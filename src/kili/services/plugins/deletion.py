@@ -16,4 +16,4 @@ def delete_plugin(kili, plugin_name: str) -> str:
 
     logger.info(f"Plugin {plugin_name} deleted!")
 
-    return self.format_result("data", result)
+    return format_result("data", result, None, kili.http_client)

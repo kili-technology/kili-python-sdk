@@ -4,17 +4,15 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.issue.queries import IssueQuery, IssueWhere
 from kili.core.helpers import disable_tqdm_if_as_generator
+from kili.entrypoints.queries.base import BaseQueryMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesIssue:
+class QueriesIssue(BaseQueryMixin):
     """Set of Issue queries."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 
@@ -126,7 +124,7 @@ class QueriesIssue:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        issues_gen = IssueQuery(self.graphql_client)(where, fields, options)
+        issues_gen = IssueQuery(self.graphql_client, self.http_client)(where, fields, options)
         if as_generator:
             return issues_gen
         return list(issues_gen)
@@ -163,4 +161,4 @@ class QueriesIssue:
             issue_type=issue_type,
             status=status,
         )
-        return IssueQuery(self.graphql_client).count(where)
+        return IssueQuery(self.graphql_client, self.http_client).count(where)

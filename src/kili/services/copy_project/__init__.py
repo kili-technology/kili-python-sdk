@@ -178,7 +178,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
                 downloaded_assets = self._download_assets(from_project_id, fields, tmp_dir, assets)
                 return self._upload_assets(new_project_id, downloaded_assets)
 
-        asset_gen = AssetQuery(self.kili.graphql_client)(
+        asset_gen = AssetQuery(self.kili.graphql_client, self.kili.http_client)(
             where, fields, options, download_and_upload_assets
         )
         # Generator needs to be iterated over to actually fetch assets
@@ -239,7 +239,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
     # pylint: disable=too-many-locals
     def _copy_labels(self, from_project_id: str, new_project_id: str) -> None:
-        assets_new_project = AssetQuery(self.kili.graphql_client)(
+        assets_new_project = AssetQuery(self.kili.graphql_client, self.kili.http_client)(
             AssetWhere(project_id=new_project_id),
             ["id", "externalId"],
             QueryOptions(disable_tqdm=True),
@@ -253,7 +253,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             member["user"]["email"]: member["user"]["id"] for member in members_new_project
         }
 
-        nb_labels_to_copy = LabelQuery(self.kili.graphql_client).count(
+        nb_labels_to_copy = LabelQuery(self.kili.graphql_client, self.kili.http_client).count(
             LabelWhere(project_id=from_project_id)
         )
         if nb_labels_to_copy == 0:

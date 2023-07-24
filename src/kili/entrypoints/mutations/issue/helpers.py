@@ -19,7 +19,7 @@ def get_issue_numbers(kili, project_id: str, type_: Literal["QUESTION", "ISSUE"]
         type_: type of the issue to add.
         size: the number of issue to add.
     """
-    issues = IssueQuery(kili.graphql_client)(
+    issues = IssueQuery(kili.graphql_client, kili.http_client)(
         IssueWhere(
             project_id=project_id,
         ),
@@ -51,7 +51,9 @@ def get_labels_asset_ids_map(kili, project_id: str, label_id_array: List[str]):
         id_contains=label_id_array,
     )
     labels = list(
-        LabelQuery(kili.graphql_client)(where=where, fields=["labelOf.id", "id"], options=options)
+        LabelQuery(kili.graphql_client, kili.http_client)(
+            where=where, fields=["labelOf.id", "id"], options=options
+        )
     )
     labels_not_found = [
         label_id for label_id in label_id_array if label_id not in [label["id"] for label in labels]

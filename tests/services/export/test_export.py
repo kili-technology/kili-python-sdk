@@ -2,7 +2,6 @@
 import glob
 import json
 import os
-import tempfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -21,8 +20,7 @@ from kili.services.export.exceptions import (
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from kili.services.export.format.base import ExportParams
-from kili.services.export.format.kili import AbstractExporter, KiliExporter
+from kili.services.export.format.kili import KiliExporter
 from tests.fakes.fake_ffmpeg import mock_ffmpeg
 from tests.fakes.fake_kili import (
     FakeKili,

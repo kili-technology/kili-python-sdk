@@ -6,21 +6,18 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
 from kili.core.helpers import disable_tqdm_if_as_generator
+from kili.entrypoints.queries.base import BaseQueryMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-# pylint: disable=too-few-public-methods
-class QueriesDataConnection:
+class QueriesDataConnection(BaseQueryMixin):
     """Set of cloud storage connection queries."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 
@@ -132,7 +129,9 @@ class QueriesDataConnection:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        data_connections_gen = DataConnectionsQuery(self.graphql_client)(where, fields, options)
+        data_connections_gen = DataConnectionsQuery(self.graphql_client, self.http_client)(
+            where, fields, options
+        )
 
         if as_generator:
             return data_connections_gen

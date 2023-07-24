@@ -41,7 +41,7 @@ def get_download_assets_function(
         return None, fields
 
     projects = list(
-        ProjectQuery(kili.graphql_client)(
+        ProjectQuery(kili.graphql_client, kili.http_client)(
             ProjectWhere(project_id=project_id), ["inputType"], QueryOptions(disable_tqdm=True)
         )
     )
@@ -53,7 +53,7 @@ def get_download_assets_function(
 
     # We need to query the data connections to know if the assets are hosted in a cloud storage
     # If so, we remove the fields "content" and "jsonContent" from the query
-    data_connections_gen = DataConnectionsQuery(kili.graphql_client)(
+    data_connections_gen = DataConnectionsQuery(kili.graphql_client, kili.http_client)(
         where=DataConnectionsWhere(project_id=project_id),
         fields=["id"],
         options=QueryOptions(disable_tqdm=True, first=1, skip=0),

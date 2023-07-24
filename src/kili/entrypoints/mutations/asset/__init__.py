@@ -9,9 +9,8 @@ from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
-from kili.core.helpers import format_result, is_empty_list_with_warning
+from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import _mutate_from_paginated_call
 from kili.entrypoints.mutations.asset.helpers import (
     process_update_properties_in_assets_parameters,
@@ -36,8 +35,6 @@ from .helpers import get_asset_ids_or_throw_error
 @for_all_methods(log_call, exclude=["__init__"])
 class MutationsAsset(BaseMutationMixin):
     """Set of Asset mutations."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,too-many-locals
     @typechecked
@@ -115,10 +112,8 @@ class MutationsAsset(BaseMutationMixin):
 
         if status_array is not None:
             warnings.warn(
-                (
-                    "status_array is deprecated, asset status is automatically computed based on"
-                    " its labels and cannot be overwritten."
-                ),
+                "status_array is deprecated, asset status is automatically computed based on"
+                " its labels and cannot be overwritten.",
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -246,22 +241,18 @@ class MutationsAsset(BaseMutationMixin):
 
         if status_array is not None:
             warnings.warn(
-                (
-                    "status_array is deprecated, asset status is automatically computed based on"
-                    " its labels and cannot be overwritten."
-                ),
+                "status_array is deprecated, asset status is automatically computed based on"
+                " its labels and cannot be overwritten.",
                 DeprecationWarning,
                 stacklevel=1,
             )
 
         if asset_ids is not None and external_ids is not None:
             warnings.warn(
-                (
-                    "The use of `external_ids` argument has changed. It is now used to identify"
-                    " which properties of which assets to update. Please use"
-                    " `kili.change_asset_external_ids()` method instead to change asset external"
-                    " IDs."
-                ),
+                "The use of `external_ids` argument has changed. It is now used to identify"
+                " which properties of which assets to update. Please use"
+                " `kili.change_asset_external_ids()` method instead to change asset external"
+                " IDs.",
                 DeprecationWarning,
                 stacklevel=1,
             )

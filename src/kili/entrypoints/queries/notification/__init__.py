@@ -5,20 +5,18 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.notification.queries import (
     NotificationQuery,
     NotificationWhere,
 )
 from kili.core.helpers import disable_tqdm_if_as_generator
+from kili.entrypoints.queries.base import BaseQueryMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesNotification:
+class QueriesNotification(BaseQueryMixin):
     """Set of Notification queries."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 
@@ -111,7 +109,9 @@ class QueriesNotification:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        notifications_gen = NotificationQuery(self.graphql_client)(where, fields, options)
+        notifications_gen = NotificationQuery(self.graphql_client, self.http_client)(
+            where, fields, options
+        )
 
         if as_generator:
             return notifications_gen
@@ -139,4 +139,4 @@ class QueriesNotification:
             notification_id=notification_id,
             user_id=user_id,
         )
-        return NotificationQuery(self.graphql_client).count(where)
+        return NotificationQuery(self.graphql_client, self.http_client).count(where)

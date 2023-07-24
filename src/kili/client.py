@@ -107,6 +107,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             kili.projects()  # list your projects
             ```
         """
+        super().__init__()
         if api_key is None:
             api_key = os.getenv("KILI_API_KEY")
 
@@ -201,5 +202,8 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         return user
 
     def format_result(self, name: str, result: dict, object_: Optional[Type[T]] = None) -> T:
-        """Format the result of a graphQL query. FIXME: this should not be used at that level."""
+        """Format the result of a graphQL query.
+
+        FIXME: this should not be used at that level.
+        """
         return format_result(name, result, object_, self.http_client)

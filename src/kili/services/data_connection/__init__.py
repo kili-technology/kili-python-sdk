@@ -39,7 +39,9 @@ def get_data_connection(kili, data_connection_id: str, fields: List[str]) -> Dic
     """Get data connection information."""
     where = DataConnectionIdWhere(data_connection_id=data_connection_id)
     options = QueryOptions(first=1, disable_tqdm=True)
-    data_connection = list(DataConnectionQuery(kili.graphql_client)(where, fields, options))
+    data_connection = list(
+        DataConnectionQuery(kili.graphql_client, kili.http_client)(where, fields, options)
+    )
     if len(data_connection) == 0:
         raise ValueError(f"No data connection with id {data_connection_id}")
     return data_connection[0]
@@ -54,7 +56,7 @@ def trigger_validate_data_differences(
         "processingParameters": None,
     }
     result = kili.graphql_client.execute(GQL_VALIDATE_DATA_DIFFERENCES, variables)
-    data_connection = self.format_result("data", result)
+    data_connection = format_result("data", result, None, kili.http_client)
     return data_connection
 
 
@@ -65,7 +67,7 @@ def validate_data_differences(
     diff = data_connection["dataDifferencesSummary"]["added" if diff_type == "ADD" else "removed"]
 
     where = AssetWhere(project_id=data_connection["projectId"])
-    nb_assets_before = AssetQuery(kili.graphql_client).count(where)
+    nb_assets_before = AssetQuery(kili.graphql_client, kili.http_client).count(where)
 
     trigger_validate_data_differences(kili, diff_type, data_connection["id"])
 
@@ -76,7 +78,7 @@ def validate_data_differences(
         reraise=True,
     ):
         with attempt:
-            nb_assets_after = AssetQuery(kili.graphql_client).count(where)
+            nb_assets_after = AssetQuery(kili.graphql_client, kili.http_client).count(where)
             if abs(nb_assets_after - nb_assets_before) != diff:
                 raise ValueError(
                     "Number of assets in project after validation is not correct: before"
@@ -139,7 +141,7 @@ def compute_differences(kili, data_connection_id: str) -> Dict:
     if blob_paths is not None:
         variables["data"] = {"blobPaths": blob_paths}
     result = kili.graphql_client.execute(GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES, variables)
-    data_connection = self.format_result("data", result)
+    data_connection = format_result("data", result, None, kili.http_client)
     return data_connection
 
 

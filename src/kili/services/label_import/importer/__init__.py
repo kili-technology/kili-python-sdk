@@ -114,7 +114,7 @@ class AbstractLabelImporter(ABC):
                 batch_result = self.kili.graphql_client.execute(
                     GQL_APPEND_MANY_LABELS, variables, timeout=60
                 )
-                result.extend(format_result("data", batch_result, Label))
+                result.extend(format_result("data", batch_result, Label, self.kili.http_client))
                 pbar.update(len(batch_labels))
         return result
 

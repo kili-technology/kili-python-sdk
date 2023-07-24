@@ -4,8 +4,7 @@ from typing import Any, Dict, Literal, Optional
 
 from typeguard import typechecked
 
-from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import format_result
+from kili.entrypoints.mutations.base import BaseMutationMixin
 from kili.entrypoints.mutations.user.queries import (
     GQL_CREATE_USER,
     GQL_UPDATE_PASSWORD,
@@ -13,10 +12,8 @@ from kili.entrypoints.mutations.user.queries import (
 )
 
 
-class MutationsUser:
+class MutationsUser(BaseMutationMixin):
     """Set of User mutations."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments
     @typechecked

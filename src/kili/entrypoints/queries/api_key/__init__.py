@@ -5,17 +5,15 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.core.helpers import disable_tqdm_if_as_generator
+from kili.entrypoints.queries.base import BaseQueryMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesApiKey:
+class QueriesApiKey(BaseQueryMixin):
     """Set of ApiKey queries."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,dangerous-default-value
     @overload
@@ -91,7 +89,7 @@ class QueriesApiKey:
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        api_keys_gen = APIKeyQuery(self.graphql_client)(where, fields, options)
+        api_keys_gen = APIKeyQuery(self.graphql_client, self.http_client)(where, fields, options)
 
         if as_generator:
             return api_keys_gen
@@ -122,4 +120,4 @@ class QueriesApiKey:
             1
         """
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
-        return APIKeyQuery(self.graphql_client).count(where)
+        return APIKeyQuery(self.graphql_client, self.http_client).count(where)

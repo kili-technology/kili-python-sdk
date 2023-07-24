@@ -6,7 +6,6 @@ from typing import Optional
 from typeguard import typechecked
 
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import format_result
 from kili.entrypoints.mutations.base import BaseMutationMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -29,11 +28,11 @@ class MutationsOrganization(BaseMutationMixin):
         Each user must be linked to an organization
 
         Args:
-            name :
-            address :
-            zip_code :
-            city :
-            country :
+            name : Name of the organization
+            address : Address of the organization
+            zip_code : Zip code of the organization
+            city : City of the organization
+            country : Country of the organization
 
         Returns:
             A result object which indicates if the mutation was successful,

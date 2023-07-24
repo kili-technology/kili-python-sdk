@@ -11,7 +11,7 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import format_result
+from kili.entrypoints.mutations.base import BaseMutationMixin
 from kili.entrypoints.mutations.exceptions import MutationError
 from kili.exceptions import NotFound
 from kili.services.copy_project import ProjectCopier
@@ -30,7 +30,7 @@ from .queries import (
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsProject:
+class MutationsProject(BaseMutationMixin):
     """Set of Project mutations."""
 
     graphql_client: GraphQLClient

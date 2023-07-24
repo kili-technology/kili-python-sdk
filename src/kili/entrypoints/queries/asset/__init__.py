@@ -7,23 +7,21 @@ import pandas as pd
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import (
     disable_tqdm_if_as_generator,
     validate_category_search_query,
 )
 from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
+from kili.entrypoints.queries.base import BaseQueryMixin
 from kili.services.project import get_project
 from kili.utils.labels.parsing import ParsedLabel, parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesAsset:
+class QueriesAsset(BaseQueryMixin):
     """Set of Asset queries."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value,redefined-builtin
 
@@ -435,7 +433,9 @@ class QueriesAsset:
             self, download_media, fields, project_id, local_media_dir
         )
 
-        assets_gen = AssetQuery(self.graphql_client)(where, fields, options, post_call_function)
+        assets_gen = AssetQuery(self.graphql_client, self.http_client)(
+            where, fields, options, post_call_function
+        )
 
         if label_output_format == "parsed_label":
             project = get_project(self, project_id, ["jsonInterface", "inputType"])
@@ -657,4 +657,4 @@ class QueriesAsset:
             issue_status=issue_status,
             issue_type=issue_type,
         )
-        return AssetQuery(self.graphql_client).count(where)
+        return AssetQuery(self.graphql_client, self.http_client).count(where)

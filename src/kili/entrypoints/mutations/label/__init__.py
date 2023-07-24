@@ -8,7 +8,8 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import deprecate, format_result
+from kili.core.helpers import deprecate
+from kili.entrypoints.mutations.base import BaseMutationMixin
 from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
 from kili.entrypoints.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
@@ -25,7 +26,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsLabel:
+class MutationsLabel(BaseMutationMixin):
     """Set of Label mutations."""
 
     graphql_client: GraphQLClient
@@ -82,11 +83,9 @@ class MutationsLabel:
                     " your calls by models."
                 )
             warnings.warn(
-                (
-                    "The use of `model_name_array` is deprecated. Creating predictions from"
-                    " different models is not supported anymore. Please use `model_name` argument"
-                    " instead to provide the predictions model name."
-                ),
+                "The use of `model_name_array` is deprecated. Creating predictions from"
+                " different models is not supported anymore. Please use `model_name` argument"
+                " instead to provide the predictions model name.",
                 DeprecationWarning,
                 stacklevel=1,
             )

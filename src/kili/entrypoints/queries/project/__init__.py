@@ -5,17 +5,15 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.core.helpers import disable_tqdm_if_as_generator
+from kili.entrypoints.queries.base import BaseQueryMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesProject:
+class QueriesProject(BaseQueryMixin):
     """Set of Project queries."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 
@@ -146,7 +144,7 @@ class QueriesProject:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        projects_gen = ProjectQuery(self.graphql_client)(where, fields, options)
+        projects_gen = ProjectQuery(self.graphql_client, self.http_client)(where, fields, options)
 
         if as_generator:
             return projects_gen
@@ -192,4 +190,4 @@ class QueriesProject:
             updated_at_lte=updated_at_lte,
             archived=archived,
         )
-        return ProjectQuery(self.graphql_client).count(where)
+        return ProjectQuery(self.graphql_client, self.http_client).count(where)

@@ -18,13 +18,13 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import (
     disable_tqdm_if_as_generator,
     validate_category_search_query,
 )
+from kili.entrypoints.queries.base import BaseQueryMixin
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
@@ -35,10 +35,8 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesLabel:
+class QueriesLabel(BaseQueryMixin):
     """Set of Label queries."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value
 
@@ -319,7 +317,9 @@ class QueriesLabel:
 
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        labels_gen = LabelQuery(self.graphql_client)(where, fields, options, post_call_function)
+        labels_gen = LabelQuery(self.graphql_client, self.http_client)(
+            where, fields, options, post_call_function
+        )
 
         if as_generator:
             return labels_gen
@@ -638,7 +638,7 @@ class QueriesLabel:
             A pandas DataFrame containing the labels.
         """
         services.get_project(self, project_id, ["id"])
-        assets_gen = AssetQuery(self.graphql_client)(
+        assets_gen = AssetQuery(self.graphql_client, self.http_client)(
             AssetWhere(project_id=project_id),
             asset_fields + ["labels." + field for field in fields],
             QueryOptions(disable_tqdm=False),
@@ -721,7 +721,7 @@ class QueriesLabel:
             user_id=user_id,
             category_search=category_search,
         )
-        return LabelQuery(self.graphql_client).count(where)
+        return LabelQuery(self.graphql_client, self.http_client).count(where)
 
     def export_labels(
         self,

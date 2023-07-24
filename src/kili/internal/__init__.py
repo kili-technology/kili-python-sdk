@@ -2,7 +2,6 @@
 
 from typeguard import typechecked
 
-from kili.core.helpers import format_result
 from kili.entrypoints.mutations.organization import MutationsOrganization
 from kili.entrypoints.mutations.project.queries import GQL_DELETE_PROJECT
 from kili.entrypoints.mutations.user.queries import GQL_RESET_PASSWORD
@@ -18,6 +17,7 @@ class KiliInternal(MutationsOrganization, QueriesApiKey):
         Args:
             kili: Kili object
         """
+        super().__init__()
         self.kili = kili
 
         self.graphql_client = kili.graphql_client
