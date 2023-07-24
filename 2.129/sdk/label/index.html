@@ -2000,7 +2000,7 @@
 
 
 
-<h3 class="doc doc-heading" id="kili.queries.label.__init__.QueriesLabel.count_labels">
+<h3 id="kili.queries.label.__init__.QueriesLabel.count_labels" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">count_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -2215,7 +2215,7 @@ Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>
 
 
 
-<h3 class="doc doc-heading" id="kili.queries.label.__init__.QueriesLabel.export_labels">
+<h3 id="kili.queries.label.__init__.QueriesLabel.export_labels" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">export_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;split&#39;</span><span class="p">,</span> <span class="n">single_file</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_assets</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">annotation_modifier</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -2459,7 +2459,7 @@ kili.export_labels(
 
 
 
-<h3 class="doc doc-heading" id="kili.queries.label.__init__.QueriesLabel.export_labels_as_df">
+<h3 id="kili.queries.label.__init__.QueriesLabel.export_labels_as_df" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">export_labels_as_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;labelType&#39;</span><span class="p">],</span> <span class="n">asset_fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;externalId&#39;</span><span class="p">])</span></code>
 
 
@@ -2574,7 +2574,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#asset">the d
 
 
 
-<h3 class="doc doc-heading" id="kili.queries.label.__init__.QueriesLabel.inferences">
+<h3 id="kili.queries.label.__init__.QueriesLabel.inferences" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">inferences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
@@ -2838,7 +2838,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
 
 
 
-<h3 class="doc doc-heading" id="kili.queries.label.__init__.QueriesLabel.labels">
+<h3 id="kili.queries.label.__init__.QueriesLabel.labels" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;labelType&#39;</span><span class="p">,</span> <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
@@ -3158,7 +3158,7 @@ category_search = `(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY_B.co
 
 
 
-<h3 class="doc doc-heading" id="kili.queries.label.__init__.QueriesLabel.predictions">
+<h3 id="kili.queries.label.__init__.QueriesLabel.predictions" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
@@ -3761,7 +3761,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.label.__init__.MutationsLabel.append_labels">
+<h3 id="kili.mutations.label.__init__.MutationsLabel.append_labels" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">append_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_response_array</span><span class="o">=</span><span class="p">[],</span> <span class="n">author_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seconds_to_label_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="o">=</span><span class="s1">&#39;DEFAULT&#39;</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
@@ -3942,7 +3942,7 @@ Name of the model when uploading predictions</p></td>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.label.__init__.MutationsLabel.append_to_labels">
+<h3 id="kili.mutations.label.__init__.MutationsLabel.append_to_labels" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">append_to_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_response</span><span class="p">,</span> <span class="n">author_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_asset_external_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="o">=</span><span class="s1">&#39;DEFAULT&#39;</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seconds_to_label</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
 
 
@@ -4117,7 +4117,7 @@ This new function allows to import several labels 10 times faster.</p>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.label.__init__.MutationsLabel.create_honeypot">
+<h3 id="kili.mutations.label.__init__.MutationsLabel.create_honeypot" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_honeypot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_response</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -4244,7 +4244,7 @@ Either provide asset_id or asset_external_id and project_id</p></td>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.label.__init__.MutationsLabel.create_predictions">
+<h3 id="kili.mutations.label.__init__.MutationsLabel.create_predictions" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">external_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_response_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -4418,7 +4418,7 @@ provide the predictions model name.</p>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.label.__init__.MutationsLabel.update_properties_in_label">
+<h3 id="kili.mutations.label.__init__.MutationsLabel.update_properties_in_label" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">update_properties_in_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">,</span> <span class="n">seconds_to_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_response</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -4610,7 +4610,7 @@ provide the predictions model name.</p>
 
 
 
-<h3 class="doc doc-heading" id="kili.subscriptions.label.__init__.SubscriptionsLabel.label_created_or_updated">
+<h3 id="kili.subscriptions.label.__init__.SubscriptionsLabel.label_created_or_updated" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">label_created_or_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span></code>
 
 

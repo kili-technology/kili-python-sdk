@@ -1447,7 +1447,7 @@
 
 
 
-<h3 class="doc doc-heading" id="kili.queries.project.__init__.QueriesProject.count_projects">
+<h3 id="kili.queries.project.__init__.QueriesProject.count_projects" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">count_projects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">search_query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -1575,7 +1575,7 @@ whose update date is lower or equal to this date.</p></td>
 
 
 
-<h3 class="doc doc-heading" id="kili.queries.project.__init__.QueriesProject.projects">
+<h3 id="kili.queries.project.__init__.QueriesProject.projects" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">projects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">search_query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;consensusTotCoverage&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;inputType&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonInterface&#39;</span><span class="p">,</span> <span class="s1">&#39;minConsensusSize&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewCoverage&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.id&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.role&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.user.email&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.user.id&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
@@ -2187,7 +2187,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.project.__init__.MutationsProject.append_to_roles">
+<h3 id="kili.mutations.project.__init__.MutationsProject.append_to_roles" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">append_to_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">user_email</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s1">&#39;LABELER&#39;</span><span class="p">)</span></code>
 
 
@@ -2300,7 +2300,7 @@ This email is used as the unique identifier of the user.</p></td>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.project.__init__.MutationsProject.archive_project">
+<h3 id="kili.mutations.project.__init__.MutationsProject.archive_project" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">archive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span></code>
 
 
@@ -2379,7 +2379,7 @@ This email is used as the unique identifier of the user.</p></td>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.project.__init__.MutationsProject.copy_project">
+<h3 id="kili.mutations.project.__init__.MutationsProject.copy_project" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">copy_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_project_id</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy_json_interface</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">copy_quality_settings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">copy_members</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">copy_assets</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">copy_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
@@ -2536,7 +2536,7 @@ if <code>None</code> is provided.</p></td>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.project.__init__.MutationsProject.create_project">
+<h3 id="kili.mutations.project.__init__.MutationsProject.create_project" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_type</span><span class="p">,</span> <span class="n">json_interface</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">project_type</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -2712,7 +2712,7 @@ if <code>None</code> is provided.</p></td>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.project.__init__.MutationsProject.delete_from_roles">
+<h3 id="kili.mutations.project.__init__.MutationsProject.delete_from_roles" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">delete_from_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role_id</span><span class="p">)</span></code>
 
 
@@ -2785,7 +2785,7 @@ if <code>None</code> is provided.</p></td>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.project.__init__.MutationsProject.delete_project">
+<h3 id="kili.mutations.project.__init__.MutationsProject.delete_project" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">delete_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span></code>
 
 
@@ -2859,7 +2859,7 @@ if <code>None</code> is provided.</p></td>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.project.__init__.MutationsProject.unarchive_project">
+<h3 id="kili.mutations.project.__init__.MutationsProject.unarchive_project" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">unarchive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span></code>
 
 
@@ -2938,7 +2938,7 @@ if <code>None</code> is provided.</p></td>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.project.__init__.MutationsProject.update_properties_in_project">
+<h3 id="kili.mutations.project.__init__.MutationsProject.update_properties_in_project" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">update_properties_in_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">can_navigate_between_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">can_skip_asset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_tot_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instructions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_consensus_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_skipped_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_remaining_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_reviewed_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">review_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata_types</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
@@ -3261,7 +3261,7 @@ will default to the <code>string</code> type.</p>
 
 
 
-<h3 class="doc doc-heading" id="kili.mutations.project.__init__.MutationsProject.update_properties_in_role">
+<h3 id="kili.mutations.project.__init__.MutationsProject.update_properties_in_role" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">update_properties_in_role</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">role</span><span class="p">)</span></code>
 
 
