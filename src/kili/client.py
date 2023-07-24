@@ -126,7 +126,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         self.client_name = client_name
         self.graphql_client_params = graphql_client_params
 
-        skip_checks = os.environ.get("KILI_SDK_SKIP_CHECKS", None) is not None
+        skip_checks = os.getenv("KILI_SDK_SKIP_CHECKS") is not None
 
         self.http_client = requests.Session()
         self.http_client.verify = verify
