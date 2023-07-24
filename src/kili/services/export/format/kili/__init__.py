@@ -9,7 +9,7 @@ from kili.orm import Asset
 from kili.services.export.format.base import AbstractExporter
 from kili.services.types import Job
 
-from ...exceptions import NotCompatibleInputType
+from ...exceptions import NotCompatibleInputType, NotCompatibleOptions
 from ...media.video import cut_video
 
 
@@ -197,13 +197,20 @@ def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> 
     # - boundingPoly: list of bounding polygons
     # each polygon is a dict with a key "normalizedVertices" that is a list of vertices
     if "polys" in annotation and "boundingPoly" in annotation:
-        page_number_to_dimensions = {
-            page_resolution["pageNumber"]: {
-                "width": page_resolution["width"],
-                "height": page_resolution["height"],
+        try:
+            page_number_to_dimensions = {
+                page_resolution["pageNumber"]: {
+                    "width": page_resolution["width"],
+                    "height": page_resolution["height"],
+                }
+                for page_resolution in asset["pageResolutions"]
             }
-            for page_resolution in asset["pageResolutions"]
-        }
+        except KeyError as err:
+            raise NotCompatibleOptions(
+                "PDF labels export with absolute coordinates require `pageResolutions` in the"
+                " asset. Please use `kili.update_properties_in_assets(page_resolutions_array=...)`"
+                " to update the page resolutions of your asset.`"
+            ) from err
 
         for key in ("polys", "boundingPoly"):
             annotation[key] = [
