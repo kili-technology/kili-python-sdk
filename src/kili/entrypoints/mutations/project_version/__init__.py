@@ -5,14 +5,14 @@ from typing import Dict, Optional
 from typeguard import typechecked
 
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.entrypoints.mutations.base import BaseMutationMixin
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .queries import GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsProjectVersion(BaseMutationMixin):
+class MutationsProjectVersion(BaseOperationEntrypointMixin):
     """Set of ProjectVersion mutations."""
 
     graphql_client: GraphQLClient

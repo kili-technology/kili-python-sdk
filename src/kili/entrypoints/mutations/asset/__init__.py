@@ -12,6 +12,7 @@ from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import _mutate_from_paginated_call
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
     process_update_properties_in_assets_parameters,
 )
@@ -21,7 +22,6 @@ from kili.entrypoints.mutations.asset.queries import (
     GQL_SEND_BACK_ASSETS_TO_QUEUE,
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
 )
-from kili.entrypoints.mutations.base import BaseMutationMixin
 from kili.exceptions import MissingArgumentError
 from kili.orm import Asset
 from kili.services.asset_import import import_assets
@@ -33,7 +33,7 @@ from .helpers import get_asset_ids_or_throw_error
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsAsset(BaseMutationMixin):
+class MutationsAsset(BaseOperationEntrypointMixin):
     """Set of Asset mutations."""
 
     # pylint: disable=too-many-arguments,too-many-locals

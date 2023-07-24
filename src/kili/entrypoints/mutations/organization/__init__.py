@@ -6,14 +6,14 @@ from typing import Optional
 from typeguard import typechecked
 
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.entrypoints.mutations.base import BaseMutationMixin
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .queries import GQL_CREATE_ORGANIZATION, GQL_UPDATE_PROPERTIES_IN_ORGANIZATION
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsOrganization(BaseMutationMixin):
+class MutationsOrganization(BaseOperationEntrypointMixin):
     """Set of Organization mutations."""
 
     graphql_client: GraphQLClient

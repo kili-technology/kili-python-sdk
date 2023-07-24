@@ -4,7 +4,7 @@ from typing import Any, Dict, Literal, Optional
 
 from typeguard import typechecked
 
-from kili.entrypoints.mutations.base import BaseMutationMixin
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.user.queries import (
     GQL_CREATE_USER,
     GQL_UPDATE_PASSWORD,
@@ -12,7 +12,7 @@ from kili.entrypoints.mutations.user.queries import (
 )
 
 
-class MutationsUser(BaseMutationMixin):
+class MutationsUser(BaseOperationEntrypointMixin):
     """Set of User mutations."""
 
     # pylint: disable=too-many-arguments

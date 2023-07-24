@@ -2,26 +2,23 @@
 
 from datetime import datetime
 from typing import Dict, List, Optional
-import requests
 
 from typeguard import typechecked
 
 from kili import services
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationsQuery,
     DataIntegrationWhere,
 )
-from kili.core.helpers import format_result
-from kili.entrypoints.mutations.base import BaseMutationMixin
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .queries import GQL_ADD_PROJECT_DATA_CONNECTION
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsDataConnection(BaseMutationMixin):
+class MutationsDataConnection(BaseOperationEntrypointMixin):
     """Set of DataConnection mutations."""
 
     @typechecked

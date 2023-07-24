@@ -10,12 +10,12 @@ from kili.core.graphql.operations.notification.queries import (
     NotificationWhere,
 )
 from kili.core.helpers import disable_tqdm_if_as_generator
-from kili.entrypoints.queries.base import BaseQueryMixin
+from kili.entrypoints.queries.base import BaseMutationMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesNotification(BaseQueryMixin):
+class QueriesNotification(BaseMutationMixin):
     """Set of Notification queries."""
 
     # pylint: disable=too-many-arguments,dangerous-default-value

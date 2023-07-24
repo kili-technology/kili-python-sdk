@@ -8,8 +8,8 @@ from typeguard import typechecked
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
-from kili.entrypoints.mutations.base import BaseMutationMixin
 from kili.services.helpers import assert_all_arrays_have_same_size
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -18,7 +18,7 @@ from .queries import GQL_CREATE_ISSUES
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsIssue(BaseMutationMixin):
+class MutationsIssue(BaseOperationEntrypointMixin):
     """Set of Issue mutations."""
 
     # pylint: disable=too-many-arguments

@@ -9,7 +9,7 @@ from typeguard import typechecked
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import deprecate
-from kili.entrypoints.mutations.base import BaseMutationMixin
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
 from kili.entrypoints.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
@@ -26,7 +26,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsLabel(BaseMutationMixin):
+class MutationsLabel(BaseOperationEntrypointMixin):
     """Set of Label mutations."""
 
     graphql_client: GraphQLClient
