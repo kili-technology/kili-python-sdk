@@ -24,6 +24,7 @@ install_requires = [
     "urllib3>=1.26,<2.0.0",
     "ffmpeg-python",
     "gql[requests,websockets]",
+    "pip-system-certs>=4.0.0,<5.0.0",
 ]
 
 dev_extra = [
