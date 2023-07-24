@@ -128,6 +128,9 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
 
         skip_checks = os.environ.get("KILI_SDK_SKIP_CHECKS", None) is not None
 
+        self.http_client = requests.Session()
+        self.http_client.verify = verify
+
         if not skip_checks:
             self._check_api_key_valid()
 
@@ -138,9 +141,6 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             verify=self.verify,
             **(graphql_client_params or {}),  # type: ignore
         )
-
-        self.http_client = requests.Session()
-        self.http_client.verify = verify
 
         if not skip_checks:
             self._check_expiry_of_key_is_close()

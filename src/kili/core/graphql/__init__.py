@@ -2,8 +2,8 @@
 
 from abc import ABC, abstractmethod
 from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type, TypeVar
-import requests
 
+import requests
 from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE

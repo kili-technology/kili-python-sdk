@@ -7,7 +7,6 @@ from kili.core.graphql.operations.plugin.mutations import (
     GQL_ACTIVATE_PLUGIN_ON_PROJECT,
     GQL_DEACTIVATE_PLUGIN_ON_PROJECT,
 )
-
 from kili.services.plugins.helpers import get_logger
 from kili.services.plugins.tools import check_errors_plugin_activation
 
