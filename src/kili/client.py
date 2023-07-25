@@ -2,7 +2,7 @@
 import os
 import warnings
 from datetime import datetime, timedelta
-from typing import Callable, Dict, Optional, Type, TypeVar
+from typing import Callable, Dict, Optional, Type, TypeVar, Union
 
 import requests
 
@@ -73,7 +73,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         self,
         api_key: Optional[str] = None,
         api_endpoint: Optional[str] = None,
-        verify: bool = True,
+        verify: Union[bool, str] = True,
         client_name: GraphQLClientName = GraphQLClientName.SDK,
         graphql_client_params: Optional[Dict[str, object]] = None,
     ) -> None:
@@ -88,7 +88,15 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
                 Default to `KILI_API_ENDPOINT` environment variable.
                 If not passed, default to Kili SaaS:
                 'https://cloud.kili-technology.com/api/label/v2/graphql'
-            verify: Verify certificate. Set to False on local deployment without SSL.
+            verify: similar to `requests`' verify.
+                Either a boolean, in which case it controls whether we verify
+                the server's TLS certificate, or a string, in which case it must be a path
+                to a CA bundle to use. Defaults to ``True``. When set to
+                ``False``, requests will accept any TLS certificate presented by
+                the server, and will ignore hostname mismatches and/or expired
+                certificates, which will make your application vulnerable to
+                man-in-the-middle (MitM) attacks. Setting verify to ``False``
+                may be useful during local development or testing. Note that
             client_name: For internal use only.
                 Define the name of the graphQL client whith which graphQL calls will be sent.
             graphql_client_params: Parameters to pass to the graphQL client.

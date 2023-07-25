@@ -46,7 +46,7 @@ class GraphQLClient:
         api_key: str,
         client_name: GraphQLClientName,
         kili_app_version: Optional[str],
-        verify: bool = True,
+        verify: Union[bool, str] = True,
         enable_schema_caching: bool = True,
         graphql_schema_cache_dir: Optional[Union[str, Path]] = DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR,
     ) -> None:
