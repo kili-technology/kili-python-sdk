@@ -139,6 +139,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             api_key=api_key,
             client_name=client_name,
             verify=self.verify,
+            kili_app_version=self._get_kili_app_version(),
             **(graphql_client_params or {}),  # type: ignore
         )
 
@@ -174,6 +175,19 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
                 f" {response.status_code}\n\n{response.text}"
             ),
         )
+
+    def _get_kili_app_version(self) -> Optional[str]:
+        """Get the version of the Kili app server.
+
+        Returns None if the version cannot be retrieved.
+        """
+        url = self.api_endpoint.replace("/graphql", "/version")
+        response = self.http_client.get(url, timeout=30)
+        if response.status_code == 200 and '"version":' in response.text:
+            response_json = response.json()
+            version = response_json["version"]
+            return version
+        return None
 
     @staticmethod
     def _check_expiry_of_key_is_close(api_key_query: Callable, api_key: str) -> None:

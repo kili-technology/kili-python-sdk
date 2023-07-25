@@ -10,12 +10,12 @@ from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationWhere,
 )
 from kili.core.helpers import disable_tqdm_if_as_generator
-from kili.entrypoints.queries.base import BaseMutationMixin
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesDataIntegration(BaseMutationMixin):
+class QueriesDataIntegration(BaseOperationEntrypointMixin):
     """Set of cloud storage integration queries."""
 
     # pylint: disable=too-many-arguments,dangerous-default-value

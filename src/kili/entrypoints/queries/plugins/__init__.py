@@ -12,13 +12,13 @@ from kili.core.graphql.operations.plugin.queries import (
     PluginLogsWhere,
     PluginQuery,
 )
-from kili.entrypoints.queries.base import BaseMutationMixin
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.services.plugins import PluginUploader
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesPlugins(BaseMutationMixin):
+class QueriesPlugins(BaseOperationEntrypointMixin):
     """Set of Plugins queries."""
 
     # pylint: disable=too-many-arguments

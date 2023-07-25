@@ -11,12 +11,12 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsWhere,
 )
 from kili.core.helpers import disable_tqdm_if_as_generator
-from kili.entrypoints.queries.base import BaseMutationMixin
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesDataConnection(BaseMutationMixin):
+class QueriesDataConnection(BaseOperationEntrypointMixin):
     """Set of cloud storage connection queries."""
 
     # pylint: disable=too-many-arguments,dangerous-default-value

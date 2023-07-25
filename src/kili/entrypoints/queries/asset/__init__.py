@@ -12,15 +12,15 @@ from kili.core.helpers import (
     disable_tqdm_if_as_generator,
     validate_category_search_query,
 )
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
-from kili.entrypoints.queries.base import BaseMutationMixin
 from kili.services.project import get_project
 from kili.utils.labels.parsing import ParsedLabel, parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesAsset(BaseMutationMixin):
+class QueriesAsset(BaseOperationEntrypointMixin):
     """Set of Asset queries."""
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value,redefined-builtin

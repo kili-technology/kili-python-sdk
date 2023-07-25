@@ -24,7 +24,7 @@ from kili.core.helpers import (
     disable_tqdm_if_as_generator,
     validate_category_search_query,
 )
-from kili.entrypoints.queries.base import BaseMutationMixin
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
@@ -35,7 +35,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesLabel(BaseMutationMixin):
+class QueriesLabel(BaseOperationEntrypointMixin):
     """Set of Label queries."""
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value

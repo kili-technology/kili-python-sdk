@@ -7,12 +7,12 @@ from typeguard import typechecked
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.core.helpers import disable_tqdm_if_as_generator
-from kili.entrypoints.queries.base import BaseMutationMixin
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesApiKey(BaseMutationMixin):
+class QueriesApiKey(BaseOperationEntrypointMixin):
     """Set of ApiKey queries."""
 
     # pylint: disable=too-many-arguments,dangerous-default-value
