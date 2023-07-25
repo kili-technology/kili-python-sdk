@@ -161,6 +161,7 @@ class MediaDownloader:
                         urls,
                         img_names,
                         repeat(self.local_dir_path),
+                        repeat(self.http_client),
                     )
                     asset["jsonContent"] = list(paths_gen)
                 return asset  # we skip video "content" download

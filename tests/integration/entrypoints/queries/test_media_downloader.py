@@ -2,7 +2,6 @@
 
 import os
 from pathlib import Path
-from unittest import mock
 
 import pytest
 import requests
@@ -172,16 +171,14 @@ def test_download_media_jsoncontent_field_added_but_useful():
         ("http://...", "", True),
     ],
 )
-@mock.patch("kili.entrypoints.queries.asset.media_downloader.requests")
-def test_download_media_jsoncontent_none(
-    mock_requests, content, jsoncontent, should_call_requests_get
-):
+def test_download_media_jsoncontent_none(mocker, content, jsoncontent, should_call_requests_get):
     """Requests.get should only be called when valid url."""
+    http_client = mocker.MagicMock(spec=requests.Session)
     with TemporaryDirectory() as tmp_dir:
-        _ = MediaDownloader(tmp_dir, "", False, "VIDEO", requests.Session()).download_single_asset(
+        _ = MediaDownloader(tmp_dir, "", False, "VIDEO", http_client).download_single_asset(
             {"content": content, "jsonContent": jsoncontent, "externalId": "externalId"}
         )
         if should_call_requests_get:
-            mock_requests.get.assert_called()
+            http_client.get.assert_called()
         else:
-            mock_requests.get.assert_not_called()
+            http_client.get.assert_not_called()

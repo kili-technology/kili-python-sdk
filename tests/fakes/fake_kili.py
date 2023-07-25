@@ -2,6 +2,8 @@
 
 from unittest.mock import MagicMock
 
+import requests
+
 from kili.orm import Asset
 from tests.fakes.fake_data import (
     asset_image_1,
@@ -18,7 +20,7 @@ class FakeKili:
     api_key = ""
     api_endpoint = "http://content-repository"
     graphql_client = MagicMock()
-    http_client = MagicMock()
+    http_client = requests.Session()
 
 
 def mocked_ProjectQuery(where, _fields, _options):
