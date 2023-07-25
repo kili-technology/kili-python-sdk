@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union
 from zipfile import ZipFile
 
+import requests
 from typing_extensions import LiteralString
 
 from kili.core.constants import (
@@ -133,9 +134,18 @@ class WebhookUploader:
 class PluginUploader:
     """Class to upload a plugin."""
 
-    def __init__(self, kili, plugin_path: str, plugin_name: Optional[str], verbose: bool) -> None:
+    # pylint: disable=too-many-arguments
+    def __init__(
+        self,
+        kili,
+        plugin_path: str,
+        plugin_name: Optional[str],
+        verbose: bool,
+        http_client: requests.Session,
+    ) -> None:
         self.kili = kili
         self.plugin_path = Path(plugin_path)
+        self.http_client = http_client
 
         if (not self.plugin_path.is_dir()) and (not self.plugin_path.is_file()):
             raise FileNotFoundError(
@@ -211,9 +221,9 @@ class PluginUploader:
         compile(source_code, "<string>", "exec")
 
     @staticmethod
-    def _upload_file(zip_path: Path, url: str):
+    def _upload_file(zip_path: Path, url: str, http_client: requests.Session):
         """Upload a file to a signed url and returns the url with the file_id."""
-        bucket.upload_data_via_rest(url, zip_path.read_bytes(), "application/zip")
+        bucket.upload_data_via_rest(url, zip_path.read_bytes(), "application/zip", http_client)
 
     def _retrieve_upload_url(self, is_updating_plugin: bool) -> str:
         """Retrieve an upload url from the backend."""
@@ -262,7 +272,7 @@ class PluginUploader:
 
             upload_url = self._retrieve_upload_url(is_updating_plugin)
 
-            self._upload_file(zip_path, upload_url)
+            self._upload_file(zip_path, upload_url, self.http_client)
 
     def _create_plugin_runner(self):
         """Create plugin's runner."""

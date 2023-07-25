@@ -108,7 +108,9 @@ class QueriesPlugins(BaseOperationEntrypointMixin):
             >>> kili.get_plugin_status(plugin_name="my_plugin_name")
         """
 
-        result = PluginUploader(self, "", plugin_name, verbose).get_plugin_runner_status()
+        result = PluginUploader(
+            self, "", plugin_name, verbose, self.http_client
+        ).get_plugin_runner_status()
         return result
 
     # pylint: disable=dangerous-default-value
