@@ -2,7 +2,7 @@
 import os
 import warnings
 from datetime import datetime, timedelta
-from typing import Dict, Optional, Type, TypeVar
+from typing import Callable, Dict, Optional, Type, TypeVar
 
 import requests
 
@@ -143,7 +143,8 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         )
 
         if not skip_checks:
-            self._check_expiry_of_key_is_close()
+            api_key_query = APIKeyQuery(self.graphql_client, self.http_client)
+            self._check_expiry_of_key_is_close(api_key_query, self.api_key)
 
         self.internal = KiliInternal(self)
 
@@ -174,13 +175,14 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             ),
         )
 
-    def _check_expiry_of_key_is_close(self) -> None:
+    @staticmethod
+    def _check_expiry_of_key_is_close(api_key_query: Callable, api_key: str) -> None:
         """Check that the expiration date of the api_key is not too close."""
         warn_days = 30
 
-        api_keys = APIKeyQuery(self.graphql_client, self.http_client)(
+        api_keys = api_key_query(
             fields=["expiryDate"],
-            where=APIKeyWhere(api_key=self.api_key),
+            where=APIKeyWhere(api_key=api_key),
             options=QueryOptions(disable_tqdm=True),
         )
 
