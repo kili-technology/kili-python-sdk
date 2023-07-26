@@ -66,7 +66,7 @@ def get_download_assets_function(
 class MediaDownloader:
     """Media downloader for kili.assets()"""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         local_media_dir: Optional[Union[Path, str]],
         project_id: str,

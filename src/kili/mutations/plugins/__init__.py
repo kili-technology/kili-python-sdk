@@ -144,7 +144,7 @@ class MutationsPlugins:
             plugin_name,
             new_header,
             verbose,
-            handler_types,  # pylint: disable=no-value-for-parameter
+            handler_types,
         ).update_webhook()
 
     @typechecked
