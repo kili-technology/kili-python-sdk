@@ -2,7 +2,7 @@
 import os
 import warnings
 from datetime import datetime, timedelta
-from typing import Callable, Dict, Optional, Type, TypeVar, Union
+from typing import Callable, Dict, Optional, Union
 
 import requests
 
@@ -11,7 +11,6 @@ from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.core.graphql.operations.user.queries import GQL_ME
-from kili.core.helpers import format_result
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.data_connection import MutationsDataConnection
 from kili.entrypoints.mutations.issue import MutationsIssue
@@ -38,8 +37,6 @@ from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.internal import KiliInternal
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
-
-T = TypeVar("T")
 
 
 class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
@@ -222,10 +219,3 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         if user is None or user["id"] is None or user["email"] is None:
             raise UserNotFoundError("No user attached to the API key was found")
         return user
-
-    def format_result(self, name: str, result: dict, object_: Optional[Type[T]] = None) -> T:
-        """Format the result of a graphQL query.
-
-        FIXME: this should not be used at that level.
-        """
-        return format_result(name, result, object_, self.http_client)
