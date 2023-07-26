@@ -96,7 +96,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
                 the server, and will ignore hostname mismatches and/or expired
                 certificates, which will make your application vulnerable to
                 man-in-the-middle (MitM) attacks. Setting verify to ``False``
-                may be useful during local development or testing. Note that
+                may be useful during local development or testing.
             client_name: For internal use only.
                 Define the name of the graphQL client whith which graphQL calls will be sent.
             graphql_client_params: Parameters to pass to the graphQL client.
@@ -115,7 +115,6 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             kili.projects()  # list your projects
             ```
         """
-        super().__init__()
         if api_key is None:
             api_key = os.getenv("KILI_API_KEY")
 
@@ -162,7 +161,6 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         response = self.http_client.post(
             url=self.api_endpoint,
             data='{"query":"{ me { id email } }"}',
-            verify=self.verify,
             timeout=30,
             headers={
                 "Authorization": f"X-API-Key: {self.api_key}",
