@@ -7,6 +7,7 @@ from kili.services.data_connection import (
     synchronize_data_connection,
 )
 from kili.services.export import export_labels
+from kili.services.import_csv import import_csv
 from kili.services.label_import import import_labels_from_dict, import_labels_from_files
 from kili.services.project import get_project, get_project_field
 
@@ -20,4 +21,5 @@ __all__ = [
     "get_data_connection",
     "synchronize_data_connection",
     "compute_differences",
+    "import_csv",
 ]
