@@ -1,7 +1,7 @@
 """Project mutations."""
 
 from json import dumps
-from typing import Any, Dict, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -15,8 +15,10 @@ from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.exceptions import MutationError
 from kili.exceptions import NotFound
 from kili.services.copy_project import ProjectCopier
+from kili.services.types import LabelType
 from kili.utils.logcontext import for_all_methods, log_call
 
+from . import import_csv
 from .helpers import verify_argument_ranges
 from .queries import (
     GQL_APPEND_TO_ROLES,
@@ -444,3 +446,58 @@ class MutationsProject(BaseOperationEntrypointMixin):
 
         result = self.graphql_client.execute(GQL_PROJECT_UPDATE_ANONYMIZATION, variables)
         return self.format_result("data", result)
+
+    @typechecked
+    def import_csv(
+        self,
+        csv_file: str,
+        content_column: str,
+        unique_categories: Optional[List[str]] = None,
+        category_column: Optional[str] = None,
+        external_id_column: Optional[str] = None,
+        csv_separator: str = ",",
+        label_type: LabelType = "DEFAULT",
+        project_id: Optional[str] = None,
+        project_title: Optional[str] = None,
+        project_description: Optional[str] = None,
+    ) -> Dict[Literal["id"], str]:
+        """Import text assets and labels from a csv file.
+
+        This method imports assets and eventually assigns a single category to each asset (if
+        `category_column` is provided).
+
+        The csv file should contain a header with the column names.
+
+        Args:
+            csv_file: Path to the csv file.
+            content_column: Name of the column containing the content of the assets.
+            unique_categories: List of the categories an asset can belong to.
+                This argument is used for project creation if `project_id` is None.
+                If not provided, the categories will be inferred from the csv `category_column`.
+            category_column: Name of the column containing the category of the assets.
+                If None, the assets will be imported without labels.
+            external_id_column: Name of the column containing the external id of the assets.
+                If None, the external id will be set to the row number.
+            label_type: Type of the labels to create. Only used if `category_column` is provided.
+            csv_separator: Separator used in the csv file.
+            project_id: Identifier of the project. If None, a text project is created.
+            project_title: Title of the project. Only required if `project_id` is None.
+            project_description: Description of the project. Only required if `project_id` is None.
+
+        Returns:
+            A dictionary with the project `id`.
+        """
+        project_id = import_csv.import_csv(
+            self,
+            csv_file,
+            content_column,
+            unique_categories,
+            category_column,
+            external_id_column,
+            csv_separator,
+            label_type,
+            project_id,
+            project_title,
+            project_description,
+        )
+        return {"id": project_id}

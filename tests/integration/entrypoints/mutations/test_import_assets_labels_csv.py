@@ -4,8 +4,8 @@ import pytest
 import pytest_mock
 
 from kili.client import Kili
-from kili.entrypoints.mutations.asset import MutationsAsset
-from kili.services.import_csv import (
+from kili.entrypoints.mutations.project import MutationsProject
+from kili.entrypoints.mutations.project.import_csv import (
     _create_project,
     _get_json_response_array,
     _read_csv,
@@ -109,7 +109,7 @@ def test__get_json_response_array():
 
 
 def test_kili_import_csv_new_project(csv_file_path: str, mocker: pytest_mock.MockerFixture):
-    kili: Kili = MutationsAsset()  # type: ignore
+    kili: Kili = MutationsProject()  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.create_project = mocker.MagicMock(return_value={"id": "fake_project_id"})
     kili.append_many_to_dataset = mocker.MagicMock()
@@ -152,7 +152,7 @@ def test_kili_import_csv_new_project(csv_file_path: str, mocker: pytest_mock.Moc
 
 
 def test_kili_import_csv_existing_project(csv_file_path: str, mocker: pytest_mock.MockerFixture):
-    kili: Kili = MutationsAsset()  # type: ignore
+    kili: Kili = MutationsProject()  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.create_project = mocker.MagicMock(return_value={"id": "fake_project_id"})
     kili.append_many_to_dataset = mocker.MagicMock()
@@ -187,7 +187,7 @@ def test_kili_import_csv_existing_project(csv_file_path: str, mocker: pytest_moc
 
 
 def test_kili_import_csv_unique_columns(csv_file_path: str, mocker: pytest_mock.MockerFixture):
-    kili: Kili = MutationsAsset()  # type: ignore
+    kili: Kili = MutationsProject()  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.create_project = mocker.MagicMock(return_value={"id": "fake_project_id"})
     kili.append_many_to_dataset = mocker.MagicMock()
