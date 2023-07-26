@@ -594,13 +594,16 @@ def get_file_tree(folder: str):
         ),
     ],
 )
-@patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
-@patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
-@patch.object(AssetQuery, "count", side_effect=mocked_AssetQuery_count)
-@patch("kili.services.export.media.video.ffmpeg")
-def test_export_service_layout(
-    mocker_ffmpeg, mocker_asset_count, mocker_asset, mocker_project, name, test_case
-):
+def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_case):
+    mocker.patch.object(AssetQuery, "count", side_effect=mocked_AssetQuery_count)
+    mocker.patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
+    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
+    mocker_ffmpeg = mocker.patch("kili.services.export.media.video.ffmpeg")
+    mocker.patch(
+        "kili.services.export.format.geojson.is_geotiff_asset_with_lat_lon_coords",
+        return_value=True,
+    )
+
     with TemporaryDirectory() as export_folder:
         with TemporaryDirectory() as extract_folder:
             path_zipfile = Path(export_folder) / "export.zip"
