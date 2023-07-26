@@ -7,7 +7,7 @@ from kili.client import Kili
 from kili.entrypoints.mutations.project import MutationsProject
 from kili.entrypoints.mutations.project.import_csv import (
     _create_project,
-    _get_json_response_array,
+    _generate_json_response_array,
     _read_csv,
 )
 
@@ -99,8 +99,8 @@ def test__create_project(mocker: pytest_mock.MockerFixture):
     )
 
 
-def test__get_json_response_array():
-    json_resp_array = _get_json_response_array(["category_1", "category_2", "category_1"])
+def test__generate_json_response_array():
+    json_resp_array = _generate_json_response_array(["category_1", "category_2", "category_1"])
     assert json_resp_array == [
         {"CLASSIFICATION_JOB": {"categories": [{"name": "category_1"}]}},
         {"CLASSIFICATION_JOB": {"categories": [{"name": "category_2"}]}},

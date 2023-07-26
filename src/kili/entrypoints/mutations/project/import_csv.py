@@ -65,7 +65,7 @@ def import_text_assets_labels_from_csv(
     assert categories_array is not None, categories_array
 
     logger.info("Adding labels to project.")
-    json_response_array = _get_json_response_array(categories_array)
+    json_response_array = _generate_json_response_array(categories_array)
     kili.append_labels(
         json_response_array=json_response_array,
         project_id=project_id,
@@ -129,7 +129,7 @@ def _create_project(kili, title: str, description: str, categories: List[str]) -
     return project_id
 
 
-def _get_json_response_array(categories_array: List[str]) -> List[Dict]:
+def _generate_json_response_array(categories_array: List[str]) -> List[Dict]:
     json_response_array = []
     for category in categories_array:
         json_resp = (
