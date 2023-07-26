@@ -24,7 +24,7 @@ from kili.core.graphql.operations.organization.queries import (
     OrganizationQuery,
     OrganizationWhere,
 )
-from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
+from kili.core.helpers import RetryLongWaitWarner, T, is_url
 from kili.core.utils import pagination
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
@@ -203,7 +203,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             "where": {"id": self.project_id},
         }
         results = self.kili.graphql_client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
-        return format_result("data", results, Asset, self.kili.http_client)
+        return self.kili.format_result("data", results, Asset)
 
     def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets with synchronous resolver."""
@@ -220,7 +220,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             "where": {"id": self.project_id},
         }
         results = self.kili.graphql_client.execute(GQL_APPEND_MANY_TO_DATASET, payload)
-        return format_result("data", results, Asset, self.kili.http_client)
+        return self.kili.format_result("data", results, Asset, self.kili.http_client)
 
     def import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets to Kili with the right resolver."""
