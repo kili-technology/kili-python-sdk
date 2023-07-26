@@ -2,36 +2,43 @@
 import warnings
 from typing import Dict, List, Optional
 
+import requests
+
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import validate_category_search_query
 from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
 from kili.services.export.types import ExportType
 
-DEFAULT_FIELDS = [
+COMMON_FIELDS = [
     "id",
-    "content",
     "externalId",
+    "content",
+    "jsonContent",
     "jsonMetadata",
+    "pageResolutions.pageNumber",
+    "pageResolutions.height",
+    "pageResolutions.width",
+    "pageResolutions.rotation",
+    "resolution.height",
+    "resolution.width",
+]
+
+DEFAULT_FIELDS = COMMON_FIELDS + [
+    "labels.jsonResponse",
     "labels.author.id",
     "labels.author.email",
     "labels.author.firstname",
     "labels.author.lastname",
-    "labels.jsonResponse",
     "labels.createdAt",
     "labels.isLatestLabelForUser",
     "labels.labelType",
     "labels.modelName",
 ]
-LATEST_LABEL_FIELDS = [
-    "id",
-    "content",
-    "externalId",
-    "jsonContent",
-    "jsonMetadata",
+LATEST_LABEL_FIELDS = COMMON_FIELDS + [
+    "latestLabel.jsonResponse",
     "latestLabel.author.id",
     "latestLabel.author.email",
-    "latestLabel.jsonResponse",
     "latestLabel.author.firstname",
     "latestLabel.author.lastname",
     "latestLabel.createdAt",
@@ -164,3 +171,25 @@ def get_fields_to_fetch(export_type: ExportType):
     if export_type == "latest":
         return LATEST_LABEL_FIELDS
     return DEFAULT_FIELDS
+
+
+def is_geotiff_asset_with_lat_lon_coords(asset: Dict) -> bool:
+    """Check if asset is a geotiff with lat/lon coordinates."""
+    if "jsonContent" not in asset:
+        return False
+
+    if isinstance(asset["jsonContent"], str) and asset["jsonContent"].startswith("http"):
+        response = requests.get(asset["jsonContent"], timeout=30)
+        json_content = response.json()
+
+    else:
+        json_content = asset["jsonContent"]
+
+    return (
+        isinstance(json_content, List)
+        and len(json_content) > 0
+        and isinstance(json_content[0], Dict)
+        and json_content[0].get("useClassicCoordinates") is False
+        and "epsg" in json_content[0]
+        and json_content[0]["epsg"] != "TiledImage"
+    )

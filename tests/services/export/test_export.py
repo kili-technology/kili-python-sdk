@@ -535,6 +535,63 @@ def get_file_tree(folder: str):
                 },
             },
         ),
+        (
+            "geojson format image project",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "geojson",
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "labels": {"car_1.geojson": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "geojson format image project with assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "geojson",
+                    "with_assets": True,
+                },
+                "file_tree_expected": {
+                    "labels": {"car_1.geojson": {}},
+                    "images": {"car_1.jpg": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "geojson format object_detection_with_classification",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_with_classification",
+                    "label_format": "geojson",
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "labels": {"car_1.geojson": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "geojson format semantic_segmentation",
+            {
+                "export_kwargs": {
+                    "project_id": "semantic_segmentation",
+                    "label_format": "geojson",
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "labels": {"car_1.geojson": {}, "car_2.geojson": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
     ],
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
