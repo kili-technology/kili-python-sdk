@@ -314,7 +314,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
                 signed_urls,
                 json_content_array,
                 ["text/plain"] * len(assets),
-                self.http_client,
+                repeat(self.http_client),
             )
         # pylint: disable=line-too-long
         return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
