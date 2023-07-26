@@ -4,6 +4,7 @@ import mimetypes
 import os
 import warnings
 from concurrent.futures import ThreadPoolExecutor
+from itertools import repeat
 from json import dumps
 from pathlib import Path
 from typing import Callable, List, NamedTuple, Optional, Tuple, Union
@@ -78,6 +79,7 @@ class BaseBatchImporter:
         self.is_hosted = batch_params.is_hosted
         self.is_asynchronous = batch_params.is_asynchronous
         self.pbar = pbar
+        self.http_client = kili.http_client
 
         logging.basicConfig()
         self.logger = logging.getLogger("kili.services.asset_import.base")
@@ -272,7 +274,11 @@ class ContentBatchImporter(BaseBatchImporter):
         data_array, content_type_array = zip(*data_and_content_type_array)
         with ThreadPoolExecutor() as threads:
             url_gen = threads.map(
-                bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
+                bucket.upload_data_via_rest,
+                signed_urls,
+                data_array,
+                content_type_array,
+                repeat(self.http_client),
             )
         # pylint: disable=line-too-long
         return [AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
@@ -308,6 +314,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
                 signed_urls,
                 json_content_array,
                 ["text/plain"] * len(assets),
+                self.http_client,
             )
         # pylint: disable=line-too-long
         return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
