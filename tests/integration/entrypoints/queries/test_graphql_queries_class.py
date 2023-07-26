@@ -1,6 +1,6 @@
 """Module for testing the graphQLQuery class."""
 
-from typing import Generator
+from typing import Generator, cast
 from unittest import TestCase
 from unittest.mock import MagicMock, call
 
@@ -14,7 +14,7 @@ def mocked_client_execute(query, payload):
     if query == "object_query":
         first = payload["first"]
         skip = payload["skip"]
-        nb_objects_to_return = min(first, NUMBER_OBJECT_IN_DB - skip)
+        nb_objects_to_return = cast(int, min(first, NUMBER_OBJECT_IN_DB - skip))
         assert nb_objects_to_return <= QUERY_BATCH_SIZE, nb_objects_to_return
         return {"data": [{"id": "id"}] * nb_objects_to_return}
 

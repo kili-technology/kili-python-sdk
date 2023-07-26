@@ -2,7 +2,7 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, cast
 
 from kili.orm import JobMLTask, JobTool
 from kili.services.export.exceptions import (
@@ -287,8 +287,8 @@ def _convert_from_kili_to_yolo_format(
         normalized_vertices = bounding_poly[0]["normalizedVertices"]
         x_s = [vertice["x"] for vertice in normalized_vertices]
         y_s = [vertice["y"] for vertice in normalized_vertices]
-        x_min, y_min = min(x_s), min(y_s)
-        x_max, y_max = max(x_s), max(y_s)
+        x_min, y_min = cast(float, min(x_s)), cast(float, min(y_s))
+        x_max, y_max = cast(float, max(x_s)), cast(float, max(y_s))
         _x_, _y_ = (x_max + x_min) / 2, (y_max + y_min) / 2
         _w_, _h_ = x_max - x_min, y_max - y_min
 

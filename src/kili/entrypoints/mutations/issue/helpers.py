@@ -1,7 +1,7 @@
 """Helpers for the issue mutations."""
 
 
-from typing import List, Literal
+from typing import List, Literal, cast
 
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.issue.queries import IssueQuery, IssueWhere
@@ -27,9 +27,12 @@ def get_issue_numbers(kili, project_id: str, type_: Literal["QUESTION", "ISSUE"]
         QueryOptions(disable_tqdm=True),
     )
     first_issue_number = (
-        max(
-            (issue["issueNumber"] for issue in issues if issue["type"] == type_),
-            default=-1,
+        cast(
+            int,
+            max(
+                (issue["issueNumber"] for issue in issues if issue["type"] == type_),
+                default=-1,
+            ),
         )
         + 1
     )
