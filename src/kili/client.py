@@ -107,7 +107,7 @@ class Kili(  # pylint: disable=too-many-ancestors
                 api_key=api_key,
                 api_endpoint=api_endpoint,
                 client_name=client_name,
-                verify=verify,
+                ssl_verify=verify,
             )
             super().__init__(self.auth)
         except Exception as exception:

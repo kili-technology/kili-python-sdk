@@ -102,6 +102,7 @@ class WebhookUploader:
         header: Optional[str],
         verbose: bool,
         handler_types: Optional[List[str]],
+        ssl_verify: Union[bool, str],
     ) -> None:
         self.auth = auth
         self.webhook_url = webhook_url
@@ -109,6 +110,7 @@ class WebhookUploader:
         self.header = header
         self.verbose = verbose
         self.handler_types = handler_types
+        self.ssl_verify = ssl_verify
 
     def create_webhook(self):
         """
@@ -124,7 +126,7 @@ class WebhookUploader:
 
         result = self.auth.client.execute(GQL_CREATE_WEBHOOK, variables)
 
-        return format_result("data", result)
+        return format_result("data", result, None, ssl_verify=self.ssl_verify)
 
     def update_webhook(self):
         """
@@ -140,7 +142,7 @@ class WebhookUploader:
 
         result = self.auth.client.execute(GQL_UPDATE_WEBHOOK, variables)
 
-        return format_result("data", result)
+        return format_result("data", result, None, ssl_verify=self.ssl_verify)
 
 
 class PluginUploader:
@@ -149,7 +151,12 @@ class PluginUploader:
     """
 
     def __init__(
-        self, auth: KiliAuth, plugin_path: str, plugin_name: Optional[str], verbose: bool
+        self,
+        auth: KiliAuth,
+        plugin_path: str,
+        plugin_name: Optional[str],
+        verbose: bool,
+        ssl_verify: Union[bool, str],
     ) -> None:
         self.auth = auth
         self.plugin_path = Path(plugin_path)
@@ -166,6 +173,7 @@ class PluginUploader:
             self.plugin_name = self.plugin_path.name
         self.verbose = verbose
         self.handler_types = None
+        self.ssl_verify = ssl_verify
 
     def _retrieve_plugin_src(self) -> List[Path]:
         """
@@ -236,11 +244,11 @@ class PluginUploader:
         compile(source_code, "<string>", "exec")
 
     @staticmethod
-    def _upload_file(zip_path: Path, url: str):
+    def _upload_file(zip_path: Path, url: str, ssl_verify: Union[bool, str]):
         """
         Upload a file to a signed url and returns the url with the file_id
         """
-        bucket.upload_data_via_rest(url, zip_path.read_bytes(), "application/zip")
+        bucket.upload_data_via_rest(url, zip_path.read_bytes(), "application/zip", ssl_verify)
 
     def _retrieve_upload_url(self, is_updating_plugin: bool) -> str:
         """
@@ -254,7 +262,7 @@ class PluginUploader:
             result = self.auth.client.execute(GQL_CREATE_PLUGIN, variables)
 
         check_errors_plugin_upload(result, self.plugin_path, self.plugin_name)
-        upload_url = format_result("data", result)
+        upload_url = format_result("data", result, None, self.ssl_verify)
         return upload_url
 
     def _create_zip(self, tmp_directory: Path):
@@ -295,7 +303,7 @@ class PluginUploader:
 
             upload_url = self._retrieve_upload_url(is_updating_plugin)
 
-            self._upload_file(zip_path, upload_url)
+            self._upload_file(zip_path, upload_url, self.ssl_verify)
 
     def _create_plugin_runner(self):
         """
@@ -305,7 +313,7 @@ class PluginUploader:
         variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
 
         result = self.auth.client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.ssl_verify)
 
     def _check_plugin_runner_status(self, update=False):
         """
@@ -363,7 +371,7 @@ code (you can use kili.update_plugin() for that)."""
 
         result = self.auth.client.execute(GQL_GET_PLUGIN_RUNNER_STATUS, variables)
 
-        return format_result("data", result)
+        return format_result("data", result, None, self.ssl_verify)
 
     def create_plugin(self):
         """
@@ -383,7 +391,7 @@ code (you can use kili.update_plugin() for that)."""
         variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
 
         result = self.auth.client.execute(GQL_UPDATE_PLUGIN_RUNNER, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.ssl_verify)
 
     def update_plugin(self):
         """

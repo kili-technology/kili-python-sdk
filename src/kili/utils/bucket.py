@@ -53,7 +53,9 @@ def request_signed_urls(auth: KiliAuth, file_urls: List[str]):
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2), reraise=True)
-def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type: str):
+def upload_data_via_rest(
+    url_with_id: str, data: Union[str, bytes], content_type: str, ssl_verify: Union[bool, str]
+):
     """upload data in buckets' signed URL via REST
     Args:
         signed_urls: Bucket signed URLs to upload local files to
@@ -67,7 +69,9 @@ def upload_data_via_rest(url_with_id: str, data: Union[str, bytes], content_type
     if "blob.core.windows.net" in url_to_use_for_upload:
         headers["x-ms-blob-type"] = "BlockBlob"
 
-    response = requests.put(url_to_use_for_upload, data=data, headers=headers, timeout=30)
+    response = requests.put(
+        url_to_use_for_upload, data=data, headers=headers, timeout=30, verify=ssl_verify
+    )
     response.raise_for_status()
     return url_with_id
 

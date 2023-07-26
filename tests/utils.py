@@ -6,6 +6,7 @@ import traceback
 import uuid
 from datetime import datetime, timedelta
 from functools import wraps
+from typing import Union
 
 import requests
 
@@ -81,11 +82,12 @@ def debug_subprocess_pytest(result):
 
 
 class LocalDownloader:
-    def __init__(self, directory):
+    def __init__(self, directory, ssl_verify: Union[bool, str]):
         self.directory = directory
+        self.ssl_verify = ssl_verify
 
     def __call__(self, url):
-        content = requests.get(url)
+        content = requests.get(url, verify=self.ssl_verify)
         name = os.path.basename(url)
         path = os.path.join(self.directory, f"{str(uuid.uuid4())}-{name}")
         with open(path, "wb") as file:
