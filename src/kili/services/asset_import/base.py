@@ -69,7 +69,7 @@ class LoggerParams(NamedTuple):
     disable_tqdm: bool
 
 
-class BaseBatchImporter:
+class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
     """Base class for BatchImporters."""
 
     def __init__(self, kili, project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm):

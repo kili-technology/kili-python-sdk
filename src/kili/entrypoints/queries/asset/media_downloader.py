@@ -116,7 +116,7 @@ class MediaDownloader:
         self.local_dir_path.mkdir(parents=True, exist_ok=True)
 
         with ThreadPoolExecutor() as threads:
-            assets_gen = threads.map(self.download_single_asset, assets, repeat(self.http_client))
+            assets_gen = threads.map(self.download_single_asset, assets)
 
         assets = list(assets_gen)
 
