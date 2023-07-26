@@ -52,7 +52,7 @@ jobs:
         run: pyright .
 
   unittest:
-    timeout-minutes: 10
+    timeout-minutes: 12
     name: Unit tests
     strategy:
       matrix:

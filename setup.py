@@ -23,6 +23,7 @@ install_requires = [
     "ffmpeg-python>=0.2.0,<0.3.0",
     "gql[requests,websockets]>=3.5.0b4,<4.0.0",
     "filelock>=3.0.0,<4.0.0",
+    "pip-system-certs>=4.0.0,<5.0.0; platform_system=='Windows'",
 ]
 
 image_requires = [
