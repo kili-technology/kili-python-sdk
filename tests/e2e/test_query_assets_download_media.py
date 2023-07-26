@@ -106,6 +106,7 @@ def test_download_assets_protected_content_images(kili, src_project_image):
             src_project_image["id"],
             jsoncontent_field_added=False,
             project_input_type="IMAGE",
+            ssl_verify=True,
         )
         assets = media_dl.download_assets(assets)
 
@@ -158,7 +159,8 @@ def src_project_video_frames(kili):
 
     with TemporaryDirectory() as tmp_dir:
         urls = get_json_content_urls_video(
-            "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2_video2-json-content.json"
+            "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2_video2-json-content.json",
+            ssl_verify=True,
         )
         for i, url in enumerate(urls):
             if i >= 5:  # keep only a few images for testing
@@ -197,6 +199,7 @@ def test_download_single_asset_protected_content_videos(kili, src_project_video_
             src_project_video_frames["id"],
             jsoncontent_field_added=False,
             project_input_type="VIDEO",
+            ssl_verify=True,
         )
         asset = media_dl.download_single_asset(assets[0])
 
@@ -289,6 +292,7 @@ def test_download_assets_text(kili, src_project_text):
             src_project_text["id"],
             jsoncontent_field_added=False,
             project_input_type="TEXT",
+            ssl_verify=True,
         )
         assets = media_dl.download_assets(assets)
 
@@ -385,6 +389,7 @@ def test_download_single_asset_big_image(kili, src_project_big_image):
             src_project_big_image["id"],
             jsoncontent_field_added=False,
             project_input_type="IMAGE",
+            ssl_verify=True,
         )
         asset = media_dl.download_single_asset(assets[0])
 
@@ -470,6 +475,7 @@ def test_download_single_asset_video_content_and_jsoncontent(
             src_project_video_content_and_jsoncontent["id"],
             jsoncontent_field_added=False,
             project_input_type="VIDEO",
+            ssl_verify=True,
         )
         asset = media_dl.download_single_asset(assets[0])
 

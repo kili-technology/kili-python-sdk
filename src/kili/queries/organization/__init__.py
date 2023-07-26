@@ -101,7 +101,9 @@ class QueriesOrganization:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        organizations_gen = OrganizationQuery(self.auth.client)(where, fields, options)
+        organizations_gen = OrganizationQuery(self.auth.client, self.auth.ssl_verify)(
+            where, fields, options
+        )
 
         if as_generator:
             return organizations_gen
@@ -125,7 +127,7 @@ class QueriesOrganization:
             email=email,
             organization_id=organization_id,
         )
-        return OrganizationQuery(self.auth.client).count(where)
+        return OrganizationQuery(self.auth.client, self.auth.ssl_verify).count(where)
 
     @typechecked
     def organization_metrics(
@@ -152,4 +154,4 @@ class QueriesOrganization:
         where = OrganizationMetricsWhere(
             organization_id=organization_id, start_date=start_date, end_date=end_date
         )
-        return OrganizationQuery(self.auth.client).metrics(where)
+        return OrganizationQuery(self.auth.client, self.auth.ssl_verify).metrics(where)

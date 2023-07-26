@@ -79,7 +79,7 @@ def update_member(
 
     count = 0
 
-    existing_members_gen = ProjectUserQuery(kili.auth.client)(
+    existing_members_gen = ProjectUserQuery(kili.auth.client, kili.auth.ssl_verify)(
         where=ProjectUserWhere(project_id=project_id),
         fields=["role", "activated", "user.email", "id", "user.id"],
         options=QueryOptions(disable_tqdm=True),

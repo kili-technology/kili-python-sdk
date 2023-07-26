@@ -149,7 +149,7 @@ class QueriesProject:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        projects_gen = ProjectQuery(self.auth.client)(where, fields, options)
+        projects_gen = ProjectQuery(self.auth.client, self.auth.ssl_verify)(where, fields, options)
 
         if as_generator:
             return projects_gen
@@ -192,4 +192,4 @@ class QueriesProject:
             updated_at_gte=updated_at_gte,
             updated_at_lte=updated_at_lte,
         )
-        return ProjectQuery(self.auth.client).count(where)
+        return ProjectQuery(self.auth.client, self.auth.ssl_verify).count(where)

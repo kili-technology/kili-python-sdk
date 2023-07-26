@@ -142,7 +142,9 @@ class QueriesDataConnection:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        data_connections_gen = DataConnectionsQuery(self.auth.client)(where, fields, options)
+        data_connections_gen = DataConnectionsQuery(self.auth.client, self.auth.ssl_verify)(
+            where, fields, options
+        )
 
         if as_generator:
             return data_connections_gen

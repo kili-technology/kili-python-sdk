@@ -39,7 +39,7 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     projects = list(
-        ProjectQuery(kili.auth.client)(
+        ProjectQuery(kili.auth.client, kili.auth.ssl_verify)(
             ProjectWhere(),
             [
                 "title",
@@ -69,7 +69,11 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
     ]
     # If description or title has more than 50 characters, truncate after 47 and add '...'
     projects["DESCRIPTION"] = [
-        (description[:47] + "...").replace("\n", "") if len(description) > 50 else description
+        (
+            (str(description)[:47] + "...").replace("\n", "")
+            if len(str(description)) > 50
+            else str(description)
+        )
         for description in projects["description"]  # type: ignore
     ]
     # pylint: disable=line-too-long

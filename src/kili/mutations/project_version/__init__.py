@@ -44,4 +44,4 @@ class MutationsProjectVersion:  # pylint: disable=too-few-public-methods
             "id": project_version_id,
         }
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)

@@ -137,7 +137,7 @@ class BaseBatchImporter:
             with attempt:
                 assets_ids = [assets[-1]["id"]]  # check last asset of the batch only
                 where = AssetWhere(project_id=self.project_id, asset_id_in=assets_ids)
-                nb_assets_in_kili = AssetQuery(self.auth.client).count(where)
+                nb_assets_in_kili = AssetQuery(self.auth.client, self.auth.ssl_verify).count(where)
                 if len(assets_ids) != nb_assets_in_kili:
                     raise BatchImportError(
                         "Number of assets to upload is not equal to number of assets uploaded in"
@@ -237,7 +237,7 @@ class BaseBatchImporter:
             "where": {"id": self.project_id},
         }
         results = self.auth.client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
-        return format_result("data", results, Asset)
+        return format_result("data", results, Asset, self.auth.ssl_verify)
 
     def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
         """
@@ -256,7 +256,7 @@ class BaseBatchImporter:
             "where": {"id": self.project_id},
         }
         results = self.auth.client.execute(GQL_APPEND_MANY_TO_DATASET, payload)
-        return format_result("data", results, Asset)
+        return format_result("data", results, Asset, self.auth.ssl_verify)
 
     def import_to_kili(self, assets: List[KiliResolverAsset]):
         """
@@ -323,7 +323,9 @@ class ContentBatchImporter(BaseBatchImporter):
             url_gen = threads.map(
                 bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
             )
-        return [AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)]
+        return [
+            AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)  # noqa
+        ]
 
 
 class JsonContentBatchImporter(BaseBatchImporter):
@@ -419,7 +421,9 @@ class BaseAssetImporter:
         )
         options = QueryOptions(disable_tqdm=True)
         organization = list(
-            OrganizationQuery(self.auth.client)(where, ["license.uploadLocalData"], options)
+            OrganizationQuery(self.auth.client, self.auth.ssl_verify)(
+                where, ["license.uploadLocalData"], options
+            )
         )[0]
         return organization["license"]["uploadLocalData"]
 
@@ -481,7 +485,7 @@ class BaseAssetImporter:
         """Filter out assets whose external_id is already in the project."""
         if len(assets) == 0:
             raise ImportValidationError("No assets to import")
-        assets_in_project = AssetQuery(self.auth.client)(
+        assets_in_project = AssetQuery(self.auth.client, self.auth.ssl_verify)(
             AssetWhere(project_id=self.project_params.project_id),
             ["externalId"],
             QueryOptions(disable_tqdm=True),

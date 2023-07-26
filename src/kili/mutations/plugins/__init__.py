@@ -139,7 +139,12 @@ class MutationsPlugins:
         """
 
         return WebhookUploader(
-            self.auth, new_webhook_url, plugin_name, new_header, verbose, handler_types
+            self.auth,
+            new_webhook_url,
+            plugin_name,
+            new_header,
+            verbose,
+            handler_types,  # pylint: disable=no-value-for-parameter
         ).update_webhook()
 
     @typechecked

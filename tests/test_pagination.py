@@ -96,7 +96,7 @@ def test_row_generator_from_paginated_calls(test_case):
     options = QueryOptions(first=first, skip=skip, disable_tqdm=disable_tqdm)
     where = MyGraphQLWhere()
     actual = MyGraphQLQuery(
-        client=MagicMock(execute=mocked_query_method)
+        client=MagicMock(execute=mocked_query_method), ssl_verify=True
     ).execute_query_from_paginated_call(
         query="", where=where, options=options, post_call_function=None
     )

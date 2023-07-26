@@ -59,7 +59,7 @@ class MutationsDataConnection:
                     f"The data integration with id {cloud_storage_integration_id} is not supported"
                     " in the SDK yet. Use the Kili app to create a data connection instead."
                 ) from err
-            result = format_result("data", result)
+            result = format_result("data", result, None, self.auth.ssl_verify)
             selected_folders = [folder["key"] for folder in result]
 
         variables = {
@@ -72,7 +72,7 @@ class MutationsDataConnection:
             }
         }
         result = self.auth.client.execute(GQL_ADD_PROJECT_DATA_CONNECTION, variables)
-        result = format_result("data", result)
+        result = format_result("data", result, None, self.auth.ssl_verify)
 
         # We trigger data difference computation (same behavior as in the frontend)
         services.compute_differences(self.auth, result["id"])

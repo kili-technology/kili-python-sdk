@@ -17,7 +17,7 @@ class ImportTestCase(TestCase):
     def setUp(self):
         self.project_id = "project_id"
         self.test_dir = tempfile.mkdtemp()
-        self.downloader = LocalDownloader(self.test_dir)
+        self.downloader = LocalDownloader(self.test_dir, True)
         self.auth = mocked_auth
 
     def tearDown(self):

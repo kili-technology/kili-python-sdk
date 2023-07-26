@@ -108,7 +108,9 @@ def fetch_assets(  # pylint: disable=too-many-arguments
     post_call_function, fields = get_download_assets_function(
         auth, download_media, fields, project_id, local_media_dir
     )
-    assets = list(AssetQuery(auth.client)(where, fields, options, post_call_function))
+    assets = list(
+        AssetQuery(auth.client, auth.ssl_verify)(where, fields, options, post_call_function)
+    )
     _check_content_presence(assets)
     attach_name_to_assets_labels_author(assets, export_type)
     return assets

@@ -102,7 +102,6 @@ class WebhookUploader:
         header: Optional[str],
         verbose: bool,
         handler_types: Optional[List[str]],
-        ssl_verify: Union[bool, str],
     ) -> None:
         self.auth = auth
         self.webhook_url = webhook_url
@@ -110,7 +109,7 @@ class WebhookUploader:
         self.header = header
         self.verbose = verbose
         self.handler_types = handler_types
-        self.ssl_verify = ssl_verify
+        self.ssl_verify = self.auth.ssl_verify
 
     def create_webhook(self):
         """
@@ -156,7 +155,6 @@ class PluginUploader:
         plugin_path: str,
         plugin_name: Optional[str],
         verbose: bool,
-        ssl_verify: Union[bool, str],
     ) -> None:
         self.auth = auth
         self.plugin_path = Path(plugin_path)
@@ -173,7 +171,7 @@ class PluginUploader:
             self.plugin_name = self.plugin_path.name
         self.verbose = verbose
         self.handler_types = None
-        self.ssl_verify = ssl_verify
+        self.ssl_verify = self.auth.ssl_verify
 
     def _retrieve_plugin_src(self) -> List[Path]:
         """

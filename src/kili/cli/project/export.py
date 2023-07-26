@@ -121,4 +121,4 @@ def export_labels(
             annotation_modifier=None,
         )
     except NoCompatibleJobError as excp:
-        print(str(excp))
+        print(excp)

@@ -182,7 +182,7 @@ class MutationsLabel:
             "where": {"id": label_asset_id},
         }
         result = self.auth.client.execute(GQL_APPEND_TO_LABELS, variables)
-        return format_result("data", result, Label)
+        return format_result("data", result, Label, self.auth.ssl_verify)
 
     @typechecked
     def append_labels(  # pylint: disable=dangerous-default-value
@@ -288,7 +288,7 @@ class MutationsLabel:
             "jsonResponse": formatted_json_response,
         }
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
-        return format_result("data", result, Label)
+        return format_result("data", result, Label, self.auth.ssl_verify)
 
     @typechecked
     def create_honeypot(
@@ -330,4 +330,4 @@ class MutationsLabel:
             "where": {"id": asset_id},
         }
         result = self.auth.client.execute(GQL_CREATE_HONEYPOT, variables)
-        return format_result("data", result, Label)
+        return format_result("data", result, Label, self.auth.ssl_verify)

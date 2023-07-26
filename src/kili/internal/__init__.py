@@ -37,7 +37,7 @@ class KiliInternal(MutationsOrganization):
         """
         variables = {"where": {"email": email}}
         result = self.auth.client.execute(GQL_RESET_PASSWORD, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)
 
     @typechecked
     def delete_project(self, project_id: str):
@@ -53,4 +53,4 @@ class KiliInternal(MutationsOrganization):
         """
         variables = {"projectID": project_id}
         result = self.auth.client.execute(GQL_DELETE_PROJECT, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)

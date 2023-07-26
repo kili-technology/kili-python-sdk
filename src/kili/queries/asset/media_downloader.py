@@ -37,7 +37,7 @@ def get_download_assets_function(
     if not download_media:
         return None, fields
     projects = list(
-        ProjectQuery(auth.client)(
+        ProjectQuery(auth.client, auth.ssl_verify)(
             ProjectWhere(project_id=project_id), ["inputType"], QueryOptions(disable_tqdm=True)
         )
     )
@@ -57,6 +57,7 @@ def get_download_assets_function(
             project_id,
             jsoncontent_field_added,
             input_type,
+            auth.ssl_verify,
         ).download_assets,
         fields,
     )
@@ -71,11 +72,13 @@ class MediaDownloader:
         project_id: str,
         jsoncontent_field_added: bool,
         project_input_type: str,
+        ssl_verify: Union[bool, str],
     ) -> None:
         self.local_media_dir = local_media_dir
         self.project_id = project_id
         self.jsoncontent_field_added = jsoncontent_field_added
         self.project_input_type = project_input_type
+        self.ssl_verify = ssl_verify
 
         self.local_dir_path = (
             Path(self.local_media_dir)
@@ -110,19 +113,19 @@ class MediaDownloader:
 
         return assets
 
-    def download_single_asset(self, asset: Dict, ssl_verify: Union[bool, str]) -> Dict[str, Any]:
+    def download_single_asset(self, asset: Dict) -> Dict[str, Any]:
         """Download single asset on disk and modify asset attributes"""
 
         if "jsonContent" in asset and str(asset["jsonContent"]).startswith("http"):
             # richtext
             if self.project_input_type == "TEXT":
                 asset["jsonContent"] = download_file(
-                    asset["jsonContent"], asset["externalId"], self.local_dir_path, ssl_verify
+                    asset["jsonContent"], asset["externalId"], self.local_dir_path, self.ssl_verify
                 )
 
             # video frames
             elif self.project_input_type == "VIDEO":
-                urls = get_json_content_urls_video(asset["jsonContent"], ssl_verify)
+                urls = get_json_content_urls_video(asset["jsonContent"], self.ssl_verify)
                 nbr_char_zfill = len(str(len(urls)))
                 img_names = (
                     f'{asset["externalId"]}_{f"{i+1}".zfill(nbr_char_zfill)}'
@@ -134,6 +137,7 @@ class MediaDownloader:
                         urls,
                         img_names,
                         repeat(self.local_dir_path),
+                        repeat(self.ssl_verify),
                     )
                     asset["jsonContent"] = list(paths_gen)
                 return asset  # we skip video "content" download
@@ -141,7 +145,7 @@ class MediaDownloader:
             # big images
             elif self.project_input_type == "IMAGE":
                 # the "jsonContent" contains some information but not the image
-                response = requests.get(asset["jsonContent"], verify=ssl_verify, timeout=20)
+                response = requests.get(asset["jsonContent"], verify=self.ssl_verify, timeout=20)
                 response = response.json()
                 asset["jsonContent"] = response
 
@@ -152,7 +156,10 @@ class MediaDownloader:
 
         if str(asset["content"]).startswith("http"):
             asset["content"] = download_file(
-                asset["content"], asset["externalId"], self.local_dir_path, ssl_verify=ssl_verify
+                asset["content"],
+                asset["externalId"],
+                self.local_dir_path,
+                ssl_verify=self.ssl_verify,
             )
             return asset
 

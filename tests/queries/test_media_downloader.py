@@ -75,7 +75,7 @@ def test_download_single_asset_mixed(input_asset, expected_filename):
     """Tests download_single_asset with asset["content"]"""
     with TemporaryDirectory() as tmp_dir:
         output_asset = MediaDownloader(
-            tmp_dir, "", False, input_asset["project"]["inputType"]
+            tmp_dir, "", False, input_asset["project"]["inputType"], ssl_verify=True
         ).download_single_asset(input_asset)
 
         assert output_asset["content"] == os.path.join(str(tmp_dir.resolve()), expected_filename)
@@ -109,7 +109,7 @@ def test_download_single_asset_jsoncontent(input_asset):
     """Tests with asset["jsonContent"] and extension in externalid"""
     with TemporaryDirectory() as tmp_dir:
         output_asset = MediaDownloader(
-            tmp_dir, "", False, input_asset["project"]["inputType"]
+            tmp_dir, "", False, input_asset["project"]["inputType"], ssl_verify=True
         ).download_single_asset(input_asset)
 
         assert output_asset["content"] == input_asset["content"] == ""
@@ -129,7 +129,11 @@ def test_download_media_jsoncontent_field_added_but_useless():
     """should remove jsonContent field"""
     with TemporaryDirectory() as tmp_dir:
         media_downloader = MediaDownloader(
-            tmp_dir, project_id="", jsoncontent_field_added=True, project_input_type="IMAGE"
+            tmp_dir,
+            project_id="",
+            jsoncontent_field_added=True,
+            project_input_type="IMAGE",
+            ssl_verify=True,
         )
         assets = [{"content": "", "externalId": "", "jsonContent": ""}]
         ret = media_downloader.download_assets(assets)[0]
@@ -140,7 +144,11 @@ def test_download_media_jsoncontent_field_added_but_useful():
     """should warn jsoncontent field added and downloaded"""
     with TemporaryDirectory() as tmp_dir:
         media_downloader = MediaDownloader(
-            tmp_dir, project_id="", jsoncontent_field_added=True, project_input_type="VIDEO"
+            tmp_dir,
+            project_id="",
+            jsoncontent_field_added=True,
+            project_input_type="VIDEO",
+            ssl_verify=True,
         )
         assets = [
             {
@@ -171,7 +179,7 @@ def test_download_media_jsoncontent_none(
 ):
     """requests.get should only be called when valid url"""
     with TemporaryDirectory() as tmp_dir:
-        _ = MediaDownloader(tmp_dir, "", False, "VIDEO").download_single_asset(
+        _ = MediaDownloader(tmp_dir, "", False, "VIDEO", ssl_verify=True).download_single_asset(
             {"content": content, "jsonContent": jsoncontent, "externalId": "externalId"}
         )
         if should_call_requests_get:

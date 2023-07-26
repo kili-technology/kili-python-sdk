@@ -77,7 +77,7 @@ def add_member(
         members_to_add = collect_members_from_emails(emails, role)
 
     count = 0
-    existing_members = ProjectUserQuery(kili.auth.client)(
+    existing_members = ProjectUserQuery(kili.auth.client, kili.auth.ssl_verify)(
         where=ProjectUserWhere(project_id=project_id),
         fields=[
             "activated",

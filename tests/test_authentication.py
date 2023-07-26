@@ -21,7 +21,9 @@ def test_warn_cant_check_kili_version(*_):
         "mismatch or the app might be in deployment"
     )
     with pytest.warns(UserWarning, match=message):
-        _ = KiliAuth(api_key="", api_endpoint="", client_name=GraphQLClientName.SDK)
+        _ = KiliAuth(
+            api_key="", api_endpoint="", client_name=GraphQLClientName.SDK, ssl_verify=True
+        )
 
 
 @patch("kili.authentication.requests")
@@ -34,7 +36,9 @@ def test_check_expiry_of_key_is_close(*_):
         APIKeyQuery, "__call__", return_value=iter([{"expiryDate": "2021-01-01T00:00:00.000Z"}])
     ):
         with pytest.warns(UserWarning, match="Your api key will be deprecated on"):
-            _ = KiliAuth(api_key="", api_endpoint="", client_name=GraphQLClientName.SDK)
+            _ = KiliAuth(
+                api_key="", api_endpoint="", client_name=GraphQLClientName.SDK, ssl_verify=True
+            )
 
     current = datetime.datetime.now()
     with patch.object(
@@ -46,4 +50,6 @@ def test_check_expiry_of_key_is_close(*_):
     ):
         with warnings.catch_warnings():
             warnings.simplefilter("error")
-            _ = KiliAuth(api_key="", api_endpoint="", client_name=GraphQLClientName.SDK)
+            _ = KiliAuth(
+                api_key="", api_endpoint="", client_name=GraphQLClientName.SDK, ssl_verify=True
+            )

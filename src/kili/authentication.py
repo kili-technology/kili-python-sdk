@@ -59,7 +59,7 @@ class KiliAuth:
             endpoint=api_endpoint,
             api_key=api_key,
             client_name=client_name,
-            verify=self.ssl_verify,
+            ssl_verify=self.ssl_verify,
         )
 
         self.check_expiry_of_key_is_close()
@@ -120,7 +120,7 @@ class KiliAuth:
         """
         warn_days = 30
 
-        api_keys = APIKeyQuery(self.client)(
+        api_keys = APIKeyQuery(self.client, self.ssl_verify)(
             fields=["expiryDate"],
             where=APIKeyWhere(api_key=self.api_key),
             options=QueryOptions(disable_tqdm=True),

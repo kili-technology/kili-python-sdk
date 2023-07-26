@@ -99,7 +99,7 @@ class QueriesUser:
         where = UserWhere(api_key=api_key, email=email, organization_id=organization_id)
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        users_gen = UserQuery(self.auth.client)(where, fields, options)
+        users_gen = UserQuery(self.auth.client, self.auth.ssl_verify)(where, fields, options)
 
         if as_generator:
             return users_gen
@@ -121,4 +121,4 @@ class QueriesUser:
             The number of organizations with the parameters provided
         """
         where = UserWhere(api_key=api_key, email=email, organization_id=organization_id)
-        return UserQuery(self.auth.client).count(where)
+        return UserQuery(self.auth.client, self.auth.ssl_verify).count(where)
