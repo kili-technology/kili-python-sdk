@@ -5,6 +5,7 @@ import logging
 import mimetypes
 import os
 from concurrent.futures import ThreadPoolExecutor
+from itertools import repeat
 from json import dumps
 from pathlib import Path
 from typing import Callable, List, NamedTuple, Optional, Tuple, Union
@@ -321,7 +322,11 @@ class ContentBatchImporter(BaseBatchImporter):
         data_array, content_type_array = zip(*data_and_content_type_array)
         with ThreadPoolExecutor() as threads:
             url_gen = threads.map(
-                bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
+                bucket.upload_data_via_rest,
+                signed_urls,
+                data_array,
+                content_type_array,
+                repeat(True),
             )
         return [
             AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)  # noqa
@@ -364,6 +369,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
                 signed_urls,
                 json_content_array,
                 ["text/plain"] * len(assets),
+                repeat(True),
             )
         return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]
 
