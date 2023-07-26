@@ -115,7 +115,7 @@ def test_kili_import_csv_new_project(csv_file_path: str, mocker: pytest_mock.Moc
     kili.append_many_to_dataset = mocker.MagicMock()
     kili.append_labels = mocker.MagicMock()
 
-    kili.import_csv(
+    kili.import_text_from_csv(
         csv_file=csv_file_path,
         content_column="asset_content_column",
         unique_categories=["category_1", "category_2", "category_3"],
@@ -158,7 +158,7 @@ def test_kili_import_csv_existing_project(csv_file_path: str, mocker: pytest_moc
     kili.append_many_to_dataset = mocker.MagicMock()
     kili.append_labels = mocker.MagicMock()
 
-    kili.import_csv(
+    kili.import_text_from_csv(
         csv_file=csv_file_path,
         content_column="asset_content_column",
         category_column="category_column",
@@ -193,7 +193,7 @@ def test_kili_import_csv_unique_columns(csv_file_path: str, mocker: pytest_mock.
     kili.append_many_to_dataset = mocker.MagicMock()
     kili.append_labels = mocker.MagicMock()
 
-    kili.import_csv(
+    kili.import_text_from_csv(
         csv_file=csv_file_path,
         content_column="asset_content_column",
         category_column="category_column",

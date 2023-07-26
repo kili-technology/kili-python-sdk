@@ -18,8 +18,8 @@ from kili.services.copy_project import ProjectCopier
 from kili.services.types import LabelType
 from kili.utils.logcontext import for_all_methods, log_call
 
-from . import import_csv
 from .helpers import verify_argument_ranges
+from .import_csv import import_text_assets_labels_from_csv
 from .queries import (
     GQL_APPEND_TO_ROLES,
     GQL_CREATE_PROJECT,
@@ -448,7 +448,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
         return self.format_result("data", result)
 
     @typechecked
-    def import_csv(
+    def import_text_from_csv(
         self,
         csv_file: str,
         content_column: str,
@@ -487,7 +487,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
         Returns:
             A dictionary with the project `id`.
         """
-        project_id = import_csv.import_csv(
+        project_id = import_text_assets_labels_from_csv(
             self,
             csv_file,
             content_column,

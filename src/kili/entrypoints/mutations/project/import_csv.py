@@ -6,12 +6,12 @@ from typing import Dict, List, Optional, Tuple
 from kili.services.types import LabelType
 
 logging.basicConfig()
-logger = logging.getLogger("kili.services.import_csv")
+logger = logging.getLogger("kili.entrypoints.mutations.project.import_csv")
 logger.setLevel(logging.INFO)
 
 
 # pylint: disable=too-many-arguments,too-many-locals
-def import_csv(
+def import_text_assets_labels_from_csv(
     kili,
     csv_file: str,
     content_column: str,
