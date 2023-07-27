@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Tuple
 from kili.services.types import LabelType
 
 logging.basicConfig()
-logger = logging.getLogger("kili.entrypoints.mutations.project.import_csv")
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
