@@ -67,7 +67,11 @@ class GeoJsonExporter(AbstractExporter):
         labels_folder = self.base_folder / "labels"
         labels_folder.mkdir(parents=True, exist_ok=True)
 
-        geotiff_assets = [asset for asset in assets if is_geotiff_asset_with_lat_lon_coords(asset)]
+        geotiff_assets = [
+            asset
+            for asset in assets
+            if is_geotiff_asset_with_lat_lon_coords(asset, self.kili.http_client)
+        ]
         if len(geotiff_assets) < len(assets):
             self.logger.warning(
                 f"Among {len(assets)} assets, only {len(geotiff_assets)} are geotiff assets and"
