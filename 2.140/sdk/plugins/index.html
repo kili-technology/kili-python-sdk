@@ -19,7 +19,7 @@
         <link rel="next" href="../project/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
+      <meta name="generator" content="mkdocs-1.5.0, mkdocs-material-9.1.20">
     
     
       
@@ -2074,10 +2074,8 @@ It also contains some technical fields: <code>createdAt</code>, <code>updatedAt<
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/queries/plugins/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesPlugins</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesPlugins</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Plugins queries.&quot;&quot;&quot;</span>
-
-    <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
 
     <span class="c1"># pylint: disable=too-many-arguments</span>
 
@@ -2108,7 +2106,9 @@ It also contains some technical fields: <code>createdAt</code>, <code>updatedAt<
         <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span>
             <span class="n">first</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>  <span class="c1"># disable tqm is not implemented for this query</span>
-        <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">get_build_errors</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+        <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">get_build_errors</span><span class="p">(</span>
+            <span class="n">where</span><span class="p">,</span> <span class="n">options</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">pretty_result</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -2142,7 +2142,7 @@ It also contains some technical fields: <code>createdAt</code>, <code>updatedAt<
         <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span>
             <span class="n">first</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>  <span class="c1"># disable tqm is not implemented for this query</span>
-        <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">get_logs</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+        <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">get_logs</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">pretty_result</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -2164,7 +2164,9 @@ It also contains some technical fields: <code>createdAt</code>, <code>updatedAt<
 <span class="sd">            &gt;&gt;&gt; kili.get_plugin_status(plugin_name=&quot;my_plugin_name&quot;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="n">PluginUploader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">get_plugin_runner_status</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">PluginUploader</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">get_plugin_runner_status</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="c1"># pylint: disable=dangerous-default-value</span>
@@ -2192,7 +2194,7 @@ It also contains some technical fields: <code>createdAt</code>, <code>updatedAt<
 <span class="sd">            &gt;&gt;&gt; kili.list_plugins()</span>
 <span class="sd">            &gt;&gt;&gt; kili.list_plugins(fields=[&#39;name&#39;])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -2308,7 +2310,9 @@ It also contains some technical fields: <code>createdAt</code>, <code>updatedAt<
     <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span>
         <span class="n">first</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span>  <span class="c1"># disable tqm is not implemented for this query</span>
-    <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">get_build_errors</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">get_build_errors</span><span class="p">(</span>
+        <span class="n">where</span><span class="p">,</span> <span class="n">options</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">pretty_result</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2428,7 +2432,7 @@ It also contains some technical fields: <code>createdAt</code>, <code>updatedAt<
     <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span>
         <span class="n">first</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span>  <span class="c1"># disable tqm is not implemented for this query</span>
-    <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">get_logs</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">pretty_result</span> <span class="o">=</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">get_logs</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">pretty_result</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2517,7 +2521,9 @@ It also contains some technical fields: <code>createdAt</code>, <code>updatedAt<
 <span class="sd">        &gt;&gt;&gt; kili.get_plugin_status(plugin_name=&quot;my_plugin_name&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">PluginUploader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">get_plugin_runner_status</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">PluginUploader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">get_plugin_runner_status</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
@@ -2608,7 +2614,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 <span class="sd">        &gt;&gt;&gt; kili.list_plugins()</span>
 <span class="sd">        &gt;&gt;&gt; kili.list_plugins(fields=[&#39;name&#39;])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2637,10 +2643,8 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/plugins/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsPlugins</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsPlugins</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Plugins mutations.&quot;&quot;&quot;</span>
-
-    <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">upload_plugin</span><span class="p">(</span>
@@ -2676,7 +2680,9 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
         <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_path</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;plugin_path is nullish, please provide a value&#39;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_path</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">create_plugin</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">plugin_path</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">create_plugin</span><span class="p">()</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">create_webhook</span><span class="p">(</span>
@@ -2844,7 +2850,9 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#plugins">the
         <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_name</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;plugin_name is nullish, please provide a value&#39;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_path</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">update_plugin</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">plugin_path</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">update_plugin</span><span class="p">()</span>
 </code></pre></div>
         </details>
 
@@ -3361,7 +3369,9 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_name</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;plugin_name is nullish, please provide a value&#39;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_path</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">update_plugin</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">plugin_path</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">update_plugin</span><span class="p">()</span>
 </code></pre></div>
         </details>
     </div>
@@ -3599,7 +3609,9 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>]</p></td>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_path</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;plugin_path is nullish, please provide a value&#39;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_path</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">create_plugin</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">plugin_path</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">create_plugin</span><span class="p">()</span>
 </code></pre></div>
         </details>
     </div>

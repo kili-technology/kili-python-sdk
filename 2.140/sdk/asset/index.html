@@ -19,7 +19,7 @@
         <link rel="next" href="../cloud_storage/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
+      <meta name="generator" content="mkdocs-1.5.0, mkdocs-material-9.1.20">
     
     
       
@@ -1414,10 +1414,8 @@
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/queries/asset/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesAsset</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesAsset</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Asset queries.&quot;&quot;&quot;</span>
-
-    <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
 
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value,redefined-builtin</span>
 
@@ -1829,7 +1827,9 @@
             <span class="bp">self</span><span class="p">,</span> <span class="n">download_media</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">local_media_dir</span>
         <span class="p">)</span>
 
-        <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">post_call_function</span><span class="p">)</span>
+        <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
+            <span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">post_call_function</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">label_output_format</span> <span class="o">==</span> <span class="s2">&quot;parsed_label&quot;</span><span class="p">:</span>
             <span class="n">project</span> <span class="o">=</span> <span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;jsonInterface&quot;</span><span class="p">,</span> <span class="s2">&quot;inputType&quot;</span><span class="p">])</span>
@@ -2051,7 +2051,7 @@
             <span class="n">issue_status</span><span class="o">=</span><span class="n">issue_status</span><span class="p">,</span>
             <span class="n">issue_type</span><span class="o">=</span><span class="n">issue_type</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -2730,7 +2730,9 @@ label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_
         <span class="bp">self</span><span class="p">,</span> <span class="n">download_media</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">local_media_dir</span>
     <span class="p">)</span>
 
-    <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">post_call_function</span><span class="p">)</span>
+    <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
+        <span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">post_call_function</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">label_output_format</span> <span class="o">==</span> <span class="s2">&quot;parsed_label&quot;</span><span class="p">:</span>
         <span class="n">project</span> <span class="o">=</span> <span class="n">get_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;jsonInterface&quot;</span><span class="p">,</span> <span class="s2">&quot;inputType&quot;</span><span class="p">])</span>
@@ -3285,7 +3287,7 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
         <span class="n">issue_status</span><span class="o">=</span><span class="n">issue_status</span><span class="p">,</span>
         <span class="n">issue_type</span><span class="o">=</span><span class="n">issue_type</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -3314,10 +3316,8 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/asset/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsAsset</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsAsset</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Asset mutations.&quot;&quot;&quot;</span>
-
-    <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
 
     <span class="c1"># pylint: disable=too-many-arguments,too-many-locals</span>
     <span class="nd">@typechecked</span>
@@ -3572,7 +3572,7 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
             <span class="n">generate_variables</span><span class="p">,</span>
             <span class="n">GQL_UPDATE_PROPERTIES_IN_ASSETS</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Asset</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+        <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Asset</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">batch_list</span> <span class="ow">in</span> <span class="n">formated_results</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch_list</span><span class="p">]</span>
 
     <span class="nd">@typechecked</span>
@@ -3626,7 +3626,7 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
             <span class="n">generate_variables</span><span class="p">,</span>
             <span class="n">GQL_UPDATE_PROPERTIES_IN_ASSETS</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Asset</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+        <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Asset</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">batch_list</span> <span class="ow">in</span> <span class="n">formated_results</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch_list</span><span class="p">]</span>
 
     <span class="nd">@typechecked</span>
@@ -3666,7 +3666,7 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
         <span class="k">def</span> <span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Check that all assets in the last batch have been deleted.&quot;&quot;&quot;</span>
             <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
-            <span class="n">nb_assets_in_kili</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+            <span class="n">nb_assets_in_kili</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
                 <span class="n">AssetWhere</span><span class="p">(</span>
                     <span class="n">project_id</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
                     <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
@@ -3682,7 +3682,7 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
             <span class="n">GQL_DELETE_MANY_FROM_DATASET</span><span class="p">,</span>
             <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">add_to_review</span><span class="p">(</span>
@@ -3738,7 +3738,7 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
             <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                 <span class="k">return</span>  <span class="c1"># No assets have changed status</span>
             <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
-            <span class="n">nb_assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+            <span class="n">nb_assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
                 <span class="n">AssetWhere</span><span class="p">(</span>
                     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
                     <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
@@ -3755,11 +3755,11 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
             <span class="n">GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW</span><span class="p">,</span>
             <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="c1"># unlike send_back_to_queue, the add_to_review mutation doesn&#39;t always return the project ID</span>
         <span class="c1"># it happens when no assets have been sent to review</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="n">assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span>
+            <span class="n">assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
                 <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TO_REVIEW&quot;</span><span class="p">]),</span>
                 <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
                 <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
@@ -3814,7 +3814,7 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
         <span class="k">def</span> <span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Check that all assets in the last batch have been sent back to queue.&quot;&quot;&quot;</span>
             <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
-            <span class="n">nb_assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+            <span class="n">nb_assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
                 <span class="n">AssetWhere</span><span class="p">(</span>
                     <span class="n">project_id</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
                     <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
@@ -3831,8 +3831,8 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
             <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span><span class="p">,</span>
             <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
             <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ONGOING&quot;</span><span class="p">]),</span>
             <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
             <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
@@ -3985,7 +3985,7 @@ An error message if mutation failed.</p></td>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
             <span class="k">return</span>  <span class="c1"># No assets have changed status</span>
         <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
-        <span class="n">nb_assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+        <span class="n">nb_assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
             <span class="n">AssetWhere</span><span class="p">(</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
                 <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
@@ -4002,11 +4002,11 @@ An error message if mutation failed.</p></td>
         <span class="n">GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW</span><span class="p">,</span>
         <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="c1"># unlike send_back_to_queue, the add_to_review mutation doesn&#39;t always return the project ID</span>
     <span class="c1"># it happens when no assets have been sent to review</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-        <span class="n">assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span>
+        <span class="n">assets_in_review</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
             <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TO_REVIEW&quot;</span><span class="p">]),</span>
             <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
             <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
@@ -4412,7 +4412,7 @@ If <code>False</code>, the function will return faster but the assets might not 
         <span class="n">generate_variables</span><span class="p">,</span>
         <span class="n">GQL_UPDATE_PROPERTIES_IN_ASSETS</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Asset</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+    <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Asset</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">batch_list</span> <span class="ow">in</span> <span class="n">formated_results</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch_list</span><span class="p">]</span>
 </code></pre></div>
         </details>
@@ -4521,7 +4521,7 @@ If <code>False</code>, the function will return faster but the assets might not 
     <span class="k">def</span> <span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that all assets in the last batch have been deleted.&quot;&quot;&quot;</span>
         <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
-        <span class="n">nb_assets_in_kili</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+        <span class="n">nb_assets_in_kili</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
             <span class="n">AssetWhere</span><span class="p">(</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
                 <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
@@ -4537,7 +4537,7 @@ If <code>False</code>, the function will return faster but the assets might not 
         <span class="n">GQL_DELETE_MANY_FROM_DATASET</span><span class="p">,</span>
         <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </code></pre></div>
         </details>
     </div>
@@ -4664,7 +4664,7 @@ An error message if mutation failed.</p></td>
     <span class="k">def</span> <span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that all assets in the last batch have been sent back to queue.&quot;&quot;&quot;</span>
         <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
-        <span class="n">nb_assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
+        <span class="n">nb_assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span>
             <span class="n">AssetWhere</span><span class="p">(</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
                 <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
@@ -4681,8 +4681,8 @@ An error message if mutation failed.</p></td>
         <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span><span class="p">,</span>
         <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="n">AssetQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
         <span class="n">AssetWhere</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ONGOING&quot;</span><span class="p">]),</span>
         <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
         <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
@@ -5013,7 +5013,7 @@ corresponding asset. Each resolution can be passed as a
         <span class="n">generate_variables</span><span class="p">,</span>
         <span class="n">GQL_UPDATE_PROPERTIES_IN_ASSETS</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Asset</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+    <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">Asset</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">batch_list</span> <span class="ow">in</span> <span class="n">formated_results</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch_list</span><span class="p">]</span>
 </code></pre></div>
         </details>

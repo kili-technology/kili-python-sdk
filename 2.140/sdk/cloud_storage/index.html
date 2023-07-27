@@ -19,7 +19,7 @@
         <link rel="next" href="../issue/">
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
+      <meta name="generator" content="mkdocs-1.5.0, mkdocs-material-9.1.20">
     
     
       
@@ -1392,10 +1392,8 @@ More information about how to use a cloud storage integration in a project can b
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/queries/data_integration/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesDataIntegration</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesDataIntegration</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of cloud storage integration queries.&quot;&quot;&quot;</span>
-
-    <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
 
     <span class="c1"># pylint: disable=too-many-arguments,dangerous-default-value</span>
 
@@ -1480,7 +1478,9 @@ More information about how to use a cloud storage integration in a project can b
         <span class="p">)</span>
         <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
         <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
-        <span class="n">data_integrations_gen</span> <span class="o">=</span> <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+        <span class="n">data_integrations_gen</span> <span class="o">=</span> <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
+            <span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">data_integrations_gen</span>
@@ -1514,7 +1514,7 @@ More information about how to use a cloud storage integration in a project can b
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
             <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -1687,7 +1687,9 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
     <span class="p">)</span>
     <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
-    <span class="n">data_integrations_gen</span> <span class="o">=</span> <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">data_integrations_gen</span> <span class="o">=</span> <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
+        <span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data_integrations_gen</span>
@@ -1802,7 +1804,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
         <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -1830,10 +1832,8 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/queries/data_connection/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesDataConnection</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesDataConnection</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of cloud storage connection queries.&quot;&quot;&quot;</span>
-
-    <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
 
     <span class="c1"># pylint: disable=too-many-arguments,dangerous-default-value</span>
 
@@ -1945,7 +1945,9 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataintegrat
         <span class="p">)</span>
         <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
         <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
-        <span class="n">data_connections_gen</span> <span class="o">=</span> <span class="n">DataConnectionsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+        <span class="n">data_connections_gen</span> <span class="o">=</span> <span class="n">DataConnectionsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
+            <span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">data_connections_gen</span>
@@ -2129,7 +2131,9 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
     <span class="p">)</span>
     <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
-    <span class="n">data_connections_gen</span> <span class="o">=</span> <span class="n">DataConnectionsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span><span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">data_connections_gen</span> <span class="o">=</span> <span class="n">DataConnectionsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
+        <span class="n">where</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">options</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data_connections_gen</span>
@@ -2162,10 +2166,8 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/data_connection/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsDataConnection</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MutationsDataConnection</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of DataConnection mutations.&quot;&quot;&quot;</span>
-
-    <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span> <span class="nf">add_cloud_storage_connection</span><span class="p">(</span>
@@ -2186,7 +2188,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
 <span class="sd">            A dict with the DataConnection Id.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data_integrations</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span>
+            <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
                 <span class="n">where</span><span class="o">=</span><span class="n">DataIntegrationWhere</span><span class="p">(</span><span class="n">data_integration_id</span><span class="o">=</span><span class="n">cloud_storage_integration_id</span><span class="p">),</span>
                 <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
                 <span class="n">options</span><span class="o">=</span><span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
@@ -2207,7 +2209,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#dataconnecti
             <span class="p">}</span>
         <span class="p">}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ADD_PROJECT_DATA_CONNECTION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
         <span class="c1"># We trigger data difference computation (same behavior as in the frontend)</span>
         <span class="n">services</span><span class="o">.</span><span class="n">compute_differences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
@@ -2339,7 +2341,7 @@ If not provided, all folders of the data integration will be connected.</p></td>
 <span class="sd">        A dict with the DataConnection Id.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data_integrations</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-        <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">)(</span>
+        <span class="n">DataIntegrationsQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)(</span>
             <span class="n">where</span><span class="o">=</span><span class="n">DataIntegrationWhere</span><span class="p">(</span><span class="n">data_integration_id</span><span class="o">=</span><span class="n">cloud_storage_integration_id</span><span class="p">),</span>
             <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
             <span class="n">options</span><span class="o">=</span><span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
@@ -2360,7 +2362,7 @@ If not provided, all folders of the data integration will be connected.</p></td>
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ADD_PROJECT_DATA_CONNECTION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="c1"># We trigger data difference computation (same behavior as in the frontend)</span>
     <span class="n">services</span><span class="o">.</span><span class="n">compute_differences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
