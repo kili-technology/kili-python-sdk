@@ -20,15 +20,18 @@ from kili.core.constants import mime_extensions_for_IV2
 T = TypeVar("T")
 
 
-def format_result(name: str, result: dict, object_: Optional[Type[T]] = None) -> T:
+def format_result(
+    name: str, result: dict, object_: Optional[Type[T]], http_client: requests.Session
+) -> T:
     """Formats the result of the GraphQL queries.
 
     Args:
         name: name of the field to extract, usually data
         result: query result to parse
         object_: returned type
+        http_client: http client to use for the query
     """
-    formatted_json = format_json(result[name])
+    formatted_json = format_json(result[name], http_client)
     if object_ is None:
         return formatted_json  # type:ignore X
     if isinstance(formatted_json, list):
@@ -83,11 +86,12 @@ def is_url(path: object):
     return isinstance(path, str) and re.match(r"^(http://|https://)", path.lower())
 
 
-def format_json_dict(result: Dict) -> Dict:
+def format_json_dict(result: Dict, http_client: requests.Session) -> Dict:
     """Formats the dict part of a json return by a GraphQL query into a python object.
 
     Args:
         result: result of a GraphQL query
+        http_client: http client to use for the query
     """
     for key, value in result.items():
         if key in ["jsonInterface", "jsonMetadata", "jsonResponse"]:
@@ -96,7 +100,7 @@ def format_json_dict(result: Dict) -> Dict:
             elif isinstance(value, str):
                 try:
                     if is_url(value):
-                        result[key] = requests.get(value, timeout=30).json()
+                        result[key] = http_client.get(value, timeout=30).json()
                     else:
                         result[key] = loads(value)
                 except Exception as exception:
@@ -104,25 +108,28 @@ def format_json_dict(result: Dict) -> Dict:
                         "Json Metadata / json response / json interface should be valid jsons"
                     ) from exception
         else:
-            result[key] = format_json(value)
+            result[key] = format_json(value, http_client)
     return result
 
 
 D = TypeVar("D")
 
 
-def format_json(result: Union[None, list, dict, D]) -> Union[None, list, dict, D]:
+def format_json(
+    result: Union[None, list, dict, D], http_client: requests.Session
+) -> Union[None, list, dict, D]:
     """Formats the json return by a GraphQL query into a python object.
 
     Args:
         result: result of a GraphQL query
+        http_client: http client to use for the query
     """
     if result is None:
         return result
     if isinstance(result, list):
-        return [format_json(elem) for elem in result]
+        return [format_json(elem, http_client) for elem in result]
     if isinstance(result, dict):
-        return format_json_dict(result)
+        return format_json_dict(result, http_client)
     return result
 
 

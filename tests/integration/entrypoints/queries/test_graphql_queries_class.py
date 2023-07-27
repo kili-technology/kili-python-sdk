@@ -1,6 +1,6 @@
 """Module for testing the graphQLQuery class."""
 
-from typing import Generator
+from typing import Generator, cast
 from unittest import TestCase
 from unittest.mock import MagicMock, call
 
@@ -14,7 +14,7 @@ def mocked_client_execute(query, payload):
     if query == "object_query":
         first = payload["first"]
         skip = payload["skip"]
-        nb_objects_to_return = min(first, NUMBER_OBJECT_IN_DB - skip)
+        nb_objects_to_return = cast(int, min(first, NUMBER_OBJECT_IN_DB - skip))
         assert nb_objects_to_return <= QUERY_BATCH_SIZE, nb_objects_to_return
         return {"data": [{"id": "id"}] * nb_objects_to_return}
 
@@ -59,7 +59,7 @@ class TestGraphQLQueries(TestCase):
 
     def test_query_all_objects_by_paginated_calls_with_count(self):
         options = QueryOptions(disable_tqdm=False)
-        list(FakeQueryWithCount(self.fake_client)(self.where, self.fields, options))
+        list(FakeQueryWithCount(self.fake_client, MagicMock())(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call("count_query", {"where": {"projectID": "project-id"}}),
@@ -80,7 +80,7 @@ class TestGraphQLQueries(TestCase):
 
     def test_query_all_objects_by_paginated_calls_without_count(self):
         options = QueryOptions(disable_tqdm=False)
-        list(FakeQueryWithoutCount(self.fake_client)(self.where, self.fields, options))
+        list(FakeQueryWithoutCount(self.fake_client, MagicMock())(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call(
@@ -100,7 +100,7 @@ class TestGraphQLQueries(TestCase):
     def test_query_first_objects_with_count(self):
         FIRST = 3
         options = QueryOptions(disable_tqdm=False, first=FIRST)
-        list(FakeQueryWithCount(self.fake_client)(self.where, self.fields, options))
+        list(FakeQueryWithCount(self.fake_client, MagicMock())(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call("count_query", {"where": {"projectID": "project-id"}}),
@@ -114,7 +114,7 @@ class TestGraphQLQueries(TestCase):
     def test_query_first_objects_without_count(self):
         FIRST = 3
         options = QueryOptions(disable_tqdm=False, first=FIRST)
-        list(FakeQueryWithoutCount(self.fake_client)(self.where, self.fields, options))
+        list(FakeQueryWithoutCount(self.fake_client, MagicMock())(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call(
@@ -127,7 +127,7 @@ class TestGraphQLQueries(TestCase):
     def test_query_skip_objects_with_count(self):
         SKIP = 30
         options = QueryOptions(disable_tqdm=False, skip=SKIP)
-        list(FakeQueryWithCount(self.fake_client)(self.where, self.fields, options))
+        list(FakeQueryWithCount(self.fake_client, MagicMock())(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call("count_query", {"where": {"projectID": "project-id"}}),
@@ -150,7 +150,7 @@ class TestGraphQLQueries(TestCase):
     def test_query_skip_objects_without_count(self):
         SKIP = 30
         options = QueryOptions(disable_tqdm=False, skip=SKIP)
-        list(FakeQueryWithoutCount(self.fake_client)(self.where, self.fields, options))
+        list(FakeQueryWithoutCount(self.fake_client, MagicMock())(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call(
@@ -172,7 +172,7 @@ class TestGraphQLQueries(TestCase):
         SKIP = 30
         FIRST = 20
         options = QueryOptions(disable_tqdm=False, skip=SKIP, first=FIRST)
-        list(FakeQueryWithCount(self.fake_client)(self.where, self.fields, options))
+        list(FakeQueryWithCount(self.fake_client, MagicMock())(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call("count_query", {"where": {"projectID": "project-id"}}),
@@ -187,7 +187,7 @@ class TestGraphQLQueries(TestCase):
         SKIP = 30
         FIRST = 20
         options = QueryOptions(disable_tqdm=False, skip=SKIP, first=FIRST)
-        list(FakeQueryWithoutCount(self.fake_client)(self.where, self.fields, options))
+        list(FakeQueryWithoutCount(self.fake_client, MagicMock())(self.where, self.fields, options))
         self.fake_client.execute.assert_has_calls(
             [
                 call(
@@ -200,8 +200,10 @@ class TestGraphQLQueries(TestCase):
     def test_return_type(self):
         options = QueryOptions(disable_tqdm=False)
 
-        result = FakeQueryWithCount(self.fake_client)(self.where, self.fields, options)
+        result = FakeQueryWithCount(self.fake_client, MagicMock())(self.where, self.fields, options)
         assert isinstance(result, Generator)
 
-        result = FakeQueryWithoutCount(self.fake_client)(self.where, self.fields, options)
+        result = FakeQueryWithoutCount(self.fake_client, MagicMock())(
+            self.where, self.fields, options
+        )
         assert isinstance(result, Generator)

@@ -13,7 +13,6 @@ from typing import Any, Callable, Dict, Optional, Union
 from urllib.parse import urlparse
 
 import graphql
-import requests
 import websocket
 from filelock import FileLock
 from gql import Client, gql
@@ -41,7 +40,8 @@ class GraphQLClient:
         endpoint: str,
         api_key: str,
         client_name: GraphQLClientName,
-        verify: bool = True,
+        kili_app_version: Optional[str],
+        verify: Union[bool, str] = True,
         enable_schema_caching: bool = True,
         graphql_schema_cache_dir: Optional[Union[str, Path]] = DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR,
     ) -> None:
@@ -58,6 +58,7 @@ class GraphQLClient:
         self.endpoint = endpoint
         self.api_key = api_key
         self.client_name = client_name
+        self.kili_app_version = kili_app_version
         self.verify = verify
         self.enable_schema_caching = enable_schema_caching
         self.graphql_schema_cache_dir = (
@@ -199,24 +200,10 @@ class GraphQLClient:
             return None
 
         endpoint_netloc = urlparse(self.endpoint).netloc
-        version = self._get_kili_app_version()
-        if version is None:
+        if self.kili_app_version is None:
             return None
-        filename = f"{endpoint_netloc}_{version}.graphql"
+        filename = f"{endpoint_netloc}_{self.kili_app_version}.graphql"
         return self.graphql_schema_cache_dir / filename
-
-    def _get_kili_app_version(self) -> Optional[str]:
-        """Get the version of the Kili app server.
-
-        Returns None if the version cannot be retrieved.
-        """
-        url = self.endpoint.replace("/graphql", "/version")
-        response = requests.get(url, verify=self.verify, timeout=30)
-        if response.status_code == 200 and '"version":' in response.text:
-            response_json = response.json()
-            version = response_json["version"]
-            return version
-        return None
 
     def execute(
         self, query: Union[str, DocumentNode], variables: Optional[Dict] = None, **kwargs

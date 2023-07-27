@@ -18,17 +18,17 @@ from kili.orm import Asset
 from tests.fakes.fake_kili import FakeKili
 
 
-def test_format_result_no_type_conversion_1():
+def test_format_result_no_type_conversion_1(mocker):
     result = r'{"data":{"id":"claqu1f012345678905oi4evp","email":"username@kili-technology.com"}}'
     result = json.loads(result)
-    ret = format_result("data", result)
+    ret = format_result("data", result, None, mocker.MagicMock())
     assert ret == {"id": "claqu1f012345678905oi4evp", "email": "username@kili-technology.com"}
 
 
-def test_format_result_no_type_conversion_2():
+def test_format_result_no_type_conversion_2(mocker):
     result = r'{"data":[{"createdAt":"2022-12-12T13:52:14.989Z"},{"createdAt":"2022-12-09T08:33:55.940Z"},{"createdAt":"2022-11-29T16:48:09.456Z"},{"createdAt":"2022-11-29T16:44:29.652Z"},{"createdAt":"2022-11-29T16:44:06.341Z"},{"createdAt":"2022-11-29T16:40:07.941Z"},{"createdAt":"2022-11-25T08:14:12.298Z"}]}'
     result = json.loads(result)
-    ret = format_result("data", result)
+    ret = format_result("data", result, None, mocker.MagicMock())
     assert len(ret) == 7
     assert all("createdAt" in x for x in ret)
 
@@ -59,7 +59,7 @@ def test_format_result_formatted_json_is_list():
             }
         ]
     }
-    ret = format_result("data", result, object_=List[Asset])
+    ret = format_result("data", result, object_=List[Asset], http_client=MagicMock())
     assert isinstance(ret, list)
     assert isinstance(ret[0], Asset)
 
@@ -67,7 +67,7 @@ def test_format_result_formatted_json_is_list():
 def test_format_result_legacy_orm_objects():
     result = r'{"data":[{"id": "clbp1ozzb12345678cl9l85ci"}]}'
     result = json.loads(result)
-    ret = format_result("data", result, Asset)
+    ret = format_result("data", result, Asset, http_client=MagicMock())
     assert len(ret) == 1
     assert isinstance(ret, list)
     assert isinstance(ret[0], Asset)
@@ -76,7 +76,7 @@ def test_format_result_legacy_orm_objects():
 def test_format_result_with_type_conversion_int():
     result = r'{"data":400}'
     result = json.loads(result)
-    ret = format_result("data", result, int)
+    ret = format_result("data", result, int, http_client=MagicMock())
     assert isinstance(ret, int)
 
 
@@ -191,6 +191,8 @@ class TestCheckWarnEmptyList(TestCase):
 
     def test_kwargs_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
         kili = MutationsAsset()
+        kili.graphql_client = MagicMock()
+        kili.http_client = MagicMock()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(asset_ids=["asset_id"], external_ids=None)
@@ -198,6 +200,8 @@ class TestCheckWarnEmptyList(TestCase):
 
     def test_args_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
         kili = MutationsAsset()
+        kili.graphql_client = MagicMock()
+        kili.http_client = MagicMock()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(["asset_id"], None)

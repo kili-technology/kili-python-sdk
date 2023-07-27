@@ -1,36 +1,50 @@
-import datetime
 import platform
 import warnings
-from unittest.mock import patch
+from datetime import datetime, timedelta
 
 import pytest
 import pytest_mock
 
 from kili.client import Kili
-from kili.core.graphql.graphql_client import GraphQLClientName
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery
 
 
 @pytest.mark.skipif(platform.system() == "Windows", reason="Mocking fails on Windows")
-def test__check_expiry_of_key_is_close(mocker: pytest_mock.MockerFixture):
-    mocker.patch.object(Kili, "_check_api_key_valid", return_value=True)
-    mocker.patch.object(Kili, "get_user", return_value={"id": "id", "email": "email"})
-    mocker.patch("kili.client.GraphQLClient")
+def test_given_an_api_key_close_to_expiration_when_I_check_expiry_of_key_is_close_then_it_outputs_a_warning(
+    mocker: pytest_mock.MockerFixture,
+):
+    # Given
+    expiry_date = datetime.now() + timedelta(days=20)
 
-    with patch.object(
-        APIKeyQuery, "__call__", return_value=iter([{"expiryDate": "2021-01-01T00:00:00.000Z"}])
-    ):
-        with pytest.warns(UserWarning, match="Your api key will be deprecated on"):
-            _ = Kili(api_key="", api_endpoint="", client_name=GraphQLClientName.SDK)
-
-    current = datetime.datetime.now()
-    with patch.object(
-        APIKeyQuery,
-        "__call__",
+    api_key_query = mocker.MagicMock(
+        spec=APIKeyQuery,
         return_value=iter(
-            [{"expiryDate": f"{current.year+1}-{current.month}-{current.day}T09:54:19.071Z"}]
+            [{"expiryDate": datetime.strftime(expiry_date, r"%Y-%m-%dT%H:%M:%S.%fZ")}]
         ),
-    ):
-        with warnings.catch_warnings():
-            warnings.simplefilter("error")
-            _ = Kili(api_key="", api_endpoint="", client_name=GraphQLClientName.SDK)
+    )
+
+    # Then
+    with pytest.warns(UserWarning, match="Your api key will be deprecated on"):
+        # When
+        Kili._check_expiry_of_key_is_close(api_key_query, "dummy_api_key")
+
+
+@pytest.mark.skipif(platform.system() == "Windows", reason="Mocking fails on Windows")
+def test_given_an_api_key_away_to_expiration_when_I_check_expiry_of_key_is_close_then_it_does_not_output_anything(
+    mocker: pytest_mock.MockerFixture,
+):
+    # Given
+    expiry_date = datetime.now() + timedelta(days=40)
+
+    api_key_query = mocker.MagicMock(
+        spec=APIKeyQuery,
+        return_value=iter(
+            [{"expiryDate": datetime.strftime(expiry_date, r"%Y-%m-%dT%H:%M:%S.%fZ")}]
+        ),
+    )
+
+    # Then
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")  # checks that no warning is raised
+        # When
+        Kili._check_expiry_of_key_is_close(api_key_query, "dummy_api_key")
