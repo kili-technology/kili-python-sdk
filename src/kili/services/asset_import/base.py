@@ -220,7 +220,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             "where": {"id": self.project_id},
         }
         results = self.kili.graphql_client.execute(GQL_APPEND_MANY_TO_DATASET, payload)
-        return self.kili.format_result("data", results, Asset, self.kili.http_client)
+        return self.kili.format_result("data", results, Asset)
 
     def import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets to Kili with the right resolver."""
