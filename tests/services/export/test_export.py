@@ -1011,7 +1011,7 @@ def test_when_exporting_geotiff_asset_with_incompatible_options_then_it_crashes(
         NotCompatibleOptions,
         match=(
             "Cannot export geotiff assets with geospatial coordinates in coco format. Please use"
-            " 'raw' or 'kili' format instead."
+            " 'kili', 'raw' or 'geojson' formats instead."
         ),
     ):
         kili.export_labels(
