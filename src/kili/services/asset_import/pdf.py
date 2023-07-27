@@ -1,11 +1,11 @@
 """Functions to import assets into a PDF project."""
 from typing import List
 
-from .base import BaseAssetImporter, BatchParams, ContentBatchImporter
+from .base import BaseAbstractAssetImporter, BatchParams, ContentBatchImporter
 from .types import AssetLike
 
 
-class PdfDataImporter(BaseAssetImporter):
+class PdfDataImporter(BaseAbstractAssetImporter):
     """Class for importing data into a PDF project."""
 
     def import_assets(self, assets: List[AssetLike]):
@@ -18,5 +18,5 @@ class PdfDataImporter(BaseAssetImporter):
         batch_importer = ContentBatchImporter(
             self.kili, self.project_params, batch_params, self.pbar
         )
-        result = self.import_assets_by_batch(assets, batch_importer)
-        return result
+        created_asset_ids = self.import_assets_by_batch(assets, batch_importer)
+        return created_asset_ids

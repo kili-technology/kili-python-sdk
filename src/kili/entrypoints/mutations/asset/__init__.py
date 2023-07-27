@@ -52,7 +52,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         wait_until_availability: bool = True,
         from_csv: Optional[str] = None,
         csv_separator: str = ",",
-    ) -> Optional[Dict[Literal["id"], str]]:
+    ) -> Optional[Dict[Literal["id", "created_assets_ids"], Union[str, List[str]]]]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -130,8 +130,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         if status_array is not None:
             warnings.warn(
-                "status_array is deprecated, asset status is automatically computed based on"
-                " its labels and cannot be overwritten.",
+                (
+                    "status_array is deprecated, asset status is automatically computed based on"
+                    " its labels and cannot be overwritten."
+                ),
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -158,14 +160,14 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         for key, value in field_mapping.items():
             if value is not None:
                 assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
-        result = import_assets(
+        created_assets_ids = import_assets(
             self,
             project_id=project_id,
             assets=assets,
             disable_tqdm=disable_tqdm,
             verify=wait_until_availability,
         )
-        return result
+        return {"id": project_id, "created_assets_ids": created_assets_ids}
 
     @typechecked
     def update_properties_in_assets(
@@ -262,18 +264,22 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         if status_array is not None:
             warnings.warn(
-                "status_array is deprecated, asset status is automatically computed based on"
-                " its labels and cannot be overwritten.",
+                (
+                    "status_array is deprecated, asset status is automatically computed based on"
+                    " its labels and cannot be overwritten."
+                ),
                 DeprecationWarning,
                 stacklevel=1,
             )
 
         if asset_ids is not None and external_ids is not None:
             warnings.warn(
-                "The use of `external_ids` argument has changed. It is now used to identify"
-                " which properties of which assets to update. Please use"
-                " `kili.change_asset_external_ids()` method instead to change asset external"
-                " IDs.",
+                (
+                    "The use of `external_ids` argument has changed. It is now used to identify"
+                    " which properties of which assets to update. Please use"
+                    " `kili.change_asset_external_ids()` method instead to change asset external"
+                    " IDs."
+                ),
                 DeprecationWarning,
                 stacklevel=1,
             )

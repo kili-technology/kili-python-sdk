@@ -8,7 +8,7 @@ from typing import List
 
 from kili.core.helpers import is_url
 from kili.services.asset_import.base import (
-    BaseAssetImporter,
+    BaseAbstractAssetImporter,
     BaseBatchImporter,
     BatchParams,
     ContentBatchImporter,
@@ -126,7 +126,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         return AssetLike(**{**asset, "json_content": list(cleaned_urls)})  # type: ignore
 
 
-class VideoDataImporter(BaseAssetImporter):
+class VideoDataImporter(BaseAbstractAssetImporter):
     """Class for importing data into a VIDEO project."""
 
     @staticmethod
@@ -212,5 +212,5 @@ class VideoDataImporter(BaseAssetImporter):
             batch_size = IMPORT_BATCH_SIZE
         else:
             raise ImportValidationError
-        result = self.import_assets_by_batch(assets, batch_importer, batch_size)
-        return result
+        created_asset_ids = self.import_assets_by_batch(assets, batch_importer, batch_size)
+        return created_asset_ids
