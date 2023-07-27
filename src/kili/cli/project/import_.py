@@ -1,10 +1,10 @@
 """CLI's project import subcommand"""
 
 import os
-import urllib.request
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
 import click
+import requests
 from typeguard import typechecked
 
 from kili import services
@@ -18,12 +18,12 @@ from kili.services.helpers import (
 )
 
 
-def check_asset_type(key, value):
+def check_asset_type(key, value, verify_ssl):
     """type check value based on key"""
     if key == "content" and not os.path.isfile(value):
-        with urllib.request.urlopen(value) as http_response:
-            if not http_response.getcode() == 200:
-                return f"{value} is not a valid url or path to a file."
+        http_response = requests.get(value, verify=verify_ssl, timeout=30)
+        if not http_response.status_code == 200:
+            return f"{value} is not a valid url or path to a file."
 
     return ""
 
@@ -67,6 +67,7 @@ def generate_json_metadata(as_frames, fps):
     "--fps", type=int, help="Only for a frame project, import videos with a specific frame rate"
 )
 @Options.verbose
+@Options.ssl_verify
 @typechecked
 # pylint: disable=too-many-arguments,too-many-locals
 def import_assets(
@@ -77,7 +78,8 @@ def import_assets(
     csv_path: Optional[str],
     fps: Optional[int],
     as_frames: bool,
-    verbose: bool,  # pylint: disable=unused-argument
+    verbose: bool,
+    ssl_verify: Union[str, bool],
 ):
     """
     Add assets into a project
@@ -120,7 +122,8 @@ def import_assets(
 
         For such imports, please use the `append_many_to_dataset` method in the Kili SDK.
     """
-    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
+    _ = verbose
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint, ssl_verify=ssl_verify)
     input_type = services.get_project_field(kili.auth, project_id, "inputType")
     if input_type not in ("VIDEO_LEGACY", "VIDEO") and (fps is not None or as_frames is True):
         illegal_option = "fps and frames are"
@@ -144,11 +147,14 @@ def import_assets(
         external_ids = [get_external_id_from_file_path(path) for path in files_to_upload]
 
     elif csv_path is not None:
+        http_client = requests.Session()
+        http_client.verify = kili.auth.ssl_verify
         row_dict = collect_from_csv(
             csv_path=csv_path,
             required_columns=["external_id", "content"],
             optional_columns=[],
             type_check_function=check_asset_type,
+            ssl_verify=kili.auth.ssl_verify,
         )
 
         files_to_upload = [row["content"] for row in row_dict]

@@ -1,6 +1,6 @@
 """CLI's project member list subcommand"""
 
-from typing import Optional
+from typing import Optional, Union
 
 import click
 import pandas as pd
@@ -22,7 +22,14 @@ ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "
 @Options.endpoint
 @Arguments.project_id
 @Options.tablefmt
-def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: str, tablefmt: str):
+@Options.ssl_verify
+def list_members(
+    api_key: Optional[str],
+    endpoint: Optional[str],
+    project_id: str,
+    tablefmt: str,
+    ssl_verify: Union[str, bool],
+):
     """
     List the members of the project
 
@@ -33,7 +40,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
         ```
 
     """
-    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint, ssl_verify=ssl_verify)
     members_list = list(
         ProjectUserQuery(kili.auth.client, kili.auth.ssl_verify)(
             where=ProjectUserWhere(project_id=project_id),

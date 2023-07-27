@@ -1,6 +1,6 @@
 """CLI's project copy subcommand"""
 
-from typing import Optional
+from typing import Optional, Union
 
 import click
 
@@ -32,6 +32,7 @@ from kili.cli.helpers import get_kili_client
 )
 @click.option("--with-assets/--without-assets", required=False, default=False, help="Copy assets.")
 @click.option("--with-labels/--without-labels", required=False, default=False, help="Copy labels.")
+@Options.ssl_verify
 # pylint: disable=too-many-arguments
 def copy_project(
     api_key: Optional[str],
@@ -44,6 +45,7 @@ def copy_project(
     with_members: bool = True,
     with_assets: bool = False,
     with_labels: bool = False,
+    ssl_verify: Union[str, bool] = True,
 ) -> None:
     """Copy an existing Kili project.
 
@@ -72,7 +74,7 @@ def copy_project(
             --without-members
         ```
     """
-    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint, ssl_verify=ssl_verify)
     new_proj_id = kili.copy_project(
         from_project_id=from_project_id,
         title=title,

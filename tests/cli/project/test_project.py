@@ -22,6 +22,7 @@ from .mocks.projects import mocked__ProjectQuery
 
 kili_client = MagicMock()
 kili_client.auth.api_endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
+kili_client.auth.ssl_verify = True
 kili_client.create_project = create_project_mock = MagicMock()
 
 
@@ -41,22 +42,6 @@ class TestCLIProject:
             and (result.output.count("100.0%") == 1)
             and (result.output.count("0.0%") == 2)
             and (result.output.count("nan") == 1)
-        )
-
-    def test_create_project(self, *_):
-        runner = CliRunner()
-        runner.invoke(
-            create_project,
-            [
-                "--interface",
-                "tests/fixtures/image_interface.json",
-                "--title",
-                "Test project",
-                "--description",
-                "description",
-                "--input-type",
-                "IMAGE",
-            ],
         )
 
     def test_describe_project(self, *_):

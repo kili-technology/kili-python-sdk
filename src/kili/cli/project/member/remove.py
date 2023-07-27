@@ -1,7 +1,7 @@
 """CLI's project member remove subcommand"""
 
 import warnings
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
 import click
 
@@ -34,6 +34,7 @@ from kili.graphql.operations.project_user.queries import (
     default=False,
     help="Remove all users from project",
 )
+@Options.ssl_verify
 # pylint: disable=too-many-arguments
 def remove_member(
     api_key: Optional[str],
@@ -42,6 +43,7 @@ def remove_member(
     project_id: str,
     csv_path: Optional[str],
     all_members: bool,
+    ssl_verify: Union[str, bool],
 ):
     """Remove members from a Kili project
 
@@ -67,12 +69,12 @@ def remove_member(
             --all
         ```
     """
-    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint, ssl_verify=ssl_verify)
 
     check_exclusive_options(csv_path, None, emails, all_members)
 
     if csv_path is not None:
-        members_to_rm = collect_members_from_csv(csv_path, None)
+        members_to_rm = collect_members_from_csv(csv_path, None, kili.auth.ssl_verify)
     elif all_members:
         members_to_rm = collect_members_from_project(kili.auth, project_id, None)
     else:

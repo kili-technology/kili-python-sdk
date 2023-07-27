@@ -1,7 +1,7 @@
 """CLI's project member update subcommand"""
 
 import warnings
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
 import click
 
@@ -28,6 +28,7 @@ from kili.graphql.operations.project_user.queries import (
 @Options.role
 @from_csv(["email"], ["role"])
 @Options.from_project
+@Options.ssl_verify
 # pylint: disable=too-many-arguments
 def update_member(
     api_key: Optional[str],
@@ -37,6 +38,7 @@ def update_member(
     role: Optional[str],
     csv_path: Optional[str],
     project_id_src: Optional[str],
+    ssl_verify: Union[str, bool],
 ):
     """Update member's role of a Kili project
 
@@ -62,12 +64,12 @@ def update_member(
             --from-project <project_id_scr>
         ```
     """
-    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint, ssl_verify=ssl_verify)
 
     check_exclusive_options(csv_path, project_id_src, emails, None)
 
     if csv_path is not None:
-        members_to_update = collect_members_from_csv(csv_path, role)
+        members_to_update = collect_members_from_csv(csv_path, role, kili.auth.ssl_verify)
     elif project_id_src is not None:
         members_to_update = collect_members_from_project(kili.auth, project_id_src, role)
     else:

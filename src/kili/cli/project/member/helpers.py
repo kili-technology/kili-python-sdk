@@ -2,7 +2,7 @@
 
 import re
 import warnings
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
 from kili.authentication import KiliAuth
 from kili.cli.common_args import ROLES
@@ -16,8 +16,9 @@ from kili.graphql.operations.project_user.queries import (
 REGEX_EMAIL = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
 
 
-def type_check_member(key, value):
+def type_check_member(key, value, ssl_verify):
     """type check value based on key"""
+    _ = ssl_verify
     if key == "email" and not re.search(REGEX_EMAIL, value):
         return f"{value} is not a valid email address, "
 
@@ -27,13 +28,14 @@ def type_check_member(key, value):
     return ""
 
 
-def collect_members_from_csv(csv_path: str, role: Optional[str]):
+def collect_members_from_csv(csv_path: str, role: Optional[str], ssl_verify: Union[str, bool]):
     """read a csv with to collect members and role"""
     members_to_add = collect_from_csv(
         csv_path=csv_path,
         required_columns=["email"],
         optional_columns=["role"],
         type_check_function=type_check_member,
+        ssl_verify=ssl_verify,
     )
 
     if len(members_to_add) == 0:

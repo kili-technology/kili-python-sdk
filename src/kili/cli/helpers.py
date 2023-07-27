@@ -2,22 +2,29 @@
 
 import csv
 import warnings
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from kili.client import Kili
 from kili.graphql.graphql_client import GraphQLClientName
 
 
-def get_kili_client(api_key: Optional[str], api_endpoint: Optional[str]):
+def get_kili_client(
+    api_key: Optional[str], api_endpoint: Optional[str], ssl_verify: Union[bool, str]
+):
     """Instantiate a kili client for the CLI functions"""
-    return Kili(api_key=api_key, api_endpoint=api_endpoint, client_name=GraphQLClientName.CLI)
+    return Kili(
+        api_key=api_key,
+        api_endpoint=api_endpoint,
+        client_name=GraphQLClientName.CLI,
+        verify=ssl_verify,
+    )
 
 
-def dict_type_check(dict_: Dict[str, Any], type_check):
+def dict_type_check(dict_: Dict[str, Any], type_check, ssl_verify: Union[bool, str]):
     """check if elements in row have correct type and return [row]"""
     warnings_message = ""
     for key, value in dict_.items():
-        warnings_message += type_check(key, value)
+        warnings_message += type_check(key, value, ssl_verify)
     if len(warnings_message) == 0:
         return [dict_]
 
@@ -30,6 +37,7 @@ def collect_from_csv(
     required_columns: List[str],
     optional_columns: List[str],
     type_check_function,
+    ssl_verify: Union[bool, str],
 ):
     """read a csv to collect required_columns and optional_columns"""
     out = []
@@ -46,6 +54,7 @@ def collect_from_csv(
             out += dict_type_check(
                 dict_={k: v for k, v in row.items() if k in required_columns + optional_columns},
                 type_check=type_check_function,
+                ssl_verify=ssl_verify,
             )
 
     return out

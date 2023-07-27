@@ -1,6 +1,6 @@
 """CLI's project export subcommand"""
 
-from typing import Optional, cast
+from typing import Optional, Union, cast
 
 import click
 from typeguard import typechecked
@@ -52,6 +52,7 @@ from kili.services.types import ProjectId
 @Options.endpoint
 @Options.project_id
 @Options.verbose
+@Options.ssl_verify
 @typechecked
 # pylint: disable=too-many-arguments
 def export_labels(
@@ -64,6 +65,7 @@ def export_labels(
     project_id: str,
     verbose: bool,
     with_assets: bool,
+    ssl_verify: Union[str, bool],
 ):
     """
     Export the Kili labels of a project to a given format.
@@ -103,7 +105,7 @@ def export_labels(
 
         For such exports, please use the Kili UI.
     """
-    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint, ssl_verify=ssl_verify)
 
     try:
         services.export_labels(
