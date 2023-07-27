@@ -7,5 +7,6 @@ unused-arguments-ignore-stub-functions = True
 ; W503 Line break before binary operator (conflict with black)
 ; E203 whitespace before ':' (conflict with black)
 ; B001, E722 do not use bare 'except' (hard to handle with Kili)
+; BLK100 Black line length (handled by black)
 ignore = B006, U100, E501, W503, E203, B001, E722, BLK100
 exclude = tests/*.py, recipes/*.py
