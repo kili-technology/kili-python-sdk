@@ -533,6 +533,63 @@ def get_file_tree(folder: str):
             },
         ),
         (
+            "geojson format image project",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "geojson",
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "labels": {"car_1.geojson": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "geojson format image project with assets",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection",
+                    "label_format": "geojson",
+                    "with_assets": True,
+                },
+                "file_tree_expected": {
+                    "labels": {"car_1.geojson": {}},
+                    "images": {"car_1.jpg": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "geojson format object_detection_with_classification",
+            {
+                "export_kwargs": {
+                    "project_id": "object_detection_with_classification",
+                    "label_format": "geojson",
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "labels": {"car_1.geojson": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
+            "geojson format semantic_segmentation",
+            {
+                "export_kwargs": {
+                    "project_id": "semantic_segmentation",
+                    "label_format": "geojson",
+                    "with_assets": False,
+                },
+                "file_tree_expected": {
+                    "labels": {"car_1.geojson": {}, "car_2.geojson": {}},
+                    "README.kili.txt": {},
+                },
+            },
+        ),
+        (
             "pascal voc format image project no assets",
             {
                 "export_kwargs": {
@@ -562,13 +619,16 @@ def get_file_tree(folder: str):
         ),
     ],
 )
-@patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
-@patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
-@patch.object(AssetQuery, "count", side_effect=mocked_AssetQuery_count)
-@patch("kili.services.export.media.video.ffmpeg")
-def test_export_service_layout(
-    mocker_ffmpeg, mocker_asset_count, mocker_asset, mocker_project, name, test_case
-):
+def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_case):
+    mocker.patch.object(AssetQuery, "count", side_effect=mocked_AssetQuery_count)
+    mocker.patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
+    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
+    mocker_ffmpeg = mocker.patch("kili.services.export.media.video.ffmpeg")
+    mocker.patch(
+        "kili.services.export.format.geojson.is_geotiff_asset_with_lat_lon_coords",
+        return_value=True,
+    )
+
     with TemporaryDirectory() as export_folder:
         with TemporaryDirectory() as extract_folder:
             path_zipfile = Path(export_folder) / "export.zip"

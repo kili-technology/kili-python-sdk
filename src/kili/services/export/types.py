@@ -3,7 +3,9 @@ from typing import Callable, Dict, Literal, NamedTuple, Tuple
 
 ExportType = Literal["latest", "normal"]
 SplitOption = Literal["split", "merged"]
-LabelFormat = Literal["raw", "kili", "yolo_v4", "yolo_v5", "yolo_v7", "coco", "pascal_voc"]
+LabelFormat = Literal[
+    "raw", "kili", "yolo_v4", "yolo_v5", "yolo_v7", "coco", "pascal_voc", "geojson"
+]
 
 
 class JobCategory(NamedTuple):

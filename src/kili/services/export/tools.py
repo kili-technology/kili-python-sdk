@@ -167,13 +167,13 @@ def get_fields_to_fetch(export_type: ExportType):
     return DEFAULT_FIELDS
 
 
-def is_geotiff_asset_with_lat_lon_coords(asset: Dict) -> bool:
+def is_geotiff_asset_with_lat_lon_coords(asset: Dict, http_client: requests.Session) -> bool:
     """Check if asset is a geotiff with lat/lon coordinates."""
     if "jsonContent" not in asset:
         return False
 
     if isinstance(asset["jsonContent"], str) and asset["jsonContent"].startswith("http"):
-        response = requests.get(asset["jsonContent"], timeout=30)
+        response = http_client.get(asset["jsonContent"], timeout=30)
         json_content = response.json()
 
     else:
