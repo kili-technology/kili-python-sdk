@@ -149,6 +149,7 @@ def test_synchronize_cloud_storage_connection(
 
     kili = MutationsDataConnection()
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     kili.synchronize_cloud_storage_connection(
         cloud_storage_connection_id="my_data_connection_id",

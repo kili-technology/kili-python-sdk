@@ -3,6 +3,8 @@ import tempfile
 from unittest import TestCase
 from unittest.mock import call
 
+import requests
+
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
     GQL_APPEND_MANY_TO_DATASET,
@@ -17,7 +19,7 @@ class ImportTestCase(TestCase):
     def setUp(self):
         self.project_id = "project_id"
         self.test_dir = tempfile.mkdtemp()
-        self.downloader = LocalDownloader(self.test_dir)
+        self.downloader = LocalDownloader(self.test_dir, requests.Session())
         self.kili = mocked_auth
 
     def tearDown(self):

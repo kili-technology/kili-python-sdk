@@ -2,7 +2,6 @@
 import glob
 import json
 import os
-import tempfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -21,8 +20,7 @@ from kili.services.export.exceptions import (
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from kili.services.export.format.base import ExportParams
-from kili.services.export.format.kili import AbstractExporter, KiliExporter
+from kili.services.export.format.kili import KiliExporter
 from tests.fakes.fake_ffmpeg import mock_ffmpeg
 from tests.fakes.fake_kili import (
     FakeKili,
@@ -712,6 +710,7 @@ def test_export_with_asset_filter_kwargs(mocker):
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
     kili.export_labels(
         project_id="fake_proj_id",
         filename="fake_filename",
@@ -769,6 +768,7 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     with pytest.raises(NameError, match="Unknown asset filter arguments"):
         kili.export_labels(
@@ -788,6 +788,7 @@ def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     with pytest.raises(
         NotCompatibleOptions,
@@ -852,6 +853,7 @@ def test_when_exporting_without_assets_given_a_project_that_needs_them_it_should
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     with pytest.warns(
         UserWarning,
@@ -1082,6 +1084,7 @@ def test_convert_to_non_normalized_coords_2(mocker: pytest_mock.MockerFixture):
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     kili.export_labels(
         "fake_proj_id", "export_pixel_coords_kili_pdf.zip", fmt="kili", normalized_coordinates=False

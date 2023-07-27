@@ -7,22 +7,19 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationsQuery,
     DataIntegrationWhere,
 )
-from kili.core.helpers import format_result
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .queries import GQL_ADD_PROJECT_DATA_CONNECTION
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsDataConnection:
+class MutationsDataConnection(BaseOperationEntrypointMixin):
     """Set of DataConnection mutations."""
-
-    graphql_client: GraphQLClient
 
     @typechecked
     def add_cloud_storage_connection(
@@ -43,7 +40,7 @@ class MutationsDataConnection:
             A dict with the DataConnection Id.
         """
         data_integrations = list(
-            DataIntegrationsQuery(self.graphql_client)(
+            DataIntegrationsQuery(self.graphql_client, self.http_client)(
                 where=DataIntegrationWhere(data_integration_id=cloud_storage_integration_id),
                 fields=["id"],
                 options=QueryOptions(disable_tqdm=True, first=1, skip=0),
@@ -64,7 +61,7 @@ class MutationsDataConnection:
             }
         }
         result = self.graphql_client.execute(GQL_ADD_PROJECT_DATA_CONNECTION, variables)
-        result = format_result("data", result)
+        result = self.format_result("data", result)
 
         # We trigger data difference computation (same behavior as in the frontend)
         services.compute_differences(self, result["id"])

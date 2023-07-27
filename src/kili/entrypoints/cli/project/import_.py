@@ -1,10 +1,10 @@
 """CLI's project import subcommand."""
 
 import os
-import urllib.request
 from typing import Iterable, Optional
 
 import click
+import requests
 from typeguard import typechecked
 
 from kili import services
@@ -18,12 +18,16 @@ from kili.services.helpers import (
 )
 
 
-def check_asset_type(key, value):
+def check_asset_type(key: str, value: str, http_client: Optional[requests.Session]) -> str:
     """Type check value based on key."""
+    assert (
+        http_client is not None
+    )  # the optional type is there only to match the collect_from_csv type check function, that may
+    # not require http requests.
     if key == "content" and not os.path.isfile(value):
-        with urllib.request.urlopen(value) as http_response:
-            if not http_response.getcode() == 200:
-                return f"{value} is not a valid url or path to a file."
+        resp = http_client.get(value)
+        if not resp.status_code == 200:
+            return f"{value} is not a valid url or path to a file."
 
     return ""
 
@@ -147,6 +151,7 @@ def import_assets(
             required_columns=["external_id", "content"],
             optional_columns=[],
             type_check_function=check_asset_type,
+            http_client=kili.http_client,
         )
 
         files_to_upload = [row["content"] for row in row_dict]

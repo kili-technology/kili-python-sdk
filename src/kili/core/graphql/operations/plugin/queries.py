@@ -5,7 +5,6 @@ from datetime import datetime
 from typing import List, NamedTuple, Optional
 
 from kili.core.graphql import GraphQLQuery, QueryOptions
-from kili.core.helpers import format_result
 
 
 class PluginBuildErrorsWhere(NamedTuple):
@@ -111,7 +110,7 @@ class PluginQuery(GraphQLQuery):
         fragment = self.fragment_builder(fields)
         query = self.gql_list_plugins(fragment)
         result = self.client.execute(query)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     def get_build_errors(self, where: PluginBuildErrorsWhere, options: QueryOptions):
         """Get build errors of a plugin in Kili."""
@@ -127,7 +126,7 @@ class PluginQuery(GraphQLQuery):
             )
 
         result = self.client.execute(self.GQL_GET_PLUGIN_BUILD_ERRORS, payload)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     def get_logs(self, where: PluginLogsWhere, options: QueryOptions):
         """Get logs of a plugin in Kili."""
@@ -144,7 +143,7 @@ class PluginQuery(GraphQLQuery):
             )
 
         result = self.client.execute(self.GQL_GET_PLUGIN_LOGS, payload)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
 
 GQL_GET_PLUGIN_RUNNER_STATUS = """

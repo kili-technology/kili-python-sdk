@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
+import requests
 from click.testing import CliRunner
 
 from kili.core.graphql.operations.asset.queries import AssetQuery
@@ -23,6 +24,7 @@ from .mocks.projects import mocked__ProjectQuery
 kili_client = MagicMock()
 kili_client.api_endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
 kili_client.create_project = create_project_mock = MagicMock()
+kili_client.http_client = requests.Session()
 
 
 @patch("kili.client.Kili.__new__", return_value=kili_client)
@@ -68,20 +70,20 @@ class TestCLIProject:
             and (result.output.count("project title") == 1)
         )
 
-    def test_import(self, *_):
-        TEST_CASES = [
-            {
-                "case_name": (
-                    "AAU, when I import a list of file to an image project, I see a success"
-                ),
-                "files": [
+    @pytest.mark.parametrize(
+        "case_name,files,options,flags,expected_service_payload",
+        [
+            (
+                "AAU, when I import a list of file to an image project, I see a success",
+                [
                     str(Path("test_tree") / "image1.png"),
                     str(Path("test_tree") / "leaf" / "image3.png"),
                 ],
-                "options": {
+                {
                     "project-id": "image_project",
                 },
-                "expected_service_payload": (
+                None,
+                (
                     ANY,
                     "image_project",
                     [
@@ -96,17 +98,18 @@ class TestCLIProject:
                     ],
                     ANY,
                 ),
-            },
-            {
-                "case_name": "AAU, when I import files with stars, I see a success",
-                "files": [
+            ),
+            (
+                "AAU, when I import files with stars, I see a success",
+                [
                     str(Path("test_tree") / "**.jpg"),
                     str(Path("test_tree") / "leaf" / "**.jpg"),
                 ],
-                "options": {
+                {
                     "project-id": "image_project",
                 },
-                "expected_service_payload": (
+                None,
+                (
                     ANY,
                     "image_project",
                     [
@@ -121,12 +124,13 @@ class TestCLIProject:
                     ],
                     ANY,
                 ),
-            },
-            {
-                "case_name": "AAU, when I import a files to a text project, I see a success",
-                "files": [str(Path("test_tree/")), str(Path("test_tree") / "leaf")],
-                "options": {"project-id": "text_project"},
-                "expected_service_payload": (
+            ),
+            (
+                "AAU, when I import a files to a text project, I see a success",
+                [str(Path("test_tree/")), str(Path("test_tree") / "leaf")],
+                {"project-id": "text_project"},
+                None,
+                (
                     ANY,
                     "text_project",
                     [
@@ -150,18 +154,49 @@ class TestCLIProject:
                     ],
                     ANY,
                 ),
-            },
-            {
-                "case_name": (
+            ),
+            (
+                "AAU, when I import a files to a text project, I see a success",
+                [str(Path("test_tree/")), str(Path("test_tree") / "leaf")],
+                {"project-id": "text_project"},
+                None,
+                (
+                    ANY,
+                    "text_project",
+                    [
+                        {"content": str(Path("test_tree") / "image1.png"), "external_id": "image1"},
+                        {"content": str(Path("test_tree") / "image2.jpg"), "external_id": "image2"},
+                        {
+                            "content": str(Path("test_tree") / "leaf" / "image3.png"),
+                            "external_id": "image3",
+                        },
+                        {
+                            "content": str(Path("test_tree") / "leaf" / "image4.jpg"),
+                            "external_id": "image4",
+                        },
+                        {
+                            "content": str(Path("test_tree") / "leaf" / "texte2.txt"),
+                            "external_id": "texte2",
+                        },
+                        {"content": str(Path("test_tree") / "texte1.txt"), "external_id": "texte1"},
+                        {"content": str(Path("test_tree") / "video1.mp4"), "external_id": "video1"},
+                        {"content": str(Path("test_tree") / "video2.mp4"), "external_id": "video2"},
+                    ],
+                    ANY,
+                ),
+            ),
+            (
+                (
                     "AAU, when I import videos to a video project, as native by changing the fps, I"
                     " see a success"
                 ),
-                "files": [str(Path("test_tree/"))],
-                "options": {
+                [str(Path("test_tree/"))],
+                {
                     "project-id": "frame_project",
                     "fps": "10",
                 },
-                "expected_service_payload": (
+                None,
+                (
                     ANY,
                     "frame_project",
                     [
@@ -223,18 +258,18 @@ class TestCLIProject:
                     ],
                     ANY,
                 ),
-            },
-            {
-                "case_name": (
+            ),
+            (
+                (
                     "AAU, when I import videos to a video project, as frames with the native frame"
                     " rate, I see a success"
                 ),
-                "files": [str(Path("test_tree/"))],
-                "options": {
+                [str(Path("test_tree/"))],
+                {
                     "project-id": "frame_project",
                 },
-                "flags": ["frames"],
-                "expected_service_payload": (
+                ["frames"],
+                (
                     ANY,
                     "frame_project",
                     [
@@ -296,15 +331,16 @@ class TestCLIProject:
                     ],
                     ANY,
                 ),
-            },
-            {
-                "case_name": "AAU, when I import assets from a csv file, I see a success",
-                "files": [],
-                "options": {
+            ),
+            (
+                "AAU, when I import assets from a csv file, I see a success",
+                [],
+                {
                     "project-id": "image_project",
                     "from-csv": "assets_to_import.csv",
                 },
-                "expected_service_payload": (
+                None,
+                (
                     ANY,
                     "image_project",
                     [
@@ -321,10 +357,23 @@ class TestCLIProject:
                     ],
                     ANY,
                 ),
-            },
-        ]
+            ),
+        ],
+    )
+    def test_import(
+        self,
+        _mocker_asset,
+        _mocker_project,
+        _mocker_kili,
+        case_name,
+        files,
+        options,
+        expected_service_payload,
+        flags,
+    ):
         runner = CliRunner()
         with runner.isolated_filesystem():
+            _ = case_name
             os.mkdir("test_tree")
             # pylint: disable=unspecified-encoding
             open("test_tree/image1.png", "w")
@@ -348,21 +397,16 @@ class TestCLIProject:
                     ]
                 )
 
-            for test_case in TEST_CASES:
-                arguments = test_case["files"]
-                for k, v in test_case["options"].items():
-                    arguments.append("--" + k)
-                    arguments.append(v)
-                if test_case.get("flags"):
-                    arguments.extend(["--" + flag for flag in test_case["flags"]])
-                with patch(
-                    "kili.services.asset_import.import_assets"
-                ) as mocked_import_assets_service:
-                    result = runner.invoke(import_assets, arguments)
-                    debug_subprocess_pytest(result)
-                    mocked_import_assets_service.assert_called_with(
-                        *test_case["expected_service_payload"]
-                    )
+            arguments = files
+            for k, v in options.items():
+                arguments.append("--" + k)
+                arguments.append(v)
+            if flags:
+                arguments.extend(["--" + flag for flag in flags])
+            with patch("kili.services.asset_import.import_assets") as mocked_import_assets_service:
+                result = runner.invoke(import_assets, arguments)
+                debug_subprocess_pytest(result)
+                mocked_import_assets_service.assert_called_with(*expected_service_payload)
 
     @pytest.mark.parametrize(
         "name,test_case",

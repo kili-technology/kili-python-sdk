@@ -6,9 +6,9 @@ from typing import Dict, List, Literal, Optional
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.core.helpers import deprecate, format_result
+from kili.core.helpers import deprecate
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
 from kili.services.helpers import assert_all_arrays_have_same_size
 from kili.utils.logcontext import for_all_methods, log_call
@@ -18,10 +18,8 @@ from .queries import GQL_CREATE_ISSUES
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsIssue:
+class MutationsIssue(BaseOperationEntrypointMixin):
     """Set of Issue mutations."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments
     @deprecate(
@@ -67,7 +65,9 @@ class MutationsIssue:
                 label_id=label_id,
             )
             asset_id: str = list(
-                LabelQuery(self.graphql_client)(where=where, fields=["labelOf.id"], options=options)
+                LabelQuery(self.graphql_client, self.http_client)(
+                    where=where, fields=["labelOf.id"], options=options
+                )
             )[0]["labelOf"]["id"]
         except:
             # pylint: disable=raise-missing-from
@@ -89,7 +89,7 @@ class MutationsIssue:
         }
 
         result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
-        return format_result("data", result)[0]
+        return self.format_result("data", result)[0]
 
     @typechecked
     def create_issues(
@@ -134,7 +134,7 @@ class MutationsIssue:
         }
 
         result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def create_questions(
@@ -172,4 +172,4 @@ class MutationsIssue:
         }
 
         result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
