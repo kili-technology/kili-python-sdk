@@ -8,7 +8,8 @@ ROLES = ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"]
 
 
 class BoolOrStringParamType(click.ParamType):
-    """Click parameter type for boolean or string"""
+    """Click parameter type for boolean or string. This is useful for the --ssl-verify option,
+    that can take a boolean or a string as value (like the `requests` library)"""
 
     name = "bool_or_string"
 
@@ -91,7 +92,11 @@ class Options:  # pylint: disable=too-few-public-methods
         "--ssl-verify",
         type=BOOL_OR_STRING,
         default="True",
-        help="Verify SSL certificate (see Python's requests' verify argument documentation)",
+        help=(
+            "Verify SSL certificate (see Python's requests' verify argument documentation for more"
+            " details:"
+            " https://requests.readthedocs.io/en/latest/user/advanced/#ssl-cert-verification)"
+        ),
     )
 
 
