@@ -60,6 +60,7 @@ def type_check_label(key, value):
     type=str,
     help="Job name in the project where to upload the labels (if relevant to the input format)",
 )
+@Options.ssl_verify
 # pylint: disable=too-many-arguments
 def import_labels(
     api_key: Optional[str],
@@ -72,6 +73,7 @@ def import_labels(
     input_format: str,
     metadata_file: Optional[str],
     target_job: Optional[str],
+    ssl_verify: bool,
 ):
     """
     Import labels or predictions
@@ -119,7 +121,7 @@ def import_labels(
             "you must provide a model name with the --model-name option"
         )
 
-    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint, ssl_verify=ssl_verify)
 
     services.import_labels_from_files(
         kili.auth,

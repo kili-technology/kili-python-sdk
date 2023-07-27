@@ -1,6 +1,6 @@
 """CLI's project describe command"""
 
-from typing import Optional
+from typing import Optional, Union
 
 import click
 from tabulate import tabulate
@@ -15,7 +15,10 @@ from kili.queries.project.helpers import get_project_metadata, get_project_metri
 @Arguments.project_id
 @Options.api_key
 @Options.endpoint
-def describe_project(api_key: Optional[str], endpoint: Optional[str], project_id: str):
+@Options.ssl_verify
+def describe_project(
+    api_key: Optional[str], endpoint: Optional[str], project_id: str, ssl_verify: Union[bool, str]
+):
     """Show project description and analytics.
     \b
     !!! Examples
@@ -23,7 +26,7 @@ def describe_project(api_key: Optional[str], endpoint: Optional[str], project_id
         kili project describe --project-id <project_id>
         ```
     """
-    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint, ssl_verify=ssl_verify)
     query_fields = [
         "title",
         "id",

@@ -2,7 +2,7 @@
 
 import os
 import urllib.request
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
 import click
 from typeguard import typechecked
@@ -67,6 +67,7 @@ def generate_json_metadata(as_frames, fps):
     "--fps", type=int, help="Only for a frame project, import videos with a specific frame rate"
 )
 @Options.verbose
+@Options.ssl_verify
 @typechecked
 # pylint: disable=too-many-arguments,too-many-locals
 def import_assets(
@@ -77,7 +78,8 @@ def import_assets(
     csv_path: Optional[str],
     fps: Optional[int],
     as_frames: bool,
-    verbose: bool,  # pylint: disable=unused-argument
+    verbose: bool,
+    ssl_verify: Union[str, bool],
 ):
     """
     Add assets into a project
@@ -120,7 +122,8 @@ def import_assets(
 
         For such imports, please use the `append_many_to_dataset` method in the Kili SDK.
     """
-    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
+    _ = verbose
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint, ssl_verify=ssl_verify)
     input_type = services.get_project_field(kili.auth, project_id, "inputType")
     if input_type not in ("VIDEO_LEGACY", "VIDEO") and (fps is not None or as_frames is True):
         illegal_option = "fps and frames are"

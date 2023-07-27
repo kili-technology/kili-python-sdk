@@ -37,6 +37,7 @@ def create_project(
     title: str,
     description: str,
     tablefmt: str,
+    ssl_verify: str,
 ):
     """Create a Kili project
 
@@ -63,7 +64,7 @@ def create_project(
     To build a Kili project interface, please visit: \n
     https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings
     """
-    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint, ssl_verify=ssl_verify)
 
     if ((interface is not None) + (project_id_src is not None)) > 1:
         raise ValueError("interface argument and option --from-project are exclusive.")

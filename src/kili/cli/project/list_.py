@@ -19,6 +19,7 @@ from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 @Options.api_key
 @Options.endpoint
 @Options.tablefmt
+@Options.ssl_verify
 @click.option(
     "--max",
     "first",
@@ -26,7 +27,9 @@ from kili.graphql.operations.project.queries import ProjectQuery, ProjectWhere
     help="Maximum number of project to display.",
     default=100,
 )
-def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str, first: int):
+def list_projects(
+    api_key: Optional[str], endpoint: Optional[str], tablefmt: str, first: int, ssl_verify: bool
+):
     """
     List your projects
 
@@ -37,7 +40,7 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
         ```
 
     """
-    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
+    kili = get_kili_client(api_key=api_key, api_endpoint=endpoint, ssl_verify=ssl_verify)
     projects = list(
         ProjectQuery(kili.auth.client, kili.auth.ssl_verify)(
             ProjectWhere(),

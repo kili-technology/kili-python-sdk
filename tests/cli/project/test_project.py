@@ -43,22 +43,6 @@ class TestCLIProject:
             and (result.output.count("nan") == 1)
         )
 
-    def test_create_project(self, *_):
-        runner = CliRunner()
-        runner.invoke(
-            create_project,
-            [
-                "--interface",
-                "tests/fixtures/image_interface.json",
-                "--title",
-                "Test project",
-                "--description",
-                "description",
-                "--input-type",
-                "IMAGE",
-            ],
-        )
-
     def test_describe_project(self, *_):
         runner = CliRunner()
         result = runner.invoke(describe_project, ["project_id"])

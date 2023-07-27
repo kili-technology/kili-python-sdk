@@ -2,15 +2,22 @@
 
 import csv
 import warnings
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from kili.client import Kili
 from kili.graphql.graphql_client import GraphQLClientName
 
 
-def get_kili_client(api_key: Optional[str], api_endpoint: Optional[str]):
+def get_kili_client(
+    api_key: Optional[str], api_endpoint: Optional[str], ssl_verify: Union[bool, str]
+):
     """Instantiate a kili client for the CLI functions"""
-    return Kili(api_key=api_key, api_endpoint=api_endpoint, client_name=GraphQLClientName.CLI)
+    return Kili(
+        api_key=api_key,
+        api_endpoint=api_endpoint,
+        client_name=GraphQLClientName.CLI,
+        verify=ssl_verify,
+    )
 
 
 def dict_type_check(dict_: Dict[str, Any], type_check):

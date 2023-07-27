@@ -1,10 +1,26 @@
 """Common arguments and options for the CLI"""
-from typing import List
+from typing import List, Union
 
 import click
 
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 ROLES = ["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"]
+
+
+class BoolOrStringParamType(click.ParamType):
+    """Click parameter type for boolean or string"""
+
+    name = "bool_or_string"
+
+    def convert(self, value, param, ctx) -> Union[bool, str]:
+        if value.lower() == "true":
+            return True
+        if value.lower() == "false":
+            return False
+        return value
+
+
+BOOL_OR_STRING = BoolOrStringParamType()
 
 
 class Options:  # pylint: disable=too-few-public-methods
@@ -69,6 +85,13 @@ class Options:  # pylint: disable=too-few-public-methods
 
     verbose = click.option(
         "--verbose", type=bool, is_flag=True, default=False, help="Show more logs"
+    )
+
+    ssl_verify = click.option(
+        "--ssl-verify",
+        type=BOOL_OR_STRING,
+        default="True",
+        help="Verify SSL certificate (see Python's requests' verify argument documentation)",
     )
 
 

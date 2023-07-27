@@ -83,7 +83,8 @@ class Kili(  # pylint: disable=too-many-ancestors
                 Default to  KILI_API_ENDPOINT environment variable).
                 If not passed, default to Kili SaaS:
                 'https://cloud.kili-technology.com/api/label/v2/graphql'
-            verify: Verify certificate (see request's documentation). Set to False on local deployment without SSL.
+                verify: Verify certificate (see request's documentation). Set to False on
+                local deployment without SSL.
             client_name: For internal use only.
                 Define the name of the graphQL client whith which graphQL calls will be sent.
 
