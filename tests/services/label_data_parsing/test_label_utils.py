@@ -303,6 +303,7 @@ def test_integration_of_label_parsing_in_kili_labels(mocker):
     kili = QueriesLabel()
     kili.graphql_client = mocker.MagicMock()
     kili.graphql_client.execute = mocked_execute
+    kili.http_client = mocker.MagicMock()
 
     labels = kili.labels(project_id="project_id", output_format="parsed_label")
 
@@ -369,6 +370,7 @@ def test_integration_of_label_parsing_in_kili_assets(mocker):
     kili = QueriesAsset()
     kili.graphql_client = mocker.MagicMock()
     kili.graphql_client.execute = mocked_execute
+    kili.http_client = mocker.MagicMock()
 
     fields = [
         "content",

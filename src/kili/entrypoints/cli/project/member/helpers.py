@@ -2,7 +2,9 @@
 
 import re
 import warnings
-from typing import Iterable, Optional
+from typing import Callable, Iterable, Optional
+
+import requests
 
 from kili.client import Kili
 from kili.core.graphql import QueryOptions
@@ -29,11 +31,14 @@ def type_check_member(key, value):
 
 def collect_members_from_csv(csv_path: str, role: Optional[str]):
     """Read a csv with to collect members and role."""
+    type_check_function: Callable[[str, str, Optional[requests.Session]], str] = (
+        lambda key, value, z: type_check_member(key, value)
+    )
     members_to_add = collect_from_csv(
         csv_path=csv_path,
         required_columns=["email"],
         optional_columns=["role"],
-        type_check_function=type_check_member,
+        type_check_function=type_check_function,
     )
 
     if len(members_to_add) == 0:
@@ -60,7 +65,7 @@ def collect_members_from_project(kili: Kili, project_id_source: str, role: Optio
     if role is not None:
         raise ValueError("--role cannot be used if the argument passed is a Kili project_id")
 
-    existing_members = ProjectUserQuery(kili.graphql_client)(
+    existing_members = ProjectUserQuery(kili.graphql_client, kili.http_client)(
         where=ProjectUserWhere(project_id=project_id_source),
         fields=["role", "user.email", "activated"],
         options=QueryOptions(disable_tqdm=True),

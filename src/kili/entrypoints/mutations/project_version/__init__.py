@@ -5,14 +5,14 @@ from typing import Dict, Optional
 from typeguard import typechecked
 
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import format_result
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .queries import GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsProjectVersion:  # pylint: disable=too-few-public-methods
+class MutationsProjectVersion(BaseOperationEntrypointMixin):
     """Set of ProjectVersion mutations."""
 
     graphql_client: GraphQLClient
@@ -41,4 +41,4 @@ class MutationsProjectVersion:  # pylint: disable=too-few-public-methods
             "id": project_version_id,
         }
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)

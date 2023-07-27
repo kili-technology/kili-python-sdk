@@ -23,9 +23,10 @@ from kili.entrypoints.queries.user import QueriesUser
     ],
 )
 @patch.object(UserQuery, "__call__")
-def test_users_query_return_type(mock, args, kwargs, expected_return_type):
+def test_users_query_return_type(mocker, args, kwargs, expected_return_type):
     kili = QueriesUser()
-    kili.graphql_client = mock.MagicMock()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     result = kili.users(*args, **kwargs)
     assert check_type("result", result, expected_return_type) is None
@@ -43,9 +44,10 @@ def test_users_query_return_type(mock, args, kwargs, expected_return_type):
     ],
 )
 @patch.object(AssetQuery, "__call__")
-def test_assets_query_return_type(mock, args, kwargs, expected_return_type):
+def test_assets_query_return_type(mocker, args, kwargs, expected_return_type):
     kili = QueriesAsset()
-    kili.graphql_client = mock.MagicMock()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     result = kili.assets(*args, **kwargs)
     assert check_type("result", result, expected_return_type) is None

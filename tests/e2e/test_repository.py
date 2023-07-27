@@ -18,7 +18,7 @@ def test_get_content_stream_public_image(content_url):
         router_headers={
             "Authorization": f"X-API-Key: {kili.api_key}",
         },
-        verify_ssl=True,
+        http_client=kili.http_client,
     )
 
     content_repository.get_content_stream(content_url, 1024)

@@ -3,6 +3,7 @@ import mimetypes
 import os
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
+from itertools import repeat
 from typing import List
 
 from kili.core.helpers import is_url
@@ -115,7 +116,11 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
             content_type_array.append(content_type)
         with ThreadPoolExecutor() as threads:
             url_gen = threads.map(
-                bucket.upload_data_via_rest, signed_urls, data_array, content_type_array
+                bucket.upload_data_via_rest,
+                signed_urls,
+                data_array,
+                content_type_array,
+                repeat(self.http_client),
             )
         cleaned_urls = (bucket.clean_signed_url(url, self.kili.api_endpoint) for url in url_gen)
         return AssetLike(**{**asset, "json_content": list(cleaned_urls)})  # type: ignore

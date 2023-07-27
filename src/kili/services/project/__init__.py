@@ -10,7 +10,7 @@ from kili.exceptions import NotFound
 def get_project(kili, project_id: str, fields: List[str]) -> Dict:
     """Get a project from its id or raise a NotFound Error if not found."""
     projects = list(
-        ProjectQuery(kili.graphql_client)(
+        ProjectQuery(kili.graphql_client, kili.http_client)(
             ProjectWhere(project_id=project_id), fields, QueryOptions(disable_tqdm=True, first=1)
         )
     )

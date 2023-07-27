@@ -6,14 +6,14 @@ from typing import Optional
 from typeguard import typechecked
 
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import format_result
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .queries import GQL_CREATE_ORGANIZATION, GQL_UPDATE_PROPERTIES_IN_ORGANIZATION
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsOrganization:
+class MutationsOrganization(BaseOperationEntrypointMixin):
     """Set of Organization mutations."""
 
     graphql_client: GraphQLClient
@@ -28,11 +28,11 @@ class MutationsOrganization:
         Each user must be linked to an organization
 
         Args:
-            name :
-            address :
-            zip_code :
-            city :
-            country :
+            name : Name of the organization
+            address : Address of the organization
+            zip_code : Zip code of the organization
+            city : City of the organization
+            country : Country of the organization
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -48,7 +48,7 @@ class MutationsOrganization:
             }
         }
         result = self.graphql_client.execute(GQL_CREATE_ORGANIZATION, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def update_properties_in_organization(
@@ -77,4 +77,4 @@ class MutationsOrganization:
         if license_str is not None:
             variables["license"] = license_str
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)

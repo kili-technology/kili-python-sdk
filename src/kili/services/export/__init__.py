@@ -62,7 +62,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         router_headers={
             "Authorization": f"X-API-Key: {kili.api_key}",
         },
-        verify_ssl=True,
+        http_client=kili.http_client,
     )
 
     if label_format in get_args(LabelFormat):
