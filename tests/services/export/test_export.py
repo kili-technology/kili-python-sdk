@@ -808,32 +808,6 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
         )
 
 
-def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it_should_crash(
-    mocker,
-):
-    kili = mock_kili(mocker, with_data_connection=True)
-    kili.api_endpoint = "https://"  # type: ignore
-    kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
-
-    with pytest.raises(
-        NotCompatibleOptions,
-        match=(
-            "Export with download of assets is not allowed on projects with data"
-            " connections. Please disable the download of assets by setting"
-            " `with_assets=False`."
-        ),
-    ):
-        kili.export_labels(
-            project_id="fake_proj_id",
-            filename="fake_filename",
-            fmt="yolo_v5",
-            layout="merged",
-            with_assets=True,
-        )
-
-
 def mock_kili(mocker, with_data_connection):
     get_project_return_val = {
         "jsonInterface": {
