@@ -5,6 +5,7 @@ from unittest import mock
 import graphql
 import pytest
 import pytest_mock
+import requests
 from gql.transport.exceptions import TransportServerError
 
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
@@ -14,13 +15,14 @@ from kili.exceptions import GraphQLError
 def test_graphql_client_cache_cant_get_kili_version(mocker):
     """Test when we can't get the kili version from the backend."""
     mocker.patch("kili.core.graphql.graphql_client.Client", return_value=None)
+    mocker.patch.object(GraphQLClient, "_get_kili_app_version", return_value=None)
 
     _ = GraphQLClient(
         endpoint="https://",
         api_key="nokey",
         client_name=GraphQLClientName.SDK,
         verify=True,
-        kili_app_version=None,
+        http_client=requests.Session(),
     )
 
 
@@ -46,7 +48,7 @@ def test_gql_bad_query_local_validation(query, mocker):
         api_key="",
         client_name=GraphQLClientName.SDK,
         verify=True,
-        kili_app_version="2.129.0",
+        http_client=requests.Session(),
     )
 
     with pytest.raises(GraphQLError) as exc_info:
@@ -75,7 +77,7 @@ def test_graphql_client_cache(mocker):
         api_key="",
         client_name=GraphQLClientName.SDK,
         verify=True,
-        kili_app_version="2.129.0",
+        http_client=requests.Session(),
     )
 
     # schema should be cached
@@ -89,7 +91,7 @@ def test_graphql_client_cache(mocker):
             api_key="",
             client_name=GraphQLClientName.SDK,
             verify=True,
-            kili_app_version="2.129.0",
+            http_client=requests.Session(),
         )
         mocked_print_schema.assert_not_called()
 
@@ -107,7 +109,7 @@ def test_schema_caching_requires_cache_dir():
             client_name=GraphQLClientName.SDK,
             enable_schema_caching=True,
             graphql_schema_cache_dir=None,
-            kili_app_version="2.129.0",
+            http_client=requests.Session(),
         )
 
 
@@ -115,7 +117,10 @@ def test_skip_checks_disable_local_validation(mocker: pytest_mock.MockerFixture)
     mocker_gql = mocker.patch("kili.core.graphql.graphql_client.Client", return_value=None)
     mocker.patch.dict(os.environ, {"KILI_SDK_SKIP_CHECKS": "true"})
     client = GraphQLClient(
-        endpoint="", api_key="", client_name=GraphQLClientName.SDK, kili_app_version="2.129.0"
+        endpoint="",
+        api_key="",
+        client_name=GraphQLClientName.SDK,
+        http_client=requests.Session(),
     )
     mocker_gql.assert_called_with(
         transport=client._gql_transport,
@@ -130,7 +135,7 @@ def test_retries_in_case_of_transport_server_error(mocker: pytest_mock.MockerFix
         api_key="",
         client_name=GraphQLClientName.SDK,
         enable_schema_caching=False,
-        kili_app_version="2.129.0",
+        http_client=requests.Session(),
     )
 
     nb_errors_to_raise = 3
