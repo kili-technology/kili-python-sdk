@@ -2,6 +2,7 @@
 This script permits to initialize the Kili Python SDK client.
 """
 import os
+from typing import Union
 
 from kili.authentication import KiliAuth
 from kili.exceptions import AuthenticationFailed
@@ -70,7 +71,7 @@ class Kili(  # pylint: disable=too-many-ancestors
         self,
         api_key=None,
         api_endpoint=None,
-        verify=True,
+        verify: Union[bool, str] = True,
         client_name=GraphQLClientName.SDK,
     ):
         """
