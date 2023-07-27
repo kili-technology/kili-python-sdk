@@ -3,25 +3,36 @@
 import os
 import shutil
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple
 
 import ffmpeg
 
 from kili.utils.tempfile import TemporaryDirectory
+
+from ..exceptions import NotExportableAssetError
 
 
 class FFmpegError(Exception):
     """Errors related to ffmpeg."""
 
 
-def get_video_dimensions(file_path: Union[Path, str]) -> Tuple:
+def get_video_dimensions(asset: Dict) -> Tuple:
     """Get a video width and height."""
-    assert Path(file_path).is_file(), f"File {file_path} does not exist"
-    probe = ffmpeg.probe(str(file_path))
-    video_info = next(s for s in probe["streams"] if s["codec_type"] == "video")
-    width = video_info["width"]
-    height = video_info["height"]
-    return width, height
+    if "resolution" in asset and asset["resolution"] is not None:
+        return (asset["resolution"]["width"], asset["resolution"]["height"])
+
+    if Path(asset["content"]).is_file():
+        probe = ffmpeg.probe(str(asset["content"]))
+        video_info = next(s for s in probe["streams"] if s["codec_type"] == "video")
+        width = video_info["width"]
+        height = video_info["height"]
+        return width, height
+
+    raise NotExportableAssetError(
+        f"Could not find video dimensions for asset with externalId '{asset['externalId']}'. Please"
+        " use `kili.update_properties_in_assets()` to update the resolution of your asset. Or use"
+        " `kili.export_labels(with_assets=True).`"
+    )
 
 
 def cut_video(

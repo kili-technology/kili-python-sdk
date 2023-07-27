@@ -1,13 +1,48 @@
 """Tools for export with images."""
 
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Dict, Tuple
 
 from PIL import Image
 
+from ..exceptions import NotExportableAssetError
 
-def get_image_dimensions(file_path: Union[Path, str]) -> Tuple:
+
+def _get_image_dimensions(filepath: str) -> Tuple:
     """Get an image width and height."""
-    assert Path(file_path).is_file(), f"File {file_path} does not exist"
-    image = Image.open(str(file_path))
+    image = Image.open(filepath)
     return image.size
+
+
+def get_image_dimensions(asset: Dict) -> Tuple:
+    """Get an asset image width and height."""
+    if "resolution" in asset and asset["resolution"] is not None:
+        return (asset["resolution"]["width"], asset["resolution"]["height"])
+
+    if Path(asset["content"]).is_file():
+        return _get_image_dimensions(asset["content"])
+
+    raise NotExportableAssetError(
+        f"Could not find dimensions for asset with externalId '{asset['externalId']}'. Please"
+        " use `kili.update_properties_in_assets()` to update the resolution of your asset. Or use"
+        " `kili.export_labels(with_assets=True).`"
+    )
+
+
+def get_frame_dimensions(asset: Dict) -> Tuple:
+    """Get a video asset frame width and height."""
+    if "resolution" in asset and asset["resolution"] is not None:
+        return (asset["resolution"]["width"], asset["resolution"]["height"])
+
+    if (
+        isinstance(asset["jsonContent"], list)
+        and len(asset["jsonContent"]) > 0
+        and Path(asset["jsonContent"][0]).is_file()
+    ):
+        return _get_image_dimensions(asset["jsonContent"][0])
+
+    raise NotExportableAssetError(
+        f"Could not find dimensions for asset with externalId '{asset['externalId']}'. Please"
+        " use `kili.update_properties_in_assets()` to update the resolution of your asset. Or use"
+        " `kili.export_labels(with_assets=True).`"
+    )

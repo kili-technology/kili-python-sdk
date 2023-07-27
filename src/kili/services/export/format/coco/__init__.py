@@ -23,7 +23,7 @@ from kili.services.export.types import CocoAnnotationModifier
 from kili.services.types import Job, JobName
 from kili.utils.tqdm import tqdm
 
-from ...media.image import get_image_dimensions
+from ...media.image import get_frame_dimensions, get_image_dimensions
 from ...media.video import cut_video, get_video_dimensions
 
 DATA_SUBDIR = "data"
@@ -34,8 +34,6 @@ DATA_SUBDIR = "data"
 
 class CocoExporter(AbstractExporter):
     """Common code for COCO exporter."""
-
-    requires_asset_access = True
 
     def _check_arguments_compatibility(self) -> None:
         """Checks if the export label format is compatible with the export options."""
@@ -271,7 +269,7 @@ def _get_images_and_annotation_for_images(
     annotation_offset = 0
 
     for asset_i, asset in tqdm(enumerate(assets), desc="Convert to coco format"):
-        width, height = get_image_dimensions(asset["content"])
+        width, height = get_image_dimensions(asset)
         coco_image = CocoImage(
             id=asset_i,
             license=0,
@@ -335,12 +333,12 @@ def _get_images_and_annotation_for_videos(
         frame_ext = ""
         # jsonContent with frames
         if isinstance(asset["jsonContent"], list) and Path(asset["jsonContent"][0]).is_file():
-            width, height = get_image_dimensions(asset["jsonContent"][0])
+            width, height = get_frame_dimensions(asset)
             frame_ext = Path(asset["jsonContent"][0]).suffix
 
         # video with shouldUseNativeVideo set to True (no frames available)
         elif Path(asset["content"]).is_file():
-            width, height = get_video_dimensions(asset["content"])
+            width, height = get_video_dimensions(asset)
             cut_video(asset["content"], asset, leading_zeros, Path(asset["content"]).parent)
             frame_ext = ".jpg"
 

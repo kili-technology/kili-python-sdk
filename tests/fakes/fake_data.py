@@ -69,6 +69,7 @@ asset_image_1 = {
     "externalId": "car_1",
     "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
     "jsonContent": "",
+    "resolution": {"height": 1000, "width": 1000},
 }
 
 asset_image_1_with_classification = {
