@@ -215,19 +215,23 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
         If one of the assets is a geotiff asset, then:
 
-        - we can only allow the export for Kili format, since geotiff normalizedVertices are lat/lon coordinates
+        - we can only allow the export for Kili or geojson formats, since geotiff normalizedVertices are lat/lon coordinates
         - we cannot allow normalized_coordinates != None, for the same reason
         """
-        if self.label_format not in ("raw", "kili") or self.normalized_coordinates is not None:
+        if (
+            self.label_format not in ("raw", "kili", "geojson")
+            or self.normalized_coordinates is not None
+        ):
             has_geotiff_asset = any(
                 is_geotiff_asset_with_lat_lon_coords(asset, self.kili.http_client)
                 for asset in assets
             )
 
-            if self.label_format not in ("raw", "kili") and has_geotiff_asset:
+            if self.label_format not in ("raw", "kili", "geojson") and has_geotiff_asset:
                 raise NotCompatibleOptions(
                     "Cannot export geotiff assets with geospatial coordinates in"
-                    f" {self.label_format} format. Please use 'raw' or 'kili' format instead."
+                    f" {self.label_format} format. Please use 'kili', 'raw' or 'geojson' formats"
+                    " instead."
                 )
 
             if self.normalized_coordinates is not None and has_geotiff_asset:
