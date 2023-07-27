@@ -324,3 +324,14 @@ class MutationsLabel:
         }
         result = self.graphql_client.execute(GQL_CREATE_HONEYPOT, variables)
         return format_result("data", result, Label)
+
+    @typechecked
+    def delete_labels(self, ids: List[str]):
+        """Delete labels.
+
+        Args:
+            ids: List of label ids to delete.
+
+        Returns:
+            The deleted label ids.
+        """
