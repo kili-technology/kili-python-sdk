@@ -134,7 +134,7 @@ def fetch_assets(
     where = AssetWhere(**asset_where_params)
 
     if download_media:
-        count = AssetQuery(kili.graphql_client).count(where)
+        count = AssetQuery(kili.graphql_client, kili.http_client).count(where)
         if count > THRESHOLD_WARN_MANY_ASSETS:
             warnings.warn(
                 f"Downloading many assets ({count}). This might take a while. Consider"
@@ -154,7 +154,11 @@ def fetch_assets(
     post_call_function, fields = get_download_assets_function(
         kili, download_media, fields, project_id, local_media_dir
     )
-    assets = list(AssetQuery(kili.graphql_client)(where, fields, options, post_call_function))
+    assets = list(
+        AssetQuery(kili.graphql_client, kili.http_client)(
+            where, fields, options, post_call_function
+        )
+    )
     attach_name_to_assets_labels_author(assets, export_type)
     return assets
 

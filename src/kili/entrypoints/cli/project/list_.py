@@ -35,7 +35,7 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     projects = list(
-        ProjectQuery(kili.graphql_client)(
+        ProjectQuery(kili.graphql_client, kili.http_client)(
             ProjectWhere(),
             [
                 "title",

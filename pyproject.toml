@@ -12,14 +12,14 @@ exclude = '''
 
 [tool.isort]
 profile = "black"
-py_version=38
-known_first_party= ['kili']
+py_version = 38
+known_first_party = ['kili']
 
 [tool.pyright]
-exclude = [
-    "**/__pycache__",
-    "recipes/datasets/plugins/plugin.py",
-]
+exclude = ["**/__pycache__", "recipes/datasets/plugins/plugin.py"]
 
 pythonVersion = "3.8"
 typeCheckingMode = "basic"
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]

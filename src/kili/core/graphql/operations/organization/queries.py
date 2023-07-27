@@ -5,7 +5,6 @@ from datetime import datetime
 from typing import Dict, Optional
 
 from kili.core.graphql import BaseQueryWhere, GraphQLQuery
-from kili.core.helpers import format_result
 
 
 class OrganizationWhere(BaseQueryWhere):
@@ -87,4 +86,4 @@ class OrganizationQuery(GraphQLQuery):
         """Execute the organizationMetrics operation."""
         payload = {"where": where.graphql_payload}
         result = self.client.execute(self.GQL_ORGANIZATION_METRICS, payload)
-        return format_result("data", result)
+        return self.format_result("data", result)

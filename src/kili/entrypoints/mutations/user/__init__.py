@@ -4,8 +4,7 @@ from typing import Any, Dict, Literal, Optional
 
 from typeguard import typechecked
 
-from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import format_result
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.user.queries import (
     GQL_CREATE_USER,
     GQL_UPDATE_PASSWORD,
@@ -13,10 +12,8 @@ from kili.entrypoints.mutations.user.queries import (
 )
 
 
-class MutationsUser:
+class MutationsUser(BaseOperationEntrypointMixin):
     """Set of User mutations."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments
     @typechecked
@@ -52,7 +49,7 @@ class MutationsUser:
         if lastname is not None:
             variables["data"]["lastname"] = lastname
         result = self.graphql_client.execute(GQL_CREATE_USER, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def update_password(
@@ -80,7 +77,7 @@ class MutationsUser:
             "where": {"email": email},
         }
         result = self.graphql_client.execute(GQL_UPDATE_PASSWORD, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def update_properties_in_user(
@@ -120,4 +117,4 @@ class MutationsUser:
         if activated is not None:
             variables["activated"] = activated
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_USER, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)

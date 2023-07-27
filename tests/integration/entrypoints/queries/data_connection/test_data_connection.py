@@ -1,19 +1,17 @@
-from unittest.mock import patch
-
 import pytest
 
 from kili.entrypoints.queries.data_connection import QueriesDataConnection
 
 
-@patch("kili.core.graphql.GraphQLClient")
-def test_data_connections(mocked_graphql_client):
+def test_data_connections(mocker):
     """Test data_connections query."""
     kili = QueriesDataConnection()
-    kili.graphql_client = mocked_graphql_client
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
     kili.cloud_storage_connections(project_id="789465123")
-    mocked_graphql_client.execute.assert_called_once()
-    query_sent = mocked_graphql_client.execute.call_args[0][0]
-    variables = mocked_graphql_client.execute.call_args[0][1]
+    kili.graphql_client.execute.assert_called_once()
+    query_sent = kili.graphql_client.execute.call_args[0][0]
+    variables = kili.graphql_client.execute.call_args[0][1]
 
     assert (
         "query dataConnections($where: DataConnectionsWhere!, $first: PageSize!, $skip: Int!)"
@@ -29,19 +27,19 @@ def test_data_connections(mocked_graphql_client):
     }
 
 
-@patch("kili.core.graphql.GraphQLClient")
-def test_data_connection(mocked_graphql_client):
+def test_data_connection(mocker):
     """Test data_connection query."""
     kili = QueriesDataConnection()
-    kili.graphql_client = mocked_graphql_client
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
     with pytest.raises(ValueError, match="No data connection with id my_data_connection_id"):
         kili.cloud_storage_connections(
             cloud_storage_connection_id="my_data_connection_id", fields=["my_field"]
         )
 
-    mocked_graphql_client.execute.assert_called_once()
-    query_sent = mocked_graphql_client.execute.call_args[0][0]
-    variables = mocked_graphql_client.execute.call_args[0][1]
+    kili.graphql_client.execute.assert_called_once()
+    query_sent = kili.graphql_client.execute.call_args[0][0]
+    variables = kili.graphql_client.execute.call_args[0][1]
 
     assert "query dataConnection($where: DataConnectionIdWhere!)" in query_sent
     assert "data: dataConnection(where: $where)" in query_sent
