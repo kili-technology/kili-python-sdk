@@ -30,6 +30,7 @@ def test_given_page_resolutions_when_i_call_update_properties_in_assets_it_calls
     # Given
     kili = MutationsAsset()
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     asset_ids = ["asset_id"]
 

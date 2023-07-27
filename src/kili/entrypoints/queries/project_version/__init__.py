@@ -5,20 +5,18 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.project_version.queries import (
     ProjectVersionQuery,
     ProjectVersionWhere,
 )
 from kili.core.helpers import disable_tqdm_if_as_generator
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesProjectVersion:
+class QueriesProjectVersion(BaseOperationEntrypointMixin):
     """Set of ProjectVersion queries."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 
@@ -59,13 +57,13 @@ class QueriesProjectVersion:
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
-        # pylint: disable=line-too-long
         """Get a generator or a list of project versions respecting a set of criteria.
 
         Args:
             project_id: Filter on Id of project
             fields: All the fields to request among the possible fields for the project versions
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectVersions) for all possible fields.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectVersions) # pylint:disable=line-too-long
+                  for all possible fields.
             first: Number of project versions to query
             skip: Number of project versions to skip (they are ordered by their date
                 of creation, first to last).
@@ -80,7 +78,9 @@ class QueriesProjectVersion:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        project_versions_gen = ProjectVersionQuery(self.graphql_client)(where, fields, options)
+        project_versions_gen = ProjectVersionQuery(self.graphql_client, self.http_client)(
+            where, fields, options
+        )
 
         if as_generator:
             return project_versions_gen
@@ -99,4 +99,4 @@ class QueriesProjectVersion:
         where = ProjectVersionWhere(
             project_id=project_id,
         )
-        return ProjectVersionQuery(self.graphql_client).count(where)
+        return ProjectVersionQuery(self.graphql_client, self.http_client).count(where)

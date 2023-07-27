@@ -9,7 +9,7 @@ from typing import Dict, List, NamedTuple, Optional, Type
 import yaml
 
 from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
-from kili.core.helpers import format_result, get_file_paths_to_upload
+from kili.core.helpers import get_file_paths_to_upload
 from kili.core.utils import pagination
 from kili.orm import Label
 from kili.services.helpers import (
@@ -114,7 +114,7 @@ class AbstractLabelImporter(ABC):
                 batch_result = self.kili.graphql_client.execute(
                     GQL_APPEND_MANY_LABELS, variables, timeout=60
                 )
-                result.extend(format_result("data", batch_result, Label))
+                result.extend(self.kili.format_result("data", batch_result, Label))
                 pbar.update(len(batch_labels))
         return result
 

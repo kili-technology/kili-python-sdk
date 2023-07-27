@@ -2,9 +2,9 @@
 
 import os
 from pathlib import Path
-from unittest import mock
 
 import pytest
+import requests
 
 from kili.entrypoints.queries.asset.media_downloader import MediaDownloader
 from kili.utils.tempfile import TemporaryDirectory
@@ -73,7 +73,7 @@ def test_download_single_asset_mixed(input_asset, expected_filename):
     """Tests download_single_asset with asset["content"]"""
     with TemporaryDirectory() as tmp_dir:
         output_asset = MediaDownloader(
-            tmp_dir, "", False, input_asset["project"]["inputType"]
+            tmp_dir, "", False, input_asset["project"]["inputType"], requests.Session()
         ).download_single_asset(input_asset)
 
         assert output_asset["content"] == os.path.join(str(tmp_dir.resolve()), expected_filename)
@@ -107,7 +107,7 @@ def test_download_single_asset_jsoncontent(input_asset):
     """Tests with asset["jsonContent"] and extension in externalid."""
     with TemporaryDirectory() as tmp_dir:
         output_asset = MediaDownloader(
-            tmp_dir, "", False, input_asset["project"]["inputType"]
+            tmp_dir, "", False, input_asset["project"]["inputType"], requests.Session()
         ).download_single_asset(input_asset)
 
         assert output_asset["content"] == input_asset["content"] == ""
@@ -127,7 +127,11 @@ def test_download_media_jsoncontent_field_added_but_useless():
     """Should remove jsonContent field."""
     with TemporaryDirectory() as tmp_dir:
         media_downloader = MediaDownloader(
-            tmp_dir, project_id="", jsoncontent_field_added=True, project_input_type="IMAGE"
+            tmp_dir,
+            project_id="",
+            jsoncontent_field_added=True,
+            project_input_type="IMAGE",
+            http_client=requests.Session(),
         )
         assets = [{"content": "", "externalId": "", "jsonContent": ""}]
         ret = media_downloader.download_assets(assets)[0]
@@ -138,7 +142,11 @@ def test_download_media_jsoncontent_field_added_but_useful():
     """Should warn jsoncontent field added and downloaded."""
     with TemporaryDirectory() as tmp_dir:
         media_downloader = MediaDownloader(
-            tmp_dir, project_id="", jsoncontent_field_added=True, project_input_type="VIDEO"
+            tmp_dir,
+            project_id="",
+            jsoncontent_field_added=True,
+            project_input_type="VIDEO",
+            http_client=requests.Session(),
         )
         assets = [
             {
@@ -163,16 +171,14 @@ def test_download_media_jsoncontent_field_added_but_useful():
         ("http://...", "", True),
     ],
 )
-@mock.patch("kili.entrypoints.queries.asset.media_downloader.requests")
-def test_download_media_jsoncontent_none(
-    mock_requests, content, jsoncontent, should_call_requests_get
-):
+def test_download_media_jsoncontent_none(mocker, content, jsoncontent, should_call_requests_get):
     """Requests.get should only be called when valid url."""
+    http_client = mocker.MagicMock(spec=requests.Session)
     with TemporaryDirectory() as tmp_dir:
-        _ = MediaDownloader(tmp_dir, "", False, "VIDEO").download_single_asset(
+        _ = MediaDownloader(tmp_dir, "", False, "VIDEO", http_client).download_single_asset(
             {"content": content, "jsonContent": jsoncontent, "externalId": "externalId"}
         )
         if should_call_requests_get:
-            mock_requests.get.assert_called()
+            http_client.get.assert_called()
         else:
-            mock_requests.get.assert_not_called()
+            http_client.get.assert_not_called()

@@ -11,11 +11,11 @@ class AbstractContentRepository(ABC):
     """Interface to the content repository."""
 
     def __init__(
-        self, router_endpoint: str, router_headers: Dict[str, str], verify_ssl: bool
+        self, router_endpoint: str, router_headers: Dict[str, str], http_client: requests.Session
     ) -> None:
         self.router_endpoint = router_endpoint
         self.router_headers = router_headers
-        self.verify_ssl = verify_ssl
+        self.http_client = http_client
         assert router_endpoint, "The router endpoint string should not be empty"
 
     @abstractmethod
@@ -51,29 +51,25 @@ class SDKContentRepository(AbstractContentRepository):
         headers = None
         if content_url.startswith(self.router_endpoint):
             headers = self.router_headers
-        json_content_resp = requests.get(
-            content_url, headers=headers, verify=self.verify_ssl, timeout=30
-        )
+        json_content_resp = self.http_client.get(content_url, headers=headers, timeout=30)
 
         if json_content_resp.ok:
             frames = list(json_content_resp.json().values())
         return frames
 
     def get_content_stream(self, content_url: str, block_size: int) -> Iterator[Any]:
-        response = requests.get(
+        response = self.http_client.get(
             content_url,
             stream=True,
             headers=None,
-            verify=self.verify_ssl,
             timeout=30,
         )
 
         if not response.ok:
-            response = requests.get(
+            response = self.http_client.get(
                 content_url,
                 stream=True,
                 headers=self.router_headers,  # pass the API key if first request failed
-                verify=self.verify_ssl,
                 timeout=30,
             )
 

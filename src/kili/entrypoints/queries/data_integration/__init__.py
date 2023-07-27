@@ -5,20 +5,18 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationsQuery,
     DataIntegrationWhere,
 )
 from kili.core.helpers import disable_tqdm_if_as_generator
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesDataIntegration:
+class QueriesDataIntegration(BaseOperationEntrypointMixin):
     """Set of cloud storage integration queries."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,dangerous-default-value
 
@@ -103,7 +101,9 @@ class QueriesDataIntegration:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        data_integrations_gen = DataIntegrationsQuery(self.graphql_client)(where, fields, options)
+        data_integrations_gen = DataIntegrationsQuery(self.graphql_client, self.http_client)(
+            where, fields, options
+        )
 
         if as_generator:
             return data_integrations_gen
@@ -137,4 +137,4 @@ class QueriesDataIntegration:
             status=status,
             organization_id=organization_id,
         )
-        return DataIntegrationsQuery(self.graphql_client).count(where)
+        return DataIntegrationsQuery(self.graphql_client, self.http_client).count(where)

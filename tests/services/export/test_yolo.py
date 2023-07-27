@@ -1,7 +1,8 @@
 # pylint: disable=missing-docstring
 
-import os
 from unittest import TestCase
+
+import requests
 
 from kili.services.export.format.yolo import (
     _convert_from_kili_to_yolo_format,
@@ -22,7 +23,9 @@ class YoloTestCase(TestCase):
     def test_process_asset_for_job_image_not_served_by_kili(self):
         with TemporaryDirectory() as images_folder:
             with TemporaryDirectory() as labels_folder:
-                fake_content_repository = FakeContentRepository("https://contentrep", {}, False)
+                fake_content_repository = FakeContentRepository(
+                    "https://contentrep", {}, requests.Session()
+                )
                 asset_remote_content, video_filenames = _process_asset(
                     asset_image_1,
                     images_folder,
@@ -51,7 +54,9 @@ class YoloTestCase(TestCase):
     def test_process_asset_for_job_frame_not_served_by_kili(self):
         with TemporaryDirectory() as images_folder:
             with TemporaryDirectory() as labels_folder:
-                fake_content_repository = FakeContentRepository("https://contentrep", {}, False)
+                fake_content_repository = FakeContentRepository(
+                    "https://contentrep", {}, requests.Session()
+                )
                 asset_remote_content, video_filenames = _process_asset(
                     asset_video,
                     images_folder,

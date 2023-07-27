@@ -4,7 +4,7 @@ from typing import List, Optional
 from typeguard import typechecked
 from typing_extensions import LiteralString
 
-from kili.core.graphql.graphql_client import GraphQLClient
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.services.plugins import (
     PluginUploader,
     WebhookUploader,
@@ -16,10 +16,8 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsPlugins:
+class MutationsPlugins(BaseOperationEntrypointMixin):
     """Set of Plugins mutations."""
-
-    graphql_client: GraphQLClient
 
     @typechecked
     def upload_plugin(
@@ -55,7 +53,9 @@ class MutationsPlugins:
         if not plugin_path:
             raise TypeError('"plugin_path is nullish, please provide a value')
 
-        return PluginUploader(self, plugin_path, plugin_name, verbose).create_plugin()
+        return PluginUploader(
+            self, plugin_path, plugin_name, verbose, self.http_client
+        ).create_plugin()
 
     @typechecked
     def create_webhook(
@@ -223,4 +223,6 @@ class MutationsPlugins:
         if not plugin_name:
             raise TypeError('"plugin_name is nullish, please provide a value')
 
-        return PluginUploader(self, plugin_path, plugin_name, verbose).update_plugin()
+        return PluginUploader(
+            self, plugin_path, plugin_name, verbose, self.http_client
+        ).update_plugin()

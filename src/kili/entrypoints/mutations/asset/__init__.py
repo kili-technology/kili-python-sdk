@@ -9,10 +9,10 @@ from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
-from kili.core.helpers import format_result, is_empty_list_with_warning
+from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import _mutate_from_paginated_call
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
     process_update_properties_in_assets_parameters,
 )
@@ -33,10 +33,8 @@ from .helpers import get_asset_ids_or_throw_error
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsAsset:
+class MutationsAsset(BaseOperationEntrypointMixin):
     """Set of Asset mutations."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,too-many-locals
     @typechecked
@@ -291,7 +289,7 @@ class MutationsAsset:
             generate_variables,
             GQL_UPDATE_PROPERTIES_IN_ASSETS,
         )
-        formated_results = [format_result("data", result, Asset) for result in results]
+        formated_results = [self.format_result("data", result, Asset) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 
     @typechecked
@@ -345,7 +343,7 @@ class MutationsAsset:
             generate_variables,
             GQL_UPDATE_PROPERTIES_IN_ASSETS,
         )
-        formated_results = [format_result("data", result, Asset) for result in results]
+        formated_results = [self.format_result("data", result, Asset) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 
     @typechecked
@@ -385,7 +383,7 @@ class MutationsAsset:
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been deleted."""
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
-            nb_assets_in_kili = AssetQuery(self.graphql_client).count(
+            nb_assets_in_kili = AssetQuery(self.graphql_client, self.http_client).count(
                 AssetWhere(
                     project_id=results[0]["data"]["id"],
                     asset_id_in=asset_ids,
@@ -401,7 +399,7 @@ class MutationsAsset:
             GQL_DELETE_MANY_FROM_DATASET,
             last_batch_callback=verify_last_batch,
         )
-        return format_result("data", results[0])
+        return self.format_result("data", results[0])
 
     @typechecked
     def add_to_review(
@@ -457,7 +455,7 @@ class MutationsAsset:
             except TypeError:
                 return  # No assets have changed status
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
-            nb_assets_in_review = AssetQuery(self.graphql_client).count(
+            nb_assets_in_review = AssetQuery(self.graphql_client, self.http_client).count(
                 AssetWhere(
                     project_id=project_id,
                     asset_id_in=asset_ids,
@@ -474,11 +472,11 @@ class MutationsAsset:
             GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
             last_batch_callback=verify_last_batch,
         )
-        result = format_result("data", results[0])
+        result = self.format_result("data", results[0])
         # unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID
         # it happens when no assets have been sent to review
         if isinstance(result, dict) and "id" in result:
-            assets_in_review = AssetQuery(self.graphql_client)(
+            assets_in_review = AssetQuery(self.graphql_client, self.http_client)(
                 AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["TO_REVIEW"]),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
@@ -533,7 +531,7 @@ class MutationsAsset:
         def verify_last_batch(last_batch: Dict, results: List):
             """Check that all assets in the last batch have been sent back to queue."""
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
-            nb_assets_in_queue = AssetQuery(self.graphql_client).count(
+            nb_assets_in_queue = AssetQuery(self.graphql_client, self.http_client).count(
                 AssetWhere(
                     project_id=results[0]["data"]["id"],
                     asset_id_in=asset_ids,
@@ -550,8 +548,8 @@ class MutationsAsset:
             GQL_SEND_BACK_ASSETS_TO_QUEUE,
             last_batch_callback=verify_last_batch,
         )
-        result = format_result("data", results[0])
-        assets_in_queue = AssetQuery(self.graphql_client)(
+        result = self.format_result("data", results[0])
+        assets_in_queue = AssetQuery(self.graphql_client, self.http_client)(
             AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
             ["id"],
             QueryOptions(disable_tqdm=True),
