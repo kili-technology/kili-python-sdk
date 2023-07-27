@@ -67,7 +67,11 @@ class Kili(  # pylint: disable=too-many-ancestors
     """
 
     def __init__(
-        self, api_key=None, api_endpoint=None, verify=True, client_name=GraphQLClientName.SDK
+        self,
+        api_key=None,
+        api_endpoint=None,
+        verify=True,
+        client_name=GraphQLClientName.SDK,
     ):
         """
         Args:
@@ -79,7 +83,7 @@ class Kili(  # pylint: disable=too-many-ancestors
                 Default to  KILI_API_ENDPOINT environment variable).
                 If not passed, default to Kili SaaS:
                 'https://cloud.kili-technology.com/api/label/v2/graphql'
-            verify: Verify certificate. Set to False on local deployment without SSL.
+            verify: Verify certificate (see request's documentation). Set to False on local deployment without SSL.
             client_name: For internal use only.
                 Define the name of the graphQL client whith which graphQL calls will be sent.
 
@@ -107,7 +111,7 @@ class Kili(  # pylint: disable=too-many-ancestors
                 api_key=api_key,
                 api_endpoint=api_endpoint,
                 client_name=client_name,
-                verify=verify,
+                ssl_verify=verify,
             )
             super().__init__(self.auth)
         except Exception as exception:

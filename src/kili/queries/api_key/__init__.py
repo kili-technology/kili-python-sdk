@@ -103,7 +103,7 @@ class QueriesApiKey:
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        api_keys_gen = APIKeyQuery(self.auth.client)(where, fields, options)
+        api_keys_gen = APIKeyQuery(self.auth.client, self.auth.ssl_verify)(where, fields, options)
 
         if as_generator:
             return api_keys_gen
@@ -134,4 +134,4 @@ class QueriesApiKey:
             1
         """
         where = APIKeyWhere(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
-        return APIKeyQuery(self.auth.client).count(where)
+        return APIKeyQuery(self.auth.client, self.auth.ssl_verify).count(where)

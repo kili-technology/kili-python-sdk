@@ -313,7 +313,9 @@ class QueriesAsset:
         post_call_function, fields = get_download_assets_function(
             self.auth, download_media, fields, project_id, local_media_dir
         )
-        assets_gen = AssetQuery(self.auth.client)(where, fields, options, post_call_function)
+        assets_gen = AssetQuery(self.auth.client, self.auth.ssl_verify)(
+            where, fields, options, post_call_function
+        )
 
         if format == "pandas":
             return pd.DataFrame(list(assets_gen))
@@ -442,4 +444,4 @@ class QueriesAsset:
             created_at_gte=created_at_gte,
             created_at_lte=created_at_lte,
         )
-        return AssetQuery(self.auth.client).count(where)
+        return AssetQuery(self.auth.client, self.auth.ssl_verify).count(where)

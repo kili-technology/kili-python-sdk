@@ -133,7 +133,7 @@ class QueriesIssue:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        issues_gen = IssueQuery(self.auth.client)(where, fields, options)
+        issues_gen = IssueQuery(self.auth.client, self.auth.ssl_verify)(where, fields, options)
         if as_generator:
             return issues_gen
         return list(issues_gen)
@@ -170,4 +170,4 @@ class QueriesIssue:
             issue_type=issue_type,
             status=status,
         )
-        return IssueQuery(self.auth.client).count(where)
+        return IssueQuery(self.auth.client, self.auth.ssl_verify).count(where)

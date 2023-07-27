@@ -88,7 +88,7 @@ class PluginQuery(GraphQLQuery):
         fragment = self.fragment_builder(fields)
         query = self.gql_list_plugins(fragment)
         result = self.client.execute(query)
-        return format_result("data", result)
+        return format_result("data", result, None, self.ssl_verify)
 
     def get_logs(self, where: PluginLogsWhere, options: QueryOptions):
         """
@@ -108,7 +108,7 @@ class PluginQuery(GraphQLQuery):
             )
 
         result = self.client.execute(self.GQL_GET_PLUGIN_LOGS, payload)
-        return format_result("data", result)
+        return format_result("data", result, None, self.ssl_verify)
 
 
 GQL_GET_PLUGIN_RUNNER_STATUS = """

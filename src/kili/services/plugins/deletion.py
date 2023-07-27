@@ -21,4 +21,4 @@ def delete_plugin(auth: KiliAuth, plugin_name: str):
 
     logger.info(f"Plugin {plugin_name} deleted!")
 
-    return format_result("data", result)
+    return format_result("data", result, None, auth.ssl_verify)

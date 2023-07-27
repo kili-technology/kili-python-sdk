@@ -126,7 +126,9 @@ class QueriesProjectUser:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        project_users_gen = ProjectUserQuery(self.auth.client)(where, fields, options)
+        project_users_gen = ProjectUserQuery(self.auth.client, self.auth.ssl_verify)(
+            where, fields, options
+        )
 
         if as_generator:
             return project_users_gen
@@ -154,4 +156,4 @@ class QueriesProjectUser:
         where = ProjectUserWhere(
             project_id=project_id, email=email, _id=id, organization_id=organization_id
         )
-        return ProjectUserQuery(self.auth.client).count(where)
+        return ProjectUserQuery(self.auth.client, self.auth.ssl_verify).count(where)

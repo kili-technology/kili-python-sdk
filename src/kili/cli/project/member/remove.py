@@ -83,7 +83,7 @@ def remove_member(
         members_to_rm = collect_members_from_emails(emails, None)
 
     count = 0
-    existing_members = ProjectUserQuery(kili.auth.client)(
+    existing_members = ProjectUserQuery(kili.auth.client, kili.auth.ssl_verify)(
         where=ProjectUserWhere(project_id=project_id),
         fields=[
             "activated",

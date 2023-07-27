@@ -3,7 +3,7 @@ GraphQL module
 """
 
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type
+from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type, Union
 
 from tqdm import tqdm
 from typeguard import typechecked
@@ -53,8 +53,10 @@ class GraphQLQuery(ABC):
     def __init__(
         self,
         client: GraphQLClient,
+        ssl_verify: Union[bool, str],
     ) -> None:
         self.client = client
+        self.ssl_verify = ssl_verify
 
     @staticmethod
     @abstractmethod
@@ -89,7 +91,7 @@ class GraphQLQuery(ABC):
         """Count the number of objects matching the given where payload"""
         payload = {"where": where.graphql_payload}
         count_result = self.client.execute(self.COUNT_QUERY, payload)
-        return format_result("data", count_result, int)
+        return format_result("data", count_result, int, self.ssl_verify)
 
     def get_number_of_elements_to_query(self, where: BaseQueryWhere, options: QueryOptions):
         """Return the total number of element to query for one query.
@@ -152,7 +154,7 @@ class GraphQLQuery(ABC):
                     )
                     payload = {"where": where.graphql_payload, "skip": skip, "first": first}
                     rows = api_throttle(self.client.execute)(query, payload)
-                    rows = format_result("data", rows, self.FORMAT_TYPE)
+                    rows = format_result("data", rows, self.FORMAT_TYPE, self.ssl_verify)
 
                     if rows is None or len(rows) == 0:
                         break

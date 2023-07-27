@@ -22,15 +22,18 @@ from kili.constants import mime_extensions_for_IV2
 T = TypeVar("T")
 
 
-def format_result(name: str, result: dict, _object: Optional[Type[T]] = None) -> T:
+def format_result(
+    name: str, result: dict, _object: Optional[Type[T]], ssl_verify: Union[bool, str]
+) -> T:
     """
     Formats the result of the GraphQL queries.
     Args:
         name: name of the field to extract, usually data
         result: query result to parse
         _object: returned type
+        ssl_verify: requests' ssl_verify parameter
     """
-    formatted_json = format_json(result[name])
+    formatted_json = format_json(result[name], ssl_verify)
     if _object is None:
         return formatted_json  # type:ignore X
     if isinstance(formatted_json, list):
@@ -89,7 +92,7 @@ def is_url(path):
     return isinstance(path, str) and re.match(r"^(http://|https://)", path.lower())
 
 
-def format_json_dict(result: dict) -> Dict:
+def format_json_dict(result: dict, ssl_verify: Union[bool, str]) -> Dict:
     """
     Formats the dict part of a json return by a GraphQL query into a python object
 
@@ -103,7 +106,7 @@ def format_json_dict(result: dict) -> Dict:
             elif isinstance(value, str):
                 try:
                     if is_url(value):
-                        result[key] = requests.get(value, timeout=30).json()
+                        result[key] = requests.get(value, verify=ssl_verify, timeout=30).json()
                     else:
                         result[key] = loads(value)
                 except Exception as exception:
@@ -111,14 +114,16 @@ def format_json_dict(result: dict) -> Dict:
                         "Json Metadata / json response / json interface should be valid jsons"
                     ) from exception
         else:
-            result[key] = format_json(value)
+            result[key] = format_json(value, ssl_verify)
     return result
 
 
 D = TypeVar("D")
 
 
-def format_json(result: Union[None, list, dict, D]) -> Union[None, list, dict, D]:
+def format_json(
+    result: Union[None, list, dict, D], ssl_verify: Union[bool, str]
+) -> Union[None, list, dict, D]:
     """
     Formats the json return by a GraphQL query into a python object
 
@@ -128,9 +133,9 @@ def format_json(result: Union[None, list, dict, D]) -> Union[None, list, dict, D
     if result is None:
         return result
     if isinstance(result, list):
-        return [format_json(elem) for elem in result]
+        return [format_json(elem, ssl_verify) for elem in result]
     if isinstance(result, dict):
-        return format_json_dict(result)
+        return format_json_dict(result, ssl_verify)
     return result
 
 

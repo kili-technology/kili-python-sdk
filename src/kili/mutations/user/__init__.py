@@ -62,7 +62,7 @@ class MutationsUser:
         if lastname is not None:
             variables["data"]["lastname"] = lastname
         result = self.auth.client.execute(GQL_CREATE_USER, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)
 
     @typechecked
     def update_password(
@@ -90,7 +90,7 @@ class MutationsUser:
             "where": {"email": email},
         }
         result = self.auth.client.execute(GQL_UPDATE_PASSWORD, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)
 
     def reset_password(self, email: str):
         """
@@ -145,4 +145,4 @@ class MutationsUser:
         if activated is not None:
             variables["activated"] = activated
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_USER, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)

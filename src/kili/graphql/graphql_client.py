@@ -36,12 +36,12 @@ class GraphQLClient:
         endpoint: str,
         api_key: str,
         client_name: GraphQLClientName,
-        verify: bool = True,
+        ssl_verify: Union[bool, str],
     ) -> None:
         self.endpoint = endpoint
         self.api_key = api_key
         self.client_name = client_name
-        self.verify = verify
+        self.ssl_verify = ssl_verify
 
         self.ws_endpoint = self.endpoint.replace("http", "ws")
 
@@ -52,7 +52,7 @@ class GraphQLClient:
             auth=None,
             use_json=True,
             timeout=30,
-            verify=verify,
+            verify=ssl_verify,
             retries=20,
             method="POST",
         )
@@ -138,7 +138,7 @@ class GraphQLClient:
         Returns None if the version cannot be retrieved.
         """
         url = self.endpoint.replace("/graphql", "/version")
-        response = requests.get(url, verify=self.verify, timeout=30)
+        response = requests.get(url, verify=self.ssl_verify, timeout=30)
         if response.status_code == 200 and '"version":' in response.text:
             response_json = response.json()
             version = response_json["version"]
@@ -261,7 +261,7 @@ class SubscriptionGraphQLClient:
             "type": "connection_init",
             "payload": {"headers": headers, "Authorization": authorization},
         }
-        self._conn.send(json.dumps(payload))
+        self._conn.send(json.dumps(payload).encode("utf-8"))
         self._conn.recv()
 
     def _start(self, payload):
@@ -273,7 +273,7 @@ class SubscriptionGraphQLClient:
         """
         _id = gen_id()
         frame = {"id": _id, "type": "start", "payload": payload}
-        self._conn.send(json.dumps(frame))
+        self._conn.send(json.dumps(frame).encode("utf-8"))
         return _id
 
     def _stop(self, _id):
@@ -284,7 +284,7 @@ class SubscriptionGraphQLClient:
         - _id: connection id
         """
         payload = {"id": _id, "type": "stop"}
-        self._conn.send(json.dumps(payload))
+        self._conn.send(json.dumps(payload).encode("utf-8"))
         return self._conn.recv()
 
     def query(self, query, variables=None, headers=None):

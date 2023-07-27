@@ -88,7 +88,9 @@ class QueriesProjectVersion:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        project_versions_gen = ProjectVersionQuery(self.auth.client)(where, fields, options)
+        project_versions_gen = ProjectVersionQuery(self.auth.client, self.auth.ssl_verify)(
+            where, fields, options
+        )
 
         if as_generator:
             return project_versions_gen
@@ -107,4 +109,4 @@ class QueriesProjectVersion:
         where = ProjectVersionWhere(
             project_id=project_id,
         )
-        return ProjectVersionQuery(self.auth.client).count(where)
+        return ProjectVersionQuery(self.auth.client, self.auth.ssl_verify).count(where)

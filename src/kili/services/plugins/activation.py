@@ -29,7 +29,7 @@ def activate_plugin(auth: KiliAuth, plugin_name: str, project_id: str):
     if not already_activated and not has_failed:
         logger.info(f'Plugin with name "{plugin_name}" activated on project "{project_id}"')
 
-    return format_result("data", result) if not already_activated else None
+    return format_result("data", result, None, auth.ssl_verify) if not already_activated else None
 
 
 def deactivate_plugin(auth: KiliAuth, plugin_name: str, project_id: str):
@@ -45,4 +45,4 @@ def deactivate_plugin(auth: KiliAuth, plugin_name: str, project_id: str):
 
     logger.info(f"Plugin {plugin_name} deactivated on project {project_id}")
 
-    return format_result("data", result)
+    return format_result("data", result, None, auth.ssl_verify)

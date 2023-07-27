@@ -120,7 +120,9 @@ class QueriesNotification:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        notifications_gen = NotificationQuery(self.auth.client)(where, fields, options)
+        notifications_gen = NotificationQuery(self.auth.client, self.auth.ssl_verify)(
+            where, fields, options
+        )
 
         if as_generator:
             return notifications_gen
@@ -147,4 +149,4 @@ class QueriesNotification:
             notification_id=notification_id,
             user_id=user_id,
         )
-        return NotificationQuery(self.auth.client).count(where)
+        return NotificationQuery(self.auth.client, self.auth.ssl_verify).count(where)

@@ -77,7 +77,9 @@ class MutationsIssue:
                 label_id=label_id,
             )
             asset_id: str = list(
-                LabelQuery(self.auth.client)(where=where, fields=["labelOf.id"], options=options)
+                LabelQuery(self.auth.client, self.auth.ssl_verify)(
+                    where=where, fields=["labelOf.id"], options=options
+                )
             )[0]["labelOf"]["id"]
         except:
             # pylint: disable=raise-missing-from
@@ -99,7 +101,7 @@ class MutationsIssue:
         }
 
         result = self.auth.client.execute(GQL_CREATE_ISSUES, variables)
-        return format_result("data", result)[0]
+        return format_result("data", result, None, self.auth.ssl_verify)[0]
 
     @typechecked
     def create_issues(
@@ -144,7 +146,7 @@ class MutationsIssue:
         }
 
         result = self.auth.client.execute(GQL_CREATE_ISSUES, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)
 
     @typechecked
     def create_questions(
@@ -180,4 +182,4 @@ class MutationsIssue:
         }
 
         result = self.auth.client.execute(GQL_CREATE_ISSUES, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)

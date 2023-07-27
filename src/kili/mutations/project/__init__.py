@@ -71,7 +71,7 @@ class MutationsProject:
             "where": {"id": project_id},
         }
         result = self.auth.client.execute(GQL_APPEND_TO_ROLES, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)
 
     @typechecked
     def update_properties_in_project(
@@ -182,7 +182,7 @@ class MutationsProject:
             "useHoneyPot": use_honeypot,
         }
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
-        result = format_result("data", result)
+        result = format_result("data", result, None, self.auth.ssl_verify)
 
         variables.pop("projectID")
         variables = {k: v for k, v in variables.items() if v is not None}
@@ -248,7 +248,7 @@ class MutationsProject:
             }
         }
         result = self.auth.client.execute(GQL_CREATE_PROJECT, variables)
-        result = format_result("data", result)
+        result = format_result("data", result, None, self.auth.ssl_verify)
 
         # We check during 60s for the project to be created
         for attempt in Retrying(
@@ -291,7 +291,7 @@ class MutationsProject:
             "role": role,
         }
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)
 
     @typechecked
     def delete_from_roles(self, role_id: str):
@@ -306,7 +306,7 @@ class MutationsProject:
         """
         variables = {"where": {"id": role_id}}
         result = self.auth.client.execute(GQL_DELETE_FROM_ROLES, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)
 
     @typechecked
     def delete_project(self, project_id: str) -> str:
@@ -322,7 +322,7 @@ class MutationsProject:
         """
         variables = {"where": {"id": project_id}}
         result = self.auth.client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)
 
     @typechecked
     def archive_project(self, project_id: str):
@@ -343,7 +343,7 @@ class MutationsProject:
         }
 
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)
 
     @typechecked
     def unarchive_project(self, project_id: str):
@@ -364,7 +364,7 @@ class MutationsProject:
         }
 
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)
 
     @typechecked
     def copy_project(  # pylint: disable=too-many-arguments

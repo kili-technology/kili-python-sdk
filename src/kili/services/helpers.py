@@ -66,7 +66,7 @@ def infer_ids_from_external_ids(
         external_id: external id
         project_id: project id
     """
-    assets = AssetQuery(auth.client)(
+    assets = AssetQuery(auth.client, auth.ssl_verify)(
         AssetWhere(project_id=project_id, external_id_contains=asset_external_ids),
         ["id", "externalId"],
         QueryOptions(disable_tqdm=True),

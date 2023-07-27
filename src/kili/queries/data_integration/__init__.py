@@ -112,7 +112,9 @@ class QueriesDataIntegration:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        data_integrations_gen = DataIntegrationsQuery(self.auth.client)(where, fields, options)
+        data_integrations_gen = DataIntegrationsQuery(self.auth.client, self.auth.ssl_verify)(
+            where, fields, options
+        )
 
         if as_generator:
             return data_integrations_gen
@@ -146,4 +148,4 @@ class QueriesDataIntegration:
             status=status,
             organization_id=organization_id,
         )
-        return DataIntegrationsQuery(self.auth.client).count(where)
+        return DataIntegrationsQuery(self.auth.client, self.auth.ssl_verify).count(where)

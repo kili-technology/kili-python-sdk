@@ -1,7 +1,7 @@
 """API authentication module"""
 import warnings
 from datetime import datetime, timedelta
-from typing import Dict
+from typing import Dict, Union
 
 import requests
 
@@ -33,12 +33,16 @@ class KiliAuth:
     """
 
     def __init__(
-        self, api_key: str, api_endpoint: str, client_name: GraphQLClientName, verify=True
+        self,
+        api_key: str,
+        api_endpoint: str,
+        client_name: GraphQLClientName,
+        ssl_verify: Union[bool, str],
     ) -> None:
         self.api_key = api_key
         self.api_endpoint = api_endpoint
         self.client_name = client_name
-        self.verify = verify
+        self.ssl_verify = ssl_verify
 
         try:
             self.endpoint_kili_version = self.check_versions_match()
@@ -55,7 +59,7 @@ class KiliAuth:
             endpoint=api_endpoint,
             api_key=api_key,
             client_name=client_name,
-            verify=self.verify,
+            ssl_verify=self.ssl_verify,
         )
 
         self.check_expiry_of_key_is_close()
@@ -71,7 +75,7 @@ class KiliAuth:
             api_endpoint: url of the Kili API
         """
         url = self.api_endpoint.replace("/graphql", "/version")
-        response = requests.get(url, verify=self.verify, timeout=30).json()
+        response = requests.get(url, verify=self.ssl_verify, timeout=30).json()
         version = response["version"]
         if get_version_without_patch(version) != get_version_without_patch(__version__):
             message = (
@@ -86,7 +90,7 @@ class KiliAuth:
         response = requests.post(
             url=self.api_endpoint,
             data='{"query":"{ me { id email } }"}',
-            verify=self.verify,
+            verify=self.ssl_verify,
             timeout=30,
             headers={
                 "Authorization": f"X-API-Key: {self.api_key}",
@@ -116,7 +120,7 @@ class KiliAuth:
         """
         warn_days = 30
 
-        api_keys = APIKeyQuery(self.client)(
+        api_keys = APIKeyQuery(self.client, self.ssl_verify)(
             fields=["expiryDate"],
             where=APIKeyWhere(api_key=self.api_key),
             options=QueryOptions(disable_tqdm=True),
@@ -134,7 +138,7 @@ class KiliAuth:
     def get_user(self) -> Dict:
         """Get the current user from the api_key provided"""
         result = self.client.execute(GQL_ME)
-        user = format_result("data", result)
+        user = format_result("data", result, None, self.ssl_verify)
         if user is None or user["id"] is None or user["email"] is None:
             raise UserNotFoundError("No user attached to the API key was found")
         return user

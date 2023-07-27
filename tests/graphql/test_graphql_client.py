@@ -19,7 +19,7 @@ def test_graphql_client_cache_cant_get_kili_version(mocker):
         endpoint="https://",
         api_key="nokey",
         client_name=GraphQLClientName.SDK,
-        verify=True,
+        ssl_verify=True,
     )
 
 
@@ -44,7 +44,7 @@ def test_gql_bad_query_local_validation(query, mocker):
         endpoint=api_endpoint,
         api_key="",
         client_name=GraphQLClientName.SDK,
-        verify=True,
+        ssl_verify=True,
     )
 
     with pytest.raises(GraphQLError) as exc_info:
@@ -72,7 +72,7 @@ def test_graphql_client_cache(mocker):
         endpoint=api_endpoint,
         api_key="",
         client_name=GraphQLClientName.SDK,
-        verify=True,
+        ssl_verify=True,
     )
     assert SCHEMA_PATH.is_file()  # schema cached
     assert SCHEMA_PATH.stat().st_size > 0  # schema not empty
@@ -82,7 +82,7 @@ def test_graphql_client_cache(mocker):
             endpoint=api_endpoint,
             api_key="",
             client_name=GraphQLClientName.SDK,
-            verify=True,
+            ssl_verify=True,
         )
         mocked_print_schema.assert_not_called()
 

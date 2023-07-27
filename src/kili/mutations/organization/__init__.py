@@ -54,7 +54,7 @@ class MutationsOrganization:
             }
         }
         result = self.auth.client.execute(GQL_CREATE_ORGANIZATION, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)
 
     @typechecked
     def update_properties_in_organization(
@@ -98,4 +98,4 @@ class MutationsOrganization:
         if country is not None:
             variables["country"] = country
         result = self.auth.client.execute(GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
-        return format_result("data", result)
+        return format_result("data", result, None, self.auth.ssl_verify)

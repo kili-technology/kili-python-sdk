@@ -37,7 +37,7 @@ def get_download_assets_function(
     if not download_media:
         return None, fields
     projects = list(
-        ProjectQuery(auth.client)(
+        ProjectQuery(auth.client, auth.ssl_verify)(
             ProjectWhere(project_id=project_id), ["inputType"], QueryOptions(disable_tqdm=True)
         )
     )
@@ -57,6 +57,7 @@ def get_download_assets_function(
             project_id,
             jsoncontent_field_added,
             input_type,
+            auth.ssl_verify,
         ).download_assets,
         fields,
     )
@@ -65,17 +66,19 @@ def get_download_assets_function(
 class MediaDownloader:
     """Media downloader for kili.assets()"""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         local_media_dir: Optional[Union[Path, str]],
         project_id: str,
         jsoncontent_field_added: bool,
         project_input_type: str,
+        ssl_verify: Union[bool, str],
     ) -> None:
         self.local_media_dir = local_media_dir
         self.project_id = project_id
         self.jsoncontent_field_added = jsoncontent_field_added
         self.project_input_type = project_input_type
+        self.ssl_verify = ssl_verify
 
         self.local_dir_path = (
             Path(self.local_media_dir)
@@ -117,12 +120,12 @@ class MediaDownloader:
             # richtext
             if self.project_input_type == "TEXT":
                 asset["jsonContent"] = download_file(
-                    asset["jsonContent"], asset["externalId"], self.local_dir_path
+                    asset["jsonContent"], asset["externalId"], self.local_dir_path, self.ssl_verify
                 )
 
             # video frames
             elif self.project_input_type == "VIDEO":
-                urls = get_json_content_urls_video(asset["jsonContent"])
+                urls = get_json_content_urls_video(asset["jsonContent"], self.ssl_verify)
                 nbr_char_zfill = len(str(len(urls)))
                 img_names = (
                     f'{asset["externalId"]}_{f"{i+1}".zfill(nbr_char_zfill)}'
@@ -134,6 +137,7 @@ class MediaDownloader:
                         urls,
                         img_names,
                         repeat(self.local_dir_path),
+                        repeat(self.ssl_verify),
                     )
                     asset["jsonContent"] = list(paths_gen)
                 return asset  # we skip video "content" download
@@ -141,7 +145,7 @@ class MediaDownloader:
             # big images
             elif self.project_input_type == "IMAGE":
                 # the "jsonContent" contains some information but not the image
-                response = requests.get(asset["jsonContent"], timeout=20)
+                response = requests.get(asset["jsonContent"], verify=self.ssl_verify, timeout=20)
                 response = response.json()
                 asset["jsonContent"] = response
 
@@ -152,20 +156,23 @@ class MediaDownloader:
 
         if str(asset["content"]).startswith("http"):
             asset["content"] = download_file(
-                asset["content"], asset["externalId"], self.local_dir_path
+                asset["content"],
+                asset["externalId"],
+                self.local_dir_path,
+                ssl_verify=self.ssl_verify,
             )
             return asset
 
         return asset
 
 
-def get_file_extension_from_headers(url) -> Optional[str]:
+def get_file_extension_from_headers(url, ssl_verify: Union[bool, str]) -> Optional[str]:
     """guess the extension of a file with the url response headers"""
-    with requests.head(url, timeout=20) as header_response:
+    with requests.head(url, timeout=20, verify=ssl_verify) as header_response:
         if header_response.status_code == 200:
             headers = header_response.headers
         else:
-            with requests.get(url, timeout=20) as response:
+            with requests.get(url, timeout=20, verify=ssl_verify) as response:
                 response.raise_for_status()
                 headers = response.headers
         if "content-type" in headers:
@@ -174,9 +181,11 @@ def get_file_extension_from_headers(url) -> Optional[str]:
     return None
 
 
-def get_download_path(url: str, external_id: str, local_dir_path: Path) -> Path:
+def get_download_path(
+    url: str, external_id: str, local_dir_path: Path, ssl_verify: Union[bool, str]
+) -> Path:
     """Build the path to download a file the file in local."""
-    extension = get_file_extension_from_headers(url)
+    extension = get_file_extension_from_headers(url, ssl_verify=ssl_verify)
     filename = external_id
     if extension is not None and not filename.endswith(extension):
         filename = filename + extension
@@ -185,15 +194,17 @@ def get_download_path(url: str, external_id: str, local_dir_path: Path) -> Path:
 
 
 @retry(stop=stop_after_attempt(2), wait=wait_random(min=1, max=2), reraise=True)
-def download_file(url: str, external_id: str, local_dir_path: Path) -> str:
+def download_file(
+    url: str, external_id: str, local_dir_path: Path, ssl_verify: Union[bool, str]
+) -> str:
     """
     Download a file by streming chunks of 1Mb
     If the file already exists in local, it does not download it
     """
-    local_path = get_download_path(url, external_id, local_dir_path)
+    local_path = get_download_path(url, external_id, local_dir_path, ssl_verify)
     local_path.parent.mkdir(parents=True, exist_ok=True)
     if not local_path.is_file():
-        with requests.get(url, stream=True, timeout=20) as response:
+        with requests.get(url, stream=True, timeout=20, verify=ssl_verify) as response:
             response.raise_for_status()
             with open(local_path, "wb") as file:
                 for chunk in response.iter_content(chunk_size=1024 * 1024):
@@ -212,9 +223,9 @@ def assert_required_fields_existence(assets: List[Dict]) -> None:
             )
 
 
-def get_json_content_urls_video(json_url: str) -> Tuple[str]:
+def get_json_content_urls_video(json_url: str, ssl_verify: Union[bool, str]) -> Tuple[str]:
     """Get frame urls from a jsonContent url."""
-    response = requests.get(json_url, timeout=20)
+    response = requests.get(json_url, timeout=20, verify=ssl_verify)
     response = response.json()
     urls = tuple(response.values())
     return urls

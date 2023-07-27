@@ -213,7 +213,7 @@ class QueriesLabel:
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        labels_gen = LabelQuery(self.auth.client)(where, fields, options)
+        labels_gen = LabelQuery(self.auth.client, self.auth.ssl_verify)(where, fields, options)
 
         if as_generator:
             return labels_gen
@@ -533,7 +533,7 @@ class QueriesLabel:
         """
 
         services.get_project(self.auth, project_id, ["id"])
-        assets_gen = AssetQuery(self.auth.client)(
+        assets_gen = AssetQuery(self.auth.client, self.auth.ssl_verify)(
             AssetWhere(project_id=project_id),
             asset_fields + ["labels." + field for field in fields],
             QueryOptions(disable_tqdm=False),
@@ -616,7 +616,7 @@ class QueriesLabel:
             user_id=user_id,
             category_search=category_search,
         )
-        return LabelQuery(self.auth.client).count(where)
+        return LabelQuery(self.auth.client, self.auth.ssl_verify).count(where)
 
     def export_labels(
         self,

@@ -46,7 +46,9 @@ def get_data_connection(auth: KiliAuth, data_connection_id: str, fields: List[st
     """
     where = DataConnectionIdWhere(data_connection_id=data_connection_id)
     options = QueryOptions(first=1, disable_tqdm=True)
-    data_connection = list(DataConnectionQuery(auth.client)(where, fields, options))
+    data_connection = list(
+        DataConnectionQuery(auth.client, auth.ssl_verify)(where, fields, options)
+    )
     if len(data_connection) == 0:
         raise ValueError(f"No data connection with id {data_connection_id}")
     return data_connection[0]
@@ -63,7 +65,7 @@ def trigger_validate_data_differences(
         "processingParameters": None,
     }
     result = auth.client.execute(GQL_VALIDATE_DATA_DIFFERENCES, variables)
-    data_connection = format_result("data", result)
+    data_connection = format_result("data", result, None, auth.ssl_verify)
     return data_connection
 
 
@@ -76,7 +78,7 @@ def validate_data_differences(
     diff = data_connection["dataDifferencesSummary"]["added" if diff_type == "ADD" else "removed"]
 
     where = AssetWhere(project_id=data_connection["projectId"])
-    nb_assets_before = AssetQuery(auth.client).count(where)
+    nb_assets_before = AssetQuery(auth.client, auth.ssl_verify).count(where)
 
     trigger_validate_data_differences(auth, diff_type, data_connection["id"])
 
@@ -87,7 +89,7 @@ def validate_data_differences(
         reraise=True,
     ):
         with attempt:
-            nb_assets_after = AssetQuery(auth.client).count(where)
+            nb_assets_after = AssetQuery(auth.client, auth.ssl_verify).count(where)
             if abs(nb_assets_after - nb_assets_before) != diff:
                 raise ValueError(
                     f"Number of assets after validation is not correct: before {nb_assets_before},"
@@ -105,7 +107,7 @@ def compute_differences(
     if blob_paths is not None:
         variables["data"] = {"blobPaths": blob_paths}
     result = auth.client.execute(GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES, variables)
-    data_connection = format_result("data", result)
+    data_connection = format_result("data", result, None, auth.ssl_verify)
     return data_connection
 
 

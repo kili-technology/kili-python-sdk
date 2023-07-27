@@ -25,7 +25,7 @@ def get_issue_numbers(
         type_: type of the issue to add
         size: the number of issue to add
     """
-    issues = IssueQuery(auth.client)(
+    issues = IssueQuery(auth.client, auth.ssl_verify)(
         IssueWhere(
             project_id=project_id,
         ),
@@ -56,7 +56,9 @@ def get_labels_asset_ids_map(auth: KiliAuth, project_id: str, label_id_array: Li
         id_contains=label_id_array,
     )
     labels = list(
-        LabelQuery(auth.client)(where=where, fields=["labelOf.id", "id"], options=options)
+        LabelQuery(auth.client, auth.ssl_verify)(
+            where=where, fields=["labelOf.id", "id"], options=options
+        )
     )
     labels_not_found = [
         label_id for label_id in label_id_array if label_id not in [label["id"] for label in labels]

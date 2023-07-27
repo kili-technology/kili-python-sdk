@@ -47,7 +47,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     get_project(auth, project_id, ["id"])
 
     if with_assets:
-        count = AssetQuery(auth.client).count(AssetWhere(project_id=project_id))
+        count = AssetQuery(auth.client, auth.ssl_verify).count(AssetWhere(project_id=project_id))
         if count > THRESHOLD_WARN_MANY_ASSETS:
             warnings.warn(
                 (

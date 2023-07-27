@@ -58,7 +58,7 @@ class QueriesPlugins:
         options = QueryOptions(
             first=limit, skip=skip or 0, disable_tqdm=False
         )  # disable tqm is not implemnted for this query
-        pretty_result = PluginQuery(self.auth.client).get_logs(where, options)
+        pretty_result = PluginQuery(self.auth.client, self.auth.ssl_verify).get_logs(where, options)
         return json.dumps(pretty_result, sort_keys=True, indent=4)
 
     @typechecked
@@ -108,4 +108,4 @@ class QueriesPlugins:
             >>> kili.list_plugins()
             >>> kili.list_plugins(fields=['name'])
         """
-        return PluginQuery(self.auth.client).list(fields=fields)
+        return PluginQuery(self.auth.client, self.auth.ssl_verify).list(fields=fields)

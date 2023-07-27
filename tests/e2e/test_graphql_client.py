@@ -22,7 +22,7 @@ def test_gql_bad_query_remote_validation():
         endpoint=api_endpoint,  # type: ignore
         api_key=api_key,  # type: ignore
         client_name=GraphQLClientName.SDK,
-        verify=True,
+        ssl_verify=True,
     )
 
     query = """
@@ -78,7 +78,7 @@ def test_outdated_cached_schema(mocker):
         endpoint=api_endpoint,  # type: ignore
         api_key=api_key,  # type: ignore
         client_name=GraphQLClientName.SDK,
-        verify=True,
+        ssl_verify=True,
     )
 
     client._gql_client.schema = build_ast_schema(parse(fake_schema))

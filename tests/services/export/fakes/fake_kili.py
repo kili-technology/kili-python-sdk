@@ -20,6 +20,7 @@ class FakeAuth:
     api_key = ""
     api_endpoint = "http://content-repository"
     client = MagicMock()
+    ssl_verify = True
 
 
 def mocked_ProjectQuery(where, _fields, _options):
