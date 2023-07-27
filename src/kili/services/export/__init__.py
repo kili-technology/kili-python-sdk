@@ -7,6 +7,7 @@ from typing_extensions import get_args
 
 from kili.services.export.format.base import AbstractExporter, ExportParams
 from kili.services.export.format.coco import CocoExporter
+from kili.services.export.format.geojson import GeoJsonExporter
 from kili.services.export.format.kili import KiliExporter
 from kili.services.export.format.voc import VocExporter
 from kili.services.export.format.yolo import YoloExporter
@@ -74,6 +75,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
             "yolo_v5": YoloExporter,
             "yolo_v7": YoloExporter,
             "pascal_voc": VocExporter,
+            "geojson": GeoJsonExporter,
         }
         assert set(format_exporter_selector_mapping.keys()) == set(
             get_args(LabelFormat)
