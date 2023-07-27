@@ -13,6 +13,7 @@ from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
 from kili.entrypoints.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
+    GQL_DELETE_LABELS,
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
 from kili.orm import Label
@@ -335,3 +336,6 @@ class MutationsLabel:
         Returns:
             The deleted label ids.
         """
+        variables = {"ids": ids}
+        result = self.graphql_client.execute(GQL_DELETE_LABELS, variables)
+        return format_result("data", result)
