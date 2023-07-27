@@ -74,7 +74,7 @@ def remove_member(
     check_exclusive_options(csv_path, None, emails, all_members)
 
     if csv_path is not None:
-        members_to_rm = collect_members_from_csv(csv_path, None)
+        members_to_rm = collect_members_from_csv(csv_path, None, kili.auth.ssl_verify)
     elif all_members:
         members_to_rm = collect_members_from_project(kili.auth, project_id, None)
     else:

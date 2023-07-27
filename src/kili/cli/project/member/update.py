@@ -69,7 +69,7 @@ def update_member(
     check_exclusive_options(csv_path, project_id_src, emails, None)
 
     if csv_path is not None:
-        members_to_update = collect_members_from_csv(csv_path, role)
+        members_to_update = collect_members_from_csv(csv_path, role, kili.auth.ssl_verify)
     elif project_id_src is not None:
         members_to_update = collect_members_from_project(kili.auth, project_id_src, role)
     else:

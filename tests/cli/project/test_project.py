@@ -22,6 +22,7 @@ from .mocks.projects import mocked__ProjectQuery
 
 kili_client = MagicMock()
 kili_client.auth.api_endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
+kili_client.auth.ssl_verify = True
 kili_client.create_project = create_project_mock = MagicMock()
 
 

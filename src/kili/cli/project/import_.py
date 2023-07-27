@@ -1,10 +1,10 @@
 """CLI's project import subcommand"""
 
 import os
-import urllib.request
 from typing import Iterable, Optional, Union
 
 import click
+import requests
 from typeguard import typechecked
 
 from kili import services
@@ -18,12 +18,12 @@ from kili.services.helpers import (
 )
 
 
-def check_asset_type(key, value):
+def check_asset_type(key, value, verify_ssl):
     """type check value based on key"""
     if key == "content" and not os.path.isfile(value):
-        with urllib.request.urlopen(value) as http_response:
-            if not http_response.getcode() == 200:
-                return f"{value} is not a valid url or path to a file."
+        http_response = requests.get(value, verify=verify_ssl, timeout=30)
+        if not http_response.status_code == 200:
+            return f"{value} is not a valid url or path to a file."
 
     return ""
 
@@ -147,11 +147,14 @@ def import_assets(
         external_ids = [get_external_id_from_file_path(path) for path in files_to_upload]
 
     elif csv_path is not None:
+        http_client = requests.Session()
+        http_client.verify = kili.auth.ssl_verify
         row_dict = collect_from_csv(
             csv_path=csv_path,
             required_columns=["external_id", "content"],
             optional_columns=[],
             type_check_function=check_asset_type,
+            ssl_verify=kili.auth.ssl_verify,
         )
 
         files_to_upload = [row["content"] for row in row_dict]
