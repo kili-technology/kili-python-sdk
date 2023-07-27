@@ -46,7 +46,6 @@ class ImageTestCase(ImportTestCase):
             [False],
             [""],
             ["{}"],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -57,7 +56,7 @@ class ImageTestCase(ImportTestCase):
         ]
         import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
+            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"]
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -94,7 +93,6 @@ class ImageTestCase(ImportTestCase):
             [False],
             [""],
             ["{}"],
-            ["TODO"],
         )
         expected_parameters_async = self.get_expected_async_call(
             ["https://signed_url?id=id"],
@@ -120,7 +118,7 @@ class ImageTestCase(ImportTestCase):
         ]
         import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
+            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"]
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 

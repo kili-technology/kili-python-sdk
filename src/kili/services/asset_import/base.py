@@ -16,8 +16,8 @@ from tenacity.wait import wait_exponential
 
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.mutations import (
+    GQL_APPEND_MANY_ASSETS,
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
-    GQL_APPEND_MANY_TO_DATASET,
 )
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.graphql.operations.organization.queries import (
@@ -26,7 +26,6 @@ from kili.core.graphql.operations.organization.queries import (
 )
 from kili.core.helpers import RetryLongWaitWarner, T, is_url
 from kili.core.utils import pagination
-from kili.orm import Asset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,
     project_compatible_mimetypes,
@@ -86,15 +85,19 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         self.logger.setLevel(logging.INFO)
 
     def import_batch(self, assets: List[AssetLike], verify: bool):
-        """Base actions to import a batch of asset."""
+        """Base actions to import a batch of asset.
+
+        returns:
+            created_assets_ids: list of ids of the created assets
+        """
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
         assets_ = self.loop_on_batch(self.fill_empty_fields)(assets)
-        result_batch = self.import_to_kili(assets_)
+        created_assets_ids = self.import_to_kili(assets_)
         if verify:
             self.verify_batch_imported(assets)
         self.pbar.update(n=len(assets))
-        return result_batch
+        return created_assets_ids
 
     def verify_batch_imported(self, assets: List):
         """Verifies that the batch has been imported successfully."""
@@ -164,7 +167,6 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             content="",
             json_content="",
             external_id=uuid4().hex,
-            status="TODO",
             json_metadata="{}",
             is_honeypot=False,
             id="",
@@ -202,27 +204,34 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             "where": {"id": self.project_id},
         }
         results = self.kili.graphql_client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
-        return self.kili.format_result("data", results, Asset)
+        self.kili.format_result("data", results)
+        created_assets_ids = []
+        return created_assets_ids
 
     def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets with synchronous resolver."""
+
         payload = {
             "data": {
                 "contentArray": [asset["content"] for asset in assets],
                 "externalIDArray": [asset["external_id"] for asset in assets],
                 "idArray": [asset["id"] for asset in assets],
                 "isHoneypotArray": [asset["is_honeypot"] for asset in assets],
-                "statusArray": [asset["status"] for asset in assets],
                 "jsonContentArray": [asset["json_content"] for asset in assets],
                 "jsonMetadataArray": [asset["json_metadata"] for asset in assets],
             },
             "where": {"id": self.project_id},
         }
-        results = self.kili.graphql_client.execute(GQL_APPEND_MANY_TO_DATASET, payload)
-        return self.kili.format_result("data", results, Asset)
+        result = self.kili.graphql_client.execute(GQL_APPEND_MANY_ASSETS, payload)
+        created_assets_ids = self.kili.format_result("data", result)["createdAssets"]["id"]
+        return created_assets_ids
 
     def import_to_kili(self, assets: List[KiliResolverAsset]):
-        """Import assets to Kili with the right resolver."""
+        """Import assets to Kili with the right resolver.
+
+        returns:
+            created_assets_ids: list of ids of the created assets
+        """
         if self.is_asynchronous:
             return self._async_import_to_kili(assets)
         return self._sync_import_to_kili(assets)
@@ -456,9 +465,10 @@ class BaseAssetImporter:
         self.pbar.total = len(assets)
         self.pbar.refresh()
 
-        responses = []
+        created_asset_ids = []
         for i, batch_assets in enumerate(batch_generator):
             # check last batch only
             verify = i == (len(batch_generator) - 1) and self.verify
-            responses.append(batch_importer.import_batch(batch_assets, verify))
-        return responses[-1]
+            batch_created_asset_ids = batch_importer.import_batch(batch_assets, verify)
+            created_asset_ids.append(batch_created_asset_ids)
+        return {"id": self.project_params.project_id, "created_assets_ids": created_asset_ids}

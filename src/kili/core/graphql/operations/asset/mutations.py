@@ -1,15 +1,15 @@
 """Assets related mutations."""
 
-GQL_APPEND_MANY_TO_DATASET = """
-mutation appendManyToDataset(
-    $data: AppendManyToDatasetData!,
+GQL_APPEND_MANY_ASSETS = """
+mutation appendManyAssets(
+    $data: AppendManyAssetsData!,
     $where: ProjectWhere!
   ) {
-  data: appendManyToDataset(
+  data: appendManyAssets(
     data: $data,
     where: $where
   ) {
-    id
+      id
   }
 }
 """

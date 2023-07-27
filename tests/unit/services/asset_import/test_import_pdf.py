@@ -48,7 +48,6 @@ class PDFTestCase(ImportTestCase):
             [False],
             [""],
             ["{}"],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -59,7 +58,7 @@ class PDFTestCase(ImportTestCase):
         ]
         import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
+            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"]
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -77,7 +76,7 @@ class PDFTestCase(ImportTestCase):
         ]
         import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
+            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"]
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
         url = (
