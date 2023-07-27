@@ -2,7 +2,7 @@
 import os
 import warnings
 from datetime import datetime, timedelta
-from typing import Dict, Optional
+from typing import Callable, Dict, Optional, Union
 
 import requests
 
@@ -11,7 +11,6 @@ from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.core.graphql.operations.user.queries import GQL_ME
-from kili.core.helpers import format_result
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.data_connection import MutationsDataConnection
 from kili.entrypoints.mutations.issue import MutationsIssue
@@ -40,7 +39,7 @@ from kili.internal import KiliInternal
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
 
-class Kili(  # pylint: disable=too-many-ancestors
+class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsAsset,
     MutationsDataConnection,
     MutationsIssue,
@@ -71,7 +70,7 @@ class Kili(  # pylint: disable=too-many-ancestors
         self,
         api_key: Optional[str] = None,
         api_endpoint: Optional[str] = None,
-        verify: bool = True,
+        verify: Union[bool, str] = True,
         client_name: GraphQLClientName = GraphQLClientName.SDK,
         graphql_client_params: Optional[Dict[str, object]] = None,
     ) -> None:
@@ -86,7 +85,15 @@ class Kili(  # pylint: disable=too-many-ancestors
                 Default to `KILI_API_ENDPOINT` environment variable.
                 If not passed, default to Kili SaaS:
                 'https://cloud.kili-technology.com/api/label/v2/graphql'
-            verify: Verify certificate. Set to False on local deployment without SSL.
+            verify: similar to `requests`' verify.
+                Either a boolean, in which case it controls whether we verify
+                the server's TLS certificate, or a string, in which case it must be a path
+                to a CA bundle to use. Defaults to ``True``. When set to
+                ``False``, requests will accept any TLS certificate presented by
+                the server, and will ignore hostname mismatches and/or expired
+                certificates, which will make your application vulnerable to
+                man-in-the-middle (MitM) attacks. Setting verify to ``False``
+                may be useful during local development or testing.
             client_name: For internal use only.
                 Define the name of the graphQL client whith which graphQL calls will be sent.
             graphql_client_params: Parameters to pass to the graphQL client.
@@ -123,7 +130,10 @@ class Kili(  # pylint: disable=too-many-ancestors
         self.client_name = client_name
         self.graphql_client_params = graphql_client_params
 
-        skip_checks = os.environ.get("KILI_SDK_SKIP_CHECKS", None) is not None
+        skip_checks = os.getenv("KILI_SDK_SKIP_CHECKS") is not None
+
+        self.http_client = requests.Session()
+        self.http_client.verify = verify
 
         if not skip_checks:
             self._check_api_key_valid()
@@ -133,20 +143,21 @@ class Kili(  # pylint: disable=too-many-ancestors
             api_key=api_key,
             client_name=client_name,
             verify=self.verify,
+            kili_app_version=self._get_kili_app_version(),
             **(graphql_client_params or {}),  # type: ignore
         )
 
         if not skip_checks:
-            self._check_expiry_of_key_is_close()
+            api_key_query = APIKeyQuery(self.graphql_client, self.http_client)
+            self._check_expiry_of_key_is_close(api_key_query, self.api_key)
 
         self.internal = KiliInternal(self)
 
     def _check_api_key_valid(self) -> None:
         """Check that the api_key provided is valid."""
-        response = requests.post(
+        response = self.http_client.post(
             url=self.api_endpoint,
             data='{"query":"{ me { id email } }"}',
-            verify=self.verify,
             timeout=30,
             headers={
                 "Authorization": f"X-API-Key: {self.api_key}",
@@ -168,13 +179,27 @@ class Kili(  # pylint: disable=too-many-ancestors
             ),
         )
 
-    def _check_expiry_of_key_is_close(self) -> None:
+    def _get_kili_app_version(self) -> Optional[str]:
+        """Get the version of the Kili app server.
+
+        Returns None if the version cannot be retrieved.
+        """
+        url = self.api_endpoint.replace("/graphql", "/version")
+        response = self.http_client.get(url, timeout=30)
+        if response.status_code == 200 and '"version":' in response.text:
+            response_json = response.json()
+            version = response_json["version"]
+            return version
+        return None
+
+    @staticmethod
+    def _check_expiry_of_key_is_close(api_key_query: Callable, api_key: str) -> None:
         """Check that the expiration date of the api_key is not too close."""
         warn_days = 30
 
-        api_keys = APIKeyQuery(self.graphql_client)(
+        api_keys = api_key_query(
             fields=["expiryDate"],
-            where=APIKeyWhere(api_key=self.api_key),
+            where=APIKeyWhere(api_key=api_key),
             options=QueryOptions(disable_tqdm=True),
         )
 
@@ -190,7 +215,7 @@ class Kili(  # pylint: disable=too-many-ancestors
     def get_user(self) -> Dict:
         """Get the current user from the api_key provided."""
         result = self.graphql_client.execute(GQL_ME)
-        user = format_result("data", result)
+        user = self.format_result("data", result)
         if user is None or user["id"] is None or user["email"] is None:
             raise UserNotFoundError("No user attached to the API key was found")
         return user

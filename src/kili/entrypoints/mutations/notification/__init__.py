@@ -3,14 +3,14 @@
 from typeguard import typechecked
 
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import format_result
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .queries import GQL_CREATE_NOTIFICATION, GQL_UPDATE_PROPERTIES_IN_NOTIFICATION
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsNotification:
+class MutationsNotification(BaseOperationEntrypointMixin):
     """Set of Notification mutations."""
 
     graphql_client: GraphQLClient
@@ -40,7 +40,7 @@ class MutationsNotification:
             }
         }
         result = self.graphql_client.execute(GQL_CREATE_NOTIFICATION, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def update_properties_in_notification(
@@ -67,4 +67,4 @@ class MutationsNotification:
             "url": url,
         }
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_NOTIFICATION, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)

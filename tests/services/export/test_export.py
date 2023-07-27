@@ -737,6 +737,7 @@ def test_export_with_asset_filter_kwargs(mocker):
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
     kili.export_labels(
         project_id="fake_proj_id",
         filename="fake_filename",
@@ -794,6 +795,7 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     with pytest.raises(NameError, match="Unknown asset filter arguments"):
         kili.export_labels(
@@ -803,6 +805,32 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
             layout="merged",
             with_assets=False,
             asset_filter_kwargs={"this_arg_does_not_exists": 42},
+        )
+
+
+def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it_should_crash(
+    mocker,
+):
+    kili = mock_kili(mocker, with_data_connection=True)
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+
+    with pytest.raises(
+        NotCompatibleOptions,
+        match=(
+            "Export with download of assets is not allowed on projects with data"
+            " connections. Please disable the download of assets by setting"
+            " `with_assets=False`."
+        ),
+    ):
+        kili.export_labels(
+            project_id="fake_proj_id",
+            filename="fake_filename",
+            fmt="yolo_v5",
+            layout="merged",
+            with_assets=True,
         )
 
 
@@ -852,6 +880,7 @@ def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     with pytest.raises(
         NotCompatibleOptions,
@@ -942,6 +971,7 @@ def test_when_exporting_geotiff_asset_with_incompatible_options_then_it_crashes(
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     with pytest.raises(
         NotCompatibleOptions,

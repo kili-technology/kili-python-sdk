@@ -91,7 +91,7 @@ def _build_id_map(kili, asset_external_ids, project_id):
     # query all assets by external ids batches when there are too many
     for external_ids_batch in pagination.BatchIteratorBuilder(asset_external_ids, 1000):
         assets_generators.append(
-            AssetQuery(kili.graphql_client)(
+            AssetQuery(kili.graphql_client, kili.http_client)(
                 AssetWhere(project_id, external_id_strictly_in=external_ids_batch),
                 ["id", "externalId"],
                 QueryOptions(disable_tqdm=True),

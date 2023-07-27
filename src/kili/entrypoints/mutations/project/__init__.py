@@ -11,7 +11,7 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import format_result
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.exceptions import MutationError
 from kili.exceptions import NotFound
 from kili.services.copy_project import ProjectCopier
@@ -30,7 +30,7 @@ from .queries import (
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsProject:
+class MutationsProject(BaseOperationEntrypointMixin):
     """Set of Project mutations."""
 
     graphql_client: GraphQLClient
@@ -69,7 +69,7 @@ class MutationsProject:
         }
         result = self.graphql_client.execute(GQL_APPEND_TO_ROLES, variables)
 
-        project_data = format_result("data", result)
+        project_data = self.format_result("data", result)
         for project_user in project_data["roles"]:
             if project_user["user"]["email"] == user_email and project_user["role"] == role:
                 return project_user
@@ -186,7 +186,7 @@ class MutationsProject:
             "useHoneyPot": use_honeypot,
         }
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
-        result = format_result("data", result)
+        result = self.format_result("data", result)
 
         variables.pop("projectID")
         variables = {k: v for k, v in variables.items() if v is not None}
@@ -257,7 +257,7 @@ class MutationsProject:
             }
         }
         result = self.graphql_client.execute(GQL_CREATE_PROJECT, variables)
-        result = format_result("data", result)
+        result = self.format_result("data", result)
 
         # We check during 60s for the project to be created
         for attempt in Retrying(
@@ -301,7 +301,7 @@ class MutationsProject:
             "role": role,
         }
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_ROLE, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def delete_from_roles(self, role_id: str) -> Dict[Literal["id"], str]:
@@ -315,7 +315,7 @@ class MutationsProject:
         """
         variables = {"where": {"id": role_id}}
         result = self.graphql_client.execute(GQL_DELETE_FROM_ROLES, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def delete_project(self, project_id: str) -> str:
@@ -329,7 +329,7 @@ class MutationsProject:
         """
         variables = {"where": {"id": project_id}}
         result = self.graphql_client.execute(GQL_PROJECT_DELETE_ASYNCHRONOUSLY, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def archive_project(self, project_id: str) -> Dict[Literal["id"], str]:
@@ -348,7 +348,7 @@ class MutationsProject:
 
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
 
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def unarchive_project(self, project_id: str) -> Dict[Literal["id"], str]:
@@ -366,7 +366,7 @@ class MutationsProject:
         }
 
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def copy_project(  # pylint: disable=too-many-arguments
@@ -443,4 +443,4 @@ class MutationsProject:
         }
 
         result = self.graphql_client.execute(GQL_PROJECT_UPDATE_ANONYMIZATION, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)

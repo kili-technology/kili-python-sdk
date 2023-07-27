@@ -8,7 +8,8 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import deprecate, format_result
+from kili.core.helpers import deprecate
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
 from kili.entrypoints.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
@@ -25,7 +26,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class MutationsLabel:
+class MutationsLabel(BaseOperationEntrypointMixin):
     """Set of Label mutations."""
 
     graphql_client: GraphQLClient
@@ -175,7 +176,7 @@ class MutationsLabel:
             "where": {"id": label_asset_id},
         }
         result = self.graphql_client.execute(GQL_APPEND_TO_LABELS, variables)
-        return format_result("data", result, Label)
+        return self.format_result("data", result, Label)
 
     @typechecked
     def append_labels(  # pylint: disable=dangerous-default-value
@@ -280,7 +281,7 @@ class MutationsLabel:
             "jsonResponse": formatted_json_response,
         }
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def create_honeypot(
@@ -323,4 +324,4 @@ class MutationsLabel:
             "where": {"id": asset_id},
         }
         result = self.graphql_client.execute(GQL_CREATE_HONEYPOT, variables)
-        return format_result("data", result, Label)
+        return self.format_result("data", result, Label)

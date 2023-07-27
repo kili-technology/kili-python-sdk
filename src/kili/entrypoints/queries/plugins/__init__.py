@@ -7,21 +7,19 @@ from typing import List, Optional
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.plugin.queries import (
     PluginBuildErrorsWhere,
     PluginLogsWhere,
     PluginQuery,
 )
+from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.services.plugins import PluginUploader
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesPlugins:
+class QueriesPlugins(BaseOperationEntrypointMixin):
     """Set of Plugins queries."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments
 
@@ -52,7 +50,9 @@ class QueriesPlugins:
         options = QueryOptions(
             first=limit, skip=skip, disable_tqdm=False
         )  # disable tqm is not implemented for this query
-        pretty_result = PluginQuery(self.graphql_client).get_build_errors(where, options)
+        pretty_result = PluginQuery(self.graphql_client, self.http_client).get_build_errors(
+            where, options
+        )
         return json.dumps(pretty_result, sort_keys=True, indent=4)
 
     @typechecked
@@ -86,7 +86,7 @@ class QueriesPlugins:
         options = QueryOptions(
             first=limit, skip=skip, disable_tqdm=False
         )  # disable tqm is not implemented for this query
-        pretty_result = PluginQuery(self.graphql_client).get_logs(where, options)
+        pretty_result = PluginQuery(self.graphql_client, self.http_client).get_logs(where, options)
         return json.dumps(pretty_result, sort_keys=True, indent=4)
 
     @typechecked
@@ -108,7 +108,9 @@ class QueriesPlugins:
             >>> kili.get_plugin_status(plugin_name="my_plugin_name")
         """
 
-        result = PluginUploader(self, "", plugin_name, verbose).get_plugin_runner_status()
+        result = PluginUploader(
+            self, "", plugin_name, verbose, self.http_client
+        ).get_plugin_runner_status()
         return result
 
     # pylint: disable=dangerous-default-value
@@ -136,4 +138,4 @@ class QueriesPlugins:
             >>> kili.list_plugins()
             >>> kili.list_plugins(fields=['name'])
         """
-        return PluginQuery(self.graphql_client).list(fields=fields)
+        return PluginQuery(self.graphql_client, self.http_client).list(fields=fields)

@@ -13,19 +13,13 @@ from typing import Any, Callable, Dict, Optional, Union
 from urllib.parse import urlparse
 
 import graphql
-import requests
 import websocket
 from filelock import FileLock
 from gql import Client, gql
 from gql.transport import exceptions
-from gql.transport.exceptions import TransportServerError
 from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
-from tenacity import Retrying
-from tenacity.retry import retry_if_exception_type
-from tenacity.stop import stop_after_delay
-from tenacity.wait import wait_exponential
 from typing_extensions import LiteralString
 
 from kili import __version__
@@ -46,7 +40,8 @@ class GraphQLClient:
         endpoint: str,
         api_key: str,
         client_name: GraphQLClientName,
-        verify: bool = True,
+        kili_app_version: Optional[str],
+        verify: Union[bool, str] = True,
         enable_schema_caching: bool = True,
         graphql_schema_cache_dir: Optional[Union[str, Path]] = DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR,
     ) -> None:
@@ -63,6 +58,7 @@ class GraphQLClient:
         self.endpoint = endpoint
         self.api_key = api_key
         self.client_name = client_name
+        self.kili_app_version = kili_app_version
         self.verify = verify
         self.enable_schema_caching = enable_schema_caching
         self.graphql_schema_cache_dir = (
@@ -87,6 +83,9 @@ class GraphQLClient:
             verify=verify,
             retries=20,
             method="POST",
+            retry_backoff_factor=0.5,
+            # backend can return 401 errors even though we have a valid api key
+            retry_status_forcelist=RequestsHTTPTransport._default_retry_codes + (401,),
         )
 
         if self.enable_schema_caching is True:
@@ -201,24 +200,10 @@ class GraphQLClient:
             return None
 
         endpoint_netloc = urlparse(self.endpoint).netloc
-        version = self._get_kili_app_version()
-        if version is None:
+        if self.kili_app_version is None:
             return None
-        filename = f"{endpoint_netloc}_{version}.graphql"
+        filename = f"{endpoint_netloc}_{self.kili_app_version}.graphql"
         return self.graphql_schema_cache_dir / filename
-
-    def _get_kili_app_version(self) -> Optional[str]:
-        """Get the version of the Kili app server.
-
-        Returns None if the version cannot be retrieved.
-        """
-        url = self.endpoint.replace("/graphql", "/version")
-        response = requests.get(url, verify=self.verify, timeout=30)
-        if response.status_code == 200 and '"version":' in response.text:
-            response_json = response.json()
-            version = response_json["version"]
-            return version
-        return None
 
     def execute(
         self, query: Union[str, DocumentNode], variables: Optional[Dict] = None, **kwargs
@@ -270,27 +255,12 @@ class GraphQLClient:
 
             raise err
 
-        except TransportServerError as err:
-            # if backend returned a 401 error, we retry a few times
-            if err.code == 401:
-                for attempt in Retrying(
-                    stop=stop_after_delay(30),
-                    wait=wait_exponential(multiplier=1, min=2, max=10),
-                    retry=retry_if_exception_type(TransportServerError),
-                    reraise=True,
-                ):
-                    with attempt:
-                        return _execute(document, variables, **kwargs)
-
-            raise err
-
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"
 
 
 class SubscriptionGraphQLClient:
-    """A simple GraphQL client that works over Websocket as the transport
-    protocol, instead of HTTP.
+    """A simple GraphQL client that works over Websocket as the transport protocol, instead of HTTP.
 
     This follows the Apollo protocol.
     https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md

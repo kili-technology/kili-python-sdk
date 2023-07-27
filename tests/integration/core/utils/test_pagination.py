@@ -98,7 +98,7 @@ def test_row_generator_from_paginated_calls(mocker, name, test_case):
     options = QueryOptions(first=first, skip=skip, disable_tqdm=disable_tqdm)
     where = MyGraphQLWhere()
     actual = MyGraphQLQuery(
-        client=MagicMock(execute=mocked_query_method)
+        client=MagicMock(execute=mocked_query_method), http_client=MagicMock()
     ).execute_query_from_paginated_call(
         query="", where=where, options=options, post_call_function=None
     )
@@ -139,7 +139,9 @@ def test_row_generator_from_paginated_calls_handles_throttled_queries(name, test
     options = QueryOptions(first=first, skip=skip, disable_tqdm=disable_tqdm)
     where = MyGraphQLWhere()
     client_mock = MagicMock(execute=throttling_mocked_query_method)
-    actual = MyGraphQLQuery(client=client_mock).execute_query_from_paginated_call(
+    actual = MyGraphQLQuery(
+        client=client_mock, http_client=MagicMock()
+    ).execute_query_from_paginated_call(
         query="", where=where, options=options, post_call_function=None
     )
 

@@ -1,8 +1,9 @@
 """GraphQL module."""
 
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type
+from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type, TypeVar
 
+import requests
 from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
@@ -11,6 +12,8 @@ from kili.core.utils.pagination import api_throttle
 from kili.utils.tqdm import tqdm
 
 from .graphql_client import GraphQLClient
+
+T = TypeVar("T")
 
 
 class QueryOptions(NamedTuple):
@@ -45,11 +48,9 @@ class GraphQLQuery(ABC):
     It factorizes code for executing paginated queries
     """
 
-    def __init__(
-        self,
-        client: GraphQLClient,
-    ) -> None:
+    def __init__(self, client: GraphQLClient, http_client: requests.Session) -> None:
         self.client = client
+        self.http_client = http_client
 
     @staticmethod
     @abstractmethod
@@ -85,7 +86,7 @@ class GraphQLQuery(ABC):
         """Count the number of objects matching the given where payload."""
         payload = {"where": where.graphql_payload}
         count_result = self.client.execute(self.COUNT_QUERY, payload)
-        return format_result("data", count_result, int)
+        return self.format_result("data", count_result, int)
 
     def get_number_of_elements_to_query(self, where: BaseQueryWhere, options: QueryOptions):
         """Return the total number of element to query for one query.
@@ -149,7 +150,7 @@ class GraphQLQuery(ABC):
                     )
                     payload = {"where": where.graphql_payload, "skip": skip, "first": first}
                     rows = api_throttle(self.client.execute)(query, payload)
-                    rows = format_result("data", rows, self.FORMAT_TYPE)
+                    rows = self.format_result("data", rows, self.FORMAT_TYPE)
 
                     if rows is None or len(rows) == 0:
                         break
@@ -201,3 +202,7 @@ class GraphQLQuery(ABC):
             fragment += f" {field}"
 
         return fragment
+
+    def format_result(self, name: str, result: dict, object_: Optional[Type[T]] = None) -> T:
+        """Format the result of a graphQL query."""
+        return format_result(name, result, object_, self.http_client)

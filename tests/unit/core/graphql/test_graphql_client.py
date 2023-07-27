@@ -14,13 +14,13 @@ from kili.exceptions import GraphQLError
 def test_graphql_client_cache_cant_get_kili_version(mocker):
     """Test when we can't get the kili version from the backend."""
     mocker.patch("kili.core.graphql.graphql_client.Client", return_value=None)
-    mocker.patch.object(GraphQLClient, "_get_kili_app_version", return_value=None)
 
     _ = GraphQLClient(
         endpoint="https://",
         api_key="nokey",
         client_name=GraphQLClientName.SDK,
         verify=True,
+        kili_app_version=None,
     )
 
 
@@ -46,6 +46,7 @@ def test_gql_bad_query_local_validation(query, mocker):
         api_key="",
         client_name=GraphQLClientName.SDK,
         verify=True,
+        kili_app_version="2.129.0",
     )
 
     with pytest.raises(GraphQLError) as exc_info:
@@ -74,6 +75,7 @@ def test_graphql_client_cache(mocker):
         api_key="",
         client_name=GraphQLClientName.SDK,
         verify=True,
+        kili_app_version="2.129.0",
     )
 
     # schema should be cached
@@ -87,6 +89,7 @@ def test_graphql_client_cache(mocker):
             api_key="",
             client_name=GraphQLClientName.SDK,
             verify=True,
+            kili_app_version="2.129.0",
         )
         mocked_print_schema.assert_not_called()
 
@@ -104,6 +107,7 @@ def test_schema_caching_requires_cache_dir():
             client_name=GraphQLClientName.SDK,
             enable_schema_caching=True,
             graphql_schema_cache_dir=None,
+            kili_app_version="2.129.0",
         )
 
 
@@ -111,43 +115,10 @@ def test_skip_checks_disable_local_validation(mocker: pytest_mock.MockerFixture)
     mocker_gql = mocker.patch("kili.core.graphql.graphql_client.Client", return_value=None)
     mocker.patch.dict(os.environ, {"KILI_SDK_SKIP_CHECKS": "true"})
     client = GraphQLClient(
-        endpoint="",
-        api_key="",
-        client_name=GraphQLClientName.SDK,
+        endpoint="", api_key="", client_name=GraphQLClientName.SDK, kili_app_version="2.129.0"
     )
     mocker_gql.assert_called_with(
         transport=client._gql_transport,
         fetch_schema_from_transport=False,
         introspection_args=client._get_introspection_args(),
     )
-
-
-def test_retries_in_case_of_transport_server_error(mocker: pytest_mock.MockerFixture):
-    client = GraphQLClient(
-        endpoint="https://cloud.com",
-        api_key="",
-        client_name=GraphQLClientName.SDK,
-        enable_schema_caching=False,
-    )
-
-    nb_errors_to_raise = 3
-
-    def backend_answer(*args, **kwargs):
-        nonlocal nb_errors_to_raise
-        if nb_errors_to_raise > 0:
-            nb_errors_to_raise -= 1
-            raise TransportServerError("http 401 authentifcation failed", code=401)
-        return "success"
-
-    mocker_execute = mocker.patch.object(
-        client._gql_client,
-        "execute",
-        side_effect=backend_answer,
-    )
-
-    ret = client.execute("query { projects { id } }")
-
-    # first call + nb_errors_to_raise retries
-    assert mocker_execute.call_count == 1 + 3
-
-    assert ret == "success"

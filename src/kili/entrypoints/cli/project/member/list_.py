@@ -33,7 +33,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     members_list = list(
-        ProjectUserQuery(kili.graphql_client)(
+        ProjectUserQuery(kili.graphql_client, kili.http_client)(
             where=ProjectUserWhere(project_id=project_id),
             fields=[
                 "role",

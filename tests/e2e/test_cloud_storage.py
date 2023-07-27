@@ -70,17 +70,16 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
 @pytest.mark.parametrize(
     "endpoint_short_name,platform_name,data_integration_id_hash,selected_folders,expected_nb_assets_after_sync",
     [
-        ("PREPROD", "AWS", "b500515e72d83bb9f7e21adb71f04b25", None, 4),
-        ("PREPROD", "AWS", "b500515e72d83bb9f7e21adb71f04b25", ["chickens"], 4),
-        ("PREPROD", "AWS", "b500515e72d83bb9f7e21adb71f04b25", [], 0),
-        ("PREPROD", "Azure", "4614546f125681dcb16da4f0cc270bef", None, 5),
-        ("PREPROD", "Azure", "db299291ac41a3198420cabaa4dbf93b", None, 5),
-        ("PREPROD", "Azure", "db299291ac41a3198420cabaa4dbf93b", ["bears"], 5),
-        ("PREPROD", "Azure", "db299291ac41a3198420cabaa4dbf93b", [], 0),
-        ("PREPROD", "GCP", "38fb4280caacfbed9cb8a235441a1dc7", None, 5),
+        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", None, 4),
+        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", ["chickens"], 4),
+        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", [], 0),
+        ("STAGING", "Azure", "5512237816bd1dde391368ed93332b75", None, 5),
+        ("STAGING", "Azure", "3e7e98e2ab4af2d614d97acb7b970c2b", None, 5),
+        ("STAGING", "Azure", "3e7e98e2ab4af2d614d97acb7b970c2b", ["bears"], 5),
+        ("STAGING", "Azure", "3e7e98e2ab4af2d614d97acb7b970c2b", [], 0),
+        ("STAGING", "GCP", "f474c0170c8daa09ec2e368ce4720c73", None, 5),
     ],
 )
-@pytest.mark.skip(reason="data integrations dead on preprod")
 def test_e2e_synchronize_cloud_storage_connection(
     kili: Kili,
     src_project: Dict,

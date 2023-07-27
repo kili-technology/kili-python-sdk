@@ -2,7 +2,6 @@
 
 from typeguard import typechecked
 
-from kili.core.helpers import format_result
 from kili.entrypoints.mutations.organization import MutationsOrganization
 from kili.entrypoints.mutations.project.queries import GQL_DELETE_PROJECT
 from kili.entrypoints.mutations.user.queries import GQL_RESET_PASSWORD
@@ -18,9 +17,12 @@ class KiliInternal(MutationsOrganization, QueriesApiKey):
         Args:
             kili: Kili object
         """
+        super().__init__()
         self.kili = kili
 
         self.graphql_client = kili.graphql_client
+        self.http_client = kili.http_client
+        self.format_result = kili.format_result
 
     @typechecked
     def reset_password(self, email: str):
@@ -37,7 +39,7 @@ class KiliInternal(MutationsOrganization, QueriesApiKey):
         """
         variables = {"where": {"email": email}}
         result = self.graphql_client.execute(GQL_RESET_PASSWORD, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
 
     @typechecked
     def delete_project(self, project_id: str):
@@ -54,4 +56,4 @@ class KiliInternal(MutationsOrganization, QueriesApiKey):
         """
         variables = {"projectID": project_id}
         result = self.graphql_client.execute(GQL_DELETE_PROJECT, variables)
-        return format_result("data", result)
+        return self.format_result("data", result)
