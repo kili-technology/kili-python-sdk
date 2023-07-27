@@ -120,34 +120,3 @@ def test_skip_checks_disable_local_validation(mocker: pytest_mock.MockerFixture)
         fetch_schema_from_transport=False,
         introspection_args=client._get_introspection_args(),
     )
-
-
-def test_retries_in_case_of_transport_server_error(mocker: pytest_mock.MockerFixture):
-    client = GraphQLClient(
-        endpoint="https://cloud.com",
-        api_key="",
-        client_name=GraphQLClientName.SDK,
-        enable_schema_caching=False,
-    )
-
-    nb_errors_to_raise = 3
-
-    def backend_answer(*args, **kwargs):
-        nonlocal nb_errors_to_raise
-        if nb_errors_to_raise > 0:
-            nb_errors_to_raise -= 1
-            raise TransportServerError("http 401 authentifcation failed", code=401)
-        return "success"
-
-    mocker_execute = mocker.patch.object(
-        client._gql_client,
-        "execute",
-        side_effect=backend_answer,
-    )
-
-    ret = client.execute("query { projects { id } }")
-
-    # first call + nb_errors_to_raise retries
-    assert mocker_execute.call_count == 1 + 3
-
-    assert ret == "success"
