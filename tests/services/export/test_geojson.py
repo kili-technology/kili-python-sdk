@@ -43,6 +43,7 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     kili.export_labels(
         "fake_proj_id",
