@@ -245,6 +245,7 @@ def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     kili.export_labels(
         "fake_proj_id", "export_pixel_coords_kili_pdf.zip", fmt="kili", normalized_coordinates=False
@@ -388,6 +389,7 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     kili.export_labels(
         "fake_proj_id",
@@ -456,6 +458,7 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
 
     kili.export_labels(
         "fake_proj_id",
