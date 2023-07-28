@@ -15,14 +15,12 @@ from kili.services.export.format.base import AbstractExporter
 from kili.services.types import Job
 from kili.utils.tqdm import tqdm
 
-from ...media.image import get_image_dimensions
+from ...media.image import get_frame_dimensions, get_image_dimensions
 from ...media.video import cut_video, get_video_dimensions
 
 
 class VocExporter(AbstractExporter):
     """Common code for VOC exporter."""
-
-    requires_asset_access = True
 
     def _check_arguments_compatibility(self) -> None:
         """Check if the export label format is compatible with the export options."""
@@ -91,12 +89,12 @@ def _process_asset(
         frame_ext = ""
         # jsonContent with frames
         if isinstance(asset["jsonContent"], list) and Path(asset["jsonContent"][0]).is_file():
-            width, height = get_image_dimensions(asset["jsonContent"][0])
+            width, height = get_frame_dimensions(asset)
             frame_ext = Path(asset["jsonContent"][0]).suffix
 
         # video with shouldUseNativeVideo set to True (no frames available)
         elif Path(asset["content"]).is_file():
-            width, height = get_video_dimensions(asset["content"])
+            width, height = get_video_dimensions(asset)
             cut_video(asset["content"], asset, leading_zeros, Path(asset["content"]).parent)
             frame_ext = ".jpg"
 
@@ -115,7 +113,7 @@ def _process_asset(
 
     elif project_input_type == "IMAGE":
         json_response = asset["latestLabel"]["jsonResponse"]
-        width, height = get_image_dimensions(asset["content"])
+        width, height = get_image_dimensions(asset)
         parameters = {"filename": Path(asset["content"]).name}
         annotations = _convert_from_kili_to_voc_format(
             json_response, width, height, parameters, valid_jobs

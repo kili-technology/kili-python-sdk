@@ -5,7 +5,6 @@ import json
 import logging
 import os
 import shutil
-import warnings
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
@@ -29,11 +28,8 @@ from kili.services.project import get_project
 from kili.services.types import Job, ProjectId
 from kili.utils.tempfile import TemporaryDirectory
 
-from ..exceptions import (
-    NotAccessibleAssetError,
-    NotCompatibleOptions,
-    NotExportableAssetError,
-)
+from ..exceptions import NotCompatibleOptions, NotExportableAssetError
+from ..tools import is_geotiff_asset_with_lat_lon_coords
 
 
 class ExportParams(NamedTuple):
@@ -54,8 +50,6 @@ class ExportParams(NamedTuple):
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     """Abstract class defining the interface for all exporters."""
-
-    requires_asset_access = False
 
     # pylint: disable=too-many-arguments
     def __init__(
@@ -129,8 +123,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             fout.write(b"Exported Labels from KILI\n=========================\n\n")
             fout.write(f"- Project name: {self.project['title']}\n".encode())
             fout.write(f"- Project identifier: {self.project['id']}\n".encode())
-            fout.write(f"- Project description: {self.project['description']}\n".encode())
-            fout.write(f'- Export date: {datetime.now().strftime("%Y%m%d-%H%M%S")}\n'.encode())
+            fout.write(f"- Project description: {self.project.get('description', '')}\n".encode())
+            fout.write(f'- Export date: {datetime.now().strftime(r"%Y%m%d-%H%M%S")}\n'.encode())
             fout.write(f"- Exported format: {self.label_format}\n".encode())
             fout.write(f"- Exported labels: {self.export_type}\n".encode())
 
@@ -177,7 +171,6 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 download_media=self.with_assets,
                 local_media_dir=str(self.images_folder),
                 asset_filter_kwargs=self.asset_filter_kwargs,
-                normalized_coordinates=self.normalized_coordinates,
             )
             # if the asset["externalId"] has slashes in it, the export will not work
             # since the slashes will be interpreted as folders
@@ -187,6 +180,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                     " Please remove the slashes from the externalIds using"
                     " `kili.change_asset_external_ids()` and try again."
                 )
+
+            self._check_geotiff_export_compatibility(assets)
 
             self.process_and_save(assets, self.output_file)
 
@@ -198,28 +193,11 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
         If not, if the format requires a data access, ensure that the assets are requested.
         """
-        if self._has_data_connection():
-            data_conn_excp_str = (
-                "Export with download of assets is not allowed on projects with data connections"
+        if self._has_data_connection() and self.with_assets:
+            raise NotCompatibleOptions(
+                "Export with download of assets is not allowed on projects with data connections."
+                " Please disable the download of assets by setting `with_assets=False`."
             )
-            if self.requires_asset_access:
-                raise NotAccessibleAssetError(
-                    f"{data_conn_excp_str}. This export format requires accessing the image height"
-                    " and width."
-                )
-            if self.with_assets:
-                raise NotCompatibleOptions(
-                    f"{data_conn_excp_str}. Please disable the download of assets by setting"
-                    " `with_assets=False`."
-                )
-        else:
-            if self.requires_asset_access and not self.with_assets:
-                warnings.warn(
-                    "For an export to this format, the download of assets cannot be disabled,"
-                    " so they will be downloaded anyway.",
-                    stacklevel=2,
-                )
-                self.with_assets = True
 
     def _has_data_connection(self) -> bool:
         data_connections_gen = DataConnectionsQuery(
@@ -230,6 +208,38 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             options=QueryOptions(disable_tqdm=True, first=1, skip=0),
         )
         return len(list(data_connections_gen)) > 0
+
+    def _check_geotiff_export_compatibility(self, assets: List[Dict]) -> None:
+        # pylint: disable=line-too-long
+        """Check if one of the assets is a geotiff asset, and if the export params are compatible.
+
+        If one of the assets is a geotiff asset, then:
+
+        - we can only allow the export for Kili or geojson formats, since geotiff normalizedVertices are lat/lon coordinates
+        - we cannot allow normalized_coordinates != None, for the same reason
+        """
+        if (
+            self.label_format not in ("raw", "kili", "geojson")
+            or self.normalized_coordinates is not None
+        ):
+            has_geotiff_asset = any(
+                is_geotiff_asset_with_lat_lon_coords(asset, self.kili.http_client)
+                for asset in assets
+            )
+
+            if self.label_format not in ("raw", "kili", "geojson") and has_geotiff_asset:
+                raise NotCompatibleOptions(
+                    "Cannot export geotiff assets with geospatial coordinates in"
+                    f" {self.label_format} format. Please use 'kili', 'raw' or 'geojson' formats"
+                    " instead."
+                )
+
+            if self.normalized_coordinates is not None and has_geotiff_asset:
+                raise NotCompatibleOptions(
+                    "Cannot export geotiff assets with geospatial latitude and longitude"
+                    f" coordinates with normalized_coordinates={self.normalized_coordinates}."
+                    " Please use `normalized_coordinates=None` instead."
+                )
 
     @property
     def base_folder(self) -> Path:

@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from kili.entrypoints.queries.label import QueriesLabel
-from kili.services.export.exceptions import NotAccessibleAssetError
+from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.format.voc import _convert_from_kili_to_voc_format
 from tests.fakes.fake_data import asset_image_1, asset_image_1_without_annotation
 
@@ -43,6 +43,7 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
         "jsonInterface": {"jobs": {"JOB": {"tools": ["rectangle"], "mlTask": "OBJECT_DETECTION"}}},
         "inputType": "IMAGE",
         "title": "",
+        "id": "fake_proj_id",
     }
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
     mocker.patch(
@@ -64,16 +65,13 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
     kili.http_client = mocker.MagicMock()
 
     with pytest.raises(
-        NotAccessibleAssetError,
-        match=(
-            "Export with download of assets is not allowed on projects with data"
-            " connections. This export format requires accessing the image height and width."
-        ),
+        NotCompatibleOptions,
+        match="Export with download of assets is not allowed on projects with data connections.",
     ):
         kili.export_labels(
             project_id="fake_proj_id",
             filename="fake_filename",
             fmt="pascal_voc",
             layout="merged",
-            with_assets=False,
+            with_assets=True,
         )
