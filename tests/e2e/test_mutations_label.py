@@ -58,9 +58,11 @@ def test_e2e_delete_labels(kili: Kili, project: Dict):
 
     # When
     labels_to_delete_ids, labels_to_keep = label_ids[:2], label_ids[2:]
-    kili.delete_labels(ids=labels_to_delete_ids)
+    deleted_label_ids = kili.delete_labels(ids=labels_to_delete_ids)
 
     # Then
+    assert sorted(deleted_label_ids) == sorted(labels_to_delete_ids)
+
     labels_left_in_project = kili.labels(project_id=project["id"], fields=["id"])
     labels_left_in_project_ids = [label["id"] for label in labels_left_in_project]
     assert sorted(labels_left_in_project_ids) == sorted(labels_to_keep)
