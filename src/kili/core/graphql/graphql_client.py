@@ -244,7 +244,7 @@ class GraphQLClient:
             document: DocumentNode, variables: Optional[Dict] = None, **kwargs
         ) -> Dict[str, Any]:
             try:
-                with _limiter.ratelimit("GraphQLClient.execute", delay=True):
+                with _limiter.ratelimit("GraphQLClient.execute", delay=True), _execute_lock:
                     result = self._gql_client.execute(
                         document=document,
                         variable_values=variables,
@@ -267,8 +267,7 @@ class GraphQLClient:
         document = query if isinstance(query, DocumentNode) else gql(query)
 
         try:
-            with _execute_lock:
-                return _execute(document, variables, **kwargs)
+            return _execute(document, variables, **kwargs)
 
         except GraphQLError as err:
             # if error is due do parsing or local validation of the query (graphql.GraphQLError)
