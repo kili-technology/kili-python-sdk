@@ -1,10 +1,8 @@
 """Utils."""
-import functools
-import time
 from time import sleep
 from typing import Any, Callable, Dict, Iterator, List, Optional
 
-from kili.core.constants import MUTATION_BATCH_SIZE, THROTTLING_DELAY
+from kili.core.constants import MUTATION_BATCH_SIZE
 from kili.exceptions import GraphQLError
 
 # pylint: disable=too-many-arguments
@@ -64,21 +62,6 @@ def batch_object_builder(
     yield from batch_object_iterator
 
 
-def api_throttle(func):
-    """Define a decorator that throttle a function call to meet the API limitation."""
-
-    @functools.wraps(func)
-    def throttled_wrapper(*args, **kwargs):
-        call_start = time.time()
-        result = func(*args, **kwargs)
-        call_duration = time.time() - call_start
-        if call_duration < THROTTLING_DELAY:
-            time.sleep(THROTTLING_DELAY - call_duration)
-        return result
-
-    return throttled_wrapper
-
-
 def _mutate_from_paginated_call(
     self,
     properties_to_batch: Dict[str, Optional[List[Any]]],
@@ -120,7 +103,7 @@ def _mutate_from_paginated_call(
     for batch_number, batch in enumerate(batch_object_builder(properties_to_batch, batch_size)):
         payload = generate_variables(batch)
         try:
-            result = api_throttle(self.graphql_client.execute)(request, payload)
+            result = self.graphql_client.execute(request, payload)
         except GraphQLError as err:
             raise GraphQLError(error=err.error, batch_number=batch_number) from err
         results.append(result)

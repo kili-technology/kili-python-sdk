@@ -49,4 +49,4 @@ mime_extensions_for_txt_files = ["text/plain"]
 
 QUERY_BATCH_SIZE = 100
 MUTATION_BATCH_SIZE = 100
-THROTTLING_DELAY = 60 / 250
+MAX_CALLS_PER_MINUTE = 500

@@ -1,5 +1,7 @@
 import os
+import threading
 from pathlib import Path
+from time import time
 from unittest import mock
 
 import graphql
@@ -7,7 +9,9 @@ import pytest
 import pytest_mock
 import requests
 from gql.transport.exceptions import TransportServerError
+from pyrate_limiter import Duration, Limiter, RequestRate
 
+from kili.core.constants import MAX_CALLS_PER_MINUTE
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.exceptions import GraphQLError
 
@@ -127,3 +131,40 @@ def test_skip_checks_disable_local_validation(mocker: pytest_mock.MockerFixture)
         fetch_schema_from_transport=False,
         introspection_args=client._get_introspection_args(),
     )
+
+
+def test_rate_limiting(mocker: pytest_mock.MockerFixture):
+    mocker.patch("kili.core.graphql.graphql_client.GraphQLClient._get_kili_app_version")
+    mocker.patch("kili.core.graphql.graphql_client.gql", side_effect=lambda x: x)
+    mocker.patch(
+        "kili.core.graphql.graphql_client._limiter",
+        new=Limiter(RequestRate(MAX_CALLS_PER_MINUTE, Duration.SECOND * 5)),
+    )
+    client = GraphQLClient(
+        endpoint="",
+        api_key="",
+        client_name=GraphQLClientName.SDK,
+        http_client=requests.Session(),
+        enable_schema_caching=False,
+    )
+
+    last_call_timestamp = before_last_call_timestamp = 0
+
+    def mock_execute(*args, **kwargs):
+        nonlocal last_call_timestamp
+        nonlocal before_last_call_timestamp
+        before_last_call_timestamp = last_call_timestamp
+        last_call_timestamp = time()
+
+    client._gql_client = mocker.MagicMock()
+    client._gql_client.execute.side_effect = mock_execute
+
+    # first calls should not be rate limited
+    for _ in range(MAX_CALLS_PER_MINUTE):
+        client.execute(query="")
+
+    # next calls should be rate limited
+    client.execute(query="")
+
+    # at least 1 second delay for the last call
+    assert last_call_timestamp - before_last_call_timestamp > 1
