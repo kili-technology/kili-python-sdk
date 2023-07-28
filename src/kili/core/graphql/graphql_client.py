@@ -30,14 +30,13 @@ from kili.core.graphql.clientnames import GraphQLClientName
 from kili.exceptions import GraphQLError
 from kili.utils.logcontext import LogContext
 
-# _limiter and _execute_lock must be at kept module-level
+# _limiter and _execute_lock must be kept at module-level
 # they need to be shared between all instances of Kili client within the same process
 
 # rate limiter to avoid sending too many queries to the backend
 _limiter = Limiter(RequestRate(MAX_CALLS_PER_MINUTE, Duration.MINUTE))
 
 # mutex to avoid multiple threads sending queries to the backend at the same time
-# (which can happen if we use the same client in multiple threads)
 _execute_lock = threading.Lock()
 
 DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR = Path.home() / ".cache" / "kili" / "graphql"
