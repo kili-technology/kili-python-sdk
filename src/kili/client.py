@@ -143,7 +143,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             api_key=api_key,
             client_name=client_name,
             verify=self.verify,
-            kili_app_version=self._get_kili_app_version(),
+            http_client=self.http_client,
             **(graphql_client_params or {}),  # type: ignore
         )
 
