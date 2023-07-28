@@ -329,8 +329,10 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         return self.format_result("data", result, Label)
 
     @typechecked
-    def delete_labels(self, ids: List[str]):
+    def delete_labels(self, ids: List[str]) -> List[str]:
         """Delete labels.
+
+        Currently, only `PREDICTION` and `INFERENCE` labels can be deleted.
 
         Args:
             ids: List of label ids to delete.
@@ -344,11 +346,10 @@ class MutationsLabel(BaseOperationEntrypointMixin):
 
         properties_to_batch = {"ids": ids}
 
-        results = _mutate_from_paginated_call(
+        result = _mutate_from_paginated_call(
             self,
             properties_to_batch,  # type: ignore
             generate_variables,
             GQL_DELETE_LABELS,
         )
-        formated_results = [self.format_result("data", result) for result in results]
-        return formated_results
+        return self.format_result("data", result[0])

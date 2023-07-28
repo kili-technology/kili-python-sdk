@@ -53,8 +53,6 @@ mutation(
 
 GQL_DELETE_LABELS = """
 mutation($ids: [ID!]!) {
-  data: deleteLabels(ids: $ids) {
-    id
-  }
+  data: deleteLabels(ids: $ids)
 }
 """

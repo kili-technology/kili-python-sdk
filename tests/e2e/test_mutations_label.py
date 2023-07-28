@@ -41,6 +41,8 @@ def project(kili: Kili):
         project_id=project["id"],
         asset_external_id_array=["1"] * 4,
         json_response_array=[{"CLASSIFICATION_JOB": {"categories": ["A"]}}] * 4,
+        label_type="PREDICTION",
+        model_name="model_name",
     )
 
     assert kili.count_labels(project_id=project["id"]) == 4
