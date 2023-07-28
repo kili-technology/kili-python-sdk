@@ -8,7 +8,7 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import deprecate
+from kili.core.helpers import deprecate, is_empty_list_with_warning
 from kili.core.utils.pagination import _mutate_from_paginated_call
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
@@ -340,6 +340,8 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         Returns:
             The deleted label ids.
         """
+        if is_empty_list_with_warning("delete_labels", "ids", ids):
+            return []
 
         def generate_variables(batch):
             return {"ids": batch["ids"]}
