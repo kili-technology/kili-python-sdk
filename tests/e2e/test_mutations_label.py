@@ -27,20 +27,21 @@ def project(kili: Kili):
     project = kili.create_project(
         input_type="TEXT",
         json_interface=interface,
-        title="test_mutations_label",
-        description="test_mutations_label",
+        title="test_e2e_delete_labels",
+        description="test_e2e_delete_labels",
     )
 
     kili.append_many_to_dataset(
-        project_id=project["id"], content_array=["some text"], external_id_array=["1"]
+        project_id=project["id"],
+        content_array=["asset_content_1"],
+        external_id_array=["1"],
     )
 
-    for _ in range(4):
-        kili.append_labels(
-            project_id=project["id"],
-            asset_external_id_array=["1"],
-            json_response_array=[{"CLASSIFICATION_JOB": {"categories": ["A"]}}],
-        )
+    kili.append_labels(
+        project_id=project["id"],
+        asset_external_id_array=["1"] * 4,
+        json_response_array=[{"CLASSIFICATION_JOB": {"categories": ["A"]}}] * 4,
+    )
 
     assert kili.count_labels(project_id=project["id"]) == 4
 
@@ -49,7 +50,7 @@ def project(kili: Kili):
     kili.delete_project(project["id"])
 
 
-def test_delete_labels(kili: Kili, project: Dict):
+def test_e2e_delete_labels(kili: Kili, project: Dict):
     # Given
     labels = kili.labels(project_id=project["id"], fields=["id"])
     label_ids = [label["id"] for label in labels]
@@ -60,6 +61,6 @@ def test_delete_labels(kili: Kili, project: Dict):
     kili.delete_labels(ids=labels_to_delete_ids)
 
     # Then
-    labels_left = kili.labels(project_id=project["id"], fields=["id"])
-    labels_left_ids = [label["id"] for label in labels_left]
-    assert sorted(labels_left_ids) == sorted(labels_to_keep)
+    labels_left_in_project = kili.labels(project_id=project["id"], fields=["id"])
+    labels_left_in_project_ids = [label["id"] for label in labels_left_in_project]
+    assert sorted(labels_left_in_project_ids) == sorted(labels_to_keep)

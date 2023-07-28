@@ -9,6 +9,7 @@ from typeguard import typechecked
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import deprecate
+from kili.core.utils.pagination import _mutate_from_paginated_call
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
 from kili.entrypoints.mutations.label.queries import (
@@ -337,6 +338,17 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         Returns:
             The deleted label ids.
         """
-        variables = {"ids": ids}
-        result = self.graphql_client.execute(GQL_DELETE_LABELS, variables)
-        return self.format_result("data", result)
+
+        def generate_variables(batch):
+            return {"ids": batch["ids"]}
+
+        properties_to_batch = {"ids": ids}
+
+        results = _mutate_from_paginated_call(
+            self,
+            properties_to_batch,  # type: ignore
+            generate_variables,
+            GQL_DELETE_LABELS,
+        )
+        formated_results = [self.format_result("data", result) for result in results]
+        return formated_results
