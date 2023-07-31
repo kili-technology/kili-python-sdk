@@ -56,3 +56,23 @@ def test_given_page_resolutions_when_i_call_update_properties_in_assets_it_calls
             ],
         },
     )
+
+
+def test_given_asset_resolution_when_updating_resolution_then_it_works(
+    mocker: pytest_mock.MockerFixture,
+):
+    # Given
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+
+    # When
+    kili.update_properties_in_assets(
+        asset_ids=["asset_id_1"], resolution_array=[{"width": 100, "height": 200}]
+    )
+
+    # Then
+    assert kili.graphql_client.execute.call_args[0][1] == {
+        "whereArray": [{"id": "asset_id_1"}],
+        "dataArray": [{"resolution": {"width": 100, "height": 200}}],
+    }

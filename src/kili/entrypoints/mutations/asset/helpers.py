@@ -22,6 +22,7 @@ def process_update_properties_in_assets_parameters(
     status_array: Optional[List[str]] = None,
     is_used_for_consensus_array: Optional[List[bool]] = None,
     is_honeypot_array: Optional[List[bool]] = None,
+    resolution_array: Optional[List[dict]] = None,
     page_resolutions_array: Optional[Union[List[List[dict]], List[List[PageResolution]]]] = None,
 ) -> Dict:
     """Process arguments of the update_properties_in_assets method
@@ -50,6 +51,7 @@ def process_update_properties_in_assets_parameters(
         "isUsedForConsensus": is_used_for_consensus_array,
         "isHoneypot": is_honeypot_array,
         "pageResolutions": page_resolutions_array,
+        "resolution": resolution_array,
     }
 
     return {
