@@ -8,12 +8,14 @@ from typeguard import typechecked
 
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import deprecate
+from kili.core.helpers import deprecate, is_empty_list_with_warning
+from kili.core.utils.pagination import _mutate_from_paginated_call
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
 from kili.entrypoints.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
+    GQL_DELETE_LABELS,
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
 from kili.orm import Label
@@ -325,3 +327,31 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         }
         result = self.graphql_client.execute(GQL_CREATE_HONEYPOT, variables)
         return self.format_result("data", result, Label)
+
+    @typechecked
+    def delete_labels(self, ids: List[str]) -> List[str]:
+        """Delete labels.
+
+        Currently, only `PREDICTION` and `INFERENCE` labels can be deleted.
+
+        Args:
+            ids: List of label ids to delete.
+
+        Returns:
+            The deleted label ids.
+        """
+        if is_empty_list_with_warning("delete_labels", "ids", ids):
+            return []
+
+        def generate_variables(batch):
+            return {"ids": batch["ids"]}
+
+        properties_to_batch = {"ids": ids}
+
+        result = _mutate_from_paginated_call(
+            self,
+            properties_to_batch,  # type: ignore
+            generate_variables,
+            GQL_DELETE_LABELS,
+        )
+        return self.format_result("data", result[0])
