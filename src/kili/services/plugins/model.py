@@ -1,7 +1,7 @@
 """Develop Plugins for Kili."""
 
 import logging
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from kili.client import Kili
 from kili.services.plugins.helpers import get_logger
@@ -124,6 +124,32 @@ class PluginCore:
                             label_id_array=[label_id],
                             text_array=[issue]
                         )
+        """
+        # pylint: disable=unused-argument
+        self.logger.warning("Handler is in active development.")
+
+    def on_project_updated(
+        self,
+        settings_updated: List[Dict],
+    ) -> None:
+        """Handler for the project updated action,
+        triggered when a project setting is updated on Kili.
+
+        **Warning**: This handler is in beta and is still in active development,
+        it should be used with caution.
+
+        Args:
+            settings_updated: Settings updated on the project:
+            a list of dictionary containing the following fields:
+                `key`, `newValue`, `oldValue`.
+
+        Example use:
+
+            >>> def on_project_updated(self, label: List[Dict]):
+            >>>     for annotation in annotations
+            >>>         key = annotation.get('key')
+            >>>         if key == 'name':
+            >>>             save_name(annotation.get('newValue'))
         """
         # pylint: disable=unused-argument
         self.logger.warning("Handler is in active development.")
