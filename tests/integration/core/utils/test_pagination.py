@@ -5,13 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from kili.core.graphql import QueryOptions
-from tests.helpers import (
-    MyGraphQLQuery,
-    MyGraphQLWhere,
-    ThrottlingError,
-    mocked_query_method,
-    throttling_mocked_query_method,
-)
+from tests.helpers import MyGraphQLQuery, MyGraphQLWhere, mocked_query_method
 
 
 @pytest.mark.parametrize(
@@ -85,7 +79,7 @@ from tests.helpers import (
         ),
     ],
 )
-def test_row_generator_from_paginated_calls(mocker, name, test_case):
+def test_row_generator_from_paginated_calls(name, test_case):
     """Simulates a count query result by returning a list of ids."""
     _ = name
 
@@ -99,48 +93,6 @@ def test_row_generator_from_paginated_calls(mocker, name, test_case):
     where = MyGraphQLWhere()
     actual = MyGraphQLQuery(
         client=MagicMock(execute=mocked_query_method), http_client=MagicMock()
-    ).execute_query_from_paginated_call(
-        query="", where=where, options=options, post_call_function=None
-    )
-
-    assert all(a == b for a, b in zip(actual, expected))
-    assert type(actual).__name__ == "generator"
-
-
-@pytest.mark.parametrize(
-    "name,test_case",
-    [
-        (
-            (
-                "When I do more queries per minutes than the throttling allows it, the paginator"
-                " handles it and makes sure that throttling threshold is not reached."
-            ),
-            {
-                "args": {"first": 1000},
-                "expected_result": ({"id": i} for i in range(1000)),
-            },
-        ),
-    ],
-)
-def test_row_generator_from_paginated_calls_handles_throttled_queries(name, test_case, mocker):
-    """"""
-    _ = name
-    expected = test_case["expected_result"]
-    skip = test_case["args"].get("skip", 0)
-    first = test_case["args"].get("first")
-    disable_tqdm = test_case["args"].get("disable_tqdm", False)
-
-    # the following checks that the mocked query error throws a Throttling error when requested
-    # too frequently
-    with pytest.raises(ThrottlingError):
-        for _ in range(20):
-            throttling_mocked_query_method("", {"skip": 0, "first": 10})
-
-    options = QueryOptions(first=first, skip=skip, disable_tqdm=disable_tqdm)
-    where = MyGraphQLWhere()
-    client_mock = MagicMock(execute=throttling_mocked_query_method)
-    actual = MyGraphQLQuery(
-        client=client_mock, http_client=MagicMock()
     ).execute_query_from_paginated_call(
         query="", where=where, options=options, post_call_function=None
     )

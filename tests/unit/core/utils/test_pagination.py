@@ -1,14 +1,7 @@
 """Unit tests for core utils pagination module."""
-from time import time
-
 import pytest
 
-from kili.core.constants import THROTTLING_DELAY
-from kili.core.utils.pagination import (
-    BatchIteratorBuilder,
-    api_throttle,
-    batch_object_builder,
-)
+from kili.core.utils.pagination import BatchIteratorBuilder, batch_object_builder
 
 
 @pytest.mark.parametrize(
@@ -124,11 +117,3 @@ def test_batch_object_builder(name, test_case):
     actual = batch_object_builder(test_case["properties_to_batch"], test_case["batch_size"])
     expected = test_case["expected_result"]
     assert all(a == b for a, b in zip(actual, expected))
-
-
-def test_when_i_call_api_throttle_given_a_fast_function_then_it_makes_it_last_longer():
-    fast_throttled_function = api_throttle(lambda x: x)
-    tic = time()
-    res = fast_throttled_function(1)
-    assert (time() - tic) > THROTTLING_DELAY
-    assert res == 1

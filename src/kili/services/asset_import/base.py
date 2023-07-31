@@ -85,7 +85,6 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         self.logger = logging.getLogger("kili.services.asset_import.base")
         self.logger.setLevel(logging.INFO)
 
-    @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike], verify: bool):
         """Base actions to import a batch of asset."""
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
@@ -232,7 +231,6 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
 class ContentBatchImporter(BaseBatchImporter):
     """Class defining the methods to import a batch of assets with content."""
 
-    @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike], verify: bool):
         """Method to import a batch of asset with content."""
         assets = self.add_ids(assets)
@@ -319,7 +317,6 @@ class JsonContentBatchImporter(BaseBatchImporter):
         # pylint: disable=line-too-long
         return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
 
-    @pagination.api_throttle
     def import_batch(self, assets: List[AssetLike], verify: bool):
         """Method to import a batch of asset with json content."""
         assets = self.add_ids(assets)

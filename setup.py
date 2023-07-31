@@ -24,6 +24,7 @@ install_requires = [
     "gql[requests,websockets]>=3.5.0b5,<4.0.0",
     "filelock>=3.0.0,<4.0.0",
     "pip-system-certs>=4.0.0,<5.0.0; platform_system=='Windows'",
+    "pyrate-limiter>=2,<3",
 ]
 
 image_requires = [

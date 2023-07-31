@@ -21,12 +21,23 @@ from gql.transport import exceptions
 from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
+from pyrate_limiter import Duration, Limiter, RequestRate
 from typing_extensions import LiteralString
 
 from kili import __version__
+from kili.core.constants import MAX_CALLS_PER_MINUTE
 from kili.core.graphql.clientnames import GraphQLClientName
 from kili.exceptions import GraphQLError
 from kili.utils.logcontext import LogContext
+
+# _limiter and _execute_lock must be kept at module-level
+# they need to be shared between all instances of Kili client within the same process
+
+# rate limiter to avoid sending too many queries to the backend
+_limiter = Limiter(RequestRate(MAX_CALLS_PER_MINUTE, Duration.MINUTE))
+
+# mutex to avoid multiple threads sending queries to the backend at the same time
+_execute_lock = threading.Lock()
 
 DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR = Path.home() / ".cache" / "kili" / "graphql"
 
@@ -52,6 +63,7 @@ class GraphQLClient:
             endpoint: Kili API endpoint.
             api_key: Kili API key.
             client_name: Name of the client.
+            http_client: HTTP client.
             verify: Whether to verify the SSL certificate.
             enable_schema_caching: Whether to cache the GraphQL schema on disk.
             graphql_schema_cache_dir: Directory where to cache the GraphQL schema.
@@ -67,10 +79,6 @@ class GraphQLClient:
         )
 
         self.ws_endpoint = self.endpoint.replace("http", "ws")
-
-        # mutex to avoid multiple threads sending queries to the backend at the same time
-        # (which can happen if we use the same client in multiple threads)
-        self._execute_lock = threading.Lock()
 
         gql_requests_logger.setLevel(logging.WARNING)
 
@@ -235,17 +243,18 @@ class GraphQLClient:
             document: DocumentNode, variables: Optional[Dict] = None, **kwargs
         ) -> Dict[str, Any]:
             try:
-                result = self._gql_client.execute(
-                    document=document,
-                    variable_values=variables,
-                    extra_args={
-                        "headers": {
-                            **self._gql_transport.headers,  # type: ignore
-                            **LogContext(),
-                        }
-                    },
-                    **kwargs,
-                )
+                with _limiter.ratelimit("GraphQLClient.execute", delay=True), _execute_lock:
+                    result = self._gql_client.execute(
+                        document=document,
+                        variable_values=variables,
+                        extra_args={
+                            "headers": {
+                                **self._gql_transport.headers,  # type: ignore
+                                **LogContext(),
+                            }
+                        },
+                        **kwargs,
+                    )
 
             except graphql.GraphQLError as err:  # local validation error
                 raise GraphQLError(error=err.message) from err
@@ -257,8 +266,7 @@ class GraphQLClient:
         document = query if isinstance(query, DocumentNode) else gql(query)
 
         try:
-            with self._execute_lock:
-                return _execute(document, variables, **kwargs)
+            return _execute(document, variables, **kwargs)
 
         except GraphQLError as err:
             # if error is due do parsing or local validation of the query (graphql.GraphQLError)

@@ -8,7 +8,6 @@ from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import format_result
-from kili.core.utils.pagination import api_throttle
 from kili.utils.tqdm import tqdm
 
 from .graphql_client import GraphQLClient
@@ -149,7 +148,7 @@ class GraphQLQuery(ABC):
                         else QUERY_BATCH_SIZE
                     )
                     payload = {"where": where.graphql_payload, "skip": skip, "first": first}
-                    rows = api_throttle(self.client.execute)(query, payload)
+                    rows = self.client.execute(query, payload)
                     rows = self.format_result("data", rows, self.FORMAT_TYPE)
 
                     if rows is None or len(rows) == 0:
