@@ -165,6 +165,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         is_used_for_consensus_array: Optional[List[bool]] = None,
         is_honeypot_array: Optional[List[bool]] = None,
         project_id: Optional[str] = None,
+        resolution_array: Optional[List[Dict]] = None,
         page_resolutions_array: Optional[
             Union[List[List[dict]], List[List[PageResolution]]]
         ] = None,
@@ -195,7 +196,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.
             is_honeypot_array: Whether to use the asset for honeypot.
             project_id: The project ID. Only required if `external_ids` argument is provided.
-            page_resolutions_array: The resolution of each page of the asset (for PDF projects).
+            resolution_array: The resolution of each asset (for image and video assets).
+                Each resolution must be passed as a dictionary with keys `width` and `height`.
+            page_resolutions_array: The resolution of each page of the asset (for PDF assets).
                 Note that each element of the array should contain all the pages resolutions of the
                 corresponding asset. Each resolution can be passed as a
                 `kili.utils.assets.PageResolution` object, or as a dictionary with keys `width`,
@@ -272,6 +275,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             status_array=status_array,
             is_used_for_consensus_array=is_used_for_consensus_array,
             is_honeypot_array=is_honeypot_array,
+            resolution_array=resolution_array,
             page_resolutions_array=page_resolutions_array,
         )
 
