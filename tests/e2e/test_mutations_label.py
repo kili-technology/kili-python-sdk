@@ -52,6 +52,7 @@ def project(kili: Kili):
     kili.delete_project(project["id"])
 
 
+@pytest.mark.skip(reason="not available on staging yet")
 def test_e2e_delete_labels(kili: Kili, project: Dict):
     # Given
     labels = kili.labels(project_id=project["id"], fields=["id"])
