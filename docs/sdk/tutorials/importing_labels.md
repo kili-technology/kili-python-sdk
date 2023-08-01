@@ -132,7 +132,7 @@ When you import pre-annotations, you can use two types of labels: `PREDICTION` a
 Unlike `PREDICTION`-type labels, `INFERENCE`-type annotations are not displayed on the asset during the labeling process.
 `INFERENCE`-type labels are used for IoU (intersection over union) calculation if you want to benchmark your model predictions, or labelers' work quality against ground truth.
 
-For more information on Kili label types, refer to [our documentation](https://docs.kili-technology.com/docs/asset-lifecycle#label-types-and-definitions-throughout-an-asset-lifecycle).
+For more information on Kili label types, refer to [our documentation](https://docs.kili-technology.com/reference/label-types).
 
 First, let's prepare some fake predictions:
 
