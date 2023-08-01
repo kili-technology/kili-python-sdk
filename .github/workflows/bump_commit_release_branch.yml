@@ -49,7 +49,8 @@ jobs:
         run: |
           git fetch --quiet
 
-          source ./.github/scripts/utils.sh   # to get the bump_version function
+          curl https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/.github/scripts/utils.sh --output utils.sh
+          source ./utils.sh   # to get the bump_version function
 
           # create PR branch
           git checkout -b workflow/create-bump-commit-release-branch-${{ inputs.releaseBranchVersion }}-${{ github.run_id }}
