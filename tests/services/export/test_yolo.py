@@ -136,46 +136,134 @@ class YoloTestCase(TestCase):
                     assert expected_file.read() == created_file.read()
 
 
-def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
-    get_project_return_val = {
-        "jsonInterface": {
-            "jobs": {
-                "OBJECT_DETECTION_JOB": {
-                    "content": {
-                        "categories": {
-                            "A": {"children": [], "color": "#472CED", "name": "A"},
-                            "B": {"children": [], "name": "B", "color": "#5CE7B7"},
-                        },
-                        "input": "radio",
+get_project_return_val = {
+    "jsonInterface": {
+        "jobs": {
+            "OBJECT_DETECTION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "color": "#472CED", "name": "A"},
+                        "B": {"children": [], "name": "B", "color": "#5CE7B7"},
                     },
-                    "instruction": "bbox",
-                    "mlTask": "OBJECT_DETECTION",
-                    "required": 0,
-                    "tools": ["rectangle"],
-                    "isChild": False,
+                    "input": "radio",
+                },
+                "instruction": "bbox",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 0,
+                "tools": ["rectangle"],
+                "isChild": False,
+            },
+            "POLYGON_JOB": {
+                "content": {
+                    "categories": {
+                        "F": {"children": [], "color": "#3BCADB", "name": "F"},
+                        "G": {"children": [], "name": "G", "color": "#199CFC"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "polygon",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 0,
+                "tools": ["polygon"],
+                "isChild": False,
+            },
+        }
+    },
+    "inputType": "IMAGE",
+    "title": "fake title",
+    "description": "fake desc",
+    "id": "fake_proj_id",
+}
+
+assets = [
+    {
+        "pageResolutions": None,
+        "latestLabel": {
+            "author": {
+                "id": "user-feat1-1",
+                "email": "test+admin+1@kili-technology.com",
+                "firstname": "Feat1",
+                "lastname": "Test Admin",
+                "name": "Feat1 Test Admin",
+            },
+            "jsonResponse": {
+                "OBJECT_DETECTION_JOB": {
+                    "annotations": [
+                        {
+                            "children": {},
+                            "boundingPoly": [
+                                {
+                                    "normalizedVertices": [
+                                        {
+                                            "x": 0.4,
+                                            "y": 0.15,
+                                        },
+                                        {
+                                            "x": 0.4,
+                                            "y": 0.05,
+                                        },
+                                        {
+                                            "x": 0.90,
+                                            "y": 0.05,
+                                        },
+                                        {
+                                            "x": 0.90,
+                                            "y": 0.15,
+                                        },
+                                    ]
+                                }
+                            ],
+                            "categories": [{"name": "A"}],
+                            "mid": "20230802144746381-79813",
+                            "type": "rectangle",
+                        }
+                    ]
                 },
                 "POLYGON_JOB": {
-                    "content": {
-                        "categories": {
-                            "F": {"children": [], "color": "#3BCADB", "name": "F"},
-                            "G": {"children": [], "name": "G", "color": "#199CFC"},
-                        },
-                        "input": "radio",
-                    },
-                    "instruction": "polygon",
-                    "mlTask": "OBJECT_DETECTION",
-                    "required": 0,
-                    "tools": ["polygon"],
-                    "isChild": False,
+                    "annotations": [
+                        {
+                            "children": {},
+                            "boundingPoly": [
+                                {
+                                    "normalizedVertices": [
+                                        {
+                                            "x": 0.75,
+                                            "y": 0.23,
+                                        },
+                                        {
+                                            "x": 0.35,
+                                            "y": 0.22,
+                                        },
+                                        {
+                                            "x": 0.07,
+                                            "y": 0.35,
+                                        },
+                                    ]
+                                }
+                            ],
+                            "categories": [{"name": "F"}],
+                            "mid": "20230802144752750-12883",
+                            "type": "polygon",
+                        }
+                    ]
                 },
-            }
+            },
+            "createdAt": "2023-08-02T12:47:55.080Z",
+            "isLatestLabelForUser": True,
+            "labelType": "DEFAULT",
+            "modelName": None,
         },
-        "inputType": "IMAGE",
-        "title": "fake title",
-        "description": "fake desc",
-        "id": "fake_proj_id",
+        "resolution": {"height": 523, "width": 474},
+        "id": "clktm4x5o00002a69gv04ukst",
+        "externalId": "trees",
+        "content": "https://sdf",
+        "jsonContent": "",
+        "jsonMetadata": {},
     }
+]
 
+
+def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
     mocker.patch("kili.entrypoints.queries.label.get_project", return_value=get_project_return_val)
     mocker.patch(
@@ -187,95 +275,7 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
     )
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
-        return_value=[
-            Asset(asset)
-            for asset in [
-                {
-                    "pageResolutions": None,
-                    "latestLabel": {
-                        "author": {
-                            "id": "user-feat1-1",
-                            "email": "test+admin+1@kili-technology.com",
-                            "firstname": "Feat1",
-                            "lastname": "Test Admin",
-                            "name": "Feat1 Test Admin",
-                        },
-                        "jsonResponse": {
-                            "OBJECT_DETECTION_JOB": {
-                                "annotations": [
-                                    {
-                                        "children": {},
-                                        "boundingPoly": [
-                                            {
-                                                "normalizedVertices": [
-                                                    {
-                                                        "x": 0.4,
-                                                        "y": 0.15,
-                                                    },
-                                                    {
-                                                        "x": 0.4,
-                                                        "y": 0.05,
-                                                    },
-                                                    {
-                                                        "x": 0.90,
-                                                        "y": 0.05,
-                                                    },
-                                                    {
-                                                        "x": 0.90,
-                                                        "y": 0.15,
-                                                    },
-                                                ]
-                                            }
-                                        ],
-                                        "categories": [{"name": "A"}],
-                                        "mid": "20230802144746381-79813",
-                                        "type": "rectangle",
-                                    }
-                                ]
-                            },
-                            "POLYGON_JOB": {
-                                "annotations": [
-                                    {
-                                        "children": {},
-                                        "boundingPoly": [
-                                            {
-                                                "normalizedVertices": [
-                                                    {
-                                                        "x": 0.75,
-                                                        "y": 0.23,
-                                                    },
-                                                    {
-                                                        "x": 0.35,
-                                                        "y": 0.22,
-                                                    },
-                                                    {
-                                                        "x": 0.07,
-                                                        "y": 0.35,
-                                                    },
-                                                ]
-                                            }
-                                        ],
-                                        "categories": [{"name": "F"}],
-                                        "mid": "20230802144752750-12883",
-                                        "type": "polygon",
-                                    }
-                                ]
-                            },
-                        },
-                        "createdAt": "2023-08-02T12:47:55.080Z",
-                        "isLatestLabelForUser": True,
-                        "labelType": "DEFAULT",
-                        "modelName": None,
-                    },
-                    "resolution": {"height": 523, "width": 474},
-                    "id": "clktm4x5o00002a69gv04ukst",
-                    "externalId": "trees",
-                    "content": "https://sdf",
-                    "jsonContent": "",
-                    "jsonMetadata": {},
-                }
-            ]
-        ],
+        return_value=[Asset(asset) for asset in assets],
     )
 
     kili = QueriesLabel()
@@ -316,45 +316,6 @@ names: ['A', 'B', 'F', 'G']
 
 
 def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
-    get_project_return_val = {
-        "jsonInterface": {
-            "jobs": {
-                "OBJECT_DETECTION_JOB": {
-                    "content": {
-                        "categories": {
-                            "A": {"children": [], "color": "#472CED", "name": "A"},
-                            "B": {"children": [], "name": "B", "color": "#5CE7B7"},
-                        },
-                        "input": "radio",
-                    },
-                    "instruction": "bbox",
-                    "mlTask": "OBJECT_DETECTION",
-                    "required": 0,
-                    "tools": ["rectangle"],
-                    "isChild": False,
-                },
-                "POLYGON_JOB": {
-                    "content": {
-                        "categories": {
-                            "F": {"children": [], "color": "#3BCADB", "name": "F"},
-                            "G": {"children": [], "name": "G", "color": "#199CFC"},
-                        },
-                        "input": "radio",
-                    },
-                    "instruction": "polygon",
-                    "mlTask": "OBJECT_DETECTION",
-                    "required": 0,
-                    "tools": ["polygon"],
-                    "isChild": False,
-                },
-            }
-        },
-        "inputType": "IMAGE",
-        "title": "fake title",
-        "description": "fake desc",
-        "id": "fake_proj_id",
-    }
-
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
     mocker.patch("kili.entrypoints.queries.label.get_project", return_value=get_project_return_val)
     mocker.patch(
@@ -366,95 +327,7 @@ def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
     )
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
-        return_value=[
-            Asset(asset)
-            for asset in [
-                {
-                    "pageResolutions": None,
-                    "latestLabel": {
-                        "author": {
-                            "id": "user-feat1-1",
-                            "email": "test+admin+1@kili-technology.com",
-                            "firstname": "Feat1",
-                            "lastname": "Test Admin",
-                            "name": "Feat1 Test Admin",
-                        },
-                        "jsonResponse": {
-                            "OBJECT_DETECTION_JOB": {
-                                "annotations": [
-                                    {
-                                        "children": {},
-                                        "boundingPoly": [
-                                            {
-                                                "normalizedVertices": [
-                                                    {
-                                                        "x": 0.4,
-                                                        "y": 0.15,
-                                                    },
-                                                    {
-                                                        "x": 0.4,
-                                                        "y": 0.05,
-                                                    },
-                                                    {
-                                                        "x": 0.90,
-                                                        "y": 0.05,
-                                                    },
-                                                    {
-                                                        "x": 0.90,
-                                                        "y": 0.15,
-                                                    },
-                                                ]
-                                            }
-                                        ],
-                                        "categories": [{"name": "A"}],
-                                        "mid": "20230802144746381-79813",
-                                        "type": "rectangle",
-                                    }
-                                ]
-                            },
-                            "POLYGON_JOB": {
-                                "annotations": [
-                                    {
-                                        "children": {},
-                                        "boundingPoly": [
-                                            {
-                                                "normalizedVertices": [
-                                                    {
-                                                        "x": 0.75,
-                                                        "y": 0.23,
-                                                    },
-                                                    {
-                                                        "x": 0.35,
-                                                        "y": 0.22,
-                                                    },
-                                                    {
-                                                        "x": 0.07,
-                                                        "y": 0.35,
-                                                    },
-                                                ]
-                                            }
-                                        ],
-                                        "categories": [{"name": "F"}],
-                                        "mid": "20230802144752750-12883",
-                                        "type": "polygon",
-                                    }
-                                ]
-                            },
-                        },
-                        "createdAt": "2023-08-02T12:47:55.080Z",
-                        "isLatestLabelForUser": True,
-                        "labelType": "DEFAULT",
-                        "modelName": None,
-                    },
-                    "resolution": {"height": 523, "width": 474},
-                    "id": "clktm4x5o00002a69gv04ukst",
-                    "externalId": "trees",
-                    "content": "https://sdf",
-                    "jsonContent": "",
-                    "jsonMetadata": {},
-                }
-            ]
-        ],
+        return_value=[Asset(asset) for asset in assets],
     )
 
     kili = QueriesLabel()
