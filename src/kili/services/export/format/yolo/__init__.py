@@ -2,7 +2,7 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Set, Tuple, cast
+from typing import Dict, List, Set, Tuple
 
 from kili.orm import JobMLTask, JobTool
 from kili.services.export.exceptions import (
@@ -12,7 +12,7 @@ from kili.services.export.exceptions import (
 )
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.repository import AbstractContentRepository, DownloadError
-from kili.services.export.types import JobCategory, LabelFormat, YoloAnnotation
+from kili.services.export.types import JobCategory, LabelFormat
 from kili.services.types import Job
 from kili.utils.tqdm import tqdm
 
@@ -26,13 +26,9 @@ class YoloExporter(AbstractExporter):
         super().__init__(*args, **kwargs)
 
         if self.split_option == "merged":
-            self.merged_categories_id = self._get_merged_categories(
-                self.project["jsonInterface"], JobMLTask.ObjectDetection, JobTool.Rectangle
-            )
+            self.merged_categories_id = self._get_merged_categories(self.project["jsonInterface"])
         else:
-            self.categories_by_job = self._get_categories_by_job(
-                self.project["jsonInterface"], JobMLTask.ObjectDetection, JobTool.Rectangle
-            )
+            self.categories_by_job = self._get_categories_by_job(self.project["jsonInterface"])
 
     def _check_arguments_compatibility(self) -> None:
         """Checks if the export label format is compatible with the export options."""
@@ -55,9 +51,7 @@ class YoloExporter(AbstractExporter):
             )
 
         if len(self.compatible_jobs) == 0:
-            raise NoCompatibleJobError(
-                f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes."
-            )
+            raise NoCompatibleJobError("Project needs at least one compatible job.")
 
         if self.split_option == "merged":
             if not self.merged_categories_id:
@@ -76,7 +70,12 @@ class YoloExporter(AbstractExporter):
         """Check job compatibility with the YOLO format."""
         if "tools" not in job:
             return False
-        return JobTool.Rectangle in job["tools"] and job["mlTask"] == JobMLTask.ObjectDetection
+
+        compatible_tools = {JobTool.Rectangle, JobTool.Polygon, JobTool.Semantic}
+
+        return job["mlTask"] == JobMLTask.ObjectDetection and all(
+            tool in compatible_tools for tool in job["tools"]
+        )
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """Yolo specific process and save."""
@@ -114,27 +113,6 @@ class YoloExporter(AbstractExporter):
         self.make_archive(self.export_root_folder, output_filename)
 
         self.logger.warning(output_filename)
-
-    @classmethod
-    def _get_categories_by_job(
-        cls, json_interface: Dict, ml_task: str, tool: str
-    ) -> Dict[str, Dict[str, JobCategory]]:
-        """Return a dictionary of JobCategory instances by category full name and job id."""
-        categories_by_job: Dict[str, Dict[str, JobCategory]] = {}
-        for job_id, job in json_interface.get("jobs", {}).items():
-            if (
-                job.get("mlTask") != ml_task
-                or tool not in job.get("tools", [])
-                or job.get("isModel")
-            ):
-                continue
-            categories: Dict[str, JobCategory] = {}
-            for cat_id, category in enumerate(job.get("content", {}).get("categories", {})):
-                categories[get_category_full_name(job_id, category)] = JobCategory(
-                    category_name=category, id=cat_id, job_id=job_id
-                )
-            categories_by_job[job_id] = categories
-        return categories_by_job
 
     def _write_labels_into_single_folder(
         self,
@@ -193,25 +171,25 @@ class YoloExporter(AbstractExporter):
             )
 
     @classmethod
-    def _get_merged_categories(
-        cls, json_interface: Dict, ml_task: str, tool: str
-    ) -> Dict[str, JobCategory]:
+    def _get_merged_categories(cls, json_interface: Dict) -> Dict[str, JobCategory]:
         """Return a dictionary of JobCategory instances by category full name."""
         cat_number = 0
         merged_categories_id: Dict[str, JobCategory] = {}
         for job_id, job in json_interface.get("jobs", {}).items():
-            if (
-                job.get("mlTask") != ml_task
-                or tool not in job.get("tools", [])
-                or job.get("isModel")
-            ):
-                continue
             for cat_number, category in enumerate(job.get("content", {}).get("categories", {})):
                 merged_categories_id[get_category_full_name(job_id, category)] = JobCategory(
                     category_name=category, id=cat_number, job_id=job_id
                 )
 
         return merged_categories_id
+
+    @classmethod
+    def _get_categories_by_job(cls, json_interface: Dict) -> Dict[str, Dict[str, JobCategory]]:
+        """Return a dictionary of JobCategory instances by category full name and job id."""
+        categories_by_job: Dict[str, Dict[str, JobCategory]] = {}
+        for job_id, job in json_interface.get("jobs", {}).items():
+            categories_by_job[job_id] = cls._get_merged_categories({"jobs": {job_id: job}})
+        return categories_by_job
 
 
 class _LabelFrames:
@@ -265,7 +243,7 @@ class _LabelFrames:
 
 def _convert_from_kili_to_yolo_format(
     job_id: str, label: Dict, category_ids: Dict[str, JobCategory]
-) -> List[YoloAnnotation]:
+) -> List[Tuple]:
     # pylint: disable=too-many-locals
     """Extract formatted annotations from labels and save the zip in the buckets."""
     if label is None or "jsonResponse" not in label:
@@ -274,7 +252,7 @@ def _convert_from_kili_to_yolo_format(
     if not (job_id in json_response and "annotations" in json_response[job_id]):
         return []
     annotations = json_response[job_id]["annotations"]
-    converted_annotations = []
+    converted_annotations: List[Tuple] = []
     for annotation in annotations:
         category_idx: JobCategory = category_ids[
             get_category_full_name(job_id, annotation["categories"][0]["name"])
@@ -287,12 +265,22 @@ def _convert_from_kili_to_yolo_format(
         normalized_vertices = bounding_poly[0]["normalizedVertices"]
         x_s = [vertice["x"] for vertice in normalized_vertices]
         y_s = [vertice["y"] for vertice in normalized_vertices]
-        x_min, y_min = cast(float, min(x_s)), cast(float, min(y_s))
-        x_max, y_max = cast(float, max(x_s)), cast(float, max(y_s))
-        _x_, _y_ = (x_max + x_min) / 2, (y_max + y_min) / 2
-        _w_, _h_ = x_max - x_min, y_max - y_min
 
-        converted_annotations.append((category_idx.id, _x_, _y_, _w_, _h_))
+        if annotation["type"] == JobTool.Rectangle:
+            x_min, y_min = min(x_s), min(y_s)
+            x_max, y_max = max(x_s), max(y_s)
+            bbox_center_x, bbox_center_y = (x_min + x_max) / 2, (y_min + y_max) / 2
+            bbox_width, bbox_height = x_max - x_min, y_max - y_min
+            converted_annotations.append(
+                (category_idx.id, bbox_center_x, bbox_center_y, bbox_width, bbox_height)
+            )
+
+        elif annotation["type"] in {JobTool.Polygon, JobTool.Semantic}:
+            # <class-index> <x1> <y1> <x2> <y2> ... <xn> <yn>
+            # Each segmentation label must have a minimum of 3 xy points (polygon)
+            points = [val for pair in zip(x_s, y_s) for val in pair]
+            converted_annotations.append((category_idx.id, *points))
+
     return converted_annotations
 
 
@@ -377,24 +365,28 @@ def _write_class_file(
         with (folder / "classes.txt").open("wb") as fout:
             for job_category in category_ids.values():
                 fout.write(f"{job_category.id} {job_category.category_name}\n".encode())
-    if label_format == "yolo_v5":
+
+    elif label_format == "yolo_v5":
         with (folder / "data.yaml").open("wb") as fout:
             fout.write(b"names:\n")
-            categories = ""
             for ind, job_category in enumerate(category_ids.values()):
                 fout.write(f"  {ind}: {job_category.category_name}\n".encode())
-    if label_format == "yolo_v7":
+
+    elif label_format in ("yolo_v7", "yolo_v8"):
         with (folder / "data.yaml").open("wb") as fout:
             categories = ""
             for job_category in category_ids.values():
                 categories += f"'{job_category.category_name}', "
             fout.write(f"nc: {len(category_ids.items())}\n".encode())
-            fout.write(f"names: [{categories[:-2]}]\n".encode())
+            fout.write(f"names: [{categories[:-2]}]\n".encode())  # remove last comma
+
+    else:
+        raise ValueError(f"Unknown Yolo label format: {label_format}")
 
 
 def _get_frame_labels(
     frame: Dict, job_ids: Set[str], category_ids: Dict[str, JobCategory]
-) -> List[YoloAnnotation]:
+) -> List[Tuple]:
     annotations = []
     for job_id in job_ids:
         job_annotations = _convert_from_kili_to_yolo_format(
@@ -419,9 +411,8 @@ def _write_content_frame_to_file(
             fout.write(block)
 
 
-def _write_labels_to_file(
-    labels_folder: Path, filename: str, annotations: List[YoloAnnotation]
-) -> None:
+def _write_labels_to_file(labels_folder: Path, filename: str, annotations: List[Tuple]) -> None:
     with (labels_folder / f"{filename}.txt").open("wb") as fout:
-        for category_idx, _x_, _y_, _w_, _h_ in annotations:
-            fout.write(f"{category_idx} {_x_} {_y_} {_w_} {_h_}\n".encode())
+        for category_idx, *points in annotations:
+            points_str = " ".join([str(point) for point in points])
+            fout.write(f"{category_idx} {points_str}\n".encode())

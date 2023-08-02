@@ -1,10 +1,10 @@
 """Types used by the conversion service."""
-from typing import Callable, Dict, Literal, NamedTuple, Tuple
+from typing import Callable, Dict, Literal, NamedTuple
 
 ExportType = Literal["latest", "normal"]
 SplitOption = Literal["split", "merged"]
 LabelFormat = Literal[
-    "raw", "kili", "yolo_v4", "yolo_v5", "yolo_v7", "coco", "pascal_voc", "geojson"
+    "raw", "kili", "yolo_v4", "yolo_v5", "yolo_v7", "yolo_v8", "coco", "pascal_voc", "geojson"
 ]
 
 
@@ -15,7 +15,5 @@ class JobCategory(NamedTuple):
     id: int
     job_id: str
 
-
-YoloAnnotation = Tuple[int, float, float, float, float]
 
 CocoAnnotationModifier = Callable[[Dict, Dict, Dict], Dict]
