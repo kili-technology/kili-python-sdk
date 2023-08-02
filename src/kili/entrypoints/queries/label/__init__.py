@@ -788,15 +788,13 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         !!! Info
             The supported formats are:
 
-            - Yolo V4, V5, V7 for object detection tasks (bounding box).
+            - Yolo V4, V5, V7 for object detection tasks.
             - Kili (a.k.a raw) for all tasks.
             - COCO for object detection tasks (bounding box and semantic segmentation).
             - Pascal VOC for object detection tasks (bounding box).
 
         !!! warning "Cloud storage"
             Export with asset download (`with_assets=True`) is not allowed for projects connected to a cloud storage.
-            As they require an access to the assets to read their dimension, the COCO and Pascal VOC formats are not
-            allowed in this case.
 
         !!! Example
             ```python
