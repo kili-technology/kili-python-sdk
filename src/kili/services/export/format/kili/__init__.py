@@ -151,7 +151,11 @@ class KiliExporter(AbstractExporter):
         self, json_resp: Dict, asset: Dict, annotation_scaler: Callable[[Dict, Dict], None]
     ) -> None:
         for job_name in json_resp.keys():
-            if self.project["jsonInterface"]["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION":
+            if (
+                # some old labels might not up to date with the json interface
+                job_name not in self.project["jsonInterface"]["jobs"]
+                or self.project["jsonInterface"]["jobs"][job_name]["mlTask"] != "OBJECT_DETECTION"
+            ):
                 continue
 
             if json_resp.get(job_name, {}).get("annotations"):
@@ -205,7 +209,7 @@ def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> 
                 }
                 for page_resolution in asset["pageResolutions"]
             }
-        except KeyError as err:
+        except (KeyError, TypeError) as err:
             raise NotCompatibleOptions(
                 "PDF labels export with absolute coordinates require `pageResolutions` in the"
                 " asset. Please use `kili.update_properties_in_assets(page_resolutions_array=...)`"
@@ -228,6 +232,13 @@ def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> 
 
 def _scale_normalized_vertices_image_video_annotation(annotation: Dict, asset: Dict) -> None:
     """Scale normalized vertices of an image/video object detection annotation."""
+    if "resolution" not in asset or asset["resolution"] is None:
+        raise NotCompatibleOptions(
+            "Image and video labels export with absolute coordinates require `resolution` in the"
+            " asset. Please use `kili.update_properties_in_assets(resolution_array=...)` to update"
+            " the resolution of your asset.`"
+        )
+
     width = asset["resolution"]["width"]
     height = asset["resolution"]["height"]
 
