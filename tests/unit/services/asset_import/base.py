@@ -1,7 +1,7 @@
 import shutil
 import tempfile
 from unittest import TestCase
-from unittest.mock import call
+from unittest.mock import MagicMock, call
 
 import requests
 
@@ -74,7 +74,16 @@ class ImportTestCase(TestCase):
             {"content": "https://hosted-data", "external_id": external_id}
             for external_id in external_id_array
         ]
-        import_assets(self.kili, self.project_id, assets)
+
+        def graphql_execute_side_effect(*args, **kwargs):
+            if args[0] == GQL_APPEND_MANY_ASSETS:
+                nb_asset_batch = len(args[1]["data"]["contentArray"])
+                return {"data": [{"id": f"id{str(i)}"} for i in range(nb_asset_batch)]}
+            else:
+                return MagicMock()
+
+        self.kili.graphql_client.execute = MagicMock(side_effect=graphql_execute_side_effect)
+        created_assets = import_assets(self.kili, self.project_id, assets)
         expected_parameters_1 = self.get_expected_sync_call(
             ["https://hosted-data"] * IMPORT_BATCH_SIZE,
             [external_id_array[i] for i in range(IMPORT_BATCH_SIZE)],
@@ -93,3 +102,4 @@ class ImportTestCase(TestCase):
         )
         calls = [call(*expected_parameters_1), call(*expected_parameters_2)]
         self.kili.graphql_client.execute.assert_has_calls(calls, any_order=True)
+        assert len(created_assets) == nb_asset_test
