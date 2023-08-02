@@ -170,12 +170,14 @@ class YoloExporter(AbstractExporter):
                 base_folder,
             )
 
-    @classmethod
-    def _get_merged_categories(cls, json_interface: Dict) -> Dict[str, JobCategory]:
+    def _get_merged_categories(self, json_interface: Dict) -> Dict[str, JobCategory]:
         """Return a dictionary of JobCategory instances by category full name."""
         cat_number = 0
         merged_categories_id: Dict[str, JobCategory] = {}
         for job_id, job in json_interface.get("jobs", {}).items():
+            if not self._is_job_compatible(job):
+                continue
+
             for cat_number, category in enumerate(job.get("content", {}).get("categories", {})):
                 merged_categories_id[get_category_full_name(job_id, category)] = JobCategory(
                     category_name=category, id=cat_number, job_id=job_id
@@ -183,12 +185,14 @@ class YoloExporter(AbstractExporter):
 
         return merged_categories_id
 
-    @classmethod
-    def _get_categories_by_job(cls, json_interface: Dict) -> Dict[str, Dict[str, JobCategory]]:
+    def _get_categories_by_job(self, json_interface: Dict) -> Dict[str, Dict[str, JobCategory]]:
         """Return a dictionary of JobCategory instances by category full name and job id."""
         categories_by_job: Dict[str, Dict[str, JobCategory]] = {}
         for job_id, job in json_interface.get("jobs", {}).items():
-            categories_by_job[job_id] = cls._get_merged_categories({"jobs": {job_id: job}})
+            if not self._is_job_compatible(job):
+                continue
+
+            categories_by_job[job_id] = self._get_merged_categories({"jobs": {job_id: job}})
         return categories_by_job
 
 
@@ -263,14 +267,14 @@ def _convert_from_kili_to_yolo_format(
         if len(bounding_poly) < 1 or "normalizedVertices" not in bounding_poly[0]:
             continue
         normalized_vertices = bounding_poly[0]["normalizedVertices"]
-        x_s = [vertice["x"] for vertice in normalized_vertices]
-        y_s = [vertice["y"] for vertice in normalized_vertices]
+        x_s: List[float] = [vertice["x"] for vertice in normalized_vertices]
+        y_s: List[float] = [vertice["y"] for vertice in normalized_vertices]
 
         if annotation["type"] == JobTool.Rectangle:
             x_min, y_min = min(x_s), min(y_s)
             x_max, y_max = max(x_s), max(y_s)
-            bbox_center_x, bbox_center_y = (x_min + x_max) / 2, (y_min + y_max) / 2
-            bbox_width, bbox_height = x_max - x_min, y_max - y_min
+            bbox_center_x, bbox_center_y = (x_min + x_max) / 2, (y_min + y_max) / 2  # type: ignore
+            bbox_width, bbox_height = x_max - x_min, y_max - y_min  # type: ignore
             converted_annotations.append(
                 (category_idx.id, bbox_center_x, bbox_center_y, bbox_width, bbox_height)
             )
