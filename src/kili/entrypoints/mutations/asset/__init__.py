@@ -52,7 +52,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         wait_until_availability: bool = True,
         from_csv: Optional[str] = None,
         csv_separator: str = ",",
-    ) -> Optional[Dict[Literal["id", "created_assets_ids"], Union[str, List[str]]]]:
+    ) -> Optional[Dict[Literal["id", "asset_ids"], Union[str, List[str]]]]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -98,7 +98,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
 
         Returns:
-            A dictionary with the project `id`.
+            A dictionary with two fields: `id` which is the project id and `asset_ids` which is a list of the created asset ids.
+            In the case where assets are uploaded asynchronously (for video imported as frames or big images or tiff images), the method return an empty list of asset ids.
 
         Examples:
             >>> kili.append_many_to_dataset(
@@ -160,14 +161,14 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         for key, value in field_mapping.items():
             if value is not None:
                 assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
-        created_assets_ids = import_assets(
+        created_asset_ids = import_assets(
             self,
             project_id=project_id,
             assets=assets,
             disable_tqdm=disable_tqdm,
             verify=wait_until_availability,
         )
-        return {"id": project_id, "created_assets_ids": created_assets_ids}
+        return {"id": project_id, "asset_ids": created_asset_ids}
 
     @typechecked
     def update_properties_in_assets(
