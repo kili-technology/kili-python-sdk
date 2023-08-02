@@ -178,10 +178,11 @@ class YoloExporter(AbstractExporter):
             if not self._is_job_compatible(job):
                 continue
 
-            for cat_number, category in enumerate(job.get("content", {}).get("categories", {})):
+            for category in job.get("content", {}).get("categories", {}):
                 merged_categories_id[get_category_full_name(job_id, category)] = JobCategory(
                     category_name=category, id=cat_number, job_id=job_id
                 )
+                cat_number += 1
 
         return merged_categories_id
 
@@ -192,7 +193,12 @@ class YoloExporter(AbstractExporter):
             if not self._is_job_compatible(job):
                 continue
 
-            categories_by_job[job_id] = self._get_merged_categories({"jobs": {job_id: job}})
+            categories: Dict[str, JobCategory] = {}
+            for cat_id, category in enumerate(job.get("content", {}).get("categories", {})):
+                categories[get_category_full_name(job_id, category)] = JobCategory(
+                    category_name=category, id=cat_id, job_id=job_id
+                )
+            categories_by_job[job_id] = categories
         return categories_by_job
 
 
