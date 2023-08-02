@@ -74,9 +74,18 @@ jobs:
           if [[ "${{ github.event_name }}" == "push" ]]; then
 
             if [[ "${{ github.ref_name }}" == release/* ]]; then
-              json_str="{\"array\": [\"RELEASE_PREPROD\"]}"
+              # if the push was on a release branch, it can be either
+              # the lts branch -> LTS_CYCLE_FIRST_SDK_STAGING mode
+              # or the latest release branch -> RELEASE_PREPROD mode
+              if [[ "${{ github.ref_name }}" == release/2.129.0 ]]; then
+                json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
+              else
+                json_str="{\"array\": [\"RELEASE_PREPROD\"]}"
+              fi
+
             else
               json_str="{\"array\": [\"MAIN_STAGING\"]}"
+
             fi
 
           elif [[ "${{ github.event_name }}" == "schedule" ]]; then
