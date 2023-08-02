@@ -113,7 +113,7 @@ class YoloTestCase(TestCase):
 
     def test_write_class_file_yolo_v4(self):
         with TemporaryDirectory() as directory:
-            _write_class_file(directory, category_ids, "yolo_v4")
+            _write_class_file(directory, category_ids, "yolo_v4", "split")
             assert (directory / "classes.txt").is_file()
             with (directory / "classes.txt").open("r") as created_file:
                 with open("./tests/services/export/expected/classes.txt") as expected_file:
@@ -121,7 +121,7 @@ class YoloTestCase(TestCase):
 
     def test_write_class_file_yolo_v5(self):
         with TemporaryDirectory() as directory:
-            _write_class_file(directory, category_ids, "yolo_v5")
+            _write_class_file(directory, category_ids, "yolo_v5", "split")
             assert (directory / "data.yaml").is_file()
             with (directory / "data.yaml").open("r") as created_file:
                 with open("./tests/services/export/expected/data_v5.yaml") as expected_file:
@@ -129,7 +129,7 @@ class YoloTestCase(TestCase):
 
     def test_write_class_file_yolo_v7(self):
         with TemporaryDirectory() as directory:
-            _write_class_file(directory, category_ids, "yolo_v7")
+            _write_class_file(directory, category_ids, "yolo_v7", "split")
             assert (directory / "data.yaml").is_file()
             with (directory / "data.yaml").open("r") as created_file:
                 with open("./tests/services/export/expected/data_v7.yaml") as expected_file:
