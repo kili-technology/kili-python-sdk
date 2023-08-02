@@ -299,14 +299,12 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
 
         assert Path(f"{extract_folder}/README.kili.txt").is_file()
 
-        assert Path(f"{extract_folder}/data.yaml").is_file()
         assert Path(f"{extract_folder}/data.yaml").read_text() == """nc: 4
-names: ['A', 'B', 'F', 'G']
+names: ['OBJECT_DETECTION_JOB/A', 'OBJECT_DETECTION_JOB/B', 'POLYGON_JOB/F', 'POLYGON_JOB/G']
 """
 
         assert Path(f"{extract_folder}/labels").is_dir()
 
-        assert Path(f"{extract_folder}/labels/trees.txt").is_file()
         label = Path(f"{extract_folder}/labels/trees.txt").read_text()
 
         # bbox annotation: class bbox_center_x bbox_center_y bbox_w bbox_h

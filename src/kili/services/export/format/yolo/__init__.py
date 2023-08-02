@@ -12,7 +12,7 @@ from kili.services.export.exceptions import (
 )
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.repository import AbstractContentRepository, DownloadError
-from kili.services.export.types import JobCategory, LabelFormat
+from kili.services.export.types import JobCategory, LabelFormat, SplitOption
 from kili.services.types import Job
 from kili.utils.tqdm import tqdm
 
@@ -123,7 +123,7 @@ class YoloExporter(AbstractExporter):
         base_folder: Path,
     ):  # pylint: disable=too-many-arguments
         """Write all the labels into a single folder."""
-        _write_class_file(base_folder, categories_id, self.label_format)
+        _write_class_file(base_folder, categories_id, self.label_format, self.split_option)
 
         remote_content = []
         video_metadata = {}
@@ -368,25 +368,33 @@ def _process_asset(
 
 
 def _write_class_file(
-    folder: Path, category_ids: Dict[str, JobCategory], label_format: LabelFormat
+    folder: Path,
+    category_ids: Dict[str, JobCategory],
+    label_format: LabelFormat,
+    layout: SplitOption,
 ):
     """Create a file that contains meta information about the export, depending of Yolo version."""
     if label_format == "yolo_v4":
         with (folder / "classes.txt").open("wb") as fout:
             for job_category in category_ids.values():
-                fout.write(f"{job_category.id} {job_category.category_name}\n".encode())
+                # if layout is merged, we need to prefix the category name with the job id
+                # to avoid duplicates, since a category name can be used in several jobs
+                prefix = f"{job_category.job_id}/" if layout == "merged" else ""
+                fout.write(f"{job_category.id} {prefix}{job_category.category_name}\n".encode())
 
     elif label_format == "yolo_v5":
         with (folder / "data.yaml").open("wb") as fout:
             fout.write(b"names:\n")
             for ind, job_category in enumerate(category_ids.values()):
-                fout.write(f"  {ind}: {job_category.category_name}\n".encode())
+                prefix = f"{job_category.job_id}/" if layout == "merged" else ""
+                fout.write(f"  {ind}: {prefix}{job_category.category_name}\n".encode())
 
     elif label_format in ("yolo_v7", "yolo_v8"):
         with (folder / "data.yaml").open("wb") as fout:
             categories = ""
             for job_category in category_ids.values():
-                categories += f"'{job_category.category_name}', "
+                prefix = f"{job_category.job_id}/" if layout == "merged" else ""
+                categories += f"'{prefix}{job_category.category_name}', "
             fout.write(f"nc: {len(category_ids.items())}\n".encode())
             fout.write(f"names: [{categories[:-2]}]\n".encode())  # remove last comma
 
