@@ -28,7 +28,7 @@ class TestImportLabelsFromDict:
     def test_import_default_labels_with_asset_id(self):
         project_id = "project_id"
         label_type = "DEFAULT"
-        overwrite = True
+        overwrite = False
         model_name = None
         labels = [
             {"json_response": self.json_response, "asset_id": "asset_id_1"},
@@ -38,7 +38,7 @@ class TestImportLabelsFromDict:
         call = {
             "data": {
                 "labelType": "DEFAULT",
-                "overwrite": True,
+                "overwrite": overwrite,
                 "labelsData": [
                     {
                         "assetID": "asset_id_1",
@@ -70,7 +70,7 @@ class TestImportLabelsFromDict:
     def test_import_default_labels_with_external_id(self, mocker):
         project_id = "project_id"
         label_type = "DEFAULT"
-        overwrite = True
+        overwrite = False
         model_name = None
         labels = [
             {"json_response": self.json_response, "asset_external_id": "asset_external_id_1"},
@@ -80,7 +80,7 @@ class TestImportLabelsFromDict:
         call = {
             "data": {
                 "labelType": "DEFAULT",
-                "overwrite": True,
+                "overwrite": overwrite,
                 "labelsData": [
                     {
                         "assetID": "asset_id_1",
@@ -112,7 +112,7 @@ class TestImportLabelsFromDict:
         project_id = "project_id"
         label_type = "DEFAULT"
         model_name = None
-        overwrite = True
+        overwrite = False
         author_id = "author_id"
         seconds_to_label = 3
         labels = [
@@ -127,7 +127,7 @@ class TestImportLabelsFromDict:
         call = {
             "data": {
                 "labelType": "DEFAULT",
-                "overwrite": True,
+                "overwrite": overwrite,
                 "labelsData": [
                     {
                         "assetID": "asset_id",
@@ -151,7 +151,7 @@ class TestImportLabelsFromDict:
     def test_return_error_when_give_unexisting_label_field(self):
         project_id = "project_id"
         label_type = "DEFAULT"
-        overwrite = True
+        overwrite = False
         model_name = None
         labels = [
             {"json_response": self.json_response, "asset_id": "asset_id", "unexisting_field": 3}
@@ -164,7 +164,7 @@ class TestImportLabelsFromDict:
     def test_return_error_when_give_wrong_field_type(self):
         project_id = "project_id"
         label_type = "DEFAULT"
-        overwrite = True
+        overwrite = False
         model_name = None
         labels = [
             {
@@ -187,7 +187,7 @@ class TestImportLabelsFromDict:
         project_id = "project_id"
         label_type = "PREDICTION"
         model_name = "model_name"
-        overwrite = True
+        overwrite = False
         labels = [
             {"json_response": self.json_response, "asset_external_id": "asset_external_id_1"},
             {"json_response": self.json_response, "asset_external_id": "asset_external_id_2"},
@@ -196,7 +196,7 @@ class TestImportLabelsFromDict:
         call = {
             "data": {
                 "labelType": "PREDICTION",
-                "overwrite": True,
+                "overwrite": overwrite,
                 "labelsData": [
                     {
                         "assetID": "asset_id_1",
@@ -229,11 +229,11 @@ class TestImportLabelsFromDict:
         "__call__",
         side_effect=mocked_AssetQuery,
     )
-    def test_import_predictions_without_overwritting(self, mocker):
+    def test_import_predictions_with_overwritting(self, mocker):
         project_id = "project_id"
         label_type = "PREDICTION"
         model_name = "model_name"
-        overwrite = False
+        overwrite = True
         labels = [
             {"json_response": self.json_response, "asset_external_id": "asset_external_id_1"},
         ]
@@ -241,7 +241,7 @@ class TestImportLabelsFromDict:
         call = {
             "data": {
                 "labelType": "PREDICTION",
-                "overwrite": False,
+                "overwrite": overwrite,
                 "labelsData": [
                     {
                         "assetID": "asset_id_1",
@@ -269,7 +269,7 @@ class TestImportLabelsFromDict:
         project_id = "project_id"
         label_type = "PREDICTION"
         model_name = None
-        overwrite = True
+        overwrite = False
         labels = [{"json_response": self.json_response, "asset_external_id": "asset_external_id"}]
 
         with pytest.raises(ValueError):

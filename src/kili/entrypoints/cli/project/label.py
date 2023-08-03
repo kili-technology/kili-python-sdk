@@ -61,12 +61,13 @@ def type_check_label(key, value):
     help="Job name in the project where to upload the labels (if relevant to the input format)",
 )
 @click.option(
-    "--overwrite/--no-overwrite",
-    default=True,
+    "--overwrite",
+    is_flag=True,
+    default=False,
     help=(
-        "when uploading predictions or inference labels, if overwrite is True, it will overwrite"
-        " existing predictions and inference labels with the same model name on the targeted"
-        " assets."
+        "when uploading prediction or inference labels, if the `overwrite` flag is activated, it"
+        " will overwrite existing labels with the same model name and of the same type label type,"
+        " on the targeted assets."
     ),
 )
 # pylint: disable=too-many-arguments
