@@ -14,7 +14,16 @@ class DictClass(dict):
 
 
 AnnotationFormat = Literal[
-    "kili", "raw", "simple", "yolo_v4", "yolo_v5", "yolo_v7", "coco", "pascal_voc", "geojson"
+    "kili",
+    "raw",
+    "simple",
+    "yolo_v4",
+    "yolo_v5",
+    "yolo_v7",
+    "yolo_v8",
+    "coco",
+    "pascal_voc",
+    "geojson",
 ]
 
 

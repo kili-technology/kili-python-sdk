@@ -1,5 +1,5 @@
 """Types used by the conversion service."""
-from typing import Any, Dict, List, Literal, NamedTuple, NewType, Tuple, Union
+from typing import Any, Dict, List, Literal, NamedTuple, NewType, Union
 
 from typing_extensions import TypedDict
 
@@ -18,7 +18,6 @@ class JobCategory(NamedTuple):
     job_id: str
 
 
-YoloAnnotation = Tuple[int, float, float, float, float]
 LabelType = Literal["AUTOSAVE", "DEFAULT", "PREDICTION", "REVIEW", "INFERENCE"]
 
 MLTask = Literal["CLASSIFICATION", "NAMED_ENTITIES_RECOGNITION", "OBJECT_DETECTION"]

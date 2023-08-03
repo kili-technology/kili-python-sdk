@@ -52,24 +52,6 @@ def mocked_ProjectQuery(where, _fields, _options):
                 "input": "radio",
             },
         }
-        job_payload = {
-            "mlTask": "OBJECT_DETECTION",
-            "tools": ["rectangle"],
-            "instruction": "Categories",
-            "required": 1 if project_id == "object_detection" else 0,
-            "isChild": False,
-            "content": {
-                "categories": {
-                    "OBJECT_A": {
-                        "name": "OBJECT A",
-                    },
-                    "OBJECT_B": {
-                        "name": "OBJECT B",
-                    },
-                },
-                "input": "radio",
-            },
-        }
 
         irrelevant_job_payload = {
             "mlTask": "CLASSIFICATION",

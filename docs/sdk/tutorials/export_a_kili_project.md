@@ -225,8 +225,10 @@ You can export your project data from the Kili UI (see [documentation](https://d
 | YOLO V4       | ✅   | ✅             | ✅                      |
 | YOLO V5       | ✅   | ✅             | ✅                      |
 | YOLO V7       | ❌   | ✅             | ✅                      |
+| YOLO V8       | ❌   | ✅             | ✅                      |
 | Pascal VOC    | ✅   | ✅             | ✅                      |
 | COCO          | ❌   | ✅             | ✅                      |
+| GeoJSON          | ❌   | ✅             | ✅                      |
 
 ### The `.export_labels` method
 
@@ -301,19 +303,40 @@ kili.export_labels(
 
 ### YOLO formats
 
-When you have at least one Object Detection job with bounding boxes, you can also export to one of the YOLO formats. You can choose `"yolo_v4"`, `"yolo_v5"` or `"yolo_v7"`. The difference between each format is the structure of the metadata YAML file, which specifies the object classes. In all the cases, one file per asset is produced, containing the last created `DEFAULT` or `REVIEW` label. Each YOLO label has the following shape:
+When you have at least one object etection job, you can also export to one of the following YOLO formats: `"yolo_v4"`, `"yolo_v5"`, `"yolo_v7"` or `"yolo_v8"`.
+The difference between each format is the structure of the metadata YAML file, which specifies the object classes.
+In all the cases, one file per asset is produced, containing the last created `DEFAULT` or `REVIEW` label.
+
+For bouding boxes, each YOLO label has the following shape:
+
 ```
 2        0.25 0.67 0.26 0.34
 ^        ^    ^    ^    ^
 class    x    y    w    h
 ```
+
 where:
 
-   * `class` is the class index in the classes list contained in the YOLO metadata file.
-   * `x` is the x-coordinate relative to the image width (between 0.0 and 1.0) of the center of the bounding box.
-   * `y` is the y-coordinate relative to the image height (between 0.0 and 1.0) of the center of the bounding box.
-   * `w` is the width relative to the image width (between 0.0 and 1.0) of the bounding box.
-   * `h` is the height relative to the image height (between 0.0 and 1.0) of the bounding box.
+- `class` is the class index in the classes list contained in the YOLO metadata file.
+- `x` is the x-coordinate relative to the image width (between 0.0 and 1.0) of the center of the bounding box.
+- `y` is the y-coordinate relative to the image height (between 0.0 and 1.0) of the center of the bounding box.
+- `w` is the width relative to the image width (between 0.0 and 1.0) of the bounding box.
+- `h` is the height relative to the image height (between 0.0 and 1.0) of the bounding box.
+
+For polygons or segmentations, each YOLO label has the following shape:
+
+```
+2        0.25 0.67 0.26 0.34 0.4 0.5 0.6 0.7  ...
+^        ^    ^    ^    ^    ^   ^   ^   ^
+class    x1   y1   x2   y2   x3  y3  x4  y4   ...
+```
+
+where:
+
+- `class` is the class index in the classes list contained in the YOLO metadata file.
+- `xi` is the x-coordinate relative to the image width (between 0.0 and 1.0) of the i-th point of the polygon.
+- `yi` is the y-coordinate relative to the image height (between 0.0 and 1.0) of the i-th point of the polygon.
+
 
 Here is an example of a YOLO annotation over an image:
 

@@ -1,9 +1,14 @@
 # pylint: disable=missing-docstring
 
+from pathlib import Path
 from unittest import TestCase
+from zipfile import ZipFile
 
+import pytest_mock
 import requests
 
+from kili.entrypoints.queries.label import QueriesLabel
+from kili.orm import Asset
 from kili.services.export.format.yolo import (
     _convert_from_kili_to_yolo_format,
     _process_asset,
@@ -108,7 +113,7 @@ class YoloTestCase(TestCase):
 
     def test_write_class_file_yolo_v4(self):
         with TemporaryDirectory() as directory:
-            _write_class_file(directory, category_ids, "yolo_v4")
+            _write_class_file(directory, category_ids, "yolo_v4", "split")
             assert (directory / "classes.txt").is_file()
             with (directory / "classes.txt").open("r") as created_file:
                 with open("./tests/services/export/expected/classes.txt") as expected_file:
@@ -116,7 +121,7 @@ class YoloTestCase(TestCase):
 
     def test_write_class_file_yolo_v5(self):
         with TemporaryDirectory() as directory:
-            _write_class_file(directory, category_ids, "yolo_v5")
+            _write_class_file(directory, category_ids, "yolo_v5", "split")
             assert (directory / "data.yaml").is_file()
             with (directory / "data.yaml").open("r") as created_file:
                 with open("./tests/services/export/expected/data_v5.yaml") as expected_file:
@@ -124,8 +129,237 @@ class YoloTestCase(TestCase):
 
     def test_write_class_file_yolo_v7(self):
         with TemporaryDirectory() as directory:
-            _write_class_file(directory, category_ids, "yolo_v7")
+            _write_class_file(directory, category_ids, "yolo_v7", "split")
             assert (directory / "data.yaml").is_file()
             with (directory / "data.yaml").open("r") as created_file:
                 with open("./tests/services/export/expected/data_v7.yaml") as expected_file:
                     assert expected_file.read() == created_file.read()
+
+
+get_project_return_val = {
+    "jsonInterface": {
+        "jobs": {
+            "OBJECT_DETECTION_JOB": {
+                "content": {
+                    "categories": {
+                        "A": {"children": [], "color": "#472CED", "name": "A"},
+                        "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "bbox",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 0,
+                "tools": ["rectangle"],
+                "isChild": False,
+            },
+            "POLYGON_JOB": {
+                "content": {
+                    "categories": {
+                        "F": {"children": [], "color": "#3BCADB", "name": "F"},
+                        "G": {"children": [], "name": "G", "color": "#199CFC"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "polygon",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 0,
+                "tools": ["polygon"],
+                "isChild": False,
+            },
+        }
+    },
+    "inputType": "IMAGE",
+    "title": "fake title",
+    "description": "fake desc",
+    "id": "fake_proj_id",
+}
+
+assets = [
+    {
+        "pageResolutions": None,
+        "latestLabel": {
+            "author": {
+                "id": "user-feat1-1",
+                "email": "test+admin+1@kili-technology.com",
+                "firstname": "Feat1",
+                "lastname": "Test Admin",
+                "name": "Feat1 Test Admin",
+            },
+            "jsonResponse": {
+                "OBJECT_DETECTION_JOB": {
+                    "annotations": [
+                        {
+                            "children": {},
+                            "boundingPoly": [
+                                {
+                                    "normalizedVertices": [
+                                        {
+                                            "x": 0.4,
+                                            "y": 0.15,
+                                        },
+                                        {
+                                            "x": 0.4,
+                                            "y": 0.05,
+                                        },
+                                        {
+                                            "x": 0.90,
+                                            "y": 0.05,
+                                        },
+                                        {
+                                            "x": 0.90,
+                                            "y": 0.15,
+                                        },
+                                    ]
+                                }
+                            ],
+                            "categories": [{"name": "A"}],
+                            "mid": "20230802144746381-79813",
+                            "type": "rectangle",
+                        }
+                    ]
+                },
+                "POLYGON_JOB": {
+                    "annotations": [
+                        {
+                            "children": {},
+                            "boundingPoly": [
+                                {
+                                    "normalizedVertices": [
+                                        {
+                                            "x": 0.75,
+                                            "y": 0.23,
+                                        },
+                                        {
+                                            "x": 0.35,
+                                            "y": 0.22,
+                                        },
+                                        {
+                                            "x": 0.07,
+                                            "y": 0.35,
+                                        },
+                                    ]
+                                }
+                            ],
+                            "categories": [{"name": "F"}],
+                            "mid": "20230802144752750-12883",
+                            "type": "polygon",
+                        }
+                    ]
+                },
+            },
+            "createdAt": "2023-08-02T12:47:55.080Z",
+            "isLatestLabelForUser": True,
+            "labelType": "DEFAULT",
+            "modelName": None,
+        },
+        "resolution": {"height": 523, "width": 474},
+        "id": "clktm4x5o00002a69gv04ukst",
+        "externalId": "trees",
+        "content": "https://sdf",
+        "jsonContent": "",
+        "jsonMetadata": {},
+    }
+]
+
+
+def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
+    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
+    mocker.patch("kili.entrypoints.queries.label.get_project", return_value=get_project_return_val)
+    mocker.patch(
+        "kili.services.export.format.base.get_project", return_value=get_project_return_val
+    )
+    mocker.patch(
+        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
+        return_value=(i for i in [get_project_return_val]),
+    )
+    mocker.patch(
+        "kili.services.export.format.base.fetch_assets",
+        return_value=[Asset(asset) for asset in assets],
+    )
+
+    kili = QueriesLabel()
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+
+    kili.export_labels(
+        "clktm4vzz001a0j324elr5dsy",
+        filename="export_yolo_v8.zip",
+        fmt="yolo_v8",
+        layout="merged",
+        with_assets=False,
+    )
+
+    with TemporaryDirectory() as extract_folder:
+        with ZipFile("export_yolo_v8.zip", "r") as z_f:
+            # extract in a temp dir
+            z_f.extractall(extract_folder)
+
+        assert Path(f"{extract_folder}/README.kili.txt").is_file()
+
+        assert Path(f"{extract_folder}/data.yaml").read_text() == """nc: 4
+names: ['OBJECT_DETECTION_JOB/A', 'OBJECT_DETECTION_JOB/B', 'POLYGON_JOB/F', 'POLYGON_JOB/G']
+"""
+
+        assert Path(f"{extract_folder}/labels").is_dir()
+
+        label = Path(f"{extract_folder}/labels/trees.txt").read_text()
+
+        # bbox annotation: class bbox_center_x bbox_center_y bbox_w bbox_h
+        assert "0 0.65 0.1 0.5 0.09999999999999999" in label
+        # polygon annotation: class x1 y1 x2 y2 x3 y3 etc
+        assert "2 0.75 0.23 0.35 0.22 0.07 0.35" in label
+
+
+def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
+    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
+    mocker.patch("kili.entrypoints.queries.label.get_project", return_value=get_project_return_val)
+    mocker.patch(
+        "kili.services.export.format.base.get_project", return_value=get_project_return_val
+    )
+    mocker.patch(
+        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
+        return_value=(i for i in [get_project_return_val]),
+    )
+    mocker.patch(
+        "kili.services.export.format.base.fetch_assets",
+        return_value=[Asset(asset) for asset in assets],
+    )
+
+    kili = QueriesLabel()
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+
+    kili.export_labels(
+        "clktm4vzz001a0j324elr5dsy",
+        filename="export_yolo_v8.zip",
+        fmt="yolo_v8",
+        layout="split",
+        with_assets=False,
+    )
+
+    with TemporaryDirectory() as extract_folder:
+        with ZipFile("export_yolo_v8.zip", "r") as z_f:
+            # extract in a temp dir
+            z_f.extractall(extract_folder)
+
+        assert Path(f"{extract_folder}/README.kili.txt").is_file()
+        assert Path(f"{extract_folder}/OBJECT_DETECTION_JOB/data.yaml").read_text() == """nc: 2
+names: ['A', 'B']
+"""
+        assert Path(f"{extract_folder}/POLYGON_JOB/data.yaml").read_text() == """nc: 2
+names: ['F', 'G']
+"""
+
+        assert (
+            Path(f"{extract_folder}/OBJECT_DETECTION_JOB/labels/trees.txt").read_text()
+            == "0 0.65 0.1 0.5 0.09999999999999999\n"
+        )
+        assert (
+            Path(f"{extract_folder}/POLYGON_JOB/labels/trees.txt").read_text()
+            == "0 0.75 0.23 0.35 0.22 0.07 0.35\n"
+        )

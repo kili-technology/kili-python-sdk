@@ -74,6 +74,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
             "yolo_v4": YoloExporter,
             "yolo_v5": YoloExporter,
             "yolo_v7": YoloExporter,
+            "yolo_v8": YoloExporter,
             "pascal_voc": VocExporter,
             "geojson": GeoJsonExporter,
         }
