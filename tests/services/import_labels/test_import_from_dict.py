@@ -224,6 +224,11 @@ class TestImportLabelsFromDict:
             GQL_APPEND_MANY_LABELS, call, timeout=60
         )
 
+    @patch.object(
+        AssetQuery,
+        "__call__",
+        side_effect=mocked_AssetQuery,
+    )
     def test_import_predictions_without_overwritting(self, mocker):
         project_id = "project_id"
         label_type = "PREDICTION"

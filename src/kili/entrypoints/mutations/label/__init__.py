@@ -44,6 +44,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         model_name: Optional[str] = None,
         asset_id_array: Optional[List[str]] = None,
         disable_tqdm: bool = False,
+        overwrite: bool = True,
     ) -> Dict[Literal["id"], str]:
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
@@ -57,6 +58,9 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             model_name: The name of the model that generated the predictions
             asset_id_array: The internal IDs of the assets for which we want to add predictions.
             disable_tqdm: Disable tqdm progress bar.
+            overwrite: when uploading predictions or inference labels, if True,
+                it will overwrite existing predictions and inference labels
+                with the same model name on the targeted assets.
 
         Returns:
             A dictionary with the project `id`.
@@ -108,7 +112,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             )
         ]
         services.import_labels_from_dict(
-            self, project_id, labels, "PREDICTION", model_name, disable_tqdm
+            self, project_id, labels, "PREDICTION", overwrite, model_name, disable_tqdm
         )
         return {"id": project_id}
 
