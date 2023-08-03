@@ -1,4 +1,5 @@
 """This script permits to initialize the Kili Python SDK client."""
+import logging
 import os
 import warnings
 from datetime import datetime, timedelta
@@ -37,6 +38,17 @@ from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.internal import KiliInternal
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
+
+
+class FilterPoolFullWarning(logging.Filter):
+    """Filter out the specific urllib3 warning related to the connection pool."""
+
+    def filter(self, record) -> bool:
+        """urllib3.connectionpool:Connection pool is full, discarding connection: ..."""
+        return "Connection pool is full, discarding connection" not in record.getMessage()
+
+
+logging.getLogger("urllib3.connectionpool").addFilter(FilterPoolFullWarning())
 
 
 class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
