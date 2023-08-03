@@ -28,6 +28,7 @@ class TestImportLabelsFromDict:
     def test_import_default_labels_with_asset_id(self):
         project_id = "project_id"
         label_type = "DEFAULT"
+        overwrite = True
         model_name = None
         labels = [
             {"json_response": self.json_response, "asset_id": "asset_id_1"},
@@ -37,6 +38,7 @@ class TestImportLabelsFromDict:
         call = {
             "data": {
                 "labelType": "DEFAULT",
+                "overwrite": True,
                 "labelsData": [
                     {
                         "assetID": "asset_id_1",
@@ -57,7 +59,9 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id_1", "asset_id_2"]},
         }
 
-        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        services.import_labels_from_dict(
+            self.kili, project_id, labels, label_type, overwrite, model_name
+        )
         self.kili.graphql_client.execute.assert_called_with(
             GQL_APPEND_MANY_LABELS, call, timeout=60
         )
@@ -66,6 +70,7 @@ class TestImportLabelsFromDict:
     def test_import_default_labels_with_external_id(self, mocker):
         project_id = "project_id"
         label_type = "DEFAULT"
+        overwrite = True
         model_name = None
         labels = [
             {"json_response": self.json_response, "asset_external_id": "asset_external_id_1"},
@@ -75,6 +80,7 @@ class TestImportLabelsFromDict:
         call = {
             "data": {
                 "labelType": "DEFAULT",
+                "overwrite": True,
                 "labelsData": [
                     {
                         "assetID": "asset_id_1",
@@ -95,7 +101,9 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id_1", "asset_id_2"]},
         }
 
-        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        services.import_labels_from_dict(
+            self.kili, project_id, labels, label_type, overwrite, model_name
+        )
         self.kili.graphql_client.execute.assert_called_with(
             GQL_APPEND_MANY_LABELS, call, timeout=60
         )
@@ -104,6 +112,7 @@ class TestImportLabelsFromDict:
         project_id = "project_id"
         label_type = "DEFAULT"
         model_name = None
+        overwrite = True
         author_id = "author_id"
         seconds_to_label = 3
         labels = [
@@ -118,6 +127,7 @@ class TestImportLabelsFromDict:
         call = {
             "data": {
                 "labelType": "DEFAULT",
+                "overwrite": True,
                 "labelsData": [
                     {
                         "assetID": "asset_id",
@@ -131,7 +141,9 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id"]},
         }
 
-        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        services.import_labels_from_dict(
+            self.kili, project_id, labels, label_type, overwrite, model_name
+        )
         self.kili.graphql_client.execute.assert_called_with(
             GQL_APPEND_MANY_LABELS, call, timeout=60
         )
@@ -139,16 +151,20 @@ class TestImportLabelsFromDict:
     def test_return_error_when_give_unexisting_label_field(self):
         project_id = "project_id"
         label_type = "DEFAULT"
+        overwrite = True
         model_name = None
         labels = [
             {"json_response": self.json_response, "asset_id": "asset_id", "unexisting_field": 3}
         ]
         with pytest.raises(pydantic.ValidationError):
-            services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+            services.import_labels_from_dict(
+                self.kili, project_id, labels, label_type, overwrite, model_name
+            )
 
     def test_return_error_when_give_wrong_field_type(self):
         project_id = "project_id"
         label_type = "DEFAULT"
+        overwrite = True
         model_name = None
         labels = [
             {
@@ -158,7 +174,9 @@ class TestImportLabelsFromDict:
             }
         ]
         with pytest.raises(pydantic.ValidationError):
-            services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+            services.import_labels_from_dict(
+                self.kili, project_id, labels, label_type, overwrite, model_name
+            )
 
     @patch.object(
         AssetQuery,
@@ -169,6 +187,7 @@ class TestImportLabelsFromDict:
         project_id = "project_id"
         label_type = "PREDICTION"
         model_name = "model_name"
+        overwrite = True
         labels = [
             {"json_response": self.json_response, "asset_external_id": "asset_external_id_1"},
             {"json_response": self.json_response, "asset_external_id": "asset_external_id_2"},
@@ -177,6 +196,7 @@ class TestImportLabelsFromDict:
         call = {
             "data": {
                 "labelType": "PREDICTION",
+                "overwrite": True,
                 "labelsData": [
                     {
                         "assetID": "asset_id_1",
@@ -197,7 +217,42 @@ class TestImportLabelsFromDict:
             "where": {"idIn": ["asset_id_1", "asset_id_2"]},
         }
 
-        services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+        services.import_labels_from_dict(
+            self.kili, project_id, labels, label_type, overwrite, model_name
+        )
+        self.kili.graphql_client.execute.assert_called_with(
+            GQL_APPEND_MANY_LABELS, call, timeout=60
+        )
+
+    def test_import_predictions_without_overwritting(self, mocker):
+        project_id = "project_id"
+        label_type = "PREDICTION"
+        model_name = "model_name"
+        overwrite = False
+        labels = [
+            {"json_response": self.json_response, "asset_external_id": "asset_external_id_1"},
+        ]
+
+        call = {
+            "data": {
+                "labelType": "PREDICTION",
+                "overwrite": False,
+                "labelsData": [
+                    {
+                        "assetID": "asset_id_1",
+                        "authorID": None,
+                        "jsonResponse": json.dumps(self.json_response),
+                        "modelName": model_name,
+                        "secondsToLabel": None,
+                    },
+                ],
+            },
+            "where": {"idIn": ["asset_id_1"]},
+        }
+
+        services.import_labels_from_dict(
+            self.kili, project_id, labels, label_type, overwrite, model_name
+        )
         self.kili.graphql_client.execute.assert_called_with(
             GQL_APPEND_MANY_LABELS, call, timeout=60
         )
@@ -209,7 +264,10 @@ class TestImportLabelsFromDict:
         project_id = "project_id"
         label_type = "PREDICTION"
         model_name = None
+        overwrite = True
         labels = [{"json_response": self.json_response, "asset_external_id": "asset_external_id"}]
 
         with pytest.raises(ValueError):
-            services.import_labels_from_dict(self.kili, project_id, labels, label_type, model_name)
+            services.import_labels_from_dict(
+                self.kili, project_id, labels, label_type, overwrite, model_name
+            )

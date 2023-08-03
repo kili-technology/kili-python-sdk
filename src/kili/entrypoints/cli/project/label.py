@@ -60,6 +60,15 @@ def type_check_label(key, value):
     type=str,
     help="Job name in the project where to upload the labels (if relevant to the input format)",
 )
+@click.option(
+    "--overwrite/--no-overwrite",
+    default=True,
+    help=(
+        "when uploading predictions or inference labels, if overwrite is True, it will overwrite"
+        " existing predictions and inference labels with the same model name on the targeted"
+        " assets."
+    ),
+)
 # pylint: disable=too-many-arguments
 def import_labels(
     api_key: Optional[str],
@@ -72,6 +81,7 @@ def import_labels(
     input_format: str,
     metadata_file: Optional[str],
     target_job: Optional[str],
+    overwrite: bool,
 ):
     """Import labels or predictions.
 
@@ -108,6 +118,7 @@ def import_labels(
             --metadata-file classes.yml \\
             --target-job IMAGE_DETECTION_JOB \\
             --input-format yolo_v5
+            --overwrite True
         ```
     """
     if is_prediction and model_name is None:
@@ -129,4 +140,5 @@ def import_labels(
         "INFO" if verbose else "WARNING",
         model_name,
         is_prediction,
+        overwrite,
     )

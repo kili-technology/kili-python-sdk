@@ -192,6 +192,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         project_id: Optional[str] = None,
         asset_external_id_array: Optional[List[str]] = None,
         disable_tqdm: bool = False,
+        overwrite: bool = True,
     ) -> List[Dict[Literal["id"], str]]:
         """Append labels to assets.
 
@@ -206,6 +207,9 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             project_id: Identifier of the project.
             asset_external_id_array: list of asset external ids to append labels on.
             disable_tqdm: Disable tqdm progress bar.
+            overwrite: when uploading predictions or inference labels, if True,
+                it will overwrite existing predictions and inference labels
+                with the same model name on the targeted assets.
 
         Returns:
             A list of dictionaries with the label ids.
@@ -250,7 +254,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             )
         ]
         return services.import_labels_from_dict(
-            self, project_id, labels, label_type, model_name, disable_tqdm
+            self, project_id, labels, label_type, overwrite, model_name, disable_tqdm
         )
 
     @typechecked
