@@ -1,7 +1,7 @@
 """Develop Plugins for Kili."""
 
 import logging
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from kili.client import Kili
 from kili.services.plugins.helpers import get_logger
@@ -20,7 +20,8 @@ class PluginCore:
         on_review(self, label: Dict, asset_id: str)
         on_custom_interface_click(self, label: Dict, asset_id: str):
 
-    # Warning : if using a custom init, be sure to call super().__init__()
+    !!! warning
+        if using a custom init, be sure to call super().__init__()
     """
 
     logger: logging.Logger
@@ -49,17 +50,19 @@ class PluginCore:
                 `id`, `labelType`, `numberOfAnnotations`, `authorId`, `modelName`, `jsonResponse`,
                 `secondsToLabel`, `isSentBackToQueue`, `search` and some technical fields:
                 `createdAt`, `updatedAt`, `version`, `isLatestReviewLabelForUser`,
-                `isLatestLabelForUser`, `isLatestDefaultLabelForUser`, `readPermissionsFromProject`.
+                `isLatestLabelForUser`, `isLatestDefaultLabelForUser`,
+                `readPermissionsFromProject`.
             asset_id: Id of the asset on which the label was submitted
 
-        Example use:
-
-            >>> def on_submit(self, label: Dict, asset_id: str):
-            >>>     json_response = label.get('jsonResponse')
-            >>>     if label_is_respecting_business_rule(json_response):
-            >>>         return
-            >>>     else:
-            >>>         self.kili.send_back_to_queue(asset_ids=[asset_id])
+        !!! example
+             ```python
+             def on_submit(self, label: Dict, asset_id: str):
+                 json_response = label.get('jsonResponse')
+                 if label_is_respecting_business_rule(json_response):
+                     return
+                 else:
+                     self.kili.send_back_to_queue(asset_ids=[asset_id])
+             ```
         """
         # pylint: disable=unused-argument
         self.logger.warning("Method not implemented. Define a custom on_submit on your plugin")
@@ -82,14 +85,15 @@ class PluginCore:
                 `readPermissionsFromProject`.
             asset_id: Id of the asset on which the label was submitted
 
-        Example use:
-
-            >>> def on_review(self, label: Dict, asset_id: str):
-            >>>     json_response = label.get('jsonResponse')
-            >>>     if label_is_respecting_business_rule(json_response):
-            >>>         return
-            >>>     else:
-            >>>         self.kili.send_back_to_queue(asset_ids=[asset_id])
+        !!! example
+            ```python
+            def on_review(self, label: Dict, asset_id: str):
+                json_response = label.get('jsonResponse')
+                if label_is_respecting_business_rule(json_response):
+                    return
+                else:
+                    self.kili.send_back_to_queue(asset_ids=[asset_id])
+            ```
         """
         # pylint: disable=unused-argument
         self.logger.warning("Method not implemented. Define a custom on_review on your plugin")
@@ -102,28 +106,58 @@ class PluginCore:
     ) -> None:
         """Handler for the custom interface click action.
 
-        **Warning**: This handler is in beta and is still in active development,
-        it should be used with caution.
+        !!! warning
+            This handler is in beta and is still in active development,
+            it should be used with caution.
 
         Args:
             label: Label submitted to Kili: a dictionary containing the following fields:
                 `id`, `jsonResponse`.
             asset_id: id of the asset on which the action is called
 
-        Example use:
-
-            >>> def on_custom_interface_click(self, label: Dict, asset_id: str):
-            >>>     json_response = label.get('jsonResponse')`
-            >>>     label_id = label.get('id')
-            >>>     issue = label_is_respecting_business_rule(json_response)
-            >>>     if !issue:
-            >>>         return
-            >>>     else:
-            >>>         self.kili.create_issues(
+        !!! example
+            ```python
+            def on_custom_interface_click(self, label: Dict, asset_id: str):
+                json_response = label.get('jsonResponse')`
+                label_id = label.get('id')
+                issue = label_is_respecting_business_rule(json_response)
+                if !issue:
+                    return
+                else:
+                    self.kili.create_issues(
                             project_id=self.project_id,
                             label_id_array=[label_id],
                             text_array=[issue]
                         )
+            ```
+        """
+        # pylint: disable=unused-argument
+        self.logger.warning("Handler is in active development.")
+
+    def on_project_updated(
+        self,
+        settings_updated: List[Dict],
+    ) -> None:
+        """Handler for the project updated action,
+        triggered when a project setting is updated on Kili.
+
+        !!! warning
+            This handler is in beta and is still in active development,
+            it should be used with caution.
+
+        Args:
+            settings_updated: Settings updated on the project a list of
+                dictionary containing the following fields:
+                `key`, `newValue`, `oldValue`.
+
+        !!! example
+            ```python
+            def on_project_updated(self, label: List[Dict]):
+                for annotation in annotations
+                    key = annotation.get('key')
+                    if key == 'name':
+                        save_name(annotation.get('newValue'))
+            ```
         """
         # pylint: disable=unused-argument
         self.logger.warning("Handler is in active development.")
