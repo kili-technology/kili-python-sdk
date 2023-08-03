@@ -66,7 +66,7 @@ def type_check_label(key, value):
     default=False,
     help=(
         "when uploading prediction or inference labels, if the `overwrite` flag is activated, it"
-        " will overwrite existing labels with the same model name and of the same type label type,"
+        " will overwrite existing labels with the same model name and of the same label type,"
         " on the targeted assets."
     ),
 )

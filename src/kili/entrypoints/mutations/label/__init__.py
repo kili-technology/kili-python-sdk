@@ -212,7 +212,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             disable_tqdm: Disable tqdm progress bar.
             overwrite: when uploading prediction or inference labels, if True,
                 it will overwrite existing labels with the same model name
-                and of the same type label type, on the targeted assets.
+                and of the same label type, on the targeted assets.
 
         Returns:
             A list of dictionaries with the label ids.
