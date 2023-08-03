@@ -373,12 +373,14 @@ def _write_class_file(
     label_format: LabelFormat,
     layout: SplitOption,
 ):
-    """Create a file that contains meta information about the export, depending of Yolo version."""
+    """Create a file that contains meta information about the export, depending of Yolo version.
+
+    For the "merged" layout, the category name is prefixed with the job id to avoid duplicates
+    since a same category name can be used in several jobs.
+    """
     if label_format == "yolo_v4":
         with (folder / "classes.txt").open("wb") as fout:
             for job_category in category_ids.values():
-                # if layout is merged, we need to prefix the category name with the job id
-                # to avoid duplicates, since a category name can be used in several jobs
                 prefix = f"{job_category.job_id}/" if layout == "merged" else ""
                 fout.write(f"{job_category.id} {prefix}{job_category.category_name}\n".encode())
 
