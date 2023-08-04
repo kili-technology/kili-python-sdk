@@ -23,7 +23,6 @@ class QueriesIssue(BaseOperationEntrypointMixin):
         fields: List[str] = [
             "id",
             "createdAt",
-            "issueNumber",
             "status",
             "type",
         ],
@@ -46,7 +45,6 @@ class QueriesIssue(BaseOperationEntrypointMixin):
         fields: List[str] = [
             "id",
             "createdAt",
-            "issueNumber",
             "status",
             "type",
         ],
@@ -69,7 +67,6 @@ class QueriesIssue(BaseOperationEntrypointMixin):
         fields: List[str] = [
             "id",
             "createdAt",
-            "issueNumber",
             "status",
             "type",
             "assetId",
