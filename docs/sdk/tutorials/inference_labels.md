@@ -176,6 +176,7 @@ kili.append_labels(
     asset_external_id_array=[asset["external_id"] for asset in stream_of_assets],
     json_response_array=inference_labels,
     label_type="INFERENCE",  # We import model-generated labels as "INFERENCE" labels
+    model_name="my_model",
 )
 ```
 
@@ -363,6 +364,7 @@ kili.append_labels(
     json_response_array=test_labels,
     asset_external_id_array=[asset["external_id"] for asset in labeled_assets],
     label_type="INFERENCE",
+    model_name="my_model",
 )
 ```
 
