@@ -1,11 +1,11 @@
 # several test modes:
 # - ALL: run all modes below (only useful for manual trigger)
 # - CUSTOM: choose git branch and endpoint (only useful for manual trigger)
-# - MASTER_STAGING: master branch against staging
-# - RELEASE_PREPROD: latest release branch against preprod
-# - MASTER_LTS: master branch against LTS
-# - PREV_RELEASE_TESTS_STAGING: SDK from master, previous release tests against staging
-# - LTS_CYCLE_FIRST_SDK_STAGING: test with first SDK of LTS cycle, against staging
+# - MAIN_STAGING: main branch against STAGING
+# - RELEASE_PREPROD: latest release branch against PREPROD
+# - MAIN_LTS: main branch against LTS
+# - PREV_RELEASE_TESTS_STAGING: SDK from main, previous release tests against STAGING
+# - LTS_CYCLE_FIRST_SDK_STAGING: test with first SDK of LTS cycle, against STAGING
 
 name: E2E tests
 on:
@@ -22,16 +22,16 @@ on:
         type: boolean
         default: true
       testMode:
-        description: "Test mode: ALL (run all modes), CUSTOM (specify branch and endpoint), MASTER_STAGING (master branch against staging), RELEASE_PREPROD (latest release branch against preprod), MASTER_LTS (master branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from master, previous release tests against staging), LTS_CYCLE_FIRST_SDK_STAGING (test with first SDK of LTS cycle, against staging)"
+        description: "Test mode: ALL (run all modes), CUSTOM (specify branch and endpoint), MAIN_STAGING (main branch against STAGING), RELEASE_PREPROD (latest release branch against PREPROD), MAIN_LTS (main branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from main, previous release tests against STAGING), LTS_CYCLE_FIRST_SDK_STAGING (test with first SDK of LTS cycle, against STAGING)"
         required: true
         type: choice
-        default: "MASTER_STAGING"
+        default: "MAIN_STAGING"
         options:
           - ALL
           - CUSTOM
-          - MASTER_STAGING
+          - MAIN_STAGING
           - RELEASE_PREPROD
-          - MASTER_LTS
+          - MAIN_LTS
           - PREV_RELEASE_TESTS_STAGING
           - LTS_CYCLE_FIRST_SDK_STAGING
       customBranch:
@@ -52,16 +52,17 @@ on:
   push:
     branches:
       - "release/**"
-      - master
+      - main
   schedule:
-    - cron: "0 7,15 * * 1-5" # MASTER_STAGING
-    - cron: "0 10 * * 1-5" # MASTER_LTS
-    - cron: "0 12 * * 1-5" # PREV_RELEASE_TESTS_STAGING
-    - cron: "0 14 * * 1-5" # LTS_CYCLE_FIRST_SDK_STAGING
+    - cron: "0 7,15 * * 1-5" # MAIN_STAGING
+    - cron: "0 9 * * 1-5" # MAIN_LTS
+    - cron: "0 11 * * 1-5" # PREV_RELEASE_TESTS_STAGING
+    - cron: "0 13 * * 1-5" # LTS_CYCLE_FIRST_SDK_STAGING
 
 jobs:
   test_setup:
     name: E2E tests setup
+    if: github.repository == 'kili-technology/kili-python-sdk'
     runs-on: ubuntu-latest
     outputs:
       test_mode_array: ${{ steps.setup_step.outputs.TEST_MODE_ARRAY }}
@@ -73,23 +74,32 @@ jobs:
           if [[ "${{ github.event_name }}" == "push" ]]; then
 
             if [[ "${{ github.ref_name }}" == release/* ]]; then
-              json_str="{\"array\": [\"RELEASE_PREPROD\"]}"
+              # if the push was on a release branch, it can be either
+              # the lts branch -> LTS_CYCLE_FIRST_SDK_STAGING mode
+              # or the latest release branch -> RELEASE_PREPROD mode
+              if [[ "${{ github.ref_name }}" == release/2.129.0 ]]; then
+                json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
+              else
+                json_str="{\"array\": [\"RELEASE_PREPROD\"]}"
+              fi
+
             else
-              json_str="{\"array\": [\"MASTER_STAGING\"]}"
+              json_str="{\"array\": [\"MAIN_STAGING\"]}"
+
             fi
 
           elif [[ "${{ github.event_name }}" == "schedule" ]]; then
 
             if [[ "${{ github.event.schedule }}" == "0 7,15 * * 1-5" ]]; then
-              json_str="{\"array\": [\"MASTER_STAGING\"]}"
+              json_str="{\"array\": [\"MAIN_STAGING\"]}"
 
-            elif [[ "${{ github.event.schedule }}" == "0 10 * * 1-5" ]]; then
-              json_str="{\"array\": [\"MASTER_LTS\"]}"
+            elif [[ "${{ github.event.schedule }}" == "0 9 * * 1-5" ]]; then
+              json_str="{\"array\": [\"MAIN_LTS\"]}"
 
-            elif [[ "${{ github.event.schedule }}" == "0 12 * * 1-5" ]]; then
+            elif [[ "${{ github.event.schedule }}" == "0 11 * * 1-5" ]]; then
               json_str="{\"array\": [\"PREV_RELEASE_TESTS_STAGING\"]}"
 
-            elif [[ "${{ github.event.schedule }}" == "0 14 * * 1-5" ]]; then
+            elif [[ "${{ github.event.schedule }}" == "0 13 * * 1-5" ]]; then
               json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
 
             fi
@@ -97,7 +107,7 @@ jobs:
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
 
             if [[ "${{ github.event.inputs.testMode }}" == "ALL" ]]; then
-              json_str="{\"array\": [\"MASTER_STAGING\", \"RELEASE_PREPROD\", \"MASTER_LTS\", \"PREV_RELEASE_TESTS_STAGING\", \"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
+              json_str="{\"array\": [\"MAIN_STAGING\", \"RELEASE_PREPROD\", \"MAIN_LTS\", \"PREV_RELEASE_TESTS_STAGING\", \"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
             else
               json_str="{\"array\": [\"${{ github.event.inputs.testMode }}\"]}"
             fi
@@ -107,11 +117,21 @@ jobs:
           echo "TEST_MODE_ARRAY=$json_str" >> $GITHUB_OUTPUT
 
   tests:
-    name: ${{ matrix.test_mode }}, ${{ matrix.os }}
+    name: ${{ matrix.test_mode }}, ${{ matrix.os }}, ${{ matrix.python-version }}
+    if: github.repository == 'kili-technology/kili-python-sdk'
     strategy:
+      max-parallel: 1
       matrix:
-        os: [ubuntu-latest, windows-latest]
         test_mode: ${{ fromJson(needs.test_setup.outputs.test_mode_array).array }}
+        os:
+          - windows-latest
+          - ubuntu-latest
+        include:
+          - os: windows-latest
+            python-version: 3.11
+          - os: ubuntu-latest
+            python-version: 3.7
+
     runs-on: ${{ matrix.os }}
     needs: [test_setup]
     steps:
@@ -122,10 +142,10 @@ jobs:
       - name: Check that test mode is valid
         shell: bash
         run: |
-          if [[ ${{ env.TEST_MODE }} != "MASTER_STAGING" ]] && \
+          if [[ ${{ env.TEST_MODE }} != "MAIN_STAGING" ]] && \
              [[ ${{ env.TEST_MODE }} != "CUSTOM" ]] && \
              [[ ${{ env.TEST_MODE }} != "RELEASE_PREPROD" ]] && \
-             [[ ${{ env.TEST_MODE }} != "MASTER_LTS" ]] && \
+             [[ ${{ env.TEST_MODE }} != "MAIN_LTS" ]] && \
              [[ ${{ env.TEST_MODE }} != "PREV_RELEASE_TESTS_STAGING" ]] && \
              [[ ${{ env.TEST_MODE }} != "LTS_CYCLE_FIRST_SDK_STAGING" ]]; then
             echo "TEST_MODE is not valid: ${{ env.TEST_MODE }}"
@@ -135,30 +155,30 @@ jobs:
       - name: Set first SDK version of LTS cycle
         if: env.TEST_MODE == 'LTS_CYCLE_FIRST_SDK_STAGING'
         shell: bash
-        run: echo "LTS_CYCLE_FIRST_SDK_VERSION=2.129.7" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
+        run: echo "LTS_CYCLE_FIRST_SDK_REF=release/2.129.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
-      - name: Get latest release branch
+      - name: Add latest release branch to github env
         shell: bash
+        timeout-minutes: 3
         run: |
-          last_version=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
-          echo "Last version: $last_version"
-          IFS=. read -r major minor patch <<< "$last_version"
-          last_minor_version="$major.$minor.0"
-          echo "LASTEST_RELEASE_BRANCH=release/$last_minor_version" >> $GITHUB_ENV
+          curl https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/.github/scripts/add_latest_release_branch_to_github_env.py --output add_latest_release_branch_to_github_env.py
+          python add_latest_release_branch_to_github_env.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set checkout branch/tag and endpoint
         shell: bash
         run: |
-          if [[ "${{ env.TEST_MODE }}" == "MASTER_STAGING" ]]; then
-            echo "REF=master" >> $GITHUB_ENV
+          if [[ "${{ env.TEST_MODE }}" == "MAIN_STAGING" ]]; then
+            echo "REF=main" >> $GITHUB_ENV
             echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
 
           elif [[ "${{ env.TEST_MODE }}" == "RELEASE_PREPROD" ]]; then
             echo "REF=${{ env.LASTEST_RELEASE_BRANCH }}" >> $GITHUB_ENV
             echo "TEST_AGAINST=PREPROD" >> $GITHUB_ENV
 
-          elif [[ "${{ env.TEST_MODE }}" == "MASTER_LTS" ]]; then
-            echo "REF=master" >> $GITHUB_ENV
+          elif [[ "${{ env.TEST_MODE }}" == "MAIN_LTS" ]]; then
+            echo "REF=main" >> $GITHUB_ENV
             echo "TEST_AGAINST=LTS" >> $GITHUB_ENV
 
           elif [[ "${{ env.TEST_MODE }}" == "PREV_RELEASE_TESTS_STAGING" ]]; then
@@ -166,7 +186,7 @@ jobs:
             echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
 
           elif [[ "${{ env.TEST_MODE }}" == "LTS_CYCLE_FIRST_SDK_STAGING" ]]; then
-            echo "REF=${{ env.LTS_CYCLE_FIRST_SDK_VERSION }}" >> $GITHUB_ENV
+            echo "REF=${{ env.LTS_CYCLE_FIRST_SDK_REF }}" >> $GITHUB_ENV
             echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
 
           elif [[ "${{ env.TEST_MODE }}" == "CUSTOM" ]]; then
@@ -207,12 +227,12 @@ jobs:
       - name: Delete src for PREV_RELEASE_TESTS_STAGING mode
         if: env.TEST_MODE == 'PREV_RELEASE_TESTS_STAGING'
         shell: bash
-        run: rm -rf src # we want the previous release tests but the kili from master
+        run: rm -rf src # we want the previous release tests but the kili from main
 
-      - name: Set up Python 3.7
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: 3.7
+          python-version: ${{ matrix.python-version }}
           cache: "pip"
 
       - name: Upgrade pip
@@ -222,7 +242,7 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ env.TEST_MODE }}" == "PREV_RELEASE_TESTS_STAGING" ]]; then
-            pip install "kili[dev] @ git+https://github.com/kili-technology/kili-python-sdk.git@master"
+            pip install "kili[dev] @ git+https://github.com/kili-technology/kili-python-sdk.git@main"
           else
             pip install -e ".[dev]"
           fi
@@ -233,7 +253,7 @@ jobs:
 
       - name: E2E tests
         if: github.event.inputs.runE2ETests != 'false'
-        timeout-minutes: 15
+        timeout-minutes: 30
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/e2e -k ".py"
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
@@ -244,8 +264,9 @@ jobs:
           KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
 
       - name: Notebook tests
-        if: github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'master') # Do not run notebook tests after merging to master
-        timeout-minutes: 25
+        # we don't run notebook tests on push to main
+        if: github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'main')
+        timeout-minutes: 30
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/test_notebooks.py
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
@@ -254,6 +275,7 @@ jobs:
           KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
           KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
           KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
+          PYDEVD_DISABLE_FILE_VALIDATION: true
 
       - name: Check that kili SDK version has not changed
         shell: bash
@@ -270,7 +292,7 @@ jobs:
       - name: Slack notification if failure
         if: failure() && (github.event_name != 'workflow_dispatch') # doesn't notify for manual runs
         id: slack
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
