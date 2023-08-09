@@ -1,4 +1,5 @@
 """This script permits to initialize the Kili Python SDK client."""
+import getpass
 import logging
 import os
 import warnings
@@ -124,8 +125,12 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             kili.projects()  # list your projects
             ```
         """
-        if api_key is None:
-            api_key = os.getenv("KILI_API_KEY")
+        api_key = api_key or os.getenv("KILI_API_KEY")
+
+        if not api_key:
+            api_key = getpass.getpass(
+                "No `KILI_API_KEY` environment variable found.\nPlease enter your API key: "
+            )
 
         if api_endpoint is None:
             api_endpoint = os.getenv(
@@ -133,7 +138,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
                 "https://cloud.kili-technology.com/api/label/v2/graphql",
             )
 
-        if api_key is None:
+        if not api_key:
             raise AuthenticationFailed(api_key, api_endpoint)
 
         self.api_key = api_key

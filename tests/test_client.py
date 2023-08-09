@@ -1,8 +1,11 @@
 """Tests for the client to return correct ee."""
+import os
 import shutil
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
+import pytest_mock
 
 from kili.client import Kili
 from kili.exceptions import AuthenticationFailed
@@ -11,6 +14,7 @@ from kili.exceptions import AuthenticationFailed
 def test_no_api_key(mocker, monkeypatch):
     """Test fail because no api key is found."""
     mocker.patch("kili.client.requests")
+    mocker.patch("kili.client.getpass.getpass", return_value="")
     monkeypatch.delenv("KILI_API_KEY", raising=False)
     with pytest.raises(AuthenticationFailed):
         _ = Kili()
@@ -62,3 +66,18 @@ def test_write_to_disk_without_permissions_not_crash(mocker, monkeypatch, prepar
 
     with pytest.raises(PermissionError):
         _ = Kili()
+
+
+@patch.dict(os.environ, {"KILI_API_KEY": "", "KILI_SDK_SKIP_CHECKS": "True"})
+def test_given_env_without_api_key_when_initializing_kili_client_then_it_asks_for_api_key_getpass(
+    mocker: pytest_mock.MockerFixture,
+):
+    mocker_getpass = mocker.patch(
+        "kili.client.getpass.getpass", return_value="fake_key_entered_by_user"
+    )
+
+    # When
+    _ = Kili()
+
+    # Then
+    mocker_getpass.assert_called_once()
