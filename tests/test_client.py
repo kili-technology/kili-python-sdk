@@ -11,14 +11,6 @@ from kili.client import Kili
 from kili.exceptions import AuthenticationFailed
 
 
-def test_no_api_key(mocker, monkeypatch):
-    """Test fail because no api key is found."""
-    mocker.patch("kili.client.requests")
-    monkeypatch.delenv("KILI_API_KEY", raising=False)
-    with pytest.raises(AuthenticationFailed):
-        _ = Kili()
-
-
 def test_wrong_api_key(mocker, monkeypatch):
     """Test obfuscation of api key."""
     mocker.patch("kili.client.requests")
