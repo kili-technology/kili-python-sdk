@@ -24,6 +24,7 @@ from kili.entrypoints.mutations.asset.queries import (
 from kili.exceptions import MissingArgumentError
 from kili.orm import Asset
 from kili.services.asset_import import import_assets
+from kili.services.asset_import_csv import get_text_assets_from_csv
 from kili.utils.assets import PageResolution
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -49,6 +50,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: bool = False,
         wait_until_availability: bool = True,
+        from_csv: Optional[str] = None,
+        csv_separator: str = ",",
+        csv_content_column: Optional[str] = None,
+        csv_external_id_column: Optional[str] = None,
     ) -> Optional[Dict[Literal["id"], str]]:
         # pylint: disable=line-too-long
         """Append assets to a project.
@@ -67,7 +72,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 - For an `VIDEO_LEGACY` project, the content can be only be URLs
             external_id_array: List of external ids given to identify the assets.
                 If None, random identifiers are created.
-            id_array: Disabled parameter. Do not use.
+            id_array: Deprecated argument.
             is_honeypot_array:  Whether to use the asset for honeypot
             status_array: By default, all imported assets are set to `TODO`. Other options:
                 `ONGOING`, `LABELED`, `REVIEWED`.
@@ -87,6 +92,16 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             disable_tqdm: If `True`, the progress bar will be disabled
             wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.
                 If `False`, the function will return faster but the assets might not be fully processed by the server.
+            from_csv: Path to a csv file containing the text assets to import.
+                Only used for `TEXT` projects. If provided, `content_array` must not be provided.
+            csv_separator: Separator used in the csv file. Only used if `from_csv` is provided.
+            csv_content_column: Name of the column containing the text assets to import.
+                Only used if `from_csv` is provided.
+                If None, the first column of the csv file will be used.
+            csv_external_id_column: Name of the column containing the external ids of the assets to import.
+                Only used if `from_csv` is provided.
+                If None, the external ids will be set to the passed `external_id_array` or to the csv row index.
+
 
         Returns:
             A dictionary with the project `id`.
@@ -102,6 +117,19 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             - For more detailed examples on how to import text assets,
                 see [the recipe](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/import_text_assets/).
         """
+        if from_csv is not None:
+            if content_array is not None:
+                raise ValueError(
+                    "You cannot provide both `content_array` and `from_csv` arguments."
+                )
+            content_array, external_id_array = get_text_assets_from_csv(
+                from_csv=from_csv,
+                csv_separator=csv_separator,
+                csv_content_column=csv_content_column,
+                csv_external_id_column=csv_external_id_column,
+                external_id_array=external_id_array,
+            )
+
         if is_empty_list_with_warning(
             "append_many_to_dataset", "content_array", content_array
         ) or is_empty_list_with_warning(
