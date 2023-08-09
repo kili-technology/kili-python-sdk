@@ -128,7 +128,9 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         api_key = api_key or os.getenv("KILI_API_KEY")
 
         if not api_key:
-            api_key = getpass.getpass("Please enter your API key: ")
+            api_key = getpass.getpass(
+                "No `KILI_API_KEY` environment variable found.\nPlease enter your API key: "
+            )
 
         if api_endpoint is None:
             api_endpoint = os.getenv(
