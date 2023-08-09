@@ -83,7 +83,7 @@ jobs:
         run: pytest -n auto -ra -sv --color yes --code-highlight yes --durations=15 -vv --ignore tests/test_notebooks.py --ignore tests/e2e/ --cov=src/kili --cov-report=term-missing --cov-config=.coveragerc --cov-fail-under=80
 
   markdown-link-check:
-    timeout-minutes: 2
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -91,7 +91,7 @@ jobs:
         with:
           fail: true
           debug: false
-          args: "--quiet --no-progress --insecure './**/*.md' --exclude '^(http|https)://cloud.kili-technology.com/api/label/v2/graphql$'"
+          args: "--quiet --no-progress --insecure './**/*.md' './src/kili/**/*.py' --exclude '^(http|https)://cloud.kili-technology.com/api/label/v2/graphql$'"
 
   build-test:
     runs-on: ubuntu-latest
