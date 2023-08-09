@@ -1,3 +1,4 @@
+"""Method to import assets from a csv file."""
 import csv
 from typing import List, Optional, Tuple
 
@@ -9,6 +10,7 @@ def get_text_assets_from_csv(
     csv_external_id_column: Optional[str],
     external_id_array: Optional[List[str]],
 ) -> Tuple[List[str], List[str]]:
+    """Get text assets from a csv file."""
     content_array: List[str] = []
     external_id_array_from_csv: List[str] = []
 
