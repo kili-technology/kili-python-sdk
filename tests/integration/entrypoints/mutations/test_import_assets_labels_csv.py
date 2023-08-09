@@ -35,19 +35,6 @@ def test_get_text_assets_from_csv(csv_file_path: str):
     assert external_id_array == ["1", "2"]
 
 
-def test_get_text_assets_from_csv_no_content_column(csv_file_path: str):
-    content_array, external_id_array = get_text_assets_from_csv(
-        from_csv=csv_file_path,
-        csv_content_column=None,
-        external_id_array=None,
-        csv_external_id_column=None,
-        csv_separator=",",
-    )
-
-    assert content_array == ["asset_content_1", "asset_content_2"]
-    assert external_id_array == ["1", "2"]
-
-
 def test_get_text_assets_from_csv_with_external_id(csv_file_path: str):
     content_array, external_id_array = get_text_assets_from_csv(
         from_csv=csv_file_path,

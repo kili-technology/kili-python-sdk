@@ -97,7 +97,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             csv_separator: Separator used in the csv file. Only used if `from_csv` is provided.
             csv_content_column: Name of the column containing the text assets to import.
                 Only used if `from_csv` is provided.
-                If None, the first column of the csv file will be used.
             csv_external_id_column: Name of the column containing the external ids of the assets to import.
                 Only used if `from_csv` is provided.
                 If None, the external ids will be set to the passed `external_id_array` or to the csv row index.
