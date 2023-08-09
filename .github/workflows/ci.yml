@@ -91,7 +91,7 @@ jobs:
         with:
           fail: true
           debug: false
-          args: "--quiet --no-progress --insecure './**/*.md' './src/kili/**/*.py' --exclude '^(http|https)://cloud.kili-technology.com/api/label/v2/graphql$'"
+          args: "--quiet --no-progress --insecure './**/*.md' './src/kili/**/*.py'"
 
   build-test:
     runs-on: ubuntu-latest
