@@ -31,7 +31,7 @@ class SubscriptionsLabel:
 
         !!! example "Recipe"
             For more detailed examples on how to use Webhooks,
-            See [the related recipe](https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/webhooks.ipynb)
+            See [the related recipe](https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/webhooks_example.ipynb)
         """
         ws_endpoint = self.graphql_client.endpoint.replace("http", "ws")
         websocket = SubscriptionGraphQLClient(ws_endpoint)
