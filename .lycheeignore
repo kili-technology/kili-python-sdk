@@ -1,0 +1,6 @@
+^(http|https)://cloud.kili-technology.com/api/label/v2/graphql$
+https://my-custom-url-publicly-accessible/
+https://to/second/asset.png
+jane.doe@test.com
+john@doe.com
+john.doe@test.com
