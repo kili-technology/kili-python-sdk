@@ -96,7 +96,7 @@ Upload an asset:
 
 ```python
 content_array = ["https://storage.googleapis.com/label-public-staging/car/car_1.jpg"]
-names_array = ["landscape2"]
+names_array = ["car"]
 
 kili.append_many_to_dataset(
     project_id=project_id,
@@ -226,8 +226,11 @@ class PluginHandler(PluginCore):
 
 ```
 
-You will need to deploy this on your premise for this to work. Easy solutions are [FastAPI](https://fastapi.tiangolo.com/), with a few lines of codes, and to quickly test your code, we recommend [ngrok](https://github.com/inconshreveable/ngrok) that allows to quckly expose your local server.
+You will need to deploy this on your premise for this to work. Easy solutions are [FastAPI](https://fastapi.tiangolo.com/), with a few lines of codes, and to quickly test your code, we recommend [ngrok](https://github.com/inconshreveable/ngrok) that allows to quickly expose your local server.
+
 For this demo, we will also display the use of [https://webhook.site](https://webhook.site) that will enable us to explore the payload of the calls.
+
+You can also add a custom `Authorization` header when creating the webhook in Kili, and then verify that header in your deployed webhook. As an example, you can see the `verify_token` function below.
 
 ```python
 """
@@ -237,7 +240,7 @@ Note: Don't host it locally, it won't work as Kili can't call your localhost
 # file main.py
 import os
 from typing import Dict
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends, Request
 from kili.client import Kili
 
 # Assuming your plugin is in a file  `plugin.py` in the same folder
@@ -246,12 +249,44 @@ from plugin import PluginHandler
 app = FastAPI()
 kili = Kili()
 
+API_KEY = "secret-api-key"
+
+# Define the token verification, here we assume we only check if the header is equal
+# to a secret value that can be hard-coded / defined from an environment variable, etc.
+def verify_token(req: Request):
+    """
+    Verifies the request token
+
+    Parameters
+    ----------
+    req: request
+    """
+    print('Verifying token...')
+    token = req.headers.get('Authorization')
+    if token != API_KEY:
+        print('Token different from API_KEY...')
+        raise HTTPException(
+            status_code=401,
+            detail='Unauthorized'
+        )
+    print('Token ok.')
+    return True
 
 @app.post("/")
-def main(raw_payload: Dict):
+def main(raw_payload: Dict, authorized: bool = Depends(verify_token)):
     """
     Basic endpoint to receive kili events
+
+    Parameters
+    ----------
+    - raw_payload: webhook payload
+    - authorized: bool
+        Has the request been authorized
     """
+    if not authorized:
+        print('Not authorized, early return')
+        return None
+
     event_type = raw_payload.get('eventType')
     project_id = raw_payload.get('logPayload').get('projectId')
 
@@ -325,7 +360,9 @@ webhook_url_from_browser = f"https://webhook.site/#!/{uuid}"
 webhook_name = "Webhook bbox count"
 webhook_url = f"https://webhook.site/{uuid}"
 print(webhook_url_from_browser)
-webhook_security_header = "custom header"
+
+# The Authorization header that will be used when calling your deployed webhook
+webhook_security_header = "secret-api-key"
 
 try:
     kili.create_webhook(
