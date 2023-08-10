@@ -91,7 +91,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.
                 If `False`, the function will return faster but the assets might not be fully processed by the server.
             from_csv: Path to a csv file containing the text assets to import.
-                Only used for `TEXT` projects. If provided, `content_array` must not be provided.
+                Only used for `TEXT` projects.
+                If provided, `content_array` and `external_id_array` must be None.
                 The csv file header must specify the columns `content` and `externalId`.
             csv_separator: Separator used in the csv file. Only used if `from_csv` is provided.
 
