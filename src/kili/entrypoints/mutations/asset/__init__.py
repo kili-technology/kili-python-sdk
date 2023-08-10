@@ -111,9 +111,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 see [the recipe](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/import_text_assets/).
         """
         if from_csv is not None:
-            if content_array is not None:
+            if content_array is not None or external_id_array is not None:
                 raise ValueError(
-                    "You cannot provide both `content_array` and `from_csv` arguments."
+                    "If from_csv is provided, content_array and external_id_array must not be"
+                    " provided."
                 )
             content_array, external_id_array = get_text_assets_from_csv(
                 from_csv=from_csv, csv_separator=csv_separator
