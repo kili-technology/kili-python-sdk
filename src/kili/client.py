@@ -12,11 +12,12 @@ import requests
 from kili import __version__
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
+from kili.core.graphql.graphql_gateway import GraphQLGateway
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.core.graphql.operations.user.queries import GQL_ME
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.data_connection import MutationsDataConnection
-from kili.entrypoints.mutations.issue import MutationsIssue
+from kili.entrypoints.mutations.issue import IssueEntrypoints, MutationsIssue
 from kili.entrypoints.mutations.label import MutationsLabel
 from kili.entrypoints.mutations.notification import MutationsNotification
 from kili.entrypoints.mutations.plugins import MutationsPlugins
@@ -56,7 +57,7 @@ logging.getLogger("urllib3.connectionpool").addFilter(FilterPoolFullWarning())
 class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsAsset,
     MutationsDataConnection,
-    MutationsIssue,
+    MutationsIssue,  # deprecated
     MutationsLabel,
     MutationsNotification,
     MutationsPlugins,
@@ -76,6 +77,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     QueriesProjectVersion,
     QueriesUser,
     SubscriptionsLabel,
+    IssueEntrypoints,
 ):
     """Kili Client."""
 
@@ -164,6 +166,8 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             http_client=self.http_client,
             **(graphql_client_params or {}),  # type: ignore
         )
+
+        self.graphql_gateway = GraphQLGateway(self.graphql_client, http_client=self.http_client)
 
         if not skip_checks:
             api_key_query = APIKeyQuery(self.graphql_client, self.http_client)
