@@ -127,7 +127,6 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         """
         api_key = api_key or os.getenv("KILI_API_KEY")
 
-        # we check if we are in tty mode
         if not api_key and os.isatty(0):  # 0 is stdin
             api_key = getpass.getpass(
                 "No `KILI_API_KEY` environment variable found.\nPlease enter your API key: "
