@@ -72,7 +72,9 @@ def test_write_to_disk_without_permissions_not_crash(mocker, monkeypatch, prepar
 def test_given_env_without_api_key_when_initializing_kili_client_then_it_asks_for_api_key_getpass(
     mocker: pytest_mock.MockerFixture,
 ):
-    mocker.patch("kili.client.os.isatty", return_value=True)  # pytest is not a tty, so we mock it
+    mocker.patch(
+        "kili.client.sys.stdin.isatty", return_value=True
+    )  # pytest is not a tty, so we mock it
     mocker_getpass = mocker.patch(
         "kili.client.getpass.getpass", return_value="fake_key_entered_by_user"
     )
@@ -85,8 +87,6 @@ def test_given_env_without_api_key_when_initializing_kili_client_then_it_asks_fo
 
 
 @patch.dict(os.environ, {"KILI_API_KEY": "", "KILI_SDK_SKIP_CHECKS": "True"})
-def test_given_non_tti_env_without_api_key_when_initializing_kili_client_then_it_crash(
-    mocker: pytest_mock.MockerFixture,
-):
+def test_given_non_tti_env_without_api_key_when_initializing_kili_client_then_it_crash():
     with pytest.raises(AuthenticationFailed):
         _ = Kili()
