@@ -1,0 +1,41 @@
+<annotation>
+	<filename>2010_001140.jpg</filename>
+	<folder>VOC2012</folder>
+	<object>
+		<name>cat</name>
+		<bndbox>
+			<xmax>408</xmax>
+			<xmin>53</xmin>
+			<ymax>214</ymax>
+			<ymin>45</ymin>
+		</bndbox>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+	</object>
+	<object>
+		<name>sofa</name>
+		<bndbox>
+			<xmax>500</xmax>
+			<xmin>1</xmin>
+			<ymax>333</ymax>
+			<ymin>1</ymin>
+		</bndbox>
+		<difficult>1</difficult>
+		<occluded>1</occluded>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+	</object>
+	<segmented>0</segmented>
+	<size>
+		<depth>3</depth>
+		<height>333</height>
+		<width>500</width>
+	</size>
+	<source>
+		<annotation>PASCAL VOC2010</annotation>
+		<database>The VOC2010 Database</database>
+		<image>flickr</image>
+	</source>
+</annotation>
