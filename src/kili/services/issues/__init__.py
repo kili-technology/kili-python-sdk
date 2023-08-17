@@ -1,29 +1,26 @@
+"""Issue use cases."""
+
 from typing import List, Optional
 
 from kili.core.graphql.graphql_gateway import GraphQLGateway
-from kili.core.graphql.operations.issue.types import IssueToCreateGraphQLGatewayInput
+from kili.core.graphql.operations.issue.types import IssueToCreateGQLGatewayInput
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
-from kili.entrypoints.mutations.issue.helpers import (
-    get_issue_numbers,
-    get_labels_asset_ids_map,
-)
-from kili.services.issues.types import IssueToCreateEntrypointInput
+from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
+from kili.services.issues.types import IssueToCreateServiceInput
 
 
 class IssueUseCases:
     def __init__(self, graphql_gateway: GraphQLGateway):
         self._graphql_gateway = graphql_gateway
 
-    def create_issues(self, project_id, issues: List[IssueToCreateEntrypointInput]):
-        issue_number_array = get_issue_numbers(
-            self._graphql_gateway, project_id, "ISSUE", len(issues)
-        )
+    def create_issues(self, project_id, issues: List[IssueToCreateServiceInput]):
+        issue_number_array = [0] * len(issues)
         label_id_array = [issue.label_id for issue in issues]
         label_asset_ids_map = get_labels_asset_ids_map(
             self._graphql_gateway, project_id, label_id_array
         )  # should be done in the backend
         graphql_issues = [
-            IssueToCreateGraphQLGatewayInput(
+            IssueToCreateGQLGatewayInput(
                 issue_number=issue_number,
                 label_id=issue.label_id,
                 object_mid=issue.object_mid,
@@ -42,12 +39,12 @@ class IssueUseCases:
         asset_id_array: Optional[List[str]],
         asset_external_id_array: Optional[List[str]],
     ):
-        issue_number_array = get_issue_numbers(self, project_id, "QUESTION", len(text_array))
+        issue_number_array = [0] * len(text_array)
         asset_id_array = get_asset_ids_or_throw_error(
             self._graphql_gateway, asset_id_array, asset_external_id_array, project_id
         )  # should be done in the backend
         graphql_questions = [
-            IssueToCreateGraphQLGatewayInput(
+            IssueToCreateGQLGatewayInput(
                 issue_number=issue_number,
                 asset_id=asset_id,
                 text=text,
@@ -59,5 +56,7 @@ class IssueUseCases:
             )
         ]
 
-        issue_ids = self._graphql_gateway.create_issues(type_="QUESTION", issues=graphql_questions)
-        return issue_ids
+        question_ids = self._graphql_gateway.create_issues(
+            type_="QUESTION", issues=graphql_questions
+        )
+        return question_ids

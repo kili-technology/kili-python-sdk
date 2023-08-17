@@ -17,7 +17,7 @@ from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWher
 from kili.core.graphql.operations.user.queries import GQL_ME
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.data_connection import MutationsDataConnection
-from kili.entrypoints.mutations.issue import IssueEntrypoints, MutationsIssue
+from kili.entrypoints.mutations.issue import MutationsIssue
 from kili.entrypoints.mutations.label import MutationsLabel
 from kili.entrypoints.mutations.notification import MutationsNotification
 from kili.entrypoints.mutations.plugins import MutationsPlugins
@@ -36,6 +36,7 @@ from kili.entrypoints.queries.project import QueriesProject
 from kili.entrypoints.queries.project_user import QueriesProjectUser
 from kili.entrypoints.queries.project_version import QueriesProjectVersion
 from kili.entrypoints.queries.user import QueriesUser
+from kili.entrypoints.sdk.issue import IssueEntrypoints
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
 from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.internal import KiliInternal

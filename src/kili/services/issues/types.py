@@ -4,7 +4,7 @@ from typing import Optional
 
 
 @dataclass
-class IssueToCreateEntrypointInput:
+class IssueToCreateServiceInput:
     """Data about one Issue to create."""
 
     label_id: str
