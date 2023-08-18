@@ -32,6 +32,7 @@ YOLO_V4_TEST_CASE = {
         "call": {
             "label_type": "DEFAULT",
             "model_name": None,
+            "overwrite": False,
             "labels": [
                 {
                     "json_response": {
@@ -151,6 +152,7 @@ TEST_CASES = [
             "call": {
                 "label_type": "DEFAULT",
                 "model_name": None,
+                "overwrite": False,
                 "labels": [
                     {
                         "json_response": {
@@ -252,6 +254,7 @@ TEST_CASES = [
             "call": {
                 "label_type": "DEFAULT",
                 "model_name": None,
+                "overwrite": False,
                 "labels": [
                     {
                         "json_response": {
@@ -353,6 +356,7 @@ TEST_CASES = [
             "call": {
                 "label_type": "DEFAULT",
                 "model_name": None,
+                "overwrite": False,
                 "labels": [
                     {
                         "json_response": {

@@ -81,6 +81,7 @@ def test_import_labels_from_files(mocker, description, inputs, outputs):
                 log_level="INFO",
                 model_name=None,
                 is_prediction=False,
+                overwrite=False,
             )
 
             process_from_dict_mock.assert_called_with(**outputs["call"])
@@ -132,6 +133,7 @@ def test_import_labels_from_files_malformed_annotation(mocker):
                 log_level="INFO",
                 is_prediction=False,
                 model_name=None,
+                overwrite=False,
             )
 
 
@@ -181,6 +183,7 @@ def test_import_labels_wrong_target_job(mocker):
                 log_level="INFO",
                 model_name=None,
                 is_prediction=False,
+                overwrite=False,
             )
 
 

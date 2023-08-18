@@ -27,6 +27,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     log_level: str,
     model_name: Optional[str],
     is_prediction: bool,
+    overwrite: bool,
 ) -> None:
     """Imports labels from a list of files contained in file path."""
     get_project(kili, project_id, ["id"])
@@ -59,6 +60,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
         target_job_name,
         model_name,
         is_prediction,
+        overwrite,
     )
 
 
@@ -67,6 +69,7 @@ def import_labels_from_dict(  # pylint: disable=too-many-arguments
     project_id: Optional[str],
     labels: List[Dict],
     label_type: LabelType,
+    overwrite: bool,
     model_name: Optional[str] = None,
     disable_tqdm: bool = False,
 ) -> List:
@@ -77,5 +80,9 @@ def import_labels_from_dict(  # pylint: disable=too-many-arguments
     logger_params = LoggerParams(disable_tqdm=disable_tqdm, level=cast(LogLevel, "WARNING"))
     label_importer = KiliRawLabelImporter(kili, logger_params, cast(LabelFormat, "kili"))
     return label_importer.process_from_dict(
-        labels=labels, project_id=project_id, label_type=label_type, model_name=model_name
+        labels=labels,
+        project_id=project_id,
+        label_type=label_type,
+        overwrite=overwrite,
+        model_name=model_name,
     )

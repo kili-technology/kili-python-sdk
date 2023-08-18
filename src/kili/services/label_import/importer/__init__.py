@@ -57,6 +57,7 @@ class AbstractLabelImporter(ABC):
         target_job_name: Optional[str],
         model_name: Optional[str],
         is_prediction: bool,
+        overwrite: bool,
     ):
         """Performs the import from the label files."""
         self._check_arguments_compatibility(meta_file_path, target_job_name)
@@ -71,16 +72,18 @@ class AbstractLabelImporter(ABC):
             project_id=project_id,
             labels=labels,
             label_type=label_type,
+            overwrite=overwrite,
             model_name=model_name,
         )
 
         self.logger.warning("%d labels have been successfully imported", len(labels))
 
-    def process_from_dict(
+    def process_from_dict(  # pylint: disable=too-many-arguments,too-many-locals
         self,
         project_id: Optional[str],
         labels: List[Dict],
         label_type: LabelType,
+        overwrite: bool,
         model_name: Optional[str] = None,
     ) -> List:
         """Imports labels from a list of dictionaries representing labels."""
@@ -107,7 +110,11 @@ class AbstractLabelImporter(ABC):
         with tqdm.tqdm(total=len(labels_data), disable=self.logger_params.disable_tqdm) as pbar:
             for batch_labels in batch_generator:
                 variables = {
-                    "data": {"labelType": label_type, "labelsData": batch_labels},
+                    "data": {
+                        "labelType": label_type,
+                        "labelsData": batch_labels,
+                        "overwrite": overwrite,
+                    },
                     "where": {"idIn": [label["assetID"] for label in batch_labels]},
                 }
                 # we increase the timeout because the import can take a long time

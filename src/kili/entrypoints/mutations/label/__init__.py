@@ -44,6 +44,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         model_name: Optional[str] = None,
         asset_id_array: Optional[List[str]] = None,
         disable_tqdm: bool = False,
+        overwrite: bool = False,
     ) -> Dict[Literal["id"], str]:
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
@@ -57,6 +58,8 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             model_name: The name of the model that generated the predictions
             asset_id_array: The internal IDs of the assets for which we want to add predictions.
             disable_tqdm: Disable tqdm progress bar.
+            overwrite: if True, it will overwrite existing predictions of
+                the same model name on the targeted assets.
 
         Returns:
             A dictionary with the project `id`.
@@ -108,7 +111,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             )
         ]
         services.import_labels_from_dict(
-            self, project_id, labels, "PREDICTION", model_name, disable_tqdm
+            self, project_id, labels, "PREDICTION", overwrite, model_name, disable_tqdm
         )
         return {"id": project_id}
 
@@ -192,6 +195,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         project_id: Optional[str] = None,
         asset_external_id_array: Optional[List[str]] = None,
         disable_tqdm: bool = False,
+        overwrite: bool = False,
     ) -> List[Dict[Literal["id"], str]]:
         """Append labels to assets.
 
@@ -206,6 +210,9 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             project_id: Identifier of the project.
             asset_external_id_array: list of asset external ids to append labels on.
             disable_tqdm: Disable tqdm progress bar.
+            overwrite: when uploading prediction or inference labels, if True,
+                it will overwrite existing labels with the same model name
+                and of the same label type, on the targeted assets.
 
         Returns:
             A list of dictionaries with the label ids.
@@ -250,7 +257,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             )
         ]
         return services.import_labels_from_dict(
-            self, project_id, labels, label_type, model_name, disable_tqdm
+            self, project_id, labels, label_type, overwrite, model_name, disable_tqdm
         )
 
     @typechecked
