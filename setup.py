@@ -54,10 +54,10 @@ dev_extra = (
         "mike",
         "pymdown-extensions",
         # linting
-        "black>=23.7.0,<24.0.0",
+        "black",
         "pre-commit>=3.3.0,<4.0.0",
         "pylint==2.17.5",
-        "flake8-unused-arguments==0.0.13",
+        "flake8-unused-arguments",
         "pyright==1.1.323",
         # notebooks tests
         "nbformat",
