@@ -4,7 +4,7 @@
 import pytest
 from gql.transport import exceptions
 
-from kili.client import Kili
+from kili.entrypoints.client import Kili
 from kili.exceptions import GraphQLError
 
 

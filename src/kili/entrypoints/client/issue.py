@@ -6,7 +6,6 @@ from typing import Dict, List, Literal, Optional
 from typeguard import typechecked
 
 from kili.core.graphql.graphql_gateway import GraphQLGateway
-from kili.domain.issues import IssueId
 from kili.services.helpers import assert_all_arrays_have_same_size
 from kili.services.issues import IssueUseCases
 from kili.services.issues.types import IssueToCreateServiceInput
@@ -27,7 +26,7 @@ class IssueEntrypoints:
         *,
         object_mid_array: Optional[List[Optional[str]]] = None,
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[Dict[Literal["id"], IssueId]]:
+    ) -> List[Dict[Literal["id"], str]]:
         """Create an issue.
 
         Args:
@@ -49,8 +48,8 @@ class IssueEntrypoints:
             )
         ]
         issue_use_cases = IssueUseCases(self.graphql_gateway)
-        created_issues_ids = issue_use_cases.create_issues(project_id=project_id, issues=issues)
-        return [{"id": issue_id} for issue_id in created_issues_ids]
+        issues_entities = issue_use_cases.create_issues(project_id=project_id, issues=issues)
+        return [{"id": issue.id} for issue in issues_entities]
 
     @typechecked
     def create_questions(
@@ -60,7 +59,7 @@ class IssueEntrypoints:
         *,
         asset_id_array: Optional[List[str]] = None,
         asset_external_id_array: Optional[List[str]] = None,
-    ) -> List[Dict[Literal["id"], IssueId]]:
+    ) -> List[Dict[Literal["id"], str]]:
         # pylint:disable=line-too-long
         """Create questions.
 
@@ -75,7 +74,7 @@ class IssueEntrypoints:
         """
         assert_all_arrays_have_same_size([text_array, asset_id_array])
         issue_use_cases = IssueUseCases(self.graphql_gateway)
-        created_questions_ids = issue_use_cases.create_questions(
+        created_questions = issue_use_cases.create_questions(
             project_id, text_array, asset_id_array, asset_external_id_array
         )
-        return [{"id": issue_id} for issue_id in created_questions_ids]
+        return [{"id": question.id} for question in created_questions]

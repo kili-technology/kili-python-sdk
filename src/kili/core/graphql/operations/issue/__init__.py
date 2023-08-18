@@ -11,7 +11,7 @@ from kili.core.graphql.operations.issue.operations import (
 )
 from kili.core.graphql.operations.issue.types import IssueToCreateGQLGatewayInput
 from kili.core.utils.pagination import BatchIteratorBuilder
-from kili.domain.issues import IssueId, IssueType
+from kili.domain.issues import Issue, IssueType
 
 
 @dataclass
@@ -42,8 +42,8 @@ class IssueOperationMixin:
 
     def create_issues(
         self, type_: IssueType, issues: List[IssueToCreateGQLGatewayInput]
-    ) -> List[IssueId]:
-        created_issues_ids: List[IssueId] = []
+    ) -> List[Issue]:
+        created_issues_ids: List[str] = []
         for issues_batch in BatchIteratorBuilder(issues):
             batch_targeted_asset_ids = [issue.asset_id for issue in issues_batch]
             payload = {
@@ -63,7 +63,7 @@ class IssueOperationMixin:
             result = self.graphql_client.execute(GQL_CREATE_ISSUES, payload)
             batch_created_issues_ids = result["data"]
             created_issues_ids.extend(batch_created_issues_ids)
-        return created_issues_ids
+        return [Issue(id=id) for id in created_issues_ids]
 
     def count_issues(
         self,

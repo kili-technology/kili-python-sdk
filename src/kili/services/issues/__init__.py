@@ -29,8 +29,8 @@ class IssueUseCases:
             )
             for (issue_number, issue) in zip(issue_number_array, issues)
         ]
-        issue_ids = self._graphql_gateway.create_issues(type_="ISSUE", issues=graphql_issues)
-        return issue_ids
+        created_issues = self._graphql_gateway.create_issues(type_="ISSUE", issues=graphql_issues)
+        return created_issues
 
     def create_questions(
         self,
@@ -56,7 +56,7 @@ class IssueUseCases:
             )
         ]
 
-        question_ids = self._graphql_gateway.create_issues(
+        created_questions = self._graphql_gateway.create_issues(
             type_="QUESTION", issues=graphql_questions
         )
-        return question_ids
+        return created_questions

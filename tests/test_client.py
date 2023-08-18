@@ -7,7 +7,7 @@ from unittest.mock import patch
 import pytest
 import pytest_mock
 
-from kili.client import Kili
+from kili.entrypoints.client import Kili
 from kili.exceptions import AuthenticationFailed
 
 
