@@ -455,7 +455,12 @@ def test_import(
     ],
 )
 def test_export(name: str, test_case: List[str], mocker: pytest_mock.MockerFixture):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
     mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(AssetQuery, "__call__", side_effect=mocked__project_assets)
+    mocker.patch(
+        "kili.services.export.format.base.AbstractExporter._has_data_connection", return_value=False
+    )
 
     runner = CliRunner()
     with runner.isolated_filesystem():
