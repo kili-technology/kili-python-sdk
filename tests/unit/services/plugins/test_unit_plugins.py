@@ -25,7 +25,7 @@ def kili():
 
 def test_invalid_mime_type():
     plugin_path = Path(
-        os.path.join("tests", "services", "plugins", "plugin_folder", "requirements.txt")
+        os.path.join("tests", "unit", "services", "plugins", "plugin_folder", "requirements.txt")
     )
 
     mime_type = check_file_mime_type(plugin_path, mime_extensions_for_py_scripts)
@@ -43,7 +43,7 @@ def test_wrong_plugin_path(kili):
 
 def test_no_plugin_handler():
     plugin_path = Path(
-        os.path.join("tests", "services", "plugins", "test_plugins", "no_plugin_handler.py")
+        os.path.join("tests", "unit", "services", "plugins", "test_plugins", "no_plugin_handler.py")
     )
 
     contains_handler, handlers = check_file_contains_handler(plugin_path)
@@ -53,7 +53,9 @@ def test_no_plugin_handler():
 
 def test_no_handlers_implemented():
     plugin_path = Path(
-        os.path.join("tests", "services", "plugins", "test_plugins", "no_handlers_implemented.py")
+        os.path.join(
+            "tests", "unit", "services", "plugins", "test_plugins", "no_handlers_implemented.py"
+        )
     )
 
     contains_handler, handlers = check_file_contains_handler(plugin_path)
@@ -64,7 +66,12 @@ def test_no_handlers_implemented():
 def test_handlers_correctly_implemented():
     plugin_path = Path(
         os.path.join(
-            "tests", "services", "plugins", "test_plugins", "handlers_correctly_implemented.py"
+            "tests",
+            "unit",
+            "services",
+            "plugins",
+            "test_plugins",
+            "handlers_correctly_implemented.py",
         )
     )
 
@@ -75,7 +82,7 @@ def test_handlers_correctly_implemented():
 
 def test_commented_handler():
     plugin_path = Path(
-        os.path.join("tests", "services", "plugins", "test_plugins", "commented_handler.py")
+        os.path.join("tests", "unit", "services", "plugins", "test_plugins", "commented_handler.py")
     )
 
     contains_handler, handlers = check_file_contains_handler(plugin_path)
@@ -98,7 +105,9 @@ def test_no_pluginhandler_when_creating_zip_from_file(kili):
 
 def test_zip_creation_from_file(kili):
     with TemporaryDirectory() as tmp_dir:
-        plugin_path = Path(os.path.join("tests", "services", "plugins", "plugin_folder", "main.py"))
+        plugin_path = Path(
+            os.path.join("tests", "unit", "services", "plugins", "plugin_folder", "main.py")
+        )
 
         PluginUploader(kili, str(plugin_path), PLUGIN_NAME, False, requests.Session())._create_zip(
             tmp_dir
@@ -146,7 +155,7 @@ def test_no_pluginhandler_when_creating_zip_from_folder(kili):
 
 def test_zip_creation_from_folder(kili):
     with TemporaryDirectory() as tmp_dir:
-        plugin_path = Path(os.path.join("tests", "services", "plugins", "plugin_folder"))
+        plugin_path = Path(os.path.join("tests", "unit", "services", "plugins", "plugin_folder"))
 
         PluginUploader(kili, str(plugin_path), PLUGIN_NAME, False, requests.Session())._create_zip(
             tmp_dir
