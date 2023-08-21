@@ -6,10 +6,10 @@ from kili.core.graphql.gateway import GraphQLGateway
 from kili.core.graphql.gateway.issue.types import IssueToCreateGQLGatewayInput
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
-from kili.services.issues.types import IssueToCreateServiceInput
+from kili.services.issue.types import IssueToCreateServiceInput
 
 
-class IssueUseCases:
+class IssueService:
     def __init__(self, graphql_gateway: GraphQLGateway):
         self._graphql_gateway = graphql_gateway
 

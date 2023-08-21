@@ -3,12 +3,13 @@
 from itertools import repeat
 from typing import Dict, List, Literal, Optional
 
+import requests
 from typeguard import typechecked
 
 from kili.core.graphql.gateway import GraphQLGateway
 from kili.services.helpers import assert_all_arrays_have_same_size
-from kili.services.issues import IssueUseCases
-from kili.services.issues.types import IssueToCreateServiceInput
+from kili.services.issue import IssueService
+from kili.services.issue.types import IssueToCreateServiceInput
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -17,6 +18,7 @@ class IssueEntrypoints:
     """Set of Issue mutations."""
 
     graphql_gateway: GraphQLGateway
+    http_client: requests.Session
 
     @typechecked
     def create_issues(
@@ -46,8 +48,8 @@ class IssueEntrypoints:
                 text_array or repeat(None),
             )
         ]
-        issue_use_cases = IssueUseCases(self.graphql_gateway)
-        issues_entities = issue_use_cases.create_issues(project_id=project_id, issues=issues)
+        issue_service = IssueService(self.graphql_gateway)
+        issues_entities = issue_service.create_issues(project_id=project_id, issues=issues)
         return [{"id": issue.id} for issue in issues_entities]
 
     @typechecked
@@ -71,8 +73,8 @@ class IssueEntrypoints:
             A list of dictionary with the `id` key of the created questions.
         """
         assert_all_arrays_have_same_size([text_array, asset_id_array])
-        issue_use_cases = IssueUseCases(self.graphql_gateway)
-        created_questions = issue_use_cases.create_questions(
+        issue_service = IssueService(self.graphql_gateway)
+        created_questions = issue_service.create_questions(
             project_id, text_array, asset_id_array, asset_external_id_array
         )
         return [{"id": question.id} for question in created_questions]
