@@ -78,6 +78,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     QueriesProjectVersion,
     QueriesUser,
     SubscriptionsLabel,
+    IssueEntrypoints,
 ):
     """Kili Client."""
 

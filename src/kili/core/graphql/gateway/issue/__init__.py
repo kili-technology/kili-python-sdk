@@ -25,7 +25,7 @@ class IssueWhere:
     status: Optional[IssueStatus] = None
 
     def get_graphql_input(self):
-        """Build the GraphQL Where payload sent in the resolver from the SDK IssueWhere."""
+        """Build the GraphQL IssueWhere payload to be sent in an operation."""
         return {
             "project": {"id": self.project_id},
             "asset": {"id": self.asset_id},
@@ -43,6 +43,7 @@ class IssueOperationMixin:
     def create_issues(
         self, type_: IssueType, issues: List[IssueToCreateGQLGatewayInput]
     ) -> List[Issue]:
+        """Send a GraphQL request calling createIssues resolver."""
         created_issue_entities: List[Issue] = []
         for issues_batch in BatchIteratorBuilder(issues):
             batch_targeted_asset_ids = [issue.asset_id for issue in issues_batch]
@@ -65,7 +66,7 @@ class IssueOperationMixin:
             created_issue_entities.extend([Issue(id=issue["id"]) for issue in batch_created_issues])
         return created_issue_entities
 
-    def count_issues(
+    def count_issues(  # pylint: disable=too-many-arguments,
         self,
         project_id: str,
         asset_id: Optional[str] = None,
@@ -73,6 +74,7 @@ class IssueOperationMixin:
         issue_type: Optional[IssueType] = None,
         status: Optional[IssueStatus] = None,
     ):
+        """Send a GraphQL request calling countIssues resolver."""
         where = IssueWhere(project_id, asset_id, asset_id_in, issue_type, status)
         payload = {
             "where": where.get_graphql_input(),

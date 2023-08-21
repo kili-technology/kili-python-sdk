@@ -1,3 +1,5 @@
+"""Tests for issues service."""
+
 from kili.domain.issues import Issue
 from kili.services.issue import IssueService
 from kili.services.issue.types import IssueToCreateServiceInput

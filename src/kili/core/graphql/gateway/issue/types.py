@@ -1,3 +1,4 @@
+"""Types for the Issue-related graphql gateway functions."""
 from dataclasses import dataclass
 from typing import Optional
 

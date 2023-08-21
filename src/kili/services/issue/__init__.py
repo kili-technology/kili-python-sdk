@@ -1,4 +1,4 @@
-"""Issue use cases."""
+"""Issue Service."""
 
 from typing import List, Optional
 
@@ -10,10 +10,13 @@ from kili.services.issue.types import IssueToCreateServiceInput
 
 
 class IssueService:
+    """Issue Service."""
+
     def __init__(self, graphql_gateway: GraphQLGateway):
         self._graphql_gateway = graphql_gateway
 
     def create_issues(self, project_id, issues: List[IssueToCreateServiceInput]):
+        """Create issues with issue type."""
         issue_number_array = [0] * len(issues)
         label_id_array = [issue.label_id for issue in issues]
         label_asset_ids_map = get_labels_asset_ids_map(
@@ -39,6 +42,7 @@ class IssueService:
         asset_id_array: Optional[List[str]],
         asset_external_id_array: Optional[List[str]],
     ):
+        """Create issues with question type."""
         issue_number_array = [0] * len(text_array)
         asset_id_array = get_asset_ids_or_throw_error(
             self._graphql_gateway, asset_id_array, asset_external_id_array, project_id
