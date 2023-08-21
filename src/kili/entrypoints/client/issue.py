@@ -50,7 +50,7 @@ class IssueEntrypoints:
         ]
         issue_service = IssueService(self.graphql_gateway)
         issues_entities = issue_service.create_issues(project_id=project_id, issues=issues)
-        return [{"id": issue.id} for issue in issues_entities]
+        return [{"id": issue.id_} for issue in issues_entities]
 
     @typechecked
     def create_questions(
@@ -77,4 +77,4 @@ class IssueEntrypoints:
         created_questions = issue_service.create_questions(
             project_id, text_array, asset_id_array, asset_external_id_array
         )
-        return [{"id": question.id} for question in created_questions]
+        return [{"id": question.id_} for question in created_questions]

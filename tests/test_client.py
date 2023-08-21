@@ -13,8 +13,8 @@ from kili.exceptions import AuthenticationFailed
 
 def test_no_api_key(mocker, monkeypatch):
     """Test fail because no api key is found."""
-    mocker.patch("kili.client.requests")
-    mocker.patch("kili.client.getpass.getpass", return_value="")
+    mocker.patch("kili.entrypoints.client.requests")
+    mocker.patch("kili.entrypoints.client.getpass.getpass", return_value="")
     monkeypatch.delenv("KILI_API_KEY", raising=False)
     with pytest.raises(AuthenticationFailed):
         _ = Kili()
@@ -22,7 +22,7 @@ def test_no_api_key(mocker, monkeypatch):
 
 def test_wrong_api_key(mocker, monkeypatch):
     """Test obfuscation of api key."""
-    mocker.patch("kili.client.requests")
+    mocker.patch("kili.entrypoints.client.requests")
     monkeypatch.delenv("KILI_API_KEY", raising=False)
     Kili.http_client = mocker.MagicMock()
     with pytest.raises(
@@ -72,9 +72,9 @@ def test_write_to_disk_without_permissions_not_crash(mocker, monkeypatch, prepar
 def test_given_env_without_api_key_when_initializing_kili_client_then_it_asks_for_api_key_getpass(
     mocker: pytest_mock.MockerFixture,
 ):
-    mocker.patch("kili.client.sys.stdin.isatty", return_value=True)
+    mocker.patch("kili.entrypoints.client.sys.stdin.isatty", return_value=True)
     mocker_getpass = mocker.patch(
-        "kili.client.getpass.getpass", return_value="fake_key_entered_by_user"
+        "kili.entrypoints.client.getpass.getpass", return_value="fake_key_entered_by_user"
     )
 
     # When
@@ -88,6 +88,6 @@ def test_given_env_without_api_key_when_initializing_kili_client_then_it_asks_fo
 def test_given_non_tti_env_without_api_key_when_initializing_kili_client_then_it_crash(
     mocker: pytest_mock.MockerFixture,
 ):
-    mocker.patch("kili.client.sys.stdin.isatty", return_value=False)
+    mocker.patch("kili.entrypoints.client.sys.stdin.isatty", return_value=False)
     with pytest.raises(AuthenticationFailed):
         _ = Kili()
