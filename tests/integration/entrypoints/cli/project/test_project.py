@@ -455,7 +455,6 @@ def test_import(
     ],
 )
 def test_export(name: str, test_case: List[str], mocker: pytest_mock.MockerFixture):
-    mocker.patch("kili.client.Kili.__new__", return_value=kili_client)
     mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
 
     runner = CliRunner()
