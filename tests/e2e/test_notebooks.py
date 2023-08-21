@@ -6,8 +6,8 @@ import pytest
 from nbconvert.preprocessors.execute import ExecutePreprocessor
 
 
-def process_notebook(notebook_filename):
-    """Checks if an IPython notebook runs without error from start to finish."""
+def process_notebook(notebook_filename: str) -> None:
+    """Check if an IPython notebook runs without error from start to finish."""
     with open(notebook_filename, encoding="utf-8") as n_f:
         notebook = nbformat.read(n_f, as_version=4)
 
@@ -60,6 +60,6 @@ def process_notebook(notebook_filename):
         "recipes/webhooks_example.ipynb",
     ],
 )
-def test_all_recipes(notebook_file):
+def test_all_recipes(notebook_file: str):
     """Runs `process_notebook` on all notebooks in the git repository."""
     process_notebook(notebook_file)

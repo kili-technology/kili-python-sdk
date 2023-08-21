@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 
@@ -8,9 +8,10 @@ from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.entrypoints.queries.asset import QueriesAsset
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
-from tests.services.asset_import.base import ImportTestCase
-from tests.services.asset_import.mocks import (
+from tests.unit.services.asset_import.base import ImportTestCase
+from tests.unit.services.asset_import.mocks import (
     mocked_organization_with_upload_from_local,
+    mocked_project_input_type,
     mocked_request_signed_urls,
     mocked_unique_id,
     mocked_upload_data_via_rest,
@@ -20,7 +21,7 @@ from tests.services.asset_import.mocks import (
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
-@patch.object(ProjectQuery, "__call__", side_effect=lambda *args: [{"inputType": "TEXT"}])
+@patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
 @patch.object(
     QueriesAsset,
     "assets",
@@ -31,16 +32,16 @@ from tests.services.asset_import.mocks import (
     "__call__",
     side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
 )
-class TextTestCase(ImportTestCase):
+class ImageTestCase(ImportTestCase):
     @patch.object(AssetQuery, "count", return_value=1)
-    def test_upload_from_one_local_text_file(self, *_):
-        url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/texts/test_text_file.txt"
-        path = self.downloader(url)
-        assets = [{"content": path, "external_id": "local text file"}]
+    def test_upload_from_one_local_image(self, *_):
+        url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
+        path_image = self.downloader(url)
+        assets = [{"content": path_image, "external_id": "local image"}]
         import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
             ["https://signed_url?id=id"],
-            ["local text file"],
+            ["local image"],
             ["unique_id"],
             [False],
             [""],
@@ -50,7 +51,7 @@ class TextTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     @patch.object(AssetQuery, "count", return_value=1)
-    def test_upload_from_one_hosted_text_file(self, *_):
+    def test_upload_from_one_hosted_image(self, *_):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
@@ -61,61 +62,59 @@ class TextTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     @patch.object(AssetQuery, "count", return_value=1)
-    def test_upload_from_raw_text(self, *_):
-        assets = [{"content": "this is raw text", "external_id": "raw text"}]
+    def test_upload_from_one_local_tiff_image(self, *_):
+        url = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
+        path_image = self.downloader(url)
+        assets = [{"content": path_image, "external_id": "local tiff image"}]
         import_assets(self.kili, self.project_id, assets)
-        expected_parameters = self.get_expected_sync_call(
+        expected_parameters = self.get_expected_async_call(
             ["https://signed_url?id=id"],
-            ["raw text"],
+            ["local tiff image"],
             ["unique_id"],
-            [False],
-            [""],
             ["{}"],
-            ["TODO"],
+            "GEO_SATELLITE",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
-    @patch.object(AssetQuery, "count", return_value=1)
-    def test_upload_from_one_rich_text(self, *_):
-        json_content = [
-            {
-                "children": [
-                    {
-                        "id": "1",
-                        "underline": True,
-                        "text": "A rich text asset",
-                    }
-                ]
-            }
+    @patch.object(AssetQuery, "count", return_value=1)  # 2 images are uploaded in different batches
+    def test_upload_with_one_tiff_and_one_basic_image(self, *_):
+        url_tiff = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
+        url_basic = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
+        path_basic = self.downloader(url_basic)
+        path_tiff = self.downloader(url_tiff)
+        assets = [
+            {"content": path_basic, "external_id": "local basic image"},
+            {"content": path_tiff, "external_id": "local tiff image"},
         ]
-        assets = [{"json_content": json_content, "external_id": "rich text", "id": "unique_id"}]
         import_assets(self.kili, self.project_id, assets)
-        expected_parameters = self.get_expected_sync_call(
-            [""],
-            ["rich text"],
+        expected_parameters_sync = self.get_expected_sync_call(
+            ["https://signed_url?id=id"],
+            ["local basic image"],
             ["unique_id"],
             [False],
-            ["https://signed_url?id=id"],
+            [""],
             ["{}"],
             ["TODO"],
         )
-        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+        expected_parameters_async = self.get_expected_async_call(
+            ["https://signed_url?id=id"],
+            ["local tiff image"],
+            ["unique_id"],
+            ["{}"],
+            "GEO_SATELLITE",
+        )
+        calls = [call(*expected_parameters_sync), call(*expected_parameters_async)]
+        self.kili.graphql_client.execute.assert_has_calls(calls, any_order=True)
 
     @patch.object(AssetQuery, "count", return_value=1)
     def test_upload_from_several_batches(self, *_):
         self.assert_upload_several_batches()
 
     @patch.object(AssetQuery, "count", return_value=1)
-    def test_upload_from_one_hosted_text_authorized_while_local_forbidden(self, *_):
+    def test_upload_from_one_hosted_image_authorized_while_local_forbidden(self, *_):
         OrganizationQuery.__call__.side_effect = mocked_organization_with_upload_from_local(
             upload_local_data=False
         )
-        url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/texts/test_text_file.txt"
-        path = self.downloader(url)
-        assets = [{"content": path, "external_id": "local text file"}]
-        with pytest.raises(UploadFromLocalDataForbiddenError):
-            import_assets(self.kili, self.project_id, assets)
-
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
@@ -124,3 +123,9 @@ class TextTestCase(ImportTestCase):
             ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+
+        url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
+        path_image = self.downloader(url)
+        assets = [{"content": path_image, "external_id": "local image"}]
+        with pytest.raises(UploadFromLocalDataForbiddenError):
+            import_assets(self.kili, self.project_id, assets)

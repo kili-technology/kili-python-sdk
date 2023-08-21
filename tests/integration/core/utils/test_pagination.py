@@ -5,7 +5,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from kili.core.graphql import QueryOptions
-from tests.helpers import MyGraphQLQuery, MyGraphQLWhere, mocked_query_method
+
+from .helpers import MyGraphQLQuery, MyGraphQLWhere, mocked_query_method
 
 
 @pytest.mark.parametrize(

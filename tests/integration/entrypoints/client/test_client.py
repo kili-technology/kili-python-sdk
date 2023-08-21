@@ -1,4 +1,3 @@
-"""Tests for the client to return correct ee."""
 import os
 import shutil
 from pathlib import Path

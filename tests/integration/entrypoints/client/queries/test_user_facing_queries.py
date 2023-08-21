@@ -2,7 +2,7 @@
 
 
 from typing import Dict, Generator, List
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from typeguard import check_type

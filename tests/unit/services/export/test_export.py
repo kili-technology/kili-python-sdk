@@ -20,13 +20,13 @@ from kili.services.export.exceptions import (
     NotCompatibleOptions,
 )
 from kili.services.export.format.kili import KiliExporter
-from tests.fakes.fake_ffmpeg import mock_ffmpeg
 from tests.fakes.fake_kili import (
     FakeKili,
     mocked_AssetQuery,
     mocked_AssetQuery_count,
     mocked_ProjectQuery,
 )
+from tests.unit.services.export.fakes.fake_ffmpeg import mock_ffmpeg
 
 
 def get_file_tree(folder: str):

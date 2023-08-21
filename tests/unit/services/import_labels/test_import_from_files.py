@@ -16,8 +16,8 @@ from kili.services.label_import.importer import YoloLabelImporter
 from kili.services.label_import.parser import YoloLabelParser
 from kili.services.label_import.types import Classes
 from kili.services.types import ProjectId
-from tests.services.import_labels import fakes
-from tests.services.import_labels.test_cases_from_files import TEST_CASES
+from tests.unit.services.import_labels import fakes
+from tests.unit.services.import_labels.test_cases_from_files import TEST_CASES
 
 
 def _generate_label_file(yolo_rows: List[List], filename: str):

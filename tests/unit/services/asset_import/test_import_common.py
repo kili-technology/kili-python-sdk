@@ -6,8 +6,8 @@ from kili.core.graphql.operations.organization.queries import OrganizationQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import MimeTypeError
-from tests.services.asset_import.base import ImportTestCase
-from tests.services.asset_import.mocks import (
+from tests.unit.services.asset_import.base import ImportTestCase
+from tests.unit.services.asset_import.mocks import (
     mocked_organization_with_upload_from_local,
     mocked_project_input_type,
     mocked_request_signed_urls,
