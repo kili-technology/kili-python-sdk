@@ -1,4 +1,5 @@
-from kili.core.graphql.operations.issue import IssueOperationMixin
+"""GraphQL gateway module."""
+from kili.core.graphql.gateway.issue import IssueOperationMixin
 
 
 class GraphQLGateway(IssueOperationMixin):

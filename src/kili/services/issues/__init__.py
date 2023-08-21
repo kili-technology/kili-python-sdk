@@ -2,8 +2,8 @@
 
 from typing import List, Optional
 
-from kili.core.graphql.graphql_gateway import GraphQLGateway
-from kili.core.graphql.operations.issue.types import IssueToCreateGQLGatewayInput
+from kili.core.graphql.gateway import GraphQLGateway
+from kili.core.graphql.gateway.issue.types import IssueToCreateGQLGatewayInput
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.services.issues.types import IssueToCreateServiceInput

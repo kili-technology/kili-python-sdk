@@ -5,7 +5,7 @@ from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
 
-from kili.core.graphql.graphql_gateway import GraphQLGateway
+from kili.core.graphql.gateway import GraphQLGateway
 from kili.services.helpers import assert_all_arrays_have_same_size
 from kili.services.issues import IssueUseCases
 from kili.services.issues.types import IssueToCreateServiceInput
