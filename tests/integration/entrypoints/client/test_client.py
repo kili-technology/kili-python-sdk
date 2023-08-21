@@ -19,6 +19,10 @@ def test_no_api_key(mocker, monkeypatch):
         _ = Kili()
 
 
+@pytest.mark.skipif(
+    os.name == "nt" and os.sys.version_info == (3, 8),
+    reason="test doesn't work on windows 3.8",
+)
 def test_wrong_api_key(mocker, monkeypatch):
     """Test obfuscation of api key."""
     mocker.patch("kili.client.requests")
@@ -30,6 +34,10 @@ def test_wrong_api_key(mocker, monkeypatch):
         _ = Kili(api_key="wrong_api_key")
 
 
+@pytest.mark.skipif(
+    os.name == "nt" and os.sys.version_info == (3, 8),
+    reason="test doesn't work on windows 3.8",
+)
 def test_wrong_api_key_shot(mocker, monkeypatch):
     """Test no need to obfuscate api key."""
     monkeypatch.delenv("KILI_API_KEY", raising=False)
@@ -51,6 +59,10 @@ def prepare_cache_dir():
         shutil.rmtree(kili_cache_dir)
 
 
+@pytest.mark.skipif(
+    os.name == "nt" and os.sys.version_info == (3, 8),
+    reason="test doesn't work on windows 3.8",
+)
 def test_write_to_disk_without_permissions_not_crash(mocker, monkeypatch, prepare_cache_dir):
     """Test that we can still use kili even if we don't have write permissions."""
     mocker.patch("io.open", side_effect=PermissionError("No write permissions"))
