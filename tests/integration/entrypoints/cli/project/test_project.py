@@ -4,11 +4,10 @@ import csv
 import os
 from pathlib import Path
 from typing import List
-from unittest.mock import ANY, MagicMock, patch
+from unittest.mock import ANY, patch
 
 import pytest
 import pytest_mock
-import requests
 from click.testing import CliRunner
 
 from kili.core.graphql.operations.asset.queries import AssetQuery
@@ -22,11 +21,6 @@ from tests.integration.entrypoints.cli.helpers import debug_subprocess_pytest
 
 from .mocks.assets import mocked__project_assets
 from .mocks.projects import mocked__ProjectQuery
-
-kili_client = MagicMock()
-kili_client.api_endpoint = "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
-kili_client.create_project = create_project_mock = MagicMock()
-kili_client.http_client = requests.Session()
 
 
 def test_list(mocker: pytest_mock.MockerFixture):

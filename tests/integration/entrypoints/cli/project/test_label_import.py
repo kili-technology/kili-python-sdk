@@ -1,7 +1,7 @@
 import json
 import os
 from typing import Dict
-from unittest.mock import ANY, MagicMock, patch
+from unittest.mock import ANY, patch
 
 import pytest
 import pytest_mock
@@ -9,9 +9,6 @@ from click.testing import CliRunner
 
 from kili.entrypoints.cli.project.label import import_labels
 from tests.integration.entrypoints.cli.helpers import debug_subprocess_pytest
-
-kili_client = MagicMock()
-kili_client.create_predictions = create_predictions_mock = MagicMock()
 
 mock_label = {"JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 100}]}}
 
