@@ -265,6 +265,7 @@ def test_remove_member(
     expected_mutation_payload: Dict[str, str],
     mocker: pytest_mock.MockerFixture,
 ):
+    mocker.patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
     delete_from_roles_mock = mocker.patch(
         "kili.entrypoints.mutations.project.MutationsProject.delete_from_roles"
     )
