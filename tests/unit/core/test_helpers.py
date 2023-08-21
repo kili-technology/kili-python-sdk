@@ -126,13 +126,11 @@ def test_get_labels_asset_ids_map():
         }
 
 
-@patch(
-    "kili.entrypoints.mutations.asset._mutate_from_paginated_call", return_value=[{"data": None}]
-)
+@patch("kili.entrypoints.mutations.asset.mutate_from_paginated_call", return_value=[{"data": None}])
 class TestCheckWarnEmptyList(TestCase):
     """Tests for the check_warn_empty_list helper."""
 
-    def test_kwargs_empty(self, mocked__mutate_from_paginated_call):
+    def test_kwargs_empty(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
@@ -143,9 +141,9 @@ class TestCheckWarnEmptyList(TestCase):
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=[])
         assert ret is None
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
 
-    def test_args_empty(self, mocked__mutate_from_paginated_call):
+    def test_args_empty(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
@@ -156,18 +154,18 @@ class TestCheckWarnEmptyList(TestCase):
         ):
             ret = kili.add_to_review([], [])
         assert ret is None
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
 
-    def test_none(self, mocked__mutate_from_paginated_call):
+    def test_none(self, mocked_mutate_from_paginated_call):
         """Test that the helper does not raise a warning if args are None."""
         kili = MutationsAsset()
         with pytest.raises(MissingArgumentError):
             with warnings.catch_warnings():
                 warnings.simplefilter("error")
                 kili.add_to_review()
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
 
-    def test_kwargs_one_empty(self, mocked__mutate_from_paginated_call):
+    def test_kwargs_one_empty(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
@@ -178,9 +176,9 @@ class TestCheckWarnEmptyList(TestCase):
         ):
             ret = kili.add_to_review(asset_ids=None, external_ids=[], project_id="project_id")
         assert ret is None
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
 
-    def test_kwargs_one_empty_2(self, mocked__mutate_from_paginated_call):
+    def test_kwargs_one_empty_2(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
@@ -191,27 +189,27 @@ class TestCheckWarnEmptyList(TestCase):
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=None)
         assert ret is None
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
 
-    def test_kwargs_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
+    def test_kwargs_no_warning_correct_input(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         kili.graphql_client = MagicMock()
         kili.http_client = MagicMock()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(asset_ids=["asset_id"], external_ids=None)
-        mocked__mutate_from_paginated_call.assert_called_once()
+        mocked_mutate_from_paginated_call.assert_called_once()
 
-    def test_args_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
+    def test_args_no_warning_correct_input(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         kili.graphql_client = MagicMock()
         kili.http_client = MagicMock()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(["asset_id"], None)
-        mocked__mutate_from_paginated_call.assert_called_once()
+        mocked_mutate_from_paginated_call.assert_called_once()
 
-    def test_warn_change_asset_external_ids(self, mocked__mutate_from_paginated_call):
+    def test_warn_change_asset_external_ids(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
@@ -222,7 +220,7 @@ class TestCheckWarnEmptyList(TestCase):
         ):
             ret = kili.change_asset_external_ids(new_external_ids=[], asset_ids=[])
         assert ret == []
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
 
 
 @pytest.mark.parametrize(

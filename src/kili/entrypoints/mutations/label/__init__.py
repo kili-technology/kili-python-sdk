@@ -9,7 +9,7 @@ from typeguard import typechecked
 from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import deprecate, is_empty_list_with_warning
-from kili.core.utils.pagination import _mutate_from_paginated_call
+from kili.core.utils.pagination import mutate_from_paginated_call
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
 from kili.entrypoints.mutations.label.queries import (
@@ -355,7 +355,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
 
         properties_to_batch = {"ids": ids}
 
-        result = _mutate_from_paginated_call(
+        result = mutate_from_paginated_call(
             self,
             properties_to_batch,  # type: ignore
             generate_variables,

@@ -10,7 +10,7 @@ from typeguard import typechecked
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import is_empty_list_with_warning
-from kili.core.utils.pagination import _mutate_from_paginated_call
+from kili.core.utils.pagination import mutate_from_paginated_call
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
     process_update_properties_in_assets_parameters,
@@ -305,7 +305,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 "dataArray": data_array,
             }
 
-        results = _mutate_from_paginated_call(
+        results = mutate_from_paginated_call(
             self,
             properties_to_batch,
             generate_variables,
@@ -359,7 +359,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 "dataArray": data_array,
             }
 
-        results = _mutate_from_paginated_call(
+        results = mutate_from_paginated_call(
             self,
             properties_to_batch,
             generate_variables,
@@ -414,7 +414,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             if nb_assets_in_kili > 0:
                 raise MutationError("Failed to delete some assets.")
 
-        results = _mutate_from_paginated_call(
+        results = mutate_from_paginated_call(
             self,
             properties_to_batch,
             generate_variables,
@@ -487,7 +487,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             if len(asset_ids) != nb_assets_in_review:
                 raise MutationError("Failed to send some assets to review")
 
-        results = _mutate_from_paginated_call(
+        results = mutate_from_paginated_call(
             self,
             properties_to_batch,
             generate_variables,
@@ -563,7 +563,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             if len(asset_ids) != nb_assets_in_queue:
                 raise MutationError("Failed to send some assets back to queue")
 
-        results = _mutate_from_paginated_call(
+        results = mutate_from_paginated_call(
             self,
             properties_to_batch,
             generate_variables,
