@@ -10,7 +10,11 @@ from tenacity import TryAgain, retry
 from tenacity.wait import wait_fixed
 
 from kili.core.graphql.operations.label.queries import LabelQuery
-from kili.core.helpers import RetryLongWaitWarner, format_result
+from kili.core.helpers import (
+    RetryLongWaitWarner,
+    format_result,
+    validate_category_search_query,
+)
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.exceptions import MissingArgumentError
@@ -122,13 +126,11 @@ def test_get_labels_asset_ids_map():
         }
 
 
-@patch(
-    "kili.entrypoints.mutations.asset._mutate_from_paginated_call", return_value=[{"data": None}]
-)
+@patch("kili.entrypoints.mutations.asset.mutate_from_paginated_call", return_value=[{"data": None}])
 class TestCheckWarnEmptyList(TestCase):
     """Tests for the check_warn_empty_list helper."""
 
-    def test_kwargs_empty(self, mocked__mutate_from_paginated_call):
+    def test_kwargs_empty(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
@@ -139,9 +141,9 @@ class TestCheckWarnEmptyList(TestCase):
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=[])
         assert ret is None
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
 
-    def test_args_empty(self, mocked__mutate_from_paginated_call):
+    def test_args_empty(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
@@ -152,18 +154,18 @@ class TestCheckWarnEmptyList(TestCase):
         ):
             ret = kili.add_to_review([], [])
         assert ret is None
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
 
-    def test_none(self, mocked__mutate_from_paginated_call):
+    def test_none(self, mocked_mutate_from_paginated_call):
         """Test that the helper does not raise a warning if args are None."""
         kili = MutationsAsset()
         with pytest.raises(MissingArgumentError):
             with warnings.catch_warnings():
                 warnings.simplefilter("error")
                 kili.add_to_review()
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
 
-    def test_kwargs_one_empty(self, mocked__mutate_from_paginated_call):
+    def test_kwargs_one_empty(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
@@ -174,9 +176,9 @@ class TestCheckWarnEmptyList(TestCase):
         ):
             ret = kili.add_to_review(asset_ids=None, external_ids=[], project_id="project_id")
         assert ret is None
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
 
-    def test_kwargs_one_empty_2(self, mocked__mutate_from_paginated_call):
+    def test_kwargs_one_empty_2(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
@@ -187,27 +189,27 @@ class TestCheckWarnEmptyList(TestCase):
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=None)
         assert ret is None
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
 
-    def test_kwargs_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
+    def test_kwargs_no_warning_correct_input(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         kili.graphql_client = MagicMock()
         kili.http_client = MagicMock()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(asset_ids=["asset_id"], external_ids=None)
-        mocked__mutate_from_paginated_call.assert_called_once()
+        mocked_mutate_from_paginated_call.assert_called_once()
 
-    def test_args_no_warning_correct_input(self, mocked__mutate_from_paginated_call):
+    def test_args_no_warning_correct_input(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         kili.graphql_client = MagicMock()
         kili.http_client = MagicMock()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(["asset_id"], None)
-        mocked__mutate_from_paginated_call.assert_called_once()
+        mocked_mutate_from_paginated_call.assert_called_once()
 
-    def test_warn_change_asset_external_ids(self, mocked__mutate_from_paginated_call):
+    def test_warn_change_asset_external_ids(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
         with pytest.warns(
             UserWarning,
@@ -218,4 +220,52 @@ class TestCheckWarnEmptyList(TestCase):
         ):
             ret = kili.change_asset_external_ids(new_external_ids=[], asset_ids=[])
         assert ret == []
-        mocked__mutate_from_paginated_call.assert_not_called()
+        mocked_mutate_from_paginated_call.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "case, query, raise_error",
+    [
+        (
+            "user does not provide job",
+            "class_A.count > 0",
+            True,
+        ),
+        (
+            "user does not write count",
+            "JOB.class_A > 0",
+            True,
+        ),
+        (
+            "user can provide expressions separated by OR and AND",
+            "JOB.class_A.count > 0 AND JOB2.class_B.count == 3 OR JOB2.class_C.count < 3",
+            False,
+        ),
+        (
+            "user can provide expressions with parenthesis",
+            "JOB.class_A.count > 0 AND (JOB2.class_B.count == 3 OR JOB2.class_C.count < 3)",
+            False,
+        ),
+        (
+            "user can add spaces where it does not break the query",
+            "JOB. class_A.  count > 0 AND      JOB2.class_B. count ==   3",
+            False,
+        ),
+        (
+            "user did not close a parenthesis",
+            "JOB.class_A.count > 0 AND (JOB2.class_B.count == 3 OR JOB2.class_C.count < 3",
+            True,
+        ),
+        (
+            "user can have complex job and ategory name",
+            "JoB46_Hhzef*bzf66.class_Auzf657bdh----_.count > 0 ",
+            False,
+        ),
+    ],
+)
+def test_category_search_queries(case: str, query: str, raise_error: bool):
+    if raise_error:
+        with pytest.raises(ValueError):
+            validate_category_search_query(query)
+    else:
+        validate_category_search_query(query)

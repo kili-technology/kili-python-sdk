@@ -19,10 +19,10 @@ class KiliExporter(AbstractExporter):
     ASSETS_DIR_NAME = "assets"
 
     def _check_arguments_compatibility(self) -> None:
-        """Checks if the export label format is compatible with the export options."""
+        """Check if the export label format is compatible with the export options."""
 
     def _check_project_compatibility(self) -> None:
-        """Checks if the export label format is compatible with the project."""
+        """Check if the export label format is compatible with the project."""
 
     def _is_job_compatible(self, job: Job) -> bool:
         """Check if the export label format is compatible with the job."""
