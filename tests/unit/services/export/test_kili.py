@@ -237,7 +237,9 @@ def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture
         "kili.services.export.format.base.fetch_assets",
         return_value=[
             Asset(asset)
-            for asset in json.load(open("./tests/services/export/fakes/pdf_project_assets.json"))
+            for asset in json.load(
+                open("./tests/unit/services/export/fakes/pdf_project_assets.json")
+            )
         ],
     )
 
@@ -381,7 +383,9 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
         "kili.services.export.format.base.fetch_assets",
         return_value=[
             Asset(asset)
-            for asset in json.load(open("./tests/services/export/fakes/image_project_assets.json"))
+            for asset in json.load(
+                open("./tests/unit/services/export/fakes/image_project_assets.json")
+            )
         ],
     )
 
@@ -450,7 +454,9 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
         "kili.services.export.format.base.fetch_assets",
         return_value=[
             Asset(asset)
-            for asset in json.load(open("./tests/services/export/fakes/video_project_assets.json"))
+            for asset in json.load(
+                open("./tests/unit/services/export/fakes/video_project_assets.json")
+            )
         ],
     )
 

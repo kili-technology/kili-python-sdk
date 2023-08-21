@@ -22,7 +22,9 @@ class TestImportLabelsFromDict:
     def setup_class(self):
         self.kili = MagicMock()
         self.kili.graphql_client.execute = MagicMock()
-        with open("./tests/services/import_labels/fixtures/json_response_image.json") as json_file:
+        with open(
+            "./tests/unit/services/import_labels/fixtures/json_response_image.json"
+        ) as json_file:
             self.json_response = json.load(json_file)
 
     def test_import_default_labels_with_asset_id(self):

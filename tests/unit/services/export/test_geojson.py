@@ -34,7 +34,7 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
         return_value=[
             Asset(asset)
             for asset in json.load(
-                open("./tests/services/export/fakes/geotiff_image_project_assets.json")
+                open("./tests/unit/services/export/fakes/geotiff_image_project_assets.json")
             )
         ],
     )

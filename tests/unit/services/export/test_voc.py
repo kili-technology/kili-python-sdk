@@ -17,7 +17,7 @@ def test__convert_from_kili_to_voc_format():
         parameters=parameters,
         valid_jobs=["JOB_0"],
     )
-    expected_annotations = Path("./tests/services/export/expected/car_1.xml").read_text(
+    expected_annotations = Path("./tests/unit/services/export/expected/car_1.xml").read_text(
         encoding="utf-8"
     )
     assert annotations == expected_annotations
@@ -33,7 +33,7 @@ def test__convert_from_kili_to_voc_format_no_annotation():
         valid_jobs=["JOB_0"],
     )
     expected_annotations = Path(
-        "./tests/services/export/expected/car_1_without_annotation.xml"
+        "./tests/unit/services/export/expected/car_1_without_annotation.xml"
     ).read_text(encoding="utf-8")
     assert annotations == expected_annotations
 
