@@ -100,6 +100,7 @@ def mocked__project_user_query(**kwargs):
 
 
 def test_list_members(mocker: pytest_mock.MockerFixture):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
     mocker.patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
 
     runner = CliRunner()
