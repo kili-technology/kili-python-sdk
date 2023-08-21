@@ -371,6 +371,7 @@ def test_import(
     flags,
     mocker: pytest_mock.MockerFixture,
 ):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
     mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
 
     runner = CliRunner()
