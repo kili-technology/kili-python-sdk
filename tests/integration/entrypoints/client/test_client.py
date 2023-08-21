@@ -10,23 +10,18 @@ from kili.client import Kili
 from kili.exceptions import AuthenticationFailed
 
 
-def test_no_api_key(mocker, monkeypatch):
+@patch.dict(os.environ, {"KILI_API_KEY": "", "KILI_SDK_SKIP_CHECKS": "True"})
+def test_no_api_key(mocker: pytest_mock.MockerFixture):
     """Test fail because no api key is found."""
     mocker.patch("kili.client.requests")
     mocker.patch("kili.client.getpass.getpass", return_value="")
-    monkeypatch.delenv("KILI_API_KEY", raising=False)
     with pytest.raises(AuthenticationFailed):
         _ = Kili()
 
 
-@pytest.mark.skipif(
-    os.name == "nt" and os.sys.version_info == (3, 8),
-    reason="test doesn't work on windows 3.8",
-)
-def test_wrong_api_key(mocker, monkeypatch):
+def test_wrong_api_key(mocker: pytest_mock.MockerFixture):
     """Test obfuscation of api key."""
     mocker.patch("kili.client.requests")
-    monkeypatch.delenv("KILI_API_KEY", raising=False)
     Kili.http_client = mocker.MagicMock()
     with pytest.raises(
         AuthenticationFailed, match=r"failed with API key: \*{9}_key"  # 9 stars for "wrong_api"
@@ -34,13 +29,8 @@ def test_wrong_api_key(mocker, monkeypatch):
         _ = Kili(api_key="wrong_api_key")
 
 
-@pytest.mark.skipif(
-    os.name == "nt" and os.sys.version_info == (3, 8),
-    reason="test doesn't work on windows 3.8",
-)
-def test_wrong_api_key_shot(mocker, monkeypatch):
+def test_wrong_api_key_shot(mocker: pytest_mock.MockerFixture):
     """Test no need to obfuscate api key."""
-    monkeypatch.delenv("KILI_API_KEY", raising=False)
     Kili.http_client = mocker.MagicMock()
     with pytest.raises(AuthenticationFailed, match="failed with API key: no"):
         _ = Kili(api_key="no")
@@ -59,10 +49,6 @@ def prepare_cache_dir():
         shutil.rmtree(kili_cache_dir)
 
 
-@pytest.mark.skipif(
-    os.name == "nt" and os.sys.version_info == (3, 8),
-    reason="test doesn't work on windows 3.8",
-)
 def test_write_to_disk_without_permissions_not_crash(mocker, monkeypatch, prepare_cache_dir):
     """Test that we can still use kili even if we don't have write permissions."""
     mocker.patch("io.open", side_effect=PermissionError("No write permissions"))

@@ -1,4 +1,4 @@
-"""This script permits to setup the python package."""
+"""Script permits to setup the python package."""
 
 from setuptools import find_packages, setup
 
@@ -35,40 +35,38 @@ azure_requires = [
     "azure-storage-blob>=12.0.0,<13.0.0",
 ]
 
-dev_extra = (
-    [
-        # release
-        "bump2version",
-        # tests
-        "pytest",
-        "pytest-mock",
-        "pytest-cov",
-        "pytest-xdist[psutil]",
-        "pytest-timeout",
-        # documentation
-        "mkdocs",
-        "mkdocs-material",
-        "mkdocstrings",
-        "mkdocstrings-python-legacy",
-        "mkdocs-click",
-        "mike",
-        "pymdown-extensions",
-        # linting
-        "black",
-        "pre-commit>=3.3.0,<4.0.0",
-        "pylint==2.17.5",
-        "flake8-unused-arguments",
-        "pyright==1.1.323",
-        # notebooks tests
-        "nbformat",
-        "nbconvert",
-        "ipykernel",
-        # profiling
-        "pyinstrument",
-    ]
-    + image_requires
-    + azure_requires
-)
+dev_extra = [
+    # release
+    "bump2version",
+    # tests
+    "pytest",
+    "pytest-mock",
+    "pytest-cov",
+    "pytest-xdist[psutil]",
+    "pytest-timeout",
+    # documentation
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings",
+    "mkdocstrings-python-legacy",
+    "mkdocs-click",
+    "mike",
+    "pymdown-extensions",
+    # linting
+    "black",
+    "pre-commit>=3.3.0,<4.0.0",
+    "pylint==2.17.5",
+    "flake8-unused-arguments",
+    "pyright==1.1.323",
+    # notebooks tests
+    "nbformat",
+    "nbconvert",
+    "ipykernel",
+    # profiling
+    "pyinstrument",
+    *image_requires,
+    *azure_requires,
+]
 
 setup(
     name="kili",
