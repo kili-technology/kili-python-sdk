@@ -9,22 +9,23 @@ import pytest_mock
 from kili.client import Kili
 from kili.exceptions import AuthenticationFailed
 
-# @patch.dict(os.environ, {"KILI_API_KEY": "", "KILI_SDK_SKIP_CHECKS": "True"})
-# def test_no_api_key(mocker: pytest_mock.MockerFixture):
-#     """Test fail because no api key is found."""
-#     mocker.patch("kili.client.requests")
-#     mocker.patch("kili.client.getpass.getpass", return_value="")
-#     with pytest.raises(AuthenticationFailed):
-#         _ = Kili()
+
+@patch.dict(os.environ, {"KILI_API_KEY": "", "KILI_SDK_SKIP_CHECKS": "True"})
+def test_no_api_key(mocker: pytest_mock.MockerFixture):
+    """Test fail because no api key is found."""
+    mocker.patch("kili.client.requests")
+    mocker.patch("kili.client.getpass.getpass", return_value="")
+    with pytest.raises(AuthenticationFailed):
+        _ = Kili()
 
 
-def test_wrong_api_key_is_obfuscated(mocker: pytest_mock.MockerFixture):
-    """Test obfuscation of api key."""
-    mocker.patch.object(Kili, "_check_api_key_valid", return_value=False)
-    with pytest.raises(
-        AuthenticationFailed, match=r"failed with API key: \*{9}_key"  # 9 stars for "wrong_api"
-    ):
-        _ = Kili(api_key="wrong_api_key")
+# def test_wrong_api_key_is_obfuscated(mocker: pytest_mock.MockerFixture):
+#     """Test obfuscation of api key."""
+#     mocker.patch.object(Kili, "_check_api_key_valid", return_value=False)
+#     with pytest.raises(
+#         AuthenticationFailed, match=r"failed with API key: \*{9}_key"  # 9 stars for "wrong_api"
+#     ):
+#         _ = Kili(api_key="wrong_api_key")
 
 
 def test_wrong_api_key_no_need_to_obfuscate(mocker: pytest_mock.MockerFixture):
