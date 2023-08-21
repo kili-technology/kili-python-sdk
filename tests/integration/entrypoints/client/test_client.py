@@ -60,10 +60,11 @@ def test_write_to_disk_without_permissions_not_crash(
     mocker.patch.object(Path, "mkdir", side_effect=PermissionError("No write permissions"))
     mocker.patch.object(Kili, "_check_api_key_valid")
     mocker.patch.object(Kili, "_check_expiry_of_key_is_close")
-    _ = prepare_cache_dir
 
+    # caching disabled, should work
     _ = Kili(graphql_client_params={"enable_schema_caching": False})
 
+    # will crash trying to cache the schema
     with pytest.raises(PermissionError):
         _ = Kili()
 
