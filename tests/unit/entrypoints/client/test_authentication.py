@@ -9,7 +9,7 @@ from kili.client import Kili
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery
 
 
-@pytest.mark.skipif(platform.system() == "Windows", reason="Mocking fails on Windows")
+# @pytest.mark.skipif(platform.system() == "Windows", reason="Mocking fails on Windows")
 def test_given_an_api_key_close_to_expiration_when_I_check_expiry_of_key_is_close_then_it_outputs_a_warning(
     mocker: pytest_mock.MockerFixture,
 ):
@@ -29,7 +29,7 @@ def test_given_an_api_key_close_to_expiration_when_I_check_expiry_of_key_is_clos
         Kili._check_expiry_of_key_is_close(api_key_query, "dummy_api_key")
 
 
-@pytest.mark.skipif(platform.system() == "Windows", reason="Mocking fails on Windows")
+# @pytest.mark.skipif(platform.system() == "Windows", reason="Mocking fails on Windows")
 def test_given_an_api_key_away_to_expiration_when_I_check_expiry_of_key_is_close_then_it_does_not_output_anything(
     mocker: pytest_mock.MockerFixture,
 ):
