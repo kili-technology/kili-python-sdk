@@ -1,8 +1,10 @@
 import json
 import os
+from typing import Dict
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
+import pytest_mock
 from click.testing import CliRunner
 
 from kili.entrypoints.cli.project.label import import_labels
@@ -73,8 +75,10 @@ mock_label = {"JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 
         ),
     ],
 )
-def test_import_labels(name, test_case):
+def test_import_labels(name: str, test_case: Dict, mocker: pytest_mock.MockFixture):
     """Test that the CLI properly calls the label_import service."""
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
+
     runner = CliRunner()
     with runner.isolated_filesystem():
         os.mkdir("test_tree")
@@ -99,6 +103,7 @@ def test_import_labels(name, test_case):
                 arguments.append(v)
             if test_case.get("flags"):
                 arguments.extend(["--" + flag for flag in test_case["flags"]])
+
     with patch("kili.services.import_labels_from_files") as mocked_import_labels_service:
         result = runner.invoke(import_labels, arguments)
         debug_subprocess_pytest(result)
@@ -172,7 +177,9 @@ def test_import_labels(name, test_case):
         ),
     ],
 )
-def test_import_labels_yolo(name, test_case):
+def test_import_labels_yolo(name: str, test_case: Dict, mocker: pytest_mock.MockerFixture):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
+
     _ = name
     runner = CliRunner()
     with runner.isolated_filesystem():
