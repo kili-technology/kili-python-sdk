@@ -21,6 +21,7 @@ def test_no_api_key(mocker: pytest_mock.MockerFixture):
 
 def test_wrong_api_key(mocker: pytest_mock.MockerFixture):
     """Test obfuscation of api key."""
+    mocker.patch.object(Kili, "_check_api_key_valid", return_value=False)
     with pytest.raises(
         AuthenticationFailed, match=r"failed with API key: \*{9}_key"  # 9 stars for "wrong_api"
     ):
@@ -29,6 +30,7 @@ def test_wrong_api_key(mocker: pytest_mock.MockerFixture):
 
 def test_wrong_api_key_shot(mocker: pytest_mock.MockerFixture):
     """Test no need to obfuscate api key."""
+    mocker.patch.object(Kili, "_check_api_key_valid", return_value=False)
     with pytest.raises(AuthenticationFailed, match="failed with API key: no"):
         _ = Kili(api_key="no")
 
