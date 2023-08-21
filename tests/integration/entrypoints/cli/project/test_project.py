@@ -30,6 +30,7 @@ kili_client.http_client = requests.Session()
 
 
 def test_list(mocker: pytest_mock.MockerFixture):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
     mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
 
     runner = CliRunner()
@@ -60,6 +61,7 @@ def test_create_project(*_):
 
 
 def test_describe_project(mocker: pytest_mock.MockerFixture):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
     mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
 
     runner = CliRunner()
