@@ -10,7 +10,7 @@ def test_create_one_issue(graphql_gateway):
 
     # given one issue to create
     issues = [IssueToCreateServiceInput(label_id="label_id", text="text", object_mid="object_mid")]
-    issue_entities = [Issue(id="issue_id")]
+    issue_entities = [Issue(id_="issue_id")]
     graphql_gateway.create_issues.return_value(issue_entities)
 
     # when creating one issue

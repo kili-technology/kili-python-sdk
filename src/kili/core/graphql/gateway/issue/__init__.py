@@ -63,7 +63,9 @@ class IssueOperationMixin:
             }
             result = self.graphql_client.execute(GQL_CREATE_ISSUES, payload)
             batch_created_issues = result["data"]
-            created_issue_entities.extend([Issue(id=issue["id"]) for issue in batch_created_issues])
+            created_issue_entities.extend(
+                [Issue(id_=issue["id"]) for issue in batch_created_issues]
+            )
         return created_issue_entities
 
     def count_issues(  # pylint: disable=too-many-arguments,

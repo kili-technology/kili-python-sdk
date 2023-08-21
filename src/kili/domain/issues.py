@@ -10,4 +10,4 @@ IssueStatus = Literal["OPEN", "SOLVED"]
 class Issue:
     """Issue Entity."""
 
-    id: str
+    id_: str
