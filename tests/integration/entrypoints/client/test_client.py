@@ -5,8 +5,10 @@ from unittest.mock import patch
 
 import pytest
 import pytest_mock
+from filelock import FileLock
 
 from kili.client import Kili
+from kili.core.graphql.graphql_client import DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR
 from kili.exceptions import AuthenticationFailed
 
 
@@ -40,14 +42,18 @@ def test_wrong_api_key_no_need_to_obfuscate(mocker: pytest_mock.MockerFixture):
 @pytest.fixture
 def prepare_cache_dir():
     """Prepare cache dir."""
-    kili_cache_dir = Path.home() / ".cache" / "kili"
-    if kili_cache_dir.exists():
-        shutil.rmtree(kili_cache_dir)
 
+    def purge_cache_dir():
+        with FileLock(DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR / "cache_dir.lock", timeout=15):
+            files_in_cache_dir = list(DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR.glob("*"))
+            files_to_delete = [f for f in files_in_cache_dir if "cache_dir.lock" not in f.name]
+
+            for f in files_to_delete:
+                f.unlink()
+
+    purge_cache_dir()
     yield
-
-    if kili_cache_dir.exists():
-        shutil.rmtree(kili_cache_dir)
+    purge_cache_dir()
 
 
 @patch.dict(os.environ, {"KILI_API_KEY": "fake_key"})
