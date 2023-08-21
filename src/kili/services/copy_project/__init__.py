@@ -131,14 +131,12 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
     def _copy_members(self, from_project_id: str, new_project_id: str) -> None:
         members = self.kili.project_users(
             project_id=from_project_id,
-            fields=["activated", "role", "user.email", "invitationStatus", "id"],
+            fields=["activated", "role", "user.email", "status", "id"],
             disable_tqdm=True,
         )
 
         members = [
-            memb
-            for memb in members
-            if memb["invitationStatus"] != "DEFAULT_ACCEPTED" and memb["activated"]
+            memb for memb in members if memb["status"] != "ORG_SUSPENDED" and memb["activated"]
         ]
 
         for member in tqdm(members, disable=self.disable_tqdm):

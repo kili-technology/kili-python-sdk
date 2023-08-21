@@ -236,12 +236,10 @@ def src_project_video(kili: "Kili"):
     assets = kili.assets(project_id=project["id"], fields=["externalId", "id"])
     asset_id_array = [x["id"] for x in assets]
     members = kili.project_users(
-        project_id=project["id"], fields=["user.id", "activated", "user.email", "invitationStatus"]
+        project_id=project["id"], fields=["user.id", "activated", "user.email", "status"]
     )
     members_id_array = [
-        x["user"]["id"]
-        for x in members
-        if x["invitationStatus"] != "DEFAULT_ACCEPTED" and x["activated"]
+        x["user"]["id"] for x in members if x["status"] != "ORG_SUSPENDED" and x["activated"]
     ]
     assert kili.count_labels(project_id=project["id"]) == 0, f"{kili.labels(project['id'])}"
     kili.append_labels(
@@ -306,11 +304,11 @@ def test_copy_project_e2e_video(kili: "Kili", src_project_video):
 
     members_src = kili.project_users(
         project_id=src_proj["id"],
-        fields=["activated", "role", "user.email", "invitationStatus"],
+        fields=["activated", "role", "user.email", "status"],
     )
     members_new = kili.project_users(
         project_id=new_proj_id,
-        fields=["activated", "role", "user.email", "invitationStatus"],
+        fields=["activated", "role", "user.email", "status"],
     )
 
     label_fields = [
