@@ -19,6 +19,7 @@ def test_no_api_key(mocker: pytest_mock.MockerFixture):
         _ = Kili()
 
 
+@patch.dict(os.environ, {"KILI_SDK_SKIP_CHECKS": "True"})
 def test_wrong_api_key(mocker: pytest_mock.MockerFixture):
     """Test obfuscation of api key."""
     mocker.patch("kili.client.requests")
@@ -29,6 +30,7 @@ def test_wrong_api_key(mocker: pytest_mock.MockerFixture):
         _ = Kili(api_key="wrong_api_key")
 
 
+@patch.dict(os.environ, {"KILI_SDK_SKIP_CHECKS": "True"})
 def test_wrong_api_key_shot(mocker: pytest_mock.MockerFixture):
     """Test no need to obfuscate api key."""
     Kili.http_client = mocker.MagicMock()
