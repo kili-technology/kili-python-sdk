@@ -64,6 +64,7 @@ def batch_object_builder(
     yield from batch_object_iterator
 
 
+# pylint: disable=missing-type-doc
 def mutate_from_paginated_call(
     kili,
     properties_to_batch: Dict[str, Optional[List[Any]]],
