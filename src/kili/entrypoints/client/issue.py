@@ -23,7 +23,6 @@ class IssueEntrypoints:
         self,
         project_id: str,
         label_id_array: List[str],
-        *,
         object_mid_array: Optional[List[Optional[str]]] = None,
         text_array: Optional[List[Optional[str]]] = None,
     ) -> List[Dict[Literal["id"], str]]:
@@ -56,7 +55,6 @@ class IssueEntrypoints:
         self,
         project_id: str,
         text_array: List[str],
-        *,
         asset_id_array: Optional[List[str]] = None,
         asset_external_id_array: Optional[List[str]] = None,
     ) -> List[Dict[Literal["id"], str]]:

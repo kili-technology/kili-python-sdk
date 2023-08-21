@@ -43,7 +43,7 @@ class IssueOperationMixin:
     def create_issues(
         self, type_: IssueType, issues: List[IssueToCreateGQLGatewayInput]
     ) -> List[Issue]:
-        created_issues_ids: List[str] = []
+        created_issue_entities: List[Issue] = []
         for issues_batch in BatchIteratorBuilder(issues):
             batch_targeted_asset_ids = [issue.asset_id for issue in issues_batch]
             payload = {
@@ -61,9 +61,9 @@ class IssueOperationMixin:
                 "where": {"idIn": batch_targeted_asset_ids},
             }
             result = self.graphql_client.execute(GQL_CREATE_ISSUES, payload)
-            batch_created_issues_ids = result["data"]
-            created_issues_ids.extend(batch_created_issues_ids)
-        return [Issue(id=id) for id in created_issues_ids]
+            batch_created_issues = result["data"]
+            created_issue_entities.extend([Issue(id=issue["id"]) for issue in batch_created_issues])
+        return created_issue_entities
 
     def count_issues(
         self,
