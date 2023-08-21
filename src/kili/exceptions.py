@@ -35,12 +35,6 @@ class NotFound(Exception):
 class AuthenticationFailed(Exception):
     """Used when the authentification fails."""
 
-    @staticmethod
-    def _obfuscate(input_str: str) -> str:
-        if len(input_str) >= 4:
-            return "*" * (len(input_str) - 4) + input_str[-4:]
-        return input_str
-
     def __init__(self, api_key, api_endpoint, error_msg: Optional[str] = None):
         if api_key is None:
             super().__init__(
@@ -55,6 +49,12 @@ class AuthenticationFailed(Exception):
             if error_msg is not None:
                 raise_msg += f"\nError message:\n{error_msg}"
             super().__init__(raise_msg)
+
+    @staticmethod
+    def _obfuscate(input_str: str) -> str:
+        if len(input_str) >= 4:
+            return "*" * (len(input_str) - 4) + input_str[-4:]
+        return input_str
 
 
 class NonExistingFieldError(ValueError):
