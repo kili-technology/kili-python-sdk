@@ -8,7 +8,7 @@ from kili.entrypoints.mutations.user.queries import GQL_RESET_PASSWORD
 from kili.entrypoints.queries.api_key import QueriesApiKey
 
 
-class KiliInternal(MutationsOrganization, QueriesApiKey):
+class InternalEntrypoints(MutationsOrganization, QueriesApiKey):
     """Inherit classes for internal use by Kili Technology only."""
 
     def __init__(self, kili):
