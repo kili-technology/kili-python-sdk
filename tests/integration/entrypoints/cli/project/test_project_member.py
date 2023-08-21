@@ -139,10 +139,11 @@ def test_add_member(
     expected_mutation_payload: Dict[str, str],
     mocker: pytest_mock.MockerFixture,
 ):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
+    mocker.patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
     append_to_roles_mock = mocker.patch(
         "kili.entrypoints.mutations.project.MutationsProject.append_to_roles"
     )
-    mocker.patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
 
     runner = CliRunner()
     with runner.isolated_filesystem():
