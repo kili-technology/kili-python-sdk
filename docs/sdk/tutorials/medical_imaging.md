@@ -20,7 +20,6 @@ First of all, let's import the packages, and install pydicom in case you don't h
 
 
 ```python
-import getpass
 import os
 import pickle
 from functools import reduce
@@ -106,16 +105,8 @@ Next, we need to connect to Kili, create a project, and define the annotation in
 
 
 ```python
-if "KILI_API_KEY" not in os.environ:
-    KILI_API_KEY = getpass.getpass("Please enter your API key: ")
-else:
-    KILI_API_KEY = os.environ["KILI_API_KEY"]
-```
-
-
-```python
 kili = Kili(
-    api_key=KILI_API_KEY,  # no need to pass the API_KEY if it is already in your environment variables
+    # api_key=KILI_API_KEY,  # uncomment this line if KILI_API_KEY environment variable is not set
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
     # the line above can be uncommented and changed if you are working with an on-premise version of Kili
 )

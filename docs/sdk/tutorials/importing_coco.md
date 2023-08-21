@@ -16,7 +16,6 @@ Let's start by installing Kili:
 
 
 ```python
-import getpass
 import json
 import os
 from pprint import pprint
@@ -352,20 +351,12 @@ pprint(person_keypoints_val2017["annotations"][0])
 
 Let's create the Kili project that will contain the images and annotations of the COCO dataset.
 
-
-```python
-if "KILI_API_KEY" not in os.environ:
-    KILI_API_KEY = getpass.getpass("Please enter your API key: ")
-else:
-    KILI_API_KEY = os.environ["KILI_API_KEY"]
-```
-
 Below, we initialize the Kili client:
 
 
 ```python
 kili = Kili(
-    api_key=KILI_API_KEY,  # no need to pass the API_KEY if it is already in your environment variables
+    # api_key=KILI_API_KEY,  # uncomment this line if KILI_API_KEY environment variable is not set
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
     # the line above can be uncommented and changed if you are working with an on-premise version of Kili
 )
