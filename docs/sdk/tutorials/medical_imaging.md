@@ -106,7 +106,6 @@ Next, we need to connect to Kili, create a project, and define the annotation in
 
 ```python
 kili = Kili(
-    # api_key=KILI_API_KEY,  # uncomment this line if KILI_API_KEY environment variable is not set
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
     # the line above can be uncommented and changed if you are working with an on-premise version of Kili
 )
