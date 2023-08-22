@@ -27,6 +27,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
+        status: Optional[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]] = None,
         fields: List[str] = [
             "activated",
             "id",
@@ -50,6 +51,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
+        status: Optional[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]] = None,
         fields: List[str] = [
             "activated",
             "id",
@@ -73,6 +75,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
+        status: Optional[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]] = None,
         fields: List[str] = [
             "activated",
             "id",
@@ -91,28 +94,37 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         """Return project users (possibly with their KPIs) that match a set of criteria.
 
         Args:
-            project_id: Identifier of the project
-            email: Email of the user
-            id: Identifier of the user
-            organization_id: Identifier of the user's organization
-            fields: All the fields to request among the possible fields for the projectUsers
+            project_id: Identifier of the project.
+            email: Email of the user.
+            id: Identifier of the user.
+            organization_id: Identifier of the user's organization.
+            status: If `None`, all users are returned.
+
+                - `ORG_ADMIN`: Is an Organization Admin. Is automatically added to projects.
+                - `ACTIVATED`: Has been invited to the project. Is not an Organization Admin
+                - `ORG_SUSPENDED`: Has been suspended at the organization level. Can no longer access any projects.
+            fields: All the fields to request among the possible fields for the projectUsers.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectuser) for all possible fields.
-            first: Maximum number of users to return
-            skip: Number of project users to skip
-            disable_tqdm: If `True`, the progress bar will be disabled
+            first: Maximum number of users to return.
+            skip: Number of project users to skip.
+            disable_tqdm: If `True`, the progress bar will be disabled.
             as_generator: If `True`, a generator on the project users is returned.
 
         Returns:
             An iterable with the project users that match the criteria.
 
         Examples:
-            ```
+            ```python
             # Retrieve consensus marks of all users in project
             >>> kili.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
             ```
         """
         where = ProjectUserWhere(
-            project_id=project_id, email=email, _id=id, organization_id=organization_id
+            project_id=project_id,
+            email=email,
+            _id=id,
+            organization_id=organization_id,
+            status=status,
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
@@ -131,19 +143,29 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
+        status: Optional[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]] = None,
     ) -> int:
-        """Counts the number of projects and their users that match a set of criteria.
+        """Count the number of projects and their users that match a set of criteria.
 
         Args:
+            project_id: Identifier of the project
             email: Email of the user
             id: Identifier of the user
             organization_id: Identifier of the user's organization
-            project_id: Identifier of the project
+            status: If `None`, all users are returned.
+
+                - `ORG_ADMIN`: Is an Organization Admin. Is automatically added to projects.
+                - `ACTIVATED`: Has been invited to the project. Is not an Organization Admin
+                - `ORG_SUSPENDED`: Has been suspended at the organization level. Can no longer access any projects.
 
         Returns:
             The number of project users with the parameters provided
         """
         where = ProjectUserWhere(
-            project_id=project_id, email=email, _id=id, organization_id=organization_id
+            project_id=project_id,
+            email=email,
+            _id=id,
+            organization_id=organization_id,
+            status=status,
         )
         return ProjectUserQuery(self.graphql_client, self.http_client).count(where)
