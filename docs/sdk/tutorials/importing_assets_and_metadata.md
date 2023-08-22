@@ -24,7 +24,6 @@ First, let's install and import the required modules.
 
 
 ```python
-import getpass
 import os
 
 from kili.client import Kili
@@ -38,18 +37,7 @@ If you are unsure how to look up your API key, refer to [https://docs.kili-techn
 
 
 ```python
-if "KILI_API_KEY" not in os.environ:
-    KILI_API_KEY = getpass.getpass("Please enter your API key: ")
-else:
-    KILI_API_KEY = os.environ["KILI_API_KEY"]
-```
-
-With variables set up, we can now create an instance of the Kili object.
-
-
-```python
 kili = Kili(
-    api_key=KILI_API_KEY,  # no need to pass the API_KEY if it is already in your environment variables
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
     # the line above can be uncommented and changed if you are working with an on-premise version of Kili
 )

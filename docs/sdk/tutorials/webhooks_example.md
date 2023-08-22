@@ -32,7 +32,10 @@ If you are looking for a more of-the-shelf capability, you can have a look at th
 ```python
 from kili.client import Kili
 
-kili = Kili()
+kili = Kili(
+    # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
+    # the line above can be uncommented and changed if you are working with an on-premise version of Kili
+)
 ```
 
 ## Step 2: Create the project

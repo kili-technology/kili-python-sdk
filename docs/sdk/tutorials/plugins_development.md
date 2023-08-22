@@ -65,11 +65,10 @@ import os
 
 from kili.client import Kili
 
-api_endpoint = os.getenv("KILI_API_ENDPOINT")
-api_key = os.getenv("KILI_API_KEY")
-
-
-kili = Kili(api_endpoint=api_endpoint, api_key=api_key)
+kili = Kili(
+    # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
+    # the line above can be uncommented and changed if you are working with an on-premise version of Kili
+)
 ```
 
 ## Develop your plugin
