@@ -62,12 +62,13 @@ def test_given_project_when_querying_project_users_it_works(
     api_user = kili.get_user()
 
     # When
+    fields = ["activated", "deletedAt", "id", "role", "user.email", "user.id", "status"]
     # users = kili.project_users(project_id=project_id, activated=True)
     # users = kili.project_users(project_id=project_id, activated=None)
     # users = kili.project_users(project_id=project_id, activated=False)
-    users = kili.project_users(project_id=project_id, status="ACTIVATED")
-    users = kili.project_users(project_id=project_id, status="ORG_ADMIN")
-    users = kili.project_users(project_id=project_id, status="ORG_SUSPENDED")
+    users = kili.project_users(project_id=project_id, fields=fields, status="ACTIVATED")
+    users = kili.project_users(project_id=project_id, fields=fields, status="ORG_ADMIN")
+    users = kili.project_users(project_id=project_id, fields=fields, status="ORG_SUSPENDED")
 
     # Then
     pass
