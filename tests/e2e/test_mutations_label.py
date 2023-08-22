@@ -83,6 +83,7 @@ def test_e2e_append_labels_overwrite(kili: Kili, project: Dict):
         json_response_array=[json_response],
         model_name="model_name",
         asset_external_id_array=["1"],
+        label_type="PREDICTION",
         overwrite=True,
     )
 
