@@ -3,12 +3,12 @@ import mimetypes
 import os
 from typing import List
 
-from .base import BaseAssetImporter, BatchParams, ContentBatchImporter
+from .base import BaseAbstractAssetImporter, BatchParams, ContentBatchImporter
 from .constants import LARGE_IMAGE_THRESHOLD_SIZE
 from .types import AssetLike
 
 
-class ImageDataImporter(BaseAssetImporter):
+class ImageDataImporter(BaseAbstractAssetImporter):
     """Class for importing assets into an IMAGE project."""
 
     def import_assets(self, assets: List[AssetLike]):
@@ -19,22 +19,20 @@ class ImageDataImporter(BaseAssetImporter):
             assets = self.filter_local_assets(assets, self.raise_error)
         assets = self.filter_duplicate_external_ids(assets)
         sync_assets, async_assets = self.split_asset_by_upload_type(assets, is_hosted)
-        results = []
+        created_asset_ids: List[str] = []
         if len(sync_assets) > 0:
             sync_batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=False)
             batch_importer = ContentBatchImporter(
                 self.kili, self.project_params, sync_batch_params, self.pbar
             )
-            result = self.import_assets_by_batch(sync_assets, batch_importer)
-            results.append(result)
+            created_asset_ids += self.import_assets_by_batch(sync_assets, batch_importer)
         if len(async_assets) > 0:
             async_batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=True)
             batch_importer = ContentBatchImporter(
                 self.kili, self.project_params, async_batch_params, self.pbar
             )
-            result = self.import_assets_by_batch(async_assets, batch_importer)
-            results.append(result)
-        return results[0]
+            created_asset_ids += self.import_assets_by_batch(async_assets, batch_importer)
+        return created_asset_ids
 
     @staticmethod
     def split_asset_by_upload_type(assets: List[AssetLike], is_hosted: bool):

@@ -56,7 +56,6 @@ class VideoTestCase(ImportTestCase):
             [False],
             [""],
             [expected_json_metadata],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -81,7 +80,6 @@ class VideoTestCase(ImportTestCase):
             [False],
             [""],
             [expected_json_metadata],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -109,7 +107,6 @@ class VideoTestCase(ImportTestCase):
             [False],
             [""],
             [expected_json_metadata],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -217,7 +214,6 @@ class VideoTestCase(ImportTestCase):
             [False],
             ["https://signed_url?id=id"],
             [expected_json_metadata],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -249,7 +245,6 @@ class VideoTestCase(ImportTestCase):
             [False],
             ["https://signed_url?id=id"],
             [expected_json_metadata],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -282,7 +277,6 @@ class VideoTestCase(ImportTestCase):
             [False],
             ["https://signed_url?id=id"],
             [expected_json_metadata],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -314,7 +308,6 @@ class VideoTestCase(ImportTestCase):
             [False],
             [""],
             [expected_json_metadata],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -351,6 +344,5 @@ class VideoLegacyTestCase(ImportTestCase):
             [False],
             [""],
             [expected_json_metadata],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)

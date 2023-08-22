@@ -1,9 +1,11 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from uuid import UUID
 
+from kili.core.graphql.operations.asset.mutations import GQL_APPEND_MANY_ASSETS
 from kili.core.graphql.operations.asset.queries import AssetQuery
 from kili.core.graphql.operations.organization.queries import OrganizationQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
+from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import MimeTypeError
 from tests.unit.services.asset_import.base import ImportTestCase
@@ -54,6 +56,21 @@ class TestContentType(ImportTestCase):
         assets = [{"content": path, "external_id": "image"}]
         with self.assertRaises(FileNotFoundError):
             import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+
+    @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))
+    @patch.object(AssetQuery, "count", return_value=1)
+    def test_return_the_ids_of_created_assets(self, *_):
+        assets = [{"content": "One"}, {"content": "Two"}, {"content": "Three"}]
+
+        def graphql_execute_side_effect(*args, **kwargs):
+            if args[0] == GQL_APPEND_MANY_ASSETS:
+                return {"data": [{"id": "id1"}, {"id": "id2"}, {"id": "id3"}]}
+            else:
+                return MagicMock()
+
+        self.kili.graphql_client.execute = MagicMock(side_effect=graphql_execute_side_effect)
+        created_assets = import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+        assert set(created_assets) == {"id1", "id2", "id3"}
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))
     @patch.object(AssetQuery, "count", return_value=1)

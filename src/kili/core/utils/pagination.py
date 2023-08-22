@@ -97,7 +97,7 @@ def mutate_from_paginated_call(
         mutate_from_paginated_call(
                 properties_to_batch=properties_to_batch,
                 generate_variables=generate_variables
-                request= APPEND_MANY_TO_DATASET
+                request= GQL_APPEND_MANY_ASSETS
         )
         ```
     """

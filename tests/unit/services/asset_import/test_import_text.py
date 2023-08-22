@@ -45,7 +45,6 @@ class TextTestCase(ImportTestCase):
             [False],
             [""],
             ["{}"],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -56,7 +55,7 @@ class TextTestCase(ImportTestCase):
         ]
         import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
+            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"]
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -65,13 +64,7 @@ class TextTestCase(ImportTestCase):
         assets = [{"content": "this is raw text", "external_id": "raw text"}]
         import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://signed_url?id=id"],
-            ["raw text"],
-            ["unique_id"],
-            [False],
-            [""],
-            ["{}"],
-            ["TODO"],
+            ["https://signed_url?id=id"], ["raw text"], ["unique_id"], [False], [""], ["{}"]
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -97,7 +90,6 @@ class TextTestCase(ImportTestCase):
             [False],
             ["https://signed_url?id=id"],
             ["{}"],
-            ["TODO"],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -121,6 +113,6 @@ class TextTestCase(ImportTestCase):
         ]
         import_assets(self.kili, self.project_id, assets)
         expected_parameters = self.get_expected_sync_call(
-            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"], ["TODO"]
+            ["https://hosted-data"], ["hosted file"], ["unique_id"], [False], [""], ["{}"]
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)

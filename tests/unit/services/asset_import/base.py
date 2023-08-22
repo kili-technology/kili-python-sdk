@@ -1,13 +1,13 @@
 import shutil
 import tempfile
 from unittest import TestCase
-from unittest.mock import call
+from unittest.mock import MagicMock, call
 
 import requests
 
 from kili.core.graphql.operations.asset.mutations import (
+    GQL_APPEND_MANY_ASSETS,
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
-    GQL_APPEND_MANY_TO_DATASET,
 )
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.constants import IMPORT_BATCH_SIZE
@@ -34,17 +34,15 @@ class ImportTestCase(TestCase):
         is_honeypot_array,
         json_content_array,
         json_metadata_array,
-        status_array,
     ):
         return (
-            GQL_APPEND_MANY_TO_DATASET,
+            GQL_APPEND_MANY_ASSETS,
             {
                 "data": {
                     "contentArray": content_array,
                     "externalIDArray": external_id_array,
                     "idArray": id_array,
                     "isHoneypotArray": is_honeypot_array,
-                    "statusArray": status_array,
                     "jsonContentArray": json_content_array,
                     "jsonMetadataArray": json_metadata_array,
                 },
@@ -76,7 +74,16 @@ class ImportTestCase(TestCase):
             {"content": "https://hosted-data", "external_id": external_id}
             for external_id in external_id_array
         ]
-        import_assets(self.kili, self.project_id, assets)
+
+        def graphql_execute_side_effect(*args, **kwargs):
+            if args[0] == GQL_APPEND_MANY_ASSETS:
+                nb_asset_batch = len(args[1]["data"]["contentArray"])
+                return {"data": [{"id": f"id{str(i)}"} for i in range(nb_asset_batch)]}
+            else:
+                return MagicMock()
+
+        self.kili.graphql_client.execute = MagicMock(side_effect=graphql_execute_side_effect)
+        created_assets = import_assets(self.kili, self.project_id, assets)
         expected_parameters_1 = self.get_expected_sync_call(
             ["https://hosted-data"] * IMPORT_BATCH_SIZE,
             [external_id_array[i] for i in range(IMPORT_BATCH_SIZE)],
@@ -84,7 +91,6 @@ class ImportTestCase(TestCase):
             [False] * IMPORT_BATCH_SIZE,
             [""] * IMPORT_BATCH_SIZE,
             ["{}"] * IMPORT_BATCH_SIZE,
-            ["TODO"] * IMPORT_BATCH_SIZE,
         )
         expected_parameters_2 = self.get_expected_sync_call(
             ["https://hosted-data"] * 5,
@@ -93,7 +99,7 @@ class ImportTestCase(TestCase):
             [False] * 5,
             [""] * 5,
             ["{}"] * 5,
-            ["TODO"] * 5,
         )
         calls = [call(*expected_parameters_1), call(*expected_parameters_2)]
         self.kili.graphql_client.execute.assert_has_calls(calls, any_order=True)
+        assert len(created_assets) == nb_asset_test
