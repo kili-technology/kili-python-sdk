@@ -26,7 +26,6 @@ To use the google API, we need to install some packages:
 
 
 ```python
-import getpass
 import io
 import json
 import os
@@ -81,13 +80,14 @@ Let's initialize the Kili client and create our project:
 
 
 ```python
-if "KILI_API_KEY" not in os.environ:
-    KILI_API_KEY = getpass.getpass("Please enter your API key: ")
-else:
-    KILI_API_KEY = os.environ["KILI_API_KEY"]
+kili = Kili(
+    # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
+    # the line above can be uncommented and changed if you are working with an on-premise version of Kili
+)
+```
 
-kili = Kili(api_key=KILI_API_KEY)
 
+```python
 # Create an OCR project
 project = kili.create_project(
     description="OCR street view",

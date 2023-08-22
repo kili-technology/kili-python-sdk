@@ -25,7 +25,6 @@ To work with this notebook, you will have to install and instantiate Kili.
 
 
 ```python
-import getpass
 import os
 
 from kili.client import Kili
@@ -33,16 +32,7 @@ from kili.client import Kili
 
 
 ```python
-if "KILI_API_KEY" not in os.environ:
-    KILI_API_KEY = getpass.getpass("Please enter your API key: ")
-else:
-    KILI_API_KEY = os.environ["KILI_API_KEY"]
-```
-
-
-```python
 kili = Kili(
-    api_key=KILI_API_KEY,  # not needed if KILI_API_KEY is already in environment variables
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
     # the line above can be uncommented and changed if you are working with an on-premise version of Kili
 )

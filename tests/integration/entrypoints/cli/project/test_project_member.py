@@ -1,8 +1,10 @@
 """Tests the Kili CLI project member commands."""
 
 import csv
-from unittest.mock import MagicMock, patch
+from typing import Dict, List
 
+import pytest
+import pytest_mock
 from click.testing import CliRunner
 
 from kili.core.graphql.operations.project_user.queries import ProjectUserQuery
@@ -10,7 +12,7 @@ from kili.entrypoints.cli.project.member.add import add_member
 from kili.entrypoints.cli.project.member.list_ import list_members
 from kili.entrypoints.cli.project.member.remove import remove_member
 from kili.entrypoints.cli.project.member.update import update_member
-from tests.helpers import debug_subprocess_pytest
+from tests.integration.entrypoints.cli.helpers import debug_subprocess_pytest
 
 
 def mocked__project_user_query(**kwargs):
@@ -67,6 +69,7 @@ def mocked__project_user_query(**kwargs):
         ]
     elif kwargs["where"].project_id == "new_project":
         return []
+
     else:
         return [
             {
@@ -96,208 +99,198 @@ def mocked__project_user_query(**kwargs):
         ]
 
 
-kili_client = MagicMock()
-kili_client.kili.graphql_client.endpoint = (
-    "https://staging.cloud.kili-technology.com/api/label/v2/graphql"
+def test_list_members(mocker: pytest_mock.MockerFixture):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
+    mocker.patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
+
+    runner = CliRunner()
+    result = runner.invoke(list_members, ["project_id"])
+    debug_subprocess_pytest(result)
+    assert result.output.count("Jane Doe") == 1
+    assert result.output.count("@test.com") == 2
+
+
+@pytest.mark.parametrize(
+    ("case_name", "inputs", "options", "expected_mutation_payload"),
+    [
+        (
+            "AAU, when I add one user with email adress, I see a success",
+            ["bob@test.com", "alice@test.com"],
+            {"project-id": "new_project"},
+            {"project_id": "new_project", "user_email": "alice@test.com", "role": "LABELER"},
+        ),
+        (
+            "AAU, when I add user from another project, I see a success",
+            [],
+            {"project-id": "new_project", "from-project": "project_id_"},
+            {"project_id": "new_project", "user_email": "jane.doe@test.com", "role": "LABELER"},
+        ),
+        (
+            "AAU, when I add one user with csv file, I see a success",
+            [],
+            {"project-id": "new_project", "from-csv": "user_list.csv", "role": "REVIEWER"},
+            {"project_id": "new_project", "user_email": "bob@test.com", "role": "REVIEWER"},
+        ),
+    ],
 )
-kili_client.append_to_roles = append_to_roles_mock = MagicMock()
-kili_client.update_properties_in_role = update_properties_in_role_mock = MagicMock()
-kili_client.delete_from_roles = delete_from_roles_mock = MagicMock()
+def test_add_member(
+    case_name: str,
+    inputs: List[str],
+    options: Dict[str, str],
+    expected_mutation_payload: Dict[str, str],
+    mocker: pytest_mock.MockerFixture,
+):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
+    mocker.patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
+    append_to_roles_mock = mocker.patch(
+        "kili.entrypoints.mutations.project.MutationsProject.append_to_roles"
+    )
 
-kili = MagicMock(return_value=kili_client)
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        # pylint: disable=unspecified-encoding
+        with open("user_list.csv", "w", newline="") as f:
+            # newline="" to disable universal newlines translation (bug fix for windows)
+            writer = csv.writer(f)
+            writer.writerow(["email"])
+            writer.writerow(["alice@test.com"])
+            writer.writerow(["bob@test.com"])
 
-
-@patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
-@patch("kili.client.Kili.__new__", return_value=kili_client)
-class TestCLIProjectMember:
-    """Test the CLI functions of the project member commands."""
-
-    def test_list_members(self, *_):
-        runner = CliRunner()
-        result = runner.invoke(list_members, ["project_id"])
+        arguments = inputs
+        for k, v in options.items():
+            arguments.append("--" + k)
+            arguments.append(v)
+        result = runner.invoke(add_member, arguments)
         debug_subprocess_pytest(result)
-        assert (result.output.count("Jane Doe") == 1) and (result.output.count("@test.com") == 2)
+        append_to_roles_mock.assert_called_with(**expected_mutation_payload)
 
-    def test_add_member(self, *_):
-        TEST_CASES = [
-            {
-                "case_name": "AAU, when I add one user with email adress, I see a success",
-                "inputs": ["bob@test.com", "alice@test.com"],
-                "options": {
-                    "project-id": "new_project",
-                },
-                "expected_mutation_payload": {
-                    "project_id": "new_project",
-                    "user_email": "alice@test.com",
-                    "role": "LABELER",
-                },
-            },
-            {
-                "case_name": "AAU, when I add user from another project, I see a success",
-                "inputs": [],
-                "options": {"project-id": "new_project", "from-project": "project_id_"},
-                "expected_mutation_payload": {
-                    "project_id": "new_project",
-                    "user_email": "jane.doe@test.com",
-                    "role": "LABELER",
-                },
-            },
-            {
-                "case_name": "AAU, when I add one user with csv file, I see a success",
-                "inputs": [],
-                "options": {
-                    "project-id": "new_project",
-                    "from-csv": "user_list.csv",
-                    "role": "REVIEWER",
-                },
-                "expected_mutation_payload": {
-                    "project_id": "new_project",
-                    "user_email": "bob@test.com",
-                    "role": "REVIEWER",
-                },
-            },
-        ]
-        runner = CliRunner()
-        with runner.isolated_filesystem():
-            # pylint: disable=unspecified-encoding
-            with open("user_list.csv", "w", newline="") as f:
-                # newline="" to disable universal newlines translation (bug fix for windows)
-                writer = csv.writer(f)
-                writer.writerow(["email"])
-                writer.writerow(["alice@test.com"])
-                writer.writerow(["bob@test.com"])
 
-            for i, test_case in enumerate(TEST_CASES):
-                print(test_case["case_name"])
-                arguments = test_case["inputs"]
-                for k, v in test_case["options"].items():
-                    arguments.append("--" + k)
-                    arguments.append(v)
-                result = runner.invoke(add_member, arguments)
-                debug_subprocess_pytest(result)
-                assert append_to_roles_mock.call_count == 2 * (i + 1)
-                append_to_roles_mock.assert_called_with(**test_case["expected_mutation_payload"])
+@pytest.mark.parametrize(
+    ("case_name", "inputs", "options", "expected_mutation_payload"),
+    [
+        (
+            "AAU, when I update user's role with email adress, I see a success",
+            ["john.doe@test.com", "jane.doe@test.com"],
+            {"project-id": "project_id", "role": "REVIEWER"},
+            {
+                "role_id": "role_id_jane",
+                "project_id": "project_id",
+                "user_id": "user_id_jane",
+                "role": "REVIEWER",
+            },
+        ),
+        (
+            "AAU, when I update user's role from another project, I see a success",
+            [],
+            {"project-id": "project_id", "from-project": "project_id_source"},
+            {
+                "role_id": "role_id_jane",
+                "project_id": "project_id",
+                "user_id": "user_id_jane",
+                "role": "REVIEWER",
+            },
+        ),
+        (
+            "AAU, when I update user's role with csv file, I see a success",
+            [],
+            {"project-id": "project_id", "from-csv": "user_list.csv", "role": "REVIEWER"},
+            {
+                "role_id": "role_id_jane",
+                "project_id": "project_id",
+                "user_id": "user_id_jane",
+                "role": "REVIEWER",
+            },
+        ),
+    ],
+)
+def test_update_member(
+    case_name: str,
+    inputs: List[str],
+    options: Dict[str, str],
+    expected_mutation_payload: Dict[str, str],
+    mocker: pytest_mock.MockerFixture,
+):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
+    mocker.patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
+    update_properties_in_role_mock = mocker.patch(
+        "kili.entrypoints.mutations.project.MutationsProject.update_properties_in_role"
+    )
 
-    def test_update_member(self, *_):
-        TEST_CASES = [
-            {
-                "case_name": "AAU, when I update user's role with email adress, I see a success",
-                "inputs": ["john.doe@test.com", "jane.doe@test.com"],
-                "options": {"project-id": "project_id", "role": "REVIEWER"},
-                "expected_mutation_payload": {
-                    "role_id": "role_id_jane",
-                    "project_id": "project_id",
-                    "user_id": "user_id_jane",
-                    "role": "REVIEWER",
-                },
-            },
-            {
-                "case_name": "AAU, when I update user's role from another project, I see a success",
-                "inputs": [],
-                "options": {
-                    "project-id": "project_id",
-                    "from-project": "project_id_source",
-                },
-                "expected_mutation_payload": {
-                    "role_id": "role_id_jane",
-                    "project_id": "project_id",
-                    "user_id": "user_id_jane",
-                    "role": "REVIEWER",
-                },
-            },
-            {
-                "case_name": "AAU, when I update user's role with csv file, I see a success",
-                "inputs": [],
-                "options": {
-                    "project-id": "project_id",
-                    "from-csv": "user_list.csv",
-                    "role": "REVIEWER",
-                },
-                "expected_mutation_payload": {
-                    "role_id": "role_id_jane",
-                    "project_id": "project_id",
-                    "user_id": "user_id_jane",
-                    "role": "REVIEWER",
-                },
-            },
-        ]
-        runner = CliRunner()
-        with runner.isolated_filesystem():
-            # pylint: disable=unspecified-encoding
-            # newline="" to disable universal newlines translation (bug fix for windows)
-            with open("user_list.csv", "w", newline="") as f:
-                writer = csv.writer(f)
-                writer.writerow(["email"])
-                writer.writerow(["john.doe@test.com"])
-                writer.writerow(["jane.doe@test.com"])
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        # pylint: disable=unspecified-encoding
+        # newline="" to disable universal newlines translation (bug fix for windows)
+        with open("user_list.csv", "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["email"])
+            writer.writerow(["john.doe@test.com"])
+            writer.writerow(["jane.doe@test.com"])
 
-            for i, test_case in enumerate(TEST_CASES):
-                print(test_case["case_name"])
-                arguments = test_case["inputs"]
-                for k, v in test_case["options"].items():
-                    arguments.append("--" + k)
-                    arguments.append(v)
-                result = runner.invoke(update_member, arguments)
-                debug_subprocess_pytest(result)
-                assert update_properties_in_role_mock.call_count == 2 * (i + 1)
-                update_properties_in_role_mock.assert_called_with(
-                    **test_case["expected_mutation_payload"]
-                )
+        arguments = inputs
+        for k, v in options.items():
+            arguments.append("--" + k)
+            arguments.append(v)
+        result = runner.invoke(update_member, arguments)
+        debug_subprocess_pytest(result)
+        update_properties_in_role_mock.assert_called_with(**expected_mutation_payload)
 
-    def test_remove_member(self, *_):
-        TEST_CASES = [
-            {
-                "case_name": "AAU, when I remove users with email adress, I see a success",
-                "inputs": ["john.doe@test.com", "jane.doe@test.com"],
-                "options": {
-                    "project-id": "project_id",
-                },
-                "expected_mutation_payload": {
-                    "role_id": "role_id_jane",
-                },
-            },
-            {
-                "case_name": "AAU, when I remove all users, I see a success",
-                "inputs": [],
-                "options": {
-                    "project-id": "project_id",
-                },
-                "flags": ["all"],
-                "expected_mutation_payload": {
-                    "role_id": "role_id_jane",
-                },
-            },
-            {
-                "case_name": "AAU, when I remove users with a  csv file, I see a success",
-                "inputs": [],
-                "options": {
-                    "project-id": "project_id",
-                    "from-csv": "user_list.csv",
-                },
-                "expected_mutation_payload": {
-                    "role_id": "role_id_jane",
-                },
-            },
-        ]
-        runner = CliRunner()
-        with runner.isolated_filesystem():
-            # pylint: disable=unspecified-encoding
-            # newline="" to disable universal newlines translation (bug fix for windows)
-            with open("user_list.csv", "w", newline="") as f:
-                writer = csv.writer(f)
-                writer.writerow(["email"])
-                writer.writerow(["john.doe@test.com"])
-                writer.writerow(["jane.doe@test.com"])
 
-            for i, test_case in enumerate(TEST_CASES):
-                print(test_case["case_name"])
-                arguments = test_case["inputs"]
-                for k, v in test_case["options"].items():
-                    arguments.append("--" + k)
-                    arguments.append(v)
-                if test_case.get("flags"):
-                    arguments.extend(["--" + flag for flag in test_case["flags"]])
-                result = runner.invoke(remove_member, arguments)
-                debug_subprocess_pytest(result)
-                assert delete_from_roles_mock.call_count == 2 * (i + 1)
-                delete_from_roles_mock.assert_called_with(**test_case["expected_mutation_payload"])
+@pytest.mark.parametrize(
+    ("case_name", "inputs", "options", "flags", "expected_mutation_payload"),
+    [
+        (
+            "AAU, when I remove users with email adress, I see a success",
+            ["john.doe@test.com", "jane.doe@test.com"],
+            {"project-id": "project_id"},
+            None,
+            {"role_id": "role_id_jane"},
+        ),
+        (
+            "AAU, when I remove all users, I see a success",
+            [],
+            {"project-id": "project_id"},
+            ["all"],
+            {"role_id": "role_id_jane"},
+        ),
+        (
+            "AAU, when I remove users with a  csv file, I see a success",
+            [],
+            {"project-id": "project_id", "from-csv": "user_list.csv"},
+            None,
+            {"role_id": "role_id_jane"},
+        ),
+    ],
+)
+def test_remove_member(
+    case_name: str,
+    inputs: List[str],
+    options: Dict[str, str],
+    flags: List[str],
+    expected_mutation_payload: Dict[str, str],
+    mocker: pytest_mock.MockerFixture,
+):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
+    mocker.patch.object(ProjectUserQuery, "__call__", side_effect=mocked__project_user_query)
+    delete_from_roles_mock = mocker.patch(
+        "kili.entrypoints.mutations.project.MutationsProject.delete_from_roles"
+    )
+
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        # pylint: disable=unspecified-encoding
+        # newline="" to disable universal newlines translation (bug fix for windows)
+        with open("user_list.csv", "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["email"])
+            writer.writerow(["john.doe@test.com"])
+            writer.writerow(["jane.doe@test.com"])
+
+        arguments = inputs
+        for k, v in options.items():
+            arguments.append("--" + k)
+            arguments.append(v)
+        if flags:
+            arguments.extend(["--" + flag for flag in flags])
+        result = runner.invoke(remove_member, arguments)
+        debug_subprocess_pytest(result)
+        delete_from_roles_mock.assert_called_with(**expected_mutation_payload)

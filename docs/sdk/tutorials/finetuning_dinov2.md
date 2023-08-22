@@ -30,7 +30,6 @@ Let's first install the Kili package and all other packages required for our exp
 
 
 ```python
-import getpass
 import os
 import random
 import shutil
@@ -56,21 +55,7 @@ To interact with Kili using the Python SDK, it is necessary to have a Kili accou
 
 
 ```python
-if "KILI_API_KEY" in os.environ:
-    KILI_API_KEY = os.environ["KILI_API_KEY"]
-else:
-    KILI_API_KEY = getpass.getpass("Please enter your Kili API key: ")
-```
-
-    Please enter your Kili API key: ··········
-
-
-We can now initialize the Kili client:
-
-
-```python
 kili = Kili(
-    api_key=KILI_API_KEY,  # no need to pass the API_KEY if it is already in your environment variables
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
     # the line above can be uncommented and changed if you are working with an on-premise version of Kili
 )

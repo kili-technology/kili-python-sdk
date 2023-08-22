@@ -39,12 +39,6 @@ InputType = Literal[
     "VIDEO_LEGACY",
 ]
 
-InvitationStatus = Literal[
-    "ACCEPTED",
-    "DECLINED",
-    "PENDING",
-]
-
 
 IssueStatus = Literal[
     "OPEN",

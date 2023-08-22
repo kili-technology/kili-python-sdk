@@ -153,8 +153,12 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         self.http_client = requests.Session()
         self.http_client.verify = verify
 
-        if not skip_checks:
-            self._check_api_key_valid()
+        if not skip_checks and not self._check_api_key_valid():
+            raise AuthenticationFailed(
+                api_key=self.api_key,
+                api_endpoint=self.api_endpoint,
+                error_msg="Api key does not seem to be valid.",
+            )
 
         self.graphql_client = GraphQLClient(
             endpoint=api_endpoint,
@@ -171,7 +175,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
 
         self.internal = KiliInternal(self)
 
-    def _check_api_key_valid(self) -> None:
+    def _check_api_key_valid(self) -> bool:
         """Check that the api_key provided is valid."""
         response = self.http_client.post(
             url=self.api_endpoint,
@@ -185,17 +189,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
                 "apollographql-client-version": __version__,
             },
         )
-        if response.status_code == 200 and "email" in response.text and "id" in response.text:
-            return
-
-        raise AuthenticationFailed(
-            api_key=self.api_key,
-            api_endpoint=self.api_endpoint,
-            error_msg=(
-                "Cannot check API key validity: status_code"
-                f" {response.status_code}\n\n{response.text}"
-            ),
-        )
+        return response.status_code == 200 and "email" in response.text and "id" in response.text
 
     def _get_kili_app_version(self) -> Optional[str]:
         """Get the version of the Kili app server.

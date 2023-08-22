@@ -243,7 +243,7 @@ class NotebookTestMissingError(Exception):
 
 def check_notebook_tested(ipynb_filepath: Path):
     """Check if notebook is tested."""
-    with open("tests/test_notebooks.py", encoding="utf-8") as file:
+    with open("tests/e2e/test_notebooks.py", encoding="utf-8") as file:
         test_notebooks_module_str = file.read()
 
     if f"recipes/{ipynb_filepath.name}" not in test_notebooks_module_str:
