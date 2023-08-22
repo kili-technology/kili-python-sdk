@@ -1,16 +1,22 @@
 """Service for importing objects into kili."""
 
-from typing import Dict, List
+from typing import Dict, List, Type, cast
 
 from kili.services.asset_import.image import ImageDataImporter
 from kili.services.asset_import.pdf import PdfDataImporter
 from kili.services.asset_import.text import TextDataImporter
+from kili.services.asset_import.types import AssetLike
 from kili.services.asset_import.video import VideoDataImporter
 from kili.services.project import get_project_field
 
-from .base import LoggerParams, ProcessingParams, ProjectParams
+from .base import (
+    BaseAbstractAssetImporter,
+    LoggerParams,
+    ProcessingParams,
+    ProjectParams,
+)
 
-importer_by_type = {
+importer_by_type: Dict[str, Type[BaseAbstractAssetImporter]] = {
     "PDF": PdfDataImporter,
     "IMAGE": ImageDataImporter,
     "TEXT": TextDataImporter,
@@ -38,5 +44,5 @@ def import_assets(  # pylint: disable=too-many-arguments
     if input_type not in importer_by_type:
         raise NotImplementedError(f"There is no imported for the input type: {input_type}")
     asset_importer = importer_by_type[input_type](*importer_params)
-    result = asset_importer.import_assets(assets=assets)  # type:ignore X
-    return result
+    created_asset_ids = asset_importer.import_assets(assets=cast(List[AssetLike], assets))
+    return created_asset_ids

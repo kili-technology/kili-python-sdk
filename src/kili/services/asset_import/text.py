@@ -6,7 +6,7 @@ from typing import List, Optional, Tuple
 from kili.core.helpers import is_url
 
 from .base import (
-    BaseAssetImporter,
+    BaseAbstractAssetImporter,
     BatchParams,
     ContentBatchImporter,
     JsonContentBatchImporter,
@@ -32,7 +32,7 @@ class RawTextBatchImporter(ContentBatchImporter):
         return content or "", "text/plain"
 
 
-class TextDataImporter(BaseAssetImporter):
+class TextDataImporter(BaseAbstractAssetImporter):
     """Class for importing data into a TEXT project."""
 
     @staticmethod
@@ -91,5 +91,5 @@ class TextDataImporter(BaseAssetImporter):
             )
         else:
             raise ImportValidationError
-        result = self.import_assets_by_batch(assets, batch_importer)
-        return result
+        created_asset_ids = self.import_assets_by_batch(assets, batch_importer)
+        return created_asset_ids

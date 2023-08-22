@@ -1,5 +1,4 @@
 import os
-import threading
 from pathlib import Path
 from time import time
 from unittest import mock
@@ -8,7 +7,6 @@ import graphql
 import pytest
 import pytest_mock
 import requests
-from gql.transport.exceptions import TransportServerError
 from pyrate_limiter import Duration, Limiter, RequestRate
 
 from kili.core.constants import MAX_CALLS_PER_MINUTE

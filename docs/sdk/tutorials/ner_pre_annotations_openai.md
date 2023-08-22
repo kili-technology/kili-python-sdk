@@ -290,21 +290,12 @@ Now that we have both the data and the pre-annotations, we can import them to a 
 
 
 ```python
-if "KILI_API_KEY" in os.environ:
-    KILI_API_KEY = os.environ["KILI_API_KEY"]
-else:
-    KILI_API_KEY = getpass.getpass("Please enter your Kili API key: ")
-```
-
-
-```python
 from kili.client import Kili
 ```
 
 
 ```python
 kili = Kili(
-    api_key=KILI_API_KEY,  # no need to pass the API_KEY if it is already in your environment variables
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
     # the line above can be uncommented and changed if you are working with an on-premise version of Kili
 )

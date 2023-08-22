@@ -16,7 +16,10 @@ This tutorial shows how to use the label parser to easily access labels' content
 ```python
 from kili.client import Kili
 
-kili = Kili()
+kili = Kili(
+    # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
+    # the line above can be uncommented and changed if you are working with an on-premise version of Kili
+)
 ```
 
 ## Kili labels

@@ -1,4 +1,4 @@
-"""Utils."""
+"""Pagination utils."""
 from time import sleep
 from typing import Any, Callable, Dict, Iterator, List, Optional
 
@@ -9,18 +9,19 @@ from kili.exceptions import GraphQLError
 
 
 class BatchIteratorBuilder:
-    """Generate an paginated iterator from a list
+    """Generate an paginated iterator from a list.
+
     Args:
         iterable: a list to paginate.
         batch_size: the size of the batches to produce
     """
 
-    def __init__(self, iterable: List, batch_size=MUTATION_BATCH_SIZE) -> None:
+    def __init__(self, iterable: List, batch_size: int = MUTATION_BATCH_SIZE) -> None:
         self.iterable = iterable
         self.batch_size = batch_size
         self.nb_batches = (len(iterable) - 1) // batch_size + 1
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.nb_batches
 
     def __next__(self):
@@ -38,7 +39,8 @@ def batch_object_builder(
     properties_to_batch: Dict[str, Optional[List[Any]]],
     batch_size: int = MUTATION_BATCH_SIZE,
 ) -> Iterator[Dict[str, Optional[List[Any]]]]:
-    """Generate a paginated iterator for several variables
+    """Generate a paginated iterator for several variables.
+
     Args:
         properties_to_batch: a dictionary of properties to be batched.
         batch_size: the size of the batches to produce
@@ -62,18 +64,19 @@ def batch_object_builder(
     yield from batch_object_iterator
 
 
-def _mutate_from_paginated_call(
-    self,
+# pylint: disable=missing-type-doc
+def mutate_from_paginated_call(
+    kili,
     properties_to_batch: Dict[str, Optional[List[Any]]],
     generate_variables: Callable,
     request: str,
     batch_size: int = MUTATION_BATCH_SIZE,
     last_batch_callback: Optional[Callable] = None,
-):
+) -> List:
     """Run a mutation by making paginated calls.
 
     Args:
-        self: kili
+        kili: kili
         properties_to_batch: a dictionary of properties to be batched.
             constants across batch are defined in the generate_variables function
         generate_variables: function that takes batched properties and return
@@ -91,10 +94,10 @@ def _mutate_from_paginated_call(
                 graphQL_prop1: batched_properties['prop1']
                 graphQL_prop2: batched_properties['prop2']
             }
-        _mutate_from_paginated_call(
+        mutate_from_paginated_call(
                 properties_to_batch=properties_to_batch,
                 generate_variables=generate_variables
-                request= APPEND_MANY_TO_DATASET
+                request= GQL_APPEND_MANY_ASSETS
         )
         ```
     """
@@ -103,7 +106,7 @@ def _mutate_from_paginated_call(
     for batch_number, batch in enumerate(batch_object_builder(properties_to_batch, batch_size)):
         payload = generate_variables(batch)
         try:
-            result = self.graphql_client.execute(request, payload)
+            result = kili.graphql_client.execute(request, payload)
         except GraphQLError as err:
             raise GraphQLError(error=err.error, batch_number=batch_number) from err
         results.append(result)
