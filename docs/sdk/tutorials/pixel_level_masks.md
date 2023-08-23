@@ -154,9 +154,9 @@ annotations = [
     {
         "boundingPoly": [{"normalizedVertices": contour} for contour in contours],
         "categories": [{"name": "HUMAN", "confidence": 100}],
-        "mid": randint(100, 1000),
+        "mid": str(randint(100, 1000)),
         "score": None,
-        "type": "polygon",
+        "type": "semantic",
     }
 ]
 json_response = {"JOB_0": {"annotations": annotations}}
