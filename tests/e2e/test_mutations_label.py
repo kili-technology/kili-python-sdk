@@ -40,7 +40,7 @@ def project(kili: Kili):
     kili.append_labels(
         project_id=project["id"],
         asset_external_id_array=["1", "2"] * 2,
-        json_response_array=[{"CLASSIFICATION_JOB": {"categories": ["A"]}}] * 4,
+        json_response_array=[{"CLASSIFICATION_JOB": {"categories": [{"name": "A"}]}}] * 4,
         label_type="PREDICTION",
         model_name="model_name",
     )
@@ -77,7 +77,7 @@ def test_e2e_append_labels_overwrite(kili: Kili, project: Dict):
     assert len(label_ids) == 4
 
     # When
-    json_response = {"CLASSIFICATION_JOB": {"categories": ["A"]}}
+    json_response = {"CLASSIFICATION_JOB": {"categories": [{"name": "A"}]}}
     kili.append_labels(
         project_id=project["id"],
         json_response_array=[json_response],
