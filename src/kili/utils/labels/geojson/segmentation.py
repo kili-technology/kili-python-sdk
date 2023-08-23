@@ -196,8 +196,8 @@ def geojson_polygon_feature_to_kili_segmentation_annotation(
     ]
 
     if mid is not None:
-        ret["mid"] = mid
+        ret["mid"] = str(mid)
     elif "id" in polygon:
-        ret["mid"] = polygon["id"]
+        ret["mid"] = str(polygon["id"])
 
     return ret

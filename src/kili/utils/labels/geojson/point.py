@@ -133,8 +133,8 @@ def geojson_point_feature_to_kili_point_annotation(
     }
 
     if mid is not None:
-        ret["mid"] = mid
+        ret["mid"] = str(mid)
     elif "id" in point:
-        ret["mid"] = point["id"]
+        ret["mid"] = str(point["id"])
 
     return ret
