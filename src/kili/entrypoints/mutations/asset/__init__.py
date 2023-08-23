@@ -403,7 +403,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             retry=retry_if_exception_type(MutationError),
             reraise=True,
         )
-        def verify_last_batch(last_batch: Dict, results: List):
+        def verify_last_batch(last_batch: Dict, results: List) -> None:
             """Check that all assets in the last batch have been deleted."""
             # in some case the results is [{'data': None}]
             project_id_ = project_id or results[0]["data"].get("id")
@@ -476,7 +476,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             retry=retry_if_exception_type(MutationError),
             reraise=True,
         )
-        def verify_last_batch(last_batch: Dict, results: List):
+        def verify_last_batch(last_batch: Dict, results: List) -> None:
             """Check that all assets in the last batch have been sent to review."""
             # in some case the results is [{'data': None}]
             project_id_ = project_id or results[0]["data"].get("id")
@@ -559,13 +559,12 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         )
         def verify_last_batch(last_batch: Dict, results: List) -> None:
             """Check that all assets in the last batch have been sent back to queue."""
-            asset_ids = last_batch["asset_ids"][-1:]  # check lastest asset of the batch only
-
             # in some case the results is [{'data': None}]
             project_id_ = project_id or results[0]["data"].get("id")
             if project_id_ is None:
                 return
 
+            asset_ids = last_batch["asset_ids"][-1:]  # check lastest asset of the batch only
             nb_assets_in_queue = AssetQuery(self.graphql_client, self.http_client).count(
                 AssetWhere(
                     project_id=project_id_,
