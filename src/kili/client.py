@@ -14,8 +14,8 @@ from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.core.graphql.operations.user.queries import GQL_ME
-from kili.entrypoints.client_method.internal import InternalEntrypoints
-from kili.entrypoints.client_method.issue import IssueEntrypoints
+from kili.entrypoints.client.internal import InternalEntrypoints
+from kili.entrypoints.client.issue import IssueEntrypoints
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.data_connection import MutationsDataConnection
 from kili.entrypoints.mutations.issue import MutationsIssue

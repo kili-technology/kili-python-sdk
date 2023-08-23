@@ -10,3 +10,12 @@ class IssueToCreateServiceInput:
     label_id: str
     object_mid: Optional[str] = None
     text: Optional[str] = None
+
+
+@dataclass
+class QuestionToCreateServiceInput:
+    """Data about one Issue to create."""
+
+    asset_id: Optional[str]
+    asset_external_id: Optional[str]
+    text: str

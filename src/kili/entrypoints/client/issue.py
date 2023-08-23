@@ -9,7 +9,10 @@ from typeguard import typechecked
 from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.services.helpers import assert_all_arrays_have_same_size
 from kili.services.issue import IssueService
-from kili.services.issue.types import IssueToCreateServiceInput
+from kili.services.issue.types import (
+    IssueToCreateServiceInput,
+    QuestionToCreateServiceInput,
+)
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -73,8 +76,20 @@ class IssueEntrypoints:
             A list of dictionary with the `id` key of the created questions.
         """
         assert_all_arrays_have_same_size([text_array, asset_id_array])
+        if asset_id_array is not None and asset_external_id_array is not None:
+            raise ValueError(
+                "Only one of asset_id_array and asset_external_id_array should be given"
+            )
         issue_service = IssueService(self.kili_api_gateway)
-        created_questions = issue_service.create_questions(
-            project_id, text_array, asset_id_array, asset_external_id_array
-        )
+        questions = [
+            QuestionToCreateServiceInput(
+                asset_id=asset_id, asset_external_id=asset_external_id, text=text
+            )
+            for (asset_id, asset_external_id, text) in zip(
+                asset_id_array or repeat(None),
+                asset_external_id_array or repeat(None),
+                text_array,
+            )
+        ]
+        created_questions = issue_service.create_questions(project_id, questions)
         return [{"id": question.id_} for question in created_questions]
