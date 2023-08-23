@@ -4,14 +4,14 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 from kili.core.enums import IssueStatus
-from kili.core.graphql.gateway.issue.operations import (
+from kili.core.graphql.graphql_client import GraphQLClient
+from kili.core.utils.pagination import BatchIteratorBuilder
+from kili.domain.issue import Issue, IssueType
+from kili.gateways.kili_api_gateway.issue.operations import (
     GQL_COUNT_ISSUES,
     GQL_CREATE_ISSUES,
 )
-from kili.core.graphql.gateway.issue.types import IssueToCreateGQLGatewayInput
-from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.utils.pagination import BatchIteratorBuilder
-from kili.domain.issues import Issue, IssueType
+from kili.gateways.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 
 
 @dataclass
@@ -41,7 +41,7 @@ class IssueOperationMixin:
     graphql_client: GraphQLClient
 
     def create_issues(
-        self, type_: IssueType, issues: List[IssueToCreateGQLGatewayInput]
+        self, type_: IssueType, issues: List[IssueToCreateKiliAPIGatewayInput]
     ) -> List[Issue]:
         """Send a GraphQL request calling createIssues resolver."""
         created_issue_entities: List[Issue] = []

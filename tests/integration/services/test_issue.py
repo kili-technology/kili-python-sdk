@@ -2,19 +2,20 @@
 
 import pytest
 
-from kili.domain.issues import Issue
+from kili.domain.issue import Issue
+from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.services.issue import IssueService
 from kili.services.issue.types import IssueToCreateServiceInput
 
 
-@pytest.mark.skip("until to impelment query")
-def test_create_one_issue(graphql_gateway):
-    issue_service = IssueService(graphql_gateway)
+@pytest.mark.skip(reason="Waiting to implement queries")
+def test_create_one_issue(kili_api_gateway: KiliAPIGateway):
+    issue_service = IssueService(kili_api_gateway)
 
     # given one issue to create
     issues = [IssueToCreateServiceInput(label_id="label_id", text="text", object_mid="object_mid")]
     issue_entities = [Issue(id_="issue_id")]
-    graphql_gateway.create_issues.return_value(issue_entities)
+    kili_api_gateway.create_issues.return_value(issue_entities)
 
     # when creating one issue
     issues = issue_service.create_issues(project_id="project_id", issues=issues)

@@ -1,8 +1,8 @@
 """GraphQL gateway module."""
-from kili.core.graphql.gateway.issue import IssueOperationMixin
+from kili.gateways.kili_api_gateway.issue import IssueOperationMixin
 
 
-class GraphQLGateway(IssueOperationMixin):
+class KiliAPIGateway(IssueOperationMixin):
     """GraphQL gateway to communicate with Kili backend."""
 
     def __init__(self, graphql_client, http_client):

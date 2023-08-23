@@ -5,10 +5,10 @@ from typing import Dict, Literal, Optional
 from typeguard import typechecked
 
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.gateway.issue.operations import GQL_CREATE_ISSUES
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.gateways.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .helpers import get_issue_numbers

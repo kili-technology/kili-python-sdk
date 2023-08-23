@@ -4,7 +4,7 @@ from typing import Optional
 
 
 @dataclass
-class IssueToCreateGQLGatewayInput:
+class IssueToCreateKiliAPIGatewayInput:
     """Data about an issue to create needed in graphql createIssue resolver."""
 
     issue_number: int
