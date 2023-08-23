@@ -405,9 +405,12 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         )
         def verify_last_batch(last_batch: Dict, results: List) -> None:
             """Check that all assets in the last batch have been deleted."""
+            if project_id is not None:
+                project_id_ = project_id
             # in some case the results is [{'data': None}]
-            project_id_ = project_id or results[0]["data"].get("id")
-            if project_id_ is None:
+            elif isinstance(results[0]["data"], Dict) and results[0]["data"].get("id"):
+                project_id_ = results[0]["data"].get("id")
+            else:
                 return
 
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
@@ -478,9 +481,12 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         )
         def verify_last_batch(last_batch: Dict, results: List) -> None:
             """Check that all assets in the last batch have been sent to review."""
+            if project_id is not None:
+                project_id_ = project_id
             # in some case the results is [{'data': None}]
-            project_id_ = project_id or results[0]["data"].get("id")
-            if project_id_ is None:
+            elif isinstance(results[0]["data"], Dict) and results[0]["data"].get("id"):
+                project_id_ = results[0]["data"].get("id")
+            else:
                 return
 
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
@@ -511,7 +517,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 QueryOptions(disable_tqdm=True),
             )
             result["asset_ids"] = [asset["id"] for asset in assets_in_review]
-            return result
         return result
 
     @typechecked
@@ -559,9 +564,12 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         )
         def verify_last_batch(last_batch: Dict, results: List) -> None:
             """Check that all assets in the last batch have been sent back to queue."""
+            if project_id is not None:
+                project_id_ = project_id
             # in some case the results is [{'data': None}]
-            project_id_ = project_id or results[0]["data"].get("id")
-            if project_id_ is None:
+            elif isinstance(results[0]["data"], Dict) and results[0]["data"].get("id"):
+                project_id_ = results[0]["data"].get("id")
+            else:
                 return
 
             asset_ids = last_batch["asset_ids"][-1:]  # check lastest asset of the batch only
@@ -583,10 +591,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             last_batch_callback=verify_last_batch,
         )
         result = self.format_result("data", results[0])
-        assets_in_queue = AssetQuery(self.graphql_client, self.http_client)(
-            AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
-            ["id"],
-            QueryOptions(disable_tqdm=True),
-        )
-        result["asset_ids"] = [asset["id"] for asset in assets_in_queue]
+        if isinstance(result, dict) and "id" in result:
+            assets_in_queue = AssetQuery(self.graphql_client, self.http_client)(
+                AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
+                ["id"],
+                QueryOptions(disable_tqdm=True),
+            )
+            result["asset_ids"] = [asset["id"] for asset in assets_in_queue]
         return result
