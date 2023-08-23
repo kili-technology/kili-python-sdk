@@ -49,6 +49,7 @@ nav:
           - DICOM: sdk/tutorials/medical_imaging.md
           - Tagtog: sdk/tutorials/tagtog_to_kili.md
           - COCO: sdk/tutorials/importing_coco.md
+          - PascalVOC: sdk/tutorials/importing_pascalvoc.md
           - GeoJSON: sdk/tutorials/geojson.md
       - Managing Workflows: sdk/tutorials/set_up_workflows.md
       - Exporting Project Data:

@@ -46,6 +46,8 @@ The label parsing [tutorial](https://python-sdk-docs.kili-technology.com/latest/
 
 This [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_coco/) shows how to import COCO annotations into Kili.
 
+This [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_pascalvoc/) shows how to import PascalVOC annotations into Kili.
+
 On this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/geojson/), you will learn how to import GeoJSON annotations into Kili, and how to export Kili annotations to GeoJSON.
 
 ## Managing workflows
