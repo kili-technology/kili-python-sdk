@@ -3,7 +3,7 @@
 import logging
 from typing import Dict, List, Optional
 
-from kili.entrypoints.client import Kili
+from kili.client import Kili
 from kili.services.plugins.helpers import get_logger
 
 

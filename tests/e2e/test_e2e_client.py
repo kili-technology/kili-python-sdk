@@ -1,7 +1,7 @@
 import pytest_mock
 from pyinstrument.profiler import Profiler
 
-from kili.entrypoints.client import Kili
+from kili.client import Kili
 
 
 def test_client_init_not_too_long_with_checks_enabled():

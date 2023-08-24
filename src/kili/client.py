@@ -14,8 +14,6 @@ from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.core.graphql.operations.user.queries import GQL_ME
-from kili.entrypoints.client.internal import InternalEntrypoints
-from kili.entrypoints.client.issue import IssueEntrypoints
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.data_connection import MutationsDataConnection
 from kili.entrypoints.mutations.issue import MutationsIssue
@@ -40,6 +38,8 @@ from kili.entrypoints.queries.user import QueriesUser
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
 from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.presentation.client.internal import InternalClientMethods
+from kili.presentation.client.issue import IssueClientMethods
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
@@ -78,7 +78,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     QueriesProjectVersion,
     QueriesUser,
     SubscriptionsLabel,
-    IssueEntrypoints,
+    IssueClientMethods,
 ):
     """Kili Client."""
 
@@ -178,7 +178,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             api_key_query = APIKeyQuery(self.graphql_client, self.http_client)
             self._check_expiry_of_key_is_close(api_key_query, self.api_key)
 
-        self.internal = InternalEntrypoints(self)
+        self.internal = InternalClientMethods(self)
 
     def _check_api_key_valid(self) -> bool:
         """Check that the api_key provided is valid."""

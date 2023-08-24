@@ -6,8 +6,8 @@ import pytest
 import pytest_mock
 from filelock import FileLock
 
+from kili.client import Kili
 from kili.core.graphql.graphql_client import DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR
-from kili.entrypoints.client import Kili
 from kili.exceptions import AuthenticationFailed
 
 
