@@ -15,7 +15,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 @for_all_methods(log_call, exclude=["__init__"])
 class IssueClientMethods:
-    """Set of Issue mutations."""
+    """Methods attached to the Kili client, to run actions on issues."""
 
     kili_api_gateway: KiliAPIGateway
     http_client: requests.Session

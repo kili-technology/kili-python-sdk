@@ -1,4 +1,4 @@
-"""Types for the Issue-related graphql gateway functions."""
+"""Types for the Issue-related Kili API gateway functions."""
 from dataclasses import dataclass
 from typing import Optional
 

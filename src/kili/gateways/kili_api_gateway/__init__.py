@@ -1,4 +1,4 @@
-"""GraphQL gateway module."""
+"""Kili API Gateway module for interacting with Kili."""
 import requests
 
 from kili.core.graphql.graphql_client import GraphQLClient

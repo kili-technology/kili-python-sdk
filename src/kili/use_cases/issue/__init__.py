@@ -1,4 +1,4 @@
-"""Issue Service."""
+"""Issue use cases."""
 
 from typing import List
 
@@ -9,7 +9,7 @@ from kili.use_cases.issue.types import IssueToCreateUseCaseInput
 
 
 class IssueUseCases:
-    """Issue Service."""
+    """Issue use cases."""
 
     def __init__(self, kili_api_gateway: KiliAPIGateway):
         self._kili_api_gateway = kili_api_gateway

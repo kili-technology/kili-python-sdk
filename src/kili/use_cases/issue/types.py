@@ -1,4 +1,4 @@
-"""Types for Issue-related service."""
+"""Types for Issue-related use cases."""
 from dataclasses import dataclass
 from typing import Optional
 
