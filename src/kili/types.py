@@ -10,7 +10,6 @@ from typing_extensions import TypedDict
 
 from kili.enums import (
     InputType,
-    InvitationStatus,
     IssueStatus,
     LabelType,
     LicenseType,
@@ -110,7 +109,6 @@ class ProjectUserWithoutProject(TypedDict):
     consensusMarkCompute: float
     honeypotMark: float
     honeypotMarkCompute: float
-    invitationStatus: InvitationStatus
     lastLabelingAt: str
     lastLabelingAtCompute: str
     numberOfAnnotations: int

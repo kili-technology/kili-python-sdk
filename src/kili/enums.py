@@ -48,13 +48,6 @@ InputType = Literal[
 ]
 
 
-InvitationStatus = Literal[
-    "ACCEPTED",
-    "DECLINED",
-    "PENDING",
-]
-
-
 IssueStatus = Literal[
     "OPEN",
     "SOLVED",
