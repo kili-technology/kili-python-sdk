@@ -170,8 +170,8 @@ def geojson_polygon_feature_to_kili_polygon_annotation(
     ret["boundingPoly"] = [{"normalizedVertices": normalized_vertices}]
 
     if mid is not None:
-        ret["mid"] = mid
+        ret["mid"] = str(mid)
     elif "id" in polygon:
-        ret["mid"] = polygon["id"]
+        ret["mid"] = str(polygon["id"])
 
     return ret

@@ -40,7 +40,7 @@ def project(kili: Kili):
     kili.append_labels(
         project_id=project["id"],
         asset_external_id_array=["1", "2"] * 2,
-        json_response_array=[{"CLASSIFICATION_JOB": {"categories": ["A"]}}] * 4,
+        json_response_array=[{"CLASSIFICATION_JOB": {"categories": [{"name": "A"}]}}] * 4,
         label_type="PREDICTION",
         model_name="model_name",
     )
@@ -52,7 +52,6 @@ def project(kili: Kili):
     kili.delete_project(project["id"])
 
 
-@pytest.mark.skip(reason="not available on staging yet")
 def test_e2e_delete_labels(kili: Kili, project: Dict):
     # Given
     labels = kili.labels(project_id=project["id"], fields=["id"])
@@ -71,7 +70,6 @@ def test_e2e_delete_labels(kili: Kili, project: Dict):
     assert sorted(labels_left_in_project_ids) == sorted(labels_to_keep)
 
 
-@pytest.mark.skip(reason="not available on staging yet")
 def test_e2e_append_labels_overwrite(kili: Kili, project: Dict):
     # Given
     labels = kili.labels(project_id=project["id"], fields=["id", "labelOf.externalId"])
@@ -79,12 +77,13 @@ def test_e2e_append_labels_overwrite(kili: Kili, project: Dict):
     assert len(label_ids) == 4
 
     # When
-    json_response = {"CLASSIFICATION_JOB": {"categories": ["A"]}}
+    json_response = {"CLASSIFICATION_JOB": {"categories": [{"name": "A"}]}}
     kili.append_labels(
         project_id=project["id"],
         json_response_array=[json_response],
         model_name="model_name",
         asset_external_id_array=["1"],
+        label_type="PREDICTION",
         overwrite=True,
     )
 

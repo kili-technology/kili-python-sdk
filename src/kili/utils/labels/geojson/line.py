@@ -146,8 +146,8 @@ def geojson_linestring_feature_to_kili_line_annotation(
     ret["polyline"] = [{"x": coord[0], "y": coord[1]} for coord in line["geometry"]["coordinates"]]
 
     if mid is not None:
-        ret["mid"] = mid
+        ret["mid"] = str(mid)
     elif "id" in line:
-        ret["mid"] = line["id"]
+        ret["mid"] = str(line["id"])
 
     return ret

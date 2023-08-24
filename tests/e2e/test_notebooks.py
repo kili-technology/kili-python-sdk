@@ -22,7 +22,6 @@ def process_notebook(notebook_filename: str) -> None:
         "tests/e2e/export_labels.ipynb",
         "tests/e2e/import_assets.ipynb",
         "tests/e2e/import_predictions.ipynb",
-        "tests/e2e/paginated_calls_project_lifecycle.ipynb",
         pytest.param(
             "tests/e2e/plugin_workflow.ipynb",
             marks=pytest.mark.skipif(
@@ -36,6 +35,7 @@ def process_notebook(notebook_filename: str) -> None:
         # "recipes/finetuning_dinov2.ipynb",  # not testable because requires GPU
         "recipes/geojson.ipynb",
         "recipes/importing_coco.ipynb",
+        "recipes/importing_pascalvoc.ipynb",
         "recipes/import_text_assets.ipynb",
         "recipes/importing_assets_and_metadata.ipynb",
         "recipes/importing_pdf_assets.ipynb",
