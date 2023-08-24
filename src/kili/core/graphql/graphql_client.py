@@ -122,7 +122,8 @@ class GraphQLClient:
             "apollographql-client-version": __version__,
         }
 
-    def _get_introspection_args(self) -> Dict[str, bool]:
+    @staticmethod
+    def _get_introspection_args() -> Dict[str, bool]:
         """Get the introspection arguments."""
         return {
             "descriptions": True,  # descriptions for the schema, types, fields, and arguments
@@ -186,10 +187,9 @@ class GraphQLClient:
 
     def _cache_graphql_schema(self, graphql_schema_path: Path, schema_str: str) -> None:
         """Cache the graphql schema on disk."""
-        with self._cache_dir_lock:
-            with graphql_schema_path.open("w", encoding="utf-8") as file:
-                file.write(schema_str)
-                file.flush()
+        with self._cache_dir_lock, graphql_schema_path.open("w", encoding="utf-8") as file:
+            file.write(schema_str)
+            file.flush()
 
     def _purge_graphql_schema_cache_dir(self) -> None:
         """Purge the schema cache directory."""

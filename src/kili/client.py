@@ -38,6 +38,7 @@ from kili.entrypoints.queries.user import QueriesUser
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
 from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.internal import KiliInternal
+from kili.utils.logcontext import LogContext, log_call
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
@@ -153,7 +154,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         self.http_client = requests.Session()
         self.http_client.verify = verify
 
-        if not skip_checks and not self._check_api_key_valid():
+        if not skip_checks and not self._is_api_key_valid():
             raise AuthenticationFailed(
                 api_key=self.api_key,
                 api_endpoint=self.api_endpoint,
@@ -175,7 +176,8 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
 
         self.internal = KiliInternal(self)
 
-    def _check_api_key_valid(self) -> bool:
+    @log_call
+    def _is_api_key_valid(self) -> bool:
         """Check that the api_key provided is valid."""
         response = self.http_client.post(
             url=self.api_endpoint,
@@ -187,6 +189,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
                 "Content-Type": "application/json",
                 "apollographql-client-name": self.client_name.value,
                 "apollographql-client-version": __version__,
+                **LogContext(),
             },
         )
         return response.status_code == 200 and "email" in response.text and "id" in response.text
