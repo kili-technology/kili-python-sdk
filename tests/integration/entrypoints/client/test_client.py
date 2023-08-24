@@ -24,7 +24,7 @@ def test_no_api_key(mocker: pytest_mock.MockerFixture):
 @patch.dict(os.environ, {"KILI_API_KEY": "wrong_api_key"})
 def test_wrong_api_key_is_obfuscated(mocker: pytest_mock.MockerFixture):
     """Test obfuscation of api key."""
-    mocker.patch.object(Kili, "_check_api_key_valid", return_value=False)
+    mocker.patch.object(Kili, "_is_api_key_valid", return_value=False)
     with pytest.raises(
         AuthenticationFailed, match=r"failed with API key: \*{9}_key"  # 9 stars for "wrong_api"
     ):
@@ -34,7 +34,7 @@ def test_wrong_api_key_is_obfuscated(mocker: pytest_mock.MockerFixture):
 @patch.dict(os.environ, {"KILI_API_KEY": "no"})
 def test_wrong_api_key_no_need_to_obfuscate(mocker: pytest_mock.MockerFixture):
     """Test no need to obfuscate api key."""
-    mocker.patch.object(Kili, "_check_api_key_valid", return_value=False)
+    mocker.patch.object(Kili, "_is_api_key_valid", return_value=False)
     with pytest.raises(AuthenticationFailed, match="failed with API key: no"):
         _ = Kili()
 
@@ -64,7 +64,7 @@ def test_write_to_disk_without_permissions_not_crash(
     mocker.patch("io.open", side_effect=PermissionError("No write permissions"))
     mocker.patch("os.mkdir", side_effect=PermissionError("No write permissions"))
     mocker.patch.object(Path, "mkdir", side_effect=PermissionError("No write permissions"))
-    mocker.patch.object(Kili, "_check_api_key_valid")
+    mocker.patch.object(Kili, "_is_api_key_valid")
     mocker.patch.object(Kili, "_check_expiry_of_key_is_close")
 
     # caching disabled, should work

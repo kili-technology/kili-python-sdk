@@ -40,7 +40,7 @@ class _FakePlatform:
 
 
 def test_log_context(mocker, monkeypatch):
-    mocker.patch.object(Kili, "_check_api_key_valid")
+    mocker.patch.object(Kili, "_is_api_key_valid")
     mocker.patch.object(Kili, "_check_expiry_of_key_is_close")
     mocker.patch.object(Kili, "get_user")
     mocker.patch("kili.client.GraphQLClient")
