@@ -1,6 +1,6 @@
 """Issue mutations."""
 
-from typing import Dict, Literal, Optional
+from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
 
@@ -8,7 +8,9 @@ from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
 from kili.gateways.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
+from kili.services.helpers import assert_all_arrays_have_same_size
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .helpers import get_issue_numbers
@@ -87,3 +89,41 @@ class MutationsIssue(BaseOperationEntrypointMixin):
 
         result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
         return self.format_result("data", result)[0]
+
+    @typechecked
+    def create_questions(
+        self,
+        project_id: str,
+        text_array: List[Optional[str]],
+        asset_id_array: Optional[List[str]] = None,
+        asset_external_id_array: Optional[List[str]] = None,
+    ) -> List[Dict]:
+        # pylint:disable=line-too-long
+        """Create questions.
+
+        Args:
+            project_id: Id of the project.
+            text_array: List of question strings.
+            asset_id_array: List of the assets to add the questions to.
+            asset_external_id_array: List of the assets to add the questions to. Used if `asset_id_array` is not given.
+
+        Returns:
+            A list of dictionary with the `id` key of the created questions.
+        """
+        assert_all_arrays_have_same_size([text_array, asset_id_array])
+        issue_number_array = get_issue_numbers(self, project_id, "QUESTION", len(text_array))
+        asset_id_array = get_asset_ids_or_throw_error(
+            self, asset_id_array, asset_external_id_array, project_id
+        )
+        variables = {
+            "issues": [
+                {"issueNumber": issue_number, "type": "QUESTION", "assetId": asset_id, "text": text}
+                for (asset_id, text, issue_number) in zip(
+                    asset_id_array, text_array, issue_number_array
+                )
+            ],
+            "where": {"idIn": asset_id_array},
+        }
+
+        result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
+        return self.format_result("data", result)
