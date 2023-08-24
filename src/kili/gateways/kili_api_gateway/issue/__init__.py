@@ -78,7 +78,7 @@ class IssueOperationMixin:
         asset_id_in: Optional[List[str]] = None,
         issue_type: Optional[IssueType] = None,
         status: Optional[IssueStatus] = None,
-    ):
+    ) -> int:
         """Send a GraphQL request calling countIssues resolver."""
         where = IssueWhere(project_id, asset_id, asset_id_in, issue_type, status)
         payload = {

@@ -19,7 +19,7 @@ class IssueUseCases:
         label_id_array = [issue.label_id for issue in issues]
         label_asset_ids_map = get_labels_asset_ids_map(
             self._kili_api_gateway, project_id, label_id_array
-        )  # should be done in the backend
+        )  # TODO: should be done in the backend
         gateway_issues = [
             IssueToCreateKiliAPIGatewayInput(
                 issue_number=0,
