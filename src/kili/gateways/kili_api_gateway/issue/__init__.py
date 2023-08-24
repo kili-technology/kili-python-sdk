@@ -12,6 +12,7 @@ from kili.gateways.kili_api_gateway.issue.operations import (
     GQL_CREATE_ISSUES,
 )
 from kili.gateways.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
+from kili.utils import tqdm
 
 
 @dataclass
@@ -45,27 +46,29 @@ class IssueOperationMixin:
     ) -> List[Issue]:
         """Send a GraphQL request calling createIssues resolver."""
         created_issue_entities: List[Issue] = []
-        for issues_batch in BatchIteratorBuilder(issues):
-            batch_targeted_asset_ids = [issue.asset_id for issue in issues_batch]
-            payload = {
-                "issues": [
-                    {
-                        "issueNumber": issue.issue_number,
-                        "labelID": issue.label_id,
-                        "objectMid": issue.object_mid,
-                        "type": type_,
-                        "assetId": issue.asset_id,
-                        "text": issue.text,
-                    }
-                    for issue in issues_batch
-                ],
-                "where": {"idIn": batch_targeted_asset_ids},
-            }
-            result = self.graphql_client.execute(GQL_CREATE_ISSUES, payload)
-            batch_created_issues = result["data"]
-            created_issue_entities.extend(
-                [Issue(id_=issue["id"]) for issue in batch_created_issues]
-            )
+        with tqdm.tqdm(total=len(issues)) as pbar:
+            for issues_batch in BatchIteratorBuilder(issues):
+                batch_targeted_asset_ids = [issue.asset_id for issue in issues_batch]
+                payload = {
+                    "issues": [
+                        {
+                            "issueNumber": issue.issue_number,
+                            "labelID": issue.label_id,
+                            "objectMid": issue.object_mid,
+                            "type": type_,
+                            "assetId": issue.asset_id,
+                            "text": issue.text,
+                        }
+                        for issue in issues_batch
+                    ],
+                    "where": {"idIn": batch_targeted_asset_ids},
+                }
+                result = self.graphql_client.execute(GQL_CREATE_ISSUES, payload)
+                batch_created_issues = result["data"]
+                created_issue_entities.extend(
+                    [Issue(id_=issue["id"]) for issue in batch_created_issues]
+                )
+                pbar.update(len(issues_batch))
         return created_issue_entities
 
     def count_issues(  # pylint: disable=too-many-arguments,

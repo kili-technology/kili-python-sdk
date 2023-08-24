@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 from unittest.mock import patch
 
@@ -14,8 +15,8 @@ from kili.exceptions import AuthenticationFailed
 @patch.dict(os.environ, {"KILI_API_KEY": "", "KILI_SDK_SKIP_CHECKS": "True"})
 def test_no_api_key(mocker: pytest_mock.MockerFixture):
     """Test fail because no api key is found."""
-    mocker.patch("kili.entrypoints.client.requests")
-    mocker.patch("kili.entrypoints.client.getpass.getpass", return_value="")
+    mocker.patch("kili.client.requests")
+    mocker.patch("kili.client.getpass.getpass", return_value="")
     with pytest.raises(AuthenticationFailed):
         _ = Kili()
 
@@ -23,7 +24,7 @@ def test_no_api_key(mocker: pytest_mock.MockerFixture):
 @patch.dict(os.environ, {"KILI_API_KEY": "wrong_api_key"})
 def test_wrong_api_key_is_obfuscated(mocker: pytest_mock.MockerFixture):
     """Test obfuscation of api key."""
-    mocker.patch("kili.entrypoints.client.requests")
+    mocker.patch.object(Kili, "_check_api_key_valid", return_value=False)
     with pytest.raises(
         AuthenticationFailed, match=r"failed with API key: \*{9}_key"  # 9 stars for "wrong_api"
     ):
@@ -78,9 +79,9 @@ def test_write_to_disk_without_permissions_not_crash(
 def test_given_env_without_api_key_when_initializing_kili_client_then_it_asks_for_api_key_getpass(
     mocker: pytest_mock.MockerFixture,
 ):
-    mocker.patch("kili.entrypoints.client.sys.stdin.isatty", return_value=True)
+    mocker.patch("kili.client.sys.stdin.isatty", return_value=True)
     mocker_getpass = mocker.patch(
-        "kili.entrypoints.client.getpass.getpass", return_value="fake_key_entered_by_user"
+        "kili.client.getpass.getpass", return_value="fake_key_entered_by_user"
     )
 
     # When
@@ -94,6 +95,6 @@ def test_given_env_without_api_key_when_initializing_kili_client_then_it_asks_fo
 def test_given_non_tti_env_without_api_key_when_initializing_kili_client_then_it_crash(
     mocker: pytest_mock.MockerFixture,
 ):
-    mocker.patch("kili.entrypoints.client.sys.stdin.isatty", return_value=False)
+    mocker.patch("kili.client.sys.stdin.isatty", return_value=False)
     with pytest.raises(AuthenticationFailed):
         _ = Kili()
