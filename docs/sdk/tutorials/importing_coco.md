@@ -703,7 +703,7 @@ for image_id in external_id_array:
                 "kind": "POSE_ESTIMATION",
                 "mid": str(coco_ann["id"]) + "_keypoints_" + body_part,
                 "points": [],
-                "type": "marker",
+                "type": "pose",
             }
             for x, y, visibility, point_type in zip(
                 keypoints[::3],
@@ -717,12 +717,12 @@ for image_id in external_id_array:
                     continue
                 kili_keypoint_ann["points"].append(
                     {
-                        "categories": [{"name": point_type}],
                         "children": {},
                         "code": point_type,
                         "jobName": "POSE_ESTIMATION_JOB",
                         "mid": str(coco_ann["id"]) + "_keypoints_" + point_type,
                         "name": point_type,
+                        "type": "marker",
                         "point": point_to_normalized_point(
                             point={"x": x, "y": y},
                             img_height=img_height,
