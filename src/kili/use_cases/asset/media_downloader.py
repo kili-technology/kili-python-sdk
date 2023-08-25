@@ -20,7 +20,10 @@ from kili.core.graphql.operations.data_connection.queries import (
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.exceptions import NotFound
 
-from .exceptions import DownloadNotAllowedError, MissingPropertyError
+from ...entrypoints.queries.asset.exceptions import (
+    DownloadNotAllowedError,
+    MissingPropertyError,
+)
 
 
 def get_download_assets_function(

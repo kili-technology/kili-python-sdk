@@ -10,8 +10,8 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
-from kili.core.helpers import disable_tqdm_if_as_generator
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.presentation.client.common_validators import disable_tqdm_if_as_generator
 from kili.utils.logcontext import for_all_methods, log_call
 
 

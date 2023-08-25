@@ -28,18 +28,6 @@ HubspotSubscriptionStatus = Literal[
     "UNSUBSCRIBED",
 ]
 
-
-InputType = Literal[
-    "AUDIO",
-    "IMAGE",
-    "PDF",
-    "TEXT",
-    "TIME_SERIES",
-    "VIDEO",
-    "VIDEO_LEGACY",
-]
-
-
 IssueStatus = Literal[
     "OPEN",
     "SOLVED",

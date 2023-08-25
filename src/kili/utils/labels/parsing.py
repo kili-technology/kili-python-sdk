@@ -3,8 +3,9 @@
 from copy import deepcopy
 from typing import Dict, Generator, Iterable, List, overload
 
+from kili.domain.project import InputType
 from kili.services.label_data_parsing import json_response as json_response_module
-from kili.services.label_data_parsing.types import InputType, Project
+from kili.services.label_data_parsing.types import Project
 
 
 class ParsedLabel(Dict):
