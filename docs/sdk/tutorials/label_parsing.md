@@ -58,6 +58,8 @@ my_label = kili.labels(project_id="my_project_id", output_format='parsed_label')
 # example of how to access the category name of the first label
 # (only for a classification job)
 my_label.jobs["MY_JOB_NAME"].category.name
+# or
+my_label.jobs["MY_JOB_NAME"].category.key
 ```
 
 Instead of:
@@ -68,7 +70,7 @@ my_label = kili.labels(project_id="my_project_id", output_format='dict')[0]
 my_label["jsonResponse"]["jobs"]["MY_JOB_NAME"]["categories"][0]["name"]
 ```
 
-As you can see, the parsed label is much easier to use than the raw label, and helps you develop your own scripts faster using your IDE auto-completion, type checking, etc.
+As you can see, the parsed label is much easier to use than the raw dict label, and helps you develop your own scripts faster using your IDE auto-completion, type checking, etc.
 
 ## Parsed Label integration to kili.assets()
 
@@ -80,6 +82,8 @@ my_asset = kili.assets(project_id="my_project_id", label_output_format='parsed_l
 # example of how to access the category name of the first label
 # (only for a classification job)
 my_asset["labels"][0].jobs["MY_JOB_NAME"].category.name
+# or
+my_asset["labels"][0].jobs["MY_JOB_NAME"].category.key
 ```
 
 ## ParsedLabel class
@@ -110,7 +114,9 @@ Converting a label to a `ParsedLabel` is as simple as:
 my_label = {
     "author": {"email": "first.last@kili-technology.com", "id": "123456"},
     "id": "clh0fsi9u0tli0j666l4sfhpz",
-    "jsonResponse": {"CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "A"}]}},
+    "jsonResponse": {
+        "CLASSIFICATION_JOB": {"categories": [{"confidence": 100, "name": "CATEGORY_A"}]}
+    },
     "labelType": "DEFAULT",
     "secondsToLabel": 5,
 }
@@ -164,17 +170,21 @@ The available data attributes are specific to the job interface described in the
 print(my_parsed_label.jobs["CLASSIFICATION_JOB"])
 ```
 
-    {'categories': [{'name': 'A', 'confidence': 100}]}
+    {'categories': [{'name': 'CATEGORY_A', 'confidence': 100}]}
 
 
-For example, for a classification job, the available data attributes are `categories` or `category`, and a category object can have a `name` and a `confidence` attribute.
+For example, for a classification job, the available data attributes are `.categories` or `.category`, and a category object can have `.name`, `.key` and `.confidence` attributes.
 
 
 ```python
 print(my_parsed_label.jobs["CLASSIFICATION_JOB"].categories[0].name)
+print(my_parsed_label.jobs["CLASSIFICATION_JOB"].categories[0].key)
+print(my_parsed_label.jobs["CLASSIFICATION_JOB"].categories[0].confidence)
 ```
 
     A
+    CATEGORY_A
+    100
 
 
 ## Autocomplete
@@ -183,7 +193,7 @@ The `ParsedLabel` class enables your IDE to explore the possible attributes duri
 
 <img src="https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/label_parsing_autocompletion.gif" width="600">
 
-Note that some attributes will not be avaible at runtime, since they are specific to the project ontology that will only be known at runtime.
+Note that some attributes will not be avaible at runtime, since they are specific to the project ontology (jsonInterface) that will only be known at runtime.
 
 ## Get the json response from a parsed label
 
@@ -202,7 +212,7 @@ print(type(my_parsed_label.json_response))
 print(my_parsed_label.json_response)
 ```
 
-    {'CLASSIFICATION_JOB': {'categories': [{'name': 'A', 'confidence': 100}]}}
+    {'CLASSIFICATION_JOB': {'categories': [{'name': 'CATEGORY_A', 'confidence': 100}]}}
 
 
 ## Convert ParsedLabel to Python dict
@@ -235,7 +245,7 @@ print(type(label_as_dict))
 print(label_as_dict)
 ```
 
-    {'author': {'email': 'first.last@kili-technology.com', 'id': '123456'}, 'id': 'clh0fsi9u0tli0j666l4sfhpz', 'labelType': 'DEFAULT', 'secondsToLabel': 5, 'jsonResponse': {'CLASSIFICATION_JOB': {'categories': [{'name': 'A', 'confidence': 100}]}}}
+    {'author': {'email': 'first.last@kili-technology.com', 'id': '123456'}, 'id': 'clh0fsi9u0tli0j666l4sfhpz', 'labelType': 'DEFAULT', 'secondsToLabel': 5, 'jsonResponse': {'CLASSIFICATION_JOB': {'categories': [{'name': 'CATEGORY_A', 'confidence': 100}]}}}
 
 
 ## Task specific attributes
@@ -254,9 +264,9 @@ json_interface = {
         "SINGLE_CLASS_JOB": {
             "content": {
                 "categories": {
-                    "A": {"children": [], "name": "A"},
-                    "B": {"children": [], "name": "B"},
-                    "C": {"children": [], "name": "C"},
+                    "CATEGORY_A": {"children": [], "name": "A"},
+                    "CATEGORY_B": {"children": [], "name": "B"},
+                    "CATEGORY_C": {"children": [], "name": "C"},
                 },
                 "input": "radio",
             },
@@ -268,9 +278,9 @@ json_interface = {
         "MULTI_CLASS_JOB": {
             "content": {
                 "categories": {
-                    "D": {"children": [], "name": "D"},
-                    "E": {"children": [], "name": "E"},
-                    "F": {"children": [], "name": "F"},
+                    "CATEGORY_D": {"children": [], "name": "D"},
+                    "CATEGORY_E": {"children": [], "name": "E"},
+                    "CATEGORY_F": {"children": [], "name": "F"},
                 },
                 "input": "checkbox",
             },
@@ -293,21 +303,30 @@ To learn more about the json response format for classification jobs, please ref
 ```python
 json_responses = [
     {
-        "SINGLE_CLASS_JOB": {"categories": [{"confidence": 75, "name": "A"}]},
+        "SINGLE_CLASS_JOB": {"categories": [{"confidence": 75, "name": "CATEGORY_A"}]},
         "MULTI_CLASS_JOB": {
-            "categories": [{"confidence": 1, "name": "D"}, {"confidence": 1, "name": "E"}]
+            "categories": [
+                {"confidence": 1, "name": "CATEGORY_D"},
+                {"confidence": 1, "name": "CATEGORY_E"},
+            ]
         },
     },
     {
-        "SINGLE_CLASS_JOB": {"categories": [{"confidence": 50, "name": "B"}]},
+        "SINGLE_CLASS_JOB": {"categories": [{"confidence": 50, "name": "CATEGORY_B"}]},
         "MULTI_CLASS_JOB": {
-            "categories": [{"confidence": 2, "name": "E"}, {"confidence": 2, "name": "F"}]
+            "categories": [
+                {"confidence": 2, "name": "CATEGORY_E"},
+                {"confidence": 2, "name": "CATEGORY_F"},
+            ]
         },
     },
     {
-        "SINGLE_CLASS_JOB": {"categories": [{"confidence": 25, "name": "C"}]},
+        "SINGLE_CLASS_JOB": {"categories": [{"confidence": 25, "name": "CATEGORY_C"}]},
         "MULTI_CLASS_JOB": {
-            "categories": [{"confidence": 3, "name": "F"}, {"confidence": 3, "name": "D"}]
+            "categories": [
+                {"confidence": 3, "name": "CATEGORY_F"},
+                {"confidence": 3, "name": "CATEGORY_D"},
+            ]
         },
     },
 ]
@@ -326,7 +345,7 @@ labels = [
 print(labels[0].jobs["SINGLE_CLASS_JOB"])
 ```
 
-    {'categories': [{'name': 'A', 'confidence': 75}]}
+    {'categories': [{'name': 'CATEGORY_A', 'confidence': 75}]}
 
 
 
@@ -334,15 +353,17 @@ print(labels[0].jobs["SINGLE_CLASS_JOB"])
 print(labels[0].jobs["SINGLE_CLASS_JOB"].categories)
 ```
 
-    [{'name': 'A', 'confidence': 75}]
+    [{'name': 'CATEGORY_A', 'confidence': 75}]
 
 
 
 ```python
 print(labels[0].jobs["SINGLE_CLASS_JOB"].categories[0].name)
+print(labels[0].jobs["SINGLE_CLASS_JOB"].categories[0].key)
 ```
 
     A
+    CATEGORY_A
 
 
 Since `SINGLE_CLASS_JOB` is a single-category classification job, the `.category` attribute is available, and is an alias for `.categories[0]`:
@@ -379,30 +400,30 @@ for i, label in enumerate(labels):
     for job_name, job_data in label.jobs.items():
         print("job_name: ", job_name)
         for category in job_data.categories:
-            print("category: ", category.name, category.confidence)
+            print("category: ", category.key, category.name, category.confidence)
 ```
 
 
     Label 0
     job_name:  SINGLE_CLASS_JOB
-    category:  A 75
+    category:  CATEGORY_A A 75
     job_name:  MULTI_CLASS_JOB
-    category:  D 1
-    category:  E 1
+    category:  CATEGORY_D D 1
+    category:  CATEGORY_E E 1
 
     Label 1
     job_name:  SINGLE_CLASS_JOB
-    category:  B 50
+    category:  CATEGORY_B B 50
     job_name:  MULTI_CLASS_JOB
-    category:  E 2
-    category:  F 2
+    category:  CATEGORY_E E 2
+    category:  CATEGORY_F F 2
 
     Label 2
     job_name:  SINGLE_CLASS_JOB
-    category:  C 25
+    category:  CATEGORY_C C 25
     job_name:  MULTI_CLASS_JOB
-    category:  F 3
-    category:  D 3
+    category:  CATEGORY_F F 3
+    category:  CATEGORY_D D 3
 
 
 ### Transcription jobs
@@ -448,7 +469,7 @@ json_interface = {
             "tools": ["rectangle"],
             "required": 1,
             "isChild": False,
-            "content": {"categories": {"A": {}, "B": {}}, "input": "radio"},
+            "content": {"categories": {"A": {"name": "A"}, "B": {"name": "B"}}, "input": "radio"},
         }
     }
 }
@@ -990,7 +1011,7 @@ print(list(label.jobs.keys()))
 print(label.jobs["JOB_0"].annotations[0].category)
 ```
 
-    {'name': 'HEAD'}
+    {'key': 'HEAD', 'name': 'Head'}
 
 
 
@@ -1099,7 +1120,7 @@ frame = label.jobs["FRAME_CLASSIF_JOB"].frames[5]
 print(frame.category.name)
 ```
 
-    OBJECT_A
+    Object A
 
 
 The syntax is similar for object detection jobs on video:
@@ -1167,7 +1188,7 @@ label = ParsedLabel(dict_label, json_interface=json_interface, input_type="VIDEO
 print(label.jobs["JOB_0"].frames[1].annotations[0].category.name)
 ```
 
-    OBJECT_B
+    Car
 
 
 ### Named entities recognition jobs
@@ -1185,7 +1206,7 @@ json_interface = {
             "required": 1,
             "isChild": False,
             "content": {
-                "categories": {"ORG": {}, "PERSON": {}},
+                "categories": {"ORG": {"name": "ORG"}, "PERSON": {"name": "PERSON"}},
                 "input": "radio",
             },
         }
@@ -1239,7 +1260,7 @@ print(label.jobs["NER_JOB"].annotations == label.jobs["NER_JOB"].entity_annotati
 print(label.jobs["NER_JOB"].annotations[0].category)
 ```
 
-    {'name': 'ORG', 'confidence': 42}
+    {'key': 'ORG', 'name': 'ORG', 'confidence': 42}
 
 
 
@@ -1416,7 +1437,7 @@ print(first_ann.content)
 print(first_ann.category)
 ```
 
-    {'name': 'C', 'confidence': 100}
+    {'key': 'C', 'name': 'C', 'confidence': 100}
 
 
 The NER in PDFs json response format is a bit complex, and thus requires to use the `.annotations` attribute a second time. You can read more about it in the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs).
@@ -1576,7 +1597,7 @@ print(label.jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].start_entities)
 print(label.jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].end_entities)
 ```
 
-    RELATION_1
+    Relation 1
     [{'mid': '123'}]
     [{'mid': '456'}]
 
@@ -1709,7 +1730,7 @@ print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].start_objects)
 print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].end_objects)
 ```
 
-    {'name': 'RELATION_1'}
+    {'key': 'RELATION_1', 'name': 'Relation 1'}
     [{'mid': '20230502102127826-44552'}]
     [{'mid': '20230502102129606-15732'}]
 
