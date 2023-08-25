@@ -39,19 +39,6 @@ InputType = Literal[
     "VIDEO_LEGACY",
 ]
 
-
-IssueStatus = Literal[
-    "OPEN",
-    "SOLVED",
-]
-
-
-IssueType = Literal[
-    "ISSUE",
-    "QUESTION",
-]
-
-
 LabelFormat = Literal[
     "RAW",
     "SIMPLE",
