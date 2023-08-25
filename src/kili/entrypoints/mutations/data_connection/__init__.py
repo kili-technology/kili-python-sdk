@@ -5,16 +5,13 @@ from typing import Dict, List, Optional
 
 from typeguard import typechecked
 
+import kili.services.data_connection as data_connection_service
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationsQuery,
     DataIntegrationWhere,
 )
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.services.data_connection import (
-    compute_differences,
-    synchronize_data_connection,
-)
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .queries import GQL_ADD_PROJECT_DATA_CONNECTION
@@ -67,7 +64,7 @@ class MutationsDataConnection(BaseOperationEntrypointMixin):
         result = self.format_result("data", result)
 
         # We trigger data difference computation (same behavior as in the frontend)
-        compute_differences(self, result["id"])
+        data_connection_service.compute_differences(self, result["id"])
 
         return result
 
@@ -96,6 +93,6 @@ class MutationsDataConnection(BaseOperationEntrypointMixin):
         Returns:
             A dict with the cloud storage connection Id.
         """
-        return synchronize_data_connection(
+        return data_connection_service.synchronize_data_connection(
             self, cloud_storage_connection_id, delete_extraneous_files, dry_run
         )
