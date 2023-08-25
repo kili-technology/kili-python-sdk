@@ -480,7 +480,7 @@ def test_ner_text_project_with_classif_children_job():
                 "required": 1,
             },
             "CLASSIFICATION_JOB": {
-                "content": {"categories": {"A": {"children": [], "name": "A"}}, "input": "radio"},
+                "content": {"categories": {"A": {"children": [], "name": "a"}}, "input": "radio"},
                 "instruction": "Classif",
                 "mlTask": "CLASSIFICATION",
                 "required": 1,
@@ -511,15 +511,19 @@ def test_ner_text_project_with_classif_children_job():
     project_info = Project(jsonInterface=job_interface["jobs"], inputType="TEXT")  # type: ignore
     parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
 
-    assert parsed_jobs["JOB_0"].entity_annotations[0].category.name == "INTERJECTION"
+    assert parsed_jobs["JOB_0"].entity_annotations[0].category.name == "Interjection"
+    assert parsed_jobs["JOB_0"].entity_annotations[0].category.key == "INTERJECTION"
     assert parsed_jobs["JOB_0"].entity_annotations[0].begin_offset == 497
     assert parsed_jobs["JOB_0"].entity_annotations[0].end_offset == 514
 
     assert (
         parsed_jobs["JOB_0"].entity_annotations[0].children["CLASSIFICATION_JOB"].category.name
+        == "a"
+    )
+    assert (
+        parsed_jobs["JOB_0"].entity_annotations[0].children["CLASSIFICATION_JOB"].category.key
         == "A"
     )
-
     parsed_jobs_as_dict = parsed_jobs.to_dict()
     assert parsed_jobs_as_dict == json_resp
 
@@ -655,7 +659,7 @@ def test_pose_estimation_with_children():
             },
             "CLASSIFICATION_JOB": {
                 "content": {
-                    "categories": {"CATEGORY_1": {"children": [], "name": "CATEGORY_1"}},
+                    "categories": {"CATEGORY_1": {"children": [], "name": "Cat 1"}},
                     "input": "radio",
                 },
                 "instruction": "CLASSIFICATION_JOB",
@@ -670,27 +674,21 @@ def test_pose_estimation_with_children():
         "JOB_0": {
             "annotations": [
                 {
-                    "categories": [{"confidence": 100, "name": "POSE_A"}],
                     "children": {},
-                    "jobName": "JOB_0",
-                    "kind": "POSE_ESTIMATION",
-                    "mid": "20220511112452SS-21114",
                     "points": [
                         {
-                            "categories": [{"confidence": 100, "name": "POSE_A"}],
                             "children": {
                                 "CLASSIFICATION_JOB": {
                                     "categories": [{"confidence": 100, "name": "CATEGORY_1"}]
                                 }
                             },
                             "code": "POINT_A1",
-                            "jobName": "JOB_0",
-                            "mid": "20220511112452SS-21114",
-                            "name": "Point A1",
-                            "point": {"x": 0.4853515625, "y": 0.203125},
-                        },
+                            "point": {"x": 0.74, "y": 0.39},
+                        }
                     ],
-                    "type": "marker",
+                    "categories": [{"name": "POSE_A"}],
+                    "mid": "20230825092341563-27153",
+                    "type": "pose",
                 }
             ]
         }
@@ -701,9 +699,18 @@ def test_pose_estimation_with_children():
 
     ann = parsed_jobs["JOB_0"].annotations[0]
 
-    assert ann.category.name == "POSE_A"
-    assert ann.points[0].category.name == "POSE_A"
-    assert ann.points[0].children["CLASSIFICATION_JOB"].categories[0].name == "CATEGORY_1"
+    assert ann.category.name == "A"
+    assert ann.category.key == "POSE_A"
+    assert ann.mid == "20230825092341563-27153"
+    assert ann.type == "pose"
+
+    first_point = ann.points[0]
+    assert first_point.code == "POINT_A1"
+    assert first_point.point == {"x": 0.74, "y": 0.39}
+    assert first_point.children["CLASSIFICATION_JOB"].categories[0].name == "Cat 1"
+    assert first_point.children["CLASSIFICATION_JOB"].categories[0].key == "CATEGORY_1"
+    assert first_point.children["CLASSIFICATION_JOB"].category.name == "Cat 1"
+    assert first_point.children["CLASSIFICATION_JOB"].category.key == "CATEGORY_1"
 
     parsed_jobs_as_dict = parsed_jobs.to_dict()
     assert parsed_jobs_as_dict == json_resp

@@ -54,14 +54,6 @@ def test_attribute_category():
 
 
 def test_attribute_categories_multiclass():
-    json_response_dict = {
-        "JOB_0": {
-            "categories": [
-                {"name": "A", "confidence": 42},
-                {"name": "B", "confidence": 100},
-            ]
-        }
-    }
     json_interface = {
         "jobs": {
             "JOB_0": {
@@ -70,13 +62,22 @@ def test_attribute_categories_multiclass():
                 "isChild": False,
                 "content": {
                     "categories": {
-                        "A": {"children": [], "name": "A", "id": "category30"},
-                        "B": {"children": [], "name": "B", "id": "category31"},
-                        "C": {"children": [], "name": "C", "id": "category32"},
+                        "CATEGORY_A": {"children": [], "name": "Category A", "id": "category30"},
+                        "CATEGORY_B": {"children": [], "name": "Category B", "id": "category31"},
+                        "CATEGORY_C": {"children": [], "name": "Category C", "id": "category32"},
                     },
                     "input": "checkbox",
                 },
             }
+        }
+    }
+
+    json_response_dict = {
+        "JOB_0": {
+            "categories": [
+                {"name": "CATEGORY_A", "confidence": 42},
+                {"name": "CATEGORY_B", "confidence": 100},
+            ]
         }
     }
 
@@ -85,9 +86,11 @@ def test_attribute_categories_multiclass():
     categories = parsed_jobs["JOB_0"].categories
 
     assert categories[0].confidence == 42
-    assert categories[0].name == "A"
+    assert categories[0].name == "Category A"
+    assert categories[0].key == "CATEGORY_A"
     assert categories[1].confidence == 100
-    assert categories[1].name == "B"
+    assert categories[1].name == "Category B"
+    assert categories[1].key == "CATEGORY_B"
 
 
 def test_attribute_text():
@@ -103,6 +106,19 @@ def test_attribute_text():
 
 
 def test_attribute_entity_annotations():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "required": 1,
+                "isChild": False,
+                "content": {
+                    "categories": {"ORG": {"name": "org"}, "PERSON": {"name": "person"}},
+                    "input": "radio",
+                },
+            }
+        }
+    }
     json_response_dict = {
         "JOB_0": {
             "annotations": [
@@ -121,19 +137,6 @@ def test_attribute_entity_annotations():
             ]
         }
     }
-    json_interface = {
-        "jobs": {
-            "JOB_0": {
-                "mlTask": "NAMED_ENTITIES_RECOGNITION",
-                "required": 1,
-                "isChild": False,
-                "content": {
-                    "categories": {"ORG": {}, "PERSON": {}},
-                    "input": "radio",
-                },
-            }
-        }
-    }
 
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
     parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_response_dict)
@@ -145,14 +148,30 @@ def test_attribute_entity_annotations():
     category = parsed_jobs["JOB_0"].entity_annotations[0].category
     categories = parsed_jobs["JOB_0"].entity_annotations[0].categories
 
-    assert category.name == categories[0].name == "ORG"
+    assert category.name == categories[0].name == "org"
+    assert category.key == categories[0].key == "ORG"
     assert category.confidence == categories[0].confidence == 42
 
-    assert parsed_jobs["JOB_0"].entity_annotations[1].category.name == "PERSON"
+    assert parsed_jobs["JOB_0"].entity_annotations[1].category.name == "person"
+    assert parsed_jobs["JOB_0"].entity_annotations[1].category.key == "PERSON"
     assert parsed_jobs["JOB_0"].entity_annotations[1].category.confidence == 100
 
 
 def test_attribute_object_detection():
+    json_interface = {
+        "jobs": {
+            "OBJECT_DETECTION_JOB": {
+                "mlTask": "OBJECT_DETECTION",
+                "tools": ["rectangle"],
+                "required": 1,
+                "isChild": False,
+                "content": {
+                    "categories": {"A": {"name": "a"}, "B": {"name": "b"}},
+                    "input": "radio",
+                },
+            }
+        }
+    }
     json_response_dict = {
         "OBJECT_DETECTION_JOB": {
             "annotations": [
@@ -175,23 +194,14 @@ def test_attribute_object_detection():
             ]
         }
     }
-    json_interface = {
-        "jobs": {
-            "OBJECT_DETECTION_JOB": {
-                "mlTask": "OBJECT_DETECTION",
-                "tools": ["rectangle"],
-                "required": 1,
-                "isChild": False,
-                "content": {"categories": {"A": {}, "B": {}}, "input": "radio"},
-            }
-        }
-    }
 
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
-    assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].category.name == "B"
-    assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].categories[0].name == "B"
+    assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].category.name == "b"
+    assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].category.key == "B"
+    assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].categories[0].name == "b"
+    assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].categories[0].key == "B"
     assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].mid == "20230315142306286-25528"
     assert parsed_jobs["OBJECT_DETECTION_JOB"].annotations[0].type == "rectangle"
 
@@ -576,8 +586,10 @@ def test_multiple_bounding_poly():
 
     job = parsed_jobs["JOB_0"]
 
-    assert job.annotations[0].categories[0].name == "OBJECT_A"
-    assert job.annotations[1].category.name == "OBJECT_B"
+    assert job.annotations[0].categories[0].name == "Object A"
+    assert job.annotations[0].categories[0].key == "OBJECT_A"
+    assert job.annotations[1].category.name == "Object B"
+    assert job.annotations[1].category.key == "OBJECT_B"
 
     assert job.annotations[0].type == job.annotations[1].type == "semantic"
 
@@ -671,7 +683,8 @@ def test_text_ner_job_with_relation_job():
     parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
     relation_job = parsed_jobs["RELATION_JOB"]
 
-    assert relation_job.annotations[0].categories[0].name == "CATEGORY_RELATION_JOB"
+    assert relation_job.annotations[0].categories[0].name == "Category relation job"
+    assert relation_job.annotations[0].categories[0].key == "CATEGORY_RELATION_JOB"
     assert relation_job.annotations[0].start_entities[0]
     assert relation_job.annotations[0].end_entities[0]
 
@@ -779,13 +792,27 @@ def test_object_detection_with_relations():
 
     relation_job = parsed_jobs["OBJECT_RELATION_JOB"]
 
-    assert relation_job.annotations[0].categories[0].name == "CATEGORY_A"
+    assert relation_job.annotations[0].categories[0].name == "Category A"
+    assert relation_job.annotations[0].categories[0].key == "CATEGORY_A"
     assert relation_job.annotations[0].start_objects[0]
     assert relation_job.annotations[0].end_objects[0]
     assert relation_job.annotations[0].mid == "20230328131252526-80405"
 
 
 def test_repr_str_custom_classes():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "required": 1,
+                "isChild": False,
+                "content": {
+                    "categories": {"ORG": {"name": "Org"}, "PERSON": {"name": "Person"}},
+                    "input": "radio",
+                },
+            }
+        }
+    }
     json_response_dict = {
         "JOB_0": {
             "annotations": [
@@ -796,16 +823,6 @@ def test_repr_str_custom_classes():
                     "mid": "a",
                 }
             ]
-        }
-    }
-    json_interface = {
-        "jobs": {
-            "JOB_0": {
-                "mlTask": "NAMED_ENTITIES_RECOGNITION",
-                "required": 1,
-                "isChild": False,
-                "content": {"categories": {"ORG": {}, "PERSON": {}}, "input": "radio"},
-            }
         }
     }
 
@@ -900,12 +917,15 @@ def test_parsing_category_only_name():
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
     parsed_jobs = ParsedJobs(project_info=project_info, json_response=json_resp)
 
-    assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "OBJECT_B"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "Object B"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[0].key == "OBJECT_B"
 
-    parsed_jobs["JOB_0"].annotations[0].categories[0].name = "OBJECT_A"
+    parsed_jobs["JOB_0"].annotations[0].categories[0].name = "Object A"
+    parsed_jobs["JOB_0"].annotations[0].categories[0].key = "OBJECT_A"
     parsed_jobs["JOB_0"].annotations[0].categories[0].confidence = 42
 
-    assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "OBJECT_A"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "Object A"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[0].key == "OBJECT_A"
     assert parsed_jobs["JOB_0"].annotations[0].category.confidence == 42
 
 
@@ -962,19 +982,23 @@ def test_video_project_classification():
     assert not hasattr(parsed_label, "frames")
 
     assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[5].is_key_frame is True
-    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[5].category.name == "OBJECT_A"
+    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[5].category.name == "Object A"
+    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[5].category.key == "OBJECT_A"
     assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[5].category.confidence == 100
 
     assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[6].is_key_frame is False
-    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[6].category.name == "OBJECT_B"
+    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[6].category.name == "Object B"
+    assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[6].category.key == "OBJECT_B"
     assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[6].category.confidence == 42
 
     for i, frame in enumerate(parsed_label.jobs["FRAME_CLASSIF_JOB"].frames):
         if i == 5:
-            frame.category.name = "OBJECT_A"
+            frame.category.name = "Object A"
+            frame.category.key = "OBJECT_A"
             frame.category.confidence = 100
         elif i == 6:
-            frame.category.name = "OBJECT_B"
+            frame.category.name = "Object B"
+            frame.category.key = "OBJECT_B"
             frame.category.confidence = 42
 
     assert parsed_label.jobs["FRAME_CLASSIF_JOB"].frames[0].to_dict() == {}
@@ -993,8 +1017,8 @@ def test_video_project_object_detection():
             "JOB_0": {
                 "content": {
                     "categories": {
-                        "OBJECT_A": {"children": ["JOB_1"], "name": "Train", "color": "#733AFB"},
-                        "OBJECT_B": {"children": ["JOB_2"], "name": "Car", "color": "#3CD876"},
+                        "OBJECT_A": {"children": ["JOB_1"], "name": "A", "color": "#733AFB"},
+                        "OBJECT_B": {"children": ["JOB_2"], "name": "B", "color": "#3CD876"},
                     },
                     "input": "radio",
                 },
@@ -1103,17 +1127,20 @@ def test_video_project_object_detection():
     frame = parsed_label.jobs["JOB_0"].frames[1]
 
     first_annotation = frame.annotations[0]
-    assert first_annotation.category.name == "OBJECT_B"
+    assert first_annotation.category.name == "B"
+    assert first_annotation.category.key == "OBJECT_B"
     assert first_annotation.type == "rectangle"
     assert first_annotation.is_key_frame is True
     assert len(first_annotation.bounding_poly) == 1
 
     second_annotation = frame.annotations[1]
-    assert second_annotation.category.name == "OBJECT_A"
+    assert second_annotation.category.name == "A"
+    assert second_annotation.category.key == "OBJECT_A"
     assert second_annotation.type == "rectangle"
     assert second_annotation.is_key_frame is False
     assert len(second_annotation.bounding_poly) == 1
-    assert second_annotation.children["JOB_1"].categories[0].name == "IS_THE OBJECT OCCLUDED?"
+    assert second_annotation.children["JOB_1"].categories[0].name == "Is the object occluded?"
+    assert second_annotation.children["JOB_1"].categories[0].key == "IS_THE OBJECT OCCLUDED?"
     assert second_annotation.children["JOB_1"].categories[0].confidence == 100
     assert second_annotation.children["JOB_1"].is_key_frame is False
 
@@ -1504,7 +1531,8 @@ def test_parsing_ner_in_pdf_1():
     parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
 
     annotation_1 = parsed_jobs["JOB_0"].annotations[0]
-    assert annotation_1.category.name == "ENTITY_A"
+    assert annotation_1.category.name == "Entity A"
+    assert annotation_1.category.key == "ENTITY_A"
     assert annotation_1.category.confidence == 100
     assert annotation_1.content == "abcdefghijsdjfspdjfso"
     assert annotation_1.annotations[0].polys == [{"normalizedVertices": [normalizedVertices]}]
@@ -1571,7 +1599,8 @@ def test_parsing_ner_in_pdf_2():
     parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
 
     annotation_1 = parsed_jobs["JOB_0"].annotations[0]
-    assert annotation_1.category.name == "ENTITY_A"
+    assert annotation_1.category.name == "Entity A"
+    assert annotation_1.category.key == "ENTITY_A"
     assert annotation_1.category.confidence == 100
     assert annotation_1.content == "While many "
 
@@ -1666,7 +1695,8 @@ def test_pose_estimation_1():
 
     annotation = parsed_jobs["JOB_0"].annotations[0]
 
-    assert annotation.category.name == "POSE_A"
+    assert annotation.category.name == "A"
+    assert annotation.category.key == "POSE_A"
     assert annotation.category.confidence == 100
     assert annotation.kind == "POSE_ESTIMATION"
     assert annotation.type == "marker"
@@ -1674,12 +1704,14 @@ def test_pose_estimation_1():
     assert len(annotation.points) == 4
 
     for i, point in enumerate(annotation.points):
-        assert point.category.name == "POSE_A"
+        assert point.category.name == "A"
+        assert point.category.key == "POSE_A"
         assert point.category.confidence == i + 1
         assert point.code == f"POINT_A{i + 1}"
         assert point.job_name == "JOB_0"
         assert point.name == f"Point A{i + 1}"
-        assert "x" in point.point and "y" in point.point
+        assert "x" in point.point
+        assert "y" in point.point
 
     assert parsed_jobs.to_dict() == json_resp
 
@@ -1852,13 +1884,15 @@ def test_pose_estimation_2():
 
     first_ann = parsed_jobs["JOB_0"].annotations[0]
 
-    assert first_ann.category.name == "HEAD"
+    assert first_ann.category.name == "Head"
+    assert first_ann.category.key == "HEAD"
     assert first_ann.points[0].code == "RIGHT_EARBASE"
     assert first_ann.points[1].code == "RIGHT_EYE"
 
     second_ann = parsed_jobs["JOB_0"].annotations[1]
 
-    assert second_ann.category.name == "BODY"
+    assert second_ann.category.name == "Body"
+    assert second_ann.category.key == "BODY"
     assert second_ann.points[0].code == "THROAT"
     assert second_ann.points[1].code == "WITHERS"
 

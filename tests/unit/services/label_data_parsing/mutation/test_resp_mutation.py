@@ -11,6 +11,61 @@ from kili.services.label_data_parsing.types import Project
 from kili.utils.labels.parsing import ParsedLabel
 
 
+def test_set_attribute_categories_multiclass():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": False,
+                "content": {
+                    "categories": {
+                        "CATEGORY_A": {"children": [], "name": "Category A", "id": "category30"},
+                        "CATEGORY_B": {"children": [], "name": "Category B", "id": "category31"},
+                        "CATEGORY_C": {"children": [], "name": "Category C", "id": "category32"},
+                    },
+                    "input": "checkbox",
+                },
+            }
+        }
+    }
+
+    json_response_dict = {
+        "JOB_0": {
+            "categories": [
+                {"name": "CATEGORY_A"},
+                {"name": "CATEGORY_B"},
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
+    categories = parsed_jobs["JOB_0"].categories
+
+    assert categories[0].name == "Category A"
+    assert categories[0].key == "CATEGORY_A"
+    assert categories[1].name == "Category B"
+    assert categories[1].key == "CATEGORY_B"
+
+    categories[0].name = "Category B"
+    assert categories[0].name == "Category B"
+    assert categories[0].key == "CATEGORY_B"
+
+    categories[1].key = "CATEGORY_A"
+    assert categories[1].name == "Category A"
+    assert categories[1].key == "CATEGORY_A"
+
+    assert parsed_jobs.to_dict() == {
+        "JOB_0": {
+            "categories": [
+                {"name": "CATEGORY_B"},
+                {"name": "CATEGORY_A"},
+            ]
+        }
+    }
+
+
 def test_mutate_transcription_label():
     json_interface = {
         "jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}}
