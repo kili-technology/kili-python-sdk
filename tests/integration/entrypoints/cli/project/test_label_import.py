@@ -101,7 +101,9 @@ def test_import_labels(name: str, test_case: Dict, mocker: pytest_mock.MockFixtu
             if test_case.get("flags"):
                 arguments.extend(["--" + flag for flag in test_case["flags"]])
 
-    with patch("kili.services.import_labels_from_files") as mocked_import_labels_service:
+    with patch(
+        "kili.services.label_import.import_labels_from_files"
+    ) as mocked_import_labels_service:
         result = runner.invoke(import_labels, arguments)
         debug_subprocess_pytest(result)
         mocked_import_labels_service.assert_called_with(*test_case["expected_service_call"])
@@ -180,7 +182,9 @@ def test_import_labels_yolo(name: str, test_case: Dict, mocker: pytest_mock.Mock
     _ = name
     runner = CliRunner()
     with runner.isolated_filesystem():
-        with patch("kili.services.import_labels_from_files") as mocked_import_labels_service:
+        with patch(
+            "kili.services.label_import.import_labels_from_files"
+        ) as mocked_import_labels_service:
             arguments = test_case["files"]
             for k, v in test_case["options"].items():
                 arguments.append("--" + k)

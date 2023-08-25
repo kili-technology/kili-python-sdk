@@ -10,7 +10,7 @@ from typeguard import typechecked
 from kili.core.helpers import get_file_paths_to_upload
 from kili.entrypoints.cli.common_args import Arguments, Options, from_csv
 from kili.entrypoints.cli.helpers import collect_from_csv, get_kili_client
-from kili.services.asset_import import import_assets as service_import_assets
+from kili.services import asset_import
 from kili.services.helpers import (
     check_exclusive_options,
     get_external_id_from_file_path,
@@ -176,4 +176,4 @@ def import_assets(
             for i in range(len(assets_to_import))
         ]
 
-    service_import_assets(kili, project_id, assets_to_import, False)
+    asset_import.import_assets(kili, project_id, assets_to_import, False)
