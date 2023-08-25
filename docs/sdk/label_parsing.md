@@ -38,7 +38,7 @@ Read more about this feature in the [label parsing tutorial](https://python-sdk-
     print(my_label.jobs["CLASSIFICATION_JOB"].category.name)  # Category A
     ```
 
-    If you want to retrieve the category name as it is in the json interface, you can use the `.key` attribute:
+    If you want to retrieve the category name as it is in the json response, you can use the `.key` attribute:
 
     ```python
     print(my_label.jobs["CLASSIFICATION_JOB"].category.key)  # CATEGORY_A
