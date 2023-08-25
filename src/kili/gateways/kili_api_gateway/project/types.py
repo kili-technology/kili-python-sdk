@@ -1,10 +1,12 @@
 """Types for the Project-related Kili API gateway functions."""
 
+from dataclasses import dataclass
 from typing import Optional
 
 from kili.gateways.kili_api_gateway.queries import AbstractQueryWhere
 
 
+@dataclass
 class ProjectWhere(AbstractQueryWhere):
     """Dataclass holding the parameters to query projects."""
 
