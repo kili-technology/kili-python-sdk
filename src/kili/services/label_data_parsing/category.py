@@ -4,7 +4,6 @@ from typing import Any, Dict, Iterator, List, Optional
 from typeguard import typechecked
 
 import kili.services.label_data_parsing.json_response as json_response_module
-from kili.services.types import JobName
 
 from .exceptions import InvalidMutationError
 from .types import Project
@@ -25,8 +24,7 @@ class Category:
         self._json_data = {}
         self._project_info = project_info
         self._job_name = job_name
-        self._job_interface = project_info["jsonInterface"][JobName(job_name)]
-
+        self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
         # call the setters to check the values are valid
         self.name = category_json["name"]
         if "confidence" in category_json:
@@ -196,7 +194,7 @@ class CategoryList:
         self._project_info = project_info
         self._job_name = job_name
 
-        self._job_interface = project_info["jsonInterface"][JobName(job_name)]
+        self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
 
         for category_dict in categories_list:
             self.add_category(**category_dict)
