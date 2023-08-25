@@ -54,7 +54,7 @@ kili.update_properties_in_project(project_id=project_id, review_coverage=50)
 
 
 
-    {'id': 'cld95dpne0n2y0joi6wuq3u6v', 'reviewCoverage': 50}
+    {'id': 'cllqje3ab02at085la2tp6o50', 'reviewCoverage': 50}
 
 
 
@@ -72,16 +72,21 @@ Let's set the percentage of the project dataset that will be annotated several t
 
 
 ```python
-def set_consensus_coverage(project_id: str, consensus_tot_coverage: int, min_consensus_size: int):
-    kili.update_properties_in_project(
-        project_id=project_id,
-        consensus_tot_coverage=consensus_tot_coverage,
-        min_consensus_size=min_consensus_size,
-    )
-
-
-set_consensus_coverage(project_id=project_id, consensus_tot_coverage=50, min_consensus_size=3)
+kili.update_properties_in_project(
+    project_id=project_id,
+    consensus_tot_coverage=50,
+    min_consensus_size=3,
+)
 ```
+
+
+
+
+    {'id': 'cllqje3ab02at085la2tp6o50',
+     'consensusTotCoverage': 50,
+     'minConsensusSize': 3}
+
+
 
 ### Setting consensus for specific assets to compute consensus KPIs
 
@@ -89,17 +94,21 @@ You can manually select specific project assets to be used for computing consens
 
 
 ```python
-def set_assets_for_consensus(project_id: str, external_ids: list):
-    kili.update_properties_in_assets(
-        project_id=project_id,
-        external_ids=external_ids,
-        is_used_for_consensus_array=[True] * len(external_ids),
-    )
-
-
-external_ids = ["1.jpg", "2.jpg", "3.jpg"]
-set_assets_for_consensus(project_id=project_id, external_ids=external_ids)
+kili.update_properties_in_assets(
+    project_id=project_id,
+    external_ids=["1.jpg", "2.jpg", "3.jpg"],
+    is_used_for_consensus_array=[True] * 3,
+)
 ```
+
+
+
+
+    [{'id': 'cllqje4px0017flvzc97bjzrh'},
+     {'id': 'cllqje4px0018flvz01v8hro5'},
+     {'id': 'cllqje4px0019flvznv1j8d55'}]
+
+
 
 For more information on consensus, refer to our [documentation](https://docs.kili-technology.com/docs/consensus-overview).
 
@@ -112,12 +121,11 @@ You can manually select specific project assets to be used as honeypots.
 
 
 ```python
-asset_external_id = "1.jpg"
-json_response = {"JOB_0": {"categories": [{"confidence": 100, "name": "OBJECT_B"}]}}
-
 kili.create_honeypot(
-    project_id=project_id, asset_external_id=asset_external_id, json_response=json_response
-);
+    project_id=project_id,
+    asset_external_id="1.jpg",
+    json_response={"JOB_0": {"categories": [{"confidence": 100, "name": "OBJECT_B"}]}},
+)
 ```
 
 For more information on honeypot, refer to our [documentation](https://docs.kili-technology.com/docs/consensus-overview).
@@ -128,25 +136,25 @@ You can assign specific labelers to specific assets in your project. You can do 
 
 
 ```python
-def assign_labelers_to_assets(project_id: str, external_ids: list, to_be_labeled_by_array: list):
-    kili.update_properties_in_assets(
-        project_id=project_id,
-        external_ids=external_ids,
-        to_be_labeled_by_array=to_be_labeled_by_array,
-    )
-
-
-external_ids = ["1.jpg", "2.jpg", "3.jpg"]
-to_be_labeled_by_array = [
-    ["example1@example.com"],
-    ["example2@example.com"],
-    ["example3@example.com"],
-]
-
-assign_labelers_to_assets(
-    project_id=project_id, external_ids=external_ids, to_be_labeled_by_array=to_be_labeled_by_array
+kili.update_properties_in_assets(
+    project_id=project_id,
+    external_ids=["1.jpg", "2.jpg", "3.jpg"],
+    to_be_labeled_by_array=[
+        ["example1@example.com"],
+        ["example2@example.com"],
+        ["example3@example.com"],
+    ],
 )
 ```
+
+
+
+
+    [{'id': 'cllqje4px0017flvzc97bjzrh'},
+     {'id': 'cllqje4px0018flvz01v8hro5'},
+     {'id': 'cllqje4px0019flvznv1j8d55'}]
+
+
 
 The `to_be_labeled_by_array` argument is a list of lists. Each of the sub-lists can contain several e-mails. This way you can assign several labelers to one asset.
 
@@ -163,16 +171,19 @@ If you have certain assets that you need to have labeled earlier or later than t
 
 
 ```python
-def set_priority_for_assets(project_id: str, external_ids: list, priorities: list):
-    kili.update_properties_in_assets(
-        project_id=project_id, external_ids=external_ids, priorities=priorities
-    )
-
-
-external_ids = ["1.jpg", "2.jpg", "3.jpg"]
-priorities = [1, 5, 10]
-set_priority_for_assets(project_id=project_id, external_ids=external_ids, priorities=priorities)
+kili.update_properties_in_assets(
+    project_id=project_id, external_ids=["1.jpg", "2.jpg", "3.jpg"], priorities=[1, 5, 10]
+)
 ```
+
+
+
+
+    [{'id': 'cllqje4px0017flvzc97bjzrh'},
+     {'id': 'cllqje4px0018flvz01v8hro5'},
+     {'id': 'cllqje4px0019flvznv1j8d55'}]
+
+
 
 For information on setting asset priorities, refer to our [documentation](https://docs.kili-technology.com/docs/queue-prioritization).
 
@@ -184,13 +195,10 @@ The method will return the list of newly-added label IDs.
 
 
 ```python
-json_response_array = [
-    {"JOB_0": {"categories": [{"confidence": 100, "name": "OBJECT_B"}]}} for i in range(3)
-]
 kili.append_labels(
     project_id=project_id,
-    asset_external_id_array=["1.jpg", "2.jpg", "3.jpg"],
-    json_response_array=json_response_array,
+    asset_external_id_array=["4.jpg"],
+    json_response_array=[{"JOB_0": {"categories": [{"confidence": 100, "name": "OBJECT_B"}]}}],
     label_type="DEFAULT",
 )
 ```
@@ -200,9 +208,7 @@ kili.append_labels(
 
 
 
-    [{'id': 'cld95duf80o3k0jpa5f8bdolk'},
-     {'id': 'cld95duf80o3l0jpa6tkv947s'},
-     {'id': 'cld95duf90o3m0jpaccwo0awt'}]
+    [{'id': 'cllqjefdw02hq088zb2koga1x'}]
 
 
 
@@ -210,55 +216,31 @@ Now, let's place some assets in the review queue. The method will return a proje
 
 
 ```python
-external_ids = ["1.jpg", "2.jpg", "3.jpg"]
-kili.add_to_review(project_id=project_id, external_ids=external_ids)
+kili.add_to_review(project_id=project_id, external_ids=["4.jpg"])
 ```
+
+
+
+
+    {'id': 'cllqje3ab02at085la2tp6o50', 'asset_ids': ['cllqje4py001aflvzvou02fws']}
+
+
 
 For more information on asset statuses, refer to our [documentation](https://docs.kili-technology.com/docs/asset-lifecycle).
 
 ### Sending an asset back to the labeling queue
 
 You can also send specific labeled assets back to the labeling queue.
-asset_names, first, let's simulate adding labels to some of our assets.
-The method will return the list of newly-added label IDs.
 
 
 ```python
-json_response_array = [{"JOB_0": {"categories": [{"confidence": 100, "name": "OBJECT_B"}]}}] * 3
-kili.append_labels(
-    project_id=project_id,
-    asset_external_id_array=["1.jpg", "2.jpg", "3.jpg"],
-    json_response_array=json_response_array,
-    label_type="DEFAULT",
-)
+kili.send_back_to_queue(project_id=project_id, external_ids=["4.jpg"])
 ```
 
 
 
 
-
-
-    [{'id': 'cld95dy130iss0ko864g7c7hr'},
-     {'id': 'cld95dy130ist0ko8fgokak6h'},
-     {'id': 'cld95dy130isu0ko8gb0s1ckc'}]
-
-
-
-Now, we will send some of our assets back to the labeling queue. The method will return a project ID and a list of asset IDs that were sent back to the labeling queue.
-
-
-```python
-external_ids = ["1.jpg", "2.jpg", "3.jpg"]
-kili.send_back_to_queue(project_id=project_id, external_ids=external_ids)
-```
-
-
-
-
-    {'id': 'cld95dpne0n2y0joi6wuq3u6v',
-     'asset_ids': ['cld95dq340006wvszexj8u1uh',
-      'cld95dq340007wvszoxdhet57',
-      'cld95dq340008wvszveinxcy2']}
+    {'id': 'cllqje3ab02at085la2tp6o50', 'asset_ids': ['cllqje4py001aflvzvou02fws']}
 
 
 
