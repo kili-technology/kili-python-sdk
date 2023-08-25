@@ -16,7 +16,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class IssueClientMethods:
+class AssetClientMethods:
     """Methods attached to the Kili client, to run actions on assets."""
 
     kili_api_gateway: KiliAPIGateway

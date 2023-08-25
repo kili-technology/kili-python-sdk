@@ -25,7 +25,7 @@ class IssueWhere:
     issue_type: Optional[IssueType] = None
     status: Optional[IssueStatus] = None
 
-    def get_graphql_input(self):
+    def build_gql_value(self):
         """Build the GraphQL IssueWhere payload to be sent in an operation."""
         return {
             "project": {"id": self.project_id},
@@ -82,7 +82,7 @@ class IssueOperationMixin:
         """Send a GraphQL request calling countIssues resolver."""
         where = IssueWhere(project_id, asset_id, asset_id_in, issue_type, status)
         payload = {
-            "where": where.get_graphql_input(),
+            "where": where.build_gql_value(),
         }
         count_result = self.graphql_client.execute(GQL_COUNT_ISSUES, payload)
         return count_result["data"]

@@ -21,19 +21,11 @@ class QueryOptions(NamedTuple):
 class AbstractQueryWhere(ABC):
     """Abtsract class for defining the where payload to send in a graphQL query."""
 
-    def __init__(self):
-        self._graphql_variable = self.get_graphql_where_value()
-
     @abstractmethod
-    def get_graphql_where_value(self) -> Dict:
+    def build_gql_value(self) -> Dict:
         """Build the GraphQL where payload sent in the resolver from the
         arguments given to the where class."""
         raise NotImplementedError
-
-    @property
-    def graphql_value(self):
-        """Where payload to send in the graphQL query."""
-        return self._graphql_variable
 
 
 class PaginatedGraphQLQuery:
@@ -47,7 +39,7 @@ class PaginatedGraphQLQuery:
 
     def _count(self, count_query: str, where: AbstractQueryWhere) -> int:
         """Count the number of objects matching the given where payload."""
-        payload = {"where": where.graphql_variable}
+        payload = {"where": where.build_gql_value()}
         count_result = self._graphql_client.execute(count_query, payload)
         return count_result["data"]
 
@@ -89,8 +81,8 @@ class PaginatedGraphQLQuery:
                         if nb_elements_to_query is not None
                         else QUERY_BATCH_SIZE
                     )
-                    payload = {"where": where.graphql_variable, "skip": skip, "first": first}
-                    elements = self._graphql_client.execute(query, payload)
+                    payload = {"where": where.build_gql_value(), "skip": skip, "first": first}
+                    elements = self._graphql_client.execute(query, payload)["data"]
 
                     if elements is None or len(elements) == 0:
                         break
@@ -125,7 +117,7 @@ def get_number_of_elements_to_query(
     first = options.first
     skip = options.skip
     if count_query is not None:
-        payload = {"where": where.graphql_variable}
+        payload = {"where": where.build_gql_value()}
         count_result = graphql_client.execute(count_query, payload)
         nb_elements = count_result["data"]
         nb_elements_queried = max(nb_elements - skip, 0)

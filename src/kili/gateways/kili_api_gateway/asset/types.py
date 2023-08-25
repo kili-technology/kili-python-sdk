@@ -1,5 +1,4 @@
-"""GraphQL Queries of Assets."""
-
+"""Types for the Asset-related Kili API gateway functions."""
 
 from dataclasses import dataclass
 from typing import List, Optional
@@ -10,7 +9,7 @@ from kili.gateways.kili_api_gateway.queries import AbstractQueryWhere
 
 @dataclass
 class AssetWhere(AbstractQueryWhere):
-    """Tuple to be passed to the AssetQuery to restrict query."""
+    """Dataclass holding the parameters to query assets."""
 
     # pylint: disable=too-many-instance-attributes
     project_id: str
@@ -46,7 +45,7 @@ class AssetWhere(AbstractQueryWhere):
     issue_type: Optional[IssueType] = None
     issue_status: Optional[IssueStatus] = None
 
-    def get_graphql_where_value(self):
+    def build_gql_value(self):
         """Build the GraphQL AssetWhere variable to be sent in an operation."""
 
         return {

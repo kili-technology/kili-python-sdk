@@ -38,6 +38,7 @@ from kili.entrypoints.queries.user import QueriesUser
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
 from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.presentation.client.asset import AssetClientMethods
 from kili.presentation.client.internal import InternalClientMethods
 from kili.presentation.client.issue import IssueClientMethods
 from kili.utils.logcontext import LogContext, log_call
@@ -80,6 +81,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     QueriesUser,
     SubscriptionsLabel,
     IssueClientMethods,
+    AssetClientMethods,
 ):
     """Kili Client."""
 

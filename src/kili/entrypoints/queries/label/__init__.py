@@ -20,11 +20,9 @@ from kili import services
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.core.helpers import (
-    disable_tqdm_if_as_generator,
-    validate_category_search_query,
-)
+from kili.core.helpers import validate_category_search_query
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.presentation.client.common_validators import disable_tqdm_if_as_generator
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids

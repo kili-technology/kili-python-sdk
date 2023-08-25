@@ -4,9 +4,10 @@ import requests
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.gateways.kili_api_gateway.asset import AssetOperationMixin
 from kili.gateways.kili_api_gateway.issue import IssueOperationMixin
+from kili.gateways.kili_api_gateway.project import ProjectOperationMixin
 
 
-class KiliAPIGateway(IssueOperationMixin, AssetOperationMixin):
+class KiliAPIGateway(IssueOperationMixin, AssetOperationMixin, ProjectOperationMixin):
     """GraphQL gateway to communicate with Kili backend."""
 
     def __init__(self, graphql_client: GraphQLClient, http_client: requests.Session):
