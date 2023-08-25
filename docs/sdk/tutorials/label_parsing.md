@@ -12,16 +12,6 @@ This tutorial shows how to use the label parser to easily access labels' content
 %pip install kili
 ```
 
-
-```python
-from kili.client import Kili
-
-kili = Kili(
-    # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
-    # the line above can be uncommented and changed if you are working with an on-premise version of Kili
-)
-```
-
 ## Kili labels
 
 In Kili SDK, a label is a dictionary that follows a json structure as described in the [documentation](https://docs.kili-technology.com/docs/data-format):
@@ -59,7 +49,7 @@ my_label = kili.labels(project_id="my_project_id", output_format='parsed_label')
 # (only for a classification job)
 my_label.jobs["MY_JOB_NAME"].category.name
 # or
-my_label.jobs["MY_JOB_NAME"].category.key
+my_label.jobs["MY_JOB_NAME"].category.display_name
 ```
 
 Instead of:
@@ -83,7 +73,7 @@ my_asset = kili.assets(project_id="my_project_id", label_output_format='parsed_l
 # (only for a classification job)
 my_asset["labels"][0].jobs["MY_JOB_NAME"].category.name
 # or
-my_asset["labels"][0].jobs["MY_JOB_NAME"].category.key
+my_asset["labels"][0].jobs["MY_JOB_NAME"].category.display_name
 ```
 
 ## ParsedLabel class
@@ -173,17 +163,17 @@ print(my_parsed_label.jobs["CLASSIFICATION_JOB"])
     {'categories': [{'name': 'CATEGORY_A', 'confidence': 100}]}
 
 
-For example, for a classification job, the available data attributes are `.categories` or `.category`, and a category object can have `.name`, `.key` and `.confidence` attributes.
+For example, for a classification job, the available data attributes are `.categories` or `.category`, and a category object can have `.name`, `.display_name` and `.confidence` attributes.
 
 
 ```python
 print(my_parsed_label.jobs["CLASSIFICATION_JOB"].categories[0].name)
-print(my_parsed_label.jobs["CLASSIFICATION_JOB"].categories[0].key)
+print(my_parsed_label.jobs["CLASSIFICATION_JOB"].categories[0].display_name)
 print(my_parsed_label.jobs["CLASSIFICATION_JOB"].categories[0].confidence)
 ```
 
-    A
     CATEGORY_A
+    A
     100
 
 
@@ -359,11 +349,11 @@ print(labels[0].jobs["SINGLE_CLASS_JOB"].categories)
 
 ```python
 print(labels[0].jobs["SINGLE_CLASS_JOB"].categories[0].name)
-print(labels[0].jobs["SINGLE_CLASS_JOB"].categories[0].key)
+print(labels[0].jobs["SINGLE_CLASS_JOB"].categories[0].display_name)
 ```
 
-    A
     CATEGORY_A
+    A
 
 
 Since `SINGLE_CLASS_JOB` is a single-category classification job, the `.category` attribute is available, and is an alias for `.categories[0]`:
@@ -374,7 +364,7 @@ print(labels[0].jobs["SINGLE_CLASS_JOB"].category.name)
 print(labels[0].jobs["SINGLE_CLASS_JOB"].category.confidence)
 ```
 
-    A
+    CATEGORY_A
     75
 
 
@@ -400,30 +390,30 @@ for i, label in enumerate(labels):
     for job_name, job_data in label.jobs.items():
         print("job_name: ", job_name)
         for category in job_data.categories:
-            print("category: ", category.key, category.name, category.confidence)
+            print("category: ", category.display_name, category.name, category.confidence)
 ```
 
 
     Label 0
     job_name:  SINGLE_CLASS_JOB
-    category:  CATEGORY_A A 75
+    category:  A CATEGORY_A 75
     job_name:  MULTI_CLASS_JOB
-    category:  CATEGORY_D D 1
-    category:  CATEGORY_E E 1
+    category:  D CATEGORY_D 1
+    category:  E CATEGORY_E 1
 
     Label 1
     job_name:  SINGLE_CLASS_JOB
-    category:  CATEGORY_B B 50
+    category:  B CATEGORY_B 50
     job_name:  MULTI_CLASS_JOB
-    category:  CATEGORY_E E 2
-    category:  CATEGORY_F F 2
+    category:  E CATEGORY_E 2
+    category:  F CATEGORY_F 2
 
     Label 2
     job_name:  SINGLE_CLASS_JOB
-    category:  CATEGORY_C C 25
+    category:  C CATEGORY_C 25
     job_name:  MULTI_CLASS_JOB
-    category:  CATEGORY_F F 3
-    category:  CATEGORY_D D 3
+    category:  F CATEGORY_F 3
+    category:  D CATEGORY_D 3
 
 
 ### Transcription jobs
@@ -1011,7 +1001,7 @@ print(list(label.jobs.keys()))
 print(label.jobs["JOB_0"].annotations[0].category)
 ```
 
-    {'key': 'HEAD', 'name': 'Head'}
+    {'name': 'HEAD', 'display_name': 'Head'}
 
 
 
@@ -1120,7 +1110,7 @@ frame = label.jobs["FRAME_CLASSIF_JOB"].frames[5]
 print(frame.category.name)
 ```
 
-    Object A
+    OBJECT_A
 
 
 The syntax is similar for object detection jobs on video:
@@ -1188,7 +1178,7 @@ label = ParsedLabel(dict_label, json_interface=json_interface, input_type="VIDEO
 print(label.jobs["JOB_0"].frames[1].annotations[0].category.name)
 ```
 
-    Car
+    OBJECT_B
 
 
 ### Named entities recognition jobs
@@ -1260,7 +1250,7 @@ print(label.jobs["NER_JOB"].annotations == label.jobs["NER_JOB"].entity_annotati
 print(label.jobs["NER_JOB"].annotations[0].category)
 ```
 
-    {'key': 'ORG', 'name': 'ORG', 'confidence': 42}
+    {'name': 'ORG', 'display_name': 'ORG', 'confidence': 42}
 
 
 
@@ -1437,7 +1427,7 @@ print(first_ann.content)
 print(first_ann.category)
 ```
 
-    {'key': 'C', 'name': 'C', 'confidence': 100}
+    {'name': 'C', 'display_name': 'C', 'confidence': 100}
 
 
 The NER in PDFs json response format is a bit complex, and thus requires to use the `.annotations` attribute a second time. You can read more about it in the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs).
@@ -1597,7 +1587,7 @@ print(label.jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].start_entities)
 print(label.jobs["NAMED_ENTITIES_RELATION_JOB"].annotations[0].end_entities)
 ```
 
-    Relation 1
+    RELATION_1
     [{'mid': '123'}]
     [{'mid': '456'}]
 
@@ -1730,7 +1720,7 @@ print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].start_objects)
 print(label.jobs["OBJECT_RELATION_JOB"].annotations[0].end_objects)
 ```
 
-    {'key': 'RELATION_1', 'name': 'Relation 1'}
+    {'name': 'RELATION_1', 'display_name': 'Relation 1'}
     [{'mid': '20230502102127826-44552'}]
     [{'mid': '20230502102129606-15732'}]
 

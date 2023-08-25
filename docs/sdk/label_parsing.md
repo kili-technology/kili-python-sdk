@@ -9,41 +9,6 @@ Read more about this feature in the [label parsing tutorial](https://python-sdk-
 !!! warning
     This feature is currently in beta. The classes and methods can still change marginally.
 
-!!! danger "Breaking change"
-    The `.category.name` attribute behavior has been changed.
-
-    For a json interface like this:
-
-    ```json
-        "CLASSIFICATION_JOB": {
-            "mlTask": "CLASSIFICATION",
-            "content": {
-                "categories": {
-                    "CATEGORY_A": {"name": "Category A"},
-                    "CATEGORY_B": {"name": "Category B"},
-                },
-            },
-        }
-    ```
-
-    The old behavior (before Kili SDK 2.143.2):
-
-    ```python
-    print(my_label.jobs["CLASSIFICATION_JOB"].category.name)  # CATEGORY_A
-    ```
-
-    The new behavior (after Kili SDK 2.143.2):
-
-    ```python
-    print(my_label.jobs["CLASSIFICATION_JOB"].category.name)  # Category A
-    ```
-
-    If you want to retrieve the category name as it is in the json response, you can use the `.key` attribute:
-
-    ```python
-    print(my_label.jobs["CLASSIFICATION_JOB"].category.key)  # CATEGORY_A
-    ```
-
 ## ParsedLabel
 
 ::: kili.utils.labels.parsing.ParsedLabel
@@ -117,16 +82,16 @@ label.jobs["CLASSIF_JOB"].category.name
 
     parsed_label = ParsedLabel(label=my_label, json_interface=json_interface, input_type="IMAGE")
 
-    print(parsed_label.jobs["JOB_0"].categories[0].name)  # A
-    print(parsed_label.jobs["JOB_0"].categories[0].key)  # CATEGORY_A
+    print(parsed_label.jobs["JOB_0"].categories[0].name)  # CATEGORY_A
+    print(parsed_label.jobs["JOB_0"].categories[0].display_name)  # A
     ```
 
-#### `.key`
+#### `.display_name`
 
-Retrieves the category name key.
+Retrieves the category name as it is displayed in the interface.
 
 ```python
-label.jobs["CLASSIF_JOB"].category.key
+label.jobs["CLASSIF_JOB"].category.display_name
 ```
 
 #### `.confidence`
