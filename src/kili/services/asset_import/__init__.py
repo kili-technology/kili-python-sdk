@@ -2,11 +2,6 @@
 
 from typing import Dict, List, Type, cast
 
-from kili.services.asset_import.image import ImageDataImporter
-from kili.services.asset_import.pdf import PdfDataImporter
-from kili.services.asset_import.text import TextDataImporter
-from kili.services.asset_import.types import AssetLike
-from kili.services.asset_import.video import VideoDataImporter
 from kili.services.project import get_project_field
 
 from .base import (
@@ -15,6 +10,11 @@ from .base import (
     ProcessingParams,
     ProjectParams,
 )
+from .image import ImageDataImporter
+from .pdf import PdfDataImporter
+from .text import TextDataImporter
+from .types import AssetLike
+from .video import VideoDataImporter
 
 importer_by_type: Dict[str, Type[BaseAbstractAssetImporter]] = {
     "PDF": PdfDataImporter,

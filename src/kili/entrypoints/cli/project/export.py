@@ -6,9 +6,9 @@ import click
 from typeguard import typechecked
 from typing_extensions import get_args
 
-from kili import services
 from kili.entrypoints.cli.common_args import Options
 from kili.entrypoints.cli.helpers import get_kili_client
+from kili.services.export import export_labels as service_export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.types import ProjectId
@@ -107,7 +107,7 @@ def export_labels(
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
 
     try:
-        services.export_labels(
+        service_export_labels(
             kili,
             asset_ids=None,
             project_id=cast(ProjectId, project_id),

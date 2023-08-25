@@ -50,7 +50,7 @@ class ParsedLabel(Dict):
         )
 
     def to_dict(self) -> Dict:
-        """Returns a copy of the parsed label as a dict.
+        """Return a copy of the parsed label as a dict.
 
         !!! Example
             ```python
@@ -67,11 +67,11 @@ class ParsedLabel(Dict):
         return ret
 
     def __repr__(self) -> str:
-        """Returns the representation of the object."""
+        """Return the representation of the object."""
         return repr(self.to_dict())
 
     def __str__(self) -> str:
-        """Returns the string representation of the object."""
+        """Return the string representation of the object."""
         return str(self.to_dict())
 
     @property

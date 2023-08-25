@@ -5,13 +5,13 @@ from typing import Optional
 import click
 from tabulate import tabulate
 
-from kili import services
 from kili.entrypoints.cli.common_args import Arguments, Options
 from kili.entrypoints.cli.helpers import get_kili_client
 from kili.entrypoints.queries.project.helpers import (
     get_project_metadata,
     get_project_metrics,
 )
+from kili.services.project import get_project
 
 
 @click.command(name="describe")
@@ -43,7 +43,7 @@ def describe_project(api_key: Optional[str], endpoint: Optional[str], project_id
         "numberOfOpenQuestions",
         "numberOfSolvedQuestions",
     ]
-    project = services.get_project(kili, project_id, query_fields)
+    project = get_project(kili, project_id, query_fields)
     metadata = get_project_metadata(project, kili.graphql_client.endpoint)
     dataset_metrics, quality_metrics = get_project_metrics(project)
 

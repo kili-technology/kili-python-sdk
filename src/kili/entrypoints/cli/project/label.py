@@ -7,9 +7,9 @@ from typing import Optional, Tuple
 import click
 from typing_extensions import get_args
 
-from kili import services
 from kili.entrypoints.cli.common_args import Arguments, Options
 from kili.entrypoints.cli.helpers import get_kili_client
+from kili.services import label_import
 from kili.services.label_import.types import LabelFormat
 
 
@@ -130,7 +130,7 @@ def import_labels(
 
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
 
-    services.import_labels_from_files(
+    label_import.import_labels_from_files(
         kili,
         list(files or []),
         metadata_file,

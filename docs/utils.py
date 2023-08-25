@@ -27,6 +27,7 @@ from nbconvert.preprocessors.tagremove import TagRemovePreprocessor
 IGNORED_TUTORIALS = [
     "plugins_library",
 ]
+DEFAULT_REMOVE_CELL_TAGS = ("remove", "remove_cell", "test", "test_cell", "skip", "skip_cell")
 
 
 class ExtractAttachmentsPreprocessor(Preprocessor):
@@ -109,9 +110,6 @@ def embed_images_in_markdown(markdown: str, images: Dict[str, bytes], notebook_d
         after = f"![{img_text}](data:image/{extension};base64,{encoded_img})"
         markdown = markdown.replace(f"![{img_text}]({img_content})", after)
     return markdown
-
-
-DEFAULT_REMOVE_CELL_TAGS = ("remove", "remove_cell", "test", "test_cell", "skip", "skip_cell")
 
 
 @click.command(name="convert")

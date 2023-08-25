@@ -4,9 +4,9 @@ from typing import Optional
 
 import click
 
-from kili import services
 from kili.entrypoints.cli.common_args import Options
 from kili.entrypoints.cli.helpers import get_kili_client
+from kili.services.project import get_project_field
 
 
 @click.command(name="copy")
@@ -83,5 +83,5 @@ def copy_project(
         copy_assets=with_assets,
         copy_labels=with_labels,
     )
-    title = services.get_project_field(kili, new_proj_id, "title")
+    title = get_project_field(kili, new_proj_id, "title")
     print(f'Project copied successfully. New project id: "{new_proj_id}", with title: "{title}"')
