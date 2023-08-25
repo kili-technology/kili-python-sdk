@@ -934,12 +934,34 @@ def test_parsing_category_only_name():
     assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "OBJECT_B"
 
     parsed_jobs["JOB_0"].annotations[0].categories[0].display_name = "Object A"
-    parsed_jobs["JOB_0"].annotations[0].categories[0].key = "OBJECT_A"
     parsed_jobs["JOB_0"].annotations[0].categories[0].confidence = 42
 
     assert parsed_jobs["JOB_0"].annotations[0].categories[0].display_name == "Object A"
     assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "OBJECT_A"
     assert parsed_jobs["JOB_0"].annotations[0].category.confidence == 42
+
+    assert parsed_jobs.to_dict() == {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {},
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.5141441957015471, "y": 0.6164292619007603},
+                                {"x": 0.5141441957015471, "y": 0.367821056372058},
+                                {"x": 0.7138743970392409, "y": 0.367821056372058},
+                                {"x": 0.7138743970392409, "y": 0.6164292619007603},
+                            ]
+                        }
+                    ],
+                    "categories": [{"name": "OBJECT_A", "confidence": 42}],
+                    "mid": "20230329145907681-18624",
+                    "type": "rectangle",
+                }
+            ]
+        }
+    }
 
 
 def test_video_project_classification():
