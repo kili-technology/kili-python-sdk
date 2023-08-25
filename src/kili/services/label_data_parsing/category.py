@@ -126,10 +126,15 @@ class Category:
     @typechecked
     def display_name(self, name: str) -> None:
         """Set the displayed name of the category label."""
-        ui_name_to_name = {
-            cat_val["name"]: cat_key
-            for cat_key, cat_val in self._job_interface["content"]["categories"].items()
-        }
+        ui_name_to_name = {}
+        for cat_key, cat_val in self._job_interface["content"]["categories"].items():
+            if cat_val["name"] in ui_name_to_name:
+                raise InvalidMutationError(
+                    f"Category '{cat_val}' is not unique in the job interface:"
+                    f" {self._job_interface}\nUse `.name` instead of `.display_name` to set the"
+                    " category name.`"
+                )
+            ui_name_to_name[cat_val["name"]] = cat_key
 
         try:
             self._json_data["name"] = ui_name_to_name[name]
