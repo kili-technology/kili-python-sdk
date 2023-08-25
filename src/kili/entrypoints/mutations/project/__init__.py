@@ -9,12 +9,12 @@ from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_fixed
 from typeguard import typechecked
 
-from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.exceptions import MutationError
 from kili.exceptions import NotFound
 from kili.services.copy_project import ProjectCopier
+from kili.services.project import get_project
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .helpers import verify_argument_ranges
@@ -191,7 +191,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
         variables.pop("projectID")
         variables = {k: v for k, v in variables.items() if v is not None}
 
-        new_project_settings = services.get_project(self, project_id, list(variables.keys()))
+        new_project_settings = get_project(self, project_id, list(variables.keys()))
 
         result = {**result, **new_project_settings}
         return result
@@ -267,7 +267,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
             reraise=True,
         ):
             with attempt:
-                _ = services.get_project(self, project_id=result["id"], fields=["id"])
+                _ = get_project(self, project_id=result["id"], fields=["id"])
 
         return result
 

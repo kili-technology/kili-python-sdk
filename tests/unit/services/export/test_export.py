@@ -13,7 +13,7 @@ from kili.core.graphql.operations.asset.queries import AssetQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.orm import Asset
-from kili.services import export_labels
+from kili.services.export import export_labels
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,

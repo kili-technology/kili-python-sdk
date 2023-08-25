@@ -7,15 +7,15 @@ import click
 import requests
 from typeguard import typechecked
 
-from kili import services
 from kili.core.helpers import get_file_paths_to_upload
 from kili.entrypoints.cli.common_args import Arguments, Options, from_csv
 from kili.entrypoints.cli.helpers import collect_from_csv, get_kili_client
-from kili.services import asset_import
+from kili.services.asset_import import import_assets as service_import_assets
 from kili.services.helpers import (
     check_exclusive_options,
     get_external_id_from_file_path,
 )
+from kili.services.project import get_project_field
 
 
 def check_asset_type(key: str, value: str, http_client: Optional[requests.Session]) -> str:
@@ -123,7 +123,7 @@ def import_assets(
         For such imports, please use the `append_many_to_dataset` method in the Kili SDK.
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
-    input_type = services.get_project_field(kili, project_id, "inputType")
+    input_type = get_project_field(kili, project_id, "inputType")
     if input_type not in ("VIDEO_LEGACY", "VIDEO") and (fps is not None or as_frames is True):
         illegal_option = "fps and frames are"
         if not as_frames:
@@ -176,4 +176,4 @@ def import_assets(
             for i in range(len(assets_to_import))
         ]
 
-    asset_import.import_assets(kili, project_id, assets_to_import, False)
+    service_import_assets(kili, project_id, assets_to_import, False)

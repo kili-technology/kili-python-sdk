@@ -6,7 +6,6 @@ from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
 
-from kili import services
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import deprecate, is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
@@ -23,6 +22,7 @@ from kili.services.helpers import (
     assert_all_arrays_have_same_size,
     infer_ids_from_external_ids,
 )
+from kili.services.label_import import import_labels_from_dict
 from kili.services.types import LabelType
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -110,7 +110,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
                 )
             )
         ]
-        services.import_labels_from_dict(
+        import_labels_from_dict(
             self, project_id, labels, "PREDICTION", overwrite, model_name, disable_tqdm
         )
         return {"id": project_id}
@@ -256,7 +256,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
                 )
             )
         ]
-        return services.import_labels_from_dict(
+        return import_labels_from_dict(
             self, project_id, labels, label_type, overwrite, model_name, disable_tqdm
         )
 
