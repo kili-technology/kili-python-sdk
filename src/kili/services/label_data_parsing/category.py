@@ -28,7 +28,7 @@ class Category:
         self._job_interface = project_info["jsonInterface"][JobName(job_name)]
 
         # call the setters to check the values are valid
-        self.key = category_json["name"]
+        self.name = category_json["name"]
         if "confidence" in category_json:
             self.confidence = category_json["confidence"]
         if category_json.get("children"):
@@ -44,7 +44,7 @@ class Category:
 
     def as_dict(self) -> Dict:
         """Return the parsed category as a dict."""
-        ret = {"name": self._json_data["key"]}
+        ret = {"name": self._json_data["name"]}
         if "confidence" in self._json_data:
             ret["confidence"] = self._json_data["confidence"]
         if "children" in self._json_data:
@@ -73,16 +73,18 @@ class Category:
         }
         ```
 
-        The name of the category label can be `Category A`, or `Category B`.
+        The name of the category label can be `CATEGORY_A` or `CATEGORY_B`.
 
-        To get the key of the category label (`CATEGORY_A` or `CATEGORY_B`),
-            use the `.key` attribute instead.
+        To get the displayed name of the category label (`Category A`, or `Category B`),
+            use the `.display_name` attribute instead.
         """
         return self._json_data["name"]
 
     @property
-    def key(self) -> str:
-        """Return the name key of the category label.
+    def display_name(self) -> str:
+        """Return the displayed name of the category label.
+
+        It is the category name that is displayed in the UI.
 
         For a json interface such as:
 
@@ -98,21 +100,21 @@ class Category:
         }
         ```
 
-        The name key of the category label can be `CATEGORY_A`, or `CATEGORY_B`.
+        The displayed name of the category label can be `Category A` or `Category B`.
 
-        To get the name of the category label (`Category A` or `Category B`),
+        To get the name of the category label (`CATEGORY_A` or `CATEGORY_B`),
             use the `.name` attribute instead.
         """
-        return self._json_data["key"]
+        return self._json_data["display_name"]
 
-    @key.setter
+    @name.setter
     @typechecked
-    def key(self, name: str) -> None:
-        """Set the name key of the category label."""
+    def name(self, name: str) -> None:
+        """Set the name of the category label."""
         for cat_key, cat_val in self._job_interface["content"]["categories"].items():
             if name == cat_key:
-                self._json_data["key"] = name
-                self._json_data["name"] = cat_val["name"]
+                self._json_data["name"] = name
+                self._json_data["display_name"] = cat_val["name"]
                 return
 
         raise InvalidMutationError(
@@ -120,21 +122,22 @@ class Category:
             f" {list(self._job_interface['content']['categories'].keys())}"
         )
 
-    @name.setter
+    @display_name.setter
     @typechecked
-    def name(self, name: str) -> None:
-        """Set the name of the category label."""
-        category_name_to_key_name = {
-            cat["name"]: key for key, cat in self._job_interface["content"]["categories"].items()
+    def display_name(self, name: str) -> None:
+        """Set the displayed name of the category label."""
+        ui_name_to_name = {
+            cat_val["name"]: cat_key
+            for cat_key, cat_val in self._job_interface["content"]["categories"].items()
         }
 
         try:
-            self._json_data["key"] = category_name_to_key_name[name]
-            self._json_data["name"] = name
+            self._json_data["name"] = ui_name_to_name[name]
+            self._json_data["display_name"] = name
         except KeyError as err:
             raise InvalidMutationError(
                 f"Category '{name}' is not in the job interface with categories:"
-                f" {category_name_to_key_name.keys()}"
+                f" {ui_name_to_name.keys()}"
             ) from err
 
     @property

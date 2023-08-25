@@ -43,18 +43,18 @@ def test_set_attribute_categories_multiclass():
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
     categories = parsed_jobs["JOB_0"].categories
 
-    assert categories[0].name == "Category A"
-    assert categories[0].key == "CATEGORY_A"
-    assert categories[1].name == "Category B"
-    assert categories[1].key == "CATEGORY_B"
+    assert categories[0].display_name == "Category A"
+    assert categories[0].name == "CATEGORY_A"
+    assert categories[1].display_name == "Category B"
+    assert categories[1].name == "CATEGORY_B"
 
-    categories[0].name = "Category B"
-    assert categories[0].name == "Category B"
-    assert categories[0].key == "CATEGORY_B"
+    categories[0].display_name = "Category B"
+    assert categories[0].display_name == "Category B"
+    assert categories[0].name == "CATEGORY_B"
 
-    categories[1].key = "CATEGORY_A"
-    assert categories[1].name == "Category A"
-    assert categories[1].key == "CATEGORY_A"
+    categories[1].name = "CATEGORY_A"
+    assert categories[1].display_name == "Category A"
+    assert categories[1].name == "CATEGORY_A"
 
     assert parsed_jobs.to_dict() == {
         "JOB_0": {
@@ -309,15 +309,15 @@ def test_mutate_ner_project_entity_annotations():
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
-    parsed_jobs["JOB_0"].entity_annotations[0].categories[0].name = "person"
-    parsed_jobs["JOB_0"].entity_annotations[0].categories[0].key = "PERSON"
+    parsed_jobs["JOB_0"].entity_annotations[0].categories[0].display_name = "person"
+    parsed_jobs["JOB_0"].entity_annotations[0].categories[0].name = "PERSON"
     parsed_jobs["JOB_0"].entity_annotations[0].categories[0].confidence = 98
     parsed_jobs["JOB_0"].entity_annotations[0].begin_offset = 42
     parsed_jobs["JOB_0"].entity_annotations[0].content = "abcdef"
     parsed_jobs["JOB_0"].entity_annotations[0].mid = "new mid"
 
-    assert parsed_jobs["JOB_0"].entity_annotations[0].category.name == "person"
-    assert parsed_jobs["JOB_0"].entity_annotations[0].category.key == "PERSON"
+    assert parsed_jobs["JOB_0"].entity_annotations[0].category.display_name == "person"
+    assert parsed_jobs["JOB_0"].entity_annotations[0].category.name == "PERSON"
     assert parsed_jobs["JOB_0"].entity_annotations[0].category.confidence == 98
     assert parsed_jobs["JOB_0"].entity_annotations[0].begin_offset == 42
     assert parsed_jobs["JOB_0"].entity_annotations[0].content == "abcdef"
@@ -360,15 +360,15 @@ def test_mutate_ner_project_annotations():
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
-    parsed_jobs["JOB_0"].annotations[0].categories[0].name = "person"
-    parsed_jobs["JOB_0"].annotations[0].categories[0].key = "PERSON"
+    parsed_jobs["JOB_0"].annotations[0].categories[0].display_name = "person"
+    parsed_jobs["JOB_0"].annotations[0].categories[0].name = "PERSON"
     parsed_jobs["JOB_0"].annotations[0].categories[0].confidence = 98
     parsed_jobs["JOB_0"].annotations[0].begin_offset = 42
     parsed_jobs["JOB_0"].annotations[0].content = "abcdef"
     parsed_jobs["JOB_0"].annotations[0].mid = "new mid"
 
-    assert parsed_jobs["JOB_0"].annotations[0].category.name == "person"
-    assert parsed_jobs["JOB_0"].annotations[0].category.key == "PERSON"
+    assert parsed_jobs["JOB_0"].annotations[0].category.display_name == "person"
+    assert parsed_jobs["JOB_0"].annotations[0].category.name == "PERSON"
     assert parsed_jobs["JOB_0"].annotations[0].category.confidence == 98
     assert parsed_jobs["JOB_0"].annotations[0].begin_offset == 42
     assert parsed_jobs["JOB_0"].annotations[0].content == "abcdef"
@@ -536,8 +536,8 @@ def test_add_annotation_ner():
         }
     )
 
-    assert parsed_jobs["JOB_0"].annotations[2].categories[0].name == "org"
-    assert parsed_jobs["JOB_0"].annotations[2].categories[0].key == "ORG"
+    assert parsed_jobs["JOB_0"].annotations[2].categories[0].display_name == "org"
+    assert parsed_jobs["JOB_0"].annotations[2].categories[0].name == "ORG"
     assert parsed_jobs["JOB_0"].annotations[2].categories[0].confidence == 59
     assert parsed_jobs["JOB_0"].annotations[2].begin_offset == 42
     assert parsed_jobs["JOB_0"].annotations[2].content == "this is the text for Kili"
@@ -643,13 +643,13 @@ def test_add_category_in_annotation_bbox():
         }
     )
 
-    assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "Object B"
-    assert parsed_jobs["JOB_0"].annotations[0].categories[0].key == "OBJECT_B"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[0].display_name == "Object B"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "OBJECT_B"
 
     parsed_jobs["JOB_0"].annotations[0].add_category("OBJECT_A", 100)
 
-    assert parsed_jobs["JOB_0"].annotations[0].categories[1].name == "Object A"
-    assert parsed_jobs["JOB_0"].annotations[0].categories[1].key == "OBJECT_A"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[1].display_name == "Object A"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[1].name == "OBJECT_A"
 
 
 def test_add_bounding_poly():

@@ -134,8 +134,8 @@ def test_query_invalid_attributes_on_bbox_annotations():
 
     bb_annotations = parsed_jobs["OBJECT_DETECTION_JOB"].annotations
 
-    assert bb_annotations[0].category.name == "a"
-    assert bb_annotations[0].category.key == "A"
+    assert bb_annotations[0].category.display_name == "a"
+    assert bb_annotations[0].category.name == "A"
     assert bb_annotations[0].mid == "20230315142306286-25528"
 
     with pytest.raises(AttributeNotCompatibleWithJobError):
