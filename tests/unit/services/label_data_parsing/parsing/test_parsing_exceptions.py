@@ -13,7 +13,7 @@ def test_attribute_category_checkbox_job():
     json_interface = {
         "jobs": {
             "JOB_0": {
-                "content": {"categories": {"A": {}}, "input": "checkbox"},
+                "content": {"categories": {"A": {"name": "a"}}, "input": "checkbox"},
                 "mlTask": "CLASSIFICATION",
                 "required": 0,
                 "isChild": False,
@@ -92,6 +92,20 @@ def test_attribute_not_compatible_with_classif_job_error():
 
 
 def test_query_invalid_attributes_on_bbox_annotations():
+    json_interface = {
+        "jobs": {
+            "OBJECT_DETECTION_JOB": {
+                "mlTask": "OBJECT_DETECTION",
+                "tools": ["rectangle"],
+                "required": 1,
+                "isChild": False,
+                "content": {
+                    "categories": {"A": {"name": "a"}, "B": {"name": "b"}},
+                    "input": "radio",
+                },
+            }
+        }
+    }
     json_response_dict = {
         "OBJECT_DETECTION_JOB": {
             "annotations": [
@@ -114,27 +128,14 @@ def test_query_invalid_attributes_on_bbox_annotations():
             ]
         }
     }
-    json_interface = {
-        "jobs": {
-            "OBJECT_DETECTION_JOB": {
-                "mlTask": "OBJECT_DETECTION",
-                "tools": ["rectangle"],
-                "required": 1,
-                "isChild": False,
-                "content": {
-                    "categories": {"A": {}, "B": {}},
-                    "input": "radio",
-                },
-            }
-        }
-    }
 
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     bb_annotations = parsed_jobs["OBJECT_DETECTION_JOB"].annotations
 
-    assert bb_annotations[0].category.name == "A"
+    assert bb_annotations[0].category.name == "a"
+    assert bb_annotations[0].category.key == "A"
     assert bb_annotations[0].mid == "20230315142306286-25528"
 
     with pytest.raises(AttributeNotCompatibleWithJobError):

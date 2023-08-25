@@ -181,6 +181,20 @@ def test_mutate_category_wrong_class_name(input_):
 
 
 def test_invalid_mutation_on_bbox_annotations():
+    json_interface = {
+        "jobs": {
+            "OBJECT_DETECTION_JOB": {
+                "mlTask": "OBJECT_DETECTION",
+                "tools": ["rectangle"],
+                "required": 1,
+                "isChild": False,
+                "content": {
+                    "categories": {"A": {"name": "a"}, "B": {"name": "b"}},
+                    "input": "radio",
+                },
+            }
+        }
+    }
     json_response_dict = {
         "OBJECT_DETECTION_JOB": {
             "annotations": [
@@ -203,27 +217,14 @@ def test_invalid_mutation_on_bbox_annotations():
             ]
         }
     }
-    json_interface = {
-        "jobs": {
-            "OBJECT_DETECTION_JOB": {
-                "mlTask": "OBJECT_DETECTION",
-                "tools": ["rectangle"],
-                "required": 1,
-                "isChild": False,
-                "content": {
-                    "categories": {"A": {}, "B": {}},
-                    "input": "radio",
-                },
-            }
-        }
-    }
 
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     bb_annotations = parsed_jobs["OBJECT_DETECTION_JOB"].annotations
 
-    assert bb_annotations[0].category.name == "A"
+    assert bb_annotations[0].category.name == "a"
+    assert bb_annotations[0].category.key == "A"
     assert bb_annotations[0].mid == "20230315142306286-25528"
 
     with pytest.raises(AttributeNotCompatibleWithJobError):
@@ -276,7 +277,7 @@ def test_add_annotation_ner_wrong_category_name():
                 "required": 1,
                 "isChild": False,
                 "content": {
-                    "categories": {"ORG": {}, "PERSON": {}},
+                    "categories": {"ORG": {"name": "org"}, "PERSON": {"name": "person"}},
                     "input": "radio",
                 },
             }

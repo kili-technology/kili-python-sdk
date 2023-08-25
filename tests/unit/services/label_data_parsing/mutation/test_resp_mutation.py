@@ -274,6 +274,19 @@ def test_mutate_categories_checkbox():
 
 
 def test_mutate_ner_project_entity_annotations():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "required": 1,
+                "isChild": False,
+                "content": {
+                    "categories": {"ORG": {"name": "org"}, "PERSON": {"name": "person"}},
+                    "input": "radio",
+                },
+            }
+        }
+    }
     json_response_dict = {
         "JOB_0": {
             "annotations": [
@@ -292,30 +305,19 @@ def test_mutate_ner_project_entity_annotations():
             ]
         }
     }
-    json_interface = {
-        "jobs": {
-            "JOB_0": {
-                "mlTask": "NAMED_ENTITIES_RECOGNITION",
-                "required": 1,
-                "isChild": False,
-                "content": {
-                    "categories": {"ORG": {}, "PERSON": {}},
-                    "input": "radio",
-                },
-            }
-        }
-    }
 
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
-    parsed_jobs["JOB_0"].entity_annotations[0].categories[0].name = "PERSON"
+    parsed_jobs["JOB_0"].entity_annotations[0].categories[0].name = "person"
+    parsed_jobs["JOB_0"].entity_annotations[0].categories[0].key = "PERSON"
     parsed_jobs["JOB_0"].entity_annotations[0].categories[0].confidence = 98
     parsed_jobs["JOB_0"].entity_annotations[0].begin_offset = 42
     parsed_jobs["JOB_0"].entity_annotations[0].content = "abcdef"
     parsed_jobs["JOB_0"].entity_annotations[0].mid = "new mid"
 
-    assert parsed_jobs["JOB_0"].entity_annotations[0].category.name == "PERSON"
+    assert parsed_jobs["JOB_0"].entity_annotations[0].category.name == "person"
+    assert parsed_jobs["JOB_0"].entity_annotations[0].category.key == "PERSON"
     assert parsed_jobs["JOB_0"].entity_annotations[0].category.confidence == 98
     assert parsed_jobs["JOB_0"].entity_annotations[0].begin_offset == 42
     assert parsed_jobs["JOB_0"].entity_annotations[0].content == "abcdef"
@@ -323,6 +325,19 @@ def test_mutate_ner_project_entity_annotations():
 
 
 def test_mutate_ner_project_annotations():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "mlTask": "NAMED_ENTITIES_RECOGNITION",
+                "required": 1,
+                "isChild": False,
+                "content": {
+                    "categories": {"ORG": {"name": "org"}, "PERSON": {"name": "person"}},
+                    "input": "radio",
+                },
+            }
+        }
+    }
     json_response_dict = {
         "JOB_0": {
             "annotations": [
@@ -341,30 +356,19 @@ def test_mutate_ner_project_annotations():
             ]
         }
     }
-    json_interface = {
-        "jobs": {
-            "JOB_0": {
-                "mlTask": "NAMED_ENTITIES_RECOGNITION",
-                "required": 1,
-                "isChild": False,
-                "content": {
-                    "categories": {"ORG": {}, "PERSON": {}},
-                    "input": "radio",
-                },
-            }
-        }
-    }
 
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
-    parsed_jobs["JOB_0"].annotations[0].categories[0].name = "PERSON"
+    parsed_jobs["JOB_0"].annotations[0].categories[0].name = "person"
+    parsed_jobs["JOB_0"].annotations[0].categories[0].key = "PERSON"
     parsed_jobs["JOB_0"].annotations[0].categories[0].confidence = 98
     parsed_jobs["JOB_0"].annotations[0].begin_offset = 42
     parsed_jobs["JOB_0"].annotations[0].content = "abcdef"
     parsed_jobs["JOB_0"].annotations[0].mid = "new mid"
 
-    assert parsed_jobs["JOB_0"].annotations[0].category.name == "PERSON"
+    assert parsed_jobs["JOB_0"].annotations[0].category.name == "person"
+    assert parsed_jobs["JOB_0"].annotations[0].category.key == "PERSON"
     assert parsed_jobs["JOB_0"].annotations[0].category.confidence == 98
     assert parsed_jobs["JOB_0"].annotations[0].begin_offset == 42
     assert parsed_jobs["JOB_0"].annotations[0].content == "abcdef"
@@ -494,7 +498,7 @@ def test_add_annotation_ner():
                 "required": 1,
                 "isChild": False,
                 "content": {
-                    "categories": {"ORG": {}, "PERSON": {}},
+                    "categories": {"ORG": {"name": "org"}, "PERSON": {"name": "person"}},
                     "input": "radio",
                 },
             }
@@ -532,7 +536,8 @@ def test_add_annotation_ner():
         }
     )
 
-    assert parsed_jobs["JOB_0"].annotations[2].categories[0].name == "ORG"
+    assert parsed_jobs["JOB_0"].annotations[2].categories[0].name == "org"
+    assert parsed_jobs["JOB_0"].annotations[2].categories[0].key == "ORG"
     assert parsed_jobs["JOB_0"].annotations[2].categories[0].confidence == 59
     assert parsed_jobs["JOB_0"].annotations[2].begin_offset == 42
     assert parsed_jobs["JOB_0"].annotations[2].content == "this is the text for Kili"
@@ -638,11 +643,13 @@ def test_add_category_in_annotation_bbox():
         }
     )
 
-    assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "OBJECT_B"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[0].name == "Object B"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[0].key == "OBJECT_B"
 
     parsed_jobs["JOB_0"].annotations[0].add_category("OBJECT_A", 100)
 
-    assert parsed_jobs["JOB_0"].annotations[0].categories[1].name == "OBJECT_A"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[1].name == "Object A"
+    assert parsed_jobs["JOB_0"].annotations[0].categories[1].key == "OBJECT_A"
 
 
 def test_add_bounding_poly():
