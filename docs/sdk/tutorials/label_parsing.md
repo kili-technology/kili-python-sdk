@@ -459,7 +459,10 @@ json_interface = {
             "tools": ["rectangle"],
             "required": 1,
             "isChild": False,
-            "content": {"categories": {"A": {"name": "A"}, "B": {"name": "B"}}, "input": "radio"},
+            "content": {
+                "categories": {"CATEGORY_A": {"name": "A"}, "CATEGORY_B": {"name": "B"}},
+                "input": "radio",
+            },
         }
     }
 }
@@ -480,7 +483,7 @@ dict_label = {
                             ]
                         }
                     ],
-                    "categories": [{"name": "B"}],
+                    "categories": [{"name": "CATEGORY_B"}],
                     "mid": "20230315142306286-25528",
                     "type": "rectangle",
                 }
@@ -500,7 +503,7 @@ label = ParsedLabel(dict_label, json_interface=json_interface, input_type="IMAGE
 print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].category.name)
 ```
 
-    B
+    CATEGORY_B
 
 
 
@@ -551,8 +554,8 @@ json_interface = {
         "OBJECT_DETECTION_JOB": {
             "content": {
                 "categories": {
-                    "A": {"children": [], "color": "#472CED", "name": "A"},
-                    "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                    "CATEGORY_A": {"children": [], "color": "#472CED", "name": "A"},
+                    "CATEGORY_B": {"children": [], "name": "B", "color": "#5CE7B7"},
                 },
                 "input": "radio",
             },
@@ -572,14 +575,14 @@ dict_label = {
                 {
                     "children": {},
                     "point": {"x": 0.10, "y": 0.20},
-                    "categories": [{"name": "A"}],
+                    "categories": [{"name": "CATEGORY_A"}],
                     "mid": "20230323113855529-11197",
                     "type": "marker",
                 },
                 {
                     "children": {},
                     "point": {"x": 0.30, "y": 0.40},
-                    "categories": [{"name": "B"}],
+                    "categories": [{"name": "CATEGORY_B"}],
                     "mid": "20230323113857016-51829",
                     "type": "marker",
                 },
@@ -615,7 +618,7 @@ print(label.jobs["OBJECT_DETECTION_JOB"].annotations[1].point)
 print(label.jobs["OBJECT_DETECTION_JOB"].annotations[1].category.name)
 ```
 
-    B
+    CATEGORY_B
 
 
 #### Line detection jobs
@@ -629,8 +632,8 @@ json_interface = {
         "OBJECT_DETECTION_JOB": {
             "content": {
                 "categories": {
-                    "A": {"children": [], "color": "#472CED", "name": "A"},
-                    "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                    "CATEGORY_A": {"children": [], "color": "#472CED", "name": "A"},
+                    "CATEGORY_B": {"children": [], "name": "B", "color": "#5CE7B7"},
                 },
                 "input": "radio",
             },
@@ -650,14 +653,14 @@ dict_label = {
                 {
                     "children": {},
                     "polyline": [{"x": 0.59, "y": 0.40}, {"x": 0.25, "y": 0.30}],
-                    "categories": [{"name": "A"}],
+                    "categories": [{"name": "CATEGORY_A"}],
                     "mid": "20230428163557647-23000",
                     "type": "polyline",
                 },
                 {
                     "children": {},
                     "polyline": [{"x": 0.70, "y": 0.50}, {"x": 0.40, "y": 0.70}],
-                    "categories": [{"name": "B"}],
+                    "categories": [{"name": "CATEGORY_B"}],
                     "mid": "20230428163606237-86143",
                     "type": "polyline",
                 },
@@ -685,7 +688,7 @@ print(len(label.jobs["OBJECT_DETECTION_JOB"].annotations))
 print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].category.name)
 ```
 
-    A
+    CATEGORY_A
 
 
 
@@ -1122,8 +1125,8 @@ json_interface = {
         "JOB_0": {
             "content": {
                 "categories": {
-                    "OBJECT_A": {"children": [], "name": "Train", "color": "#733AFB"},
-                    "OBJECT_B": {"children": [], "name": "Car", "color": "#3CD876"},
+                    "TRAIN": {"children": [], "name": "Train", "color": "#733AFB"},
+                    "CAR": {"children": [], "name": "Car", "color": "#3CD876"},
                 },
                 "input": "radio",
             },
@@ -1156,7 +1159,7 @@ dict_label = {
                                 ]
                             }
                         ],
-                        "categories": [{"name": "OBJECT_B"}],
+                        "categories": [{"name": "CAR"}],
                         "mid": "20230407140827577-43802",
                         "type": "rectangle",
                         "isKeyFrame": True,
@@ -1178,7 +1181,7 @@ label = ParsedLabel(dict_label, json_interface=json_interface, input_type="VIDEO
 print(label.jobs["JOB_0"].frames[1].annotations[0].category.name)
 ```
 
-    OBJECT_B
+    CAR
 
 
 ### Named entities recognition jobs
@@ -1196,7 +1199,7 @@ json_interface = {
             "required": 1,
             "isChild": False,
             "content": {
-                "categories": {"ORG": {"name": "ORG"}, "PERSON": {"name": "PERSON"}},
+                "categories": {"ORG": {"name": "org"}, "PERSON": {"name": "person"}},
                 "input": "radio",
             },
         }
@@ -1250,7 +1253,7 @@ print(label.jobs["NER_JOB"].annotations == label.jobs["NER_JOB"].entity_annotati
 print(label.jobs["NER_JOB"].annotations[0].category)
 ```
 
-    {'name': 'ORG', 'display_name': 'ORG', 'confidence': 42}
+    {'name': 'ORG', 'display_name': 'org', 'confidence': 42}
 
 
 
@@ -1302,9 +1305,9 @@ json_interface = {
         "NAMED_ENTITIES_RECOGNITION_JOB": {
             "content": {
                 "categories": {
-                    "A": {"children": [], "color": "#472CED", "name": "A"},
-                    "B": {"children": [], "name": "B", "color": "#5CE7B7"},
-                    "C": {"children": [], "name": "C", "color": "#D33BCE"},
+                    "CATEGORY_A": {"children": [], "color": "#472CED", "name": "A"},
+                    "CATEGORY_B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                    "CATEGORY_C": {"children": [], "name": "C", "color": "#D33BCE"},
                 },
                 "input": "radio",
             },
@@ -1351,7 +1354,7 @@ dict_label = {
                             ],
                         }
                     ],
-                    "categories": [{"confidence": 100, "name": "C"}],
+                    "categories": [{"confidence": 100, "name": "CATEGORY_C"}],
                     "content": "Some content",
                     "mid": "20230502085706687-73004",
                 },
@@ -1386,8 +1389,8 @@ dict_label = {
                             ],
                         }
                     ],
-                    "categories": [{"confidence": 100, "name": "A"}],
-                    "content": "chier    compressé   “Coregist",
+                    "categories": [{"confidence": 100, "name": "CATEGORY_A"}],
+                    "content": "Coregist",
                     "mid": "20230502085709115-90490",
                 },
             ]
@@ -1427,7 +1430,7 @@ print(first_ann.content)
 print(first_ann.category)
 ```
 
-    {'name': 'C', 'display_name': 'C', 'confidence': 100}
+    {'name': 'CATEGORY_C', 'display_name': 'C', 'confidence': 100}
 
 
 The NER in PDFs json response format is a bit complex, and thus requires to use the `.annotations` attribute a second time. You can read more about it in the [documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs).
@@ -1488,8 +1491,8 @@ json_interface = {
         "NAMED_ENTITIES_RECOGNITION_JOB": {
             "content": {
                 "categories": {
-                    "A": {"children": [], "color": "#5CE7B7", "name": "A"},
-                    "B": {"children": [], "name": "B", "color": "#D33BCE"},
+                    "CATEGORY_A": {"children": [], "color": "#5CE7B7", "name": "A"},
+                    "CATEGORY_B": {"children": [], "name": "B", "color": "#D33BCE"},
                 },
                 "input": "radio",
             },
@@ -1508,7 +1511,7 @@ dict_label = {
                     "children": {},
                     "beginId": "main/[0]",
                     "beginOffset": 159,
-                    "categories": [{"name": "A"}],
+                    "categories": [{"name": "CATEGORY_A"}],
                     "content": "KBDFR",
                     "endId": "main/[0]",
                     "endOffset": 164,
@@ -1518,7 +1521,7 @@ dict_label = {
                     "children": {},
                     "beginId": "main/[0]",
                     "beginOffset": 145,
-                    "categories": [{"name": "B"}],
+                    "categories": [{"name": "CATEGORY_B"}],
                     "content": "KBDJPN",
                     "endId": "main/[0]",
                     "endOffset": 151,
@@ -1563,7 +1566,7 @@ print("End offset: ", label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations[0
 ```
 
     Annotation content:  KBDFR
-    Category:  A
+    Category:  CATEGORY_A
     Begin offset:  159
     End offset:  164
 
@@ -1576,8 +1579,8 @@ for ann in label.jobs["NAMED_ENTITIES_RECOGNITION_JOB"].annotations:
     print(ann.mid, ann.category.name)
 ```
 
-    123 A
-    456 B
+    123 CATEGORY_A
+    456 CATEGORY_B
 
 
 
@@ -1605,8 +1608,8 @@ json_interface = {
         "OBJECT_DETECTION_JOB": {
             "content": {
                 "categories": {
-                    "A": {"children": [], "color": "#472CED", "name": "A"},
-                    "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                    "CATEGORY_A": {"children": [], "color": "#472CED", "name": "A"},
+                    "CATEGORY_B": {"children": [], "name": "B", "color": "#5CE7B7"},
                 },
                 "input": "radio",
             },
@@ -1623,8 +1626,8 @@ json_interface = {
                         "children": [],
                         "color": "#D33BCE",
                         "name": "Relation 1",
-                        "startObjects": ["A"],
-                        "endObjects": ["B"],
+                        "startObjects": ["CATEGORY_A"],
+                        "endObjects": ["CATEGORY_B"],
                     }
                 },
                 "input": "radio",
@@ -1653,7 +1656,7 @@ dict_label = {
                             ]
                         }
                     ],
-                    "categories": [{"name": "A"}],
+                    "categories": [{"name": "CATEGORY_A"}],
                     "mid": "20230502102127826-44552",
                     "type": "rectangle",
                 },
@@ -1669,7 +1672,7 @@ dict_label = {
                             ]
                         }
                     ],
-                    "categories": [{"name": "B"}],
+                    "categories": [{"name": "CATEGORY_B"}],
                     "mid": "20230502102129606-15732",
                     "type": "rectangle",
                 },
@@ -1709,8 +1712,8 @@ for ann in label.jobs["OBJECT_DETECTION_JOB"].annotations:
     print(ann.mid, ann.category.name)
 ```
 
-    20230502102127826-44552 A
-    20230502102129606-15732 B
+    20230502102127826-44552 CATEGORY_A
+    20230502102129606-15732 CATEGORY_B
 
 
 
@@ -1736,7 +1739,11 @@ json_interface = {
         "OBJECT_DETECTION_JOB": {
             "content": {
                 "categories": {
-                    "A": {"children": ["TRANSCRIPTION_JOB"], "color": "#472CED", "name": "A"}
+                    "CATEGORY_A": {
+                        "children": ["TRANSCRIPTION_JOB"],
+                        "color": "#472CED",
+                        "name": "A",
+                    }
                 },
                 "input": "radio",
             },
@@ -1774,7 +1781,7 @@ dict_label = {
                             ]
                         }
                     ],
-                    "categories": [{"name": "A"}],
+                    "categories": [{"name": "CATEGORY_A"}],
                     "mid": "20230502102626089-88764",
                     "type": "rectangle",
                 }
@@ -1796,7 +1803,7 @@ print(label.jobs["OBJECT_DETECTION_JOB"].annotations[0].category.name)
 ```
 
     rectangle
-    A
+    CATEGORY_A
 
 
 
