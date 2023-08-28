@@ -3,10 +3,11 @@ from itertools import chain
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Optional, TypeVar
 
-from kili.core.graphql import QueryOptions
-from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.client import Kili
 from kili.core.utils import pagination
 from kili.exceptions import NotFound
+from kili.gateways.kili_api_gateway.asset.types import AssetWhere
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.services.exceptions import (
     NotEnoughArgumentsSpecifiedError,
     TooManyArgumentsSpecifiedError,
@@ -86,15 +87,16 @@ def infer_ids_from_external_ids(
     return id_map
 
 
-def _build_id_map(kili, asset_external_ids, project_id):
+def _build_id_map(kili: Kili, asset_external_ids, project_id):
     assets_generators: List[Generator[Dict, None, None]] = []
     # query all assets by external ids batches when there are too many
     for external_ids_batch in pagination.BatchIteratorBuilder(asset_external_ids, 1000):
         assets_generators.append(
-            AssetQuery(kili.graphql_client, kili.http_client)(
-                AssetWhere(project_id, external_id_strictly_in=external_ids_batch),
+            kili.kili_api_gateway.list_assets(
                 ["id", "externalId"],
+                AssetWhere(project_id, external_id_strictly_in=external_ids_batch),
                 QueryOptions(disable_tqdm=True),
+                None,
             )
         )
     assets = chain(*assets_generators)

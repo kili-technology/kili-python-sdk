@@ -10,7 +10,6 @@ from typing import Callable, Dict, Optional, Union
 import requests
 
 from kili import __version__
-from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.core.graphql.operations.user.queries import GQL_ME
@@ -38,6 +37,7 @@ from kili.entrypoints.queries.user import QueriesUser
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
 from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.presentation.client.asset import AssetClientMethods
 from kili.presentation.client.internal import InternalClientMethods
 from kili.presentation.client.issue import IssueClientMethods

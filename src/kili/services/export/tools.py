@@ -4,9 +4,9 @@ from typing import Dict, List, Optional
 
 import requests
 
-from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import validate_category_search_query
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.services.export.types import ExportType
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 

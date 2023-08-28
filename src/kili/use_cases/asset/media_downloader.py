@@ -12,12 +12,12 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
 from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 
 from .exceptions import DownloadNotAllowedError, MissingPropertyError
 

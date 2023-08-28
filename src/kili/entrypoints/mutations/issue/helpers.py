@@ -3,10 +3,10 @@
 
 from typing import List, Literal, cast
 
-from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.issue.queries import IssueQuery, IssueWhere
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.exceptions import NotFound
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 
 
 # pylint: disable=missing-type-doc

@@ -15,18 +15,19 @@ from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 
-from kili.core.graphql import QueryOptions
+from kili.client import Kili
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
 )
-from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.graphql.operations.organization.queries import (
     OrganizationQuery,
     OrganizationWhere,
 )
 from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
 from kili.core.utils import pagination
+from kili.gateways.kili_api_gateway.asset.types import AssetWhere
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,
@@ -73,7 +74,9 @@ class LoggerParams(NamedTuple):
 class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
     """Base class for BatchImporters."""
 
-    def __init__(self, kili, project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm):
+    def __init__(
+        self, kili: Kili, project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm
+    ):
         self.kili = kili
         self.project_id = project_params.project_id
         self.input_type = project_params.input_type
@@ -124,9 +127,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             with attempt:
                 assets_ids = [assets[-1]["id"]]  # check last asset of the batch only
                 where = AssetWhere(project_id=self.project_id, asset_id_in=assets_ids)
-                nb_assets_in_kili = AssetQuery(
-                    self.kili.graphql_client, self.kili.http_client
-                ).count(where)
+                nb_assets_in_kili = self.kili.kili_api_gateway.count_assets(where)
                 if len(assets_ids) != nb_assets_in_kili:
                     raise BatchImportError(
                         "Number of assets to upload is not equal to number of assets uploaded in"
@@ -341,7 +342,7 @@ class BaseAbstractAssetImporter(abc.ABC):
 
     def __init__(
         self,
-        kili,
+        kili: Kili,
         project_params: ProjectParams,
         processing_params: ProcessingParams,
         logger_params: LoggerParams,
@@ -443,10 +444,11 @@ class BaseAbstractAssetImporter(abc.ABC):
         """Filter out assets whose external_id is already in the project."""
         if len(assets) == 0:
             raise ImportValidationError("No assets to import")
-        assets_in_project = AssetQuery(self.kili.graphql_client, self.kili.http_client)(
-            AssetWhere(project_id=self.project_params.project_id),
+        assets_in_project = self.kili.kili_api_gateway.list_assets(
             ["externalId"],
+            AssetWhere(project_id=self.project_params.project_id),
             QueryOptions(disable_tqdm=True),
+            None,
         )
         external_ids_in_project = [asset["externalId"] for asset in assets_in_project]
         filtered_assets = [

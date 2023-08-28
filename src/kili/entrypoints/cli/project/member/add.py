@@ -5,7 +5,6 @@ from typing import Iterable, Optional
 
 import click
 
-from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
@@ -18,6 +17,7 @@ from kili.entrypoints.cli.project.member.helpers import (
     collect_members_from_emails,
     collect_members_from_project,
 )
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 
 
 # pylint: disable=too-many-arguments

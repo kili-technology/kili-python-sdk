@@ -8,8 +8,7 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_exponential
 
-from kili.core.graphql import QueryOptions
-from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.client import Kili
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionIdWhere,
     DataConnectionQuery,
@@ -19,6 +18,8 @@ from kili.entrypoints.mutations.data_connection.queries import (
     GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES,
     GQL_VALIDATE_DATA_DIFFERENCES,
 )
+from kili.gateways.kili_api_gateway.asset.types import AssetWhere
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 
 LOGGER = None
 
@@ -61,13 +62,13 @@ def trigger_validate_data_differences(
 
 
 def validate_data_differences(
-    kili, diff_type: Literal["ADD", "REMOVE"], data_connection: Dict
+    kili: Kili, diff_type: Literal["ADD", "REMOVE"], data_connection: Dict
 ) -> None:
     """Call the validateDataDifferences resolver and wait until the validation is done."""
     diff = data_connection["dataDifferencesSummary"]["added" if diff_type == "ADD" else "removed"]
 
     where = AssetWhere(project_id=data_connection["projectId"])
-    nb_assets_before = AssetQuery(kili.graphql_client, kili.http_client).count(where)
+    nb_assets_before = kili.kili_api_gateway.count_assets(where)
 
     trigger_validate_data_differences(kili, diff_type, data_connection["id"])
 
@@ -78,7 +79,7 @@ def validate_data_differences(
         reraise=True,
     ):
         with attempt:
-            nb_assets_after = AssetQuery(kili.graphql_client, kili.http_client).count(where)
+            nb_assets_after = kili.kili_api_gateway.count_assets(where)
             if abs(nb_assets_after - nb_assets_before) != diff:
                 raise ValueError(
                     "Number of assets in project after validation is not correct: before"

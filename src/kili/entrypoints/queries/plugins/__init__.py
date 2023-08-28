@@ -6,13 +6,13 @@ from typing import List, Optional
 
 from typeguard import typechecked
 
-from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.plugin.queries import (
     PluginBuildErrorsWhere,
     PluginLogsWhere,
     PluginQuery,
 )
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.services.plugins import PluginUploader
 from kili.utils.logcontext import for_all_methods, log_call
 

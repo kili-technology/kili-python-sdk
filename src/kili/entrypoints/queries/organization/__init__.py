@@ -5,7 +5,6 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
-from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.organization.queries import (
     OrganizationMetricsWhere,
@@ -13,6 +12,7 @@ from kili.core.graphql.operations.organization.queries import (
     OrganizationWhere,
 )
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.presentation.client.common_validators import disable_tqdm_if_as_generator
 from kili.utils.logcontext import for_all_methods, log_call
 

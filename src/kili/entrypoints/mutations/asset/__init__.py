@@ -7,8 +7,6 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
-from kili.core.graphql import QueryOptions
-from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
 from kili.entrypoints.base import BaseOperationEntrypointMixin
@@ -22,6 +20,9 @@ from kili.entrypoints.mutations.asset.queries import (
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
 )
 from kili.exceptions import MissingArgumentError
+from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.gateways.kili_api_gateway.asset.types import AssetWhere
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv
@@ -35,6 +36,8 @@ from .helpers import get_asset_ids_or_throw_error
 @for_all_methods(log_call, exclude=["__init__"])
 class MutationsAsset(BaseOperationEntrypointMixin):
     """Set of Asset mutations."""
+
+    kili_api_gateway: KiliAPIGateway
 
     # pylint: disable=too-many-arguments,too-many-locals
     @typechecked
@@ -414,7 +417,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 return
 
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
-            nb_assets_in_kili = AssetQuery(self.graphql_client, self.http_client).count(
+
+            nb_assets_in_kili = self.kili_api_gateway.count_assets(
                 AssetWhere(
                     project_id=project_id_,
                     asset_id_in=asset_ids,
@@ -490,7 +494,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 return
 
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
-            nb_assets_in_review = AssetQuery(self.graphql_client, self.http_client).count(
+            nb_assets_in_review = self.kili_api_gateway.count_assets(
                 AssetWhere(
                     project_id=project_id_,
                     asset_id_in=asset_ids,
@@ -511,10 +515,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         # unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID
         # it happens when no assets have been sent to review
         if isinstance(result, dict) and "id" in result:
-            assets_in_review = AssetQuery(self.graphql_client, self.http_client)(
-                AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["TO_REVIEW"]),
+            assets_in_review = self.kili_api_gateway.list_assets(
                 ["id"],
+                AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["TO_REVIEW"]),
                 QueryOptions(disable_tqdm=True),
+                None,
             )
             result["asset_ids"] = [asset["id"] for asset in assets_in_review]
         return result
@@ -573,7 +578,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 return
 
             asset_ids = last_batch["asset_ids"][-1:]  # check lastest asset of the batch only
-            nb_assets_in_queue = AssetQuery(self.graphql_client, self.http_client).count(
+            nb_assets_in_queue = self.kili_api_gateway.count_assets(
                 AssetWhere(
                     project_id=project_id_,
                     asset_id_in=asset_ids,
@@ -592,10 +597,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         )
         result = self.format_result("data", results[0])
         if isinstance(result, dict) and "id" in result:
-            assets_in_queue = AssetQuery(self.graphql_client, self.http_client)(
-                AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
+            assets_in_queue = self.kili_api_gateway.list_assets(
                 ["id"],
+                AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
                 QueryOptions(disable_tqdm=True),
+                None,
             )
             result["asset_ids"] = [asset["id"] for asset in assets_in_queue]
         return result

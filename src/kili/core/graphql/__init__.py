@@ -1,26 +1,19 @@
 """GraphQL module."""
 
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type, TypeVar
+from typing import Callable, Dict, Generator, List, Optional, Type, TypeVar
 
 import requests
 from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import format_result
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.utils.tqdm import tqdm
 
 from .graphql_client import GraphQLClient
 
 T = TypeVar("T")
-
-
-class QueryOptions(NamedTuple):
-    """Options when calling GraphQLQuery from the SDK."""
-
-    disable_tqdm: Optional[bool]
-    first: Optional[int] = None
-    skip: int = 0
 
 
 class BaseQueryWhere(ABC):

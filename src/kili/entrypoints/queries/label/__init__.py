@@ -17,11 +17,12 @@ import pandas as pd
 from typeguard import typechecked
 
 from kili import services
-from kili.core.graphql import QueryOptions
-from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import validate_category_search_query
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.gateways.kili_api_gateway.asset.types import AssetWhere
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.presentation.client.common_validators import disable_tqdm_if_as_generator
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
@@ -35,6 +36,8 @@ from kili.utils.logcontext import for_all_methods, log_call
 @for_all_methods(log_call, exclude=["__init__"])
 class QueriesLabel(BaseOperationEntrypointMixin):
     """Set of Label queries."""
+
+    kili_api_gateway: KiliAPIGateway
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value
 
@@ -636,10 +639,11 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             A pandas DataFrame containing the labels.
         """
         services.get_project(self, project_id, ["id"])
-        assets_gen = AssetQuery(self.graphql_client, self.http_client)(
-            AssetWhere(project_id=project_id),
+        assets_gen = self.kili_api_gateway.list_assets(
             asset_fields + ["labels." + field for field in fields],
+            AssetWhere(project_id=project_id),
             QueryOptions(disable_tqdm=False),
+            None,
         )
         labels = [
             dict(
