@@ -19,10 +19,7 @@ from kili.core.graphql.operations.data_connection.queries import (
 )
 from kili.gateways.kili_api_gateway import KiliAPIGateway
 
-from ...entrypoints.queries.asset.exceptions import (
-    DownloadNotAllowedError,
-    MissingPropertyError,
-)
+from .exceptions import DownloadNotAllowedError, MissingPropertyError
 
 
 def get_download_assets_function(

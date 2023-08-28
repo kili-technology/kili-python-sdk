@@ -18,6 +18,7 @@ class AssetUseCases:
     def __init__(self, kili_api_gateway: KiliAPIGateway):
         self._kili_api_gateway = kili_api_gateway
 
+    # pylint: disable=too-many-arguments
     def list_assets(
         self,
         where: AssetWhere,
@@ -45,6 +46,8 @@ class AssetUseCases:
 
         return assets_gen
 
-    def count_assets(self, asset_where: AssetWhere) -> int:
+    def count_assets(self, where: AssetWhere) -> int:
         """Send a GraphQL request calling countAssets resolver."""
-        return self._kili_api_gateway.count_assets(asset_where)
+        if where.label_category_search:
+            validate_category_search_query(where.label_category_search)
+        return self._kili_api_gateway.count_assets(where)

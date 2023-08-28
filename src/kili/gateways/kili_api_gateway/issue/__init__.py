@@ -1,6 +1,5 @@
 """GraphQL Mixin extending GraphQL Gateway class with Issue related operations."""
 
-from dataclasses import dataclass
 from typing import List, Optional
 
 from kili.core.enums import IssueStatus
@@ -11,29 +10,11 @@ from kili.gateways.kili_api_gateway.issue.operations import (
     GQL_COUNT_ISSUES,
     GQL_CREATE_ISSUES,
 )
-from kili.gateways.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
+from kili.gateways.kili_api_gateway.issue.types import (
+    IssueToCreateKiliAPIGatewayInput,
+    IssueWhere,
+)
 from kili.utils import tqdm
-
-
-@dataclass
-class IssueWhere:
-    """Tuple to be passed to the IssueQuery to restrict query."""
-
-    project_id: str
-    asset_id: Optional[str] = None
-    asset_id_in: Optional[List[str]] = None
-    issue_type: Optional[IssueType] = None
-    status: Optional[IssueStatus] = None
-
-    def build_gql_value(self):
-        """Build the GraphQL IssueWhere payload to be sent in an operation."""
-        return {
-            "project": {"id": self.project_id},
-            "asset": {"id": self.asset_id},
-            "assetIn": self.asset_id_in,
-            "status": self.status,
-            "type": self.issue_type,
-        }
 
 
 class IssueOperationMixin:

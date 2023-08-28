@@ -6,6 +6,7 @@ from typing import Callable, List, Optional
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.gateways.kili_api_gateway.asset.operations import (
     GQL_COUNT_ASSETS,
+    GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
     get_asset_query,
 )
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
@@ -47,3 +48,11 @@ class AssetOperationMixin:
         count_result = self.graphql_client.execute(GQL_COUNT_ASSETS, payload)
         count: int = count_result["data"]
         return count
+
+    def create_upload_bucket_signed_urls(self, file_paths: List[str]) -> List[str]:
+        """Send a GraphQL request calling createUploadBucketSignedUrls resolver."""
+        payload = {
+            "filePaths": file_paths,
+        }
+        urls_response = self.graphql_client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
+        return urls_response["urls"]
