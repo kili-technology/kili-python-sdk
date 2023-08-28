@@ -11,18 +11,19 @@ from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import deprecate, is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
 from kili.entrypoints.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
     GQL_DELETE_LABELS,
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
+from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.orm import Label
-from kili.services.helpers import (
+from kili.presentation.client.common_validators import (
     assert_all_arrays_have_same_size,
-    infer_ids_from_external_ids,
+    check_asset_identifier_arguments,
 )
+from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.types import LabelType
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -32,6 +33,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
     """Set of Label mutations."""
 
     graphql_client: GraphQLClient
+    kili_api_gateway: KiliAPIGateway
 
     # pylint: disable=too-many-arguments
     @typechecked
@@ -169,7 +171,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         if label_asset_id is None:
             assert label_asset_external_id and project_id
             label_asset_id = infer_ids_from_external_ids(
-                self, [label_asset_external_id], project_id
+                self.kili_api_gateway, [label_asset_external_id], project_id
             )[label_asset_external_id]
         variables = {
             "data": {
@@ -324,9 +326,9 @@ class MutationsLabel(BaseOperationEntrypointMixin):
                 raise ValueError(
                     "Either provide `asset_id` or `asset_external_id` and `project_id`."
                 )
-            asset_id = infer_ids_from_external_ids(self, [asset_external_id], project_id)[
-                asset_external_id
-            ]
+            asset_id = infer_ids_from_external_ids(
+                self.kili_api_gateway, [asset_external_id], project_id
+            )[asset_external_id]
 
         variables = {
             "data": {"jsonResponse": dumps(json_response)},

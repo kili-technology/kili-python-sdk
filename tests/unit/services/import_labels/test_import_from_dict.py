@@ -1,12 +1,11 @@
 import json
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pydantic
 import pytest
 
 from kili import services
 from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
-from kili.gateways.kili_api_gateway.asset import AssetOperationMixin
 
 
 def mocked_AssetQuery(*_):
@@ -21,6 +20,7 @@ class TestImportLabelsFromDict:
 
     def setup_class(self):
         self.kili = MagicMock()
+        self.kili.kili_api_gateway.list_assets = MagicMock(side_effect=mocked_AssetQuery)
         self.kili.graphql_client.execute = MagicMock()
         with open(
             "./tests/unit/services/import_labels/fixtures/json_response_image.json"
@@ -68,8 +68,7 @@ class TestImportLabelsFromDict:
             GQL_APPEND_MANY_LABELS, call, timeout=60
         )
 
-    @patch.object(AssetOperationMixin, "list_assets", side_effect=mocked_AssetQuery)
-    def test_import_default_labels_with_external_id(self, mocker):
+    def test_import_default_labels_with_external_id(self):
         project_id = "project_id"
         label_type = "DEFAULT"
         overwrite = False
@@ -180,11 +179,6 @@ class TestImportLabelsFromDict:
                 self.kili, project_id, labels, label_type, overwrite, model_name
             )
 
-    @patch.object(
-        AssetOperationMixin,
-        "list_assets",
-        side_effect=mocked_AssetQuery,
-    )
     def test_import_predictions(self, mocker):
         project_id = "project_id"
         label_type = "PREDICTION"
@@ -226,11 +220,6 @@ class TestImportLabelsFromDict:
             GQL_APPEND_MANY_LABELS, call, timeout=60
         )
 
-    @patch.object(
-        AssetOperationMixin,
-        "list_assets",
-        side_effect=mocked_AssetQuery,
-    )
     def test_import_predictions_with_overwritting(self, mocker):
         project_id = "project_id"
         label_type = "PREDICTION"

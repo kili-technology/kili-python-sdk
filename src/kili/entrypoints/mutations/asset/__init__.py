@@ -11,6 +11,7 @@ from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
+    get_asset_ids_or_throw_error,
     process_update_properties_in_assets_parameters,
 )
 from kili.entrypoints.mutations.asset.queries import (
@@ -30,7 +31,6 @@ from kili.utils.assets import PageResolution
 from kili.utils.logcontext import for_all_methods, log_call
 
 from ..exceptions import MutationError
-from .helpers import get_asset_ids_or_throw_error
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -283,7 +283,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             )
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
 
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(
+            self.kili_api_gateway, asset_ids, external_ids, project_id
+        )
 
         properties_to_batch = process_update_properties_in_assets_parameters(
             asset_ids,
@@ -348,7 +350,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ):
             return []
 
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(
+            self.kili_api_gateway, asset_ids, external_ids, project_id
+        )
 
         properties_to_batch = process_update_properties_in_assets_parameters(
             asset_ids=asset_ids,
@@ -394,7 +398,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ) or is_empty_list_with_warning("delete_many_from_dataset", "external_ids", external_ids):
             return None
 
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(
+            self.kili_api_gateway, asset_ids, external_ids, project_id
+        )
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -471,7 +477,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ) or is_empty_list_with_warning("add_to_review", "external_ids", external_ids):
             return None
 
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(
+            self.kili_api_gateway, asset_ids, external_ids, project_id
+        )
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 
@@ -555,7 +563,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ) or is_empty_list_with_warning("send_back_to_queue", "external_ids", external_ids):
             return None
 
-        asset_ids = get_asset_ids_or_throw_error(self, asset_ids, external_ids, project_id)
+        asset_ids = get_asset_ids_or_throw_error(
+            self.kili_api_gateway, asset_ids, external_ids, project_id
+        )
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
 

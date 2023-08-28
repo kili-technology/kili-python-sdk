@@ -8,9 +8,10 @@ from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
+from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.gateways.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
 from kili.gateways.kili_api_gateway.queries import QueryOptions
-from kili.services.helpers import assert_all_arrays_have_same_size
+from kili.presentation.client.common_validators import assert_all_arrays_have_same_size
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .helpers import get_issue_numbers
@@ -19,6 +20,8 @@ from .helpers import get_issue_numbers
 @for_all_methods(log_call, exclude=["__init__"])
 class MutationsIssue(BaseOperationEntrypointMixin):
     """Set of Issue mutations."""
+
+    kili_api_gateway: KiliAPIGateway
 
     # pylint: disable=too-many-arguments
     @deprecate(
@@ -113,7 +116,7 @@ class MutationsIssue(BaseOperationEntrypointMixin):
         assert_all_arrays_have_same_size([text_array, asset_id_array])
         issue_number_array = get_issue_numbers(self, project_id, "QUESTION", len(text_array))
         asset_id_array = get_asset_ids_or_throw_error(
-            self, asset_id_array, asset_external_id_array, project_id
+            self.kili_api_gateway, asset_id_array, asset_external_id_array, project_id
         )
         variables = {
             "issues": [

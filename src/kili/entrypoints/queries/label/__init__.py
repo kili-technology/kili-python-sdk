@@ -819,7 +819,9 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         """
         if external_ids is not None and asset_ids is None:
             id_map = infer_ids_from_external_ids(
-                kili=self, asset_external_ids=external_ids, project_id=project_id
+                kili_api_gateway=self.kili_api_gateway,
+                asset_external_ids=external_ids,
+                project_id=project_id,
             )
             asset_ids = [id_map[id] for id in external_ids]
 
