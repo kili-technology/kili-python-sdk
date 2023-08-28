@@ -6,11 +6,11 @@ from typing import Optional
 import click
 from tabulate import tabulate
 
-from kili import services
 from kili.core.constants import INPUT_TYPE
 from kili.entrypoints.cli.common_args import Options
 from kili.entrypoints.cli.helpers import get_kili_client
 from kili.entrypoints.queries.project.helpers import get_project_url
+from kili.services.project import get_project_field
 
 
 @click.command(name="create")
@@ -75,7 +75,7 @@ def create_project(
             json_interface = json.load(interface_file)
 
     elif project_id_src is not None:
-        json_interface = services.get_project_field(kili, project_id_src, "jsonInterface")
+        json_interface = get_project_field(kili, project_id_src, "jsonInterface")
 
     result = kili.create_project(
         input_type=input_type,

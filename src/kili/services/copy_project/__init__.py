@@ -3,10 +3,10 @@ import itertools
 import logging
 from typing import Dict, Optional
 
-from kili import services
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
 from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.services.project import get_project
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
@@ -79,7 +79,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         if copy_quality_settings:
             fields = fields + self.FIELDS_QUALITY_SETTINGS
 
-        src_project = services.get_project(self.kili, from_project_id, fields)
+        src_project = get_project(self.kili, from_project_id, fields)
 
         if len(src_project["dataConnections"]) > 0 and copy_assets:
             raise NotImplementedError("Copying projects with cloud storage is not supported.")

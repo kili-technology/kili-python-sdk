@@ -1,4 +1,4 @@
-"""Client entrypoints methods for issues."""
+"""Client presentation methods for issues."""
 
 from itertools import repeat
 from typing import Dict, List, Literal, Optional

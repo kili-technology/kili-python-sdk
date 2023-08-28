@@ -22,7 +22,6 @@ class IssueUseCases:
         )  # TODO: should be done in the backend
         gateway_issues = [
             IssueToCreateKiliAPIGatewayInput(
-                issue_number=0,
                 label_id=issue.label_id,
                 object_mid=issue.object_mid,
                 asset_id=label_asset_ids_map[issue.label_id],

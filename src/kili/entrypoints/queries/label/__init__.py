@@ -16,7 +16,6 @@ from typing import (
 import pandas as pd
 from typeguard import typechecked
 
-from kili import services
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import validate_category_search_query
 from kili.entrypoints.base import BaseOperationEntrypointMixin
@@ -24,6 +23,7 @@ from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
 from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.presentation.client.common_validators import disable_tqdm_if_as_generator
+from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.helpers import infer_ids_from_external_ids
@@ -638,7 +638,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         Returns:
             A pandas DataFrame containing the labels.
         """
-        services.get_project(self, project_id, ["id"])
+        get_project(self, project_id, ["id"])
         assets_gen = self.kili_api_gateway.list_assets(
             AssetWhere(project_id=project_id),
             asset_fields + ["labels." + field for field in fields],
@@ -826,7 +826,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             asset_ids = [id_map[id] for id in external_ids]
 
         try:
-            services.export_labels(
+            export_labels(
                 self,
                 asset_ids=asset_ids,
                 project_id=cast(ProjectId, project_id),

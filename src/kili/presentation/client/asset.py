@@ -1,4 +1,4 @@
-"""Client entrypoints methods for assets."""
+"""Client presentation methods for assets."""
 
 import warnings
 from typing import Dict, Generator, Iterable, List, Literal, Optional, Union, overload

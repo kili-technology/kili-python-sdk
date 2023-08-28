@@ -1,11 +1,10 @@
-"""GraphQL Mixin extending GraphQL Gateway class with Issue related operations."""
+"""Mixin extending Kili API Gateway class with Issue related operations."""
 
 from typing import List, Optional
 
-from kili.core.enums import IssueStatus
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.utils.pagination import BatchIteratorBuilder
-from kili.domain.issue import Issue, IssueType
+from kili.domain.issue import Issue, IssueStatus, IssueType
 from kili.gateways.kili_api_gateway.issue.operations import (
     GQL_COUNT_ISSUES,
     GQL_CREATE_ISSUES,
@@ -33,7 +32,7 @@ class IssueOperationMixin:
                 payload = {
                     "issues": [
                         {
-                            "issueNumber": issue.issue_number,
+                            "issueNumber": 0,
                             "labelID": issue.label_id,
                             "objectMid": issue.object_mid,
                             "type": type_,

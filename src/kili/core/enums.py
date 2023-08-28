@@ -28,17 +28,6 @@ HubspotSubscriptionStatus = Literal[
     "UNSUBSCRIBED",
 ]
 
-IssueStatus = Literal[
-    "OPEN",
-    "SOLVED",
-]
-
-
-IssueType = Literal[
-    "ISSUE",
-    "QUESTION",
-]
-
 
 LabelFormat = Literal[
     "RAW",

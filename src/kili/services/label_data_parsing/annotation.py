@@ -68,7 +68,7 @@ class _BaseAnnotation:
         return repr(self._json_data)
 
     def as_dict(self) -> Dict:
-        """Returns the parsed annotation as a dict."""
+        """Return the parsed annotation as a dict."""
         ret = {
             k: v
             for k, v in self._json_data.items()
@@ -120,7 +120,7 @@ class _BaseAnnotation:
 
     @typechecked
     def add_category(self, name: str, confidence: Optional[int] = None) -> None:
-        """Adds a category to an annotation job with categories."""
+        """Add a category to an annotation job with categories."""
         if "categories" not in self._json_data:
             category_list = category_module.CategoryList(
                 categories_list=[], project_info=self._project_info, job_name=self._job_name
@@ -138,7 +138,7 @@ class _BaseAnnotation:
     @mid.setter
     @typechecked
     def mid(self, mid: str) -> None:
-        """Sets the annotation unique identifier."""
+        """Set the annotation unique identifier."""
         if len(mid) == 0:
             raise ValueError("mid must be non-empty.")
         self._json_data["mid"] = mid
@@ -151,7 +151,7 @@ class _BaseAnnotation:
     @children.setter
     @typechecked
     def children(self, children: Dict) -> None:
-        """Sets the children jobs of the annotation job."""
+        """Set the children jobs of the annotation job."""
         job_names_to_parse = get_children_job_names(
             json_interface=self._project_info["jsonInterface"],
             job_interface=self._job_interface,  # type: ignore
@@ -178,7 +178,7 @@ class _BaseNamedEntityRecognitionAnnotation(_BaseAnnotation):
     @content.setter
     @typechecked
     def content(self, content: str) -> None:
-        """Sets the content of the annotation."""
+        """Set the content of the annotation."""
         self._json_data["content"] = content
 
 
@@ -197,7 +197,7 @@ class EntityAnnotation(_BaseNamedEntityRecognitionAnnotation):
     @begin_offset.setter
     @typechecked
     def begin_offset(self, begin_offset: int) -> None:
-        """Sets the begin offset of the annotation."""
+        """Set the begin offset of the annotation."""
         if begin_offset < 0:
             raise ValueError(f"begin_offset must be positive, got {begin_offset}")
         self._json_data["beginOffset"] = begin_offset
@@ -210,7 +210,7 @@ class EntityAnnotation(_BaseNamedEntityRecognitionAnnotation):
     @end_offset.setter
     @typechecked
     def end_offset(self, end_offset: int) -> None:
-        """Sets the end offset of the annotation."""
+        """Set the end offset of the annotation."""
         if end_offset < 0:
             raise ValueError(f"end_offset must be positive, got {end_offset}")
         self._json_data["endOffset"] = end_offset
@@ -220,13 +220,10 @@ class _BaseAnnotationWithTool(_BaseAnnotation):
     """Base class for annotations with a "type" key (tool used to create the annotation)."""
 
     @property
-    def type(self) -> Literal["rectangle", "polygon", "semantic", "marker", "vector", "polyline"]:
-        """Returns the tool of the annotation.
-
-        One of "rectangle", "polygon", or "semantic" for 2D annotations.
-
-        One of "marker", "vector", "polyline" for 1D annotations.
-        """
+    def type(
+        self,
+    ) -> Literal["rectangle", "polygon", "semantic", "marker", "vector", "polyline", "pose"]:
+        """Returns the tool of the annotation."""
         return self._json_data["type"]
 
 
@@ -249,7 +246,7 @@ class PointAnnotation(_BaseAnnotationWithTool):
     @point.setter
     @typechecked
     def point(self, point: NormalizedVertex) -> None:
-        """Sets the point of a point detection job."""
+        """Set the point of a point detection job."""
         self._json_data["point"] = point
 
 
@@ -272,7 +269,7 @@ class PolyLineAnnotation(_BaseAnnotationWithTool):
     @polyline.setter
     @typechecked
     def polyline(self, polyline: List[NormalizedVertex]) -> None:
-        """Sets the polyline of a polyline detection job."""
+        """Set the polyline of a polyline detection job."""
         self._json_data["polyline"] = polyline
 
 
@@ -341,7 +338,7 @@ class _Base2DAnnotation(_BaseAnnotationWithTool, _BaseAnnotationWithBoundingPoly
             Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
         ],
     ) -> None:
-        """Adds a bounding polygon to the boundingPoly list."""
+        """Add a bounding polygon to the boundingPoly list."""
         bounding_poly_list = (
             BoundingPolyList(
                 bounding_poly_list=[],
@@ -366,7 +363,7 @@ class _Base2DAnnotation(_BaseAnnotationWithTool, _BaseAnnotationWithBoundingPoly
     @score.setter
     @typechecked
     def score(self, score: int) -> None:
-        """Sets the score of the annotation."""
+        """Set the score of the annotation."""
         if not 0 <= score <= 100:
             raise ValueError(f"Score must be between 0 and 100, got {score}.")
         self._json_data["score"] = score
@@ -455,7 +452,7 @@ class EntityRelationAnnotation(_BaseAnnotation):
     @start_entities.setter
     @typechecked
     def start_entities(self, start_entities: List[Dict[Literal["mid"], str]]) -> None:
-        """Sets the list of the start entities composing the relation."""
+        """Set the list of the start entities composing the relation."""
         self._json_data["startEntities"] = start_entities
 
     @property
@@ -466,7 +463,7 @@ class EntityRelationAnnotation(_BaseAnnotation):
     @end_entities.setter
     @typechecked
     def end_entities(self, end_entities: List[Dict[Literal["mid"], str]]) -> None:
-        """Sets the list of the end entities composing the relation."""
+        """Set the list of the end entities composing the relation."""
         self._json_data["endEntities"] = end_entities
 
 
@@ -485,7 +482,7 @@ class ObjectRelationAnnotation(_BaseAnnotation):
     @start_objects.setter
     @typechecked
     def start_objects(self, start_objects: List[Dict[Literal["mid"], str]]) -> None:
-        """Sets the list of the start objects composing the relation."""
+        """Set the list of the start objects composing the relation."""
         self._json_data["startObjects"] = start_objects
 
     @property
@@ -496,12 +493,12 @@ class ObjectRelationAnnotation(_BaseAnnotation):
     @end_objects.setter
     @typechecked
     def end_objects(self, end_objects: List[Dict[Literal["mid"], str]]) -> None:
-        """Sets the list of the end objects composing the relation."""
+        """Set the list of the end objects composing the relation."""
         self._json_data["endObjects"] = end_objects
 
 
 def check_attribute_compatible_with_job(func):
-    """Raises an error if the decorated method is not compatible with the job."""
+    """Raise an error if the decorated method is not compatible with the job."""
 
     @functools.wraps(func)
     # pylint: disable=protected-access
@@ -541,7 +538,7 @@ class Annotation(
     """
 
     def __init__(self, json_data: Dict, project_info: Project, job_name: str) -> None:
-        """Initializes an Annotation object.
+        """Initialize an Annotation object.
 
         This class is used to parse the "annotations" key of a job response.
 
@@ -621,7 +618,7 @@ class AnnotationList:
 
     @typechecked
     def add_annotation(self, annotation_dict: Dict) -> None:
-        """Adds an annotation object to the AnnotationList object."""
+        """Add an annotation object to the AnnotationList object."""
         annotation = Annotation(
             json_data=annotation_dict, project_info=self._project_info, job_name=self._job_name
         )
@@ -630,25 +627,25 @@ class AnnotationList:
 
     @typechecked
     def __getitem__(self, index: int) -> Annotation:
-        """Returns the annotation object at the given index."""
+        """Return the annotation object at the given index."""
         return self._annotations_list[index]
 
     def __len__(self) -> int:
-        """Returns the number of annotations."""
+        """Return the number of annotations."""
         return len(self._annotations_list)
 
     def __iter__(self) -> Iterator[Annotation]:
-        """Returns an iterator over the annotations."""
+        """Return an iterator over the annotations."""
         return iter(self._annotations_list)
 
     def __str__(self) -> str:
-        """Returns the string representation of the annotations list."""
+        """Return the string representation of the annotations list."""
         return str(self.as_list())
 
     def __repr__(self) -> str:
-        """Returns the string representation of the annotations list."""
+        """Return the string representation of the annotations list."""
         return repr(self.as_list())
 
     def as_list(self) -> List[Dict]:
-        """Returns the list of categories as a list of dicts."""
+        """Return the list of categories as a list of dicts."""
         return [annotation.as_dict() for annotation in self._annotations_list]

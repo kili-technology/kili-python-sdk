@@ -51,6 +51,49 @@ Retrieves the category name.
 label.jobs["CLASSIF_JOB"].category.name
 ```
 
+!!! example
+
+    ```python
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "mlTask": "CLASSIFICATION",
+                "content": {
+                    "categories": {
+                        "CATEGORY_A": {"name": "A"},
+                        "CATEGORY_B": {"name": "B"},
+                    },
+                    "input": "radio",
+                },
+            }
+        }
+    }
+    json_response_dict = {
+        "JOB_0": {
+            "categories": [
+                {
+                    "confidence": 100,
+                    "name": "CATEGORY_A",
+                }
+            ]
+        }
+    }
+    my_label = {"jsonResponse": json_response_dict}
+
+    parsed_label = ParsedLabel(label=my_label, json_interface=json_interface, input_type="IMAGE")
+
+    print(parsed_label.jobs["JOB_0"].categories[0].name)  # CATEGORY_A
+    print(parsed_label.jobs["JOB_0"].categories[0].display_name)  # A
+    ```
+
+#### `.display_name`
+
+Retrieves the category name as it is displayed in the interface.
+
+```python
+label.jobs["CLASSIF_JOB"].category.display_name
+```
+
 #### `.confidence`
 
 Retrieves the confidence (when available).
@@ -321,7 +364,7 @@ label.jobs["CLASSIF_JOB"].category.children
 label.jobs["OBJECT_DETECTION_JOB"].annotations[0].children
 ```
 
-You can find more information about the children jobs in the Kili documentation.
+You can find more information about the children jobs in the [label parsing tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/#child-jobs).
 
 ## Migrating from jsonReponse format
 

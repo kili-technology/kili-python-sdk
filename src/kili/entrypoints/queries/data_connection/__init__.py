@@ -4,7 +4,6 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
-from kili import services
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
@@ -12,6 +11,7 @@ from kili.core.graphql.operations.data_connection.queries import (
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.presentation.client.common_validators import disable_tqdm_if_as_generator
+from kili.services.data_connection import get_data_connection
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -115,9 +115,7 @@ class QueriesDataConnection(BaseOperationEntrypointMixin):
 
         # call dataConnection resolver
         if cloud_storage_connection_id is not None:
-            data_connection = services.get_data_connection(
-                self, cloud_storage_connection_id, fields
-            )
+            data_connection = get_data_connection(self, cloud_storage_connection_id, fields)
             data_connection_list = [data_connection]
             if as_generator:
                 return iter(data_connection_list)
