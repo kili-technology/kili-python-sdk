@@ -6,7 +6,6 @@ from typing_extensions import TypedDict
 
 from kili.core.enums import (
     InputType,
-    IssueStatus,
     LabelType,
     LicenseType,
     LockType,
@@ -17,6 +16,7 @@ from kili.core.enums import (
     Status,
 )
 from kili.core.helpers import deprecate
+from kili.domain.issue import IssueStatus
 
 
 #######

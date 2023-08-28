@@ -1,4 +1,4 @@
-"""Module for methods and classes that are for internal use by Kili Technology only."""
+"""Module for methods that are for internal use by Kili Technology only."""
 
 from typeguard import typechecked
 
@@ -8,8 +8,8 @@ from kili.entrypoints.mutations.user.queries import GQL_RESET_PASSWORD
 from kili.entrypoints.queries.api_key import QueriesApiKey
 
 
-class KiliInternal(MutationsOrganization, QueriesApiKey):
-    """Inherit classes for internal use by Kili Technology only."""
+class InternalClientMethods(MutationsOrganization, QueriesApiKey):
+    """Kili client methods for internal use by Kili Technology only."""
 
     def __init__(self, kili):
         """Initializes the class.

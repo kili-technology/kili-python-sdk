@@ -1,6 +1,5 @@
 """Issue mutations."""
 
-from itertools import repeat
 from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
@@ -10,11 +9,11 @@ from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
+from kili.gateways.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
 from kili.services.helpers import assert_all_arrays_have_same_size
 from kili.utils.logcontext import for_all_methods, log_call
 
-from .helpers import get_issue_numbers, get_labels_asset_ids_map
-from .queries import GQL_CREATE_ISSUES
+from .helpers import get_issue_numbers
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -90,51 +89,6 @@ class MutationsIssue(BaseOperationEntrypointMixin):
 
         result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
         return self.format_result("data", result)[0]
-
-    @typechecked
-    def create_issues(
-        self,
-        project_id: str,
-        label_id_array: List[str],
-        object_mid_array: Optional[List[Optional[str]]] = None,
-        text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[Dict]:
-        """Create an issue.
-
-        Args:
-            project_id: Id of the project.
-            label_id_array: List of Ids of the labels to add an issue to.
-            object_mid_array: List of mids of the objects in the labels to associate the issues to.
-            text_array: List of texts to associate to the issues.
-
-        Returns:
-            A list of dictionary with the `id` key of the created issues.
-        """
-        assert_all_arrays_have_same_size([label_id_array, object_mid_array, text_array])
-        issue_number_array = get_issue_numbers(self, project_id, "ISSUE", len(label_id_array))
-        label_asset_ids_map = get_labels_asset_ids_map(self, project_id, label_id_array)
-        variables = {
-            "issues": [
-                {
-                    "issueNumber": issue_number,
-                    "labelID": label_id,
-                    "objectMid": object_mid,
-                    "type": "ISSUE",
-                    "assetId": label_asset_ids_map[label_id],
-                    "text": text,
-                }
-                for (issue_number, label_id, object_mid, text) in zip(
-                    issue_number_array,
-                    label_id_array,
-                    object_mid_array or repeat(None),
-                    text_array or repeat(None),
-                )
-            ],
-            "where": {"idIn": list(label_asset_ids_map.values())},
-        }
-
-        result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
-        return self.format_result("data", result)
 
     @typechecked
     def create_questions(

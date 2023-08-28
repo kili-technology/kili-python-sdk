@@ -37,7 +37,9 @@ from kili.entrypoints.queries.project_version import QueriesProjectVersion
 from kili.entrypoints.queries.user import QueriesUser
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
 from kili.exceptions import AuthenticationFailed, UserNotFoundError
-from kili.internal import KiliInternal
+from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.presentation.client.internal import InternalClientMethods
+from kili.presentation.client.issue import IssueClientMethods
 from kili.utils.logcontext import LogContext, log_call
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
@@ -77,6 +79,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     QueriesProjectVersion,
     QueriesUser,
     SubscriptionsLabel,
+    IssueClientMethods,
 ):
     """Kili Client."""
 
@@ -170,11 +173,13 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             **(graphql_client_params or {}),  # type: ignore
         )
 
+        self.kili_api_gateway = KiliAPIGateway(self.graphql_client, self.http_client)
+
         if not skip_checks:
             api_key_query = APIKeyQuery(self.graphql_client, self.http_client)
             self._check_expiry_of_key_is_close(api_key_query, self.api_key)
 
-        self.internal = KiliInternal(self)
+        self.internal = InternalClientMethods(self)
 
     @log_call
     def _is_api_key_valid(self) -> bool:
