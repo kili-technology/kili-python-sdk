@@ -51,7 +51,6 @@ def is_target_job_in_json_interface(kili, project_id: str, target_job_name: str)
     return target_job_name in json_interface["jobs"]
 
 
-# pylint: disable=missing-type-doc
 def infer_ids_from_external_ids(
     kili_api_gateway: KiliAPIGateway, asset_external_ids: List[str], project_id: str
 ) -> Dict[str, str]:
