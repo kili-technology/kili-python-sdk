@@ -33,7 +33,7 @@ class AssetUseCases:
             validate_category_search_query(where.label_category_search)
 
         post_call_function, fields = get_download_assets_function(
-            self, download_media, fields, where.project_id, local_media_dir
+            self._kili_api_gateway, download_media, fields, where.project_id, local_media_dir
         )
         assets_gen = self._kili_api_gateway.list_assets(fields, where, options, post_call_function)
 

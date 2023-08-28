@@ -4,6 +4,7 @@
 from typing import List
 
 from kili.core.graphql.graphql_client import GraphQLClient
+from kili.exceptions import NotFound
 from kili.gateways.kili_api_gateway.project.operations import get_project_query
 from kili.gateways.kili_api_gateway.project.types import ProjectWhere
 from kili.gateways.kili_api_gateway.queries import fragment_builder
@@ -26,4 +27,10 @@ class ProjectOperationMixin:
         result = self.graphql_client.execute(
             query=query, variables={"where": where.build_gql_value()}
         )
-        return result["data"]
+        projects = result["data"]
+        if len(projects) == 0:
+            raise NotFound(
+                f"project ID: {project_id}. Maybe your KILI_API_KEY does not belong to a member of"
+                " the project."
+            )
+        return projects[0]

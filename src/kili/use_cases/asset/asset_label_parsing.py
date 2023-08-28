@@ -7,10 +7,11 @@ from kili.utils.labels.parsing import ParsedLabel, parse_labels
 
 def parse_labels_of_asset(asset: Dict, project: LabelParsingProject) -> Dict:
     """Parse the labels of an asset queried to Kili."""
-    if asset.get("labels", {}).get("jsonResponse") is not None:
-        asset["labels"] = parse_labels(
-            asset["labels"], project["jsonInterface"], project["inputType"]
-        )
+    if asset.get("labels"):
+        if asset["labels"][0].get("jsonResponse") is not None:
+            asset["labels"] = parse_labels(
+                asset["labels"], project["jsonInterface"], project["inputType"]
+            )
     if asset.get("latestLabel", {}).get("jsonResponse") is not None:
         asset["latestLabel"] = ParsedLabel(
             label=asset["latestLabel"],

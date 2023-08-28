@@ -17,8 +17,7 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
-from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
-from kili.exceptions import NotFound
+from kili.gateways.kili_api_gateway import KiliAPIGateway
 
 from ...entrypoints.queries.asset.exceptions import (
     DownloadNotAllowedError,
@@ -27,7 +26,7 @@ from ...entrypoints.queries.asset.exceptions import (
 
 
 def get_download_assets_function(
-    kili,
+    kili_api_gateway: KiliAPIGateway,
     download_media: bool,
     fields: List[str],
     project_id: str,
@@ -40,23 +39,19 @@ def get_download_assets_function(
     Also returns the fields to be queried, which may be modified
     if the jsonContent field is necessary.
     """
+    print("get_download_assets_function")
     if not download_media:
         return None, fields
 
-    projects = list(
-        ProjectQuery(kili.graphql_client, kili.http_client)(
-            ProjectWhere(project_id=project_id), ["inputType"], QueryOptions(disable_tqdm=True)
-        )
-    )
-    if len(projects) == 0:
-        raise NotFound(
-            f"project ID: {project_id}. Maybe your KILI_API_KEY does not belong to a member of the"
-            " project."
-        )
+    project = kili_api_gateway.get_project(project_id=project_id, fields=["inputType"])
+    input_type = project["inputType"]
+    print(project, download_media, local_media_dir)
 
     # We need to query the data connections to know if the assets are hosted in a cloud storage
     # If so, we remove the fields "content" and "jsonContent" from the query
-    data_connections_gen = DataConnectionsQuery(kili.graphql_client, kili.http_client)(
+    data_connections_gen = DataConnectionsQuery(
+        kili_api_gateway.graphql_client, kili_api_gateway.http_client
+    )(
         where=DataConnectionsWhere(project_id=project_id),
         fields=["id"],
         options=QueryOptions(disable_tqdm=True, first=1, skip=0),
@@ -67,7 +62,6 @@ def get_download_assets_function(
             " Asset download is disabled."
         )
 
-    input_type = projects[0]["inputType"]
     jsoncontent_field_added = False
     if input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
         fields = fields + ["jsonContent"]
@@ -79,7 +73,7 @@ def get_download_assets_function(
             project_id,
             jsoncontent_field_added,
             input_type,
-            kili.http_client,
+            kili_api_gateway.http_client,
         ).download_assets,
         fields,
     )

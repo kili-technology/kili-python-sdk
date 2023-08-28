@@ -149,7 +149,7 @@ def fetch_assets(
 
     options = QueryOptions(disable_tqdm=disable_tqdm)
     post_call_function, fields = get_download_assets_function(
-        kili, download_media, fields, project_id, local_media_dir
+        kili.kili_api_gateway, download_media, fields, project_id, local_media_dir
     )
     assets = list(
         AssetQuery(kili.graphql_client, kili.http_client)(
