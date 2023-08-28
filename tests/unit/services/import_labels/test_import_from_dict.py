@@ -5,8 +5,8 @@ import pydantic
 import pytest
 
 from kili import services
-from kili.core.graphql.operations.asset.queries import AssetQuery
 from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
+from kili.gateways.kili_api_gateway.asset import AssetOperationMixin
 
 
 def mocked_AssetQuery(*_):
@@ -68,7 +68,7 @@ class TestImportLabelsFromDict:
             GQL_APPEND_MANY_LABELS, call, timeout=60
         )
 
-    @patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
+    @patch.object(AssetOperationMixin, "list_assets", side_effect=mocked_AssetQuery)
     def test_import_default_labels_with_external_id(self, mocker):
         project_id = "project_id"
         label_type = "DEFAULT"
@@ -181,8 +181,8 @@ class TestImportLabelsFromDict:
             )
 
     @patch.object(
-        AssetQuery,
-        "__call__",
+        AssetOperationMixin,
+        "list_assets",
         side_effect=mocked_AssetQuery,
     )
     def test_import_predictions(self, mocker):
@@ -227,8 +227,8 @@ class TestImportLabelsFromDict:
         )
 
     @patch.object(
-        AssetQuery,
-        "__call__",
+        AssetOperationMixin,
+        "list_assets",
         side_effect=mocked_AssetQuery,
     )
     def test_import_predictions_with_overwritting(self, mocker):

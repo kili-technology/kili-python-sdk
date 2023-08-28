@@ -36,7 +36,7 @@ class AssetUseCases:
         post_call_function, fields = get_download_assets_function(
             self._kili_api_gateway, download_media, fields, where.project_id, local_media_dir
         )
-        assets_gen = self._kili_api_gateway.list_assets(fields, where, options, post_call_function)
+        assets_gen = self._kili_api_gateway.list_assets(where, fields, options, post_call_function)
 
         if label_output_format == "parsed_label":
             project: LabelParsingProject = self._kili_api_gateway.get_project(

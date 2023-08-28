@@ -38,25 +38,29 @@ def test_given_query_parameters_I_can_query_assets_and_get_their_labels_parsed(
     kili_api_gateway: KiliAPIGateway,
 ):
     # mocking
-    json_response = {"JOB_0": {"categories": [{"name": "CATGORY_A"}]}}
+    label = {
+        "author": {
+            "id": "cldbnzmmq00go0jwc20fq1jkl",
+            "email": "john.doe@kili-technology.com",
+        },
+        "createdAt": "2023-05-11T16:01:48.093Z",
+        "id": "clhjbhrul015m0k7hct21drz4",
+        "jsonResponse": {"JOB_0": {"text": "some text abc"}},
+    }
     asset = {
+        "labels": [label],
+        "latestLabel": label,
+        "content": "https://storage.googleapis.com/label-backend-staging/",
+        "createdAt": "2023-05-11T15:55:01.134Z",
+        "externalId": "4bad2303e43bfefa0169d890c68f5c9d--cherry-blossom-tree-blossom-trees.jpg",
         "id": "asset_id",
-        "labels": [{"jsonResponse": json_response}],
-        "latestLabel": {"jsonResponse": json_response},
+        "isHoneypot": False,
+        "jsonMetadata": {},
+        "skipped": False,
+        "status": "LABELED",
     }
     json_interface = {
-        "jobs": {
-            "JOB_0": {
-                "mlTask": "CLASSIFICATION",
-                "isChild": False,
-                "content": {
-                    "categories": {
-                        "CATGORY_A": {"children": [], "name": "category A", "id": "category30"},
-                    },
-                    "input": "checkbox",
-                },
-            }
-        }
+        "jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}}
     }
     kili_api_gateway.list_assets.return_value = (asset for asset in [asset])
     kili_api_gateway.get_project.return_value = {
@@ -67,7 +71,22 @@ def test_given_query_parameters_I_can_query_assets_and_get_their_labels_parsed(
     # given parameters to query assets
     asset_use_cases = AssetUseCases(kili_api_gateway)
     where = AssetWhere(project_id="project_id")
-    fields = ["id", "label.jsonResponse", "latestLabel.jsonresponse"]
+    fields = [
+        "content",
+        "createdAt",
+        "externalId",
+        "id",
+        "isHoneypot",
+        "jsonMetadata",
+        "labels.author.id",
+        "labels.author.email",
+        "labels.createdAt",
+        "labels.id",
+        "labels.jsonResponse",
+        "skipped",
+        "status",
+        "latestLabel.jsonResponse",
+    ]
     options = QueryOptions(disable_tqdm=False)
 
     # when creating query assets
@@ -79,12 +98,16 @@ def test_given_query_parameters_I_can_query_assets_and_get_their_labels_parsed(
         local_media_dir=None,
         label_output_format="parsed_label",
     )
-    returned_asset = list(asset_gen)[0]
 
     # then
+    returned_assets = list(asset_gen)
+    assert len(returned_assets) == 1
+    returned_asset = returned_assets[0]
     assert returned_asset == asset
     assert isinstance(returned_asset["latestLabel"], ParsedLabel)
+    assert returned_asset["latestLabel"].jobs["JOB_0"].text == "some text abc"
     assert isinstance(returned_asset["labels"][0], ParsedLabel)
+    assert returned_asset["labels"][0].jobs["JOB_0"].text == "some text abc"
 
 
 def test_given_query_parameters_I_can_query_assets_and_download_their_media(

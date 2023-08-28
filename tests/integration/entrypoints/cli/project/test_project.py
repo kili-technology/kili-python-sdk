@@ -10,13 +10,13 @@ import pytest
 import pytest_mock
 from click.testing import CliRunner
 
-from kili.core.graphql.operations.asset.queries import AssetQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.entrypoints.cli.project.create import create_project
 from kili.entrypoints.cli.project.describe import describe_project
 from kili.entrypoints.cli.project.export import export_labels
 from kili.entrypoints.cli.project.import_ import import_assets
 from kili.entrypoints.cli.project.list_ import list_projects
+from kili.gateways.kili_api_gateway.asset import AssetOperationMixin
 from tests.integration.entrypoints.cli.helpers import debug_subprocess_pytest
 
 from .mocks.assets import mocked__project_assets
@@ -454,7 +454,7 @@ def test_import(
 def test_export(name: str, test_case: List[str], mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
     mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
-    mocker.patch.object(AssetQuery, "__call__", side_effect=mocked__project_assets)
+    mocker.patch.object(AssetOperationMixin, "list_assets", side_effect=mocked__project_assets)
     mocker.patch(
         "kili.services.export.format.base.AbstractExporter._has_data_connection", return_value=False
     )

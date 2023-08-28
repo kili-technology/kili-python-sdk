@@ -176,7 +176,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
                 return self._upload_assets(new_project_id, downloaded_assets)
 
         asset_gen = self.kili.kili_api_gateway.list_assets(
-            fields, where, options, download_and_upload_assets
+            where, fields, options, download_and_upload_assets
         )
         # Generator needs to be iterated over to actually fetch assets
         for _ in asset_gen:
@@ -237,8 +237,8 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-locals
     def _copy_labels(self, from_project_id: str, new_project_id: str) -> None:
         assets_new_project = self.kili.kili_api_gateway.list_assets(
-            ["id", "externalId"],
             AssetWhere(project_id=new_project_id),
+            ["id", "externalId"],
             QueryOptions(disable_tqdm=True),
             None,
         )

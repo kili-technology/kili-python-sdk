@@ -640,8 +640,8 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         """
         services.get_project(self, project_id, ["id"])
         assets_gen = self.kili_api_gateway.list_assets(
-            asset_fields + ["labels." + field for field in fields],
             AssetWhere(project_id=project_id),
+            asset_fields + ["labels." + field for field in fields],
             QueryOptions(disable_tqdm=False),
             None,
         )

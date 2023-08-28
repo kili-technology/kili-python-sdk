@@ -1,7 +1,7 @@
 import pytest
 
-from kili.core.graphql.operations.asset.queries import AssetQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
+from kili.gateways.kili_api_gateway.asset import AssetOperationMixin
 from kili.services.helpers import _build_id_map
 from tests.fakes.fake_kili import (
     FakeKili,
@@ -22,8 +22,8 @@ def test__build_id_map_when_project_has_less_than_2000_assets(mocker, name, asse
     _ = name
     kili = FakeKili()
     mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
-    mocker.patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
-    mocker.patch.object(AssetQuery, "count", side_effect=mocked_AssetQuery_count)
+    mocker.patch.object(AssetOperationMixin, "list_assets", side_effect=mocked_AssetQuery)
+    mocker.patch.object(AssetOperationMixin, "count_assets", side_effect=mocked_AssetQuery_count)
 
     asset_external_ids = [f"ext-{i}" for i in range(asset_count)]
     project_id = "object_detection_2500_assets"

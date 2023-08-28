@@ -4,8 +4,8 @@ from typing import Dict, List, Optional
 
 import requests
 
-from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import validate_category_search_query
+from kili.gateways.kili_api_gateway.asset.types import AssetWhere
 from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.services.export.types import ExportType
 from kili.use_cases.asset.media_downloader import get_download_assets_function
@@ -139,7 +139,7 @@ def fetch_assets(
     where = AssetWhere(**asset_where_params)
 
     if download_media:
-        count = AssetQuery(kili.graphql_client, kili.http_client).count(where)
+        count = kili.kili_api_gateway.count_assets(where)
         if count > THRESHOLD_WARN_MANY_ASSETS:
             warnings.warn(
                 f"Downloading many assets ({count}). This might take a while. Consider"
@@ -151,11 +151,7 @@ def fetch_assets(
     post_call_function, fields = get_download_assets_function(
         kili.kili_api_gateway, download_media, fields, project_id, local_media_dir
     )
-    assets = list(
-        AssetQuery(kili.graphql_client, kili.http_client)(
-            where, fields, options, post_call_function
-        )
-    )
+    assets = list(kili.kili_api_gateway.list_assets(where, fields, options, post_call_function))
     attach_name_to_assets_labels_author(assets, export_type)
     return assets
 

@@ -445,8 +445,8 @@ class BaseAbstractAssetImporter(abc.ABC):
         if len(assets) == 0:
             raise ImportValidationError("No assets to import")
         assets_in_project = self.kili.kili_api_gateway.list_assets(
-            ["externalId"],
             AssetWhere(project_id=self.project_params.project_id),
+            ["externalId"],
             QueryOptions(disable_tqdm=True),
             None,
         )

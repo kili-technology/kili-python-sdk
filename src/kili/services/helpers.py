@@ -93,8 +93,8 @@ def _build_id_map(kili: Kili, asset_external_ids, project_id):
     for external_ids_batch in pagination.BatchIteratorBuilder(asset_external_ids, 1000):
         assets_generators.append(
             kili.kili_api_gateway.list_assets(
-                ["id", "externalId"],
                 AssetWhere(project_id, external_id_strictly_in=external_ids_batch),
+                ["id", "externalId"],
                 QueryOptions(disable_tqdm=True),
                 None,
             )

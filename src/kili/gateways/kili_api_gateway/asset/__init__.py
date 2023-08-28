@@ -25,8 +25,8 @@ class AssetOperationMixin:
 
     def list_assets(
         self,
-        fields: List[str],
         where: AssetWhere,
+        fields: List[str],
         options: QueryOptions,
         post_call_function: Optional[Callable],
     ):

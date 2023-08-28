@@ -2,10 +2,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from kili.core.graphql.operations.asset.queries import AssetQuery
 from kili.core.graphql.operations.organization.queries import OrganizationQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
-from kili.entrypoints.queries.asset import QueriesAsset
+from kili.gateways.kili_api_gateway.asset import AssetOperationMixin
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
 from tests.unit.services.asset_import.base import ImportTestCase
@@ -21,18 +20,14 @@ from tests.unit.services.asset_import.mocks import (
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
 @patch.object(ProjectQuery, "__call__", side_effect=lambda *args: [{"inputType": "TEXT"}])
-@patch.object(
-    QueriesAsset,
-    "assets",
-    MagicMock(return_value=[]),
-)
+@patch.object(AssetOperationMixin, "list_assets", MagicMock(return_value=[]))
 @patch.object(
     OrganizationQuery,
     "__call__",
     side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
 )
 class TextTestCase(ImportTestCase):
-    @patch.object(AssetQuery, "count", return_value=1)
+    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_upload_from_one_local_text_file(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/texts/test_text_file.txt"
         path = self.downloader(url)
@@ -48,7 +43,7 @@ class TextTestCase(ImportTestCase):
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
-    @patch.object(AssetQuery, "count", return_value=1)
+    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_upload_from_one_hosted_text_file(self, *_):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
@@ -59,7 +54,7 @@ class TextTestCase(ImportTestCase):
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
-    @patch.object(AssetQuery, "count", return_value=1)
+    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_upload_from_raw_text(self, *_):
         assets = [{"content": "this is raw text", "external_id": "raw text"}]
         import_assets(self.kili, self.project_id, assets)
@@ -68,7 +63,7 @@ class TextTestCase(ImportTestCase):
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
-    @patch.object(AssetQuery, "count", return_value=1)
+    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_upload_from_one_rich_text(self, *_):
         json_content = [
             {
@@ -93,11 +88,11 @@ class TextTestCase(ImportTestCase):
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
-    @patch.object(AssetQuery, "count", return_value=1)
+    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_upload_from_several_batches(self, *_):
         self.assert_upload_several_batches()
 
-    @patch.object(AssetQuery, "count", return_value=1)
+    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_upload_from_one_hosted_text_authorized_while_local_forbidden(self, *_):
         OrganizationQuery.__call__.side_effect = mocked_organization_with_upload_from_local(
             upload_local_data=False

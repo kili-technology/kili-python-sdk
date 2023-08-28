@@ -9,9 +9,9 @@ from zipfile import ZipFile
 import pytest
 import pytest_mock
 
-from kili.core.graphql.operations.asset.queries import AssetQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.entrypoints.queries.label import QueriesLabel
+from kili.gateways.kili_api_gateway.asset import AssetOperationMixin
 from kili.orm import Asset
 from kili.services import export_labels
 from kili.services.export.exceptions import (
@@ -620,8 +620,8 @@ def get_file_tree(folder: str):
     ],
 )
 def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_case):
-    mocker.patch.object(AssetQuery, "count", side_effect=mocked_AssetQuery_count)
-    mocker.patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
+    mocker.patch.object(AssetOperationMixin, "count_assets", side_effect=mocked_AssetQuery_count)
+    mocker.patch.object(AssetOperationMixin, "list_assets", side_effect=mocked_AssetQuery)
     mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
     mocker_ffmpeg = mocker.patch("kili.services.export.media.video.ffmpeg")
     mocker.patch(
@@ -754,8 +754,8 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
     ],
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
-@patch.object(AssetQuery, "__call__", side_effect=mocked_AssetQuery)
-@patch.object(AssetQuery, "count", side_effect=mocked_AssetQuery_count)
+@patch.object(AssetOperationMixin, "list_assets", side_effect=mocked_AssetQuery)
+@patch.object(AssetOperationMixin, "count_assets", side_effect=mocked_AssetQuery_count)
 def test_export_service_errors(
     mocker_asset_count, mocker_asset, mocker_project, name, test_case, error
 ):
