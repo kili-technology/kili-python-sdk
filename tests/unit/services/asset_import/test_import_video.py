@@ -312,8 +312,8 @@ class VideoTestCase(ImportTestCase):
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("VIDEO_LEGACY"))
 @patch.object(
-    QueriesAsset,
-    "assets",
+    AssetOperationMixin,
+    "list_assets",
     MagicMock(return_value=[]),
 )
 @patch.object(AssetOperationMixin, "count_assets", return_value=1)

@@ -8,7 +8,6 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_exponential
 
-from kili.client import Kili
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionIdWhere,
     DataConnectionQuery,
@@ -62,7 +61,7 @@ def trigger_validate_data_differences(
 
 
 def validate_data_differences(
-    kili: Kili, diff_type: Literal["ADD", "REMOVE"], data_connection: Dict
+    kili, diff_type: Literal["ADD", "REMOVE"], data_connection: Dict
 ) -> None:
     """Call the validateDataDifferences resolver and wait until the validation is done."""
     diff = data_connection["dataDifferencesSummary"]["added" if diff_type == "ADD" else "removed"]

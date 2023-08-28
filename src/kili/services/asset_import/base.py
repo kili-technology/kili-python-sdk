@@ -15,7 +15,6 @@ from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 
-from kili.client import Kili
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
@@ -74,9 +73,7 @@ class LoggerParams(NamedTuple):
 class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
     """Base class for BatchImporters."""
 
-    def __init__(
-        self, kili: Kili, project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm
-    ):
+    def __init__(self, kili, project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm):
         self.kili = kili
         self.project_id = project_params.project_id
         self.input_type = project_params.input_type
@@ -342,7 +339,7 @@ class BaseAbstractAssetImporter(abc.ABC):
 
     def __init__(
         self,
-        kili: Kili,
+        kili,
         project_params: ProjectParams,
         processing_params: ProcessingParams,
         logger_params: LoggerParams,

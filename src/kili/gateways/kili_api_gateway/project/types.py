@@ -25,5 +25,5 @@ class ProjectWhere(AbstractQueryWhere):
             "updatedAtLte": self.updated_at_lte,
         }
         if self.archived is not None:
-            value["archived"] = self.archived
+            value["archived"] = self.archived  # type: ignore
         return value

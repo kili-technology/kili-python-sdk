@@ -4,7 +4,6 @@ import logging
 from typing import Dict, Optional
 
 from kili import services
-from kili.client import Kili
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
 from kili.gateways.kili_api_gateway.queries import QueryOptions
@@ -31,7 +30,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         "reviewCoverage",
     ]
 
-    def __init__(self, kili: Kili) -> None:
+    def __init__(self, kili) -> None:
         self.disable_tqdm = False
         self.kili = kili
 

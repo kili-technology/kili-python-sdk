@@ -11,8 +11,6 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili.client import Kili
-
 AZURE_STRING = "blob.core.windows.net"
 GCP_STRING = "storage.googleapis.com"
 GCP_STRING_PUBLIC = "storage.cloud.google.com"
@@ -25,7 +23,7 @@ def generate_unique_id():
     return cuid.cuid()
 
 
-def request_signed_urls(kili: Kili, file_urls: List[str]):
+def request_signed_urls(kili, file_urls: List[str]):
     """Get upload signed URLs.
 
     Args:

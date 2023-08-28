@@ -3,7 +3,6 @@ from itertools import chain
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Optional, TypeVar
 
-from kili.client import Kili
 from kili.core.utils import pagination
 from kili.exceptions import NotFound
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
@@ -87,7 +86,7 @@ def infer_ids_from_external_ids(
     return id_map
 
 
-def _build_id_map(kili: Kili, asset_external_ids, project_id):
+def _build_id_map(kili, asset_external_ids, project_id):
     assets_generators: List[Generator[Dict, None, None]] = []
     # query all assets by external ids batches when there are too many
     for external_ids_batch in pagination.BatchIteratorBuilder(asset_external_ids, 1000):

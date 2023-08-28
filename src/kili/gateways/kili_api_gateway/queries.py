@@ -22,7 +22,7 @@ class AbstractQueryWhere(ABC):
     """Abtsract class for defining the where payload to send in a graphQL query."""
 
     @abstractmethod
-    def build_gql_value(self) -> Dict:
+    def build_gql_value(self):
         """Build the GraphQL where payload sent in the resolver from the
         arguments given to the where class."""
         raise NotImplementedError
