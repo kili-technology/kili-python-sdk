@@ -1,3 +1,5 @@
+"""Module for common argument validators across client methods."""
+
 import warnings
 
 

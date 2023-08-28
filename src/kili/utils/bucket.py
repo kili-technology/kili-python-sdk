@@ -23,6 +23,7 @@ def generate_unique_id():
     return cuid.cuid()
 
 
+# pylint: disable=missing-type-doc
 def request_signed_urls(kili, file_urls: List[str]):
     """Get upload signed URLs.
 

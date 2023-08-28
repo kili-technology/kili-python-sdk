@@ -23,7 +23,7 @@ class AssetClientMethods:
     kili_api_gateway: KiliAPIGateway
     http_client: requests.Session
 
-    # pylint: disable=too-many-arguments, dangerous-default-value, redefined-builtin
+    # pylint: disable=too-many-arguments, dangerous-default-value, redefined-builtin, too-many-locals
     @overload
     def assets(
         self,
