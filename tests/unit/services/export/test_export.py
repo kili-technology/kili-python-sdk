@@ -3,7 +3,7 @@ import glob
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
+from unittest.mock import ANY, patch
 from zipfile import ZipFile
 
 import pytest
@@ -11,7 +11,8 @@ import pytest_mock
 
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.entrypoints.queries.label import QueriesLabel
-from kili.gateways.kili_api_gateway.asset import AssetOperationMixin
+from kili.gateways.kili_api_gateway.asset.types import AssetWhere
+from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.orm import Asset
 from kili.services.export import export_labels
 from kili.services.export.exceptions import (
@@ -24,6 +25,7 @@ from tests.fakes.fake_kili import (
     FakeKili,
     mocked_AssetQuery,
     mocked_AssetQuery_count,
+    mocked_kili_api_gateway_get_project,
     mocked_ProjectQuery,
 )
 from tests.unit.services.export.fakes.fake_ffmpeg import mock_ffmpeg
@@ -620,8 +622,6 @@ def get_file_tree(folder: str):
     ],
 )
 def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_case):
-    mocker.patch.object(AssetOperationMixin, "count_assets", side_effect=mocked_AssetQuery_count)
-    mocker.patch.object(AssetOperationMixin, "list_assets", side_effect=mocked_AssetQuery)
     mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
     mocker_ffmpeg = mocker.patch("kili.services.export.media.video.ffmpeg")
     mocker.patch(
@@ -637,6 +637,9 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
             mock_ffmpeg(mocker_ffmpeg)
 
             fake_kili = FakeKili()
+            fake_kili.kili_api_gateway.list_assets.side_effect = mocked_AssetQuery
+            fake_kili.kili_api_gateway.count_assets.side_effect = mocked_AssetQuery_count
+            fake_kili.kili_api_gateway.get_project.side_effect = mocked_kili_api_gateway_get_project
             default_kwargs = {
                 "asset_ids": [],
                 "split_option": "merged",
@@ -754,16 +757,15 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
     ],
 )
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
-@patch.object(AssetOperationMixin, "list_assets", side_effect=mocked_AssetQuery)
-@patch.object(AssetOperationMixin, "count_assets", side_effect=mocked_AssetQuery_count)
-def test_export_service_errors(
-    mocker_asset_count, mocker_asset, mocker_project, name, test_case, error
-):
+def test_export_service_errors(mocker_project, name, test_case, error):
     with TemporaryDirectory() as export_folder:
         path_zipfile = Path(export_folder) / "export.zip"
         path_zipfile.parent.mkdir(parents=True, exist_ok=True)
 
         fake_kili = FakeKili()
+        fake_kili.kili_api_gateway.list_assets.side_effect = mocked_AssetQuery
+        fake_kili.kili_api_gateway.count_assets.side_effect = mocked_AssetQuery_count
+        fake_kili.kili_api_gateway.get_project.side_effect = mocked_kili_api_gateway_get_project
         default_kwargs = {
             "asset_ids": [],
             "split_option": "merged",
@@ -798,6 +800,7 @@ def test_export_with_asset_filter_kwargs(mocker):
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
     kili.export_labels(
         project_id="fake_proj_id",
         filename="fake_filename",
@@ -815,32 +818,54 @@ def test_export_with_asset_filter_kwargs(mocker):
             "skipped": None,
             "status_in": None,
             "label_category_search": None,
-            "created_at_gte": 0.5,
-            "created_at_lte": 0.6,
+            "created_at_gte": "2022-02-03",
+            "created_at_lte": "2023-02-03",
             "issue_type": "QUESTION",
             "issue_status": None,
             "inference_mark_gte": 0.7,
             "inference_mark_lte": 0.8,
         },
     )
-
-    query_sent = kili.graphql_client.execute.call_args[0][0]
-    assert_where = kili.graphql_client.execute.call_args[0][1]["where"]
-
-    assert "query assets($where: AssetWhere!" in query_sent
-    assert "data: assets(where: $where" in query_sent
-
-    assert assert_where["project"]["id"] == "fake_proj_id"
-    assert assert_where["consensusMarkGte"] == 0.1
-    assert assert_where["consensusMarkLte"] == 0.2
-    assert assert_where["honeypotMarkGte"] == 0.3
-    assert assert_where["honeypotMarkLte"] == 0.4
-    assert assert_where["createdAtGte"] == 0.5
-    assert assert_where["createdAtLte"] == 0.6
-    assert assert_where["inferenceMarkGte"] == 0.7
-    assert assert_where["inferenceMarkLte"] == 0.8
-    assert assert_where["externalIdStrictlyIn"] == ["truc"]
-    assert assert_where["issue"]["type"] == "QUESTION"
+    expected_where = AssetWhere(
+        project_id="fake_proj_id",
+        external_id_strictly_in=["truc"],
+        consensus_mark_gte=0.1,
+        consensus_mark_lte=0.2,
+        honeypot_mark_gte=0.3,
+        honeypot_mark_lte=0.4,
+        created_at_gte="2022-02-03",
+        created_at_lte="2023-02-03",
+        label_type_in=["DEFAULT", "REVIEW"],
+        inference_mark_gte=0.7,
+        inference_mark_lte=0.8,
+        issue_type="QUESTION",
+    )
+    expected_fields = [
+        "id",
+        "externalId",
+        "content",
+        "jsonContent",
+        "jsonMetadata",
+        "pageResolutions.pageNumber",
+        "pageResolutions.height",
+        "pageResolutions.width",
+        "pageResolutions.rotation",
+        "resolution.height",
+        "resolution.width",
+        "latestLabel.jsonResponse",
+        "latestLabel.author.id",
+        "latestLabel.author.email",
+        "latestLabel.author.firstname",
+        "latestLabel.author.lastname",
+        "latestLabel.createdAt",
+        "latestLabel.isLatestLabelForUser",
+        "latestLabel.labelType",
+        "latestLabel.modelName",
+    ]
+    expected_options = QueryOptions(disable_tqdm=False, first=None, skip=0)
+    kili.kili_api_gateway.list_assets.assert_called_once_with(
+        expected_where, expected_fields, expected_options, None
+    )
 
 
 def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
@@ -891,10 +916,6 @@ def mock_kili(mocker, with_data_connection):
     }
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
     mocker.patch(
-        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
-        return_value=(i for i in [get_project_return_val]),
-    )
-    mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
     if with_data_connection:
@@ -904,6 +925,8 @@ def mock_kili(mocker, with_data_connection):
         )
 
     kili = QueriesLabel()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = get_project_return_val
     return kili
 
 

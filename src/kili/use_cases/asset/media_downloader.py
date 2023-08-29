@@ -100,7 +100,6 @@ class MediaDownloader:
 
     def download_assets(self, assets: List[Dict]) -> List[Dict]:
         """Download assets media in local."""
-        print("Downloading assets...")
         if len(assets) == 0:
             return assets
 

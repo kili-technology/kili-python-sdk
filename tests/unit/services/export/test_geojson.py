@@ -18,10 +18,10 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
         "description": "fake proj description",
     }
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch(
-        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
-        return_value=(i for i in [get_project_return_val]),
-    )
+    # mocker.patch(
+    #     "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
+    #     return_value=(i for i in [get_project_return_val]),
+    # )
     mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
@@ -44,6 +44,8 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
 
     kili.export_labels(
         "fake_proj_id",
