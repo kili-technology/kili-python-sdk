@@ -8,7 +8,6 @@ from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
-from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.gateways.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
 from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.presentation.client.common_validators import assert_all_arrays_have_same_size
@@ -20,8 +19,6 @@ from .helpers import get_issue_numbers
 @for_all_methods(log_call, exclude=["__init__"])
 class MutationsIssue(BaseOperationEntrypointMixin):
     """Set of Issue mutations."""
-
-    kili_api_gateway: KiliAPIGateway
 
     # pylint: disable=too-many-arguments
     @deprecate(

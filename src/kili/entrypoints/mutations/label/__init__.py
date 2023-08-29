@@ -6,7 +6,6 @@ from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
 
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import deprecate, is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
 from kili.entrypoints.base import BaseOperationEntrypointMixin
@@ -16,7 +15,6 @@ from kili.entrypoints.mutations.label.queries import (
     GQL_DELETE_LABELS,
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
-from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.orm import Label
 from kili.presentation.client.common_validators import (
     assert_all_arrays_have_same_size,
@@ -31,9 +29,6 @@ from kili.utils.logcontext import for_all_methods, log_call
 @for_all_methods(log_call, exclude=["__init__"])
 class MutationsLabel(BaseOperationEntrypointMixin):
     """Set of Label mutations."""
-
-    graphql_client: GraphQLClient
-    kili_api_gateway: KiliAPIGateway
 
     # pylint: disable=too-many-arguments
     @typechecked

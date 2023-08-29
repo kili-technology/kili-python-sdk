@@ -22,6 +22,7 @@ class ImportTestCase(TestCase):
         self.test_dir = tempfile.mkdtemp()
         self.downloader = LocalDownloader(self.test_dir, requests.Session())
         self.kili = mocked_auth
+        self.kili.kili_api_gateway.count_assets = MagicMock(return_value=1)
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)

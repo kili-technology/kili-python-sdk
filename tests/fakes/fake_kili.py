@@ -21,6 +21,7 @@ class FakeKili:
     api_endpoint = "http://content-repository"
     graphql_client = MagicMock()
     http_client = requests.Session()
+    kili_api_gateway = MagicMock()
 
 
 def mocked_ProjectQuery(where, _fields, _options):

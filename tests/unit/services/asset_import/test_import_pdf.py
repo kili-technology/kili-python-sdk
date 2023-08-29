@@ -28,7 +28,6 @@ from tests.unit.services.asset_import.mocks import (
     side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
 )
 class PDFTestCase(ImportTestCase):
-    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_upload_from_one_local_pdf(self, *_):
         url = (
             "https://storage.googleapis.com/label-public-staging/asset-test-sample/pdfs/sample.pdf"
@@ -46,7 +45,6 @@ class PDFTestCase(ImportTestCase):
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
-    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_upload_from_one_hosted_pdf(self, *_):
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
@@ -57,11 +55,9 @@ class PDFTestCase(ImportTestCase):
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
-    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_upload_from_several_batches(self, *_):
         self.assert_upload_several_batches()
 
-    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_upload_from_one_hosted_pdf_authorized_while_local_forbidden(self, *_):
         OrganizationQuery.__call__.side_effect = mocked_organization_with_upload_from_local(
             upload_local_data=False

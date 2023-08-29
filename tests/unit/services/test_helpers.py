@@ -23,10 +23,10 @@ def test__build_id_map_when_project_has_less_than_2000_assets(mocker, name, asse
     kili = FakeKili()
     mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
     mocker.patch.object(AssetOperationMixin, "list_assets", side_effect=mocked_AssetQuery)
-    mocker.patch.object(AssetOperationMixin, "count_assets", side_effect=mocked_AssetQuery_count)
+    kili.kili_api_gateway.count_assets = mocker.MagicMock(side_effect=mocked_AssetQuery_count)
 
     asset_external_ids = [f"ext-{i}" for i in range(asset_count)]
     project_id = "object_detection_2500_assets"
-    id_map = _build_id_map(kili, asset_external_ids, project_id)
+    id_map = _build_id_map(kili.kili_api_gateway, asset_external_ids, project_id)
 
     assert id_map == {f"ext-{i}": f"{i}" for i in range(asset_count)}

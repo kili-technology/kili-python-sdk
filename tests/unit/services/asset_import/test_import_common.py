@@ -20,7 +20,6 @@ from tests.unit.services.asset_import.mocks import (
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
-@patch.object(AssetOperationMixin, "list_assets", return_value=[])
 @patch.object(
     OrganizationQuery,
     "__call__",
@@ -28,7 +27,6 @@ from tests.unit.services.asset_import.mocks import (
 )
 class TestContentType(ImportTestCase):
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("VIDEO_LEGACY"))
-    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_cannot_upload_an_image_to_video_project(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
@@ -37,7 +35,6 @@ class TestContentType(ImportTestCase):
             import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
-    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_cannot_import_files_not_found_to_an_image_project(self, *_):
         path = "./doesnotexist.png"
         assets = [{"content": path, "external_id": "image"}]
@@ -45,7 +42,6 @@ class TestContentType(ImportTestCase):
             import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("PDF"))
-    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_cannot_upload_raw_text_to_pdf_project(self, *_):
         path = "Hello world"
         assets = [{"content": path, "external_id": "image"}]
@@ -53,7 +49,6 @@ class TestContentType(ImportTestCase):
             import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))
-    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_return_the_ids_of_created_assets(self, *_):
         assets = [{"content": "One"}, {"content": "Two"}, {"content": "Three"}]
 
@@ -68,7 +63,6 @@ class TestContentType(ImportTestCase):
         assert set(created_assets) == {"id1", "id2", "id3"}
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))
-    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     def test_generate_different_uuid4_external_ids_if_not_given(self, *_):
         assets = [{"content": "One"}, {"content": "Two"}, {"content": "Three"}]
         self.kili.graphql_client.execute.reset_mock()
@@ -87,7 +81,6 @@ class TestContentType(ImportTestCase):
         assert external_ids_are_uniques
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
-    @patch.object(AssetOperationMixin, "count_assets", return_value=1)
     @patch("kili.services.asset_import.base.BaseBatchImporter.verify_batch_imported")
     def test_import_assets_verify(self, mocked_verify_batch_imported, *_):
         assets = [{"content": "https://hosted-data", "external_id": "externalid"}]

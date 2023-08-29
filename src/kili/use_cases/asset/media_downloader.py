@@ -36,13 +36,11 @@ def get_download_assets_function(
     Also returns the fields to be queried, which may be modified
     if the jsonContent field is necessary.
     """
-    print("get_download_assets_function")
     if not download_media:
         return None, fields
 
     project = kili_api_gateway.get_project(project_id=project_id, fields=["inputType"])
     input_type = project["inputType"]
-    print(project, download_media, local_media_dir)
 
     # We need to query the data connections to know if the assets are hosted in a cloud storage
     # If so, we remove the fields "content" and "jsonContent" from the query
@@ -102,6 +100,7 @@ class MediaDownloader:
 
     def download_assets(self, assets: List[Dict]) -> List[Dict]:
         """Download assets media in local."""
+        print("Downloading assets...")
         if len(assets) == 0:
             return assets
 

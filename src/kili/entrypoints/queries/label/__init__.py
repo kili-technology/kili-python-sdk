@@ -19,7 +19,6 @@ from typeguard import typechecked
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import validate_category_search_query
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
 from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.presentation.client.common_validators import disable_tqdm_if_as_generator
@@ -36,8 +35,6 @@ from kili.utils.logcontext import for_all_methods, log_call
 @for_all_methods(log_call, exclude=["__init__"])
 class QueriesLabel(BaseOperationEntrypointMixin):
     """Set of Label queries."""
-
-    kili_api_gateway: KiliAPIGateway
 
     # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value
 

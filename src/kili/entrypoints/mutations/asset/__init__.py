@@ -21,7 +21,6 @@ from kili.entrypoints.mutations.asset.queries import (
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
 )
 from kili.exceptions import MissingArgumentError
-from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
 from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.orm import Asset
@@ -36,8 +35,6 @@ from ..exceptions import MutationError
 @for_all_methods(log_call, exclude=["__init__"])
 class MutationsAsset(BaseOperationEntrypointMixin):
     """Set of Asset mutations."""
-
-    kili_api_gateway: KiliAPIGateway
 
     # pylint: disable=too-many-arguments,too-many-locals
     @typechecked
