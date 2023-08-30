@@ -44,7 +44,7 @@ class PaginatedGraphQLQuery:
         where: AbstractQueryWhere,
         options: QueryOptions,
         nb_elements_to_query: Optional[int],
-        post_call_function: Optional[Callable] = None,
+        post_call_function: Optional[Callable[[List], List]] = None,
     ) -> Generator[Dict, None, None]:
         """Builds a row generator from paginated calls.
 
@@ -53,8 +53,11 @@ class PaginatedGraphQLQuery:
             where: The where payload to send in the graphQL query,
                 both to the query and the count_query if specified
             options: The query options with skip and first and disable_tqdm
-            nb_elements_to_query: The expected number of elements to query
-            post_call_function: A function to be applied to the result of the query
+            nb_elements_to_query: The expected number of elements to query.
+                If given, it will show a progress bar if tqdm is not disabled in options
+            post_call_function: A function to be applied to the result of the query after each call.
+                It should take the elements of the result of the query as input and should return
+                the list of modified (or not) elements
         """
         disable_tqdm = nb_elements_to_query is None or options.disable_tqdm
 
@@ -100,28 +103,33 @@ class PaginatedGraphQLQuery:
 
 def get_number_of_elements_to_query(
     graphql_client: GraphQLClient,
+    count_query: str,
     where: AbstractQueryWhere,
     options: QueryOptions,
-    count_query: Optional[str] = None,
-):
-    """Return the total number of element to query for one query that will be paginated.
+) -> int:
+    """Give the total number of elements to query for one query that will be paginated.
 
     It uses both the argument first given by the user
     and the total number of available objects obtained with a graphQL count query
+
+    Args:
+        graphql_client: The graphQL client
+        where: the where payload to the count query,
+        options: the query options with skip and first
+        count_query: the count query
+
+    Returns:
+        The number of elements to query
     """
     first = options.first
     skip = options.skip
-    if count_query is not None:
-        payload = {"where": where.build_gql_where()}
-        count_result = graphql_client.execute(count_query, payload)
-        nb_elements = count_result["data"]
-        nb_elements_queried = max(nb_elements - skip, 0)
-        if first is None:
-            return nb_elements_queried
-        return min(nb_elements_queried, first)
-    if options.first is not None:
-        return options.first
-    return None
+    payload = {"where": where.build_gql_where()}
+    count_result = graphql_client.execute(count_query, payload)
+    nb_elements = count_result["data"]
+    nb_elements_queried = max(nb_elements - skip, 0)
+    if first is None:
+        return nb_elements_queried
+    return min(nb_elements_queried, first)
 
 
 @typechecked
