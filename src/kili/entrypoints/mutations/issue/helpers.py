@@ -13,6 +13,7 @@ def get_labels_asset_ids_map(kili, project_id: str, label_id_array: List[str]):
 
     Returns:
         a dict of key->value: a label id->its associated asset id for the given label ids
+
     Raises:
         NotFound error if at least one label was not found with its given id
     """

@@ -1,6 +1,6 @@
 """Types for the Issue-related Kili API gateway functions."""
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from kili.domain.issue import IssueStatus, IssueType
 
@@ -25,7 +25,7 @@ class IssueWhere:
     issue_type: Optional[IssueType] = None
     status: Optional[IssueStatus] = None
 
-    def get_graphql_where_value(self):
+    def get_graphql_where_value(self) -> Dict:
         """Build the GraphQL IssueWhere variable value to be sent in an operation."""
         return {
             "project": {"id": self.project_id},

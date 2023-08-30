@@ -40,6 +40,7 @@ from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.presentation.client.internal import InternalClientMethods
 from kili.presentation.client.issue import IssueClientMethods
+from kili.presentation.client.tag import TagClientMethods
 from kili.utils.logcontext import LogContext, log_call
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
@@ -80,6 +81,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     QueriesUser,
     SubscriptionsLabel,
     IssueClientMethods,
+    TagClientMethods,
 ):
     """Kili Client."""
 

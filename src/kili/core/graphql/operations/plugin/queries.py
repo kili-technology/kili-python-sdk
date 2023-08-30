@@ -6,6 +6,8 @@ from typing import List, NamedTuple, Optional
 
 from kili.core.graphql import GraphQLQuery, QueryOptions
 
+from ...utils import fragment_builder
+
 
 class PluginBuildErrorsWhere(NamedTuple):
     """Tuple to be passed to the PluginQuery to restrict query."""
@@ -107,7 +109,7 @@ class PluginQuery(GraphQLQuery):
 
     def list(self, fields: List[str]):
         """List plugins."""
-        fragment = self.fragment_builder(fields)
+        fragment = fragment_builder(fields)
         query = self.gql_list_plugins(fragment)
         result = self.client.execute(query)
         return self.format_result("data", result)
