@@ -9,6 +9,7 @@ from kili.core.graphql import BaseQueryWhere, GraphQLQuery
 class ProjectUserWhere(BaseQueryWhere):
     """Tuple to be passed to the ProjectUserQuery to restrict query."""
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         project_id: str,

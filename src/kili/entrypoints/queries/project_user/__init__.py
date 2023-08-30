@@ -145,6 +145,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         organization_id: Optional[str] = None,
         status: Optional[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]] = None,
     ) -> int:
+        # pylint: disable=line-too-long
         """Count the number of projects and their users that match a set of criteria.
 
         Args:
