@@ -25,7 +25,7 @@ class IssueWhere:
     issue_type: Optional[IssueType] = None
     status: Optional[IssueStatus] = None
 
-    def build_gql_value(self):
+    def build_gql_where(self):
         """Build the GraphQL IssueWhere payload to be sent in an operation."""
         return {
             "project": {"id": self.project_id},

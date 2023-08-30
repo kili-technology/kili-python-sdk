@@ -19,7 +19,7 @@ from kili.gateways.kili_api_gateway.queries import (
 class FakeWhere(AbstractQueryWhere):
     project_id: str
 
-    def build_gql_value(self):
+    def build_gql_where(self):
         return {"projectID": self.project_id}
 
 

@@ -1,7 +1,7 @@
 """Mixin extending Kili API Gateway class with Asset related operations."""
 
 
-from typing import Callable, List, Optional
+from typing import Callable, Dict, Generator, List, Optional
 
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.gateways.kili_api_gateway.asset.operations import (
@@ -29,7 +29,7 @@ class AssetOperationMixin:
         fields: List[str],
         options: QueryOptions,
         post_call_function: Optional[Callable],
-    ):
+    ) -> Generator[Dict, None, None]:
         """List assets with given options."""
         fragment = fragment_builder(fields)
         query = get_asset_query(fragment)
@@ -40,10 +40,10 @@ class AssetOperationMixin:
             query, where, options, nb_elements_to_query, post_call_function
         )
 
-    def count_assets(self, where: AssetWhere):
+    def count_assets(self, where: AssetWhere) -> int:
         """Send a GraphQL request calling countIssues resolver."""
         payload = {
-            "where": where.build_gql_value(),
+            "where": where.build_gql_where(),
         }
         count_result = self.graphql_client.execute(GQL_COUNT_ASSETS, payload)
         count: int = count_result["data"]

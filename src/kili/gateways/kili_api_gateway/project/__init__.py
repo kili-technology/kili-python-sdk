@@ -25,7 +25,7 @@ class ProjectOperationMixin:
         query = get_project_query(fragment)
         where = ProjectWhere(project_id=project_id)
         result = self.graphql_client.execute(
-            query=query, variables={"where": where.build_gql_value()}
+            query=query, variables={"where": where.build_gql_where(), "first": 1}
         )
         projects = result["data"]
         if len(projects) == 0:

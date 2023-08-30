@@ -16,7 +16,7 @@ class ProjectWhere(AbstractQueryWhere):
     updated_at_lte: Optional[str] = None
     archived: Optional[bool] = None
 
-    def build_gql_value(self):
+    def build_gql_where(self):
         """Build the GraphQL Where payload sent in the resolver from the SDK ProjectWhere."""
         value = {
             "id": self.project_id,

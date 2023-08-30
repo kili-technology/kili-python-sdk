@@ -62,7 +62,7 @@ class IssueOperationMixin:
         """Send a GraphQL request calling countIssues resolver."""
         where = IssueWhere(project_id, asset_id, asset_id_in, issue_type, status)
         payload = {
-            "where": where.build_gql_value(),
+            "where": where.build_gql_where(),
         }
         count_result = self.graphql_client.execute(GQL_COUNT_ISSUES, payload)
         return count_result["data"]

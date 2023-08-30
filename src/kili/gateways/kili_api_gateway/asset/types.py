@@ -45,7 +45,7 @@ class AssetWhere(AbstractQueryWhere):
     issue_type: Optional[IssueType] = None
     issue_status: Optional[IssueStatus] = None
 
-    def build_gql_value(self):
+    def build_gql_where(self):
         """Build the GraphQL AssetWhere variable to be sent in an operation."""
 
         return {
