@@ -1,15 +1,20 @@
 """Helpers for the issue mutations."""
 
 
-from typing import List
+from typing import Dict, List
 
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.exceptions import NotFound
 
 
-def get_labels_asset_ids_map(kili, project_id: str, label_id_array: List[str]):
+def get_labels_asset_ids_map(kili, project_id: str, label_id_array: List[str]) -> Dict:
     """Return a dictionary that gives for every label id, its associated asset id.
+
+    Args:
+        kili: Kili object
+        project_id: id of the project
+        label_id_array: list of label ids
 
     Returns:
         a dict of key->value: a label id->its associated asset id for the given label ids

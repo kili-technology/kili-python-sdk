@@ -4,6 +4,9 @@ from typing import Dict, List, Sequence
 
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.utils import fragment_builder
+from kili.domain.tag import Tag
+
+from .operations import GQL_CHECK_TAG
 
 
 class TagOperationMixin:
@@ -35,3 +38,9 @@ class TagOperationMixin:
         variables = {"projectId": project_id}
         result = self.graphql_client.execute(query, variables)
         return result["data"]
+
+    def check_tag(self, project_id: str, tag_id: str) -> Tag:
+        """Send a GraphQL request calling checkTag resolver."""
+        variables = {"data": {"tagId": tag_id, "projectId": project_id}}
+        result = self.graphql_client.execute(GQL_CHECK_TAG, variables)
+        return Tag(id_=result["data"]["id"])

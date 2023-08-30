@@ -1,12 +1,13 @@
 """Client presentation methods for tags."""
 
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, List, Literal, Optional, Sequence
 
 import requests
 from typeguard import typechecked
 
 from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.utils.logcontext import for_all_methods, log_call
+from kili.utils.tqdm import tqdm
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -19,16 +20,15 @@ class TagClientMethods:
     @typechecked
     def tags(
         self,
-        *,
         project_id: Optional[str] = None,
-        fields: Sequence[str] = ("id", "organizationId", "label", "checkedForProjects")
+        fields: Sequence[str] = ("id", "organizationId", "label", "checkedForProjects"),
     ) -> List[Dict]:
         """Get tags.
 
         Args:
-            organization_id: Id of the organization to which the tags belong.
             project_id: Id of the project to which the tags belong.
-            fields: Fields to be retrieved.
+                If not provided, tags of the organization are retrieved.
+            fields: Fields of tags to be retrieved.
                 See the [documentation](https://docs.kili-technology.com/reference/graphql-api#tag)
                 for all possible fields.
 
@@ -42,25 +42,31 @@ class TagClientMethods:
         )
 
     @typechecked
-    def tag_project(
-        self,
-        project_id: str,
-        tags: Optional[Sequence[str]] = None,
-        tag_ids: Optional[Sequence[str]] = None,
-    ) -> List[Dict]:
-        """Link a tag to a project.
+    def tag_project(self, project_id: str, tags: Sequence[str]) -> List[Dict[Literal["id"], str]]:
+        """Link tags to a project.
 
         Args:
             project_id: Id of the project.
-            tags: List of tags to associate to the project.
-            tag_ids: List of tag ids to associate to the project. Used only if tags is None.
+            tags: Sequence of tags to associate to the project.
+                The value of each tag can be its name or its id.
 
         Returns:
             A list of dictionary with the tag ids.
         """
-        if tags is None and tag_ids is None:
-            raise ValueError("Either `tags` or `tag_ids` must be provided.")
-        if tags is not None and tag_ids is not None:
-            raise ValueError("Only one of `tags` or `tag_ids` must be provided.")
+        tags_of_orga = self.kili_api_gateway.list_tags_by_org(fields=("id", "label"))
+        tag_name_to_id = {tag["label"]: tag["id"] for tag in tags_of_orga}
 
-        raise NotImplementedError
+        ret_tags = []
+        for tag in tqdm(tags, desc="Tagging project"):
+            if tag in tag_name_to_id.values():
+                tag_id = tag
+            elif tag in tag_name_to_id.keys():
+                tag_id = tag_name_to_id[tag]
+            else:
+                raise ValueError(f"Tag {tag} not found in project {project_id}")
+
+            ret_tags.append(
+                {"id": self.kili_api_gateway.check_tag(project_id=project_id, tag_id=tag_id).id_}
+            )
+
+        return ret_tags
