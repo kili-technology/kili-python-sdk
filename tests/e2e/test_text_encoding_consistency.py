@@ -1,9 +1,5 @@
 # pylint: disable=missing-function-docstring,redefined-outer-name
 """Tests that the external id check is strict."""
-import json
-from pathlib import Path
-from tempfile import NamedTemporaryFile
-
 import pytest
 import requests
 
