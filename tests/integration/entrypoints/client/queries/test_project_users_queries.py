@@ -8,7 +8,7 @@ def test_project_users_query(mocker: pytest_mock.MockFixture):
     kili.graphql_client = mocked_graphql = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
 
-    kili.project_users(project_id="fake_project_id", status="ACTIVATED")
+    kili.project_users(project_id="fake_project_id", status_in=("ACTIVATED",))
 
     query, variables = mocked_graphql.execute.call_args[0]
 
