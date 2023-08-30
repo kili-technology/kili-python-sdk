@@ -1,43 +1,11 @@
 """Helpers for the issue mutations."""
 
 
-from typing import List, Literal, cast
+from typing import List
 
-from kili.core.graphql.operations.issue.queries import IssueQuery, IssueWhere
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.exceptions import NotFound
 from kili.gateways.kili_api_gateway.queries import QueryOptions
-
-
-# pylint: disable=missing-type-doc
-def get_issue_numbers(kili, project_id: str, type_: Literal["QUESTION", "ISSUE"], size: int):
-    """Get the next available issue number.
-
-    Args:
-        kili: Kili instance.
-        project_id: Id of the project.
-        type_: type of the issue to add.
-        size: the number of issue to add.
-    """
-    issues = IssueQuery(kili.graphql_client, kili.http_client)(
-        IssueWhere(
-            project_id=project_id,
-        ),
-        ["type", "issueNumber"],
-        QueryOptions(disable_tqdm=True),
-    )
-    first_issue_number = (
-        cast(
-            int,
-            max(
-                (issue["issueNumber"] for issue in issues if issue["type"] == type_),
-                default=-1,
-            ),
-        )
-        + 1
-    )
-
-    return list(range(first_issue_number, first_issue_number + size))
 
 
 def get_labels_asset_ids_map(kili, project_id: str, label_id_array: List[str]):

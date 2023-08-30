@@ -6,14 +6,14 @@ from typeguard import typechecked
 
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
+from kili.core.utils.pagination import BatchIteratorBuilder
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
 from kili.gateways.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
 from kili.gateways.kili_api_gateway.queries import QueryOptions
 from kili.presentation.client.common_validators import assert_all_arrays_have_same_size
+from kili.utils import tqdm
 from kili.utils.logcontext import for_all_methods, log_call
-
-from .helpers import get_issue_numbers
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -56,7 +56,6 @@ class MutationsIssue(BaseOperationEntrypointMixin):
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        issue_number = get_issue_numbers(self, project_id, type_, 1)[0]
         try:
             options = QueryOptions(disable_tqdm=True)
             where = LabelWhere(
@@ -76,7 +75,7 @@ class MutationsIssue(BaseOperationEntrypointMixin):
         variables = {
             "issues": [
                 {
-                    "issueNumber": issue_number,
+                    "issueNumber": 0,
                     "labelID": label_id,
                     "objectMid": object_mid,
                     "type": type_,
@@ -111,19 +110,21 @@ class MutationsIssue(BaseOperationEntrypointMixin):
             A list of dictionary with the `id` key of the created questions.
         """
         assert_all_arrays_have_same_size([text_array, asset_id_array])
-        issue_number_array = get_issue_numbers(self, project_id, "QUESTION", len(text_array))
         asset_id_array = get_asset_ids_or_throw_error(
             self.kili_api_gateway, asset_id_array, asset_external_id_array, project_id
         )
-        variables = {
-            "issues": [
-                {"issueNumber": issue_number, "type": "QUESTION", "assetId": asset_id, "text": text}
-                for (asset_id, text, issue_number) in zip(
-                    asset_id_array, text_array, issue_number_array
-                )
-            ],
-            "where": {"idIn": asset_id_array},
-        }
+        created_questions: List[Dict[str, str]] = []
+        with tqdm.tqdm(total=len(text_array), desc="Creating questions") as pbar:
+            for batch_questions in BatchIteratorBuilder(list(zip(asset_id_array, text_array))):
+                variables = {
+                    "issues": [
+                        {"issueNumber": 0, "type": "QUESTION", "assetId": asset_id, "text": text}
+                        for (asset_id, text) in batch_questions
+                    ],
+                    "where": {"idIn": asset_id_array},
+                }
 
-        result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
-        return self.format_result("data", result)
+                result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
+                created_questions.extend(self.format_result("data", result))
+                pbar.update(len(batch_questions))
+        return created_questions

@@ -26,7 +26,7 @@ class IssueOperationMixin:
     ) -> List[Issue]:
         """Send a GraphQL request calling createIssues resolver."""
         created_issue_entities: List[Issue] = []
-        with tqdm.tqdm(total=len(issues)) as pbar:
+        with tqdm.tqdm(total=len(issues), desc="Creating issues") as pbar:
             for issues_batch in BatchIteratorBuilder(issues):
                 batch_targeted_asset_ids = [issue.asset_id for issue in issues_batch]
                 payload = {
