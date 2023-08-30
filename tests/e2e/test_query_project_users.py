@@ -1,8 +1,6 @@
 import uuid
-from typing import Dict
 
 import pytest
-import pytest_mock
 
 from kili.client import Kili
 
@@ -18,40 +16,14 @@ def project_id_suspended_user_email(kili: Kili):
         input_type="TEXT", title="test_query_project_users.py sdk", json_interface={"jobs": {}}
     )
 
-    # We add some users to both the orga and the project
-    # for role in ("LABELER", "TEAM_MANAGER", "REVIEWER", "ADMIN"):
-    #     kili.append_to_roles(
-    #         project_id=project["id"],
-    #         user_email=f"john.doe+{role}@kili-technology.com",
-    #         role=role,
-    #     )
-
-    # add a user that we will desactivate
+    # add a user that we desactivate
     suspended_user_email = f"john.doe{uuid.uuid4()}+desactivated@kili-technology.com"
     kili.append_to_roles(
         project_id=project["id"],
         user_email=suspended_user_email,
         role="LABELER",
     )
-    # project_users = kili.project_users(project_id=project["id"], fields=["id", "user.email"])
-    # user = [user for user in project_users if user["user"]["email"] == suspended_user_email][0]
-
     kili.update_properties_in_user(email=suspended_user_email, activated=False)
-    # kili.delete_from_roles(user["id"])
-    # query = """
-    #     mutation updatePropertiesInProjectUser($data: ProjectUserData!, $where: ProjectUserWhere!) {
-    #         data: updatePropertiesInProjectUser(data: $data, where: $where) {
-    #             id activated
-    #         }
-    #     }
-    #     """
-    # kili.graphql_client.execute(
-    #     query=query,
-    #     variables={
-    #         "where": {"project": {"id": project["id"]}, "user": {"email": suspended_user_email}},
-    #         "data": {"activated": False},
-    #     },
-    # )
 
     yield project["id"], suspended_user_email
 
@@ -77,8 +49,7 @@ def test_given_project_when_querying_project_users_it_works(
 
     # Then, only one activated user: the api user
     assert len(activated_users) == 1, activated_users
-    for proj_user in activated_users:
-        assert proj_user["user"]["email"] in {api_user["email"]}, activated_users
+    assert activated_users[0]["user"]["email"] == api_user["email"], activated_users
 
     # When
     admin_users = kili.project_users(project_id=project_id, fields=fields, status="ORG_ADMIN")
@@ -97,5 +68,4 @@ def test_given_project_when_querying_project_users_it_works(
 
     # Then, only one disabled user
     assert len(disabled_users) == 1, disabled_users
-    for proj_user in disabled_users:
-        assert proj_user["user"]["email"] in {suspended_user_email}, disabled_users
+    assert disabled_users[0]["user"]["email"] == suspended_user_email, disabled_users
