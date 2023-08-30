@@ -42,13 +42,16 @@ class TagClientMethods:
         )
 
     @typechecked
-    def tag_project(self, project_id: str, tags: Sequence[str]) -> List[Dict[Literal["id"], str]]:
+    def tag_project(
+        self, project_id: str, tags: Sequence[str], disable_tqdm: bool = False
+    ) -> List[Dict[Literal["id"], str]]:
         """Link tags to a project.
 
         Args:
             project_id: Id of the project.
             tags: Sequence of tags to associate to the project.
                 The value of each tag can be its name or its id.
+            disable_tqdm: Whether to disable the progress bar.
 
         Returns:
             A list of dictionary with the tag ids.
@@ -57,7 +60,7 @@ class TagClientMethods:
         tag_name_to_id = {tag["label"]: tag["id"] for tag in tags_of_orga}
 
         ret_tags = []
-        for tag in tqdm(tags, desc="Tagging project"):
+        for tag in tqdm(tags, desc="Tagging project", disable=disable_tqdm):
             if tag in tag_name_to_id.values():
                 tag_id = tag
             elif tag in tag_name_to_id.keys():
