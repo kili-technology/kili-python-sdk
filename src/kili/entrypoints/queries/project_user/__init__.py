@@ -1,6 +1,15 @@
 """Project user queries."""
 
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from typing import (
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    overload,
+)
 
 from typeguard import typechecked
 
@@ -27,7 +36,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
-        status: Optional[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]] = None,
+        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = None,
         fields: List[str] = [
             "activated",
             "id",
@@ -35,6 +44,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             "starred",
             "user.email",
             "user.id",
+            "status",
         ],
         first: Optional[int] = None,
         skip: int = 0,
@@ -51,7 +61,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
-        status: Optional[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]] = None,
+        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = None,
         fields: List[str] = [
             "activated",
             "id",
@@ -59,6 +69,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             "starred",
             "user.email",
             "user.id",
+            "status",
         ],
         first: Optional[int] = None,
         skip: int = 0,
@@ -75,7 +86,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
-        status: Optional[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]] = None,
+        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = None,
         fields: List[str] = [
             "activated",
             "id",
@@ -83,6 +94,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             "starred",
             "user.email",
             "user.id",
+            "status",
         ],
         first: Optional[int] = None,
         skip: int = 0,
@@ -98,7 +110,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             email: Email of the user.
             id: Identifier of the user.
             organization_id: Identifier of the user's organization.
-            status: If `None`, all users are returned.
+            status_in: If `None`, all users are returned.
 
                 - `ORG_ADMIN`: Is an Organization Admin. Is automatically added to projects.
                 - `ACTIVATED`: Has been invited to the project. Is not an Organization Admin
@@ -119,18 +131,28 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             >>> kili.project_users(project_id=project_id, fields=['consensusMark', 'user.email'])
             ```
         """
+        if status_in is not None and "status" not in fields:
+            fields = [*fields, "status"]
+
         where = ProjectUserWhere(
             project_id=project_id,
             email=email,
             _id=id,
             organization_id=organization_id,
-            status=status,
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         project_users_gen = ProjectUserQuery(self.graphql_client, self.http_client)(
             where, fields, options
         )
+
+        if status_in is not None:
+            status_in_set = set(status_in)
+            project_users_gen = (
+                project_user
+                for project_user in project_users_gen
+                if project_user["status"] in status_in_set
+            )
 
         if as_generator:
             return project_users_gen
@@ -143,7 +165,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
-        status: Optional[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]] = None,
+        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count the number of projects and their users that match a set of criteria.
@@ -153,7 +175,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             email: Email of the user
             id: Identifier of the user
             organization_id: Identifier of the user's organization
-            status: If `None`, all users are returned.
+            status_in: If `None`, all users are returned.
 
                 - `ORG_ADMIN`: Is an Organization Admin. Is automatically added to projects.
                 - `ACTIVATED`: Has been invited to the project. Is not an Organization Admin
@@ -162,11 +184,23 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         Returns:
             The number of project users with the parameters provided
         """
-        where = ProjectUserWhere(
-            project_id=project_id,
-            email=email,
-            _id=id,
-            organization_id=organization_id,
-            status=status,
-        )
-        return ProjectUserQuery(self.graphql_client, self.http_client).count(where)
+        if status_in is None:
+            where = ProjectUserWhere(
+                project_id=project_id,
+                email=email,
+                _id=id,
+                organization_id=organization_id,
+            )
+            return ProjectUserQuery(self.graphql_client, self.http_client).count(where)
+
+        count = 0
+        for status in set(status_in):
+            where = ProjectUserWhere(
+                project_id=project_id,
+                email=email,
+                _id=id,
+                organization_id=organization_id,
+                status=status,
+            )
+            count += ProjectUserQuery(self.graphql_client, self.http_client).count(where)
+        return count

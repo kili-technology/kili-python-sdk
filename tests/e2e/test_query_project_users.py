@@ -39,20 +39,22 @@ def test_given_project_when_querying_project_users_it_works(
     fields = ["activated", "deletedAt", "id", "role", "user.email", "user.id", "status"]
 
     # When
-    all_users = kili.project_users(project_id=project_id, fields=fields, status=None)
+    all_users = kili.project_users(project_id=project_id, fields=fields, status_in=None)
 
     # Then
     assert len(all_users) > 0
 
     # When
-    activated_users = kili.project_users(project_id=project_id, fields=fields, status="ACTIVATED")
+    activated_users = kili.project_users(
+        project_id=project_id, fields=fields, status_in=["ACTIVATED"]
+    )
 
     # Then, only one activated user: the api user
     assert len(activated_users) == 1, activated_users
     assert activated_users[0]["user"]["email"] == api_user["email"], activated_users
 
     # When
-    admin_users = kili.project_users(project_id=project_id, fields=fields, status="ORG_ADMIN")
+    admin_users = kili.project_users(project_id=project_id, fields=fields, status_in=["ORG_ADMIN"])
 
     # Then, admin users are not api user or disabled user
     for proj_user in admin_users:
@@ -63,7 +65,7 @@ def test_given_project_when_querying_project_users_it_works(
 
     # When
     disabled_users = kili.project_users(
-        project_id=project_id, fields=fields, status="ORG_SUSPENDED"
+        project_id=project_id, fields=fields, status_in=["ORG_SUSPENDED"]
     )
 
     # Then, only one disabled user
