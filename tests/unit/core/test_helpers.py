@@ -119,7 +119,10 @@ def test_get_labels_asset_ids_map():
         ),
     ):
         assert get_labels_asset_ids_map(
-            FakeKili, "project_id", ["label_id_1", "label_id_2"]  # type: ignore
+            FakeKili.graphql_client,
+            FakeKili.http_client,
+            "project_id",
+            ["label_id_1", "label_id_2"],
         ) == {
             "label_id_1": "asset_id_1",
             "label_id_2": "asset_id_1",

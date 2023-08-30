@@ -1,3 +1,4 @@
+"""Utils for GraphQL operations."""
 from typing import Sequence
 
 from typeguard import typechecked
