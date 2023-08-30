@@ -36,7 +36,10 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
-        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = None,
+        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = (
+            "ACTIVATED",
+            "ORG_ADMIN",
+        ),
         fields: List[str] = [
             "activated",
             "id",
@@ -61,7 +64,10 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
-        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = None,
+        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = (
+            "ACTIVATED",
+            "ORG_ADMIN",
+        ),
         fields: List[str] = [
             "activated",
             "id",
@@ -86,7 +92,10 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
-        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = None,
+        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = (
+            "ACTIVATED",
+            "ORG_ADMIN",
+        ),
         fields: List[str] = [
             "activated",
             "id",
@@ -165,7 +174,10 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         email: Optional[str] = None,
         id: Optional[str] = None,
         organization_id: Optional[str] = None,
-        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = None,
+        status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = (
+            "ACTIVATED",
+            "ORG_ADMIN",
+        ),
     ) -> int:
         # pylint: disable=line-too-long
         """Count the number of projects and their users that match a set of criteria.
