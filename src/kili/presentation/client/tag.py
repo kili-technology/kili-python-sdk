@@ -4,16 +4,17 @@ from typing import Dict, List, Literal, Optional, Sequence
 
 from typeguard import typechecked
 
-from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.domain.project import ProjectId
+from kili.domain.tag import TagId
 from kili.utils.logcontext import for_all_methods, log_call
 from kili.utils.tqdm import tqdm
 
+from .base import BaseClientMethods
+
 
 @for_all_methods(log_call, exclude=["__init__"])
-class TagClientMethods:
+class TagClientMethods(BaseClientMethods):
     """Methods attached to the Kili client, to run actions on tags."""
-
-    kili_api_gateway: KiliAPIGateway
 
     @typechecked
     def tags(
@@ -34,7 +35,9 @@ class TagClientMethods:
             A list of tags as dictionaries.
         """
         return (
-            self.kili_api_gateway.list_tags_by_project(project_id=project_id, fields=fields)
+            self.kili_api_gateway.list_tags_by_project(
+                project_id=ProjectId(project_id), fields=fields
+            )
             if project_id is not None
             else self.kili_api_gateway.list_tags_by_org(fields=fields)
         )
@@ -67,7 +70,13 @@ class TagClientMethods:
                 raise ValueError(f"Tag {tag} not found in project {project_id}")
 
             ret_tags.append(
-                {"id": self.kili_api_gateway.check_tag(project_id=project_id, tag_id=tag_id).id_}
+                {
+                    "id": str(
+                        self.kili_api_gateway.check_tag(
+                            project_id=ProjectId(project_id), tag_id=TagId(tag_id)
+                        )
+                    )
+                }
             )
 
         return ret_tags

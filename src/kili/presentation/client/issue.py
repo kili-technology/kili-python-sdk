@@ -3,22 +3,19 @@
 from itertools import repeat
 from typing import Dict, List, Literal, Optional
 
-import requests
 from typeguard import typechecked
 
-from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.services.helpers import assert_all_arrays_have_same_size
 from kili.use_cases.issue import IssueUseCases
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
 from kili.utils.logcontext import for_all_methods, log_call
 
+from .base import BaseClientMethods
+
 
 @for_all_methods(log_call, exclude=["__init__"])
-class IssueClientMethods:
+class IssueClientMethods(BaseClientMethods):
     """Methods attached to the Kili client, to run actions on issues."""
-
-    kili_api_gateway: KiliAPIGateway
-    http_client: requests.Session
 
     @typechecked
     def create_issues(

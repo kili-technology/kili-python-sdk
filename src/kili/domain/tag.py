@@ -1,9 +1,4 @@
 """Tag domain."""
-from dataclasses import dataclass
+from typing import NewType
 
-
-@dataclass
-class Tag:
-    """Tag Entity."""
-
-    id_: str
+TagId = NewType("TagId", str)
