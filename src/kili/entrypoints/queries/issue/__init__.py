@@ -3,9 +3,9 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.issue.queries import IssueQuery, IssueWhere
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )

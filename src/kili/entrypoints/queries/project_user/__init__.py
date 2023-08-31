@@ -13,12 +13,12 @@ from typing import (
 
 from typeguard import typechecked
 
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
 )
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )

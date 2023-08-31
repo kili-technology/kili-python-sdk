@@ -6,13 +6,13 @@ from unittest.mock import MagicMock, call
 
 import pytest
 
-from kili.core.constants import QUERY_BATCH_SIZE
-from kili.core.graphql.graphql_client import GraphQLClient
-from kili.gateways.kili_api_gateway.helpers.queries import (
+from kili.adapters.kili_api_gateway.helpers.queries import (
     AbstractQueryWhere,
     PaginatedGraphQLQuery,
     QueryOptions,
 )
+from kili.core.constants import QUERY_BATCH_SIZE
+from kili.core.graphql.graphql_client import GraphQLClient
 
 
 @dataclass

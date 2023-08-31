@@ -6,7 +6,7 @@ from typing import Dict, List, Literal, Optional
 import requests
 from typeguard import typechecked
 
-from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
 )

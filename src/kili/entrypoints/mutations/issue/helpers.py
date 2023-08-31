@@ -3,9 +3,9 @@
 
 from typing import List
 
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.exceptions import NotFound
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 
 
 def get_labels_asset_ids_map(kili, project_id: str, label_id_array: List[str]):

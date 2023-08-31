@@ -2,9 +2,9 @@
 
 from typing import Dict, List
 
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.exceptions import NotFound
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 
 
 def get_project(kili, project_id: str, fields: List[str]) -> Dict:

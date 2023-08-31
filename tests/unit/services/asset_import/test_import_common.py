@@ -1,10 +1,10 @@
 from unittest.mock import MagicMock, patch
 from uuid import UUID
 
+from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
 from kili.core.graphql.operations.asset.mutations import GQL_APPEND_MANY_ASSETS
 from kili.core.graphql.operations.organization.queries import OrganizationQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
-from kili.gateways.kili_api_gateway.asset import AssetOperationMixin
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import MimeTypeError
 from tests.unit.services.asset_import.base import ImportTestCase

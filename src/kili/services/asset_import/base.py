@@ -15,6 +15,8 @@ from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 
+from kili.adapters.kili_api_gateway.asset.types import AssetWhere
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
@@ -25,8 +27,6 @@ from kili.core.graphql.operations.organization.queries import (
 )
 from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
 from kili.core.utils import pagination
-from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,

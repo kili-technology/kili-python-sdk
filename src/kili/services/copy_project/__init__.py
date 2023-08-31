@@ -3,9 +3,9 @@ import itertools
 import logging
 from typing import Dict, Optional
 
+from kili.adapters.kili_api_gateway.asset.types import AssetWhere
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.services.project import get_project
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory

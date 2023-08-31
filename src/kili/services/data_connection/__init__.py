@@ -8,6 +8,8 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_exponential
 
+from kili.adapters.kili_api_gateway.asset.types import AssetWhere
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionIdWhere,
     DataConnectionQuery,
@@ -17,8 +19,6 @@ from kili.entrypoints.mutations.data_connection.queries import (
     GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES,
     GQL_VALIDATE_DATA_DIFFERENCES,
 )
-from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 
 LOGGER = None
 

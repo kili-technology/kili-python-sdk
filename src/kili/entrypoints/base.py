@@ -4,9 +4,9 @@ from typing import Optional, Type, TypeVar
 
 import requests
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import format_result
-from kili.gateways.kili_api_gateway import KiliAPIGateway
 
 T = TypeVar("T")
 

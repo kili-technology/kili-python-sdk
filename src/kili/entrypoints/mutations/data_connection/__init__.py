@@ -6,12 +6,12 @@ from typing import Dict, List, Optional
 from typeguard import typechecked
 
 import kili.services.data_connection as data_connection_service
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationsQuery,
     DataIntegrationWhere,
 )
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .queries import GQL_ADD_PROJECT_DATA_CONNECTION

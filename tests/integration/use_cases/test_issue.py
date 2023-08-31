@@ -2,8 +2,8 @@
 
 import pytest
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.domain.issue import Issue
-from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.use_cases.issue import IssueUseCases
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
 

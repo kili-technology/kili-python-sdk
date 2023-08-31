@@ -7,6 +7,8 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
+from kili.adapters.kili_api_gateway.asset.types import AssetWhere
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
 from kili.entrypoints.base import BaseOperationEntrypointMixin
@@ -21,8 +23,6 @@ from kili.entrypoints.mutations.asset.queries import (
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
 )
 from kili.exceptions import MissingArgumentError
-from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv

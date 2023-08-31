@@ -10,13 +10,13 @@ import pytest
 import pytest_mock
 from click.testing import CliRunner
 
+from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.entrypoints.cli.project.create import create_project
 from kili.entrypoints.cli.project.describe import describe_project
 from kili.entrypoints.cli.project.export import export_labels
 from kili.entrypoints.cli.project.import_ import import_assets
 from kili.entrypoints.cli.project.list_ import list_projects
-from kili.gateways.kili_api_gateway.asset import AssetOperationMixin
 from tests.integration.entrypoints.cli.helpers import debug_subprocess_pytest
 
 from .mocks.assets import mocked__project_assets

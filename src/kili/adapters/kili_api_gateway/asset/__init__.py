@@ -3,19 +3,19 @@
 
 from typing import Callable, Dict, Generator, List, Optional
 
-from kili.core.graphql.graphql_client import GraphQLClient
-from kili.gateways.kili_api_gateway.asset.operations import (
+from kili.adapters.kili_api_gateway.asset.operations import (
     GQL_COUNT_ASSETS,
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
     get_asset_query,
 )
-from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.helpers.queries import (
+from kili.adapters.kili_api_gateway.asset.types import AssetWhere
+from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
     fragment_builder,
     get_number_of_elements_to_query,
 )
+from kili.core.graphql.graphql_client import GraphQLClient
 
 
 class AssetOperationMixin:

@@ -9,10 +9,10 @@ from zipfile import ZipFile
 import pytest
 import pytest_mock
 
+from kili.adapters.kili_api_gateway.asset.types import AssetWhere
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.entrypoints.queries.label import QueriesLabel
-from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.orm import Asset
 from kili.services.export import export_labels
 from kili.services.export.exceptions import (

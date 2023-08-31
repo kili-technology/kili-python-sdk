@@ -3,10 +3,10 @@
 
 from typing import List, Literal, Optional
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.asset.types import AssetWhere
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import validate_category_search_query
-from kili.gateways.kili_api_gateway import KiliAPIGateway
-from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.services.label_data_parsing.types import Project as LabelParsingProject
 from kili.use_cases.asset.asset_label_parsing import parse_labels_of_asset
 from kili.use_cases.asset.media_downloader import get_download_assets_function

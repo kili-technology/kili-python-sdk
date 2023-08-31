@@ -1,9 +1,9 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from kili.gateways.kili_api_gateway import KiliAPIGateway
-from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.asset.types import AssetWhere
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.use_cases.asset import AssetUseCases
 from kili.use_cases.asset.media_downloader import MediaDownloader
 from kili.utils.labels.parsing import ParsedLabel

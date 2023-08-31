@@ -5,12 +5,12 @@ from typing import Callable, Dict, Generator, List, Optional, Type, TypeVar
 
 import requests
 
-from kili.core.constants import QUERY_BATCH_SIZE
-from kili.core.helpers import format_result
-from kili.gateways.kili_api_gateway.helpers.queries import (
+from kili.adapters.kili_api_gateway.helpers.queries import (
     QueryOptions,
     fragment_builder,
 )
+from kili.core.constants import QUERY_BATCH_SIZE
+from kili.core.helpers import format_result
 from kili.utils.tqdm import tqdm
 
 from .graphql_client import GraphQLClient
