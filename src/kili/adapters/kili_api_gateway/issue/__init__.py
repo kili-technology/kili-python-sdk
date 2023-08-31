@@ -1,18 +1,16 @@
 """Mixin extending Kili API Gateway class with Issue related operations."""
 
-from typing import List, Optional
+from typing import List
 
+from kili.adapters.kili_api_gateway.issue.mappers import issue_where_mapper
 from kili.adapters.kili_api_gateway.issue.operations import (
     GQL_COUNT_ISSUES,
     GQL_CREATE_ISSUES,
 )
-from kili.adapters.kili_api_gateway.issue.types import (
-    IssueToCreateKiliAPIGatewayInput,
-    IssueWhere,
-)
+from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.utils.pagination import BatchIteratorBuilder
-from kili.domain.issue import Issue, IssueStatus, IssueType
+from kili.domain.issue import Issue, IssueFilters, IssueType
 from kili.utils import tqdm
 
 
@@ -51,18 +49,9 @@ class IssueOperationMixin:
                 pbar.update(len(issues_batch))
         return created_issue_entities
 
-    def count_issues(  # pylint: disable=too-many-arguments,
-        self,
-        project_id: str,
-        asset_id: Optional[str] = None,
-        asset_id_in: Optional[List[str]] = None,
-        issue_type: Optional[IssueType] = None,
-        status: Optional[IssueStatus] = None,
-    ) -> int:
+    def count_issues(self, filters: IssueFilters) -> int:
         """Send a GraphQL request calling countIssues resolver."""
-        where = IssueWhere(project_id, asset_id, asset_id_in, issue_type, status)
-        payload = {
-            "where": where.build_gql_where(),
-        }
+        where = issue_where_mapper(filters)
+        payload = {"where": where}
         count_result = self.graphql_client.execute(GQL_COUNT_ISSUES, payload)
         return count_result["data"]
