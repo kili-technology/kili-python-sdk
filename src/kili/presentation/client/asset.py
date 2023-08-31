@@ -11,7 +11,9 @@ from kili.domain.issue import IssueStatus, IssueType
 from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
 from kili.gateways.kili_api_gateway.queries import QueryOptions
-from kili.presentation.client.common_validators import disable_tqdm_if_as_generator
+from kili.presentation.client.helpers.common_validators import (
+    disable_tqdm_if_as_generator,
+)
 from kili.use_cases.asset import AssetUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 

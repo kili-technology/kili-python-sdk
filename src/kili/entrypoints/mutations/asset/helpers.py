@@ -3,7 +3,9 @@ from typing import Callable, Dict, List, Optional, Union
 
 from kili.core.helpers import convert_to_list_of_none, format_metadata, is_none_or_empty
 from kili.gateways.kili_api_gateway import KiliAPIGateway
-from kili.presentation.client.common_validators import check_asset_identifier_arguments
+from kili.presentation.client.helpers.common_validators import (
+    check_asset_identifier_arguments,
+)
 from kili.services.helpers import infer_ids_from_external_ids
 from kili.utils.assets import PageResolution
 

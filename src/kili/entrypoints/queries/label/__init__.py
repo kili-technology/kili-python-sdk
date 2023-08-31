@@ -21,7 +21,9 @@ from kili.core.helpers import validate_category_search_query
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
 from kili.gateways.kili_api_gateway.queries import QueryOptions
-from kili.presentation.client.common_validators import disable_tqdm_if_as_generator
+from kili.presentation.client.helpers.common_validators import (
+    disable_tqdm_if_as_generator,
+)
 from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption

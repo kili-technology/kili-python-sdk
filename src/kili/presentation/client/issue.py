@@ -7,7 +7,9 @@ import requests
 from typeguard import typechecked
 
 from kili.gateways.kili_api_gateway import KiliAPIGateway
-from kili.presentation.client.common_validators import assert_all_arrays_have_same_size
+from kili.presentation.client.helpers.common_validators import (
+    assert_all_arrays_have_same_size,
+)
 from kili.use_cases.issue import IssueUseCases
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
 from kili.utils.logcontext import for_all_methods, log_call

@@ -11,7 +11,9 @@ from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
 from kili.gateways.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
 from kili.gateways.kili_api_gateway.queries import QueryOptions
-from kili.presentation.client.common_validators import assert_all_arrays_have_same_size
+from kili.presentation.client.helpers.common_validators import (
+    assert_all_arrays_have_same_size,
+)
 from kili.utils import tqdm
 from kili.utils.logcontext import for_all_methods, log_call
 

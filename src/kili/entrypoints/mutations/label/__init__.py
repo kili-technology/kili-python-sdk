@@ -16,7 +16,7 @@ from kili.entrypoints.mutations.label.queries import (
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
 from kili.orm import Label
-from kili.presentation.client.common_validators import (
+from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
     check_asset_identifier_arguments,
 )

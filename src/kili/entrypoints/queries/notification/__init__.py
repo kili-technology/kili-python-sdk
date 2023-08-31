@@ -10,7 +10,9 @@ from kili.core.graphql.operations.notification.queries import (
 )
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.gateways.kili_api_gateway.queries import QueryOptions
-from kili.presentation.client.common_validators import disable_tqdm_if_as_generator
+from kili.presentation.client.helpers.common_validators import (
+    disable_tqdm_if_as_generator,
+)
 from kili.utils.logcontext import for_all_methods, log_call
 
 
