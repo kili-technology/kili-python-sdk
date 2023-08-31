@@ -52,7 +52,7 @@ def test_tag_project(mocker: pytest_mock.MockerFixture):
 
     assert kili.kili_api_gateway.graphql_client.execute.call_count == 2
     kili.kili_api_gateway.graphql_client.execute.assert_called_with(
-        "\nmutation checkTag($data: CheckedTagData!) {\n    data: checkTag(data: $data) {\n       "
-        " id\n    }\n}\n",
+        "\n        mutation checkTag($data: CheckedTagData!) {\n            data: checkTag(data:"
+        " $data) {\n                id\n            }\n        }\n        ",
         {"data": {"tagId": "tag2_id", "projectId": "fake_proj_id"}},
     )
