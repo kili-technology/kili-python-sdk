@@ -3,8 +3,8 @@
 from typing import Dict, List, Sequence
 
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.graphql.utils import fragment_builder
 from kili.domain.tag import Tag
+from kili.gateways.kili_api_gateway.queries import fragment_builder
 
 from .operations import GQL_CHECK_TAG
 

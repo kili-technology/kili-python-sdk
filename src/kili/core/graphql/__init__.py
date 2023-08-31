@@ -7,10 +7,10 @@ import requests
 
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import format_result
+from kili.gateways.kili_api_gateway.queries import fragment_builder
 from kili.utils.tqdm import tqdm
 
 from .graphql_client import GraphQLClient
-from .utils import fragment_builder
 
 T = TypeVar("T")
 
