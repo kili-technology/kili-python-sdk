@@ -55,7 +55,7 @@ class TagClientMethods(BaseClientMethods):
             disable_tqdm: Whether to disable the progress bar.
 
         Returns:
-            A list of dictionary with the tag ids.
+            A list of dictionaries with the tag ids.
         """
         tags_of_orga = self.kili_api_gateway.list_tags_by_org(fields=("id", "label"))
         tag_name_to_id = {tag["label"]: tag["id"] for tag in tags_of_orga}

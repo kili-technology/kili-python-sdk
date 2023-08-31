@@ -34,7 +34,7 @@ class IssueClientMethods(BaseClientMethods):
             text_array: List of texts to associate to the issues.
 
         Returns:
-            A list of dictionary with the `id` key of the created issues.
+            A list of dictionaries with the `id` key of the created issues.
         """
         assert_all_arrays_have_same_size([label_id_array, object_mid_array, text_array])
         issues = [

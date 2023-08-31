@@ -26,6 +26,7 @@ nav:
           - Project: sdk/project.md
           - Project User: sdk/project_user.md
           - Project Version: sdk/project_version.md
+          - Tag: sdk/tag.md
           - User: sdk/user.md
   - Command Line Interface:
       - Getting Started: cli/index.md
