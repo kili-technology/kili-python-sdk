@@ -4,11 +4,13 @@ from abc import ABC, abstractmethod
 from typing import Callable, Dict, Generator, List, Optional, Type, TypeVar
 
 import requests
-from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import format_result
-from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import (
+    QueryOptions,
+    fragment_builder,
+)
 from kili.utils.tqdm import tqdm
 
 from .graphql_client import GraphQLClient
@@ -69,7 +71,7 @@ class GraphQLQuery(ABC):
     ) -> Generator[Dict, None, None]:
         # pylint: disable=line-too-long
         """Get a generator of objects of the specified type in accordance with the provided where."""
-        fragment = self.fragment_builder(fields)
+        fragment = fragment_builder(fields)
         query = self.query(fragment)
 
         return self.execute_query_from_paginated_call(query, where, options, post_call_function)
@@ -161,39 +163,6 @@ class GraphQLQuery(ABC):
 
                     if len(rows) < first:
                         break
-
-    @typechecked
-    def fragment_builder(self, fields: List[str]):
-        """Builds a GraphQL fragment for a list of fields to query.
-
-        Args:
-            fields: The list of fields to query
-        """
-        fragment = ""
-
-        # split a field and its subfields (e.g. "roles.user.id" -> ["roles", "user.id"])
-        subfields = [field.split(".", 1) for field in fields if "." in field]
-
-        if subfields:
-            # get the root fields (e.g. "roles" in "roles.user.id")
-            root_fields = {subfield[0] for subfield in subfields}
-            for root_field in root_fields:
-                # get the subfields of the root field (e.g. "user.id" in "roles.user.id")
-                fields_subquery = [
-                    subfield[1] for subfield in subfields if subfield[0] == root_field
-                ]
-                # build the subquery fragment (e.g. "user{id}" in "roles{user{id}}")
-                new_fragment = self.fragment_builder(fields_subquery)
-                # add the subquery to the fragment
-                fragment += f" {root_field}{{{new_fragment}}}"
-
-            # remove the fields that have been queried in subqueries (e.g. "roles.user.id")
-            fields = [field for field in fields if "." not in field]
-
-        for field in fields:
-            fragment += f" {field}"
-
-        return fragment
 
     def format_result(self, name: str, result: dict, object_: Optional[Type[T]] = None) -> T:
         """Format the result of a graphQL query."""
