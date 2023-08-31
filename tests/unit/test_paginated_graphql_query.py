@@ -50,7 +50,7 @@ def test_given_a_query_the_function_returns_a_generator(graphql_client: GraphQLC
 
     # when
     gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
-        QUERY, WHERE, options, NUMBER_OBJECT_IN_DB
+        QUERY, WHERE, options, "", NUMBER_OBJECT_IN_DB
     )
 
     # then
@@ -63,7 +63,7 @@ def test_given_a_query_it_runs_several_paginated_call_if_needed(graphql_client: 
 
     # when
     gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
-        QUERY, WHERE, options, NUMBER_OBJECT_IN_DB
+        QUERY, WHERE, options, "", NUMBER_OBJECT_IN_DB
     )
     list(gen)
 
@@ -92,7 +92,7 @@ def test_given_a_query_with_skip_argument_it_skips_elements(graphql_client: Grap
 
     # when
     gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
-        QUERY, WHERE, options, NUMBER_OBJECT_IN_DB - skip
+        QUERY, WHERE, options, "", NUMBER_OBJECT_IN_DB - skip
     )
     list(gen)
 
@@ -126,7 +126,7 @@ def test_given_a_query_with_skip_and_first_arguments_it_queries_the_right_elemen
 
     # when
     gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
-        QUERY, WHERE, options, first
+        QUERY, WHERE, options, "", first
     )
     elements = list(gen)
 
@@ -151,7 +151,7 @@ def test_given_a_query_and_a_number_of_elements_to_query_i_have_a_progress_bar(
 
     # when
     gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
-        QUERY, WHERE, options, number_of_elements_to_query
+        QUERY, WHERE, options, "", number_of_elements_to_query
     )
     list(gen)
 
@@ -170,7 +170,7 @@ def test_given_a_query_without_a_number_of_elements_to_query_i_do_nothave_a_prog
 
     # when
     gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
-        QUERY, WHERE, options, number_of_elements_to_query
+        QUERY, WHERE, options, "", number_of_elements_to_query
     )
     list(gen)
 

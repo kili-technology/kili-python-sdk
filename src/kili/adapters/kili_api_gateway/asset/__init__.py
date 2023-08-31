@@ -37,7 +37,7 @@ class AssetOperationMixin:
             self.graphql_client, GQL_COUNT_ASSETS, where, options
         )
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
-            query, where, options, nb_elements_to_query, post_call_function
+            query, where, options, "Retrieving assets", nb_elements_to_query, post_call_function
         )
 
     def count_assets(self, where: AssetWhere) -> int:

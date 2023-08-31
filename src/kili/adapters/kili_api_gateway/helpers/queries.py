@@ -43,6 +43,7 @@ class PaginatedGraphQLQuery:
         query: str,
         where: AbstractQueryWhere,
         options: QueryOptions,
+        tqdm_desc: str,
         nb_elements_to_query: Optional[int],
         post_call_function: Optional[Callable[[List], List]] = None,
     ) -> Generator[Dict, None, None]:
@@ -53,6 +54,7 @@ class PaginatedGraphQLQuery:
             where: The where payload to send in the graphQL query,
                 both to the query and the count_query if specified
             options: The query options with skip and first and disable_tqdm
+            tqdm_desc: The description to show in the progress bar
             nb_elements_to_query: The expected number of elements to query.
                 If given, it will show a progress bar if tqdm is not disabled in options
             post_call_function: A function to be applied to the result of the query after each call.
@@ -64,7 +66,7 @@ class PaginatedGraphQLQuery:
         if nb_elements_to_query == 0:
             yield from ()
         else:
-            with tqdm(total=nb_elements_to_query, disable=disable_tqdm) as pbar:
+            with tqdm(total=nb_elements_to_query, disable=disable_tqdm, desc=tqdm_desc) as pbar:
                 count_elements_retrieved = 0
                 while True:
                     if (
