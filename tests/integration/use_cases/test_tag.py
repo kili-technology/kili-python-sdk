@@ -1,6 +1,11 @@
 import pytest_mock
 
 from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.gateways.kili_api_gateway.tag.operations import (
+    GQL_CHECK_TAG,
+    get_list_tags_by_org_query,
+    get_list_tags_by_project_query,
+)
 from kili.presentation.client.tag import TagClientMethods
 
 
@@ -13,10 +18,7 @@ def test_get_tags_by_org(mocker: pytest_mock.MockerFixture):
     kili.tags()
 
     kili.kili_api_gateway.graphql_client.execute.assert_called_once_with(
-        query=(
-            "query listTagsByOrg {\n            data: listTagsByOrg {\n                 id"
-            " organizationId label checkedForProjects\n            }\n        }\n        "
-        )
+        get_list_tags_by_org_query(fragment=" id organizationId label checkedForProjects")
     )
 
 
@@ -29,9 +31,7 @@ def test_get_tags_by_project(mocker: pytest_mock.MockerFixture):
     kili.tags(project_id="fake_proj_id")
 
     kili.kili_api_gateway.graphql_client.execute.assert_called_once_with(
-        "query listTagsByProject($projectId: ID!) {\n            data: listTagsByProject(projectId:"
-        " $projectId) {\n                 id organizationId label checkedForProjects\n           "
-        " }\n        }\n        ",
+        get_list_tags_by_project_query(fragment=" id organizationId label checkedForProjects"),
         {"projectId": "fake_proj_id"},
     )
 
@@ -52,7 +52,5 @@ def test_tag_project(mocker: pytest_mock.MockerFixture):
 
     assert kili.kili_api_gateway.graphql_client.execute.call_count == 2
     kili.kili_api_gateway.graphql_client.execute.assert_called_with(
-        "\n        mutation checkTag($data: CheckedTagData!) {\n            data: checkTag(data:"
-        " $data) {\n                id\n            }\n        }\n        ",
-        {"data": {"tagId": "tag2_id", "projectId": "fake_proj_id"}},
+        GQL_CHECK_TAG, {"data": {"tagId": "tag2_id", "projectId": "fake_proj_id"}}
     )
