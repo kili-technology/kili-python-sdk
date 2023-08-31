@@ -9,9 +9,9 @@ from zipfile import ZipFile
 import pytest
 import pytest_mock
 
-from kili.adapters.kili_api_gateway.asset.types import AssetWhere
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery
+from kili.domain.asset import AssetFilters
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.orm import Asset
 from kili.services.export import export_labels
@@ -826,7 +826,7 @@ def test_export_with_asset_filter_kwargs(mocker):
             "inference_mark_lte": 0.8,
         },
     )
-    expected_where = AssetWhere(
+    expected_where = AssetFilters(
         project_id="fake_proj_id",
         external_id_strictly_in=["truc"],
         consensus_mark_gte=0.1,

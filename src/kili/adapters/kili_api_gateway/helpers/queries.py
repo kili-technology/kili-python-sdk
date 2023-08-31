@@ -1,7 +1,7 @@
 """GraphQL module."""
 
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Generator, List, NamedTuple, Optional
+from typing import Any, Callable, Dict, Generator, List, NamedTuple, Optional
 
 from typeguard import typechecked
 
@@ -41,7 +41,7 @@ class PaginatedGraphQLQuery:
     def execute_query_from_paginated_call(
         self,
         query: str,
-        where: AbstractQueryWhere,
+        where: Dict[str, Any],
         options: QueryOptions,
         tqdm_desc: str,
         nb_elements_to_query: Optional[int],
@@ -51,8 +51,7 @@ class PaginatedGraphQLQuery:
 
         Args:
             query: The object query to execute and to send to graphQL, in string format
-            where: The where payload to send in the graphQL query,
-                both to the query and the count_query if specified
+            where: The where payload to send in the graphQL query
             options: The query options with skip and first and disable_tqdm
             tqdm_desc: The description to show in the progress bar
             nb_elements_to_query: The expected number of elements to query.
@@ -81,7 +80,7 @@ class PaginatedGraphQLQuery:
                         if nb_elements_to_query is not None
                         else QUERY_BATCH_SIZE
                     )
-                    payload = {"where": where.build_gql_where(), "skip": skip, "first": first}
+                    payload = {"where": where, "skip": skip, "first": first}
                     elements = self._graphql_client.execute(query, payload)["data"]
 
                     if elements is None or len(elements) == 0:
@@ -106,7 +105,7 @@ class PaginatedGraphQLQuery:
 def get_number_of_elements_to_query(
     graphql_client: GraphQLClient,
     count_query: str,
-    where: AbstractQueryWhere,
+    where: Dict[str, Any],
     options: QueryOptions,
 ) -> int:
     """Give the total number of elements to query for one query that will be paginated.
@@ -125,7 +124,7 @@ def get_number_of_elements_to_query(
     """
     first = options.first
     skip = options.skip
-    payload = {"where": where.build_gql_where()}
+    payload = {"where": where}
     count_result = graphql_client.execute(count_query, payload)
     nb_elements = count_result["data"]
     nb_elements_queried = max(nb_elements - skip, 0)

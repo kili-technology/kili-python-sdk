@@ -16,10 +16,10 @@ from typing import (
 import pandas as pd
 from typeguard import typechecked
 
-from kili.adapters.kili_api_gateway.asset.types import AssetWhere
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import validate_category_search_query
+from kili.domain.asset import AssetFilters
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -639,7 +639,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         """
         get_project(self, project_id, ["id"])
         assets_gen = self.kili_api_gateway.list_assets(
-            AssetWhere(project_id=project_id),
+            AssetFilters(project_id=project_id),
             asset_fields + ["labels." + field for field in fields],
             QueryOptions(disable_tqdm=False),
             None,

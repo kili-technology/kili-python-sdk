@@ -8,8 +8,7 @@ import requests
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
-from kili.adapters.kili_api_gateway.asset.types import AssetWhere
-from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.domain.asset import AssetFilters
 from kili.domain.issue import IssueStatus, IssueType
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -394,7 +393,7 @@ class AssetClientMethods:
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
-        where = AssetWhere(
+        filters = AssetFilters(
             project_id=project_id,
             asset_id=asset_id,
             asset_id_in=asset_id_in,
@@ -428,13 +427,15 @@ class AssetClientMethods:
             issue_status=issue_status,
             issue_type=issue_type,
         )
-        options = QueryOptions(
-            disable_tqdm=disable_tqdm,
-            skip=skip,
-            first=first,
-        )
         assets_gen = asset_use_cases.list_assets(
-            where, fields, options, download_media, local_media_dir, label_output_format
+            filters,
+            fields,
+            first,
+            skip,
+            disable_tqdm,
+            download_media,
+            local_media_dir,
+            label_output_format,
         )
 
         if format == "pandas":
@@ -604,7 +605,7 @@ class AssetClientMethods:
                     stacklevel=1,
                 )
 
-        where = AssetWhere(
+        filters = AssetFilters(
             project_id=project_id,
             asset_id=asset_id,
             asset_id_in=asset_id_in,
@@ -639,4 +640,4 @@ class AssetClientMethods:
             issue_type=issue_type,
         )
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
-        return asset_use_cases.count_assets(where)
+        return asset_use_cases.count_assets(filters)

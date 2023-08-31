@@ -3,12 +3,12 @@
 
 from typing import Callable, Dict, Generator, List, Optional
 
+from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
 from kili.adapters.kili_api_gateway.asset.operations import (
     GQL_COUNT_ASSETS,
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
     get_asset_query,
 )
-from kili.adapters.kili_api_gateway.asset.types import AssetWhere
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
@@ -16,6 +16,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     get_number_of_elements_to_query,
 )
 from kili.core.graphql.graphql_client import GraphQLClient
+from kili.domain.asset import AssetFilters
 
 
 class AssetOperationMixin:
@@ -25,7 +26,7 @@ class AssetOperationMixin:
 
     def list_assets(
         self,
-        where: AssetWhere,
+        filters: AssetFilters,
         fields: List[str],
         options: QueryOptions,
         post_call_function: Optional[Callable],
@@ -33,6 +34,7 @@ class AssetOperationMixin:
         """List assets with given options."""
         fragment = fragment_builder(fields)
         query = get_asset_query(fragment)
+        where = asset_where_mapper(filters)
         nb_elements_to_query = get_number_of_elements_to_query(
             self.graphql_client, GQL_COUNT_ASSETS, where, options
         )
@@ -40,11 +42,10 @@ class AssetOperationMixin:
             query, where, options, "Retrieving assets", nb_elements_to_query, post_call_function
         )
 
-    def count_assets(self, where: AssetWhere) -> int:
+    def count_assets(self, filters: AssetFilters) -> int:
         """Send a GraphQL request calling countIssues resolver."""
-        payload = {
-            "where": where.build_gql_where(),
-        }
+        where = asset_where_mapper(filters)
+        payload = {"where": where}
         count_result = self.graphql_client.execute(GQL_COUNT_ASSETS, payload)
         count: int = count_result["data"]
         return count

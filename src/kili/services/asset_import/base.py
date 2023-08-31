@@ -15,7 +15,6 @@ from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 
-from kili.adapters.kili_api_gateway.asset.types import AssetWhere
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
@@ -27,6 +26,7 @@ from kili.core.graphql.operations.organization.queries import (
 )
 from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
 from kili.core.utils import pagination
+from kili.domain.asset import AssetFilters
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,
@@ -123,8 +123,8 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         ):
             with attempt:
                 assets_ids = [assets[-1]["id"]]  # check last asset of the batch only
-                where = AssetWhere(project_id=self.project_id, asset_id_in=assets_ids)
-                nb_assets_in_kili = self.kili.kili_api_gateway.count_assets(where)
+                filters = AssetFilters(project_id=self.project_id, asset_id_in=assets_ids)
+                nb_assets_in_kili = self.kili.kili_api_gateway.count_assets(filters)
                 if len(assets_ids) != nb_assets_in_kili:
                     raise BatchImportError(
                         "Number of assets to upload is not equal to number of assets uploaded in"
@@ -442,7 +442,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         if len(assets) == 0:
             raise ImportValidationError("No assets to import")
         assets_in_project = self.kili.kili_api_gateway.list_assets(
-            AssetWhere(project_id=self.project_params.project_id),
+            AssetFilters(project_id=self.project_params.project_id),
             ["externalId"],
             QueryOptions(disable_tqdm=True),
             None,

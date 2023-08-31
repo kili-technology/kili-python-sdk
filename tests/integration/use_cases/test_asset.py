@@ -1,9 +1,5 @@
-from pathlib import Path
-from tempfile import TemporaryDirectory
-
 from kili.adapters.kili_api_gateway import KiliAPIGateway
-from kili.adapters.kili_api_gateway.asset.types import AssetWhere
-from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.domain.asset import AssetFilters
 from kili.use_cases.asset import AssetUseCases
 from kili.use_cases.asset.media_downloader import MediaDownloader
 from kili.utils.labels.parsing import ParsedLabel
@@ -17,15 +13,16 @@ def test_given_query_parameters_I_can_query_assets(kili_api_gateway: KiliAPIGate
 
     # given parameters to query assets
     asset_use_cases = AssetUseCases(kili_api_gateway)
-    where = AssetWhere(project_id="project_id")
+    filters = AssetFilters(project_id="project_id")
     fields = ["id"]
-    options = QueryOptions(disable_tqdm=False)
 
     # when creating query assets
     asset_gen = asset_use_cases.list_assets(
-        where,
+        filters,
         fields,
-        options,
+        first=None,
+        skip=0,
+        disable_tqdm=False,
         download_media=False,
         local_media_dir=None,
         label_output_format="dict",
@@ -71,7 +68,7 @@ def test_given_query_parameters_I_can_query_assets_and_get_their_labels_parsed(
 
     # given parameters to query assets
     asset_use_cases = AssetUseCases(kili_api_gateway)
-    where = AssetWhere(project_id="project_id")
+    filters = AssetFilters(project_id="project_id")
     fields = [
         "content",
         "createdAt",
@@ -88,13 +85,14 @@ def test_given_query_parameters_I_can_query_assets_and_get_their_labels_parsed(
         "status",
         "latestLabel.jsonResponse",
     ]
-    options = QueryOptions(disable_tqdm=False)
 
     # when creating query assets
     asset_gen = asset_use_cases.list_assets(
-        where,
+        filters,
         fields,
-        options,
+        first=None,
+        skip=0,
+        disable_tqdm=False,
         download_media=False,
         local_media_dir=None,
         label_output_format="parsed_label",
@@ -120,15 +118,16 @@ def test_given_query_parameters_I_can_query_assets_and_download_their_media(
 
     # given parameters to query assets
     asset_use_cases = AssetUseCases(kili_api_gateway)
-    where = AssetWhere(project_id="project_id")
+    filters = AssetFilters(project_id="project_id")
     fields = ["id", "content"]
-    options = QueryOptions(disable_tqdm=False)
 
     # when creating query assets
     asset_use_cases.list_assets(
-        where,
+        filters,
         fields,
-        options,
+        first=None,
+        skip=0,
+        disable_tqdm=False,
         download_media=True,
         local_media_dir="temp_dir",
         label_output_format="dict",

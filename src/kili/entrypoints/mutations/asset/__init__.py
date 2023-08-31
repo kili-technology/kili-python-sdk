@@ -7,10 +7,10 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
-from kili.adapters.kili_api_gateway.asset.types import AssetWhere
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
+from kili.domain.asset import AssetFilters
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
     get_asset_ids_or_throw_error,
@@ -422,7 +422,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
 
             nb_assets_in_kili = self.kili_api_gateway.count_assets(
-                AssetWhere(
+                AssetFilters(
                     project_id=project_id_,
                     asset_id_in=asset_ids,
                 )
@@ -500,7 +500,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_review = self.kili_api_gateway.count_assets(
-                AssetWhere(
+                AssetFilters(
                     project_id=project_id_,
                     asset_id_in=asset_ids,
                     status_in=["TO_REVIEW"],
@@ -521,7 +521,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         # it happens when no assets have been sent to review
         if isinstance(result, dict) and "id" in result:
             assets_in_review = self.kili_api_gateway.list_assets(
-                AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["TO_REVIEW"]),
+                AssetFilters(
+                    project_id=result["id"], asset_id_in=asset_ids, status_in=["TO_REVIEW"]
+                ),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
                 None,
@@ -586,7 +588,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
             asset_ids = last_batch["asset_ids"][-1:]  # check lastest asset of the batch only
             nb_assets_in_queue = self.kili_api_gateway.count_assets(
-                AssetWhere(
+                AssetFilters(
                     project_id=project_id_,
                     asset_id_in=asset_ids,
                     status_in=["ONGOING"],
@@ -605,7 +607,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         result = self.format_result("data", results[0])
         if isinstance(result, dict) and "id" in result:
             assets_in_queue = self.kili_api_gateway.list_assets(
-                AssetWhere(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
+                AssetFilters(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
                 None,
