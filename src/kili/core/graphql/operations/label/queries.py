@@ -3,7 +3,7 @@
 
 from typing import List, Optional
 
-from kili.core.graphql import BaseQueryWhere, GraphQLQuery
+from kili.core.graphql.queries import BaseQueryWhere, GraphQLQuery
 from kili.orm import Label as LabelFormatType
 
 

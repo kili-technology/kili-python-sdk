@@ -1,6 +1,6 @@
 """GraphQL Queries of ProjectVersions."""
 
-from kili.core.graphql import BaseQueryWhere, GraphQLQuery
+from kili.core.graphql.queries import BaseQueryWhere, GraphQLQuery
 
 
 class ProjectVersionWhere(BaseQueryWhere):

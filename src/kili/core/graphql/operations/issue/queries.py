@@ -2,7 +2,7 @@
 
 from typing import List, Literal, Optional
 
-from kili.core.graphql import BaseQueryWhere, GraphQLQuery
+from kili.core.graphql.queries import BaseQueryWhere, GraphQLQuery
 
 
 class IssueWhere(BaseQueryWhere):
