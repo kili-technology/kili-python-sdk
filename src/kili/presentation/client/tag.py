@@ -2,7 +2,6 @@
 
 from typing import Dict, List, Literal, Optional, Sequence
 
-import requests
 from typeguard import typechecked
 
 from kili.gateways.kili_api_gateway import KiliAPIGateway
@@ -15,7 +14,6 @@ class TagClientMethods:
     """Methods attached to the Kili client, to run actions on tags."""
 
     kili_api_gateway: KiliAPIGateway
-    http_client: requests.Session
 
     @typechecked
     def tags(

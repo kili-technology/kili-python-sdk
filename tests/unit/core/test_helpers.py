@@ -18,6 +18,7 @@ from kili.core.helpers import (
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.exceptions import MissingArgumentError
+from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.orm import Asset
 from tests.fakes.fake_kili import FakeKili
 
@@ -119,8 +120,7 @@ def test_get_labels_asset_ids_map():
         ),
     ):
         assert get_labels_asset_ids_map(
-            FakeKili.graphql_client,
-            FakeKili.http_client,
+            KiliAPIGateway(FakeKili.graphql_client, FakeKili.http_client),
             "project_id",
             ["label_id_1", "label_id_2"],
         ) == {

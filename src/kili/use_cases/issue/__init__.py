@@ -21,10 +21,7 @@ class IssueUseCases:
         """Create issues with issue type."""
         label_id_array = [issue.label_id for issue in issues]
         label_asset_ids_map = get_labels_asset_ids_map(
-            self._kili_api_gateway.graphql_client,
-            self._kili_api_gateway.http_client,
-            project_id,
-            label_id_array,
+            self._kili_api_gateway, project_id, label_id_array
         )  # TODO: should be done in the backend
         gateway_issues = [
             IssueToCreateKiliAPIGatewayInput(

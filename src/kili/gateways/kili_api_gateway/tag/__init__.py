@@ -6,8 +6,6 @@ from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.tag import Tag
 from kili.gateways.kili_api_gateway.queries import fragment_builder
 
-from .operations import GQL_CHECK_TAG
-
 
 class TagOperationMixin:
     """GraphQL Mixin extending GraphQL Gateway class with Tags related operations."""
@@ -41,6 +39,13 @@ class TagOperationMixin:
 
     def check_tag(self, project_id: str, tag_id: str) -> Tag:
         """Send a GraphQL request calling checkTag resolver."""
+        query = """
+        mutation checkTag($data: CheckedTagData!) {
+            data: checkTag(data: $data) {
+                id
+            }
+        }
+        """
         variables = {"data": {"tagId": tag_id, "projectId": project_id}}
-        result = self.graphql_client.execute(GQL_CHECK_TAG, variables)
+        result = self.graphql_client.execute(query, variables)
         return Tag(id_=result["data"]["id"])

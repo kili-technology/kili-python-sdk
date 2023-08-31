@@ -3,25 +3,21 @@
 
 from typing import Dict, List
 
-import requests
-
 from kili.core.graphql import QueryOptions
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.exceptions import NotFound
+from kili.gateways.kili_api_gateway import KiliAPIGateway
 
 
 def get_labels_asset_ids_map(
-    graphql_client: GraphQLClient,
-    http_client: requests.Session,
+    kili_api_gateway: KiliAPIGateway,
     project_id: str,
     label_id_array: List[str],
 ) -> Dict:
     """Return a dictionary that gives for every label id, its associated asset id.
 
     Args:
-        graphql_client: instance of the GraphQL client
-        http_client: instance of the HTTP client
+        kili_api_gateway: instance of KiliAPIGateway
         project_id: id of the project
         label_id_array: list of label ids
 
@@ -37,7 +33,7 @@ def get_labels_asset_ids_map(
         id_contains=label_id_array,
     )
     labels = list(
-        LabelQuery(graphql_client, http_client)(
+        LabelQuery(kili_api_gateway.graphql_client, kili_api_gateway.http_client)(
             where=where, fields=["labelOf.id", "id"], options=options
         )
     )
