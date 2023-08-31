@@ -10,7 +10,7 @@ from tabulate import tabulate
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
 from kili.entrypoints.cli.common_args import Options
 from kili.entrypoints.cli.helpers import get_kili_client
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 
 
 @click.command(name="list")

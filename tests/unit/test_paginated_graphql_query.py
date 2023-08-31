@@ -8,7 +8,7 @@ import pytest
 
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.gateways.kili_api_gateway.queries import (
+from kili.gateways.kili_api_gateway.helpers.queries import (
     AbstractQueryWhere,
     PaginatedGraphQLQuery,
     QueryOptions,

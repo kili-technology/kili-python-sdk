@@ -20,7 +20,7 @@ from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import validate_category_search_query
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )

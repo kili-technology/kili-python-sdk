@@ -10,7 +10,7 @@ from typeguard import typechecked
 from kili.domain.issue import IssueStatus, IssueType
 from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )

@@ -11,7 +11,7 @@ from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationWhere,
 )
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .queries import GQL_ADD_PROJECT_DATA_CONNECTION

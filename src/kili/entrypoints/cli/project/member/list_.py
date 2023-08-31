@@ -12,7 +12,7 @@ from kili.core.graphql.operations.project_user.queries import (
 )
 from kili.entrypoints.cli.common_args import Arguments, Options
 from kili.entrypoints.cli.helpers import get_kili_client
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 
 ROLE_ORDER = {v: i for i, v in enumerate(["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"])}
 

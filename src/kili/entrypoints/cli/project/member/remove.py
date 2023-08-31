@@ -17,7 +17,7 @@ from kili.entrypoints.cli.project.member.helpers import (
     collect_members_from_emails,
     collect_members_from_project,
 )
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 
 
 @click.command(name="rm")

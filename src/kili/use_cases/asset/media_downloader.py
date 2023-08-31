@@ -17,7 +17,7 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsWhere,
 )
 from kili.gateways.kili_api_gateway import KiliAPIGateway
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 
 from .exceptions import DownloadNotAllowedError, MissingPropertyError
 

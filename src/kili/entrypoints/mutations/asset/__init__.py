@@ -22,7 +22,7 @@ from kili.entrypoints.mutations.asset.queries import (
 )
 from kili.exceptions import MissingArgumentError
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv

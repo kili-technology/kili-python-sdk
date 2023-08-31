@@ -12,7 +12,7 @@ from kili.core.graphql.operations.plugin.queries import (
     PluginQuery,
 )
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.services.plugins import PluginUploader
 from kili.utils.logcontext import for_all_methods, log_call
 

@@ -13,7 +13,7 @@ from kili.core.graphql.operations.project_user.queries import (
 )
 from kili.entrypoints.cli.common_args import ROLES
 from kili.entrypoints.cli.helpers import collect_from_csv
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 
 REGEX_EMAIL = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
 

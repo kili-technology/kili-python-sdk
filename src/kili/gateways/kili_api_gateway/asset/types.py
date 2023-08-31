@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 from kili.domain.issue import IssueStatus, IssueType
-from kili.gateways.kili_api_gateway.queries import AbstractQueryWhere
+from kili.gateways.kili_api_gateway.helpers.queries import AbstractQueryWhere
 
 
 @dataclass

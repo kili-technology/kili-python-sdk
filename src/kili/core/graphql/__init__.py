@@ -8,7 +8,7 @@ from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import format_result
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 from kili.utils.tqdm import tqdm
 
 from .graphql_client import GraphQLClient

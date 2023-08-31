@@ -5,9 +5,9 @@ from typing import List
 
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.exceptions import NotFound
+from kili.gateways.kili_api_gateway.helpers.queries import fragment_builder
 from kili.gateways.kili_api_gateway.project.operations import get_project_query
 from kili.gateways.kili_api_gateway.project.types import ProjectWhere
-from kili.gateways.kili_api_gateway.queries import fragment_builder
 
 
 class ProjectOperationMixin:

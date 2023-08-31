@@ -18,7 +18,7 @@ from kili.entrypoints.mutations.data_connection.queries import (
     GQL_VALIDATE_DATA_DIFFERENCES,
 )
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.queries import QueryOptions
+from kili.gateways.kili_api_gateway.helpers.queries import QueryOptions
 
 LOGGER = None
 

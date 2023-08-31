@@ -10,7 +10,7 @@ from kili.gateways.kili_api_gateway.asset.operations import (
     get_asset_query,
 )
 from kili.gateways.kili_api_gateway.asset.types import AssetWhere
-from kili.gateways.kili_api_gateway.queries import (
+from kili.gateways.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
     fragment_builder,
