@@ -51,5 +51,5 @@ class IssueClientMethods:
             )
         ]
         issue_service = IssueUseCases(self.kili_api_gateway)
-        issues_entities = issue_service.create_issues(project_id=project_id, issues=issues)
-        return [{"id": issue.id_} for issue in issues_entities]
+        issue_ids = issue_service.create_issues(project_id=project_id, issues=issues)
+        return [{"id": issue_id} for issue_id in issue_ids]

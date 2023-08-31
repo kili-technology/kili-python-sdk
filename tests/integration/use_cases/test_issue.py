@@ -3,7 +3,7 @@
 import pytest
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
-from kili.domain.issue import Issue
+from kili.domain.issue import IssueId
 from kili.use_cases.issue import IssueUseCases
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
 
@@ -14,11 +14,10 @@ def test_create_one_issue(kili_api_gateway: KiliAPIGateway):
 
     # given one issue to create
     issues = [IssueToCreateUseCaseInput(label_id="label_id", text="text", object_mid="object_mid")]
-    issue_entities = [Issue(id_="issue_id")]
-    kili_api_gateway.create_issues.return_value(issue_entities)
+    kili_api_gateway.create_issues.return_value(IssueId("issue_id"))
 
     # when creating one issue
     issues = issue_use_cases.create_issues(project_id="project_id", issues=issues)
 
     # then
-    assert issues == issue_entities
+    assert issues == IssueId("issue_id")

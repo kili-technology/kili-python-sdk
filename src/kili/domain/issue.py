@@ -1,16 +1,10 @@
 """Issue domain."""
 from dataclasses import dataclass
-from typing import List, Literal, Optional
+from typing import List, Literal, NewType, Optional
 
 IssueType = Literal["ISSUE", "QUESTION"]
 IssueStatus = Literal["OPEN", "SOLVED"]
-
-
-@dataclass
-class Issue:
-    """Issue Entity."""
-
-    id_: str
+IssueId = NewType("IssueId", str)
 
 
 @dataclass

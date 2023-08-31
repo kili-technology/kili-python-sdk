@@ -1,31 +1,20 @@
 """Module for testing the graphQLQuery class."""
 
-from dataclasses import dataclass
 from typing import Generator, cast
 from unittest.mock import MagicMock, call
 
 import pytest
 
 from kili.adapters.kili_api_gateway.helpers.queries import (
-    AbstractQueryWhere,
     PaginatedGraphQLQuery,
     QueryOptions,
 )
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.graphql_client import GraphQLClient
 
-
-@dataclass
-class FakeWhere(AbstractQueryWhere):
-    project_id: str
-
-    def build_gql_where(self):
-        return {"projectID": self.project_id}
-
-
 QUERY = "query"
 PROJECT_ID = "project_id"
-WHERE = FakeWhere(project_id=PROJECT_ID)
+WHERE = {"projectID": PROJECT_ID}
 NUMBER_OBJECT_IN_DB = 250
 
 

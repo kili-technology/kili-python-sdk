@@ -10,7 +10,7 @@ from kili.adapters.kili_api_gateway.issue.operations import (
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.utils.pagination import BatchIteratorBuilder
-from kili.domain.issue import Issue, IssueFilters, IssueType
+from kili.domain.issue import IssueFilters, IssueId, IssueType
 from kili.utils import tqdm
 
 
@@ -21,9 +21,9 @@ class IssueOperationMixin:
 
     def create_issues(
         self, type_: IssueType, issues: List[IssueToCreateKiliAPIGatewayInput]
-    ) -> List[Issue]:
+    ) -> List[IssueId]:
         """Send a GraphQL request calling createIssues resolver."""
-        created_issue_entities: List[Issue] = []
+        created_issue_entities: List[IssueId] = []
         with tqdm.tqdm(total=len(issues), desc="Creating issues") as pbar:
             for issues_batch in BatchIteratorBuilder(issues):
                 batch_targeted_asset_ids = [issue.asset_id for issue in issues_batch]
@@ -44,7 +44,7 @@ class IssueOperationMixin:
                 result = self.graphql_client.execute(GQL_CREATE_ISSUES, payload)
                 batch_created_issues = result["data"]
                 created_issue_entities.extend(
-                    [Issue(id_=issue["id"]) for issue in batch_created_issues]
+                    [IssueId(issue["id"]) for issue in batch_created_issues]
                 )
                 pbar.update(len(issues_batch))
         return created_issue_entities

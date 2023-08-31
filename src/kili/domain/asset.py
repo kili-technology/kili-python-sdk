@@ -1,15 +1,10 @@
 """Asset domain."""
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, NewType, Optional
 
 from kili.domain.issue import IssueStatus, IssueType
 
-
-@dataclass
-class Asset:
-    """Asset Entity."""
-
-    id_: str
+AssetId = NewType("AssetId", str)
 
 
 @dataclass

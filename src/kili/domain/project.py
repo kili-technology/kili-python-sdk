@@ -1,7 +1,7 @@
 """Project domain."""
-from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, NewType
 
+ProjectId = NewType("ProjectId", str)
 InputType = Literal[
     "AUDIO",
     "IMAGE",
@@ -11,10 +11,3 @@ InputType = Literal[
     "VIDEO",
     "VIDEO_LEGACY",
 ]
-
-
-@dataclass
-class Project:
-    """Project Entity."""
-
-    id_: str
