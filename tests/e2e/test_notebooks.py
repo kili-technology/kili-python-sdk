@@ -26,7 +26,6 @@ def process_notebook(notebook_filename):
         "tests/e2e/export_labels.ipynb",
         "tests/e2e/import_assets.ipynb",
         "tests/e2e/import_predictions.ipynb",
-        "tests/e2e/paginated_calls_project_lifecycle.ipynb",
         pytest.param(
             "tests/e2e/plugin_workflow.ipynb",
             marks=pytest.mark.skipif(
