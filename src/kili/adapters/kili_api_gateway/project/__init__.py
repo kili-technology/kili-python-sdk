@@ -5,7 +5,6 @@ from typing import List
 
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
 from kili.adapters.kili_api_gateway.project.operations import get_project_query
-from kili.adapters.kili_api_gateway.project.types import ProjectWhere
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.exceptions import NotFound
 
@@ -23,14 +22,13 @@ class ProjectOperationMixin:
         """List assets with given options."""
         fragment = fragment_builder(fields)
         query = get_project_query(fragment)
-        where = ProjectWhere(project_id=project_id)
         result = self.graphql_client.execute(
-            query=query, variables={"where": where.build_gql_where(), "first": 1}
+            query=query, variables={"where": {"id": project_id}, "first": 1}
         )
         projects = result["data"]
         if len(projects) == 0:
             raise NotFound(
-                f"project ID: {project_id}. Maybe your KILI_API_KEY does not belong to a member of"
-                " the project."
+                f"project ID: {project_id}. The project does not exist or you do not have access"
+                " to it."
             )
         return projects[0]

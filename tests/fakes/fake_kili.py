@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import requests
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.adapters.kili_api_gateway.project.types import ProjectWhere
+from kili.core.graphql.operations.project.queries import ProjectWhere
 from kili.orm import Asset
 from tests.fakes.fake_data import (
     asset_image_1,
