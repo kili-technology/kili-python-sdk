@@ -25,7 +25,7 @@ jobs:
     name: create bump commit PR
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: release/${{ github.event.inputs.releaseBranchVersion}}
 
