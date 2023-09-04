@@ -5,7 +5,6 @@ from typing import Dict, List
 from typing_extensions import TypedDict
 
 from kili.core.enums import (
-    InputType,
     LabelType,
     LicenseType,
     LockType,
@@ -17,6 +16,7 @@ from kili.core.enums import (
 )
 from kili.core.helpers import deprecate
 from kili.domain.issue import IssueStatus
+from kili.domain.project import InputType
 
 
 #######

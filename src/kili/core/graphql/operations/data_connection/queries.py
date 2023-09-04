@@ -3,7 +3,7 @@
 
 from typing import Optional
 
-from kili.core.graphql import BaseQueryWhere, GraphQLQuery
+from kili.core.graphql.queries import BaseQueryWhere, GraphQLQuery
 
 
 class DataConnectionsWhere(BaseQueryWhere):

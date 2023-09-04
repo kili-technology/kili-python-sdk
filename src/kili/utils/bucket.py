@@ -11,10 +11,6 @@ from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
-from kili.core.graphql.operations.asset.queries import (
-    GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
-)
-
 AZURE_STRING = "blob.core.windows.net"
 GCP_STRING = "storage.googleapis.com"
 GCP_STRING_PUBLIC = "storage.cloud.google.com"
@@ -42,14 +38,9 @@ def request_signed_urls(kili, file_urls: List[str]):
         for i in range(0, size, MAX_NUMBER_SIGNED_URLS_TO_FETCH)
     ]
 
-    def get_file_batch_urls(file_paths: List[str]) -> List[str]:
-        payload = {
-            "filePaths": file_paths,
-        }
-        urls_response = kili.graphql_client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
-        return urls_response["urls"]
+    request_function = kili.kili_api_gateway.create_upload_bucket_signed_urls
 
-    return [*itertools.chain(*map(get_file_batch_urls, file_batches))]
+    return [*itertools.chain(*map(request_function, file_batches))]
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2), reraise=True)

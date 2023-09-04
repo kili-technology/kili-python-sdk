@@ -272,10 +272,6 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
     mocker.patch(
-        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
-        return_value=(i for i in [get_project_return_val]),
-    )
-    mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[Asset(asset) for asset in assets],
     )
@@ -285,6 +281,8 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
 
     kili.export_labels(
         "clktm4vzz001a0j324elr5dsy",
@@ -322,10 +320,6 @@ def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
     mocker.patch(
-        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
-        return_value=(i for i in [get_project_return_val]),
-    )
-    mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[Asset(asset) for asset in assets],
     )
@@ -335,6 +329,8 @@ def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
 
     kili.export_labels(
         "clktm4vzz001a0j324elr5dsy",

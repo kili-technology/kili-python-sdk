@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 import requests
 
-from kili.entrypoints.queries.asset.media_downloader import MediaDownloader
+from kili.use_cases.asset.media_downloader import MediaDownloader
 from kili.utils.tempfile import TemporaryDirectory
 
 

@@ -1,30 +1,30 @@
-"""Asset queries."""
+"""Client presentation methods for assets."""
 
 import warnings
 from typing import Dict, Generator, Iterable, List, Literal, Optional, Union, overload
 
 import pandas as pd
+import requests
 from typeguard import typechecked
 
-from kili.core.graphql import QueryOptions
-from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
-from kili.core.helpers import (
+from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.domain.asset import AssetFilters
+from kili.domain.issue import IssueStatus, IssueType
+from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
-    validate_category_search_query,
 )
-from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
-from kili.services.project import get_project
-from kili.utils.labels.parsing import ParsedLabel, parse_labels
+from kili.use_cases.asset import AssetUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesAsset(BaseOperationEntrypointMixin):
-    """Set of Asset queries."""
+class AssetClientMethods:
+    """Methods attached to the Kili client, to run actions on assets."""
 
-    # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value,redefined-builtin
+    kili_api_gateway: KiliAPIGateway
+    http_client: requests.Session
 
+    # pylint: disable=too-many-arguments, dangerous-default-value, redefined-builtin, too-many-locals
     @overload
     def assets(
         self,
@@ -349,9 +349,6 @@ class QueriesAsset(BaseOperationEntrypointMixin):
                 'Argument values as_generator==True and format=="pandas" are not compatible.'
             )
 
-        if label_category_search:
-            validate_category_search_query(label_category_search)
-
         if external_id_contains is not None:
             warnings.warn(
                 "external_id_contains is deprecated, use external_id_strictly_in instead",
@@ -393,7 +390,10 @@ class QueriesAsset(BaseOperationEntrypointMixin):
                     stacklevel=1,
                 )
 
-        where = AssetWhere(
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+
+        asset_use_cases = AssetUseCases(self.kili_api_gateway)
+        filters = AssetFilters(
             project_id=project_id,
             asset_id=asset_id,
             asset_id_in=asset_id_in,
@@ -427,33 +427,16 @@ class QueriesAsset(BaseOperationEntrypointMixin):
             issue_status=issue_status,
             issue_type=issue_type,
         )
-        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
-        options = QueryOptions(disable_tqdm, first, skip)
-        post_call_function, fields = get_download_assets_function(
-            self, download_media, fields, project_id, local_media_dir
+        assets_gen = asset_use_cases.list_assets(
+            filters,
+            fields,
+            first,
+            skip,
+            disable_tqdm,
+            download_media,
+            local_media_dir,
+            label_output_format,
         )
-
-        assets_gen = AssetQuery(self.graphql_client, self.http_client)(
-            where, fields, options, post_call_function
-        )
-
-        if label_output_format == "parsed_label":
-            project = get_project(self, project_id, ["jsonInterface", "inputType"])
-
-            def parse_labels_of_asset(asset: Dict) -> Dict:
-                if "labels.jsonResponse" in fields:
-                    asset["labels"] = parse_labels(
-                        asset["labels"], project["jsonInterface"], project["inputType"]
-                    )
-                if "latestLabel.jsonResponse" in fields and asset["latestLabel"] is not None:
-                    asset["latestLabel"] = ParsedLabel(
-                        label=asset["latestLabel"],
-                        json_interface=project["jsonInterface"],
-                        input_type=project["inputType"],
-                    )
-                return asset
-
-            assets_gen = (parse_labels_of_asset(asset) for asset in assets_gen)
 
         if format == "pandas":
             return pd.DataFrame(list(assets_gen))
@@ -461,6 +444,7 @@ class QueriesAsset(BaseOperationEntrypointMixin):
             return assets_gen
         return list(assets_gen)
 
+    # pylint: disable=too-many-arguments,too-many-locals
     @typechecked
     def count_assets(
         self,
@@ -503,8 +487,8 @@ class QueriesAsset(BaseOperationEntrypointMixin):
         label_created_at_lte: Optional[str] = None,
         label_honeypot_mark_gte: Optional[float] = None,
         label_honeypot_mark_lte: Optional[float] = None,
-        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
-        issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
+        issue_type: Optional[IssueType] = None,
+        issue_status: Optional[IssueStatus] = None,
         external_id_strictly_in: Optional[List[str]] = None,
         external_id_in: Optional[List[str]] = None,
     ) -> int:
@@ -579,8 +563,6 @@ class QueriesAsset(BaseOperationEntrypointMixin):
             - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
         """
-        if label_category_search:
-            validate_category_search_query(label_category_search)
 
         if external_id_contains is not None:
             warnings.warn(
@@ -623,7 +605,7 @@ class QueriesAsset(BaseOperationEntrypointMixin):
                     stacklevel=1,
                 )
 
-        where = AssetWhere(
+        filters = AssetFilters(
             project_id=project_id,
             asset_id=asset_id,
             asset_id_in=asset_id_in,
@@ -657,4 +639,5 @@ class QueriesAsset(BaseOperationEntrypointMixin):
             issue_status=issue_status,
             issue_type=issue_type,
         )
-        return AssetQuery(self.graphql_client, self.http_client).count(where)
+        asset_use_cases = AssetUseCases(self.kili_api_gateway)
+        return asset_use_cases.count_assets(filters)

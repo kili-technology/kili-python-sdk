@@ -3,11 +3,12 @@ import itertools
 import logging
 from typing import Dict, Optional
 
-from kili.core.graphql import QueryOptions
-from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
+from kili.domain.asset import AssetFilters
+from kili.domain.project import ProjectId
 from kili.services.project import get_project
+from kili.use_cases.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
@@ -158,7 +159,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
         Fetches assets by batch since `content` urls expire.
         """
-        where = AssetWhere(project_id=from_project_id)
+        filters = AssetFilters(project_id=from_project_id)
         options = QueryOptions(disable_tqdm=False)
         fields = [
             "content",
@@ -174,8 +175,8 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
                 downloaded_assets = self._download_assets(from_project_id, fields, tmp_dir, assets)
                 return self._upload_assets(new_project_id, downloaded_assets)
 
-        asset_gen = AssetQuery(self.kili.graphql_client, self.kili.http_client)(
-            where, fields, options, download_and_upload_assets
+        asset_gen = self.kili.kili_api_gateway.list_assets(
+            filters, fields, options, download_and_upload_assets
         )
         # Generator needs to be iterated over to actually fetch assets
         for _ in asset_gen:
@@ -183,10 +184,10 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
     def _download_assets(self, from_project_id, fields, tmp_dir, assets):
         download_function, _ = get_download_assets_function(
-            self.kili,
+            self.kili.kili_api_gateway,
             download_media=True,
             fields=fields,
-            project_id=from_project_id,
+            project_id=ProjectId(from_project_id),
             local_media_dir=str(tmp_dir.resolve()),
         )
         assert download_function
@@ -235,10 +236,11 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
     # pylint: disable=too-many-locals
     def _copy_labels(self, from_project_id: str, new_project_id: str) -> None:
-        assets_new_project = AssetQuery(self.kili.graphql_client, self.kili.http_client)(
-            AssetWhere(project_id=new_project_id),
+        assets_new_project = self.kili.kili_api_gateway.list_assets(
+            AssetFilters(project_id=new_project_id),
             ["id", "externalId"],
             QueryOptions(disable_tqdm=True),
+            None,
         )
         assets_new_project_map = {asset["externalId"]: asset["id"] for asset in assets_new_project}
 
