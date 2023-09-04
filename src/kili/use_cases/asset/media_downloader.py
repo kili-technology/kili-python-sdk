@@ -189,7 +189,9 @@ def get_file_extension_from_headers(url, http_client: requests.Session) -> Optio
                 response.raise_for_status()
                 headers = response.headers
         if "content-type" in headers:
-            content_type = headers["content-type"]
+            content_type = headers["content-type"].split(";")[0]
+            # (#ML-1368) remove parameters the content-type to only get
+            # the mimetype in the type/subtype format
             return guess_extension(content_type)
     return None
 

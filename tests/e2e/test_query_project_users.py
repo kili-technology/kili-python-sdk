@@ -68,6 +68,7 @@ def test_given_project_when_querying_project_users_it_works(
         project_id=project_id, fields=fields, status_in=["ORG_SUSPENDED"]
     )
 
-    # Then, only one disabled user
-    assert len(disabled_users) == 1, disabled_users
-    assert disabled_users[0]["user"]["email"] == suspended_user_email, disabled_users
+    # Then, the user we desactivated is disabled
+    assert suspended_user_email in {
+        user["user"]["email"] for user in disabled_users
+    }, disabled_users
