@@ -296,7 +296,7 @@ def test_download_assets_text(kili, src_project_text):
             assets[0],
             expected_externalid="text1",
             check_is_file=assets[0]["content"],
-            expected_content=os.path.join(str(tmp_dir.resolve()), "text1"),
+            expected_content=os.path.join(str(tmp_dir.resolve()), "text1.txt"),
             expected_json_content="",
         )
         assert_helper_for_asset(
@@ -312,7 +312,7 @@ def test_download_assets_text(kili, src_project_text):
             expected_externalid="richtext",
             check_is_file=assets[2]["jsonContent"],
             expected_content="",
-            expected_json_content=os.path.join(str(tmp_dir.resolve()), "richtext"),
+            expected_json_content=os.path.join(str(tmp_dir.resolve()), "richtext.txt"),
         )
 
 
