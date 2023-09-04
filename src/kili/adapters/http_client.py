@@ -12,7 +12,7 @@ class HttpClient:
 
     def __init__(self, kili_endpoint: str, api_key: str, verify: Union[bool, str]) -> None:
         """Initialize the HTTP client."""
-        self._kili_endpoint = kili_endpoint.replace("api/label/v2/graphql", "api/label/v2")
+        self._kili_endpoint = kili_endpoint.replace("/api/label/v2/graphql", "/api/label/v2")
 
         self._http_client = requests.Session()
         self._http_client_with_auth = requests.Session()
