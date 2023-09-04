@@ -31,7 +31,7 @@ class YoloTestCase(TestCase):
         with TemporaryDirectory() as images_folder:
             with TemporaryDirectory() as labels_folder:
                 fake_content_repository = FakeContentRepository(
-                    "https://contentrep", {}, requests.Session()
+                    "https://contentrep", requests.Session()
                 )
                 asset_remote_content, video_filenames = _process_asset(
                     asset_image_1,
@@ -62,7 +62,7 @@ class YoloTestCase(TestCase):
         with TemporaryDirectory() as images_folder:
             with TemporaryDirectory() as labels_folder:
                 fake_content_repository = FakeContentRepository(
-                    "https://contentrep", {}, requests.Session()
+                    "https://contentrep", requests.Session()
                 )
                 asset_remote_content, video_filenames = _process_asset(
                     asset_video,
