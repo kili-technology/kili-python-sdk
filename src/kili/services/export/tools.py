@@ -7,6 +7,7 @@ import requests
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import validate_category_search_query
 from kili.domain.asset import AssetFilters
+from kili.domain.project import ProjectId
 from kili.services.export.types import ExportType
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 
@@ -149,7 +150,7 @@ def fetch_assets(
 
     options = QueryOptions(disable_tqdm=disable_tqdm)
     post_call_function, fields = get_download_assets_function(
-        kili.kili_api_gateway, download_media, fields, project_id, local_media_dir
+        kili.kili_api_gateway, download_media, fields, ProjectId(project_id), local_media_dir
     )
     assets = list(kili.kili_api_gateway.list_assets(filters, fields, options, post_call_function))
     attach_name_to_assets_labels_author(assets, export_type)

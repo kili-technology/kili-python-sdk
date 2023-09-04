@@ -6,6 +6,7 @@ from typing import List
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
 from kili.adapters.kili_api_gateway.project.operations import get_project_query
 from kili.core.graphql.graphql_client import GraphQLClient
+from kili.domain.project import ProjectId
 from kili.exceptions import NotFound
 
 
@@ -16,7 +17,7 @@ class ProjectOperationMixin:
 
     def get_project(
         self,
-        project_id,
+        project_id: ProjectId,
         fields: List[str],
     ):
         """List assets with given options."""

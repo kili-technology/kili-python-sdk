@@ -18,6 +18,7 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
+from kili.domain.project import ProjectId
 
 from .exceptions import DownloadNotAllowedError, MissingPropertyError
 
@@ -26,7 +27,7 @@ def get_download_assets_function(
     kili_api_gateway: KiliAPIGateway,
     download_media: bool,
     fields: List[str],
-    project_id: str,
+    project_id: ProjectId,
     local_media_dir: Optional[str],
 ) -> Tuple[Optional[Callable], List[str]]:
     """Get the function to be called after each batch of asset query.

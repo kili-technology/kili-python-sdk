@@ -6,6 +6,7 @@ from typing import Dict, Optional
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.domain.asset import AssetFilters
+from kili.domain.project import ProjectId
 from kili.services.project import get_project
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
@@ -186,7 +187,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             self.kili.kili_api_gateway,
             download_media=True,
             fields=fields,
-            project_id=from_project_id,
+            project_id=ProjectId(from_project_id),
             local_media_dir=str(tmp_dir.resolve()),
         )
         assert download_function

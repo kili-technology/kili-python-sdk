@@ -7,6 +7,7 @@ from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import validate_category_search_query
 from kili.domain.asset import AssetFilters
+from kili.domain.project import ProjectId
 from kili.services.label_data_parsing.types import Project as LabelParsingProject
 from kili.use_cases.asset.asset_label_parsing import parse_labels_of_asset
 from kili.use_cases.asset.media_downloader import get_download_assets_function
@@ -36,7 +37,11 @@ class AssetUseCases:
             validate_category_search_query(filters.label_category_search)
 
         post_call_function, fields = get_download_assets_function(
-            self._kili_api_gateway, download_media, fields, filters.project_id, local_media_dir
+            self._kili_api_gateway,
+            download_media,
+            fields,
+            ProjectId(filters.project_id),
+            local_media_dir,
         )
         options = QueryOptions(skip=skip, first=first, disable_tqdm=disable_tqdm)
         assets_gen = self._kili_api_gateway.list_assets(
@@ -45,7 +50,7 @@ class AssetUseCases:
 
         if label_output_format == "parsed_label":
             project: LabelParsingProject = self._kili_api_gateway.get_project(
-                filters.project_id, ["jsonInterface", "inputType"]
+                ProjectId(filters.project_id), ["jsonInterface", "inputType"]
             )
             assets_gen = (parse_labels_of_asset(asset, project) for asset in assets_gen)
 
