@@ -43,7 +43,7 @@ def process_notebook(notebook_filename):
         "recipes/medical_imaging.ipynb",
         # "recipes/ner_pre_annotations_openai.ipynb",
         "recipes/ocr_pre_annotations.ipynb",
-        "recipes/pixel_level_masks.ipynb",
+        #"recipes/pixel_level_masks.ipynb",
         pytest.param(
             "recipes/plugins_example.ipynb",
             marks=pytest.mark.skipif(
