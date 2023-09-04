@@ -58,13 +58,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
 
     logger = get_logger(log_level)
 
-    content_repository = SDKContentRepository(
-        kili.api_endpoint,
-        router_headers={
-            "Authorization": f"X-API-Key: {kili.api_key}",
-        },
-        http_client=kili.http_client,
-    )
+    content_repository = SDKContentRepository(kili.api_endpoint, http_client=kili.http_client)
 
     if label_format in get_args(LabelFormat):
         format_exporter_selector_mapping: Dict[str, Type[AbstractExporter]] = {

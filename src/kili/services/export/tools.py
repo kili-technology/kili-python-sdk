@@ -2,8 +2,7 @@
 import warnings
 from typing import Dict, List, Optional
 
-import requests
-
+from kili.adapters.http_client import HttpClient
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
 from kili.core.helpers import validate_category_search_query
@@ -161,13 +160,13 @@ def fetch_assets(
 
 
 def get_fields_to_fetch(export_type: ExportType):
-    """Returns the fields to fetch depending on the export type."""
+    """Return the fields to fetch depending on the export type."""
     if export_type == "latest":
         return LATEST_LABEL_FIELDS
     return DEFAULT_FIELDS
 
 
-def is_geotiff_asset_with_lat_lon_coords(asset: Dict, http_client: requests.Session) -> bool:
+def is_geotiff_asset_with_lat_lon_coords(asset: Dict, http_client: HttpClient) -> bool:
     """Check if asset is a geotiff with lat/lon coordinates."""
     if "jsonContent" not in asset:
         return False

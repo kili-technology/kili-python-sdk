@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Iterator, List
 
-import requests
+from kili.adapters.http_client import HttpClient
 
 from .exceptions import DownloadError
 
@@ -10,11 +10,8 @@ from .exceptions import DownloadError
 class AbstractContentRepository(ABC):
     """Interface to the content repository."""
 
-    def __init__(
-        self, router_endpoint: str, router_headers: Dict[str, str], http_client: requests.Session
-    ) -> None:
+    def __init__(self, router_endpoint: str, http_client: HttpClient) -> None:
         self.router_endpoint = router_endpoint
-        self.router_headers = router_headers
         self.http_client = http_client
         assert router_endpoint, "The router endpoint string should not be empty"
 
@@ -48,10 +45,7 @@ class SDKContentRepository(AbstractContentRepository):
 
     def get_frames(self, content_url: str) -> List[str]:
         frames: List[str] = []
-        headers = None
-        if content_url.startswith(self.router_endpoint):
-            headers = self.router_headers
-        json_content_resp = self.http_client.get(content_url, headers=headers, timeout=30)
+        json_content_resp = self.http_client.get(content_url, timeout=30)
 
         if json_content_resp.ok:
             frames = list(json_content_resp.json().values())
@@ -64,16 +58,7 @@ class SDKContentRepository(AbstractContentRepository):
             headers=None,
             timeout=30,
         )
-
         if not response.ok:
-            response = self.http_client.get(
-                content_url,
-                stream=True,
-                headers=self.router_headers,  # pass the API key if first request failed
-                timeout=30,
-            )
-
-            if not response.ok:
-                raise DownloadError(f"Error while downloading image {content_url}")
+            raise DownloadError(f"Error while downloading image {content_url}")
 
         return response.iter_content(block_size)

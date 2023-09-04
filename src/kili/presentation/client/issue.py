@@ -3,9 +3,9 @@
 from itertools import repeat
 from typing import Dict, List, Literal, Optional
 
-import requests
 from typeguard import typechecked
 
+from kili.adapters.http_client import HttpClient
 from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.services.helpers import assert_all_arrays_have_same_size
 from kili.use_cases.issue import IssueUseCases
@@ -18,7 +18,7 @@ class IssueClientMethods:
     """Methods attached to the Kili client, to run actions on issues."""
 
     kili_api_gateway: KiliAPIGateway
-    http_client: requests.Session
+    http_client: HttpClient
 
     @typechecked
     def create_issues(

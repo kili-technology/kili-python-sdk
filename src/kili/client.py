@@ -1,4 +1,4 @@
-"""This script permits to initialize the Kili Python SDK client."""
+"""Kili Python SDK client."""
 import getpass
 import logging
 import os
@@ -7,9 +7,8 @@ import warnings
 from datetime import datetime, timedelta
 from typing import Callable, Dict, Optional, Union
 
-import requests
-
 from kili import __version__
+from kili.adapters.http_client import HttpClient
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
@@ -154,8 +153,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
 
         skip_checks = os.getenv("KILI_SDK_SKIP_CHECKS") is not None
 
-        self.http_client = requests.Session()
-        self.http_client.verify = verify
+        self.http_client = HttpClient(kili_endpoint=api_endpoint, verify=verify, api_key=api_key)
 
         if not skip_checks and not self._is_api_key_valid():
             raise AuthenticationFailed(
@@ -170,7 +168,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             client_name=client_name,
             verify=self.verify,
             http_client=self.http_client,
-            **(graphql_client_params or {}),  # type: ignore
+            **(graphql_client_params or {}),  # pyright: ignore[reportGeneralTypeIssues]
         )
 
         self.kili_api_gateway = KiliAPIGateway(self.graphql_client, self.http_client)

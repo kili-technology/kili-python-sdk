@@ -73,7 +73,11 @@ def test_download_single_asset_mixed(input_asset, expected_filename):
     """Tests download_single_asset with asset["content"]"""
     with TemporaryDirectory() as tmp_dir:
         output_asset = MediaDownloader(
-            tmp_dir, "", False, input_asset["project"]["inputType"], requests.Session()
+            tmp_dir,
+            "",
+            False,
+            input_asset["project"]["inputType"],
+            requests.Session(),
         ).download_single_asset(input_asset)
 
         assert output_asset["content"] == os.path.join(str(tmp_dir.resolve()), expected_filename)
@@ -107,7 +111,11 @@ def test_download_single_asset_jsoncontent(input_asset):
     """Tests with asset["jsonContent"] and extension in externalid."""
     with TemporaryDirectory() as tmp_dir:
         output_asset = MediaDownloader(
-            tmp_dir, "", False, input_asset["project"]["inputType"], requests.Session()
+            tmp_dir,
+            "",
+            False,
+            input_asset["project"]["inputType"],
+            requests.Session(),
         ).download_single_asset(input_asset)
 
         assert output_asset["content"] == input_asset["content"] == ""

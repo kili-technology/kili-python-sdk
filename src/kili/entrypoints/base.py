@@ -2,8 +2,7 @@
 import abc
 from typing import Optional, Type, TypeVar
 
-import requests
-
+from kili.adapters.http_client import HttpClient
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import format_result
 
@@ -14,7 +13,7 @@ class BaseOperationEntrypointMixin(abc.ABC):
     """Base class for entrypoints dealing with GraphQL operations."""
 
     graphql_client: GraphQLClient
-    http_client: requests.Session
+    http_client: HttpClient
 
     def format_result(self, name: str, result: dict, object_: Optional[Type[T]] = None) -> T:
         """Format the result of a graphQL query.

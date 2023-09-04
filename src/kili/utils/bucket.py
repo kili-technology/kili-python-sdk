@@ -6,11 +6,11 @@ from typing import List, Union
 from urllib.parse import parse_qs, urlparse
 
 import cuid
-import requests
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
+from kili.adapters.http_client import HttpClient
 from kili.core.graphql.operations.asset.queries import (
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
 )
@@ -54,7 +54,7 @@ def request_signed_urls(kili, file_urls: List[str]):
 
 @retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2), reraise=True)
 def upload_data_via_rest(
-    url_with_id: str, data: Union[str, bytes], content_type: str, http_client: requests.Session
+    url_with_id: str, data: Union[str, bytes], content_type: str, http_client: HttpClient
 ):
     """Upload data in buckets' signed URL via REST.
 

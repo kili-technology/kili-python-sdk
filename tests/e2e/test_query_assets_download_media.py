@@ -457,7 +457,7 @@ def src_project_video_content_and_jsoncontent(kili):
 
 
 def test_download_single_asset_video_content_and_jsoncontent(
-    kili, src_project_video_content_and_jsoncontent
+    kili: Kili, src_project_video_content_and_jsoncontent
 ):
     """Test video content and jsoncontent."""
     with TemporaryDirectory() as tmp_dir:

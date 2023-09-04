@@ -7,11 +7,11 @@ from mimetypes import guess_extension
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-import requests
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
+from kili.adapters.http_client import HttpClient
 from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
@@ -92,7 +92,7 @@ class MediaDownloader:
         project_id: str,
         jsoncontent_field_added: bool,
         project_input_type: str,
-        http_client: requests.Session,
+        http_client: HttpClient,
     ) -> None:
         self.local_media_dir = local_media_dir
         self.project_id = project_id
@@ -186,7 +186,7 @@ class MediaDownloader:
         return asset
 
 
-def get_file_extension_from_headers(url, http_client: requests.Session) -> Optional[str]:
+def get_file_extension_from_headers(url: str, http_client: HttpClient) -> Optional[str]:
     """Guess the extension of a file with the url response headers."""
     with http_client.head(url, timeout=20) as header_response:
         if header_response.status_code == 200:
@@ -202,7 +202,7 @@ def get_file_extension_from_headers(url, http_client: requests.Session) -> Optio
 
 
 def get_download_path(
-    url: str, external_id: str, local_dir_path: Path, http_client: requests.Session
+    url: str, external_id: str, local_dir_path: Path, http_client: HttpClient
 ) -> Path:
     """Build the path to download a file the file in local."""
     extension = get_file_extension_from_headers(url, http_client)
@@ -214,9 +214,7 @@ def get_download_path(
 
 
 @retry(stop=stop_after_attempt(2), wait=wait_random(min=1, max=2), reraise=True)
-def download_file(
-    url: str, external_id: str, local_dir_path: Path, http_client: requests.Session
-) -> str:
+def download_file(url: str, external_id: str, local_dir_path: Path, http_client: HttpClient) -> str:
     """Download a file by streming chunks of 1Mb.
 
     If the file already exists in local, it does not download it.

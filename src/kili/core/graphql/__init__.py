@@ -3,9 +3,9 @@
 from abc import ABC, abstractmethod
 from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type, TypeVar
 
-import requests
 from typeguard import typechecked
 
+from kili.adapters.http_client import HttpClient
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import format_result
 from kili.utils.tqdm import tqdm
@@ -47,7 +47,7 @@ class GraphQLQuery(ABC):
     It factorizes code for executing paginated queries
     """
 
-    def __init__(self, client: GraphQLClient, http_client: requests.Session) -> None:
+    def __init__(self, client: GraphQLClient, http_client: HttpClient) -> None:
         self.client = client
         self.http_client = http_client
 
