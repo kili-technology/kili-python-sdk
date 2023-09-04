@@ -80,12 +80,11 @@ class QueriesUser(BaseOperationEntrypointMixin):
         Examples:
             ```
             # List all users in my organization
-            >>> organization = kili.organizations()
-            >>> organization_id = organizations[0]['id]
+            >>> organization = kili.organizations()[0]
+            >>> organization_id = organization['id']
             >>> kili.users(organization_id=organization_id)
             ```
         """
-
         where = UserWhere(api_key=api_key, email=email, organization_id=organization_id)
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)

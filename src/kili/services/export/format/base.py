@@ -95,7 +95,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """Check if the export label format is compatible with the job."""
 
     @property
-    def compatible_jobs(self) -> Tuple[str]:
+    def compatible_jobs(self) -> Tuple[str, ...]:
         """Get all job names compatible with the export format."""
         return tuple(
             job_name

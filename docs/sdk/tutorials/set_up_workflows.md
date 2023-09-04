@@ -54,7 +54,7 @@ kili.update_properties_in_project(project_id=project_id, review_coverage=50)
 
 
 
-    {'id': 'cllqje3ab02at085la2tp6o50', 'reviewCoverage': 50}
+    {'id': 'clm0sxbgb05hf082tcq813zrc', 'reviewCoverage': 50}
 
 
 
@@ -74,7 +74,7 @@ Let's set the percentage of the project dataset that will be annotated several t
 ```python
 kili.update_properties_in_project(
     project_id=project_id,
-    consensus_tot_coverage=50,
+    consensus_tot_coverage=1,
     min_consensus_size=3,
 )
 ```
@@ -82,8 +82,8 @@ kili.update_properties_in_project(
 
 
 
-    {'id': 'cllqje3ab02at085la2tp6o50',
-     'consensusTotCoverage': 50,
+    {'id': 'clm0sxbgb05hf082tcq813zrc',
+     'consensusTotCoverage': 1,
      'minConsensusSize': 3}
 
 
@@ -104,9 +104,9 @@ kili.update_properties_in_assets(
 
 
 
-    [{'id': 'cllqje4px0017flvzc97bjzrh'},
-     {'id': 'cllqje4px0018flvz01v8hro5'},
-     {'id': 'cllqje4px0019flvznv1j8d55'}]
+    [{'id': 'clm0sxcpf0000ojvz92wfzxix'},
+     {'id': 'clm0sxcpf0001ojvzocjdx4w1'},
+     {'id': 'clm0sxcpf0002ojvz0oynrshg'}]
 
 
 
@@ -150,9 +150,9 @@ kili.update_properties_in_assets(
 
 
 
-    [{'id': 'cllqje4px0017flvzc97bjzrh'},
-     {'id': 'cllqje4px0018flvz01v8hro5'},
-     {'id': 'cllqje4px0019flvznv1j8d55'}]
+    [{'id': 'clm0sxcpf0000ojvz92wfzxix'},
+     {'id': 'clm0sxcpf0001ojvzocjdx4w1'},
+     {'id': 'clm0sxcpf0002ojvz0oynrshg'}]
 
 
 
@@ -179,9 +179,9 @@ kili.update_properties_in_assets(
 
 
 
-    [{'id': 'cllqje4px0017flvzc97bjzrh'},
-     {'id': 'cllqje4px0018flvz01v8hro5'},
-     {'id': 'cllqje4px0019flvznv1j8d55'}]
+    [{'id': 'clm0sxcpf0000ojvz92wfzxix'},
+     {'id': 'clm0sxcpf0001ojvzocjdx4w1'},
+     {'id': 'clm0sxcpf0002ojvz0oynrshg'}]
 
 
 
@@ -208,7 +208,7 @@ kili.append_labels(
 
 
 
-    [{'id': 'cllqjefdw02hq088zb2koga1x'}]
+    [{'id': 'clm0sxm4g05vi0840gu3iewf2'}]
 
 
 
@@ -218,13 +218,6 @@ Now, let's place some assets in the review queue. The method will return a proje
 ```python
 kili.add_to_review(project_id=project_id, external_ids=["4.jpg"])
 ```
-
-
-
-
-    {'id': 'cllqje3ab02at085la2tp6o50', 'asset_ids': ['cllqje4py001aflvzvou02fws']}
-
-
 
 For more information on asset statuses, refer to our [documentation](https://docs.kili-technology.com/docs/asset-lifecycle).
 
@@ -240,7 +233,7 @@ kili.send_back_to_queue(project_id=project_id, external_ids=["4.jpg"])
 
 
 
-    {'id': 'cllqje3ab02at085la2tp6o50', 'asset_ids': ['cllqje4py001aflvzvou02fws']}
+    {'id': 'clm0sxbgb05hf082tcq813zrc', 'asset_ids': ['clm0sxcpf0003ojvzcrha754l']}
 
 
 
@@ -254,6 +247,13 @@ We can remove the project that we created:
 ```python
 kili.delete_project(project_id)
 ```
+
+
+
+
+    'clm0sxbgb05hf082tcq813zrc'
+
+
 
 ## Summary
 
