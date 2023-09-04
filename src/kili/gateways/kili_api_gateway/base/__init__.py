@@ -1,3 +1,4 @@
+"""Base class for all KiliAPIGateway Operation Mixin classes."""
 from abc import ABC
 
 from kili.core.graphql.graphql_client import GraphQLClient
