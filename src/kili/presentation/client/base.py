@@ -12,4 +12,4 @@ class BaseClientMethods(ABC):
     It is not meant to be used and instantiated directly.
     """
 
-    kili_api_gateway: KiliAPIGateway
+    kili_api_gateway: KiliAPIGateway  # instantiated in the Kili client children class

@@ -2,11 +2,11 @@
 
 from typing import Dict, List, Sequence
 
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 from kili.gateways.kili_api_gateway.queries import fragment_builder
 
+from ..base import BaseOperationMixin
 from .operations import (
     GQL_CHECK_TAG,
     get_list_tags_by_org_query,
@@ -14,10 +14,8 @@ from .operations import (
 )
 
 
-class TagOperationMixin:
+class TagOperationMixin(BaseOperationMixin):
     """GraphQL Mixin extending GraphQL Gateway class with Tags related operations."""
-
-    graphql_client: GraphQLClient
 
     def list_tags_by_org(self, fields: Sequence[str]) -> List[Dict]:
         """Send a GraphQL request calling listTagsByOrg resolver."""

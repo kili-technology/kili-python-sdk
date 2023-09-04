@@ -19,9 +19,10 @@ def project_id(kili: Kili):
     kili.delete_project(project_id)
 
 
-def test_tag_project(kili: Kili, project_id: str):
+def test_given_org_tags_when_i_tag_project_it_tags_it(kili: Kili, project_id: str):
     # Given
     org_tags = kili.tags()
+    assert len(org_tags) > 0, "Organization has no tags"
     tags_to_add_to_project = org_tags[:3]
     tags_to_add_to_project_label = [tag["label"] for tag in tags_to_add_to_project]
 
