@@ -7,6 +7,7 @@ from zipfile import ZipFile
 import pytest
 import requests
 
+from kili.adapters.http_client import HttpClient
 from kili.core.constants import mime_extensions_for_py_scripts
 from kili.services.plugins.upload import (
     PluginUploader,
@@ -38,7 +39,15 @@ def test_wrong_plugin_path(kili):
     with pytest.raises(
         FileNotFoundError, match=r"The provided path .* is neither a directory nor a file"
     ):
-        PluginUploader(kili, plugin_path, PLUGIN_NAME, False, requests.Session())
+        PluginUploader(
+            kili,
+            plugin_path,
+            PLUGIN_NAME,
+            False,
+            HttpClient(
+                kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+            ),
+        )
 
 
 def test_no_plugin_handler():
@@ -99,7 +108,15 @@ def test_no_pluginhandler_when_creating_zip_from_file(kili):
 
         with pytest.raises(ValueError, match="PluginHandler class is not present"):
             PluginUploader(
-                kili, str(plugin_path), PLUGIN_NAME, False, requests.Session()
+                kili,
+                str(plugin_path),
+                PLUGIN_NAME,
+                False,
+                HttpClient(
+                    kili_endpoint="https://fake_endpoint.kili-technology.com",
+                    api_key="",
+                    verify=True,
+                ),
             )._create_zip(tmp_dir)
 
 
@@ -109,9 +126,15 @@ def test_zip_creation_from_file(kili):
             os.path.join("tests", "unit", "services", "plugins", "plugin_folder", "main.py")
         )
 
-        PluginUploader(kili, str(plugin_path), PLUGIN_NAME, False, requests.Session())._create_zip(
-            tmp_dir
-        )
+        PluginUploader(
+            kili,
+            str(plugin_path),
+            PLUGIN_NAME,
+            False,
+            HttpClient(
+                kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+            ),
+        )._create_zip(tmp_dir)
 
         zip_path = tmp_dir / "archive.zip"
         assert zip_path.is_file()
@@ -134,7 +157,15 @@ def test_no_main_when_creating_zip_from_folder(kili):
 
         with pytest.raises(FileNotFoundError, match="No main.py file"):
             PluginUploader(
-                kili, str(plugin_path), PLUGIN_NAME, False, requests.Session()
+                kili,
+                str(plugin_path),
+                PLUGIN_NAME,
+                False,
+                HttpClient(
+                    kili_endpoint="https://fake_endpoint.kili-technology.com",
+                    api_key="",
+                    verify=True,
+                ),
             )._create_zip(tmp_dir)
 
 
@@ -149,7 +180,15 @@ def test_no_pluginhandler_when_creating_zip_from_folder(kili):
 
         with pytest.raises(ValueError, match="PluginHandler class is not present"):
             PluginUploader(
-                kili, str(plugin_path), PLUGIN_NAME, False, requests.Session()
+                kili,
+                str(plugin_path),
+                PLUGIN_NAME,
+                False,
+                HttpClient(
+                    kili_endpoint="https://fake_endpoint.kili-technology.com",
+                    api_key="",
+                    verify=True,
+                ),
             )._create_zip(tmp_dir)
 
 
@@ -157,9 +196,15 @@ def test_zip_creation_from_folder(kili):
     with TemporaryDirectory() as tmp_dir:
         plugin_path = Path(os.path.join("tests", "unit", "services", "plugins", "plugin_folder"))
 
-        PluginUploader(kili, str(plugin_path), PLUGIN_NAME, False, requests.Session())._create_zip(
-            tmp_dir
-        )
+        PluginUploader(
+            kili,
+            str(plugin_path),
+            PLUGIN_NAME,
+            False,
+            HttpClient(
+                kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+            ),
+        )._create_zip(tmp_dir)
 
         zip_path = tmp_dir / "archive.zip"
         assert zip_path.is_file()

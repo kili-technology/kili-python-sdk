@@ -7,6 +7,7 @@ from zipfile import ZipFile
 import pytest_mock
 import requests
 
+from kili.adapters.http_client import HttpClient
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.orm import Asset
 from kili.services.export.format.yolo import (
@@ -31,7 +32,12 @@ class YoloTestCase(TestCase):
         with TemporaryDirectory() as images_folder:
             with TemporaryDirectory() as labels_folder:
                 fake_content_repository = FakeContentRepository(
-                    "https://contentrep", requests.Session()
+                    "https://contentrep",
+                    HttpClient(
+                        kili_endpoint="https://fake_endpoint.kili-technology.com",
+                        api_key="",
+                        verify=True,
+                    ),
                 )
                 asset_remote_content, video_filenames = _process_asset(
                     asset_image_1,
@@ -62,7 +68,12 @@ class YoloTestCase(TestCase):
         with TemporaryDirectory() as images_folder:
             with TemporaryDirectory() as labels_folder:
                 fake_content_repository = FakeContentRepository(
-                    "https://contentrep", requests.Session()
+                    "https://contentrep",
+                    HttpClient(
+                        kili_endpoint="https://fake_endpoint.kili-technology.com",
+                        api_key="",
+                        verify=True,
+                    ),
                 )
                 asset_remote_content, video_filenames = _process_asset(
                     asset_video,

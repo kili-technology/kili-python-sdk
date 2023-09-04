@@ -9,6 +9,7 @@ import pytest_mock
 import requests
 from pyrate_limiter import Duration, Limiter, RequestRate
 
+from kili.adapters.http_client import HttpClient
 from kili.core.constants import MAX_CALLS_PER_MINUTE
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.exceptions import GraphQLError
@@ -24,7 +25,9 @@ def test_graphql_client_cache_cant_get_kili_version(mocker):
         api_key="nokey",
         client_name=GraphQLClientName.SDK,
         verify=True,
-        http_client=requests.Session(),
+        http_client=HttpClient(
+            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+        ),
     )
 
 
@@ -50,7 +53,9 @@ def test_gql_bad_query_local_validation(query, mocker):
         api_key="",
         client_name=GraphQLClientName.SDK,
         verify=True,
-        http_client=requests.Session(),
+        http_client=HttpClient(
+            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+        ),
     )
 
     with pytest.raises(GraphQLError) as exc_info:
@@ -79,7 +84,9 @@ def test_graphql_client_cache(mocker):
         api_key="",
         client_name=GraphQLClientName.SDK,
         verify=True,
-        http_client=requests.Session(),
+        http_client=HttpClient(
+            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+        ),
     )
 
     # schema should be cached
@@ -93,7 +100,9 @@ def test_graphql_client_cache(mocker):
             api_key="",
             client_name=GraphQLClientName.SDK,
             verify=True,
-            http_client=requests.Session(),
+            http_client=HttpClient(
+                kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+            ),
         )
         mocked_print_schema.assert_not_called()
 
@@ -111,7 +120,9 @@ def test_schema_caching_requires_cache_dir():
             client_name=GraphQLClientName.SDK,
             enable_schema_caching=True,
             graphql_schema_cache_dir=None,
-            http_client=requests.Session(),
+            http_client=HttpClient(
+                kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+            ),
         )
 
 
@@ -122,7 +133,9 @@ def test_skip_checks_disable_local_validation(mocker: pytest_mock.MockerFixture)
         endpoint="",
         api_key="",
         client_name=GraphQLClientName.SDK,
-        http_client=requests.Session(),
+        http_client=HttpClient(
+            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+        ),
     )
     mocker_gql.assert_called_with(
         transport=client._gql_transport,
@@ -142,7 +155,9 @@ def test_rate_limiting(mocker: pytest_mock.MockerFixture):
         endpoint="",
         api_key="",
         client_name=GraphQLClientName.SDK,
-        http_client=requests.Session(),
+        http_client=HttpClient(
+            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+        ),
         enable_schema_caching=False,
     )
 
