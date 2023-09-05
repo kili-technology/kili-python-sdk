@@ -14,6 +14,7 @@ def project_id(kili: Kili):
     kili.delete_project(project_id)
 
 
+@pytest.mark.skip(reason="get tags by project is buggy on backend")
 def test_given_org_tags_when_i_tag_project_it_tags_it(kili: Kili, project_id: str):
     # Given
     org_tags = kili.tags()
