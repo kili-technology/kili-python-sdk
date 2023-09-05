@@ -1,4 +1,3 @@
-import platform
 import warnings
 from datetime import datetime, timedelta
 

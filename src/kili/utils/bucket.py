@@ -11,9 +11,6 @@ from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
 from kili.adapters.http_client import HttpClient
-from kili.core.graphql.operations.asset.queries import (
-    GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
-)
 
 AZURE_STRING = "blob.core.windows.net"
 GCP_STRING = "storage.googleapis.com"
@@ -22,13 +19,13 @@ GCP_STRING_PUBLIC = "storage.cloud.google.com"
 MAX_NUMBER_SIGNED_URLS_TO_FETCH = 30
 
 
-def generate_unique_id():
-    """Generates a unique id."""
+def generate_unique_id() -> str:
+    """Generate a unique id."""
     return cuid.cuid()
 
 
 # pylint: disable=missing-type-doc
-def request_signed_urls(kili, file_urls: List[str]):
+def request_signed_urls(kili, file_urls: List[str]) -> List[str]:
     """Get upload signed URLs.
 
     Args:
@@ -42,20 +39,15 @@ def request_signed_urls(kili, file_urls: List[str]):
         for i in range(0, size, MAX_NUMBER_SIGNED_URLS_TO_FETCH)
     ]
 
-    def get_file_batch_urls(file_paths: List[str]) -> List[str]:
-        payload = {
-            "filePaths": file_paths,
-        }
-        urls_response = kili.graphql_client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
-        return urls_response["urls"]
+    request_function = kili.kili_api_gateway.create_upload_bucket_signed_urls
 
-    return [*itertools.chain(*map(get_file_batch_urls, file_batches))]
+    return [*itertools.chain(*map(request_function, file_batches))]
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2), reraise=True)
 def upload_data_via_rest(
     url_with_id: str, data: Union[str, bytes], content_type: str, http_client: HttpClient
-):
+) -> str:
     """Upload data in buckets' signed URL via REST.
 
     Args:
@@ -76,7 +68,7 @@ def upload_data_via_rest(
     return url_with_id
 
 
-def clean_signed_url(url: str, endpoint: str):
+def clean_signed_url(url: str, endpoint: str) -> str:
     """Return a cleaned signed url for frame upload."""
     query = urlparse(url).query
     id_param = parse_qs(query)["id"][0]

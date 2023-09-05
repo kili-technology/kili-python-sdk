@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 from typeguard import typechecked
 
 import kili.services.data_connection as data_connection_service
-from kili.core.graphql import QueryOptions
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationsQuery,
     DataIntegrationWhere,

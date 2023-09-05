@@ -230,10 +230,6 @@ def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
     mocker.patch(
-        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
-        return_value=(i for i in [get_project_return_val]),
-    )
-    mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[
             Asset(asset)
@@ -248,6 +244,8 @@ def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = {"inputType": "PDF"}
 
     kili.export_labels(
         "fake_proj_id", "export_pixel_coords_kili_pdf.zip", fmt="kili", normalized_coordinates=False
@@ -376,10 +374,6 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
     mocker.patch(
-        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
-        return_value=(i for i in [get_project_return_val]),
-    )
-    mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[
             Asset(asset)
@@ -394,6 +388,8 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
 
     kili.export_labels(
         "fake_proj_id",
@@ -447,10 +443,6 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
     mocker.patch(
-        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
-        return_value=(i for i in [get_project_return_val]),
-    )
-    mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[
             Asset(asset)
@@ -465,6 +457,8 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
 
     kili.export_labels(
         "fake_proj_id",

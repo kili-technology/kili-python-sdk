@@ -4,8 +4,8 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kili.adapters.http_client import HttpClient
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.gateways.kili_api_gateway import KiliAPIGateway
 
 
 @pytest.fixture()

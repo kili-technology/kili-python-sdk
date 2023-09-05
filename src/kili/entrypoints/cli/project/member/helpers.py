@@ -5,8 +5,8 @@ import warnings
 from typing import Callable, Iterable, Optional
 
 from kili.adapters.http_client import HttpClient
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.client import Kili
-from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
