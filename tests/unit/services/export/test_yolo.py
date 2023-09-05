@@ -5,7 +5,6 @@ from unittest import TestCase
 from zipfile import ZipFile
 
 import pytest_mock
-import requests
 
 from kili.adapters.http_client import HttpClient
 from kili.entrypoints.queries.label import QueriesLabel

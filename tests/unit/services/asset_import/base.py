@@ -3,8 +3,6 @@ import tempfile
 from unittest import TestCase
 from unittest.mock import MagicMock, call
 
-import requests
-
 from kili.adapters.http_client import HttpClient
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,

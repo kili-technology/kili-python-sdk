@@ -1,7 +1,7 @@
 """GraphQL module."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Generator, List, NamedTuple, Optional
+from typing import Any, Callable, Dict, Generator, List, NamedTuple, Optional, Sequence
 
 from typeguard import typechecked
 
@@ -134,8 +134,8 @@ def get_number_of_elements_to_query(
 
 
 @typechecked
-def fragment_builder(fields: List[str]):
-    """Builds a GraphQL fragment for a list of fields to query.
+def fragment_builder(fields: Sequence[str]) -> str:
+    """Build a GraphQL fragment for a list of fields to query.
 
     Args:
         fields: The list of fields to query

@@ -1,12 +1,22 @@
 """Client presentation methods for assets."""
 
 import warnings
-from typing import Dict, Generator, Iterable, List, Literal, Optional, Union, overload
+from typing import (
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    Union,
+    overload,
+)
 
 import pandas as pd
-import requests
 from typeguard import typechecked
 
+from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetFilters
 from kili.domain.issue import IssueStatus, IssueType
@@ -22,16 +32,16 @@ class AssetClientMethods:
     """Methods attached to the Kili client, to run actions on assets."""
 
     kili_api_gateway: KiliAPIGateway
-    http_client: requests.Session
+    http_client: HttpClient
 
-    # pylint: disable=too-many-arguments, dangerous-default-value, redefined-builtin, too-many-locals
+    # pylint: disable=too-many-arguments, redefined-builtin, too-many-locals
     @overload
     def assets(
         self,
         project_id: str,
         asset_id: Optional[str] = None,
         skip: int = 0,
-        fields: List[str] = [
+        fields: Sequence[str] = (
             "content",
             "createdAt",
             "externalId",
@@ -45,7 +55,7 @@ class AssetClientMethods:
             "labels.jsonResponse",
             "skipped",
             "status",
-        ],
+        ),
         asset_id_in: Optional[List[str]] = None,
         asset_id_not_in: Optional[List[str]] = None,
         consensus_mark_gt: Optional[float] = None,
@@ -104,7 +114,7 @@ class AssetClientMethods:
         project_id: str,
         asset_id: Optional[str] = None,
         skip: int = 0,
-        fields: List[str] = [
+        fields: Sequence[str] = (
             "content",
             "createdAt",
             "externalId",
@@ -118,7 +128,7 @@ class AssetClientMethods:
             "labels.jsonResponse",
             "skipped",
             "status",
-        ],
+        ),
         asset_id_in: Optional[List[str]] = None,
         asset_id_not_in: Optional[List[str]] = None,
         consensus_mark_gt: Optional[float] = None,
@@ -177,7 +187,7 @@ class AssetClientMethods:
         project_id: str,
         asset_id: Optional[str] = None,
         skip: int = 0,
-        fields: List[str] = [
+        fields: Sequence[str] = (
             "content",
             "createdAt",
             "externalId",
@@ -191,7 +201,7 @@ class AssetClientMethods:
             "labels.jsonResponse",
             "skipped",
             "status",
-        ],
+        ),
         asset_id_in: Optional[List[str]] = None,
         asset_id_not_in: Optional[List[str]] = None,
         consensus_mark_gt: Optional[float] = None,

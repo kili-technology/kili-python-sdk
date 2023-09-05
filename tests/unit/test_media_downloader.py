@@ -4,8 +4,8 @@ import os
 from pathlib import Path
 
 import pytest
-import requests
 
+from kili.adapters.http_client import HttpClient
 from kili.use_cases.asset.media_downloader import MediaDownloader
 from kili.utils.tempfile import TemporaryDirectory
 
@@ -73,7 +73,13 @@ def test_download_single_asset_mixed(input_asset, expected_filename):
     """Tests download_single_asset with asset["content"]"""
     with TemporaryDirectory() as tmp_dir:
         output_asset = MediaDownloader(
-            tmp_dir, "", False, input_asset["project"]["inputType"], requests.Session()
+            tmp_dir,
+            "",
+            False,
+            input_asset["project"]["inputType"],
+            HttpClient(
+                kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+            ),
         ).download_single_asset(input_asset)
 
         assert output_asset["content"] == os.path.join(str(tmp_dir.resolve()), expected_filename)
@@ -107,7 +113,13 @@ def test_download_single_asset_jsoncontent(input_asset):
     """Tests with asset["jsonContent"] and extension in externalid."""
     with TemporaryDirectory() as tmp_dir:
         output_asset = MediaDownloader(
-            tmp_dir, "", False, input_asset["project"]["inputType"], requests.Session()
+            tmp_dir,
+            "",
+            False,
+            input_asset["project"]["inputType"],
+            HttpClient(
+                kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+            ),
         ).download_single_asset(input_asset)
 
         assert output_asset["content"] == input_asset["content"] == ""
@@ -131,7 +143,9 @@ def test_download_media_jsoncontent_field_added_but_useless():
             project_id="",
             jsoncontent_field_added=True,
             project_input_type="IMAGE",
-            http_client=requests.Session(),
+            http_client=HttpClient(
+                kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+            ),
         )
         assets = [{"content": "", "externalId": "", "jsonContent": ""}]
         ret = media_downloader.download_assets(assets)[0]
@@ -146,7 +160,9 @@ def test_download_media_jsoncontent_field_added_but_useful():
             project_id="",
             jsoncontent_field_added=True,
             project_input_type="VIDEO",
-            http_client=requests.Session(),
+            http_client=HttpClient(
+                kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+            ),
         )
         assets = [
             {
@@ -173,7 +189,7 @@ def test_download_media_jsoncontent_field_added_but_useful():
 )
 def test_download_media_jsoncontent_none(mocker, content, jsoncontent, should_call_requests_get):
     """Requests.get should only be called when valid url."""
-    http_client = mocker.MagicMock(spec=requests.Session)
+    http_client = mocker.MagicMock(spec=HttpClient)
     with TemporaryDirectory() as tmp_dir:
         _ = MediaDownloader(tmp_dir, "", False, "VIDEO", http_client).download_single_asset(
             {"content": content, "jsonContent": jsoncontent, "externalId": "externalId"}

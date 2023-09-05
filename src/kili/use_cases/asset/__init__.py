@@ -1,7 +1,7 @@
 """Asset use cases."""
 
 
-from typing import List, Literal, Optional
+from typing import Literal, Optional, Sequence
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -23,7 +23,7 @@ class AssetUseCases:
     def list_assets(
         self,
         filters: AssetFilters,
-        fields: List[str],
+        fields: Sequence[str],
         first: Optional[int],
         skip: int,
         disable_tqdm: Optional[bool],
@@ -32,7 +32,6 @@ class AssetUseCases:
         label_output_format: Literal["dict", "parsed_label"],
     ):
         """List assets with given options."""
-
         if filters.label_category_search:
             validate_category_search_query(filters.label_category_search)
 

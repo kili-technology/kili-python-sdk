@@ -5,7 +5,6 @@ from unittest.mock import MagicMock
 from zipfile import ZipFile
 
 import pytest
-import requests
 
 from kili.adapters.http_client import HttpClient
 from kili.core.constants import mime_extensions_for_py_scripts

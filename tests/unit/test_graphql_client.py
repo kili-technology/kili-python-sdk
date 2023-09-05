@@ -6,7 +6,6 @@ from unittest import mock
 import graphql
 import pytest
 import pytest_mock
-import requests
 from pyrate_limiter import Duration, Limiter, RequestRate
 
 from kili.adapters.http_client import HttpClient
