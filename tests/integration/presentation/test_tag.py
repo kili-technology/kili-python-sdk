@@ -42,7 +42,9 @@ def test_when_fetching_project_tags_then_i_get_tags(mocker: pytest_mock.MockerFi
     )
 
 
-def test_given_tags_when_i_tag_project_then_it_is_tagged(mocker: pytest_mock.MockerFixture):
+def test_given_tags_when_i_tag_project_with_tag_ids_then_it_is_tagged(
+    mocker: pytest_mock.MockerFixture,
+):
     kili = TagClientMethods()
     kili.kili_api_gateway = KiliAPIGateway(
         graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
@@ -55,7 +57,31 @@ def test_given_tags_when_i_tag_project_then_it_is_tagged(mocker: pytest_mock.Moc
     kili.kili_api_gateway.list_tags_by_org = mocker.MagicMock(return_value=tags)
 
     # When
-    kili.tag_project(project_id="fake_proj_id", tags=["tag1", "tag2_id"])
+    kili.tag_project(project_id="fake_proj_id", tag_ids=["tag1_id", "tag2_id"])
+
+    # Then
+    assert kili.kili_api_gateway.graphql_client.execute.call_count == len(tags)
+    kili.kili_api_gateway.graphql_client.execute.assert_called_with(
+        GQL_CHECK_TAG, {"data": {"tagId": "tag2_id", "projectId": "fake_proj_id"}}
+    )
+
+
+def test_given_tags_when_i_tag_project_with_tag_labels_then_it_is_tagged(
+    mocker: pytest_mock.MockerFixture,
+):
+    kili = TagClientMethods()
+    kili.kili_api_gateway = KiliAPIGateway(
+        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
+    )
+    # Given
+    tags = [
+        {"id": "tag1_id", "label": "tag1"},
+        {"id": "tag2_id", "label": "tag2"},
+    ]
+    kili.kili_api_gateway.list_tags_by_org = mocker.MagicMock(return_value=tags)
+
+    # When
+    kili.tag_project(project_id="fake_proj_id", tags=["tag1", "tag2"])
 
     # Then
     assert kili.kili_api_gateway.graphql_client.execute.call_count == len(tags)
