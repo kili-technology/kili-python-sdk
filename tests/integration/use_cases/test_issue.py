@@ -1,4 +1,4 @@
-"""Tests for issues service."""
+"""Tests for issues use cases."""
 
 import pytest
 

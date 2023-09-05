@@ -109,7 +109,7 @@ class MutationsIssue(BaseOperationEntrypointMixin):
             asset_external_id_array: List of the assets to add the questions to. Used if `asset_id_array` is not given.
 
         Returns:
-            A list of dictionary with the `id` key of the created questions.
+            A list of dictionaries with the `id` key of the created questions.
         """
         assert_all_arrays_have_same_size([text_array, asset_id_array])
         asset_id_array = get_asset_ids_or_throw_error(

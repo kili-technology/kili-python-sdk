@@ -16,8 +16,6 @@ from typing import (
 import pandas as pd
 from typeguard import typechecked
 
-from kili.adapters.http_client import HttpClient
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetFilters
 from kili.domain.issue import IssueStatus, IssueType
 from kili.presentation.client.helpers.common_validators import (
@@ -26,13 +24,12 @@ from kili.presentation.client.helpers.common_validators import (
 from kili.use_cases.asset import AssetUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
+from .base import BaseClientMethods
+
 
 @for_all_methods(log_call, exclude=["__init__"])
-class AssetClientMethods:
+class AssetClientMethods(BaseClientMethods):
     """Methods attached to the Kili client, to run actions on assets."""
-
-    kili_api_gateway: KiliAPIGateway
-    http_client: HttpClient
 
     # pylint: disable=too-many-arguments, redefined-builtin, too-many-locals
     @overload

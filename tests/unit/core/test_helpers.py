@@ -9,6 +9,7 @@ import pytest
 from tenacity import TryAgain, retry
 from tenacity.wait import wait_fixed
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.operations.label.queries import LabelQuery
 from kili.core.helpers import (
     RetryLongWaitWarner,
@@ -119,7 +120,9 @@ def test_get_labels_asset_ids_map():
         ),
     ):
         assert get_labels_asset_ids_map(
-            FakeKili, "project_id", ["label_id_1", "label_id_2"]  # type: ignore
+            KiliAPIGateway(FakeKili.graphql_client, FakeKili.http_client),
+            "project_id",
+            ["label_id_1", "label_id_2"],
         ) == {
             "label_id_1": "asset_id_1",
             "label_id_2": "asset_id_1",

@@ -8,16 +8,15 @@ from kili.adapters.kili_api_gateway.issue.operations import (
     GQL_CREATE_ISSUES,
 )
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.utils.pagination import BatchIteratorBuilder
 from kili.domain.issue import IssueFilters, IssueId, IssueType
 from kili.utils import tqdm
 
+from ..base import BaseOperationMixin
 
-class IssueOperationMixin:
+
+class IssueOperationMixin(BaseOperationMixin):
     """GraphQL Mixin extending GraphQL Gateway class with Issue related operations."""
-
-    graphql_client: GraphQLClient
 
     def create_issues(
         self, type_: IssueType, issues: List[IssueToCreateKiliAPIGatewayInput]
