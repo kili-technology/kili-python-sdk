@@ -4,7 +4,7 @@ from typing import List
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
-from kili.domain.issue import Issue
+from kili.domain.issue import IssueId
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
 
@@ -17,7 +17,7 @@ class IssueUseCases:
 
     def create_issues(
         self, project_id: str, issues: List[IssueToCreateUseCaseInput]
-    ) -> List[Issue]:
+    ) -> List[IssueId]:
         """Create issues with issue type."""
         label_id_array = [issue.label_id for issue in issues]
         label_asset_ids_map = get_labels_asset_ids_map(
@@ -32,5 +32,4 @@ class IssueUseCases:
             )
             for issue in issues
         ]
-        created_issues = self._kili_api_gateway.create_issues(type_="ISSUE", issues=gateway_issues)
-        return created_issues
+        return self._kili_api_gateway.create_issues(type_="ISSUE", issues=gateway_issues)
