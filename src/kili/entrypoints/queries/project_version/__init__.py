@@ -29,7 +29,7 @@ class QueriesProjectVersion(BaseOperationEntrypointMixin):
         first: Optional[int] = None,
         skip: int = 0,
         fields: List[str] = ["createdAt", "id", "content", "name", "projectId"],
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -42,7 +42,7 @@ class QueriesProjectVersion(BaseOperationEntrypointMixin):
         first: Optional[int] = None,
         skip: int = 0,
         fields: List[str] = ["createdAt", "id", "content", "name", "projectId"],
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -55,7 +55,7 @@ class QueriesProjectVersion(BaseOperationEntrypointMixin):
         first: Optional[int] = None,
         skip: int = 0,
         fields: List[str] = ["createdAt", "id", "content", "name", "projectId"],
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:

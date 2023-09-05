@@ -71,7 +71,7 @@ def import_labels_from_dict(  # pylint: disable=too-many-arguments
     label_type: LabelType,
     overwrite: bool,
     model_name: Optional[str] = None,
-    disable_tqdm: bool = False,
+    disable_tqdm: Optional[bool] = None,
 ) -> List:
     """Imports labels from a list of dictionaries."""
     ClientInputLabelsValidator(labels=labels)

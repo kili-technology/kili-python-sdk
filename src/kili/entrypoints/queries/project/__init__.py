@@ -52,7 +52,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
             "title",
         ),
         first: Optional[int] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -82,7 +82,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
             "title",
         ),
         first: Optional[int] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -112,7 +112,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
             "title",
         ),
         first: Optional[int] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:

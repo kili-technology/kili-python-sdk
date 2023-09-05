@@ -27,7 +27,7 @@ class QueriesApiKey(BaseOperationEntrypointMixin):
         skip: int = 0,
         fields: List[str] = ["id", "name", "createdAt", "revoked"],
         first: Optional[int] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -42,7 +42,7 @@ class QueriesApiKey(BaseOperationEntrypointMixin):
         skip: int = 0,
         fields: List[str] = ["id", "name", "createdAt", "revoked"],
         first: Optional[int] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -57,7 +57,7 @@ class QueriesApiKey(BaseOperationEntrypointMixin):
         skip: int = 0,
         fields: List[str] = ["id", "name", "createdAt", "revoked"],
         first: Optional[int] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
