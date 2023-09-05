@@ -48,8 +48,10 @@ class AssetUseCases:
         )
 
         if label_output_format == "parsed_label":
-            project: LabelParsingProject = self._kili_api_gateway.get_project(
-                ProjectId(filters.project_id), ["jsonInterface", "inputType"]
+            project = LabelParsingProject(
+                **self._kili_api_gateway.get_project(
+                    ProjectId(filters.project_id), ["jsonInterface", "inputType"]
+                )
             )
             assets_gen = (parse_labels_of_asset(asset, project) for asset in assets_gen)
 
