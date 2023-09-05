@@ -88,7 +88,6 @@ class TagClientMethods(BaseClientMethods):
             project_id: Id of the project.
             tags: Sequence of tag labels to remove from the project.
             tag_ids: Sequence of tag ids to remove from the project.
-                Only used if `tags` is not provided.
             all: Whether to remove all tags from the project.
             disable_tqdm: Whether to disable the progress bar.
         """
