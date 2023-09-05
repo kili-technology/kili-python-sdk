@@ -67,11 +67,12 @@ def test_when_untagging_project_then_it_remove_tags(kili_api_gateway: KiliAPIGat
 
     # When
     deleted_tags = TagUseCases(kili_api_gateway).untag_project(
-        project_id="fake_proj_id", tags=["tag1_id", "tag2_id"], all=None, disable_tqdm=True
+        project_id="fake_proj_id", tag_ids=["tag1_id", "tag2_id"], disable_tqdm=True
     )
 
     # Then
-    assert deleted_tags == [        "tag1_id",        "tag2_id"    ]
+    assert deleted_tags == ["tag1_id", "tag2_id"]
+
 
 def test_given_tag_labels_when_i_convert_them_to_tag_ids_then_it_works(
     kili_api_gateway: KiliAPIGateway,

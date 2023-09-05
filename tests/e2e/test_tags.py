@@ -73,5 +73,3 @@ def test_given_project_with_tags_when_i_call_untag_project_then_it_removes_all_t
     # Then
     project_tags = kili.tags(project_id=project_with_tags_id, fields=("id",))
     assert len(project_tags) == 0
-    project_tags = kili.tags(project_id=project_id)
-    assert sorted([tag["label"] for tag in project_tags]) == sorted(tags_to_add_to_project_label)

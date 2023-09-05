@@ -49,42 +49,30 @@ class TagUseCases:
     def untag_project(
         self,
         project_id: str,
-        tags: Optional[Sequence[str]],
-        all: Optional[bool],  # pylint: disable=redefined-builtin
+        tag_ids: Sequence[str],
         disable_tqdm: bool,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[TagId]:
         """Remove tags from a project."""
-        tags_of_project = self._kili_api_gateway.list_tags_by_project(
-            project_id=ProjectId(project_id), fields=("label", "id")
-        )
-        tag_name_to_id = {tag["label"]: tag["id"] for tag in tags_of_project}
+        tag_ids_of_project = {
+            tag["id"]
+            for tag in self._kili_api_gateway.list_tags_by_project(
+                project_id=ProjectId(project_id), fields=("id",)
+            )
+        }
 
-        tag_to_delete_ids = []
-        if all:
-            tag_to_delete_ids = [tag["id"] for tag in tags_of_project]
-        else:
-            assert tags
-            for tag in tags:
-                # check if the provided tag is an id
-                if tag in tag_name_to_id.values():
-                    tag_id = tag
-                # check if the provided tag is a tag label
-                elif tag in tag_name_to_id.keys():
-                    tag_id = tag_name_to_id[tag]
-                else:
-                    raise ValueError(f"Tag {tag} not found in project with tags: {tags_of_project}")
-                tag_to_delete_ids.append(tag_id)
-
-        ret_tags: List[Dict[Literal["id"], str]] = [
-            {
-                "id": self._kili_api_gateway.uncheck_tag(
-                    project_id=ProjectId(project_id), tag_id=TagId(tag_id)
+        for tag in tag_ids:
+            if tag not in tag_ids_of_project:
+                raise ValueError(
+                    f"Tag {tag} not found in project with tag ids: {tag_ids_of_project}"
                 )
-            }
-            for tag_id in tqdm(tag_to_delete_ids, desc="Untagging project", disable=disable_tqdm)
+
+        return [
+            self._kili_api_gateway.uncheck_tag(
+                project_id=ProjectId(project_id), tag_id=TagId(tag_id)
+            )
+            for tag_id in tqdm(tag_ids, desc="Untagging project", disable=disable_tqdm)
         ]
 
-        return ret_tags
     def get_tag_ids_from_labels(self, labels: Sequence[str]) -> List[TagId]:
         """Get tag ids from labels."""
         tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id", "label"))
