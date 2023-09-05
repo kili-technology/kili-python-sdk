@@ -2,8 +2,7 @@
 
 from unittest.mock import MagicMock
 
-import requests
-
+from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectWhere
 from kili.orm import Asset
@@ -22,7 +21,9 @@ class FakeKili:
     api_key = ""
     api_endpoint = "http://content-repository"
     graphql_client = MagicMock()
-    http_client = requests.Session()
+    http_client = HttpClient(
+        kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+    )
     kili_api_gateway = MagicMock()
     kili_api_gateway.http_client = http_client
 

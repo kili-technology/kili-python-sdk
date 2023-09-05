@@ -4,11 +4,6 @@ from kili.client import Kili
 
 
 @pytest.fixture()
-def kili() -> Kili:
-    return Kili()
-
-
-@pytest.fixture()
 def project_id(kili: Kili):
     json_interface = {
         "jobs": {

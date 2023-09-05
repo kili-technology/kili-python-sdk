@@ -1,7 +1,6 @@
 # pylint: disable=missing-function-docstring,redefined-outer-name
 """Tests that the external id check is strict."""
 import pytest
-import requests
 
 from kili.client import Kili
 
@@ -9,11 +8,6 @@ from kili.client import Kili
 @pytest.fixture()
 def text():
     return "Youʼll see Johnʼs car"
-
-
-@pytest.fixture
-def kili():
-    return Kili()
 
 
 @pytest.fixture()
@@ -65,4 +59,4 @@ def test_encoding_decoding_consistency(text, kili, project_with_assets):
         )
     )
 
-    assert requests.get(retrieved_assets[0]["content"], timeout=30).text == text
+    assert kili.http_client.get(retrieved_assets[0]["content"], timeout=30).text == text

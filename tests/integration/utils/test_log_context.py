@@ -45,7 +45,6 @@ def test_log_context(mocker, monkeypatch):
     mocker.patch.object(Kili, "_check_expiry_of_key_is_close")
     mocker.patch.object(Kili, "get_user")
     mocker.patch("kili.client.GraphQLClient")
-    mocker.patch("kili.client.requests.Session")
     mocker.patch("kili.utils.logcontext.datetime", _FakeDatetime())
     mocker.patch("kili.utils.logcontext.uuid", _FakeUUID())
     mocker.patch("kili.utils.logcontext.__version__", "1.0.0")

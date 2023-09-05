@@ -2,13 +2,6 @@
 """Tests that the external id check is strict."""
 import pytest
 
-from kili.client import Kili
-
-
-@pytest.fixture
-def kili():
-    return Kili()
-
 
 @pytest.fixture()
 def project_with_assets(kili):

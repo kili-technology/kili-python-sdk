@@ -3,8 +3,7 @@ import tempfile
 from unittest import TestCase
 from unittest.mock import MagicMock, call
 
-import requests
-
+from kili.adapters.http_client import HttpClient
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
@@ -20,7 +19,12 @@ class ImportTestCase(TestCase):
     def setUp(self):
         self.project_id = "project_id"
         self.test_dir = tempfile.mkdtemp()
-        self.downloader = LocalDownloader(self.test_dir, requests.Session())
+        self.downloader = LocalDownloader(
+            self.test_dir,
+            HttpClient(
+                kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+            ),
+        )
         self.kili = mocked_auth
         self.kili.kili_api_gateway.count_assets = MagicMock(return_value=1)
 

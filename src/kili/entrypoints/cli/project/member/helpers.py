@@ -4,8 +4,7 @@ import re
 import warnings
 from typing import Callable, Iterable, Optional
 
-import requests
-
+from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.client import Kili
 from kili.core.graphql.operations.project_user.queries import (
@@ -31,7 +30,7 @@ def type_check_member(key, value):
 
 def collect_members_from_csv(csv_path: str, role: Optional[str]):
     """Read a csv with to collect members and role."""
-    type_check_function: Callable[[str, str, Optional[requests.Session]], str] = (
+    type_check_function: Callable[[str, str, Optional[HttpClient]], str] = (
         lambda key, value, z: type_check_member(key, value)
     )
     members_to_add = collect_from_csv(

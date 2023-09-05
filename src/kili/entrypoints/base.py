@@ -2,8 +2,7 @@
 import abc
 from typing import Optional, Type, TypeVar
 
-import requests
-
+from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import format_result
@@ -17,7 +16,7 @@ class BaseOperationEntrypointMixin(abc.ABC):
     # FIXME: graphql_client and http_client should be removed once
     # all methods have been moved to the new architecture
     graphql_client: GraphQLClient
-    http_client: requests.Session
+    http_client: HttpClient
     kili_api_gateway: KiliAPIGateway
 
     def format_result(self, name: str, result: dict, object_: Optional[Type[T]] = None) -> T:

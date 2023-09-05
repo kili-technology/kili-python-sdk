@@ -1,10 +1,9 @@
 """GraphQL module."""
 
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Generator, List, Optional, Type, TypeVar
+from typing import Callable, Dict, Generator, Optional, Sequence, Type, TypeVar
 
-import requests
-
+from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import (
     QueryOptions,
     fragment_builder,
@@ -21,17 +20,16 @@ T = TypeVar("T")
 class BaseQueryWhere(ABC):
     """Abtsract class for defining the where payload to send in a graphQL query."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._graphql_payload = self.graphql_where_builder()
 
     @abstractmethod
     def graphql_where_builder(self) -> Dict:
-        """Build the GraphQL where payload sent in the resolver from the
-        arguments given to the where class."""
+        """Build the GraphQL where payload from the arguments given to the where class."""
         raise NotImplementedError
 
     @property
-    def graphql_payload(self):
+    def graphql_payload(self) -> Dict:
         """Where payload to send in the graphQL query."""
         return self._graphql_payload
 
@@ -42,7 +40,7 @@ class GraphQLQuery(ABC):
     It factorizes code for executing paginated queries
     """
 
-    def __init__(self, client: GraphQLClient, http_client: requests.Session) -> None:
+    def __init__(self, client: GraphQLClient, http_client: HttpClient) -> None:
         self.client = client
         self.http_client = http_client
 
@@ -65,7 +63,7 @@ class GraphQLQuery(ABC):
     def __call__(
         self,
         where: BaseQueryWhere,
-        fields: List[str],
+        fields: Sequence[str],
         options: QueryOptions,
         post_call_function: Optional[Callable] = None,
     ) -> Generator[Dict, None, None]:
@@ -82,7 +80,7 @@ class GraphQLQuery(ABC):
         count_result = self.client.execute(self.COUNT_QUERY, payload)
         return self.format_result("data", count_result, int)
 
-    def get_number_of_elements_to_query(self, where: BaseQueryWhere, options: QueryOptions):
+    def get_number_of_elements_to_query(self, where: BaseQueryWhere, options: QueryOptions) -> int:
         """Return the total number of element to query for one query.
 
         It uses both the argument first given by the user

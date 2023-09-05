@@ -6,10 +6,11 @@ from typing import List, Union
 from urllib.parse import parse_qs, urlparse
 
 import cuid
-import requests
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
+
+from kili.adapters.http_client import HttpClient
 
 AZURE_STRING = "blob.core.windows.net"
 GCP_STRING = "storage.googleapis.com"
@@ -18,13 +19,13 @@ GCP_STRING_PUBLIC = "storage.cloud.google.com"
 MAX_NUMBER_SIGNED_URLS_TO_FETCH = 30
 
 
-def generate_unique_id():
-    """Generates a unique id."""
+def generate_unique_id() -> str:
+    """Generate a unique id."""
     return cuid.cuid()
 
 
 # pylint: disable=missing-type-doc
-def request_signed_urls(kili, file_urls: List[str]):
+def request_signed_urls(kili, file_urls: List[str]) -> List[str]:
     """Get upload signed URLs.
 
     Args:
@@ -45,8 +46,8 @@ def request_signed_urls(kili, file_urls: List[str]):
 
 @retry(stop=stop_after_attempt(3), wait=wait_random(min=1, max=2), reraise=True)
 def upload_data_via_rest(
-    url_with_id: str, data: Union[str, bytes], content_type: str, http_client: requests.Session
-):
+    url_with_id: str, data: Union[str, bytes], content_type: str, http_client: HttpClient
+) -> str:
     """Upload data in buckets' signed URL via REST.
 
     Args:
@@ -67,7 +68,7 @@ def upload_data_via_rest(
     return url_with_id
 
 
-def clean_signed_url(url: str, endpoint: str):
+def clean_signed_url(url: str, endpoint: str) -> str:
     """Return a cleaned signed url for frame upload."""
     query = urlparse(url).query
     id_param = parse_qs(query)["id"][0]

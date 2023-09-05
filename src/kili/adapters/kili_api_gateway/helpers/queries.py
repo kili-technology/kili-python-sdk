@@ -1,7 +1,7 @@
 """GraphQL module."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Generator, List, NamedTuple, Optional
+from typing import Any, Callable, Dict, Generator, List, NamedTuple, Optional, Sequence
 
 from typeguard import typechecked
 
@@ -47,7 +47,7 @@ class PaginatedGraphQLQuery:
         nb_elements_to_query: Optional[int],
         post_call_function: Optional[Callable[[List], List]] = None,
     ) -> Generator[Dict, None, None]:
-        """Builds a row generator from paginated calls.
+        """Build a row generator from paginated calls.
 
         Args:
             query: The object query to execute and to send to graphQL, in string format
@@ -134,8 +134,8 @@ def get_number_of_elements_to_query(
 
 
 @typechecked
-def fragment_builder(fields: List[str]):
-    """Builds a GraphQL fragment for a list of fields to query.
+def fragment_builder(fields: Sequence[str]) -> str:
+    """Build a GraphQL fragment for a list of fields to query.
 
     Args:
         fields: The list of fields to query
