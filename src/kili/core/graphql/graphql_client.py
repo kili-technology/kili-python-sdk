@@ -224,8 +224,7 @@ class GraphQLClient:
         response = self.http_client.get(url, timeout=30)
         if response.status_code == 200 and '"version":' in response.text:
             response_json = response.json()
-            version = response_json["version"]
-            return version
+            return response_json["version"]
         return None
 
     def execute(
@@ -249,7 +248,7 @@ class GraphQLClient:
                         variable_values=variables,
                         extra_args={
                             "headers": {
-                                **self._gql_transport.headers,  # type: ignore
+                                **(self._gql_transport.headers or {}),
                                 **LogContext(),
                             }
                         },

@@ -7,6 +7,7 @@ from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWh
 from kili.exceptions import NotFound
 
 
+# TODO: delete since its in ProjectOperationMixin
 def get_project(kili, project_id: str, fields: List[str]) -> Dict:
     """Get a project from its id or raise a NotFound Error if not found."""
     projects = list(

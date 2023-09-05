@@ -47,7 +47,7 @@ class PaginatedGraphQLQuery:
         nb_elements_to_query: Optional[int],
         post_call_function: Optional[Callable[[List], List]] = None,
     ) -> Generator[Dict, None, None]:
-        """Builds a row generator from paginated calls.
+        """Build a row generator from paginated calls.
 
         Args:
             query: The object query to execute and to send to graphQL, in string format
