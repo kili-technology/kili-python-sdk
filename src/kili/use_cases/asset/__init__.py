@@ -1,7 +1,5 @@
 """Asset use cases."""
-
-
-from typing import Literal, Optional, Sequence
+from typing import Generator, Literal, Optional, Sequence
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -16,7 +14,8 @@ from kili.use_cases.asset.media_downloader import get_download_assets_function
 class AssetUseCases:
     """Asset use cases."""
 
-    def __init__(self, kili_api_gateway: KiliAPIGateway):
+    def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:
+        """Init AssetUseCases."""
         self._kili_api_gateway = kili_api_gateway
 
     # pylint: disable=too-many-arguments
@@ -30,7 +29,7 @@ class AssetUseCases:
         download_media: bool,
         local_media_dir: Optional[str],
         label_output_format: Literal["dict", "parsed_label"],
-    ):
+    ) -> Generator:
         """List assets with given options."""
         if filters.label_category_search:
             validate_category_search_query(filters.label_category_search)
@@ -57,10 +56,7 @@ class AssetUseCases:
 
         return assets_gen
 
-    def count_assets(
-        self,
-        filters: AssetFilters,
-    ) -> int:
+    def count_assets(self, filters: AssetFilters) -> int:
         """Send a GraphQL request calling countAssets resolver."""
         if filters.label_category_search:
             validate_category_search_query(filters.label_category_search)
