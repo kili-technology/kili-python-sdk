@@ -28,8 +28,10 @@ class TagOperationMixin(BaseOperationMixin):
         # result = self.graphql_client.execute(query, variables)
         # return result["data"]
         # TODO: listTagsByProject is broken currently. Use listTagsByOrg instead.
-        if "checkedForProjects" not in fields:
-            fields_with_project_ids = ("checkedForProjects", *fields)
+
+        fields_with_project_ids = (
+            ("checkedForProjects", *fields) if "checkedForProjects" not in fields else fields
+        )
         tags_of_org = self.list_tags_by_org(fields=fields_with_project_ids)
         tags_of_project = [tag for tag in tags_of_org if project_id in tag["checkedForProjects"]]
 

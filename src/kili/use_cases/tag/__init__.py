@@ -55,7 +55,7 @@ class TagUseCases:
         self,
         project_id: str,
         tags: Optional[Sequence[str]],
-        all: Optional[bool],
+        all: Optional[bool],  # pylint: disable=redefined-builtin
         disable_tqdm: bool,
     ) -> List[Dict[Literal["id"], str]]:
         """Remove tags from a project."""

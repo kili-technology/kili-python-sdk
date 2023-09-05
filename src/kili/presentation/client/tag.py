@@ -64,7 +64,7 @@ class TagClientMethods(BaseClientMethods):
         self,
         project_id: str,
         tags: Optional[Sequence[str]] = None,
-        all: Optional[bool] = None,
+        all: Optional[bool] = None,  # pylint: disable=redefined-builtin
         disable_tqdm: bool = False,
     ) -> List[Dict[Literal["id"], str]]:
         """Remove tags from a project.
