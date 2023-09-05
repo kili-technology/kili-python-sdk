@@ -1,4 +1,4 @@
-from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.use_cases.tag import TagUseCases
 
 

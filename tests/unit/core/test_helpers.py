@@ -9,6 +9,7 @@ import pytest
 from tenacity import TryAgain, retry
 from tenacity.wait import wait_fixed
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.operations.label.queries import LabelQuery
 from kili.core.helpers import (
     RetryLongWaitWarner,
@@ -18,7 +19,6 @@ from kili.core.helpers import (
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.exceptions import MissingArgumentError
-from kili.gateways.kili_api_gateway import KiliAPIGateway
 from kili.orm import Asset
 from tests.fakes.fake_kili import FakeKili
 

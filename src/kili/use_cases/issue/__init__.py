@@ -2,10 +2,10 @@
 
 from typing import List
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.domain.issue import Issue
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
-from kili.gateways.kili_api_gateway import KiliAPIGateway
-from kili.gateways.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
 
 

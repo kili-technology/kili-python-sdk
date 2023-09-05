@@ -2,16 +2,16 @@
 
 from typing import List, Optional
 
-from kili.core.utils.pagination import BatchIteratorBuilder
-from kili.domain.issue import Issue, IssueStatus, IssueType
-from kili.gateways.kili_api_gateway.issue.operations import (
+from kili.adapters.kili_api_gateway.issue.operations import (
     GQL_COUNT_ISSUES,
     GQL_CREATE_ISSUES,
 )
-from kili.gateways.kili_api_gateway.issue.types import (
+from kili.adapters.kili_api_gateway.issue.types import (
     IssueToCreateKiliAPIGatewayInput,
     IssueWhere,
 )
+from kili.core.utils.pagination import BatchIteratorBuilder
+from kili.domain.issue import Issue, IssueStatus, IssueType
 from kili.utils import tqdm
 
 from ..base import BaseOperationMixin

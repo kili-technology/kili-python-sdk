@@ -5,9 +5,9 @@ from typing import Callable, Dict, Generator, List, NamedTuple, Optional, Type, 
 
 import requests
 
+from kili.adapters.kili_api_gateway.queries import fragment_builder
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import format_result
-from kili.gateways.kili_api_gateway.queries import fragment_builder
 from kili.utils.tqdm import tqdm
 
 from .graphql_client import GraphQLClient

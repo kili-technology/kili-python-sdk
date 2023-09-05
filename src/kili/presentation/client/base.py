@@ -1,7 +1,7 @@
 """Base class for all client methods classes."""
 from abc import ABC
 
-from kili.gateways.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 
 
 class BaseClientMethods(ABC):

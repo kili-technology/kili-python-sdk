@@ -1,9 +1,9 @@
 """Kili API Gateway module for interacting with Kili."""
 import requests
 
+from kili.adapters.kili_api_gateway.issue import IssueOperationMixin
+from kili.adapters.kili_api_gateway.tag import TagOperationMixin
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.gateways.kili_api_gateway.issue import IssueOperationMixin
-from kili.gateways.kili_api_gateway.tag import TagOperationMixin
 
 
 class KiliAPIGateway(IssueOperationMixin, TagOperationMixin):

@@ -1,7 +1,7 @@
 import pytest_mock
 
-from kili.gateways.kili_api_gateway import KiliAPIGateway
-from kili.gateways.kili_api_gateway.tag.operations import (
+from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.tag.operations import (
     GQL_CHECK_TAG,
     get_list_tags_by_org_query,
     get_list_tags_by_project_query,
