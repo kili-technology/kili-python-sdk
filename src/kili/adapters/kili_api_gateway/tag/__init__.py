@@ -48,7 +48,11 @@ class TagOperationMixin(BaseOperationMixin):
         return TagId(result["data"]["id"])
 
     def uncheck_tag(self, project_id: ProjectId, tag_id: TagId) -> TagId:
-        """Send a GraphQL request calling uncheckTag resolver."""
+        """Send a GraphQL request calling uncheckTag resolver.
+
+        WARNING: The resolved expects the tag to be checked for the project in the first place,
+            do not call optimistically.
+        """
         variables = {"projectId": project_id, "tagId": tag_id}
         result = self.graphql_client.execute(GQL_UNCHECK_TAG, variables)
         return TagId(result["data"]["id"])
