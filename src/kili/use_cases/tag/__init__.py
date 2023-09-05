@@ -1,5 +1,6 @@
 """Tag use cases."""
-from typing import Dict, List, Literal, Sequence
+from collections import defaultdict
+from typing import Dict, List, Sequence
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.domain.project import ProjectId
@@ -24,29 +25,46 @@ class TagUseCases:
         )
 
     def tag_project(
-        self, project_id: str, tags: Sequence[str], disable_tqdm: bool
-    ) -> List[Dict[Literal["id"], str]]:
+        self, project_id: str, tag_ids: Sequence[str], disable_tqdm: bool
+    ) -> List[TagId]:
         """Assign tags to a project."""
-        tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id", "label"))
-        tag_name_to_id = {tag["label"]: tag["id"] for tag in tags_of_orga}
+        tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
+        tags_of_orga_ids = [tag["id"] for tag in tags_of_orga]
 
         ret_tags = []
-        for tag in tqdm(tags, desc="Tagging project", disable=disable_tqdm):
-            # check if the provided tag is an id
-            if tag in tag_name_to_id.values():
-                tag_id = tag
-            # check if the provided tag is a tag label
-            elif tag in tag_name_to_id.keys():
-                tag_id = tag_name_to_id[tag]
-            else:
-                raise ValueError(f"Tag {tag} not found in organization with tags: {tags_of_orga}")
+        for tag_id in tqdm(tag_ids, desc="Tagging project", disable=disable_tqdm):
+            if tag_id not in tags_of_orga_ids:
+                raise ValueError(
+                    f"Tag {tag_id} not found in organization with tag ids: {tags_of_orga}"
+                )
 
             ret_tags.append(
-                {
-                    "id": self._kili_api_gateway.check_tag(
-                        project_id=ProjectId(project_id), tag_id=TagId(tag_id)
-                    )
-                }
+                self._kili_api_gateway.check_tag(
+                    project_id=ProjectId(project_id), tag_id=TagId(tag_id)
+                )
             )
 
         return ret_tags
+
+    def get_tag_ids_from_labels(self, labels: Sequence[str]) -> List[TagId]:
+        """Get tag ids from labels."""
+        tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id", "label"))
+
+        tag_label_to_id = defaultdict(list)
+        for tag in tags_of_orga:
+            tag_label_to_id[tag["label"]].append(tag["id"])
+
+        tag_ids = []
+        for label in labels:
+            if label not in tag_label_to_id:
+                raise ValueError(
+                    f"Tag `{label}` not found in organization with tag ids: {tags_of_orga}"
+                )
+            if len(tag_label_to_id[label]) > 1:
+                raise ValueError(
+                    f"Several tags with ids ({tag_label_to_id[label]}) have the same label"
+                    f" `{label}`. Please use tag ids instead."
+                )
+            tag_ids.append(TagId(tag_label_to_id[label][0]))
+
+        return tag_ids

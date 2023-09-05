@@ -1,4 +1,4 @@
-"""Mixin extending Kili API Gateway class with Project related operations."""
+"""Mixin extending Kili API Gateway class with Projects related operations."""
 
 
 from typing import Dict, List
@@ -12,10 +12,10 @@ from ..base import BaseOperationMixin
 
 
 class ProjectOperationMixin(BaseOperationMixin):
-    """Mixin extending Kili API Gateway class with Assets related operations."""
+    """Mixin extending Kili API Gateway class with Projects related operations."""
 
     def get_project(self, project_id: ProjectId, fields: List[str]) -> Dict:
-        """List assets with given options."""
+        """Get project fields."""
         fragment = fragment_builder(fields)
         query = get_project_query(fragment)
         result = self.graphql_client.execute(
