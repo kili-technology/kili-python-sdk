@@ -16,17 +16,23 @@ class HttpClient:
 
         self._http_client = requests.Session()
         self._http_client_with_auth = requests.Session()
-        self._http_client_with_auth.headers.update({"Authorization": f"X-API-Key: {api_key}"})
 
         self._http_client.verify = verify
         self._http_client_with_auth.verify = verify
 
+        self._auth_headers = {"Authorization": f"X-API-Key: {api_key}"}
+        self._http_client_with_auth.headers.update(self._auth_headers)
+
     def _send_request(self, method: str, url: str, **kwargs) -> requests.Response:
-        http_client = (
-            self._http_client_with_auth
-            if url.startswith(self._kili_endpoint)
-            else self._http_client
-        )
+        """Send a request to the given URL."""
+        if url.startswith(self._kili_endpoint):
+            http_client = self._http_client_with_auth
+            # if headers are provided, we need to update the headers with the api key
+            if kwargs.get("headers") is not None and "Authorization" not in kwargs["headers"]:
+                kwargs["headers"].update(self._auth_headers)
+        else:
+            http_client = self._http_client
+
         return http_client.request(method, url, **kwargs)
 
     def get(self, url: str, **kwargs) -> requests.Response:

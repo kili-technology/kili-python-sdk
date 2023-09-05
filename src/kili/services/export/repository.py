@@ -52,12 +52,7 @@ class SDKContentRepository(AbstractContentRepository):
         return frames
 
     def get_content_stream(self, content_url: str, block_size: int) -> Iterator[Any]:
-        response = self.http_client.get(
-            content_url,
-            stream=True,
-            headers=None,
-            timeout=30,
-        )
+        response = self.http_client.get(content_url, stream=True, timeout=30)
         if not response.ok:
             raise DownloadError(f"Error while downloading image {content_url}")
 
