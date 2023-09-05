@@ -4,8 +4,7 @@ import csv
 import warnings
 from typing import Any, Callable, Dict, List, Optional
 
-import requests
-
+from kili.adapters.http_client import HttpClient
 from kili.client import Kili
 from kili.core.graphql.graphql_client import GraphQLClientName
 
@@ -17,8 +16,8 @@ def get_kili_client(api_key: Optional[str], api_endpoint: Optional[str]):
 
 def dict_type_check(
     dict_: Dict[str, Any],
-    type_check: Callable[[str, str, Optional[requests.Session]], str],
-    http_client: Optional[requests.Session],
+    type_check: Callable[[str, str, Optional[HttpClient]], str],
+    http_client: Optional[HttpClient],
 ):
     """Check if elements in row have correct type and return [row]"""
     warnings_message = ""
@@ -35,8 +34,8 @@ def collect_from_csv(
     csv_path: str,
     required_columns: List[str],
     optional_columns: List[str],
-    type_check_function: Callable[[str, str, Optional[requests.Session]], str],
-    http_client: Optional[requests.Session] = None,
+    type_check_function: Callable[[str, str, Optional[HttpClient]], str],
+    http_client: Optional[HttpClient] = None,
 ):
     """Read a csv to collect required_columns and optional_columns."""
     out = []

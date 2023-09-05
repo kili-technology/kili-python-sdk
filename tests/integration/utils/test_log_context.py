@@ -1,4 +1,5 @@
 from datetime import datetime
+from unittest.mock import MagicMock
 
 from kili.client import Kili
 
@@ -44,7 +45,6 @@ def test_log_context(mocker, monkeypatch):
     mocker.patch.object(Kili, "_check_expiry_of_key_is_close")
     mocker.patch.object(Kili, "get_user")
     mocker.patch("kili.client.GraphQLClient")
-    mocker.patch("kili.client.requests.Session")
     mocker.patch("kili.utils.logcontext.datetime", _FakeDatetime())
     mocker.patch("kili.utils.logcontext.uuid", _FakeUUID())
     mocker.patch("kili.utils.logcontext.__version__", "1.0.0")
@@ -56,7 +56,7 @@ def test_log_context(mocker, monkeypatch):
     kili = Kili()
     mocker.patch.object(kili.graphql_client, "_cache_graphql_schema")
     mocker.patch.object(kili.graphql_client._gql_client, "execute")
-    kili.assets(project_id="toto")
+    kili.count_assets(project_id="toto")
     called_args_list = kili.graphql_client._gql_client.execute.call_args_list
     for called_args in called_args_list:
         assert {

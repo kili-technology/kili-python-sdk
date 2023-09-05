@@ -4,14 +4,16 @@ from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
 
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
-from kili.core.graphql import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
 from kili.core.utils.pagination import BatchIteratorBuilder
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
-from kili.services.helpers import assert_all_arrays_have_same_size
+from kili.presentation.client.helpers.common_validators import (
+    assert_all_arrays_have_same_size,
+)
 from kili.utils import tqdm
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -111,7 +113,7 @@ class MutationsIssue(BaseOperationEntrypointMixin):
         """
         assert_all_arrays_have_same_size([text_array, asset_id_array])
         asset_id_array = get_asset_ids_or_throw_error(
-            self, asset_id_array, asset_external_id_array, project_id
+            self.kili_api_gateway, asset_id_array, asset_external_id_array, project_id
         )
         created_questions: List[Dict[str, str]] = []
         with tqdm.tqdm(total=len(text_array), desc="Creating questions") as pbar:

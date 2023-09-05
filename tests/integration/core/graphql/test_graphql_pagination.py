@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from kili.core.graphql import BaseQueryWhere, GraphQLQuery, QueryOptions
+from kili.core.graphql.queries import BaseQueryWhere, GraphQLQuery, QueryOptions
 
 COUNT_SAMPLE_MAX = 26000
 

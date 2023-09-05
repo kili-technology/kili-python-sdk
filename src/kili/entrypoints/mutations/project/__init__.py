@@ -71,7 +71,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
 
         project_data = self.format_result("data", result)
         for project_user in project_data["roles"]:
-            if project_user["user"]["email"] == user_email and project_user["role"] == role:
+            if project_user["user"]["email"] == user_email.lower() and project_user["role"] == role:
                 return project_user
 
         raise MutationError(

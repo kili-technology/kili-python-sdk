@@ -47,10 +47,6 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
     }
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
     mocker.patch(
-        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
-        return_value=(i for i in [get_project_return_val]),
-    )
-    mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
     mocker.patch(
@@ -63,6 +59,8 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
 
     with pytest.raises(
         NotCompatibleOptions,

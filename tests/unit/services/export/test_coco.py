@@ -1,4 +1,3 @@
-# pylint: disable=missing-docstring
 import json
 from datetime import datetime
 from pathlib import Path
@@ -578,10 +577,6 @@ def test_when_exporting_to_coco_given_a_project_with_data_connection_then_it_sho
     }
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
     mocker.patch(
-        "kili.entrypoints.queries.asset.media_downloader.ProjectQuery.__call__",
-        return_value=(i for i in [get_project_return_val]),
-    )
-    mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
     mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
@@ -596,6 +591,8 @@ def test_when_exporting_to_coco_given_a_project_with_data_connection_then_it_sho
     kili.api_endpoint = "https://"  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = get_project_return_val
 
     with pytest.raises(
         NotCompatibleOptions,

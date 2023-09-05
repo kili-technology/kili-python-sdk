@@ -29,16 +29,6 @@ HubspotSubscriptionStatus = Literal[
 ]
 
 
-InputType = Literal[
-    "AUDIO",
-    "IMAGE",
-    "PDF",
-    "TEXT",
-    "TIME_SERIES",
-    "VIDEO",
-    "VIDEO_LEGACY",
-]
-
 LabelFormat = Literal[
     "RAW",
     "SIMPLE",

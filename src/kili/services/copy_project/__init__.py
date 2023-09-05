@@ -1,13 +1,16 @@
 """Copy project implementation."""
 import itertools
+import json
 import logging
-from typing import Dict, Optional
+from pathlib import Path
+from typing import Dict, List, Optional, Sequence
 
-from kili.core.graphql import QueryOptions
-from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.entrypoints.queries.asset.media_downloader import get_download_assets_function
+from kili.domain.asset import AssetFilters
+from kili.domain.project import ProjectId
 from kili.services.project import get_project
+from kili.use_cases.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
 
@@ -15,20 +18,20 @@ from kili.utils.tqdm import tqdm
 class ProjectCopier:  # pylint: disable=too-few-public-methods
     """Class for copying an existing project."""
 
-    FIELDS_PROJECT = [
+    FIELDS_PROJECT = (
         "title",
         "inputType",
         "description",
         "id",
         "dataConnections.dataIntegrationId",
-    ]
-    FIELDS_JSON_INTERFACE = ["jsonInterface"]
-    FIELDS_QUALITY_SETTINGS = [
+    )
+    FIELDS_JSON_INTERFACE = ("jsonInterface",)
+    FIELDS_QUALITY_SETTINGS = (
         "consensusTotCoverage",
         "minConsensusSize",
         "useHoneyPot",
         "reviewCoverage",
-    ]
+    )
 
     def __init__(self, kili) -> None:
         self.disable_tqdm = False
@@ -75,9 +78,9 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
         fields = self.FIELDS_PROJECT
         if copy_json_interface:
-            fields = fields + self.FIELDS_JSON_INTERFACE
+            fields += self.FIELDS_JSON_INTERFACE
         if copy_quality_settings:
-            fields = fields + self.FIELDS_QUALITY_SETTINGS
+            fields += self.FIELDS_QUALITY_SETTINGS
 
         src_project = get_project(self.kili, from_project_id, fields)
 
@@ -153,12 +156,12 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             review_coverage=src_project["reviewCoverage"],
         )
 
-    def _copy_assets(self, from_project_id: str, new_project_id: str):
+    def _copy_assets(self, from_project_id: str, new_project_id: str) -> None:
         """Copy assets from a project to another.
 
         Fetches assets by batch since `content` urls expire.
         """
-        where = AssetWhere(project_id=from_project_id)
+        filters = AssetFilters(project_id=from_project_id)
         options = QueryOptions(disable_tqdm=False)
         fields = [
             "content",
@@ -169,32 +172,36 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             "jsonMetadata",
         ]
 
-        def download_and_upload_assets(assets):
+        def download_and_upload_assets(assets: List[Dict]) -> List[Dict]:
             with TemporaryDirectory() as tmp_dir:
                 downloaded_assets = self._download_assets(from_project_id, fields, tmp_dir, assets)
                 return self._upload_assets(new_project_id, downloaded_assets)
 
-        asset_gen = AssetQuery(self.kili.graphql_client, self.kili.http_client)(
-            where, fields, options, download_and_upload_assets
+        asset_gen = self.kili.kili_api_gateway.list_assets(
+            filters, fields, options, download_and_upload_assets
         )
         # Generator needs to be iterated over to actually fetch assets
         for _ in asset_gen:
             pass
 
-    def _download_assets(self, from_project_id, fields, tmp_dir, assets):
+    def _download_assets(
+        self, from_project_id: str, fields: Sequence[str], tmp_dir: Path, assets: List[Dict]
+    ) -> List[Dict]:
         download_function, _ = get_download_assets_function(
-            self.kili,
+            self.kili.kili_api_gateway,
             download_media=True,
             fields=fields,
-            project_id=from_project_id,
+            project_id=ProjectId(from_project_id),
             local_media_dir=str(tmp_dir.resolve()),
         )
         assert download_function
         return download_function(assets)
 
-    def _upload_assets(self, new_project_id, assets):
+    def _upload_assets(self, new_project_id: str, assets: List[Dict]) -> List[Dict]:
         # ocrMetadata field of assets need to be merged with jsonMetadata field
         for asset in assets:
+            if isinstance(asset["jsonMetadata"], str):
+                asset["jsonMetadata"] = json.loads(asset["jsonMetadata"])
             if asset["ocrMetadata"]:
                 asset["jsonMetadata"] = {**asset["jsonMetadata"], **asset["ocrMetadata"]}
 
@@ -235,10 +242,11 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
     # pylint: disable=too-many-locals
     def _copy_labels(self, from_project_id: str, new_project_id: str) -> None:
-        assets_new_project = AssetQuery(self.kili.graphql_client, self.kili.http_client)(
-            AssetWhere(project_id=new_project_id),
+        assets_new_project = self.kili.kili_api_gateway.list_assets(
+            AssetFilters(project_id=new_project_id),
             ["id", "externalId"],
             QueryOptions(disable_tqdm=True),
+            None,
         )
         assets_new_project_map = {asset["externalId"]: asset["id"] for asset in assets_new_project}
 

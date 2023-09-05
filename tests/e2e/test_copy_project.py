@@ -10,12 +10,6 @@ from kili.client import Kili
 from kili.services.copy_project import ProjectCopier
 from kili.utils.tempfile import TemporaryDirectory
 
-
-@pytest.fixture
-def kili() -> Kili:
-    return Kili()
-
-
 json_response_a = {
     "0": {},
     "1": {},

@@ -6,9 +6,9 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union
 from zipfile import ZipFile
 
-import requests
 from typing_extensions import LiteralString
 
+from kili.adapters.http_client import HttpClient
 from kili.core.constants import (
     mime_extensions_for_py_scripts,
     mime_extensions_for_txt_files,
@@ -142,7 +142,7 @@ class PluginUploader:
         plugin_path: str,
         plugin_name: Optional[str],
         verbose: bool,
-        http_client: requests.Session,
+        http_client: HttpClient,
     ) -> None:
         self.kili = kili
         self.plugin_path = Path(plugin_path)
@@ -222,7 +222,7 @@ class PluginUploader:
         compile(source_code, "<string>", "exec")
 
     @staticmethod
-    def _upload_file(zip_path: Path, url: str, http_client: requests.Session):
+    def _upload_file(zip_path: Path, url: str, http_client: HttpClient):
         """Upload a file to a signed url and returns the url with the file_id."""
         bucket.upload_data_via_rest(url, zip_path.read_bytes(), "application/zip", http_client)
 

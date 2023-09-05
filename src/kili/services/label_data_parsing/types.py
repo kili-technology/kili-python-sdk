@@ -4,7 +4,7 @@ from typing import Dict, Literal
 
 from typing_extensions import TypedDict
 
-from kili.core.enums import InputType
+from kili.domain.project import InputType
 from kili.services.types import Jobs
 
 

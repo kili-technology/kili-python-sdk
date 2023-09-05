@@ -162,6 +162,7 @@ class TestCheckWarnEmptyList(TestCase):
     def test_none(self, mocked_mutate_from_paginated_call):
         """Test that the helper does not raise a warning if args are None."""
         kili = MutationsAsset()
+        kili.kili_api_gateway = MagicMock()
         with pytest.raises(MissingArgumentError):
             with warnings.catch_warnings():
                 warnings.simplefilter("error")
@@ -198,6 +199,7 @@ class TestCheckWarnEmptyList(TestCase):
         kili = MutationsAsset()
         kili.graphql_client = MagicMock()
         kili.http_client = MagicMock()
+        kili.kili_api_gateway = MagicMock()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(asset_ids=["asset_id"], external_ids=None)
@@ -207,6 +209,7 @@ class TestCheckWarnEmptyList(TestCase):
         kili = MutationsAsset()
         kili.graphql_client = MagicMock()
         kili.http_client = MagicMock()
+        kili.kili_api_gateway = MagicMock()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(["asset_id"], None)

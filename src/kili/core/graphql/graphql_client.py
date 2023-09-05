@@ -13,7 +13,6 @@ from typing import Any, Callable, Dict, Optional, Union
 from urllib.parse import urlparse
 
 import graphql
-import requests
 import websocket
 from filelock import FileLock
 from gql import Client, gql
@@ -25,6 +24,7 @@ from pyrate_limiter import Duration, Limiter, RequestRate
 from typing_extensions import LiteralString
 
 from kili import __version__
+from kili.adapters.http_client import HttpClient
 from kili.core.constants import MAX_CALLS_PER_MINUTE
 from kili.core.graphql.clientnames import GraphQLClientName
 from kili.exceptions import GraphQLError
@@ -52,7 +52,7 @@ class GraphQLClient:
         endpoint: str,
         api_key: str,
         client_name: GraphQLClientName,
-        http_client: requests.Session,
+        http_client: HttpClient,
         verify: Union[bool, str] = True,
         enable_schema_caching: bool = True,
         graphql_schema_cache_dir: Optional[Union[str, Path]] = DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR,
@@ -224,8 +224,7 @@ class GraphQLClient:
         response = self.http_client.get(url, timeout=30)
         if response.status_code == 200 and '"version":' in response.text:
             response_json = response.json()
-            version = response_json["version"]
-            return version
+            return response_json["version"]
         return None
 
     def execute(
@@ -249,7 +248,7 @@ class GraphQLClient:
                         variable_values=variables,
                         extra_args={
                             "headers": {
-                                **self._gql_transport.headers,  # type: ignore
+                                **(self._gql_transport.headers or {}),
                                 **LogContext(),
                             }
                         },

@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
-from kili.core.graphql import QueryOptions
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
@@ -95,7 +95,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """Check if the export label format is compatible with the job."""
 
     @property
-    def compatible_jobs(self) -> Tuple[str]:
+    def compatible_jobs(self) -> Tuple[str, ...]:
         """Get all job names compatible with the export format."""
         return tuple(
             job_name

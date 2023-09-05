@@ -4,8 +4,8 @@
 from datetime import datetime
 from typing import List, NamedTuple, Optional
 
-from kili.adapters.kili_api_gateway.queries import fragment_builder
-from kili.core.graphql import GraphQLQuery, QueryOptions
+from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
+from kili.core.graphql.queries import GraphQLQuery, QueryOptions
 
 
 class PluginBuildErrorsWhere(NamedTuple):

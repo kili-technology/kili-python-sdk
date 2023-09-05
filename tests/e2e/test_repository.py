@@ -13,12 +13,6 @@ from kili.services.export import SDKContentRepository
 )
 def test_get_content_stream_public_image(content_url):
     kili = Kili()
-    content_repository = SDKContentRepository(
-        kili.api_endpoint,
-        router_headers={
-            "Authorization": f"X-API-Key: {kili.api_key}",
-        },
-        http_client=kili.http_client,
-    )
+    content_repository = SDKContentRepository(kili.api_endpoint, http_client=kili.http_client)
 
     content_repository.get_content_stream(content_url, 1024)

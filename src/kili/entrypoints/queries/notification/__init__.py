@@ -4,13 +4,15 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
-from kili.core.graphql import QueryOptions
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.notification.queries import (
     NotificationQuery,
     NotificationWhere,
 )
-from kili.core.helpers import disable_tqdm_if_as_generator
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.presentation.client.helpers.common_validators import (
+    disable_tqdm_if_as_generator,
+)
 from kili.utils.logcontext import for_all_methods, log_call
 
 
