@@ -1,3 +1,5 @@
+import pytest
+
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.use_cases.tag import TagUseCases
 
@@ -53,3 +55,24 @@ def test_when_tagging_project_then_it_tags_the_project(kili_api_gateway: KiliAPI
         {"id": "tag1_id"},
         {"id": "tag2_id"},
     ]
+
+
+def test_when_tagging_project_with_invalid_organization_tag_then_it_crashes(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    tags = [
+        {"id": "tag1_id", "label": "tag1"},
+    ]
+    kili_api_gateway.list_tags_by_org.return_value = tags
+
+    # When
+    tag_use_cases = TagUseCases(kili_api_gateway)
+    with pytest.raises(
+        ValueError, match="Tag this_tag_does_not_exist_it_is_fake not found in organization"
+    ):
+        tag_use_cases.tag_project(
+            project_id="fake_proj_id",
+            tags=["this_tag_does_not_exist_it_is_fake"],
+            disable_tqdm=True,
+        )
