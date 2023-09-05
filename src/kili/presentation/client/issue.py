@@ -5,8 +5,6 @@ from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
 
-from kili.adapters.http_client import HttpClient
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
 )
@@ -20,9 +18,6 @@ from .base import BaseClientMethods
 @for_all_methods(log_call, exclude=["__init__"])
 class IssueClientMethods(BaseClientMethods):
     """Methods attached to the Kili client, to run actions on issues."""
-
-    kili_api_gateway: KiliAPIGateway
-    http_client: HttpClient
 
     @typechecked
     def create_issues(

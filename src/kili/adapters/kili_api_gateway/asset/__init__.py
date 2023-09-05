@@ -15,14 +15,13 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     fragment_builder,
     get_number_of_elements_to_query,
 )
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.asset import AssetFilters
 
+from ..base import BaseOperationMixin
 
-class AssetOperationMixin:
+
+class AssetOperationMixin(BaseOperationMixin):
     """Mixin extending Kili API Gateway class with Assets related operations."""
-
-    graphql_client: GraphQLClient
 
     def list_assets(
         self,

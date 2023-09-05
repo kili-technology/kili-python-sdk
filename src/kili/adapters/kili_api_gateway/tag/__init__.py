@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Sequence
 
-from kili.adapters.kili_api_gateway.queries import fragment_builder
+from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 
