@@ -5,8 +5,10 @@ from typing import Any, Callable, Dict, Generator, List, NamedTuple, Optional, S
 
 from typeguard import typechecked
 
+from kili.adapters.http_client import HttpClient
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.graphql_client import GraphQLClient
+from kili.core.helpers import format_json
 from kili.utils.tqdm import tqdm
 
 
@@ -34,8 +36,9 @@ class PaginatedGraphQLQuery:
     It factorizes code for executing paginated queries.
     """
 
-    def __init__(self, graphql_client: GraphQLClient):
+    def __init__(self, graphql_client: GraphQLClient, http_client: HttpClient):
         self._graphql_client = graphql_client
+        self.http_client = http_client
 
     # pylint: disable=too-many-arguments
     def execute_query_from_paginated_call(
@@ -82,8 +85,13 @@ class PaginatedGraphQLQuery:
                     )
                     payload = {"where": where, "skip": skip, "first": first}
                     elements = self._graphql_client.execute(query, payload)["data"]
+                    assert isinstance(
+                        elements, list
+                    ), "Paginated queries does not support operations that does not return a list"
+                    print(elements)
+                    elements: List = [format_json(elem, self.http_client) for elem in elements]
 
-                    if elements is None or len(elements) == 0:
+                    if len(elements) == 0:
                         break
 
                     if post_call_function is not None:

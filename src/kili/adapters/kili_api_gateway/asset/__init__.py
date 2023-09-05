@@ -37,7 +37,9 @@ class AssetOperationMixin(BaseOperationMixin):
         nb_elements_to_query = get_number_of_elements_to_query(
             self.graphql_client, GQL_COUNT_ASSETS, where, options
         )
-        return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
+        return PaginatedGraphQLQuery(
+            self.graphql_client, self.http_client
+        ).execute_query_from_paginated_call(
             query, where, options, "Retrieving assets", nb_elements_to_query, post_call_function
         )
 

@@ -86,15 +86,20 @@ def is_url(path: object):
     return isinstance(path, str) and re.match(r"^(http://|https://)", path.lower())
 
 
-def format_json_dict(result: Dict, http_client: HttpClient) -> Dict:
-    """Formats the dict part of a json return by a GraphQL query into a python object.
+def __format_json_dict(result: Dict, http_client: HttpClient) -> Dict:
+    """Parse a dictionary inside the result of a graphQL query to format json fields.
+
+    If json fields (i.e "jsonInterface", "jsonMetadata" and "jsonResponse")
+    are part of the keys, either:
+        - fetch the json from the url if it is hosted on a bucket
+        - load the json from the string if the json is given as a string
 
     Args:
-        result: result of a GraphQL query
+        result: a dictionary included in the result of a GraphQL query
         http_client: http client to use for the query
     """
     for key, value in result.items():
-        if key in ["jsonInterface", "jsonMetadata", "jsonResponse"]:
+        if key in ["jsonInterface", "jsonMetadata", "jsonResponse"]:  # TODO: also parse jsonContent
             if (value == "" or value is None) and not (is_url(value) and key == "jsonInterface"):
                 result[key] = {}
             elif isinstance(value, str):
@@ -118,7 +123,7 @@ D = TypeVar("D")
 def format_json(
     result: Union[None, list, dict, D], http_client: HttpClient
 ) -> Union[None, list, dict, D]:
-    """Formats the json return by a GraphQL query into a python object.
+    """Recusively parse the result of a GraphQL query in order to get json fields as a dictionary.
 
     Args:
         result: result of a GraphQL query
@@ -129,7 +134,7 @@ def format_json(
     if isinstance(result, list):
         return [format_json(elem, http_client) for elem in result]
     if isinstance(result, dict):
-        return format_json_dict(result, http_client)
+        return __format_json_dict(result, http_client)
     return result
 
 
