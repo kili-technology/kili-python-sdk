@@ -4,11 +4,6 @@ from kili.client import Kili
 
 
 @pytest.fixture()
-def kili() -> Kili:
-    return Kili()
-
-
-@pytest.fixture()
 def project_id(kili: Kili):
     project_id = kili.create_project(
         input_type="TEXT", json_interface={"jobs": {}}, title="test_tags.py e2e SDK"
