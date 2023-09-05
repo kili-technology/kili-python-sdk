@@ -6,11 +6,6 @@ from kili.client import Kili
 
 
 @pytest.fixture()
-def kili() -> Kili:
-    return Kili()
-
-
-@pytest.fixture()
 def project_id_suspended_user_email(kili: Kili):
     project = kili.create_project(
         input_type="TEXT", title="test_query_project_users.py sdk", json_interface={"jobs": {}}

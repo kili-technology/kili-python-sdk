@@ -1,7 +1,7 @@
 """GraphQL module."""
 
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Generator, List, Optional, Type, TypeVar
+from typing import Callable, Dict, Generator, Optional, Sequence, Type, TypeVar
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -63,7 +63,7 @@ class GraphQLQuery(ABC):
     def __call__(
         self,
         where: BaseQueryWhere,
-        fields: List[str],
+        fields: Sequence[str],
         options: QueryOptions,
         post_call_function: Optional[Callable] = None,
     ) -> Generator[Dict, None, None]:

@@ -1,6 +1,15 @@
 """Project queries."""
 
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from typing import (
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    Sequence,
+    overload,
+)
 
 from typeguard import typechecked
 
@@ -17,7 +26,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesProject(BaseOperationEntrypointMixin):
     """Set of Project queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
 
     @overload
     def projects(
@@ -29,7 +38,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: List[str] = [
+        fields: Sequence[str] = (
             "consensusTotCoverage",
             "id",
             "inputType",
@@ -41,7 +50,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
             "roles.user.email",
             "roles.user.id",
             "title",
-        ],
+        ),
         first: Optional[int] = None,
         disable_tqdm: bool = False,
         *,
@@ -59,7 +68,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: List[str] = [
+        fields: Sequence[str] = (
             "consensusTotCoverage",
             "id",
             "inputType",
@@ -71,7 +80,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
             "roles.user.email",
             "roles.user.id",
             "title",
-        ],
+        ),
         first: Optional[int] = None,
         disable_tqdm: bool = False,
         *,
@@ -89,7 +98,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: List[str] = [
+        fields: Sequence[str] = (
             "consensusTotCoverage",
             "id",
             "inputType",
@@ -101,7 +110,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
             "roles.user.email",
             "roles.user.id",
             "title",
-        ],
+        ),
         first: Optional[int] = None,
         disable_tqdm: bool = False,
         *,
@@ -163,7 +172,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         archived: Optional[bool] = None,
     ) -> int:
         # pylint: disable=line-too-long
-        """Counts the number of projects with a search_query.
+        """Count the number of projects with a search_query.
 
         Args:
             project_id: Select a specific project through its project_id.

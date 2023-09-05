@@ -10,11 +10,6 @@ def text():
     return "Youʼll see Johnʼs car"
 
 
-@pytest.fixture
-def kili():
-    return Kili()
-
-
 @pytest.fixture()
 def project_with_assets(kili, text):
     interface = {

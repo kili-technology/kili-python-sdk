@@ -8,13 +8,8 @@ from kili.client import Kili
 from kili.exceptions import GraphQLError
 
 
-@pytest.fixture
-def kili() -> Kili:
-    return Kili()
-
-
 @pytest.fixture()
-def image_bbox_project(kili):
+def image_bbox_project(kili: Kili):
     interface = {
         "jobs": {
             "JOB_0": {

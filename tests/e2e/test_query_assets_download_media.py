@@ -33,11 +33,6 @@ def assert_helper_for_asset(
 
 
 @pytest.fixture()
-def kili() -> Kili:
-    return Kili()
-
-
-@pytest.fixture()
 def src_project_image(kili: Kili):
     """Create image project with token protected url."""
     interface = {

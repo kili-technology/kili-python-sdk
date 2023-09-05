@@ -6,11 +6,6 @@ from kili.client import Kili
 
 
 @pytest.fixture
-def kili() -> Kili:
-    return Kili()
-
-
-@pytest.fixture
 def projects_uuid(kili: Kili):
     projects_uuid = str(uuid.uuid4())
     proj_id_archived = kili.create_project(
