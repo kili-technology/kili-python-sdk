@@ -74,6 +74,7 @@ class TagClientMethods(BaseClientMethods):
         ]
 
     @typechecked
+    # pylint: disable=too-many-arguments
     def untag_project(
         self,
         project_id: str,
