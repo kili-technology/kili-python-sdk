@@ -58,3 +58,31 @@ class TagClientMethods(BaseClientMethods):
         return tag_use_cases.tag_project(
             project_id=project_id, tags=tags, disable_tqdm=disable_tqdm
         )
+
+    @typechecked
+    def untag_project(
+        self,
+        project_id: str,
+        tags: Optional[Sequence[str]] = None,
+        all: Optional[bool] = None,
+        disable_tqdm: bool = False,
+    ) -> List[Dict[Literal["id"], str]]:
+        """Remove tags from a project.
+
+        Args:
+            project_id: Id of the project.
+            tags: Sequence of tags to remove from the project.
+                The value of each tag can be its name or its id.
+            all: Whether to remove all tags from the project.
+            disable_tqdm: Whether to disable the progress bar.
+        """
+        if (tags is None and all is None) or (tags is not None and all is not None):
+            raise ValueError("You must provide either `tags` or `all`.")
+
+        tag_use_cases = TagUseCases(self.kili_api_gateway)
+        return tag_use_cases.untag_project(
+            project_id=project_id,
+            tags=tags,
+            all=all,
+            disable_tqdm=disable_tqdm,
+        )

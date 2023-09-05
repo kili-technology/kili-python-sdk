@@ -1,5 +1,5 @@
 """Tag use cases."""
-from typing import Dict, List, Literal, Sequence
+from typing import Dict, List, Literal, Optional, Sequence
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.domain.project import ProjectId
@@ -48,5 +48,45 @@ class TagUseCases:
                     )
                 }
             )
+
+        return ret_tags
+
+    def untag_project(
+        self,
+        project_id: str,
+        tags: Optional[Sequence[str]],
+        all: Optional[bool],
+        disable_tqdm: bool,
+    ) -> List[Dict[Literal["id"], str]]:
+        """Remove tags from a project."""
+        tags_of_project = self._kili_api_gateway.list_tags_by_project(
+            project_id=ProjectId(project_id), fields=("label", "id")
+        )
+        tag_name_to_id = {tag["label"]: tag["id"] for tag in tags_of_project}
+
+        tag_to_delete_ids = []
+        if all:
+            tag_to_delete_ids = [tag["id"] for tag in tags_of_project]
+        else:
+            assert tags
+            for tag in tags:
+                # check if the provided tag is an id
+                if tag in tag_name_to_id.values():
+                    tag_id = tag
+                # check if the provided tag is a tag label
+                elif tag in tag_name_to_id.keys():
+                    tag_id = tag_name_to_id[tag]
+                else:
+                    raise ValueError(f"Tag {tag} not found in project with tags: {tags_of_project}")
+                tag_to_delete_ids.append(tag_id)
+
+        ret_tags: List[Dict[Literal["id"], str]] = [
+            {
+                "id": self._kili_api_gateway.uncheck_tag(
+                    project_id=ProjectId(project_id), tag_id=TagId(tag_id)
+                )
+            }
+            for tag_id in tqdm(tag_to_delete_ids, desc="Untagging project", disable=disable_tqdm)
+        ]
 
         return ret_tags

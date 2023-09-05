@@ -1,3 +1,4 @@
+import pytest
 import pytest_mock
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
@@ -24,6 +25,7 @@ def test_when_fetching_org_tags_then_i_get_tags(mocker: pytest_mock.MockerFixtur
     )
 
 
+@pytest.mark.skip(reason="listTagsByProject is broken currently. Use listTagsByOrg instead.")
 def test_when_fetching_project_tags_then_i_get_tags(mocker: pytest_mock.MockerFixture):
     kili = TagClientMethods()
     kili.kili_api_gateway = KiliAPIGateway(

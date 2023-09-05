@@ -90,7 +90,7 @@ class GraphQLClient:
             use_json=True,
             timeout=30,
             verify=verify,
-            retries=20,
+            # retries=20,  # FIXME: when it is set, it sometimes freezes the .execute() method
             method="POST",
             retry_backoff_factor=0.5,
             # backend can return 401 errors even though we have a valid api key
