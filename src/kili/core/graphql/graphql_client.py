@@ -98,7 +98,7 @@ class GraphQLClient:
             use_json=True,
             timeout=30,
             verify=verify,
-            # retries=20,  # FIXME: when it is set, it sometimes freezes the .execute() method
+            retries=20,
             method="POST",
             retry_backoff_factor=0.5,
             retry_status_forcelist=retry_status_forcelist,
