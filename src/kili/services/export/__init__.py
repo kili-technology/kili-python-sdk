@@ -32,7 +32,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     split_option: SplitOption,
     single_file: bool,
     output_file: str,
-    disable_tqdm: bool,
+    disable_tqdm: Optional[bool],
     log_level: LogLevel,
     with_assets: bool,
     annotation_modifier: Optional[CocoAnnotationModifier],

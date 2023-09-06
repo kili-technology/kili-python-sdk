@@ -46,7 +46,7 @@ class TagClientMethods(BaseClientMethods):
         project_id: str,
         tags: Optional[ListOrTuple[str]] = None,
         tag_ids: Optional[ListOrTuple[str]] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
     ) -> List[Dict[Literal["id"], str]]:
         """Link tags to a project.
 

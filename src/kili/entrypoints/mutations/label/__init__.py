@@ -40,7 +40,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         json_response_array: Optional[List[dict]] = None,
         model_name: Optional[str] = None,
         asset_id_array: Optional[List[str]] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
     ) -> Dict[Literal["id"], str]:
         # pylint: disable=line-too-long
@@ -191,7 +191,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         label_type: LabelType = "DEFAULT",
         project_id: Optional[str] = None,
         asset_external_id_array: Optional[List[str]] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
     ) -> List[Dict[Literal["id"], str]]:
         """Append labels to assets.

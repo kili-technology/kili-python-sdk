@@ -58,6 +58,7 @@ interface = {
         "JOB_0": {
             "mlTask": "CLASSIFICATION",
             "required": 1,
+            "isChild": False,
             "content": {
                 "categories": {"OBJECT_A": {"name": "Object A"}, "OBJECT_B": {"name": "Object B"}},
                 "input": "radio",
