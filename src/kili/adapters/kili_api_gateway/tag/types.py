@@ -6,7 +6,10 @@ from kili.domain.tag import TagId
 
 @dataclass
 class UpdateTagReturnData:
-    """Return data."""
+    """UpdateTagReturn data.
+
+    It is the updateTag resolver return data.
+    """
 
     affected_rows: int
     updated_tag_id: TagId
