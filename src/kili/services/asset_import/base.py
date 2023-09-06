@@ -67,7 +67,7 @@ class ProjectParams(NamedTuple):
 class LoggerParams(NamedTuple):
     """Contains all parameters related to logging."""
 
-    disable_tqdm: bool
+    disable_tqdm: Optional[bool]
 
 
 class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes

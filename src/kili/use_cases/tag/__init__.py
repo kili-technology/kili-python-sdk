@@ -1,6 +1,6 @@
 """Tag use cases."""
 from collections import defaultdict
-from typing import Dict, List, Sequence
+from typing import Dict, List, Optional, Sequence
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.domain.project import ProjectId
@@ -25,7 +25,7 @@ class TagUseCases:
         )
 
     def tag_project(
-        self, project_id: str, tag_ids: Sequence[str], disable_tqdm: bool
+        self, project_id: str, tag_ids: Sequence[str], disable_tqdm: Optional[bool]
     ) -> List[TagId]:
         """Assign tags to a project."""
         tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
