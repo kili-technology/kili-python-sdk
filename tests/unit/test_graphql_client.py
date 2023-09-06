@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from time import time
 from unittest import mock
 
@@ -64,36 +65,19 @@ def test_gql_bad_query_local_validation(query, mocker):
 
 
 def test_graphql_client_cache(mocker):
-    SCHEMA_PATH = Path.home() / ".cache" / "kili" / "graphql" / "schema.graphql"
-    mocker.patch.object(GraphQLClient, "_get_graphql_schema_path", return_value=SCHEMA_PATH)
+    with TemporaryDirectory() as temp_dir:
+        schema_path = Path(temp_dir) / "schema.graphql"
+        mocker.patch.object(GraphQLClient, "_get_graphql_schema_path", return_value=schema_path)
 
-    api_endpoint = os.getenv(
-        "KILI_API_ENDPOINT", "https://cloud.kili-technology.com/api/label/v2/graphql"
-    )
+        api_endpoint = os.getenv(
+            "KILI_API_ENDPOINT", "https://cloud.kili-technology.com/api/label/v2/graphql"
+        )
 
-    # we need to remove "Authorization" api key from the header
-    # if not, the backend will refuse the introspection query
-    mocker.patch.object(GraphQLClient, "_get_headers", return_value={})
+        # we need to remove "Authorization" api key from the header
+        # if not, the backend will refuse the introspection query
+        mocker.patch.object(GraphQLClient, "_get_headers", return_value={})
 
-    if SCHEMA_PATH.is_file():
-        SCHEMA_PATH.unlink()
-
-    _ = GraphQLClient(
-        endpoint=api_endpoint,
-        api_key="",
-        client_name=GraphQLClientName.SDK,
-        verify=True,
-        http_client=HttpClient(
-            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
-        ),
-    )
-
-    # schema should be cached
-    files_in_cache_dir = list(SCHEMA_PATH.parent.glob("*"))
-    assert SCHEMA_PATH.is_file(), f"{files_in_cache_dir}, {SCHEMA_PATH}"
-    assert SCHEMA_PATH.stat().st_size > 0
-
-    with mock.patch("kili.core.graphql.graphql_client.print_schema") as mocked_print_schema:
+        # initialize a client with schema caching enabled
         _ = GraphQLClient(
             endpoint=api_endpoint,
             api_key="",
@@ -102,11 +86,31 @@ def test_graphql_client_cache(mocker):
             http_client=HttpClient(
                 kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
             ),
+            enable_schema_caching=True,
+            graphql_schema_cache_dir=temp_dir,
         )
-        mocked_print_schema.assert_not_called()
 
-    if SCHEMA_PATH.is_file():
-        SCHEMA_PATH.unlink()
+        # schema should be cached
+        files_in_cache_dir = list(schema_path.parent.glob("*"))
+        assert schema_path.is_file(), f"{files_in_cache_dir}, {schema_path}"
+        assert schema_path.stat().st_size > 0
+
+        # check that the schema is not fetched again when we initialize a new client
+        with mock.patch("kili.core.graphql.graphql_client.print_schema") as mocked_print_schema:
+            _ = GraphQLClient(
+                endpoint=api_endpoint,
+                api_key="",
+                client_name=GraphQLClientName.SDK,
+                verify=True,
+                http_client=HttpClient(
+                    kili_endpoint="https://fake_endpoint.kili-technology.com",
+                    api_key="",
+                    verify=True,
+                ),
+                enable_schema_caching=True,
+                graphql_schema_cache_dir=temp_dir,
+            )
+            mocked_print_schema.assert_not_called()
 
 
 def test_schema_caching_requires_cache_dir():

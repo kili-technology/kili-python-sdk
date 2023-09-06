@@ -142,3 +142,52 @@ class TagClientMethods(BaseClientMethods):
         TagUseCases(self.kili_api_gateway).update_tag(
             tag_name=tag_name, tag_id=None, new_tag_name=new_tag_name
         )
+
+    @typechecked
+    # pylint: disable=too-many-arguments
+    def untag_project(
+        self,
+        project_id: str,
+        tags: Optional[Sequence[str]] = None,
+        tag_ids: Optional[Sequence[str]] = None,
+        all: Optional[bool] = None,  # pylint: disable=redefined-builtin
+        disable_tqdm: bool = False,
+    ) -> List[Dict[Literal["id"], str]]:
+        """Remove tags from a project.
+
+        Args:
+            project_id: Id of the project.
+            tags: Sequence of tag labels to remove from the project.
+            tag_ids: Sequence of tag ids to remove from the project.
+            all: Whether to remove all tags from the project.
+            disable_tqdm: Whether to disable the progress bar.
+
+        Returns:
+            A list of dictionaries with the tag ids.
+
+        Raises:
+            ValueError: Either `tags` or `tag_ids` or `all` must be provided.
+        """
+        tag_use_cases = TagUseCases(self.kili_api_gateway)
+
+        if tag_ids is None:
+            if tags is not None:
+                tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
+            elif all is not None:
+                tag_ids = [
+                    tag["id"]
+                    for tag in tag_use_cases.get_tags_of_project(
+                        project_id=project_id, fields=("id",)
+                    )
+                ]
+            else:
+                raise ValueError("Either `tags` or `tag_ids` or `all` must be provided.")
+
+        return [
+            {"id": str(tag_id)}
+            for tag_id in tag_use_cases.untag_project(
+                project_id=project_id,
+                tag_ids=tag_ids,
+                disable_tqdm=disable_tqdm,
+            )
+        ]
