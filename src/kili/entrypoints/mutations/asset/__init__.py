@@ -48,7 +48,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         status_array: Optional[List[str]] = None,
         json_content_array: Optional[List[List[Union[dict, str]]]] = None,
         json_metadata_array: Optional[List[dict]] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         from_csv: Optional[str] = None,
         csv_separator: str = ",",
