@@ -5,12 +5,13 @@ import json
 from typing import Dict, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
-from kili.adapters.kili_api_gateway.project.operations import get_project_query
-from kili.domain.project import ProjectId
+from kili.adapters.kili_api_gateway.project.operations import get_projects_query
+from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
 from ..base import BaseOperationMixin
+from .mappers import project_where_mapper
 from .operations import GQL_CREATE_PROJECT
 
 
@@ -20,7 +21,7 @@ class ProjectOperationMixin(BaseOperationMixin):
     def get_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> Dict:
         """Get project fields."""
         fragment = fragment_builder(fields)
-        query = get_project_query(fragment)
+        query = get_projects_query(fragment)
         result = self.graphql_client.execute(
             query=query, variables={"where": {"id": project_id}, "first": 1, "skip": 0}
         )
@@ -53,3 +54,16 @@ class ProjectOperationMixin(BaseOperationMixin):
         }
         result = self.graphql_client.execute(GQL_CREATE_PROJECT, variables)
         return ProjectId(result["id"])
+
+    def projects(
+        self,
+        project_filters: ProjectFilters,
+        fields: ListOrTuple[str],
+        first: Optional[int],
+        skip: int,
+        disable_tqdm: Optional[bool],
+    ):
+        fragment = fragment_builder(fields)
+        query = get_projects_query(fragment)
+        where = project_where_mapper(filters=project_filters)
+        payload = {"where": where, "first": first, "skip": skip}

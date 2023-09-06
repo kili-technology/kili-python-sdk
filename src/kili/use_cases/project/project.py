@@ -1,5 +1,5 @@
 """Project use cases."""
-from typing import Dict, Optional
+from typing import Dict, Generator, Optional
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -8,7 +8,8 @@ from tenacity.wait import wait_fixed
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.enums import ProjectType
-from kili.domain.project import InputType, ProjectId
+from kili.domain.project import InputType, ProjectFilters, ProjectId
+from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
 
@@ -47,3 +48,25 @@ class ProjectUseCases:
                 _ = self._kili_api_gateway.get_project(project_id=project_id, fields=["id"])
 
         return ProjectId(project_id)
+
+    def list_projects(
+        self,
+        project_filters: ProjectFilters,
+        fields: ListOrTuple[str],
+        first: Optional[int],
+        skip: int,
+        disable_tqdm: Optional[bool],
+    ) -> Generator:
+        return self._kili_api_gateway.projects(
+            project_id,
+            search_query,
+            should_relaunch_kpi_computation,
+            updated_at_gte,
+            updated_at_lte,
+            archived,
+            tag_ids,
+            fields,
+            first,
+            skip,
+            disable_tqdm,
+        )

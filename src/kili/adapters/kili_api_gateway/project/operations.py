@@ -1,7 +1,7 @@
 """GraphQL Project operations."""
 
 
-def get_project_query(fragment: str) -> str:
+def get_projects_query(fragment: str) -> str:
     """Return the GraphQL projects query."""
     return f"""
         query projects($where: ProjectWhere!, $first: PageSize!, $skip: Int!) {{
