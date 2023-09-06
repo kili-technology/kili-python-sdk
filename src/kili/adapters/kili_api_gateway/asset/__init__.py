@@ -16,7 +16,6 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     get_number_of_elements_to_query,
 )
 from kili.domain.asset import AssetFilters
-from kili.domain.field import Field
 from kili.domain.types import ListOrTuple
 
 from ..base import BaseOperationMixin
@@ -28,7 +27,7 @@ class AssetOperationMixin(BaseOperationMixin):
     def list_assets(
         self,
         filters: AssetFilters,
-        fields: ListOrTuple[Field],
+        fields: ListOrTuple[str],
         options: QueryOptions,
         post_call_function: Optional[Callable],
     ) -> Generator[Dict, None, None]:

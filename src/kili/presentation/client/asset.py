@@ -1,23 +1,12 @@
 """Client presentation methods for assets."""
 
 import warnings
-from typing import (
-    Dict,
-    Generator,
-    Iterable,
-    List,
-    Literal,
-    Optional,
-    Union,
-    cast,
-    overload,
-)
+from typing import Dict, Generator, Iterable, List, Literal, Optional, Union, overload
 
 import pandas as pd
 from typeguard import typechecked
 
 from kili.domain.asset import AssetFilters
-from kili.domain.field import Field
 from kili.domain.issue import IssueStatus, IssueType
 from kili.domain.types import ListOrTuple
 from kili.presentation.client.helpers.common_validators import (
@@ -438,7 +427,7 @@ class AssetClientMethods(BaseClientMethods):
         )
         assets_gen = asset_use_cases.list_assets(
             filters,
-            cast(ListOrTuple[Field], fields),
+            fields,
             first,
             skip,
             disable_tqdm,

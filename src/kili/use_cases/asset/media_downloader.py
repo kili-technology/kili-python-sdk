@@ -18,7 +18,6 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
-from kili.domain.field import Field
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 
@@ -28,10 +27,10 @@ from .exceptions import DownloadNotAllowedError, MissingPropertyError
 def get_download_assets_function(
     kili_api_gateway: KiliAPIGateway,
     download_media: bool,
-    fields: ListOrTuple[Field],
+    fields: ListOrTuple[str],
     project_id: ProjectId,
     local_media_dir: Optional[str],
-) -> Tuple[Optional[Callable], ListOrTuple[Field]]:
+) -> Tuple[Optional[Callable], ListOrTuple[str]]:
     """Get the function to be called after each batch of asset query.
 
     The function is either None or MediaDownloader.download_assets().
@@ -42,7 +41,7 @@ def get_download_assets_function(
     if not download_media:
         return None, fields
 
-    project = kili_api_gateway.get_project(project_id=project_id, fields=(Field("inputType"),))
+    project = kili_api_gateway.get_project(project_id=project_id, fields=("inputType",))
     input_type = project["inputType"]
 
     # We need to query the data connections to know if the assets are hosted in a cloud storage
@@ -51,7 +50,7 @@ def get_download_assets_function(
         kili_api_gateway.graphql_client, kili_api_gateway.http_client
     )(
         where=DataConnectionsWhere(project_id=project_id),
-        fields=(Field("id"),),
+        fields=("id",),
         options=QueryOptions(disable_tqdm=True, first=1, skip=0),
     )
     if len(list(data_connections_gen)) > 0:
@@ -62,7 +61,7 @@ def get_download_assets_function(
 
     jsoncontent_field_added = False
     if input_type in ("TEXT", "VIDEO") and "jsonContent" not in fields:
-        fields = (Field("jsonContent"), *fields)
+        fields = ("jsonContent", *fields)
         jsoncontent_field_added = True
 
     return (

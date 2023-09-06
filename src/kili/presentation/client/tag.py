@@ -1,10 +1,9 @@
 """Client presentation methods for tags."""
 
-from typing import Dict, List, Literal, Optional, cast
+from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
 
-from kili.domain.field import Field
 from kili.domain.types import ListOrTuple
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -36,13 +35,9 @@ class TagClientMethods(BaseClientMethods):
         """
         tag_use_cases = TagUseCases(self.kili_api_gateway)
         return (
-            tag_use_cases.get_tags_of_organization(fields=cast(ListOrTuple[Field], fields))
+            tag_use_cases.get_tags_of_organization(fields=fields)
             if project_id is None
-            else (
-                tag_use_cases.get_tags_of_project(
-                    project_id=project_id, fields=cast(ListOrTuple[Field], fields)
-                )
-            )
+            else (tag_use_cases.get_tags_of_project(project_id=project_id, fields=fields))
         )
 
     @typechecked
@@ -119,7 +114,7 @@ class TagClientMethods(BaseClientMethods):
                 tag_ids = [
                     tag["id"]
                     for tag in tag_use_cases.get_tags_of_project(
-                        project_id=project_id, fields=(Field("id"),)
+                        project_id=project_id, fields=("id",)
                     )
                 ]
             else:

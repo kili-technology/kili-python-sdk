@@ -4,7 +4,6 @@ from typing import Dict, List, Optional
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.tag.types import UpdateTagReturnData
-from kili.domain.field import Field
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
@@ -17,11 +16,11 @@ class TagUseCases:
     def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:
         self._kili_api_gateway = kili_api_gateway
 
-    def get_tags_of_organization(self, fields: ListOrTuple[Field]) -> List[Dict]:
+    def get_tags_of_organization(self, fields: ListOrTuple[str]) -> List[Dict]:
         """Get tags of organization."""
         return self._kili_api_gateway.list_tags_by_org(fields=fields)
 
-    def get_tags_of_project(self, project_id: str, fields: ListOrTuple[Field]) -> List[Dict]:
+    def get_tags_of_project(self, project_id: str, fields: ListOrTuple[str]) -> List[Dict]:
         """Get tags of project."""
         return self._kili_api_gateway.list_tags_by_project(
             project_id=ProjectId(project_id), fields=fields
@@ -31,7 +30,7 @@ class TagUseCases:
         self, project_id: str, tag_ids: ListOrTuple[str], disable_tqdm: bool
     ) -> List[TagId]:
         """Assign tags to a project."""
-        tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=(Field("id"),))
+        tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
         tags_of_orga_ids = [tag["id"] for tag in tags_of_orga]
 
         ret_tags = []
@@ -59,7 +58,7 @@ class TagUseCases:
         tag_ids_of_project = {
             tag["id"]
             for tag in self._kili_api_gateway.list_tags_by_project(
-                project_id=ProjectId(project_id), fields=(Field("id"),)
+                project_id=ProjectId(project_id), fields=("id",)
             )
         }
 
@@ -78,7 +77,7 @@ class TagUseCases:
 
     def get_tag_ids_from_labels(self, labels: ListOrTuple[str]) -> List[TagId]:
         """Get tag ids from labels."""
-        tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=(Field("id"), Field("label")))
+        tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id", "label"))
 
         tag_label_to_id = defaultdict(list)
         for tag in tags_of_orga:
