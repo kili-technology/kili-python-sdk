@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 
 from kili.client import Kili
@@ -58,3 +60,23 @@ def test_given_project_with_tags_when_i_call_untag_project_then_it_removes_one_t
     nb_tags_in_project_after = len(project_tags)
     assert nb_tags_in_project_after == nb_tags_in_project_before - 1
     assert not any(tag["label"] == tag_to_delete for tag in project_tags)
+
+
+def test_given_org_with_tags_when_i_update_tag_then_it_is_updated(kili: Kili):
+    # Given
+    org_tags = kili.tags(fields=("label",))
+    assert len(org_tags) > 0, "Organization has no tags"
+    tag_to_update = next(tag for tag in org_tags if tag["label"])
+    prev_tag_name = tag_to_update["label"]
+
+    # When
+    new_tag_name = str(uuid.uuid4())
+    kili.update_tag(tag_name=prev_tag_name, new_tag_name=new_tag_name)
+
+    # Then
+    org_tags = kili.tags(fields=("label",))
+    assert len(org_tags) > 0, "Organization has no tags"
+    assert new_tag_name in [tag["label"] for tag in org_tags]
+
+    # Cleanup
+    kili.update_tag(tag_name=new_tag_name, new_tag_name=prev_tag_name)

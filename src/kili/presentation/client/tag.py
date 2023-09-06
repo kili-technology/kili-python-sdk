@@ -1,9 +1,10 @@
 """Client presentation methods for tags."""
 
-from typing import Dict, List, Literal, Optional, Sequence
+from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
 
+from kili.domain.types import ListOrTuple
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -18,7 +19,7 @@ class TagClientMethods(BaseClientMethods):
     def tags(
         self,
         project_id: Optional[str] = None,
-        fields: Sequence[str] = ("id", "organizationId", "label", "checkedForProjects"),
+        fields: ListOrTuple[str] = ("id", "organizationId", "label", "checkedForProjects"),
     ) -> List[Dict]:
         """Get tags.
 
@@ -43,8 +44,8 @@ class TagClientMethods(BaseClientMethods):
     def tag_project(
         self,
         project_id: str,
-        tags: Optional[Sequence[str]] = None,
-        tag_ids: Optional[Sequence[str]] = None,
+        tags: Optional[ListOrTuple[str]] = None,
+        tag_ids: Optional[ListOrTuple[str]] = None,
         disable_tqdm: bool = False,
     ) -> List[Dict[Literal["id"], str]]:
         """Link tags to a project.
@@ -64,12 +65,16 @@ class TagClientMethods(BaseClientMethods):
         if tag_ids is None:
             if tags is None:
                 raise ValueError("Either `tags` or `tag_ids` must be provided.")
-            tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
+            tag_ids = tag_use_cases.get_tag_ids_from_labels(
+                labels=tags  # pyright: ignore[reportGeneralTypeIssues]
+            )
 
         return [
             {"id": str(tag_id)}
             for tag_id in tag_use_cases.tag_project(
-                project_id=project_id, tag_ids=tag_ids, disable_tqdm=disable_tqdm
+                project_id=project_id,
+                tag_ids=tag_ids,  # pyright: ignore[reportGeneralTypeIssues]
+                disable_tqdm=disable_tqdm,
             )
         ]
 
@@ -78,8 +83,8 @@ class TagClientMethods(BaseClientMethods):
     def untag_project(
         self,
         project_id: str,
-        tags: Optional[Sequence[str]] = None,
-        tag_ids: Optional[Sequence[str]] = None,
+        tags: Optional[ListOrTuple[str]] = None,
+        tag_ids: Optional[ListOrTuple[str]] = None,
         all: Optional[bool] = None,  # pylint: disable=redefined-builtin
         disable_tqdm: bool = False,
     ) -> List[Dict[Literal["id"], str]]:
@@ -102,7 +107,9 @@ class TagClientMethods(BaseClientMethods):
 
         if tag_ids is None:
             if tags is not None:
-                tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
+                tag_ids = tag_use_cases.get_tag_ids_from_labels(
+                    labels=tags  # pyright: ignore[reportGeneralTypeIssues]
+                )
             elif all is not None:
                 tag_ids = [
                     tag["id"]
@@ -117,7 +124,28 @@ class TagClientMethods(BaseClientMethods):
             {"id": str(tag_id)}
             for tag_id in tag_use_cases.untag_project(
                 project_id=project_id,
-                tag_ids=tag_ids,
+                tag_ids=tag_ids,  # pyright: ignore[reportGeneralTypeIssues]
                 disable_tqdm=disable_tqdm,
             )
         ]
+
+    def update_tag(self, tag_name: str, new_tag_name: str) -> Dict[Literal["id"], str]:
+        """Update a tag.
+
+        This operation is organization-wide.
+        The tag will be updated for all projects of the organization.
+
+        Args:
+            tag_name: Name of the tag to update.
+            new_tag_name: New name of the tag.
+
+        Returns:
+            The id of the updated tag.
+        """
+        tag_use_cases = TagUseCases(self.kili_api_gateway)
+        tag_id = tag_use_cases.get_tag_ids_from_labels(labels=(tag_name,))[0]
+        return {
+            "id": str(
+                tag_use_cases.update_tag(tag_id=tag_id, new_tag_name=new_tag_name).updated_tag_id
+            )
+        }
