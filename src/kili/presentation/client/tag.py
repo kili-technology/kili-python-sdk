@@ -129,7 +129,7 @@ class TagClientMethods(BaseClientMethods):
             )
         ]
 
-    def update_tag(self, tag_name: str, new_tag_name: str) -> None:
+    def update_tag(self, tag_name: str, new_tag_name: str) -> str:
         """Update a tag.
 
         This operation is organization-wide.
@@ -138,7 +138,12 @@ class TagClientMethods(BaseClientMethods):
         Args:
             tag_name: Name of the tag to update.
             new_tag_name: New name of the tag.
+
+        Returns:
+            The id of the updated tag.
         """
-        TagUseCases(self.kili_api_gateway).update_tag(
-            tag_name=tag_name, tag_id=None, new_tag_name=new_tag_name
+        return str(
+            TagUseCases(self.kili_api_gateway)
+            .update_tag(tag_name=tag_name, tag_id=None, new_tag_name=new_tag_name)
+            .updated_tag_id
         )

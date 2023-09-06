@@ -3,6 +3,7 @@ from collections import defaultdict
 from typing import Dict, List, Optional
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.tag.types import UpdateTagReturnData
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTupleOfStr
@@ -97,7 +98,9 @@ class TagUseCases:
 
         return tag_ids
 
-    def update_tag(self, tag_name: Optional[str], tag_id: Optional[str], new_tag_name: str) -> None:
+    def update_tag(
+        self, tag_name: Optional[str], tag_id: Optional[str], new_tag_name: str
+    ) -> UpdateTagReturnData:
         """Update tag.
 
         This operation is organization-wide.
@@ -108,4 +111,4 @@ class TagUseCases:
                 raise ValueError("Either `tag_name` or `tag_id` must be provided.")
             tag_id = self.get_tag_ids_from_labels(labels=(tag_name,))[0]
 
-        self._kili_api_gateway.update_tag(tag_id=TagId(tag_id), label=new_tag_name)
+        return self._kili_api_gateway.update_tag(tag_id=TagId(tag_id), label=new_tag_name)
