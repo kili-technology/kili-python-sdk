@@ -1,14 +1,13 @@
 """GraphQL module."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Generator, List, NamedTuple, Optional, Sequence
+from typing import Any, Dict, Generator, NamedTuple, Optional, Sequence
 
 from typeguard import typechecked
 
 from kili.adapters.http_client import HttpClient
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.helpers import format_json
 from kili.utils.tqdm import tqdm
 
 
@@ -48,7 +47,6 @@ class PaginatedGraphQLQuery:
         options: QueryOptions,
         tqdm_desc: str,
         nb_elements_to_query: Optional[int],
-        post_call_function: Optional[Callable[[List], List]] = None,
     ) -> Generator[Dict, None, None]:
         """Build a row generator from paginated calls.
 
@@ -59,9 +57,6 @@ class PaginatedGraphQLQuery:
             tqdm_desc: The description to show in the progress bar
             nb_elements_to_query: The expected number of elements to query.
                 If given, it will show a progress bar if tqdm is not disabled in options
-            post_call_function: A function to be applied to the result of the query after each call.
-                It should take the elements of the result of the query as input and should return
-                the list of modified (or not) elements
         """
         disable_tqdm = nb_elements_to_query is None or options.disable_tqdm
 
@@ -85,20 +80,13 @@ class PaginatedGraphQLQuery:
                     )
                     payload = {"where": where, "skip": skip, "first": first}
                     elements = self._graphql_client.execute(query, payload)["data"]
-                    assert isinstance(
-                        elements, list
-                    ), "Paginated queries does not support operations that does not return a list"
-                    print(elements)
-                    elements: List = [format_json(elem, self.http_client) for elem in elements]
+                    if not isinstance(elements, list):
+                        raise ValueError(
+                            "PaginatedGraphQLQuery only support operations returning a list of"
+                            " objects"
+                        )
 
                     if len(elements) == 0:
-                        break
-
-                    if post_call_function is not None:
-                        elements = post_call_function(elements)
-
-                    if isinstance(elements, Dict):
-                        yield elements
                         break
 
                     yield from elements

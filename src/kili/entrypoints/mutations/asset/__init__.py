@@ -526,7 +526,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 ),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
-                None,
             )
             result["asset_ids"] = [asset["id"] for asset in assets_in_review]
         return result
@@ -610,7 +609,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 AssetFilters(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
-                None,
             )
             result["asset_ids"] = [asset["id"] for asset in assets_in_queue]
         return result

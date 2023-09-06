@@ -1,8 +1,8 @@
 """Mixin extending Kili API Gateway class with Asset related operations."""
 
+from typing import Dict, Generator, List, Sequence
 
-from typing import Callable, Dict, Generator, List, Optional, Sequence
-
+from kili.adapters.kili_api_gateway.asset.formatters import load_asset_json_fields
 from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
 from kili.adapters.kili_api_gateway.asset.operations import (
     GQL_COUNT_ASSETS,
@@ -15,7 +15,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     fragment_builder,
     get_number_of_elements_to_query,
 )
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import ASSET_JSON_FIELDS, AssetFilters
 
 from ..base import BaseOperationMixin
 
@@ -28,7 +28,6 @@ class AssetOperationMixin(BaseOperationMixin):
         filters: AssetFilters,
         fields: Sequence[str],
         options: QueryOptions,
-        post_call_function: Optional[Callable],
     ) -> Generator[Dict, None, None]:
         """List assets with given options."""
         fragment = fragment_builder(fields)
@@ -37,11 +36,14 @@ class AssetOperationMixin(BaseOperationMixin):
         nb_elements_to_query = get_number_of_elements_to_query(
             self.graphql_client, GQL_COUNT_ASSETS, where, options
         )
-        return PaginatedGraphQLQuery(
+        assets_gen = PaginatedGraphQLQuery(
             self.graphql_client, self.http_client
         ).execute_query_from_paginated_call(
-            query, where, options, "Retrieving assets", nb_elements_to_query, post_call_function
+            query, where, options, "Retrieving assets", nb_elements_to_query
         )
+        if any(json_field in fields for json_field in ASSET_JSON_FIELDS):
+            assets_gen = (load_asset_json_fields(asset, fields) for asset in assets_gen)
+        return assets_gen
 
     def count_assets(self, filters: AssetFilters) -> int:
         """Send a GraphQL request calling countIssues resolver."""

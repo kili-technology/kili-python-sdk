@@ -642,7 +642,6 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             AssetFilters(project_id=project_id),
             asset_fields + ["labels." + field for field in fields],
             QueryOptions(disable_tqdm=False),
-            None,
         )
         labels = [
             dict(

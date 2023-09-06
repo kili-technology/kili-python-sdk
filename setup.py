@@ -25,6 +25,7 @@ install_requires = [
     "filelock>=3.0.0,<4.0.0",
     "pip-system-certs>=4.0.0,<5.0.0; platform_system=='Windows'",
     "pyrate-limiter>=2,<3",
+    "more-itertools>=8.0.0,<11.0.0",
 ]
 
 image_requires = [
