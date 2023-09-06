@@ -1,4 +1,5 @@
 """Custom Types."""
-from typing import List, Tuple, Union
+from typing import List, Tuple, TypeVar, Union
 
-ListOrTupleOfStr = Union[List[str], Tuple[str, ...]]
+T = TypeVar("T")
+ListOrTuple = Union[List[T], Tuple[T, ...]]

@@ -4,12 +4,13 @@ from typing import Dict
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
-from kili.domain.types import ListOrTupleOfStr
+from kili.domain.field import Field
+from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
 
 # TODO: delete since its in ProjectOperationMixin
-def get_project(kili, project_id: str, fields: ListOrTupleOfStr) -> Dict:
+def get_project(kili, project_id: str, fields: ListOrTuple[Field]) -> Dict:
     """Get a project from its id or raise a NotFound Error if not found."""
     projects = list(
         ProjectQuery(kili.graphql_client, kili.http_client)(
@@ -24,7 +25,7 @@ def get_project(kili, project_id: str, fields: ListOrTupleOfStr) -> Dict:
     return projects[0]
 
 
-def get_project_field(kili, project_id: str, field: str):
+def get_project_field(kili, project_id: str, field: Field):
     """Get one project field from a the project id.
 
     Raise a NotFound Error if the project is not found.

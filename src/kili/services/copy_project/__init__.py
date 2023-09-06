@@ -8,8 +8,9 @@ from typing import Dict, List, Optional
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.domain.asset import AssetFilters
+from kili.domain.field import Field
 from kili.domain.project import ProjectId
-from kili.domain.types import ListOrTupleOfStr
+from kili.domain.types import ListOrTuple
 from kili.services.project import get_project
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
@@ -20,18 +21,18 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
     """Class for copying an existing project."""
 
     FIELDS_PROJECT = (
-        "title",
-        "inputType",
-        "description",
-        "id",
-        "dataConnections.dataIntegrationId",
+        Field("title"),
+        Field("inputType"),
+        Field("description"),
+        Field("id"),
+        Field("dataConnections.dataIntegrationId"),
     )
-    FIELDS_JSON_INTERFACE = ("jsonInterface",)
+    FIELDS_JSON_INTERFACE = (Field("jsonInterface"),)
     FIELDS_QUALITY_SETTINGS = (
-        "consensusTotCoverage",
-        "minConsensusSize",
-        "useHoneyPot",
-        "reviewCoverage",
+        Field("consensusTotCoverage"),
+        Field("minConsensusSize"),
+        Field("useHoneyPot"),
+        Field("reviewCoverage"),
     )
 
     def __init__(self, kili) -> None:
@@ -164,14 +165,14 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         """
         filters = AssetFilters(project_id=from_project_id)
         options = QueryOptions(disable_tqdm=False)
-        fields = [
-            "content",
-            "ocrMetadata",
-            "externalId",
-            "isHoneypot",
-            "jsonContent",
-            "jsonMetadata",
-        ]
+        fields = (
+            Field("content"),
+            Field("ocrMetadata"),
+            Field("externalId"),
+            Field("isHoneypot"),
+            Field("jsonContent"),
+            Field("jsonMetadata"),
+        )
 
         def download_and_upload_assets(assets: List[Dict]) -> List[Dict]:
             with TemporaryDirectory() as tmp_dir:
@@ -186,7 +187,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             pass
 
     def _download_assets(
-        self, from_project_id: str, fields: ListOrTupleOfStr, tmp_dir: Path, assets: List[Dict]
+        self, from_project_id: str, fields: ListOrTuple[Field], tmp_dir: Path, assets: List[Dict]
     ) -> List[Dict]:
         download_function, _ = get_download_assets_function(
             self.kili.kili_api_gateway,

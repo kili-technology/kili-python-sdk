@@ -5,8 +5,9 @@ from typing import Dict
 
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
 from kili.adapters.kili_api_gateway.project.operations import get_project_query
+from kili.domain.field import Field
 from kili.domain.project import ProjectId
-from kili.domain.types import ListOrTupleOfStr
+from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
 from ..base import BaseOperationMixin
@@ -15,7 +16,7 @@ from ..base import BaseOperationMixin
 class ProjectOperationMixin(BaseOperationMixin):
     """Mixin extending Kili API Gateway class with Projects related operations."""
 
-    def get_project(self, project_id: ProjectId, fields: ListOrTupleOfStr) -> Dict:
+    def get_project(self, project_id: ProjectId, fields: ListOrTuple[Field]) -> Dict:
         """Get project fields."""
         fragment = fragment_builder(fields)
         query = get_project_query(fragment)

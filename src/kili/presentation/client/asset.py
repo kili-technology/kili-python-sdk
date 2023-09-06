@@ -1,14 +1,25 @@
 """Client presentation methods for assets."""
 
 import warnings
-from typing import Dict, Generator, Iterable, List, Literal, Optional, Union, overload
+from typing import (
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    Union,
+    cast,
+    overload,
+)
 
 import pandas as pd
 from typeguard import typechecked
 
 from kili.domain.asset import AssetFilters
+from kili.domain.field import Field
 from kili.domain.issue import IssueStatus, IssueType
-from kili.domain.types import ListOrTupleOfStr
+from kili.domain.types import ListOrTuple
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )
@@ -29,7 +40,7 @@ class AssetClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         skip: int = 0,
-        fields: ListOrTupleOfStr = (
+        fields: ListOrTuple[str] = (
             "content",
             "createdAt",
             "externalId",
@@ -102,7 +113,7 @@ class AssetClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         skip: int = 0,
-        fields: ListOrTupleOfStr = (
+        fields: ListOrTuple[str] = (
             "content",
             "createdAt",
             "externalId",
@@ -175,7 +186,7 @@ class AssetClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         skip: int = 0,
-        fields: ListOrTupleOfStr = (
+        fields: ListOrTuple[str] = (
             "content",
             "createdAt",
             "externalId",
@@ -427,7 +438,7 @@ class AssetClientMethods(BaseClientMethods):
         )
         assets_gen = asset_use_cases.list_assets(
             filters,
-            fields,
+            cast(ListOrTuple[Field], fields),
             first,
             skip,
             disable_tqdm,

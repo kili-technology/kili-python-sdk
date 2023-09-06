@@ -3,9 +3,10 @@
 from typing import Dict, List
 
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
+from kili.domain.field import Field
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
-from kili.domain.types import ListOrTupleOfStr
+from kili.domain.types import ListOrTuple
 
 from ..base import BaseOperationMixin
 from .operations import (
@@ -20,14 +21,14 @@ from .types import UpdateTagReturnData
 class TagOperationMixin(BaseOperationMixin):
     """GraphQL Mixin extending GraphQL Gateway class with Tags related operations."""
 
-    def list_tags_by_org(self, fields: ListOrTupleOfStr) -> List[Dict]:
+    def list_tags_by_org(self, fields: ListOrTuple[Field]) -> List[Dict]:
         """Send a GraphQL request calling listTagsByOrg resolver."""
         fragment = fragment_builder(fields=fields)
         query = get_list_tags_by_org_query(fragment)
         result = self.graphql_client.execute(query)
         return result["data"]
 
-    def list_tags_by_project(self, project_id: ProjectId, fields: ListOrTupleOfStr) -> List[Dict]:
+    def list_tags_by_project(self, project_id: ProjectId, fields: ListOrTuple[Field]) -> List[Dict]:
         """Send a GraphQL request calling listTagsByProject resolver."""
         # fragment = fragment_builder(fields=fields)
         # query = get_list_tags_by_project_query(fragment)
@@ -37,7 +38,7 @@ class TagOperationMixin(BaseOperationMixin):
         # TODO: listTagsByProject is broken currently. Use listTagsByOrg instead.
 
         fields_with_project_ids = (
-            ("checkedForProjects", *fields) if "checkedForProjects" not in fields else fields
+            (Field("checkedForProjects"), *fields) if "checkedForProjects" not in fields else fields
         )
         tags_of_org = self.list_tags_by_org(fields=fields_with_project_ids)
         tags_of_project = [tag for tag in tags_of_org if project_id in tag["checkedForProjects"]]

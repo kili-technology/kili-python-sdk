@@ -10,7 +10,8 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 )
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import format_result
-from kili.domain.types import ListOrTupleOfStr
+from kili.domain.field import Field
+from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
 from .graphql_client import GraphQLClient
@@ -64,7 +65,7 @@ class GraphQLQuery(ABC):
     def __call__(
         self,
         where: BaseQueryWhere,
-        fields: ListOrTupleOfStr,
+        fields: ListOrTuple[Field],
         options: QueryOptions,
         post_call_function: Optional[Callable] = None,
     ) -> Generator[Dict, None, None]:

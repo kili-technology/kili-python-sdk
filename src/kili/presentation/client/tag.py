@@ -1,10 +1,11 @@
 """Client presentation methods for tags."""
 
-from typing import Dict, List, Literal, Optional
+from typing import Dict, List, Literal, Optional, cast
 
 from typeguard import typechecked
 
-from kili.domain.types import ListOrTupleOfStr
+from kili.domain.field import Field
+from kili.domain.types import ListOrTuple
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -19,7 +20,7 @@ class TagClientMethods(BaseClientMethods):
     def tags(
         self,
         project_id: Optional[str] = None,
-        fields: ListOrTupleOfStr = ("id", "organizationId", "label", "checkedForProjects"),
+        fields: ListOrTuple[str] = ("id", "organizationId", "label", "checkedForProjects"),
     ) -> List[Dict]:
         """Get tags.
 
@@ -35,17 +36,21 @@ class TagClientMethods(BaseClientMethods):
         """
         tag_use_cases = TagUseCases(self.kili_api_gateway)
         return (
-            tag_use_cases.get_tags_of_organization(fields=fields)
+            tag_use_cases.get_tags_of_organization(fields=cast(ListOrTuple[Field], fields))
             if project_id is None
-            else (tag_use_cases.get_tags_of_project(project_id=project_id, fields=fields))
+            else (
+                tag_use_cases.get_tags_of_project(
+                    project_id=project_id, fields=cast(ListOrTuple[Field], fields)
+                )
+            )
         )
 
     @typechecked
     def tag_project(
         self,
         project_id: str,
-        tags: Optional[ListOrTupleOfStr] = None,
-        tag_ids: Optional[ListOrTupleOfStr] = None,
+        tags: Optional[ListOrTuple[str]] = None,
+        tag_ids: Optional[ListOrTuple[str]] = None,
         disable_tqdm: bool = False,
     ) -> List[Dict[Literal["id"], str]]:
         """Link tags to a project.
@@ -83,8 +88,8 @@ class TagClientMethods(BaseClientMethods):
     def untag_project(
         self,
         project_id: str,
-        tags: Optional[ListOrTupleOfStr] = None,
-        tag_ids: Optional[ListOrTupleOfStr] = None,
+        tags: Optional[ListOrTuple[str]] = None,
+        tag_ids: Optional[ListOrTuple[str]] = None,
         all: Optional[bool] = None,  # pylint: disable=redefined-builtin
         disable_tqdm: bool = False,
     ) -> List[Dict[Literal["id"], str]]:
@@ -114,7 +119,7 @@ class TagClientMethods(BaseClientMethods):
                 tag_ids = [
                     tag["id"]
                     for tag in tag_use_cases.get_tags_of_project(
-                        project_id=project_id, fields=("id",)
+                        project_id=project_id, fields=(Field("id"),)
                     )
                 ]
             else:

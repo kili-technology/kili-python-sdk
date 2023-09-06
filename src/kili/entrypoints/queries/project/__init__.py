@@ -1,12 +1,13 @@
 """Project queries."""
 
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from typing import Dict, Generator, Iterable, List, Literal, Optional, cast, overload
 
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
-from kili.domain.types import ListOrTupleOfStr
+from kili.domain.field import Field
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -30,7 +31,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: ListOrTupleOfStr = (
+        fields: ListOrTuple[str] = (
             "consensusTotCoverage",
             "id",
             "inputType",
@@ -60,7 +61,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: ListOrTupleOfStr = (
+        fields: ListOrTuple[str] = (
             "consensusTotCoverage",
             "id",
             "inputType",
@@ -90,7 +91,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: ListOrTupleOfStr = (
+        fields: ListOrTuple[str] = (
             "consensusTotCoverage",
             "id",
             "inputType",
@@ -147,7 +148,9 @@ class QueriesProject(BaseOperationEntrypointMixin):
         )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        projects_gen = ProjectQuery(self.graphql_client, self.http_client)(where, fields, options)
+        projects_gen = ProjectQuery(self.graphql_client, self.http_client)(
+            where, cast(ListOrTuple[Field], fields), options
+        )
 
         if as_generator:
             return projects_gen

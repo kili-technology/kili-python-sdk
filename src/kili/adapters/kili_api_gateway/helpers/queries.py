@@ -7,7 +7,8 @@ from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.domain.types import ListOrTupleOfStr
+from kili.domain.field import Field
+from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
 
@@ -135,7 +136,7 @@ def get_number_of_elements_to_query(
 
 
 @typechecked
-def fragment_builder(fields: ListOrTupleOfStr) -> str:
+def fragment_builder(fields: ListOrTuple[Field]) -> str:
     """Build a GraphQL fragment for a list of fields to query.
 
     Args:
@@ -151,7 +152,9 @@ def fragment_builder(fields: ListOrTupleOfStr) -> str:
         root_fields = {subfield[0] for subfield in subfields}
         for root_field in root_fields:
             # get the subfields of the root field (e.g. "user.id" in "roles.user.id")
-            fields_subquery = [subfield[1] for subfield in subfields if subfield[0] == root_field]
+            fields_subquery = [
+                Field(subfield[1]) for subfield in subfields if subfield[0] == root_field
+            ]
             # build the subquery fragment (e.g. "user{id}" in "roles{user{id}}")
             new_fragment = fragment_builder(fields_subquery)
             # add the subquery to the fragment
