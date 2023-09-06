@@ -1,9 +1,12 @@
 """Client presentation methods for projects."""
 
-from typing import Dict, Literal, Optional, Sequence
+from typing import Dict, Literal, Optional, cast
 
 from typeguard import typechecked
 
+from kili.core.enums import ProjectType
+from kili.domain.project import InputType
+from kili.domain.types import ListOrTuple
 from kili.use_cases.project.project import ProjectUseCases
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -19,12 +22,12 @@ class ProjectClientMethods(BaseClientMethods):
     # pylint: disable=too-many-arguments
     def create_project(
         self,
-        input_type: str,
-        json_interface: dict,
+        input_type: InputType,
+        json_interface: Dict,
         title: str,
         description: str = "",
-        project_type: Optional[str] = None,
-        tags: Optional[Sequence[str]] = None,
+        project_type: Optional[ProjectType] = None,
+        tags: Optional[ListOrTuple[str]] = None,
     ) -> Dict[Literal["id"], str]:
         # pylint: disable=line-too-long
         """Create a project.
@@ -80,6 +83,8 @@ class ProjectClientMethods(BaseClientMethods):
         if tags is not None:
             tag_use_cases = TagUseCases(self.kili_api_gateway)
             tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
-            tag_use_cases.tag_project(project_id=project_id, tag_ids=tag_ids, disable_tqdm=True)
+            tag_use_cases.tag_project(
+                project_id=project_id, tag_ids=cast(ListOrTuple[str], tag_ids), disable_tqdm=True
+            )
 
         return {"id": project_id}
