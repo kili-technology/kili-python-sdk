@@ -52,4 +52,4 @@ class ProjectOperationMixin(BaseOperationMixin):
             }
         }
         result = self.graphql_client.execute(GQL_CREATE_PROJECT, variables)
-        return ProjectId(result["id"])
+        return ProjectId(result["data"]["id"])
