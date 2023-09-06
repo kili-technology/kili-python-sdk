@@ -23,7 +23,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     project_id: str,
     input_format: str,
     target_job_name: Optional[str],
-    disable_tqdm: bool,
+    disable_tqdm: Optional[bool],
     log_level: str,
     model_name: Optional[str],
     is_prediction: bool,
