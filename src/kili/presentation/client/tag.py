@@ -129,7 +129,7 @@ class TagClientMethods(BaseClientMethods):
             )
         ]
 
-    def update_tag(self, tag_name: str, new_tag_name: str) -> str:
+    def update_tag(self, tag_name: str, new_tag_name: str) -> Dict[Literal["id"], str]:
         """Update a tag.
 
         This operation is organization-wide.
@@ -142,8 +142,10 @@ class TagClientMethods(BaseClientMethods):
         Returns:
             The id of the updated tag.
         """
-        return str(
-            TagUseCases(self.kili_api_gateway)
-            .update_tag(tag_name=tag_name, tag_id=None, new_tag_name=new_tag_name)
-            .updated_tag_id
-        )
+        return {
+            "id": str(
+                TagUseCases(self.kili_api_gateway)
+                .update_tag(tag_name=tag_name, tag_id=None, new_tag_name=new_tag_name)
+                .updated_tag_id
+            )
+        }
