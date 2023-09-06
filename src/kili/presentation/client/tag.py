@@ -41,29 +41,45 @@ class TagClientMethods(BaseClientMethods):
 
     @typechecked
     def tag_project(
-        self, project_id: str, tags: Sequence[str], disable_tqdm: bool = False
+        self,
+        project_id: str,
+        tags: Optional[Sequence[str]] = None,
+        tag_ids: Optional[Sequence[str]] = None,
+        disable_tqdm: bool = False,
     ) -> List[Dict[Literal["id"], str]]:
         """Link tags to a project.
 
         Args:
             project_id: Id of the project.
-            tags: Sequence of tags to associate to the project.
-                The value of each tag can be its name or its id.
+            tags: Sequence of tag labels to associate to the project.
+            tag_ids: Sequence of tag ids to associate to the project.
+                Only used if `tags` is not provided.
             disable_tqdm: Whether to disable the progress bar.
 
         Returns:
             A list of dictionaries with the tag ids.
         """
         tag_use_cases = TagUseCases(self.kili_api_gateway)
-        return tag_use_cases.tag_project(
-            project_id=project_id, tags=tags, disable_tqdm=disable_tqdm
-        )
+
+        if tag_ids is None:
+            if tags is None:
+                raise ValueError("Either `tags` or `tag_ids` must be provided.")
+            tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
+
+        return [
+            {"id": str(tag_id)}
+            for tag_id in tag_use_cases.tag_project(
+                project_id=project_id, tag_ids=tag_ids, disable_tqdm=disable_tqdm
+            )
+        ]
 
     @typechecked
+    # pylint: disable=too-many-arguments
     def untag_project(
         self,
         project_id: str,
         tags: Optional[Sequence[str]] = None,
+        tag_ids: Optional[Sequence[str]] = None,
         all: Optional[bool] = None,  # pylint: disable=redefined-builtin
         disable_tqdm: bool = False,
     ) -> List[Dict[Literal["id"], str]]:
@@ -71,18 +87,37 @@ class TagClientMethods(BaseClientMethods):
 
         Args:
             project_id: Id of the project.
-            tags: Sequence of tags to remove from the project.
-                The value of each tag can be its name or its id.
+            tags: Sequence of tag labels to remove from the project.
+            tag_ids: Sequence of tag ids to remove from the project.
             all: Whether to remove all tags from the project.
             disable_tqdm: Whether to disable the progress bar.
-        """
-        if (tags is None and all is None) or (tags is not None and all is not None):
-            raise ValueError("You must provide either `tags` or `all`.")
 
+        Returns:
+            A list of dictionaries with the tag ids.
+
+        Raises:
+            ValueError: Either `tags` or `tag_ids` or `all` must be provided.
+        """
         tag_use_cases = TagUseCases(self.kili_api_gateway)
-        return tag_use_cases.untag_project(
-            project_id=project_id,
-            tags=tags,
-            all=all,
-            disable_tqdm=disable_tqdm,
-        )
+
+        if tag_ids is None:
+            if tags is not None:
+                tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
+            elif all is not None:
+                tag_ids = [
+                    tag["id"]
+                    for tag in tag_use_cases.get_tags_of_project(
+                        project_id=project_id, fields=("id",)
+                    )
+                ]
+            else:
+                raise ValueError("Either `tags` or `tag_ids` or `all` must be provided.")
+
+        return [
+            {"id": str(tag_id)}
+            for tag_id in tag_use_cases.untag_project(
+                project_id=project_id,
+                tag_ids=tag_ids,
+                disable_tqdm=disable_tqdm,
+            )
+        ]

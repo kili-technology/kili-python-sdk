@@ -9,7 +9,7 @@ import threading
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 from urllib.parse import urlparse
 
 import graphql
@@ -82,6 +82,14 @@ class GraphQLClient:
 
         gql_requests_logger.setLevel(logging.WARNING)
 
+        retry_status_forcelist: List[int] = list(RequestsHTTPTransport._default_retry_codes)
+        # backend can return 401 errors even though we have a valid api key
+        if 401 not in retry_status_forcelist:
+            retry_status_forcelist.append(401)
+        # backend can return 500 errors for invalid queries
+        if 500 in retry_status_forcelist:
+            retry_status_forcelist.remove(500)
+
         self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
             headers=self._get_headers(),
@@ -93,8 +101,7 @@ class GraphQLClient:
             # retries=20,  # FIXME: when it is set, it sometimes freezes the .execute() method
             method="POST",
             retry_backoff_factor=0.5,
-            # backend can return 401 errors even though we have a valid api key
-            retry_status_forcelist=RequestsHTTPTransport._default_retry_codes + (401,),
+            retry_status_forcelist=retry_status_forcelist,
         )
 
         if self.enable_schema_caching is True:
