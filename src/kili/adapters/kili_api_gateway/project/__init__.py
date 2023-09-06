@@ -2,7 +2,7 @@
 
 
 import json
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
 from kili.adapters.kili_api_gateway.project.operations import get_project_query

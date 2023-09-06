@@ -1,5 +1,5 @@
 """Project use cases."""
-from typing import Optional
+from typing import Dict, Optional
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -7,7 +7,8 @@ from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_fixed
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
-from kili.domain.project import ProjectId
+from kili.core.enums import ProjectType
+from kili.domain.project import InputType, ProjectId
 from kili.exceptions import NotFound
 
 
@@ -20,11 +21,11 @@ class ProjectUseCases:
     # pylint: disable=too-many-arguments
     def create_project(
         self,
-        input_type: str,
-        json_interface: dict,
+        input_type: InputType,
+        json_interface: Dict,
         title: str,
         description: str,
-        project_type: Optional[str],
+        project_type: Optional[ProjectType],
     ) -> ProjectId:
         """Create a project."""
         project_id = self._kili_api_gateway.create_project(
