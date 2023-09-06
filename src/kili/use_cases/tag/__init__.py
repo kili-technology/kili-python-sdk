@@ -1,5 +1,6 @@
 """Tag use cases."""
-from typing import Dict, List, Literal, Optional, Sequence
+from collections import defaultdict
+from typing import Dict, List, Sequence
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.domain.project import ProjectId

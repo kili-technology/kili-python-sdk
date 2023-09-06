@@ -56,7 +56,7 @@ class ProjectClientMethods(BaseClientMethods):
                 - `VIDEO_FRAME_CLASSIFICATION`
                 - `VIDEO_FRAME_OBJECT_TRACKING`
 
-            tags: Tags to add to the project.
+            tags: Tags to add to the project. The tags must already exist in the organization.
 
         Returns:
             A dict with the id of the created project.
@@ -77,8 +77,8 @@ class ProjectClientMethods(BaseClientMethods):
         )
 
         if tags is not None:
-            TagUseCases(self.kili_api_gateway).tag_project(
-                project_id=project_id, tags=tags, disable_tqdm=True
-            )
+            tag_use_cases = TagUseCases(self.kili_api_gateway)
+            tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
+            tag_use_cases.tag_project(project_id=project_id, tag_ids=tag_ids, disable_tqdm=True)
 
         return {"id": project_id}
