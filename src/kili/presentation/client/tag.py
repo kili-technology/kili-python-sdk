@@ -91,6 +91,12 @@ class TagClientMethods(BaseClientMethods):
             tag_ids: Sequence of tag ids to remove from the project.
             all: Whether to remove all tags from the project.
             disable_tqdm: Whether to disable the progress bar.
+
+        Returns:
+            A list of dictionaries with the tag ids.
+
+        Raises:
+            ValueError: Either `tags` or `tag_ids` or `all` must be provided.
         """
         tag_use_cases = TagUseCases(self.kili_api_gateway)
 

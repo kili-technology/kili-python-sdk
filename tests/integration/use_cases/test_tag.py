@@ -56,7 +56,7 @@ def test_given_tag_ids_when_tagging_project_then_it_tags_the_project(
     assert applied_tags == ["tag1_id", "tag2_id"]
 
 
-def test_when_untagging_project_then_it_remove_tags(kili_api_gateway: KiliAPIGateway):
+def test_when_untagging_project_then_it_removes_some_tags(kili_api_gateway: KiliAPIGateway):
     kili_api_gateway.uncheck_tag.side_effect = lambda project_id, tag_id: tag_id
     # Given
     tags = [

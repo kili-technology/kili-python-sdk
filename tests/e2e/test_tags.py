@@ -58,18 +58,3 @@ def test_given_project_with_tags_when_i_call_untag_project_then_it_removes_one_t
     nb_tags_in_project_after = len(project_tags)
     assert nb_tags_in_project_after == nb_tags_in_project_before - 1
     assert not any(tag["label"] == tag_to_delete for tag in project_tags)
-
-
-def test_given_project_with_tags_when_i_call_untag_project_then_it_removes_all_tags(
-    kili: Kili, project_with_tags_id: str
-):
-    # Given
-    tags_of_project = kili.tags(project_id=project_with_tags_id, fields=("id",))
-    assert len(tags_of_project) > 0, "Project has no tags"
-
-    # When
-    kili.untag_project(project_with_tags_id, all=True)
-
-    # Then
-    project_tags = kili.tags(project_id=project_with_tags_id, fields=("id",))
-    assert len(project_tags) == 0

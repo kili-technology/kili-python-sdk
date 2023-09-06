@@ -88,3 +88,28 @@ def test_given_tags_when_i_tag_project_with_tag_labels_then_it_is_tagged(
     kili.kili_api_gateway.graphql_client.execute.assert_called_with(
         GQL_CHECK_TAG, {"data": {"tagId": "tag2_id", "projectId": "fake_proj_id"}}
     )
+
+
+def test_given_tags_when_i_untag_all_project_tags_then_it_removes_all_tags(
+    mocker: pytest_mock.MockerFixture,
+):
+    kili = TagClientMethods()
+    kili.kili_api_gateway = KiliAPIGateway(
+        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
+    )
+    kili.kili_api_gateway.uncheck_tag = mocker.MagicMock()
+    # Given
+    tags = [
+        {"id": "tag1_id", "label": "tag1"},
+        {"id": "tag2_id", "label": "tag2"},
+    ]
+    kili.kili_api_gateway.list_tags_by_project = mocker.MagicMock(return_value=tags)
+
+    # When
+    kili.untag_project(project_id="fake_proj_id", all=True)
+
+    # Then
+    assert kili.kili_api_gateway.uncheck_tag.call_count == len(tags)
+    kili.kili_api_gateway.uncheck_tag.assert_called_with(
+        project_id="fake_proj_id", tag_id="tag2_id"
+    )
