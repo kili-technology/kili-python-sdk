@@ -1,11 +1,12 @@
 """Asset use cases."""
-from typing import Generator, Literal, Optional, Sequence
+from typing import Generator, Literal, Optional
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import validate_category_search_query
 from kili.domain.asset import AssetFilters
 from kili.domain.project import ProjectId
+from kili.domain.types import ListOrTuple
 from kili.services.label_data_parsing.types import Project as LabelParsingProject
 from kili.use_cases.asset.asset_label_parsing import parse_labels_of_asset
 from kili.use_cases.asset.media_downloader import get_download_assets_function
@@ -22,7 +23,7 @@ class AssetUseCases:
     def list_assets(
         self,
         filters: AssetFilters,
-        fields: Sequence[str],
+        fields: ListOrTuple[str],
         first: Optional[int],
         skip: int,
         disable_tqdm: Optional[bool],
@@ -49,7 +50,7 @@ class AssetUseCases:
         if label_output_format == "parsed_label":
             project = LabelParsingProject(
                 **self._kili_api_gateway.get_project(
-                    ProjectId(filters.project_id), ["jsonInterface", "inputType"]
+                    ProjectId(filters.project_id), ("jsonInterface", "inputType")
                 )
             )
             assets_gen = (parse_labels_of_asset(asset, project) for asset in assets_gen)
