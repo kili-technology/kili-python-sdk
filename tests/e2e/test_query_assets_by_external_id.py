@@ -16,6 +16,7 @@ def project_with_assets(kili):
         "jobs": {
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
+                "isChild": False,
                 "required": 1,
                 "content": {
                     "categories": {

@@ -22,6 +22,7 @@ def project_with_assets(kili, text):
         "jobs": {
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
+                "isChild": False,
                 "required": 1,
                 "content": {
                     "categories": {
