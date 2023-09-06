@@ -7,11 +7,7 @@ from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 
 from ..base import BaseOperationMixin
-from .operations import (
-    GQL_CHECK_TAG,
-    get_list_tags_by_org_query,
-    get_list_tags_by_project_query,
-)
+from .operations import GQL_CHECK_TAG, GQL_UNCHECK_TAG, get_list_tags_by_org_query
 
 
 class TagOperationMixin(BaseOperationMixin):
@@ -26,14 +22,37 @@ class TagOperationMixin(BaseOperationMixin):
 
     def list_tags_by_project(self, project_id: ProjectId, fields: Sequence[str]) -> List[Dict]:
         """Send a GraphQL request calling listTagsByProject resolver."""
-        fragment = fragment_builder(fields=fields)
-        query = get_list_tags_by_project_query(fragment)
-        variables = {"projectId": project_id}
-        result = self.graphql_client.execute(query, variables)
-        return result["data"]
+        # fragment = fragment_builder(fields=fields)
+        # query = get_list_tags_by_project_query(fragment)
+        # variables = {"projectId": project_id}
+        # result = self.graphql_client.execute(query, variables)
+        # return result["data"]
+        # TODO: listTagsByProject is broken currently. Use listTagsByOrg instead.
+
+        fields_with_project_ids = (
+            ("checkedForProjects", *fields) if "checkedForProjects" not in fields else fields
+        )
+        tags_of_org = self.list_tags_by_org(fields=fields_with_project_ids)
+        tags_of_project = [tag for tag in tags_of_org if project_id in tag["checkedForProjects"]]
+
+        if "checkedForProjects" not in fields:
+            for tag in tags_of_project:
+                del tag["checkedForProjects"]
+
+        return tags_of_project
 
     def check_tag(self, project_id: ProjectId, tag_id: TagId) -> TagId:
         """Send a GraphQL request calling checkTag resolver."""
         variables = {"data": {"tagId": tag_id, "projectId": project_id}}
         result = self.graphql_client.execute(GQL_CHECK_TAG, variables)
+        return TagId(result["data"]["id"])
+
+    def uncheck_tag(self, project_id: ProjectId, tag_id: TagId) -> TagId:
+        """Send a GraphQL request calling uncheckTag resolver.
+
+        WARNING: The resolved expects the tag to be checked for the project in the first place,
+            do not call optimistically.
+        """
+        variables = {"projectId": project_id, "tagId": tag_id}
+        result = self.graphql_client.execute(GQL_UNCHECK_TAG, variables)
         return TagId(result["data"]["id"])

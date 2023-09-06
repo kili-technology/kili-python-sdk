@@ -46,6 +46,33 @@ class TagUseCases:
 
         return ret_tags
 
+    def untag_project(
+        self,
+        project_id: str,
+        tag_ids: Sequence[str],
+        disable_tqdm: bool,
+    ) -> List[TagId]:
+        """Remove tags from a project."""
+        tag_ids_of_project = {
+            tag["id"]
+            for tag in self._kili_api_gateway.list_tags_by_project(
+                project_id=ProjectId(project_id), fields=("id",)
+            )
+        }
+
+        for tag in tag_ids:
+            if tag not in tag_ids_of_project:
+                raise ValueError(
+                    f"Tag {tag} not found in project with tag ids: {tag_ids_of_project}"
+                )
+
+        return [
+            self._kili_api_gateway.uncheck_tag(
+                project_id=ProjectId(project_id), tag_id=TagId(tag_id)
+            )
+            for tag_id in tqdm(tag_ids, desc="Untagging project", disable=disable_tqdm)
+        ]
+
     def get_tag_ids_from_labels(self, labels: Sequence[str]) -> List[TagId]:
         """Get tag ids from labels."""
         tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id", "label"))

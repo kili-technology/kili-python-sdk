@@ -56,6 +56,24 @@ def test_given_tag_ids_when_tagging_project_then_it_tags_the_project(
     assert applied_tags == ["tag1_id", "tag2_id"]
 
 
+def test_when_untagging_project_then_it_removes_some_tags(kili_api_gateway: KiliAPIGateway):
+    kili_api_gateway.uncheck_tag.side_effect = lambda project_id, tag_id: tag_id
+    # Given
+    tags = [
+        {"id": "tag1_id", "label": "tag1"},
+        {"id": "tag2_id", "label": "tag2"},
+    ]
+    kili_api_gateway.list_tags_by_project.return_value = tags
+
+    # When
+    deleted_tags = TagUseCases(kili_api_gateway).untag_project(
+        project_id="fake_proj_id", tag_ids=["tag1_id", "tag2_id"], disable_tqdm=True
+    )
+
+    # Then
+    assert deleted_tags == ["tag1_id", "tag2_id"]
+
+
 def test_given_tag_labels_when_i_convert_them_to_tag_ids_then_it_works(
     kili_api_gateway: KiliAPIGateway,
 ):
