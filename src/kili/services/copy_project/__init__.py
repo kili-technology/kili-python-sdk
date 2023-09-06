@@ -3,12 +3,13 @@ import itertools
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, List, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.domain.asset import AssetFilters
 from kili.domain.project import ProjectId
+from kili.domain.types import ListOrTuple
 from kili.services.project import get_project
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
@@ -163,14 +164,14 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         """
         filters = AssetFilters(project_id=from_project_id)
         options = QueryOptions(disable_tqdm=False)
-        fields = [
+        fields = (
             "content",
             "ocrMetadata",
             "externalId",
             "isHoneypot",
             "jsonContent",
             "jsonMetadata",
-        ]
+        )
 
         def download_and_upload_assets(assets: List[Dict]) -> List[Dict]:
             with TemporaryDirectory() as tmp_dir:
@@ -185,7 +186,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             pass
 
     def _download_assets(
-        self, from_project_id: str, fields: Sequence[str], tmp_dir: Path, assets: List[Dict]
+        self, from_project_id: str, fields: ListOrTuple[str], tmp_dir: Path, assets: List[Dict]
     ) -> List[Dict]:
         download_function, _ = get_download_assets_function(
             self.kili.kili_api_gateway,
