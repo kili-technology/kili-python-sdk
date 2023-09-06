@@ -142,10 +142,10 @@ class TagClientMethods(BaseClientMethods):
         Returns:
             The id of the updated tag.
         """
+        tag_use_cases = TagUseCases(self.kili_api_gateway)
+        tag_id = tag_use_cases.get_tag_ids_from_labels(labels=(tag_name,))[0]
         return {
             "id": str(
-                TagUseCases(self.kili_api_gateway)
-                .update_tag(tag_name=tag_name, tag_id=None, new_tag_name=new_tag_name)
-                .updated_tag_id
+                tag_use_cases.update_tag(tag_id=tag_id, new_tag_name=new_tag_name).updated_tag_id
             )
         }

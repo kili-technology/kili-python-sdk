@@ -1,6 +1,6 @@
 """Tag use cases."""
 from collections import defaultdict
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.tag.types import UpdateTagReturnData
@@ -98,17 +98,17 @@ class TagUseCases:
 
         return tag_ids
 
-    def update_tag(
-        self, tag_name: Optional[str], tag_id: Optional[str], new_tag_name: str
-    ) -> UpdateTagReturnData:
+    def update_tag(self, tag_id: TagId, new_tag_name: str) -> UpdateTagReturnData:
         """Update tag.
 
         This operation is organization-wide.
         The tag will be updated for all projects of the organization.
-        """
-        if tag_id is None:
-            if tag_name is None:
-                raise ValueError("Either `tag_name` or `tag_id` must be provided.")
-            tag_id = self.get_tag_ids_from_labels(labels=(tag_name,))[0]
 
+        Args:
+            tag_id: Id of the tag to update.
+            new_tag_name: New name of the tag.
+
+        Returns:
+            The updated tag.
+        """
         return self._kili_api_gateway.update_tag(tag_id=TagId(tag_id), label=new_tag_name)
