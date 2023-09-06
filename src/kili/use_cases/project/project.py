@@ -17,6 +17,7 @@ class ProjectUseCases:
     def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:
         self._kili_api_gateway = kili_api_gateway
 
+    # pylint: disable=too-many-arguments
     def create_project(
         self,
         input_type: str,

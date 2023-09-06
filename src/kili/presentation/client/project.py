@@ -16,6 +16,7 @@ class ProjectClientMethods(BaseClientMethods):
     """Methods attached to the Kili client, to run actions on projects."""
 
     @typechecked
+    # pylint: disable=too-many-arguments
     def create_project(
         self,
         input_type: str,
