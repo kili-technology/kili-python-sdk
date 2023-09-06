@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
@@ -19,6 +19,7 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsWhere,
 )
 from kili.domain.project import ProjectId
+from kili.domain.types import ListOrTupleOfStr
 
 from .exceptions import DownloadNotAllowedError, MissingPropertyError
 
@@ -26,10 +27,10 @@ from .exceptions import DownloadNotAllowedError, MissingPropertyError
 def get_download_assets_function(
     kili_api_gateway: KiliAPIGateway,
     download_media: bool,
-    fields: Sequence[str],
+    fields: ListOrTupleOfStr,
     project_id: ProjectId,
     local_media_dir: Optional[str],
-) -> Tuple[Optional[Callable], Sequence[str]]:
+) -> Tuple[Optional[Callable], ListOrTupleOfStr]:
     """Get the function to be called after each batch of asset query.
 
     The function is either None or MediaDownloader.download_assets().

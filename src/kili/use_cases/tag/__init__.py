@@ -1,10 +1,11 @@
 """Tag use cases."""
 from collections import defaultdict
-from typing import Dict, List, Sequence
+from typing import Dict, List, Optional
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
+from kili.domain.types import ListOrTupleOfStr
 from kili.utils.tqdm import tqdm
 
 
@@ -14,18 +15,18 @@ class TagUseCases:
     def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:
         self._kili_api_gateway = kili_api_gateway
 
-    def get_tags_of_organization(self, fields: Sequence[str]) -> List[Dict]:
+    def get_tags_of_organization(self, fields: ListOrTupleOfStr) -> List[Dict]:
         """Get tags of organization."""
         return self._kili_api_gateway.list_tags_by_org(fields=fields)
 
-    def get_tags_of_project(self, project_id: str, fields: Sequence[str]) -> List[Dict]:
+    def get_tags_of_project(self, project_id: str, fields: ListOrTupleOfStr) -> List[Dict]:
         """Get tags of project."""
         return self._kili_api_gateway.list_tags_by_project(
             project_id=ProjectId(project_id), fields=fields
         )
 
     def tag_project(
-        self, project_id: str, tag_ids: Sequence[str], disable_tqdm: bool
+        self, project_id: str, tag_ids: ListOrTupleOfStr, disable_tqdm: bool
     ) -> List[TagId]:
         """Assign tags to a project."""
         tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
@@ -49,7 +50,7 @@ class TagUseCases:
     def untag_project(
         self,
         project_id: str,
-        tag_ids: Sequence[str],
+        tag_ids: ListOrTupleOfStr,
         disable_tqdm: bool,
     ) -> List[TagId]:
         """Remove tags from a project."""
@@ -73,7 +74,7 @@ class TagUseCases:
             for tag_id in tqdm(tag_ids, desc="Untagging project", disable=disable_tqdm)
         ]
 
-    def get_tag_ids_from_labels(self, labels: Sequence[str]) -> List[TagId]:
+    def get_tag_ids_from_labels(self, labels: ListOrTupleOfStr) -> List[TagId]:
         """Get tag ids from labels."""
         tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id", "label"))
 
@@ -95,3 +96,16 @@ class TagUseCases:
             tag_ids.append(TagId(tag_label_to_id[label][0]))
 
         return tag_ids
+
+    def update_tag(self, tag_name: Optional[str], tag_id: Optional[str], new_tag_name: str) -> None:
+        """Update tag.
+
+        This operation is organization-wide.
+        The tag will be updated for all projects of the organization.
+        """
+        if tag_id is None:
+            if tag_name is None:
+                raise ValueError("Either `tag_name` or `tag_id` must be provided.")
+            tag_id = self.get_tag_ids_from_labels(labels=(tag_name,))[0]
+
+        self._kili_api_gateway.update_tag(tag_id=TagId(tag_id), label=new_tag_name)

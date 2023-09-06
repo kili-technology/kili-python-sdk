@@ -1,20 +1,12 @@
 """Project queries."""
 
-from typing import (
-    Dict,
-    Generator,
-    Iterable,
-    List,
-    Literal,
-    Optional,
-    Sequence,
-    overload,
-)
+from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
+from kili.domain.types import ListOrTupleOfStr
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -38,7 +30,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: Sequence[str] = (
+        fields: ListOrTupleOfStr = (
             "consensusTotCoverage",
             "id",
             "inputType",
@@ -68,7 +60,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: Sequence[str] = (
+        fields: ListOrTupleOfStr = (
             "consensusTotCoverage",
             "id",
             "inputType",
@@ -98,7 +90,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: Sequence[str] = (
+        fields: ListOrTupleOfStr = (
             "consensusTotCoverage",
             "id",
             "inputType",

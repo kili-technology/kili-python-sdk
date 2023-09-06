@@ -110,3 +110,17 @@ def test_when_tagging_project_with_invalid_organization_tag_then_it_crashes(
             tag_ids=["this_tag_does_not_exist_it_is_fake"],
             disable_tqdm=True,
         )
+
+
+def test_given_existing_tag_when_i_update_its_name_then_it_works(kili_api_gateway: KiliAPIGateway):
+    # Given
+    tags = [
+        {"id": "tag1_id", "label": "tag1"},
+    ]
+    kili_api_gateway.list_tags_by_org.return_value = tags
+
+    # When
+    TagUseCases(kili_api_gateway).update_tag(tag_name="tag1", tag_id=None, new_tag_name="tag1_new")
+
+    # Then
+    kili_api_gateway.update_tag.assert_called_once_with(tag_id="tag1_id", label="tag1_new")
