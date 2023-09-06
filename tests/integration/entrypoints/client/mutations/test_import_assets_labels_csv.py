@@ -49,5 +49,5 @@ def test_append_many_to_dataset_from_csv(csv_file_path: str, mocker: pytest_mock
         {"content": "asset_content_2", "external_id": "external_id_2"},
     ]
     mocker_import_assets.assert_called_once_with(
-        kili, project_id="fake_proj_id", assets=assets, disable_tqdm=False, verify=True
+        kili, project_id="fake_proj_id", assets=assets, disable_tqdm=None, verify=True
     )
