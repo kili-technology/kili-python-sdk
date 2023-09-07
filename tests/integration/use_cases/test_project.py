@@ -32,7 +32,7 @@ def test_when_i_query_projects_i_get_a_generator_of_projects(kili_api_gateway: K
         }
         for i in range(3)
     ]
-    kili_api_gateway.projects.return_value = (proj for proj in kili_projects)
+    kili_api_gateway.list_projects.return_value = (proj for proj in kili_projects)
 
     # When
     retrieved_projects = ProjectUseCases(kili_api_gateway).list_projects(

@@ -90,7 +90,7 @@ class ProjectClientMethods(BaseClientMethods):
         return {"id": project_id}
 
     @overload
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
     def projects(
         self,
         project_id: Optional[str] = None,
@@ -123,7 +123,7 @@ class ProjectClientMethods(BaseClientMethods):
         ...
 
     @overload
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments
     def projects(
         self,
         project_id: Optional[str] = None,

@@ -32,7 +32,7 @@ def projects_uuid(kili: Kili):
 
 
 def test_projects_query_archived_project(kili: Kili, projects_uuid: str):
-    search_query = f"%{projects_uuid}%"
+    search_query = f"%{projects_uuid}"
 
     # should have 2 projects not archived
     assert kili.count_projects(search_query=search_query, archived=False) == 2
@@ -50,63 +50,15 @@ def test_projects_query_archived_project(kili: Kili, projects_uuid: str):
     assert len(projects) == 3
 
 
-@pytest.fixture
-def projects(kili: Kili):
-    proj_1_id = kili.create_project(
-        input_type="TEXT",
-        json_interface={
-            "jobs": {
-                "CLASSIFICATION_JOB": {
-                    "content": {
-                        "categories": {"A": {"children": [], "name": "A"}},
-                        "input": "radio",
-                    },
-                    "instruction": "A",
-                    "mlTask": "CLASSIFICATION",
-                    "required": 1,
-                    "isChild": False,
-                }
-            }
-        },
-        title="test_projects.py e2e sdk 1",
-    )["id"]
-    proj_2_id = kili.create_project(
-        input_type="TEXT",
-        json_interface={
-            "jobs": {
-                "CLASSIFICATION_JOB": {
-                    "content": {
-                        "categories": {"A": {"children": [], "name": "A"}},
-                        "input": "radio",
-                    },
-                    "instruction": "A",
-                    "mlTask": "CLASSIFICATION",
-                    "required": 1,
-                    "isChild": False,
-                }
-            }
-        },
-        title="test_projects.py e2e sdk 2",
-    )["id"]
-
-    yield
-
-    kili.delete_project(proj_1_id)
-    kili.delete_project(proj_2_id)
-
-
 def test_given_projects_when_i_query_projects_with_filters_then_i_get_projects(
-    projects: None, kili: Kili
+    projects_uuid: str, kili: Kili
 ):
     # Given
-    _ = projects  # fixture
 
     # When
-    retrieved_projects = kili.projects(
-        search_query="test_projects.py e2e sdk _", fields=("jsonInterface",)
-    )
+    retrieved_projects = kili.projects(search_query=f"%{projects_uuid}", fields=("jsonInterface",))
 
     # Then
-    assert len(retrieved_projects) == 2
-    # make sure jsoninterface is serialized
+    assert len(retrieved_projects) == 3
+    # make sure jsoninterface is serialized (it's a GraphQL string type field)
     assert all(isinstance(proj["jsonInterface"], dict) for proj in retrieved_projects)

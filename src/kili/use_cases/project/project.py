@@ -7,6 +7,7 @@ from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_fixed
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.enums import ProjectType
 from kili.domain.project import InputType, ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
@@ -58,10 +59,8 @@ class ProjectUseCases:
         disable_tqdm: Optional[bool],
     ) -> Generator[Dict, None, None]:
         """Return a generator of projects that match the filter."""
-        return self._kili_api_gateway.projects(
+        return self._kili_api_gateway.list_projects(
             project_filters,
             fields,
-            first,
-            skip,
-            disable_tqdm,
+            options=QueryOptions(skip=skip, first=first, disable_tqdm=disable_tqdm),
         )

@@ -12,6 +12,12 @@ def get_projects_query(fragment: str) -> str:
         """
 
 
+GQL_COUNT_PROJECTS = """
+query countProjects($where: ProjectWhere!) {
+    data: countProjects(where: $where)
+}
+"""
+
 GQL_CREATE_PROJECT = """
 mutation($data: CreateProjectData!) {
     data: createProject(data: $data) {

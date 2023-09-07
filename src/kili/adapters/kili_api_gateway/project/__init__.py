@@ -4,7 +4,12 @@
 import json
 from typing import Dict, Generator, Optional
 
-from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
+from kili.adapters.kili_api_gateway.helpers.queries import (
+    PaginatedGraphQLQuery,
+    QueryOptions,
+    fragment_builder,
+    get_number_of_elements_to_query,
+)
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
 from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
@@ -12,7 +17,7 @@ from kili.exceptions import NotFound
 
 from ..base import BaseOperationMixin
 from .mappers import project_where_mapper
-from .operations import GQL_CREATE_PROJECT
+from .operations import GQL_COUNT_PROJECTS, GQL_CREATE_PROJECT
 
 
 class ProjectOperationMixin(BaseOperationMixin):
@@ -53,19 +58,21 @@ class ProjectOperationMixin(BaseOperationMixin):
             }
         }
         result = self.graphql_client.execute(GQL_CREATE_PROJECT, variables)
-        return ProjectId(result["id"])
+        return ProjectId(result["data"]["id"])
 
-    def projects(
+    def list_projects(
         self,
         project_filters: ProjectFilters,
         fields: ListOrTuple[str],
-        first: Optional[int],
-        skip: int,
-        disable_tqdm: Optional[bool],
+        options: QueryOptions,
     ) -> Generator[Dict, None, None]:
         """Return a generator of projects that match the filter."""
         fragment = fragment_builder(fields)
         query = get_projects_query(fragment)
         where = project_where_mapper(filters=project_filters)
-        payload = {"where": where, "first": first, "skip": skip}
-        raise NotImplementedError
+        nb_elements_to_query = get_number_of_elements_to_query(
+            self.graphql_client, GQL_COUNT_PROJECTS, where, options
+        )
+        return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
+            query, where, options, "Retrieving projects", nb_elements_to_query
+        )
