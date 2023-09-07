@@ -40,13 +40,10 @@ def test_given_a_query_returning_serialized_json_it_parses_json_fields(graphql_c
         fields,
         options=QueryOptions(disable_tqdm=None),
     )
-    assets = list(asset_gen)
 
     # then
-    assert assets == [
-        {
-            "jsonMetadata": {"test": 3},
-            "labels": [{"jsonResponse": {"jobs": {}}}],
-            "latestLabel": {"jsonResponse": {"jobs": {}}},
-        }
-    ]
+    assert next(asset_gen) == {
+        "jsonMetadata": {"test": 3},
+        "labels": [{"jsonResponse": {"jobs": {}}}],
+        "latestLabel": {"jsonResponse": {"jobs": {}}},
+    }

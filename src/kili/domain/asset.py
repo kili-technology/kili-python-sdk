@@ -44,6 +44,3 @@ class AssetFilters:
     inference_mark_lte: Optional[float] = None
     issue_type: Optional[IssueType] = None
     issue_status: Optional[IssueStatus] = None
-
-
-ASSET_JSON_FIELDS = ["jsonMetadata", "labels.jsonResponse", "latestLabel.jsonResponse"]

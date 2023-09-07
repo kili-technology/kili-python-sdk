@@ -3,8 +3,12 @@
 import json
 from typing import Dict
 
+from kili.domain.types import ListOrTuple
 
-def load_asset_json_fields(asset: Dict, fields) -> Dict:
+ASSET_JSON_FIELDS = ["jsonMetadata", "labels.jsonResponse", "latestLabel.jsonResponse"]
+
+
+def load_asset_json_fields(asset: Dict, fields: ListOrTuple[str]) -> Dict:
     """Load json fields of an asset."""
     if "jsonMetadata" in asset:
         asset["jsonMetadata"] = json.loads(asset["jsonMetadata"])

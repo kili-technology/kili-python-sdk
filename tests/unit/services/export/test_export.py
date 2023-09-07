@@ -3,7 +3,7 @@ import glob
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import ANY, patch
+from unittest.mock import patch
 from zipfile import ZipFile
 
 import pytest
@@ -864,7 +864,7 @@ def test_export_with_asset_filter_kwargs(mocker):
     ]
     expected_options = QueryOptions(disable_tqdm=None, first=None, skip=0)
     kili.kili_api_gateway.list_assets.assert_called_once_with(
-        expected_where, expected_fields, expected_options, None
+        expected_where, expected_fields, expected_options
     )
 
 

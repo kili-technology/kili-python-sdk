@@ -2,7 +2,10 @@
 
 from typing import Dict, Generator, List
 
-from kili.adapters.kili_api_gateway.asset.formatters import load_asset_json_fields
+from kili.adapters.kili_api_gateway.asset.formatters import (
+    ASSET_JSON_FIELDS,
+    load_asset_json_fields,
+)
 from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
 from kili.adapters.kili_api_gateway.asset.operations import (
     GQL_COUNT_ASSETS,
@@ -15,7 +18,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     fragment_builder,
     get_number_of_elements_to_query,
 )
-from kili.domain.asset import ASSET_JSON_FIELDS, AssetFilters
+from kili.domain.asset import AssetFilters
 from kili.domain.types import ListOrTuple
 
 from ..base import BaseOperationMixin
