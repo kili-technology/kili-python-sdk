@@ -2,12 +2,11 @@
 import warnings
 from typing import Dict, List, Optional
 
-import more_itertools
-
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import validate_category_search_query
+from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters
 from kili.domain.project import ProjectId
 from kili.services.export.types import ExportType
@@ -158,7 +157,7 @@ def fetch_assets(
     if download_media_function is not None:
         assets: List[Dict] = []
         # TODO: modify download_media function so it can take a generator of assets
-        for assets_batch in more_itertools.chunked(assets_gen, QUERY_BATCH_SIZE):
+        for assets_batch in batcher(assets_gen, QUERY_BATCH_SIZE):
             assets.extend(download_media_function(assets_batch))
     else:
         assets = list(assets_gen)

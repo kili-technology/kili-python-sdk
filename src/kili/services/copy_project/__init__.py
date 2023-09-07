@@ -5,11 +5,10 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional
 
-import more_itertools
-
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
+from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
@@ -180,7 +179,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
         with TemporaryDirectory() as tmp_dir:
             # TODO: modify download_media function so it can take a generator of assets
-            for assets_batch in more_itertools.chunked(assets_gen, QUERY_BATCH_SIZE):
+            for assets_batch in batcher(assets_gen, QUERY_BATCH_SIZE):
                 downloaded_assets = self._download_assets(
                     from_project_id, fields, tmp_dir, assets_batch
                 )
