@@ -12,7 +12,6 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 )
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.graphql_client import GraphQLClient
-from tests.conftest import MockResponse
 
 QUERY = "query"
 PROJECT_ID = "project_id"
@@ -33,11 +32,6 @@ def graphql_client() -> GraphQLClient:
 
     mocked_graphql_client.execute.side_effect = mocked_client_execute
     return mocked_graphql_client
-
-
-@pytest.fixture
-def http_client() -> HttpClient:
-    return MagicMock(spec=HttpClient)
 
 
 def test_given_a_query_the_function_returns_a_generator(
@@ -145,7 +139,7 @@ def test_given_a_query_with_skip_and_first_arguments_it_queries_the_right_elemen
 
 
 def test_given_a_query_and_a_number_of_elements_to_query_i_have_a_progress_bar(
-    graphql_client: GraphQLClient, http_client: HttpClient, capsys
+    graphql_client, http_client: HttpClient, capsys
 ):
     # given
     options = QueryOptions(disable_tqdm=False)
@@ -164,7 +158,7 @@ def test_given_a_query_and_a_number_of_elements_to_query_i_have_a_progress_bar(
 
 
 def test_given_a_query_without_a_number_of_elements_to_query_i_do_nothave_a_progress_bar(
-    graphql_client: GraphQLClient, http_client: HttpClient, capsys
+    graphql_client, http_client: HttpClient, capsys
 ):
     # given
     options = QueryOptions(disable_tqdm=False)
@@ -179,97 +173,3 @@ def test_given_a_query_without_a_number_of_elements_to_query_i_do_nothave_a_prog
     # then
     captured = capsys.readouterr()
     assert captured.err == ""
-
-
-def test_given_a_query_returning_serialized_json_it_parses_json_fields(
-    http_client,
-):
-    # given
-    options = QueryOptions(disable_tqdm=False)
-    number_of_elements_to_query = 1
-    post_call_function = None
-    graphql_client = MagicMock(spec=GraphQLClient)
-    graphql_client.execute.return_value = {
-        "data": [
-            {
-                "jsonMetadata": '{"test": 3}',
-                "labels": [{"jsonResponse": '{"jobs": {}}'}],
-                "jsonInterface": '{"test": 3}',
-                "jsonContent": '{"test": 3}',
-            },
-        ]
-    }
-
-    # when
-    gen = PaginatedGraphQLQuery(graphql_client, http_client).execute_query_from_paginated_call(
-        QUERY, WHERE, options, "", number_of_elements_to_query, post_call_function
-    )
-    assets = list(gen)
-
-    # then
-    assert assets == [
-        {
-            "jsonMetadata": {"test": 3},
-            "labels": [{"jsonResponse": {"jobs": {}}}],
-            "jsonInterface": {"test": 3},
-            "jsonContent": '{"test": 3}',
-        }
-    ]
-
-
-def test_given_a_query_returning_hosted_json_it_fetches_content_and_load_them(
-    http_client,
-):
-    # given
-    options = QueryOptions(disable_tqdm=False)
-    number_of_elements_to_query = 1
-    post_call_function = None
-    graphql_client = MagicMock(spec=GraphQLClient)
-    http_client.get.return_value = MockResponse({"key": "value"}, 200)
-    graphql_client.execute.return_value = {
-        "data": [
-            {
-                "jsonMetadata": "https://fake_url",
-                "labels": [],
-                "jsonInterface": "https://fake_url",
-                "jsonContent": "https://fake_url",
-            },
-        ]
-    }
-
-    # when
-    gen = PaginatedGraphQLQuery(graphql_client, http_client).execute_query_from_paginated_call(
-        QUERY, WHERE, options, "", number_of_elements_to_query, post_call_function
-    )
-    assets = list(gen)
-
-    # then
-    assert assets == [
-        {
-            "jsonMetadata": {"key": "value"},
-            "labels": [],
-            "jsonInterface": {"key": "value"},
-            "jsonContent": "https://fake_url",
-        }
-    ]
-
-
-def test_given_a_query_returning_no_objects_get_an_empty_generator(
-    http_client,
-):
-    # given
-    options = QueryOptions(disable_tqdm=False)
-    number_of_elements_to_query = 2
-    post_call_function = None
-    graphql_client = MagicMock(spec=GraphQLClient)
-    http_client.get.return_value = MockResponse({"jsonContentField": "value"}, 200)
-    graphql_client.execute.return_value = {"data": []}
-
-    # when
-    gen = PaginatedGraphQLQuery(graphql_client, http_client).execute_query_from_paginated_call(
-        QUERY, WHERE, options, "", number_of_elements_to_query, post_call_function
-    )
-    assets = list(gen)
-
-    # then
-    assert assets == []

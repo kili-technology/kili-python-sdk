@@ -38,7 +38,7 @@ class PaginatedGraphQLQuery:
 
     def __init__(self, graphql_client: GraphQLClient, http_client: HttpClient):
         self._graphql_client = graphql_client
-        self.http_client = http_client
+        self._http_client = http_client
 
     # pylint: disable=too-many-arguments
     def execute_query_from_paginated_call(

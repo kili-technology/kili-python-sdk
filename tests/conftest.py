@@ -8,18 +8,21 @@ from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient
 
 
-class MockResponse:
-    def __init__(self, json_data, status_code):
-        self.json_data = json_data
-        self.status_code = status_code
+@pytest.fixture
+def http_client(mocker: MockerFixture) -> HttpClient:
+    return mocker.MagicMock(spec=HttpClient)
 
-    def json(self):
-        return self.json_data
+
+@pytest.fixture
+def graphql_client(mocker: MockerFixture) -> GraphQLClient:
+    return mocker.MagicMock(spec=GraphQLClient)
 
 
 @pytest.fixture()
-def kili_api_gateway(mocker: MockerFixture):
+def kili_api_gateway(
+    mocker: MockerFixture, graphql_client: GraphQLClient, http_client: HttpClient
+) -> KiliAPIGateway:
     mock = mocker.MagicMock(spec=KiliAPIGateway)
-    mock.graphql_client = mocker.MagicMock(spec=GraphQLClient)
-    mock.http_client = mocker.MagicMock(spec=HttpClient)
+    mock.graphql_client = graphql_client
+    mock.http_client = http_client
     return mock
