@@ -10,6 +10,8 @@ from kili.adapters.kili_api_gateway.issue.operations import (
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.core.utils.pagination import BatchIteratorBuilder
 from kili.domain.issue import IssueFilters, IssueId, IssueType
+from kili.domain.label import LabelId
+from kili.domain.project import ProjectId
 from kili.utils import tqdm
 
 from ..base import BaseOperationMixin
@@ -19,10 +21,16 @@ class IssueOperationMixin(BaseOperationMixin):
     """GraphQL Mixin extending GraphQL Gateway class with Issue related operations."""
 
     def create_issues(
-        self, type_: IssueType, issues: List[IssueToCreateKiliAPIGatewayInput]
+        self,
+        project_id: ProjectId,
+        type_: IssueType,
+        issues: List[IssueToCreateKiliAPIGatewayInput],
     ) -> List[IssueId]:
         """Send a GraphQL request calling createIssues resolver."""
         created_issue_entities: List[IssueId] = []
+        label_asset_ids_map = self._get_labels_asset_ids_map(
+            project_id, [LabelId(issue.label_id) for issue in issues]
+        )  # TODO: should be done in the backend
         with tqdm.tqdm(total=len(issues), desc="Creating issues") as pbar:
             for issues_batch in BatchIteratorBuilder(issues):
                 batch_targeted_asset_ids = [issue.asset_id for issue in issues_batch]
@@ -33,7 +41,7 @@ class IssueOperationMixin(BaseOperationMixin):
                             "labelID": issue.label_id,
                             "objectMid": issue.object_mid,
                             "type": type_,
-                            "assetId": issue.asset_id,
+                            "assetId": label_asset_ids_map[issue.label_id],
                             "text": issue.text,
                         }
                         for issue in issues_batch

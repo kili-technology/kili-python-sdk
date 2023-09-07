@@ -16,8 +16,9 @@ from kili.core.helpers import (
     format_result,
     validate_category_search_query,
 )
+from kili.domain.label import LabelId
+from kili.domain.project import ProjectId
 from kili.entrypoints.mutations.asset import MutationsAsset
-from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.exceptions import MissingArgumentError
 from kili.orm import Asset
 from tests.fakes.fake_kili import FakeKili
@@ -119,10 +120,11 @@ def test_get_labels_asset_ids_map():
             ]
         ),
     ):
-        assert get_labels_asset_ids_map(
-            KiliAPIGateway(FakeKili.graphql_client, FakeKili.http_client),
-            "project_id",
-            ["label_id_1", "label_id_2"],
+        assert KiliAPIGateway(
+            FakeKili.graphql_client, FakeKili.http_client
+        )._get_labels_asset_ids_map(
+            ProjectId("project_id"),
+            [LabelId("label_id_1"), LabelId("label_id_2")],
         ) == {
             "label_id_1": "asset_id_1",
             "label_id_2": "asset_id_1",

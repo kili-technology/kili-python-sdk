@@ -1,3 +1,4 @@
+"""Methods for questions operations."""
 from typing import Dict, Generator, Iterable, List, Literal, Optional
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin

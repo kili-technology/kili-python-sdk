@@ -7,7 +7,6 @@ from typing import Optional
 class IssueToCreateKiliAPIGatewayInput:
     """Data about an issue to create needed in graphql createIssue resolver."""
 
-    label_id: Optional[str]
+    label_id: str
     object_mid: Optional[str]
-    asset_id: str
     text: Optional[str]
