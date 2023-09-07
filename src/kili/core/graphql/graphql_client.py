@@ -9,7 +9,7 @@ import threading
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Callable, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 from urllib.parse import urlparse
 
 import graphql
@@ -235,7 +235,7 @@ class GraphQLClient:
 
     def execute(
         self, query: Union[str, DocumentNode], variables: Optional[Dict] = None, **kwargs
-    ) -> Dict[str, object]:
+    ) -> Dict[str, Any]:
         """Execute a query.
 
         Args:
@@ -282,12 +282,12 @@ class GraphQLClient:
     )
     def _execute_with_retries(
         self, document: DocumentNode, variables: Optional[Dict], **kwargs
-    ) -> Dict[str, object]:
+    ) -> Dict[str, Any]:
         return self._raw_execute(document, variables, **kwargs)
 
     def _raw_execute(
         self, document: DocumentNode, variables: Optional[Dict], **kwargs
-    ) -> Dict[str, object]:
+    ) -> Dict[str, Any]:
         with _limiter.ratelimit("GraphQLClient.execute", delay=True), _execute_lock:
             return self._gql_client.execute(
                 document=document,
