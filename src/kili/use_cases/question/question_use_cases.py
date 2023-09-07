@@ -18,7 +18,7 @@ class QuestionUseCases(AbstractUseCases):
         disable_tqdm: Optional[bool],
     ) -> Generator[Dict[Literal["id"], QuestionId], None, None]:
         """Create questions in project."""
-        yield from self._kili_api_gateway.create_questions(
+        return self._kili_api_gateway.create_questions(
             project_id=project_id,
             questions=questions,
             disable_tqdm=disable_tqdm,

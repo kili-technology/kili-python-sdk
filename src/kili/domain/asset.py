@@ -5,6 +5,7 @@ from typing import List, NewType, Optional
 from kili.domain.issue import IssueStatus, IssueType
 
 AssetId = NewType("AssetId", str)
+AssetExternalId = NewType("AssetExternalId", str)
 
 
 @dataclass
