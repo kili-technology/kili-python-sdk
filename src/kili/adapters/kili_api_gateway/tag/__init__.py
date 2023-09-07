@@ -10,6 +10,7 @@ from kili.domain.types import ListOrTuple
 from ..base import BaseOperationMixin
 from .operations import (
     GQL_CHECK_TAG,
+    GQL_DELETE_TAG,
     GQL_UNCHECK_TAG,
     GQL_UPDATE_TAG,
     get_list_tags_by_org_query,
@@ -72,3 +73,9 @@ class TagOperationMixin(BaseOperationMixin):
             affected_rows=result["data"]["affectedRows"],
             updated_tag_id=TagId(result["data"]["updatedTag"]["id"]),
         )
+
+    def delete_tag(self, tag_id: TagId) -> bool:
+        """Send a GraphQL request calling deleteTag resolver."""
+        variables = {"tagId": tag_id}
+        result = self.graphql_client.execute(GQL_DELETE_TAG, variables)
+        return result["data"]
