@@ -9,7 +9,7 @@ import threading
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, Optional, Union
 from urllib.parse import urlparse
 
 import graphql
@@ -21,15 +21,23 @@ from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
 from pyrate_limiter import Duration, Limiter, RequestRate
+from tenacity import (
+    retry,
+    retry_all,
+    retry_if_exception_message,
+    retry_if_exception_type,
+    retry_if_not_exception_message,
+)
 from typing_extensions import LiteralString
 
+import kili.exceptions
 from kili import __version__
 from kili.adapters.http_client import HttpClient
 from kili.core.constants import MAX_CALLS_PER_MINUTE
 from kili.core.graphql.clientnames import GraphQLClientName
-from kili.exceptions import GraphQLError
 from kili.utils.logcontext import LogContext
 
+gql_requests_logger.setLevel(logging.WARNING)
 # _limiter and _execute_lock must be kept at module-level
 # they need to be shared between all instances of Kili client within the same process
 
@@ -80,28 +88,19 @@ class GraphQLClient:
 
         self.ws_endpoint = self.endpoint.replace("http", "ws")
 
-        gql_requests_logger.setLevel(logging.WARNING)
-
-        retry_status_forcelist: List[int] = list(RequestsHTTPTransport._default_retry_codes)
-        # backend can return 401 errors even though we have a valid api key
-        if 401 not in retry_status_forcelist:
-            retry_status_forcelist.append(401)
-        # backend can return 500 errors for invalid queries
-        if 500 in retry_status_forcelist:
-            retry_status_forcelist.remove(500)
-
         self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
             headers=self._get_headers(),
-            cookies=None,
-            auth=None,
-            use_json=True,
             timeout=30,
             verify=verify,
-            retries=20,
-            method="POST",
+            retries=10,
             retry_backoff_factor=0.5,
-            retry_status_forcelist=retry_status_forcelist,
+            retry_status_forcelist=(
+                429,  # 429 Too Many Requests
+                502,  # 502 Bad Gateway
+                503,  # 503 Service Unavailable
+                504,  # 504 Gateway Timeout
+            ),
         )
 
         if self.enable_schema_caching is True:
@@ -236,7 +235,7 @@ class GraphQLClient:
 
     def execute(
         self, query: Union[str, DocumentNode], variables: Optional[Dict] = None, **kwargs
-    ) -> Dict[str, Any]:
+    ) -> Dict[str, object]:
         """Execute a query.
 
         Args:
@@ -244,45 +243,63 @@ class GraphQLClient:
             variables: the payload of the query
             kwargs: additional arguments to pass to the GraphQL client
         """
-
-        def _execute(
-            document: DocumentNode, variables: Optional[Dict] = None, **kwargs
-        ) -> Dict[str, Any]:
-            try:
-                with _limiter.ratelimit("GraphQLClient.execute", delay=True), _execute_lock:
-                    result = self._gql_client.execute(
-                        document=document,
-                        variable_values=variables,
-                        extra_args={
-                            "headers": {
-                                **(self._gql_transport.headers or {}),
-                                **LogContext(),
-                            }
-                        },
-                        **kwargs,
-                    )
-
-            except graphql.GraphQLError as err:  # local validation error
-                raise GraphQLError(error=err.message) from err
-            except exceptions.TransportQueryError as err:  # graphql query refused by the backend
-                raise GraphQLError(error=err.errors) from err
-
-            return result
-
         document = query if isinstance(query, DocumentNode) else gql(query)
 
         try:
-            return _execute(document, variables, **kwargs)
+            result = self._execute_with_retries(document, variables, **kwargs)
 
-        except GraphQLError as err:
-            # if error is due do parsing or local validation of the query (graphql.GraphQLError)
+        except graphql.GraphQLError:  # local validation error
+            # the local schema might be outdated
             # we refresh the schema and retry once
-            if isinstance(err.__cause__, graphql.GraphQLError):
-                self._purge_graphql_schema_cache_dir()
-                self._gql_client = self._initizalize_graphql_client()
-                return _execute(document, variables, **kwargs)  # if it fails again, we crash here
+            self._purge_graphql_schema_cache_dir()
+            self._gql_client = self._initizalize_graphql_client()
+            try:
+                return self._execute_with_retries(document, variables, **kwargs)
 
-            raise err
+            except graphql.GraphQLError as err:
+                # even after updating the schema, the query is invalid , we crash
+                raise kili.exceptions.GraphQLError(error=err.message) from err
+
+            # the query is valid but the server refused it, we crash
+            except exceptions.TransportQueryError as err:
+                raise kili.exceptions.GraphQLError(error=err.errors) from err
+
+        except exceptions.TransportQueryError as err:  # remove validation error
+            # the server refused the query after some retries, we crash
+            raise kili.exceptions.GraphQLError(error=err.errors) from err
+
+        return result
+
+    @retry(
+        reraise=True,  # re-raise the last exception
+        retry=retry_all(
+            retry_if_exception_type(exceptions.TransportQueryError),  # server error
+            retry_if_not_exception_message(
+                match=r'Variable "(\$\w+)" of required type "(\w+!)" was not provided.'
+            ),
+            retry_if_exception_message(match="Invalid request made to Flagsmith API"),
+        ),
+    )
+    def _execute_with_retries(
+        self, document: DocumentNode, variables: Optional[Dict], **kwargs
+    ) -> Dict[str, object]:
+        return self._raw_execute(document, variables, **kwargs)
+
+    def _raw_execute(
+        self, document: DocumentNode, variables: Optional[Dict], **kwargs
+    ) -> Dict[str, object]:
+        with _limiter.ratelimit("GraphQLClient.execute", delay=True), _execute_lock:
+            return self._gql_client.execute(
+                document=document,
+                variable_values=variables,
+                extra_args={
+                    "headers": {
+                        **(self._gql_transport.headers or {}),
+                        **LogContext(),
+                    }
+                },
+                **kwargs,
+            )
 
 
 GQL_WS_SUBPROTOCOL = "graphql-ws"
