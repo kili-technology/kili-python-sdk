@@ -20,7 +20,7 @@ InputType = Literal[
 class ProjectFilters:
     """Project filters for running a project search."""
 
-    id: Optional[ProjectId]
+    id: Optional[ProjectId]  # pylint: disable=invalid-name
     archived: Optional[bool]
     search_query: Optional[str]
     should_relaunch_kpi_computation: Optional[bool]
