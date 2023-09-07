@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Asset related operations."""
 
-from typing import Dict, Generator, List, Sequence
+from typing import Dict, Generator, List
 
 from kili.adapters.kili_api_gateway.asset.formatters import load_asset_json_fields
 from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
@@ -16,6 +16,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     get_number_of_elements_to_query,
 )
 from kili.domain.asset import ASSET_JSON_FIELDS, AssetFilters
+from kili.domain.types import ListOrTuple
 
 from ..base import BaseOperationMixin
 
@@ -26,7 +27,7 @@ class AssetOperationMixin(BaseOperationMixin):
     def list_assets(
         self,
         filters: AssetFilters,
-        fields: Sequence[str],
+        fields: ListOrTuple[str],
         options: QueryOptions,
     ) -> Generator[Dict, None, None]:
         """List assets with given options."""

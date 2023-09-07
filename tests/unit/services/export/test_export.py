@@ -862,7 +862,7 @@ def test_export_with_asset_filter_kwargs(mocker):
         "latestLabel.labelType",
         "latestLabel.modelName",
     ]
-    expected_options = QueryOptions(disable_tqdm=False, first=None, skip=0)
+    expected_options = QueryOptions(disable_tqdm=None, first=None, skip=0)
     kili.kili_api_gateway.list_assets.assert_called_once_with(
         expected_where, expected_fields, expected_options, None
     )

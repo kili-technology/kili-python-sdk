@@ -1,14 +1,15 @@
 """Service module for projects."""
 
-from typing import Dict, Sequence
+from typing import Dict
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
+from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
 
 # TODO: delete since its in ProjectOperationMixin
-def get_project(kili, project_id: str, fields: Sequence[str]) -> Dict:
+def get_project(kili, project_id: str, fields: ListOrTuple[str]) -> Dict:
     """Get a project from its id or raise a NotFound Error if not found."""
     projects = list(
         ProjectQuery(kili.graphql_client, kili.http_client)(

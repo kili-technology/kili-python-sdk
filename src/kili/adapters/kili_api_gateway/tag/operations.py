@@ -8,6 +8,25 @@ mutation checkTag($data: CheckedTagData!) {
 }
 """
 
+GQL_UNCHECK_TAG = """
+mutation uncheckTag($projectId: ID!, $tagId: ID!) {
+    data: uncheckTag(projectId: $projectId, tagId: $tagId) {
+        id
+    }
+}
+"""
+
+GQL_UPDATE_TAG = """
+mutation updateTag($tagId: ID!, $data: UpdateTagData!) {
+    data: updateTag(tagId: $tagId, data: $data) {
+        affectedRows
+        updatedTag {
+            id
+        }
+    }
+}
+"""
+
 
 def get_list_tags_by_org_query(fragment: str) -> str:
     """Return the GraphQL query to list tags by organization."""

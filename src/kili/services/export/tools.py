@@ -77,7 +77,7 @@ def fetch_assets(
     asset_ids: Optional[List[str]],
     export_type: ExportType,
     label_type_in: Optional[List[str]],
-    disable_tqdm: bool,
+    disable_tqdm: Optional[bool],
     download_media: bool,
     local_media_dir: Optional[str],
     asset_filter_kwargs: Optional[Dict[str, object]],

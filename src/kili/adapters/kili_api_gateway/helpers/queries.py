@@ -1,13 +1,14 @@
 """GraphQL module."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generator, NamedTuple, Optional, Sequence
+from typing import Any, Dict, Generator, NamedTuple, Optional
 
 from typeguard import typechecked
 
 from kili.adapters.http_client import HttpClient
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.graphql_client import GraphQLClient
+from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
 
@@ -130,7 +131,7 @@ def get_number_of_elements_to_query(
 
 
 @typechecked
-def fragment_builder(fields: Sequence[str]) -> str:
+def fragment_builder(fields: ListOrTuple[str]) -> str:
     """Build a GraphQL fragment for a list of fields to query.
 
     Args:

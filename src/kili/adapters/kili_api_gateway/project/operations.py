@@ -10,3 +10,12 @@ def get_project_query(fragment: str) -> str:
             }}
         }}
         """
+
+
+GQL_CREATE_PROJECT = """
+mutation($data: CreateProjectData!) {
+    data: createProject(data: $data) {
+        id
+    }
+}
+"""

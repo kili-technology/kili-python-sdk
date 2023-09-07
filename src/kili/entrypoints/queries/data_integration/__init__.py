@@ -33,7 +33,7 @@ class QueriesDataIntegration(BaseOperationEntrypointMixin):
         fields: List[str] = ["name", "id", "platform", "status"],
         first: Optional[int] = None,
         skip: int = 0,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -50,7 +50,7 @@ class QueriesDataIntegration(BaseOperationEntrypointMixin):
         fields: List[str] = ["name", "id", "platform", "status"],
         first: Optional[int] = None,
         skip: int = 0,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -67,7 +67,7 @@ class QueriesDataIntegration(BaseOperationEntrypointMixin):
         fields: List[str] = ["name", "id", "platform", "status"],
         first: Optional[int] = None,
         skip: int = 0,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:

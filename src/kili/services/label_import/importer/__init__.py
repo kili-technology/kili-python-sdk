@@ -34,7 +34,7 @@ from kili.utils import tqdm
 class LoggerParams(NamedTuple):
     """Contains all parameters related to logging."""
 
-    disable_tqdm: bool
+    disable_tqdm: Optional[bool]
     level: LogLevel
 
 

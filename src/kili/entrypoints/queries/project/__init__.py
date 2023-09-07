@@ -1,20 +1,12 @@
 """Project queries."""
 
-from typing import (
-    Dict,
-    Generator,
-    Iterable,
-    List,
-    Literal,
-    Optional,
-    Sequence,
-    overload,
-)
+from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -38,7 +30,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: Sequence[str] = (
+        fields: ListOrTuple[str] = (
             "consensusTotCoverage",
             "id",
             "inputType",
@@ -52,7 +44,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
             "title",
         ),
         first: Optional[int] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -68,7 +60,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: Sequence[str] = (
+        fields: ListOrTuple[str] = (
             "consensusTotCoverage",
             "id",
             "inputType",
@@ -82,7 +74,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
             "title",
         ),
         first: Optional[int] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -98,7 +90,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         skip: int = 0,
-        fields: Sequence[str] = (
+        fields: ListOrTuple[str] = (
             "consensusTotCoverage",
             "id",
             "inputType",
@@ -112,7 +104,7 @@ class QueriesProject(BaseOperationEntrypointMixin):
             "title",
         ),
         first: Optional[int] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:

@@ -6,7 +6,7 @@ from typing import Any, List, Optional
 from kili.exceptions import IncompatibleArgumentsError, MissingArgumentError
 
 
-def disable_tqdm_if_as_generator(as_generator: bool, disable_tqdm: bool):
+def disable_tqdm_if_as_generator(as_generator: bool, disable_tqdm: Optional[bool]):
     """Disable tqdm in user-facing queries method if the return type is asked as a generator."""
     if as_generator and not disable_tqdm:
         disable_tqdm = True

@@ -8,9 +8,17 @@ def verify_argument_ranges(
     consensus_tot_coverage: Optional[int],
     min_consensus_size: Optional[int],
     review_coverage: Optional[int],
-):
-    """Ensure that all arguments are set in a correct range or raise
-    a ValueError otherwise."""
+) -> None:
+    """Ensure that all arguments are set in a correct range.
+
+    Args:
+        consensus_tot_coverage: consensus_tot_coverage
+        min_consensus_size: min_consensus_size
+        review_coverage: review_coverage
+
+    Raises:
+        ValueError: if one of the arguments is not in the correct range.
+    """
     if consensus_tot_coverage is not None and (
         consensus_tot_coverage < 0 or consensus_tot_coverage > 100
     ):
