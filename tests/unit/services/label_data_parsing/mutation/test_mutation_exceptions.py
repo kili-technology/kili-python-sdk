@@ -123,7 +123,6 @@ def test_mutate_multi_class_classif_add_too_many_categories(input_):
                 "mlTask": "CLASSIFICATION",
                 "required": 0,
                 "isChild": False,
-                "isChild": False,
             }
         }
     }

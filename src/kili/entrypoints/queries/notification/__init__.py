@@ -38,7 +38,7 @@ class QueriesNotification(BaseOperationEntrypointMixin):
         notification_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -60,7 +60,7 @@ class QueriesNotification(BaseOperationEntrypointMixin):
         notification_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -82,7 +82,7 @@ class QueriesNotification(BaseOperationEntrypointMixin):
         notification_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:

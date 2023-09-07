@@ -57,7 +57,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         export_params: ExportParams,
         kili,
         logger: logging.Logger,
-        disable_tqdm: bool,
+        disable_tqdm: Optional[bool],
         content_repository: AbstractContentRepository,
     ) -> None:
         """Initialize the exporter."""
@@ -67,7 +67,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.label_format: LabelFormat = export_params.label_format
         self.single_file: bool = export_params.single_file
         self.split_option: SplitOption = export_params.split_option
-        self.disable_tqdm: bool = disable_tqdm
+        self.disable_tqdm: Optional[bool] = disable_tqdm
         self.kili = kili
         self.logger: logging.Logger = logger
         self.content_repository: AbstractContentRepository = content_repository

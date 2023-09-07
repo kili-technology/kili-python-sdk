@@ -292,7 +292,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
         copy_members: bool = True,
         copy_assets: bool = False,
         copy_labels: bool = False,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
     ) -> str:
         """Create new project from an existing project.
 

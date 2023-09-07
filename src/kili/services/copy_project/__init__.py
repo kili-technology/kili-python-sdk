@@ -48,7 +48,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         copy_members: bool,
         copy_assets: bool,
         copy_labels: bool,
-        disable_tqdm: bool,
+        disable_tqdm: Optional[bool],
     ) -> str:
         """Copy an existing project."""
         self.disable_tqdm = disable_tqdm
