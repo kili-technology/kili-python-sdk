@@ -56,15 +56,10 @@ class ProjectUseCases:
         first: Optional[int],
         skip: int,
         disable_tqdm: Optional[bool],
-    ) -> Generator:
+    ) -> Generator[Dict, None, None]:
+        """Return a generator of projects that match the filter."""
         return self._kili_api_gateway.projects(
-            project_id,
-            search_query,
-            should_relaunch_kpi_computation,
-            updated_at_gte,
-            updated_at_lte,
-            archived,
-            tag_ids,
+            project_filters,
             fields,
             first,
             skip,

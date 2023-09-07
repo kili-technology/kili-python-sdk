@@ -2,7 +2,7 @@
 
 
 import json
-from typing import Dict, Optional
+from typing import Dict, Generator, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
@@ -62,8 +62,10 @@ class ProjectOperationMixin(BaseOperationMixin):
         first: Optional[int],
         skip: int,
         disable_tqdm: Optional[bool],
-    ):
+    ) -> Generator[Dict, None, None]:
+        """Return a generator of projects that match the filter."""
         fragment = fragment_builder(fields)
         query = get_projects_query(fragment)
         where = project_where_mapper(filters=project_filters)
         payload = {"where": where, "first": first, "skip": skip}
+        raise NotImplementedError

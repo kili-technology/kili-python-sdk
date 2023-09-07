@@ -5,7 +5,7 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, cast, ove
 from typeguard import typechecked
 
 from kili.core.enums import ProjectType
-from kili.domain.project import InputType
+from kili.domain.project import InputType, ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.use_cases.project.project import ProjectUseCases
 from kili.use_cases.tag import TagUseCases
@@ -99,6 +99,7 @@ class ProjectClientMethods(BaseClientMethods):
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
+        starred: Optional[bool] = None,
         tags_in: Optional[ListOrTuple[str]] = None,
         fields: ListOrTuple[str] = (
             "consensusTotCoverage",
@@ -131,6 +132,7 @@ class ProjectClientMethods(BaseClientMethods):
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
+        starred: Optional[bool] = None,
         tags_in: Optional[ListOrTuple[str]] = None,
         fields: ListOrTuple[str] = (
             "consensusTotCoverage",
@@ -163,6 +165,7 @@ class ProjectClientMethods(BaseClientMethods):
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
+        starred: Optional[bool] = None,
         tags_in: Optional[ListOrTuple[str]] = None,
         fields: ListOrTuple[str] = (
             "consensusTotCoverage",
@@ -195,6 +198,8 @@ class ProjectClientMethods(BaseClientMethods):
             updated_at_lte: Returned projects should have a label whose update date is lower or equal to this date.
             archived: If `True`, only archived projects are returned, if `False`, only active projects are returned.
                 `None` disables this filter.
+            starred: If `True`, only starred projects are returned, if `False`, only unstarred projects are returned.
+                `None` disables this filter.
             tags_in: Returned projects should have at least one of these tags.
             fields: All the fields to request among the possible fields for the projects.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#project) for all possible fields.
@@ -218,18 +223,24 @@ class ProjectClientMethods(BaseClientMethods):
         )
 
         projects_gen = ProjectUseCases(self.kili_api_gateway).list_projects(
-            project_id,
-            search_query,
-            should_relaunch_kpi_computation,
-            updated_at_gte,
-            updated_at_lte,
-            archived,
-            tag_ids,
+            ProjectFilters(
+                id=ProjectId(project_id) if project_id else None,
+                archived=archived,
+                search_query=search_query,
+                should_relaunch_kpi_computation=should_relaunch_kpi_computation,
+                starred=starred,
+                updated_at_gte=updated_at_gte,
+                updated_at_lte=updated_at_lte,
+                created_at_gte=None,
+                created_at_lte=None,
+                tag_ids=tag_ids,
+            ),
             fields,
             first,
             skip,
             disable_tqdm,
         )
+
         if as_generator:
             return projects_gen
         return list(projects_gen)

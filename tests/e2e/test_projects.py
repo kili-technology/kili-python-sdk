@@ -48,3 +48,65 @@ def test_projects_query_archived_project(kili: Kili, projects_uuid: str):
     assert kili.count_projects(search_query=search_query) == 3
     projects = kili.projects(fields=["id", "title"], search_query=search_query)
     assert len(projects) == 3
+
+
+@pytest.fixture
+def projects(kili: Kili):
+    proj_1_id = kili.create_project(
+        input_type="TEXT",
+        json_interface={
+            "jobs": {
+                "CLASSIFICATION_JOB": {
+                    "content": {
+                        "categories": {"A": {"children": [], "name": "A"}},
+                        "input": "radio",
+                    },
+                    "instruction": "A",
+                    "mlTask": "CLASSIFICATION",
+                    "required": 1,
+                    "isChild": False,
+                }
+            }
+        },
+        title="test_projects.py e2e sdk 1",
+    )["id"]
+    proj_2_id = kili.create_project(
+        input_type="TEXT",
+        json_interface={
+            "jobs": {
+                "CLASSIFICATION_JOB": {
+                    "content": {
+                        "categories": {"A": {"children": [], "name": "A"}},
+                        "input": "radio",
+                    },
+                    "instruction": "A",
+                    "mlTask": "CLASSIFICATION",
+                    "required": 1,
+                    "isChild": False,
+                }
+            }
+        },
+        title="test_projects.py e2e sdk 2",
+    )["id"]
+
+    yield
+
+    kili.delete_project(proj_1_id)
+    kili.delete_project(proj_2_id)
+
+
+def test_given_projects_when_i_query_projects_with_filters_then_i_get_projects(
+    projects: None, kili: Kili
+):
+    # Given
+    _ = projects  # fixture
+
+    # When
+    retrieved_projects = kili.projects(
+        search_query="test_projects.py e2e sdk _", fields=("jsonInterface",)
+    )
+
+    # Then
+    assert len(retrieved_projects) == 2
+    # make sure jsoninterface is serialized
+    assert all(isinstance(proj["jsonInterface"], dict) for proj in retrieved_projects)
