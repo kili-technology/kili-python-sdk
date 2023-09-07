@@ -132,7 +132,7 @@ def test_given_tags_when_i_delete_them_then_it_works(
     kili.kili_api_gateway.list_tags_by_org = mocker.MagicMock(return_value=tags)
 
     # When
-    kili.remove_tag(tag_name="tag1")
+    kili.delete_tag(tag_name="tag1")
 
     # Then
     kili.kili_api_gateway.graphql_client.execute.assert_called_once_with(

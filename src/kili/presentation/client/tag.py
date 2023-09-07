@@ -150,7 +150,7 @@ class TagClientMethods(BaseClientMethods):
             )
         }
 
-    def remove_tag(self, tag_name: Optional[str] = None, tag_id: Optional[str] = None) -> bool:
+    def delete_tag(self, tag_name: Optional[str] = None, tag_id: Optional[str] = None) -> bool:
         """Delete the given tag.
 
         This operation is organization-wide.
@@ -170,4 +170,4 @@ class TagClientMethods(BaseClientMethods):
             if tag_name is None:
                 raise ValueError("Either `tag_name` or `tag_id` must be provided.")
             tag_id = tag_use_cases.get_tag_ids_from_labels(labels=(tag_name,))[0]
-        return tag_use_cases.remove_tag(tag_id=tag_id)
+        return tag_use_cases.delete_tag(tag_id=tag_id)

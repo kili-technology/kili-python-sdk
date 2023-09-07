@@ -113,7 +113,7 @@ class TagUseCases:
         """
         return self._kili_api_gateway.update_tag(tag_id=TagId(tag_id), label=new_tag_name)
 
-    def remove_tag(self, tag_id: str) -> bool:
+    def delete_tag(self, tag_id: str) -> bool:
         """Delete the given tag.
 
         This operation is organization-wide.
