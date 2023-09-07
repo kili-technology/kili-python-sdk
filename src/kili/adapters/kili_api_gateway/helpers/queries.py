@@ -1,11 +1,9 @@
 """GraphQL module."""
 
-from abc import ABC, abstractmethod
 from typing import Any, Dict, Generator, NamedTuple, Optional
 
 from typeguard import typechecked
 
-from kili.adapters.http_client import HttpClient
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.types import ListOrTuple
@@ -20,25 +18,14 @@ class QueryOptions(NamedTuple):
     skip: int = 0
 
 
-class AbstractQueryWhere(ABC):
-    """Abtsract class for defining the where payload to send in a graphQL query."""
-
-    @abstractmethod
-    def build_gql_where(self):
-        """Build the GraphQL where variable sent in the resolver from the
-        arguments given to the where class."""
-        raise NotImplementedError
-
-
 class PaginatedGraphQLQuery:
     """Query class for querying Kili objects.
 
     It factorizes code for executing paginated queries.
     """
 
-    def __init__(self, graphql_client: GraphQLClient, http_client: HttpClient):
+    def __init__(self, graphql_client: GraphQLClient):
         self._graphql_client = graphql_client
-        self._http_client = http_client
 
     # pylint: disable=too-many-arguments
     def execute_query_from_paginated_call(
@@ -47,18 +34,20 @@ class PaginatedGraphQLQuery:
         where: Dict[str, Any],
         options: QueryOptions,
         tqdm_desc: str,
-        nb_elements_to_query: Optional[int],
+        count_query: Optional[str],
     ) -> Generator[Dict, None, None]:
-        """Build a row generator from paginated calls.
+        """Build a row generator from paginated query calls with the first and skip pattern.
 
         Args:
             query: The object query to execute and to send to graphQL, in string format
             where: The where payload to send in the graphQL query
             options: The query options with skip and first and disable_tqdm
             tqdm_desc: The description to show in the progress bar
-            nb_elements_to_query: The expected number of elements to query.
+            count_query: The query to count the number of objects to be retrieved.
+                It should have the same where input as the query.
                 If given, it will show a progress bar if tqdm is not disabled in options
         """
+        nb_elements_to_query = self.get_number_of_elements_to_query(count_query, where, options)
         disable_tqdm = nb_elements_to_query is None or options.disable_tqdm
 
         if nb_elements_to_query == 0:
@@ -98,36 +87,36 @@ class PaginatedGraphQLQuery:
                     if len(elements) < first:
                         break
 
+    def get_number_of_elements_to_query(
+        self,
+        count_query: Optional[str],
+        where: Dict[str, Any],
+        options: QueryOptions,
+    ) -> Optional[int]:
+        """Give the total number of elements to query for one query that will be paginated.
 
-def get_number_of_elements_to_query(
-    graphql_client: GraphQLClient,
-    count_query: str,
-    where: Dict[str, Any],
-    options: QueryOptions,
-) -> int:
-    """Give the total number of elements to query for one query that will be paginated.
+        It uses both the argument first given by the user
+        and the total number of available objects obtained with a graphQL count query
 
-    It uses both the argument first given by the user
-    and the total number of available objects obtained with a graphQL count query
+        Args:
+            count_query: the query to count the number of objects to be retrieved
+            where: the where payload to the count query,
+            options: the query options with skip and first
 
-    Args:
-        graphql_client: The graphQL client
-        where: the where payload to the count query,
-        options: the query options with skip and first
-        count_query: the count query
-
-    Returns:
-        The number of elements to query
-    """
-    first = options.first
-    skip = options.skip
-    payload = {"where": where}
-    count_result = graphql_client.execute(count_query, payload)
-    nb_elements = count_result["data"]
-    nb_elements_queried = max(nb_elements - skip, 0)
-    if first is None:
-        return nb_elements_queried
-    return min(nb_elements_queried, first)
+        Returns:
+            The number of elements to query
+        """
+        if count_query is None:
+            return None
+        first = options.first
+        skip = options.skip
+        payload = {"where": where}
+        count_result = self._graphql_client.execute(count_query, payload)
+        nb_elements = count_result["data"]
+        nb_elements_queried = max(nb_elements - skip, 0)
+        if first is None:
+            return nb_elements_queried
+        return min(nb_elements_queried, first)
 
 
 @typechecked

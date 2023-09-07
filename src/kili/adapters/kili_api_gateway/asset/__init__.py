@@ -16,7 +16,6 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
     fragment_builder,
-    get_number_of_elements_to_query,
 )
 from kili.domain.asset import AssetFilters
 from kili.domain.types import ListOrTuple
@@ -37,13 +36,8 @@ class AssetOperationMixin(BaseOperationMixin):
         fragment = fragment_builder(fields)
         query = get_asset_query(fragment)
         where = asset_where_mapper(filters)
-        nb_elements_to_query = get_number_of_elements_to_query(
-            self.graphql_client, GQL_COUNT_ASSETS, where, options
-        )
-        assets_gen = PaginatedGraphQLQuery(
-            self.graphql_client, self.http_client
-        ).execute_query_from_paginated_call(
-            query, where, options, "Retrieving assets", nb_elements_to_query
+        assets_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
+            query, where, options, "Retrieving assets", GQL_COUNT_ASSETS
         )
         if any(json_field in fields for json_field in ASSET_JSON_FIELDS):
             assets_gen = (load_asset_json_fields(asset, fields) for asset in assets_gen)
