@@ -6,7 +6,9 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
+from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
@@ -173,17 +175,15 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             "jsonMetadata",
         )
 
-        def download_and_upload_assets(assets: List[Dict]) -> List[Dict]:
-            with TemporaryDirectory() as tmp_dir:
-                downloaded_assets = self._download_assets(from_project_id, fields, tmp_dir, assets)
-                return self._upload_assets(new_project_id, downloaded_assets)
+        assets_gen = self.kili.kili_api_gateway.list_assets(filters, fields, options)
 
-        asset_gen = self.kili.kili_api_gateway.list_assets(
-            filters, fields, options, download_and_upload_assets
-        )
-        # Generator needs to be iterated over to actually fetch assets
-        for _ in asset_gen:
-            pass
+        with TemporaryDirectory() as tmp_dir:
+            # TODO: modify download_media function so it can take a generator of assets
+            for assets_batch in batcher(assets_gen, QUERY_BATCH_SIZE):
+                downloaded_assets = self._download_assets(
+                    from_project_id, fields, tmp_dir, assets_batch
+                )
+                self._upload_assets(new_project_id, downloaded_assets)
 
     def _download_assets(
         self, from_project_id: str, fields: ListOrTuple[str], tmp_dir: Path, assets: List[Dict]
@@ -247,7 +247,6 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             AssetFilters(project_id=new_project_id),
             ["id", "externalId"],
             QueryOptions(disable_tqdm=True),
-            None,
         )
         assets_new_project_map = {asset["externalId"]: asset["id"] for asset in assets_new_project}
 

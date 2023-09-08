@@ -27,6 +27,12 @@ mutation updateTag($tagId: ID!, $data: UpdateTagData!) {
 }
 """
 
+GQL_DELETE_TAG = """
+mutation deleteTag($tagId: ID!) {
+    data: deleteTag(tagId: $tagId)
+}
+"""
+
 
 def get_list_tags_by_org_query(fragment: str) -> str:
     """Return the GraphQL query to list tags by organization."""

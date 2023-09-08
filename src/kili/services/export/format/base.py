@@ -104,7 +104,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         )
 
     @abstractmethod
-    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
+    def process_and_save(self, assets: List[Asset], output_filename: Path) -> None:
         """Converts the asset and save them into an archive file."""
 
     def make_archive(self, root_folder: Path, output_filename: Path) -> Path:
@@ -209,7 +209,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         )
         return len(list(data_connections_gen)) > 0
 
-    def _check_geotiff_export_compatibility(self, assets: List[Dict]) -> None:
+    def _check_geotiff_export_compatibility(self, assets: List[Asset]) -> None:
         # pylint: disable=line-too-long
         """Check if one of the assets is a geotiff asset, and if the export params are compatible.
 

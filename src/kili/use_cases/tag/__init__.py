@@ -112,3 +112,18 @@ class TagUseCases:
             The updated tag.
         """
         return self._kili_api_gateway.update_tag(tag_id=TagId(tag_id), label=new_tag_name)
+
+    def delete_tag(self, tag_id: str) -> bool:
+        """Delete the given tag.
+
+        This operation is organization-wide.
+        The tag will no longer be proposed for projects of the organization.
+        If this tag is checked for one or more projects of the organization, it will be unchecked.
+
+        Args:
+            tag_id: Id of the tag to remove.
+
+        Returns:
+            Whether the tag was successfully removed.
+        """
+        return self._kili_api_gateway.delete_tag(tag_id=TagId(tag_id))
