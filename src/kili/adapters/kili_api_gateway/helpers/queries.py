@@ -47,7 +47,11 @@ class PaginatedGraphQLQuery:
                 It should have the same where input as the query.
                 If given, it will show a progress bar if tqdm is not disabled in options
         """
-        nb_elements_to_query = self.get_number_of_elements_to_query(count_query, where, options)
+        nb_elements_to_query = (
+            self.get_number_of_elements_to_query(count_query, where, options)
+            if count_query is not None
+            else None
+        )
         disable_tqdm = nb_elements_to_query is None or options.disable_tqdm
 
         if nb_elements_to_query == 0:
@@ -89,10 +93,10 @@ class PaginatedGraphQLQuery:
 
     def get_number_of_elements_to_query(
         self,
-        count_query: Optional[str],
+        count_query: str,
         where: Dict[str, Any],
         options: QueryOptions,
-    ) -> Optional[int]:
+    ) -> int:
         """Give the total number of elements to query for one query that will be paginated.
 
         It uses both the argument first given by the user
@@ -106,8 +110,6 @@ class PaginatedGraphQLQuery:
         Returns:
             The number of elements to query
         """
-        if count_query is None:
-            return None
         first = options.first
         skip = options.skip
         payload = {"where": where}
