@@ -8,7 +8,6 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
     fragment_builder,
-    get_number_of_elements_to_query,
 )
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
 from kili.domain.project import ProjectFilters, ProjectId
@@ -70,9 +69,6 @@ class ProjectOperationMixin(BaseOperationMixin):
         fragment = fragment_builder(fields)
         query = get_projects_query(fragment)
         where = project_where_mapper(filters=project_filters)
-        nb_elements_to_query = get_number_of_elements_to_query(
-            self.graphql_client, GQL_COUNT_PROJECTS, where, options
-        )
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
-            query, where, options, "Retrieving projects", nb_elements_to_query
+            query, where, options, "Retrieving projects", GQL_COUNT_PROJECTS
         )

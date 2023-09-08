@@ -13,5 +13,5 @@ class BaseOperationMixin(ABC):
     It is not meant to be used and instantiated directly.
     """
 
-    graphql_client: GraphQLClient  # instantiated in the Kili API Gateway child class
-    http_client: HttpClient  # instantiated in the Kili API Gateway child class
+    graphql_client: GraphQLClient  # instantiated in the KiliAPIGateway child class
+    http_client: HttpClient  # instantiated in the KiliAPIGateway child class
