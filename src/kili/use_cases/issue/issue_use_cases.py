@@ -25,5 +25,5 @@ class IssueUseCases(AbstractUseCases):
             for issue in issues
         ]
         return self._kili_api_gateway.create_issues(
-            project_id=ProjectId(project_id), type_="ISSUE", issues=gateway_issues
+            project_id=ProjectId(project_id), issues=gateway_issues
         )

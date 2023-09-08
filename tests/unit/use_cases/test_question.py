@@ -1,5 +1,6 @@
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.question.types import QuestionsToCreateGatewayInput
+from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
 from kili.domain.question import QuestionId
 from kili.use_cases.question import QuestionUseCases
@@ -7,10 +8,9 @@ from kili.use_cases.question import QuestionUseCases
 
 def test_create_one_question(kili_api_gateway: KiliAPIGateway):
     # given one issue to create
-    kili_api_gateway.create_questions.return_value = (
-        q for q in [{"id": QuestionId("created_question_id")}]
-    )
-    question = QuestionsToCreateGatewayInput(text="text", asset_id="asset_id")
+    kili_api_gateway.create_questions.return_value = [{"id": QuestionId("created_question_id")}]
+
+    question = QuestionsToCreateGatewayInput(text="text", asset_id=AssetId("asset_id"))
 
     # when creating one issue
     created_questions = QuestionUseCases(kili_api_gateway).create_questions(
@@ -18,4 +18,4 @@ def test_create_one_question(kili_api_gateway: KiliAPIGateway):
     )
 
     # then
-    assert "created_question_id" == next(created_questions)["id"]
+    assert "created_question_id" == created_questions[0]["id"]

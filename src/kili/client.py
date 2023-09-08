@@ -40,6 +40,7 @@ from kili.presentation.client.asset import AssetClientMethods
 from kili.presentation.client.internal import InternalClientMethods
 from kili.presentation.client.issue import IssueClientMethods
 from kili.presentation.client.project import ProjectClientMethods
+from kili.presentation.client.question import QuestionClientMethods
 from kili.presentation.client.tag import TagClientMethods
 from kili.utils.logcontext import LogContext, log_call
 
@@ -79,10 +80,11 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     QueriesProjectVersion,
     QueriesUser,
     SubscriptionsLabel,
-    IssueClientMethods,
     AssetClientMethods,
-    TagClientMethods,
+    IssueClientMethods,
     ProjectClientMethods,
+    QuestionClientMethods,
+    TagClientMethods,
 ):
     """Kili Client."""
 

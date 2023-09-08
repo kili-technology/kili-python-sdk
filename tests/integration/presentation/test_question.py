@@ -6,9 +6,8 @@ from kili.presentation.client.question import QuestionClientMethods
 def test_create_one_question(kili_api_gateway: KiliAPIGateway):
     # given one issue to create
     kili = QuestionClientMethods()
-    kili_api_gateway.create_questions.return_value = (
-        q for q in [{"id": QuestionId("created_question_id")}]
-    )
+    kili_api_gateway.create_questions.return_value = [{"id": QuestionId("created_question_id")}]
+
     kili.kili_api_gateway = kili_api_gateway
 
     # when creating one issue

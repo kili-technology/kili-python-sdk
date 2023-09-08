@@ -5,8 +5,8 @@ from typing import Dict, List, Optional
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.question.types import QuestionsToCreateGatewayInput
+from kili.domain.asset import AssetExternalId, AssetId
 from kili.domain.project import ProjectId
-from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
 from kili.presentation.client.base import BaseClientMethods
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
@@ -42,10 +42,6 @@ class QuestionClientMethods(BaseClientMethods):
         """
         assert_all_arrays_have_same_size([text_array, asset_id_array])
 
-        # TODO: move to the kili gateway
-        asset_id_array = get_asset_ids_or_throw_error(
-            self.kili_api_gateway, asset_id_array, asset_external_id_array, project_id
-        )
         question_use_cases = QuestionUseCases(self.kili_api_gateway)
 
         created_questions = question_use_cases.create_questions(
@@ -53,8 +49,8 @@ class QuestionClientMethods(BaseClientMethods):
             questions=(
                 QuestionsToCreateGatewayInput(
                     text=text,
-                    asset_id=asset_id,
-                    external_id=external_id,
+                    asset_id=AssetId(asset_id) if asset_id else None,
+                    external_id=AssetExternalId(external_id) if external_id else None,
                 )
                 for text, asset_id, external_id in zip(
                     text_array,
