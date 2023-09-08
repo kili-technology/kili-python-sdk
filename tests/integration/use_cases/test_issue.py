@@ -1,24 +1,25 @@
-"""Tests for issues service."""
+"""Tests for issues use cases."""
 
-import pytest
 
-from kili.domain.issue import Issue
-from kili.gateways.kili_api_gateway import KiliAPIGateway
+import pytest_mock
+
+from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.domain.issue import IssueId
 from kili.use_cases.issue import IssueUseCases
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
 
 
-@pytest.mark.skip(reason="Waiting to implement queries")
-def test_create_one_issue(kili_api_gateway: KiliAPIGateway):
-    issue_use_cases = IssueUseCases(kili_api_gateway)
+def test_create_one_issue(kili_api_gateway: KiliAPIGateway, mocker: pytest_mock.MockerFixture):
+    mocker.patch(
+        "kili.use_cases.issue.get_labels_asset_ids_map", return_value={"label_id": "asset_id"}
+    )
+    kili_api_gateway.create_issues.return_value = [IssueId("created_issue_id")]
 
     # given one issue to create
-    issues = [IssueToCreateUseCaseInput(label_id="label_id", text="text", object_mid="object_mid")]
-    issue_entities = [Issue(id_="issue_id")]
-    kili_api_gateway.create_issues.return_value(issue_entities)
+    issue = IssueToCreateUseCaseInput(label_id="label_id", text="text", object_mid="object_mid")
 
     # when creating one issue
-    issues = issue_use_cases.create_issues(project_id="project_id", issues=issues)
+    issues = IssueUseCases(kili_api_gateway).create_issues(project_id="project_id", issues=[issue])
 
     # then
-    assert issues == issue_entities
+    assert issues == [IssueId("created_issue_id")]

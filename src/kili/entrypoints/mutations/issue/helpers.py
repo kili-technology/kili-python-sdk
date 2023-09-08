@@ -1,18 +1,29 @@
 """Helpers for the issue mutations."""
 
 
-from typing import List
+from typing import Dict, List
 
-from kili.core.graphql import QueryOptions
+from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.exceptions import NotFound
 
 
-def get_labels_asset_ids_map(kili, project_id: str, label_id_array: List[str]):
+def get_labels_asset_ids_map(
+    kili_api_gateway: KiliAPIGateway,
+    project_id: str,
+    label_id_array: List[str],
+) -> Dict:
     """Return a dictionary that gives for every label id, its associated asset id.
 
+    Args:
+        kili_api_gateway: instance of KiliAPIGateway
+        project_id: id of the project
+        label_id_array: list of label ids
+
     Returns:
-        a dict of key->value: a label id->its associated asset id for the given label ids
+        a dict of key->value a label id->its associated asset id for the given label ids
+
     Raises:
         NotFound error if at least one label was not found with its given id
     """
@@ -22,7 +33,7 @@ def get_labels_asset_ids_map(kili, project_id: str, label_id_array: List[str]):
         id_contains=label_id_array,
     )
     labels = list(
-        LabelQuery(kili.graphql_client, kili.http_client)(
+        LabelQuery(kili_api_gateway.graphql_client, kili_api_gateway.http_client)(
             where=where, fields=["labelOf.id", "id"], options=options
         )
     )

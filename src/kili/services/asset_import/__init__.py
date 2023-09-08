@@ -1,6 +1,6 @@
 """Service for importing objects into kili."""
 
-from typing import Dict, List, Type, cast
+from typing import Dict, List, Optional, Type, cast
 
 from kili.services.project import get_project_field
 
@@ -29,9 +29,9 @@ def import_assets(  # pylint: disable=too-many-arguments
     kili,
     project_id: str,
     assets: List[Dict],
-    raise_error=True,
-    disable_tqdm=False,
-    verify=True,
+    raise_error: bool = True,
+    disable_tqdm: Optional[bool] = False,
+    verify: bool = True,
 ):
     """Import the selected assets into the specified project."""
     input_type = get_project_field(kili, project_id, "inputType")

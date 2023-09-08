@@ -4,9 +4,9 @@ import os
 from typing import Iterable, Optional
 
 import click
-import requests
 from typeguard import typechecked
 
+from kili.adapters.http_client import HttpClient
 from kili.core.helpers import get_file_paths_to_upload
 from kili.entrypoints.cli.common_args import Arguments, Options, from_csv
 from kili.entrypoints.cli.helpers import collect_from_csv, get_kili_client
@@ -18,7 +18,7 @@ from kili.services.helpers import (
 from kili.services.project import get_project_field
 
 
-def check_asset_type(key: str, value: str, http_client: Optional[requests.Session]) -> str:
+def check_asset_type(key: str, value: str, http_client: Optional[HttpClient]) -> str:
     """Type check value based on key."""
     assert (
         http_client is not None

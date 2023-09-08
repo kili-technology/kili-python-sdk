@@ -4,13 +4,15 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
-from kili.core.graphql import QueryOptions
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
-from kili.core.helpers import disable_tqdm_if_as_generator
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.presentation.client.helpers.common_validators import (
+    disable_tqdm_if_as_generator,
+)
 from kili.services.data_connection import get_data_connection
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -36,7 +38,7 @@ class QueriesDataConnection(BaseOperationEntrypointMixin):
         ],
         first: Optional[int] = None,
         skip: int = 0,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -57,7 +59,7 @@ class QueriesDataConnection(BaseOperationEntrypointMixin):
         ],
         first: Optional[int] = None,
         skip: int = 0,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -78,7 +80,7 @@ class QueriesDataConnection(BaseOperationEntrypointMixin):
         ],
         first: Optional[int] = None,
         skip: int = 0,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:

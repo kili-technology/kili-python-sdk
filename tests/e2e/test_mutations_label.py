@@ -6,11 +6,6 @@ from kili.client import Kili
 
 
 @pytest.fixture
-def kili() -> Kili:
-    return Kili()
-
-
-@pytest.fixture
 def project(kili: Kili):
     interface = {
         "jobs": {

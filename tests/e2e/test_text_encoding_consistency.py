@@ -1,11 +1,6 @@
 # pylint: disable=missing-function-docstring,redefined-outer-name
 """Tests that the external id check is strict."""
-import json
-from pathlib import Path
-from tempfile import NamedTemporaryFile
-
 import pytest
-import requests
 
 from kili.client import Kili
 
@@ -15,17 +10,13 @@ def text():
     return "Youʼll see Johnʼs car"
 
 
-@pytest.fixture
-def kili():
-    return Kili()
-
-
 @pytest.fixture()
 def project_with_assets(kili, text):
     interface = {
         "jobs": {
             "JOB_0": {
                 "mlTask": "CLASSIFICATION",
+                "isChild": False,
                 "required": 1,
                 "content": {
                     "categories": {
@@ -69,4 +60,4 @@ def test_encoding_decoding_consistency(text, kili, project_with_assets):
         )
     )
 
-    assert requests.get(retrieved_assets[0]["content"], timeout=30).text == text
+    assert kili.http_client.get(retrieved_assets[0]["content"], timeout=30).text == text

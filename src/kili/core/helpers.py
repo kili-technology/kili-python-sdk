@@ -11,17 +11,17 @@ from json import dumps, loads
 from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 import pyparsing as pp
-import requests
 import tenacity
 from typing_extensions import get_args, get_origin
 
+from kili.adapters.http_client import HttpClient
 from kili.core.constants import mime_extensions_for_IV2
 
 T = TypeVar("T")
 
 
 def format_result(
-    name: str, result: dict, object_: Optional[Type[T]], http_client: requests.Session
+    name: str, result: dict, object_: Optional[Type[T]], http_client: HttpClient
 ) -> T:
     """Formats the result of the GraphQL queries.
 
@@ -86,15 +86,20 @@ def is_url(path: object):
     return isinstance(path, str) and re.match(r"^(http://|https://)", path.lower())
 
 
-def format_json_dict(result: Dict, http_client: requests.Session) -> Dict:
-    """Formats the dict part of a json return by a GraphQL query into a python object.
+def __format_json_dict(result: Dict, http_client: HttpClient) -> Dict:
+    """Parse a dictionary inside the result of a graphQL query to format json fields.
+
+    If json fields (i.e "jsonInterface", "jsonMetadata" and "jsonResponse")
+    are part of the keys, either:
+        - fetch the json from the url if it is hosted on a bucket
+        - load the json from the string if the json is given as a string
 
     Args:
-        result: result of a GraphQL query
+        result: a dictionary included in the result of a GraphQL query
         http_client: http client to use for the query
     """
     for key, value in result.items():
-        if key in ["jsonInterface", "jsonMetadata", "jsonResponse"]:
+        if key in ["jsonInterface", "jsonMetadata", "jsonResponse"]:  # TODO: also parse jsonContent
             if (value == "" or value is None) and not (is_url(value) and key == "jsonInterface"):
                 result[key] = {}
             elif isinstance(value, str):
@@ -116,9 +121,9 @@ D = TypeVar("D")
 
 
 def format_json(
-    result: Union[None, list, dict, D], http_client: requests.Session
+    result: Union[None, list, dict, D], http_client: HttpClient
 ) -> Union[None, list, dict, D]:
-    """Formats the json return by a GraphQL query into a python object.
+    """Recusively parse the result of a GraphQL query in order to get json fields as a dictionary.
 
     Args:
         result: result of a GraphQL query
@@ -129,7 +134,7 @@ def format_json(
     if isinstance(result, list):
         return [format_json(elem, http_client) for elem in result]
     if isinstance(result, dict):
-        return format_json_dict(result, http_client)
+        return __format_json_dict(result, http_client)
     return result
 
 
@@ -326,18 +331,6 @@ def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
             f"File mime type should be one of {mime_extensions_for_IV2[input_type]}"
         )
     return correct_mime_type
-
-
-def disable_tqdm_if_as_generator(as_generator: bool, disable_tqdm: bool):
-    """Disable tqdm in user-facing queries method if the return type is asked as a generator."""
-    if as_generator and not disable_tqdm:
-        disable_tqdm = True
-        warnings.warn(
-            "tqdm has been forced disabled because its behavior is not compatible with the"
-            " generator return type",
-            stacklevel=2,
-        )
-    return disable_tqdm
 
 
 class RetryLongWaitWarner:  # pylint: disable=too-few-public-methods

@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
-from kili.core.graphql import QueryOptions
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
@@ -57,7 +57,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         export_params: ExportParams,
         kili,
         logger: logging.Logger,
-        disable_tqdm: bool,
+        disable_tqdm: Optional[bool],
         content_repository: AbstractContentRepository,
     ) -> None:
         """Initialize the exporter."""
@@ -67,7 +67,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.label_format: LabelFormat = export_params.label_format
         self.single_file: bool = export_params.single_file
         self.split_option: SplitOption = export_params.split_option
-        self.disable_tqdm: bool = disable_tqdm
+        self.disable_tqdm: Optional[bool] = disable_tqdm
         self.kili = kili
         self.logger: logging.Logger = logger
         self.content_repository: AbstractContentRepository = content_repository
@@ -95,7 +95,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """Check if the export label format is compatible with the job."""
 
     @property
-    def compatible_jobs(self) -> Tuple[str]:
+    def compatible_jobs(self) -> Tuple[str, ...]:
         """Get all job names compatible with the export format."""
         return tuple(
             job_name
@@ -104,7 +104,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         )
 
     @abstractmethod
-    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
+    def process_and_save(self, assets: List[Asset], output_filename: Path) -> None:
         """Converts the asset and save them into an archive file."""
 
     def make_archive(self, root_folder: Path, output_filename: Path) -> Path:
@@ -209,7 +209,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         )
         return len(list(data_connections_gen)) > 0
 
-    def _check_geotiff_export_compatibility(self, assets: List[Dict]) -> None:
+    def _check_geotiff_export_compatibility(self, assets: List[Asset]) -> None:
         # pylint: disable=line-too-long
         """Check if one of the assets is a geotiff asset, and if the export params are compatible.
 

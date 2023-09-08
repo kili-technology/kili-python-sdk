@@ -1,6 +1,4 @@
 # Asset module
 
-## Queries
-::: kili.entrypoints.queries.asset.__init__.QueriesAsset
-## Mutations
+::: kili.presentation.client.asset.AssetClientMethods
 ::: kili.entrypoints.mutations.asset.__init__.MutationsAsset

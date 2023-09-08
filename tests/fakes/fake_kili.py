@@ -2,8 +2,9 @@
 
 from unittest.mock import MagicMock
 
-import requests
-
+from kili.adapters.http_client import HttpClient
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.core.graphql.operations.project.queries import ProjectWhere
 from kili.orm import Asset
 from tests.fakes.fake_data import (
     asset_image_1,
@@ -20,7 +21,11 @@ class FakeKili:
     api_key = ""
     api_endpoint = "http://content-repository"
     graphql_client = MagicMock()
-    http_client = requests.Session()
+    http_client = HttpClient(
+        kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+    )
+    kili_api_gateway = MagicMock()
+    kili_api_gateway.http_client = http_client
 
 
 def mocked_ProjectQuery(where, _fields, _options):
@@ -197,6 +202,12 @@ def mocked_ProjectQuery(where, _fields, _options):
         ]
     else:
         return []
+
+
+def mocked_kili_api_gateway_get_project(project_id, fields):
+    return mocked_ProjectQuery(
+        ProjectWhere(project_id=project_id), fields, QueryOptions(disable_tqdm=False)
+    )[0]
 
 
 def mocked_AssetQuery(where, _fields, _options, post_call_function=None):

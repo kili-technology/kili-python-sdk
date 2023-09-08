@@ -8,11 +8,10 @@ from tempfile import NamedTemporaryFile
 from typing import Dict, List, Optional, Union
 
 import pytest
-import requests
 from PIL import Image
 
 from kili.client import Kili
-from kili.entrypoints.queries.asset.media_downloader import MediaDownloader
+from kili.use_cases.asset.media_downloader import MediaDownloader
 from kili.utils.tempfile import TemporaryDirectory
 
 
@@ -22,7 +21,7 @@ def assert_helper_for_asset(
     check_is_file: Optional[Union[Path, str]] = None,
     expected_content: Optional[str] = None,
     expected_json_content: Optional[Union[str, List]] = None,
-):
+) -> None:
     if expected_content is not None:
         assert asset["content"] == expected_content
     if expected_externalid is not None:
@@ -33,13 +32,8 @@ def assert_helper_for_asset(
         assert asset["jsonContent"] == expected_json_content
 
 
-@pytest.fixture
-def kili() -> Kili:
-    return Kili()
-
-
 @pytest.fixture()
-def src_project_image(kili):
+def src_project_image(kili: Kili):
     """Create image project with token protected url."""
     interface = {
         "jobs": {
@@ -70,7 +64,7 @@ def src_project_image(kili):
     )
 
     with NamedTemporaryFile(mode="w+b", suffix=".png", delete=False) as temp:
-        with requests.get(
+        with kili.http_client.get(
             "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/docs/assets/kili_logo.png",
             timeout=20,
         ) as response:
@@ -153,7 +147,7 @@ def src_project_video_frames(kili):
     )
 
     with TemporaryDirectory() as tmp_dir:
-        response = requests.get(
+        response = kili.http_client.get(
             "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2_video2-json-content.json",
             timeout=20,
         ).json()
@@ -161,7 +155,7 @@ def src_project_video_frames(kili):
         for i, url in enumerate(urls):
             if i >= 5:  # keep only a few images for testing
                 break
-            with requests.get(url, stream=True, timeout=20) as response:
+            with kili.http_client.get(url, stream=True, timeout=20) as response:
                 response.raise_for_status()
                 with open(os.path.join(tmp_dir, f"video2-img{i:06}.jpg"), "wb") as file:
                     for chunk in response.iter_content(chunk_size=1024 * 1024):
@@ -296,7 +290,7 @@ def test_download_assets_text(kili, src_project_text):
             assets[0],
             expected_externalid="text1",
             check_is_file=assets[0]["content"],
-            expected_content=os.path.join(str(tmp_dir.resolve()), "text1"),
+            expected_content=os.path.join(str(tmp_dir.resolve()), "text1.txt"),
             expected_json_content="",
         )
         assert_helper_for_asset(
@@ -312,7 +306,7 @@ def test_download_assets_text(kili, src_project_text):
             expected_externalid="richtext",
             check_is_file=assets[2]["jsonContent"],
             expected_content="",
-            expected_json_content=os.path.join(str(tmp_dir.resolve()), "richtext"),
+            expected_json_content=os.path.join(str(tmp_dir.resolve()), "richtext.txt"),
         )
 
 
@@ -457,7 +451,7 @@ def src_project_video_content_and_jsoncontent(kili):
 
 
 def test_download_single_asset_video_content_and_jsoncontent(
-    kili, src_project_video_content_and_jsoncontent
+    kili: Kili, src_project_video_content_and_jsoncontent
 ):
     """Test video content and jsoncontent."""
     with TemporaryDirectory() as tmp_dir:

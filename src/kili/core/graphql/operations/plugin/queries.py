@@ -4,7 +4,8 @@
 from datetime import datetime
 from typing import List, NamedTuple, Optional
 
-from kili.core.graphql import GraphQLQuery, QueryOptions
+from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
+from kili.core.graphql.queries import GraphQLQuery, QueryOptions
 
 
 class PluginBuildErrorsWhere(NamedTuple):
@@ -107,7 +108,7 @@ class PluginQuery(GraphQLQuery):
 
     def list(self, fields: List[str]):
         """List plugins."""
-        fragment = self.fragment_builder(fields)
+        fragment = fragment_builder(fields)
         query = self.gql_list_plugins(fragment)
         result = self.client.execute(query)
         return self.format_result("data", result)

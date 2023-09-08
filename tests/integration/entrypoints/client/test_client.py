@@ -14,7 +14,7 @@ from kili.exceptions import AuthenticationFailed
 @patch.dict(os.environ, {"KILI_API_KEY": "", "KILI_SDK_SKIP_CHECKS": "True"})
 def test_no_api_key(mocker: pytest_mock.MockerFixture):
     """Test fail because no api key is found."""
-    mocker.patch("kili.client.requests")
+    mocker.patch("kili.adapters.http_client.requests")
     mocker.patch("kili.client.getpass.getpass", return_value="")
     with pytest.raises(AuthenticationFailed):
         _ = Kili()

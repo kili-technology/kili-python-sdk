@@ -34,7 +34,7 @@ from kili.utils import tqdm
 class LoggerParams(NamedTuple):
     """Contains all parameters related to logging."""
 
-    disable_tqdm: bool
+    disable_tqdm: Optional[bool]
     level: LogLevel
 
 
@@ -91,7 +91,9 @@ class AbstractLabelImporter(ABC):
         if should_retrieve_asset_ids:
             assert project_id
             asset_external_ids = [label["asset_external_id"] for label in labels]
-            asset_id_map = infer_ids_from_external_ids(self.kili, asset_external_ids, project_id)
+            asset_id_map = infer_ids_from_external_ids(
+                self.kili.kili_api_gateway, asset_external_ids, project_id
+            )
             labels = [
                 {**label, "asset_id": asset_id_map[label["asset_external_id"]]} for label in labels
             ]

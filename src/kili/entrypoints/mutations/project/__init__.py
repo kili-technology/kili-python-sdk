@@ -3,16 +3,10 @@
 from json import dumps
 from typing import Any, Dict, Literal, Optional
 
-from tenacity import Retrying
-from tenacity.retry import retry_if_exception_type
-from tenacity.stop import stop_after_delay
-from tenacity.wait import wait_fixed
 from typeguard import typechecked
 
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.exceptions import MutationError
-from kili.exceptions import NotFound
 from kili.services.copy_project import ProjectCopier
 from kili.services.project import get_project
 from kili.utils.logcontext import for_all_methods, log_call
@@ -20,7 +14,6 @@ from kili.utils.logcontext import for_all_methods, log_call
 from .helpers import verify_argument_ranges
 from .queries import (
     GQL_APPEND_TO_ROLES,
-    GQL_CREATE_PROJECT,
     GQL_DELETE_FROM_ROLES,
     GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
     GQL_PROJECT_UPDATE_ANONYMIZATION,
@@ -32,8 +25,6 @@ from .queries import (
 @for_all_methods(log_call, exclude=["__init__"])
 class MutationsProject(BaseOperationEntrypointMixin):
     """Set of Project mutations."""
-
-    graphql_client: GraphQLClient
 
     # pylint: disable=too-many-arguments,too-many-locals
     @typechecked
@@ -71,7 +62,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
 
         project_data = self.format_result("data", result)
         for project_user in project_data["roles"]:
-            if project_user["user"]["email"] == user_email and project_user["role"] == role:
+            if project_user["user"]["email"] == user_email.lower() and project_user["role"] == role:
                 return project_user
 
         raise MutationError(
@@ -138,16 +129,13 @@ class MutationsProject(BaseOperationEntrypointMixin):
             A dict with the changed properties which indicates if the mutation was successful,
                 else an error message.
 
-        Examples:
-            >>> kili.update_properties_in_project(project_id=project_id, title='New title')
-
         !!! example "Change Metadata Types"
             Metadata fields are by default interpreted as `string` types. To change the type
             of a metadata field, you can use the `update_properties_in_project` function with the
             metadata_types argument. `metadata_types` is given as a dict of metadata field names
             as keys and metadata types as values.
-            Example:
-            ```
+
+            ```python
             kili.update_properties_in_project(
                 project_id = project_id,
                 metadata_types = {
@@ -158,6 +146,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
                 }
             )
             ```
+
             Not providing a type for a metadata field or providing an unsupported one
             will default to the `string` type.
         """
@@ -193,83 +182,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
 
         new_project_settings = get_project(self, project_id, list(variables.keys()))
 
-        result = {**result, **new_project_settings}
-        return result
-
-    @typechecked
-    def create_project(
-        self,
-        input_type: str,
-        json_interface: dict,
-        title: str,
-        description: str = "",
-        project_type: Optional[str] = None,
-    ) -> Dict[Literal["id"], str]:
-        # pylint: disable=line-too-long
-        """Create a project.
-
-        Args:
-            input_type: Currently, one of `IMAGE`, `PDF`, `TEXT` or `VIDEO`.
-            json_interface: The json parameters of the project, see Edit your interface.
-            title: Title of the project.
-            description: Description of the project.
-            project_type: Currently, one of:
-
-                - `IMAGE_CLASSIFICATION_MULTI`
-                - `IMAGE_CLASSIFICATION_SINGLE`
-                - `IMAGE_OBJECT_DETECTION_POLYGON`
-                - `IMAGE_OBJECT_DETECTION_RECTANGLE`
-                - `IMAGE_OBJECT_DETECTION_SEMANTIC`
-                - `IMAGE_POSE_ESTIMATION`
-                - `OCR`
-                - `PDF_CLASSIFICATION_MULTI`
-                - `PDF_CLASSIFICATION_SINGLE`
-                - `PDF_NAMED_ENTITY_RECOGNITION`
-                - `PDF_OBJECT_DETECTION_RECTANGLE`
-                - `SPEECH_TO_TEXT`
-                - `TEXT_CLASSIFICATION_MULTI`
-                - `TEXT_CLASSIFICATION_SINGLE`
-                - `TEXT_NER`
-                - `TEXT_TRANSCRIPTION`
-                - `TIME_SERIES`
-                - `VIDEO_CLASSIFICATION_SINGLE`
-                - `VIDEO_FRAME_CLASSIFICATION`
-                - `VIDEO_FRAME_OBJECT_TRACKING`
-
-
-        Returns:
-            A dict with the id of the created project.
-
-        Examples:
-            >>> kili.create_project(input_type='IMAGE', json_interface=json_interface, title='Example')
-
-        !!! example "Recipe"
-            For more detailed examples on how to create projects,
-                see [the recipe](https://docs.kili-technology.com/recipes/creating-a-project).
-        """
-        variables = {
-            "data": {
-                "description": description,
-                "inputType": input_type,
-                "jsonInterface": dumps(json_interface),
-                "projectType": project_type,
-                "title": title,
-            }
-        }
-        result = self.graphql_client.execute(GQL_CREATE_PROJECT, variables)
-        result = self.format_result("data", result)
-
-        # We check during 60s for the project to be created
-        for attempt in Retrying(
-            stop=stop_after_delay(60),
-            wait=wait_fixed(1),
-            retry=retry_if_exception_type(NotFound),
-            reraise=True,
-        ):
-            with attempt:
-                _ = get_project(self, project_id=result["id"], fields=["id"])
-
-        return result
+        return {**result, **new_project_settings}
 
     @typechecked
     def update_properties_in_role(
@@ -379,7 +292,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
         copy_members: bool = True,
         copy_assets: bool = False,
         copy_labels: bool = False,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
     ) -> str:
         """Create new project from an existing project.
 

@@ -4,10 +4,12 @@ from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
-from kili.core.graphql import QueryOptions
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.user.queries import UserQuery, UserWhere
-from kili.core.helpers import disable_tqdm_if_as_generator
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.presentation.client.helpers.common_validators import (
+    disable_tqdm_if_as_generator,
+)
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -26,7 +28,7 @@ class QueriesUser(BaseOperationEntrypointMixin):
         fields: List[str] = ["email", "id", "firstname", "lastname"],
         first: Optional[int] = None,
         skip: int = 0,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -41,7 +43,7 @@ class QueriesUser(BaseOperationEntrypointMixin):
         fields: List[str] = ["email", "id", "firstname", "lastname"],
         first: Optional[int] = None,
         skip: int = 0,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -56,7 +58,7 @@ class QueriesUser(BaseOperationEntrypointMixin):
         fields: List[str] = ["email", "id", "firstname", "lastname"],
         first: Optional[int] = None,
         skip: int = 0,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[Dict]:
@@ -80,12 +82,11 @@ class QueriesUser(BaseOperationEntrypointMixin):
         Examples:
             ```
             # List all users in my organization
-            >>> organization = kili.organizations()
-            >>> organization_id = organizations[0]['id]
+            >>> organization = kili.organizations()[0]
+            >>> organization_id = organization['id']
             >>> kili.users(organization_id=organization_id)
             ```
         """
-
         where = UserWhere(api_key=api_key, email=email, organization_id=organization_id)
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)

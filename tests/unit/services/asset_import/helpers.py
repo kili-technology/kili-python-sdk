@@ -1,11 +1,11 @@
 import os
 import uuid
 
-import requests
+from kili.adapters.http_client import HttpClient
 
 
 class LocalDownloader:
-    def __init__(self, directory, http_client: requests.Session):
+    def __init__(self, directory, http_client: HttpClient):
         self.directory = directory
         self.http_client = http_client
 

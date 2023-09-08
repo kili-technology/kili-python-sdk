@@ -1,11 +1,12 @@
 """Helpers for the services."""
 from itertools import chain
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterable, List, Optional, TypeVar
+from typing import Dict, Generator, Iterable, List, Optional, TypeVar
 
-from kili.core.graphql import QueryOptions
-from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.utils import pagination
+from kili.domain.asset import AssetFilters
 from kili.exceptions import NotFound
 from kili.services.exceptions import (
     NotEnoughArgumentsSpecifiedError,
@@ -50,14 +51,13 @@ def is_target_job_in_json_interface(kili, project_id: str, target_job_name: str)
     return target_job_name in json_interface["jobs"]
 
 
-# pylint: disable=missing-type-doc
 def infer_ids_from_external_ids(
-    kili, asset_external_ids: List[str], project_id: str
+    kili_api_gateway: KiliAPIGateway, asset_external_ids: List[str], project_id: str
 ) -> Dict[str, str]:
     """Infer asset ids from their external ids and project Id.
 
     Args:
-        kili: Kili
+        kili_api_gateway: Kili API gateway
         asset_external_ids: asset external ids
         project_id: project id
 
@@ -68,7 +68,7 @@ def infer_ids_from_external_ids(
         NotFound: when there are asset_ids what have the same external id, or when external ids
         have not been found.
     """
-    id_map = _build_id_map(kili, asset_external_ids, project_id)
+    id_map = _build_id_map(kili_api_gateway, asset_external_ids, project_id)
 
     if len(id_map) < len(set(asset_external_ids)):
         assets_not_found = [
@@ -86,13 +86,13 @@ def infer_ids_from_external_ids(
     return id_map
 
 
-def _build_id_map(kili, asset_external_ids, project_id):
+def _build_id_map(kili_api_gateway: KiliAPIGateway, asset_external_ids, project_id):
     assets_generators: List[Generator[Dict, None, None]] = []
     # query all assets by external ids batches when there are too many
     for external_ids_batch in pagination.BatchIteratorBuilder(asset_external_ids, 1000):
         assets_generators.append(
-            AssetQuery(kili.graphql_client, kili.http_client)(
-                AssetWhere(project_id, external_id_strictly_in=external_ids_batch),
+            kili_api_gateway.list_assets(
+                AssetFilters(project_id, external_id_strictly_in=external_ids_batch),
                 ["id", "externalId"],
                 QueryOptions(disable_tqdm=True),
             )
@@ -103,13 +103,3 @@ def _build_id_map(kili, asset_external_ids, project_id):
     for asset in (asset for asset in assets if asset["externalId"] in asset_external_ids_set):
         id_map[asset["externalId"]] = asset["id"]
     return id_map
-
-
-def assert_all_arrays_have_same_size(arrays: List[Optional[List[Any]]], raise_error=True):
-    """Assert that all given arrays have the same size if they are not None."""
-    sizes_arrays = {len(array) for array in arrays if array is not None}
-    if len(sizes_arrays) > 1:
-        if raise_error:
-            raise ValueError("All arrays should have the same length")
-        return False
-    return True

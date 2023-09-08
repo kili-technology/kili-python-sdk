@@ -9,6 +9,7 @@ import pytest
 from tenacity import TryAgain, retry
 from tenacity.wait import wait_fixed
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.operations.label.queries import LabelQuery
 from kili.core.helpers import (
     RetryLongWaitWarner,
@@ -119,7 +120,9 @@ def test_get_labels_asset_ids_map():
         ),
     ):
         assert get_labels_asset_ids_map(
-            FakeKili, "project_id", ["label_id_1", "label_id_2"]  # type: ignore
+            KiliAPIGateway(FakeKili.graphql_client, FakeKili.http_client),
+            "project_id",
+            ["label_id_1", "label_id_2"],
         ) == {
             "label_id_1": "asset_id_1",
             "label_id_2": "asset_id_1",
@@ -159,6 +162,7 @@ class TestCheckWarnEmptyList(TestCase):
     def test_none(self, mocked_mutate_from_paginated_call):
         """Test that the helper does not raise a warning if args are None."""
         kili = MutationsAsset()
+        kili.kili_api_gateway = MagicMock()
         with pytest.raises(MissingArgumentError):
             with warnings.catch_warnings():
                 warnings.simplefilter("error")
@@ -195,6 +199,7 @@ class TestCheckWarnEmptyList(TestCase):
         kili = MutationsAsset()
         kili.graphql_client = MagicMock()
         kili.http_client = MagicMock()
+        kili.kili_api_gateway = MagicMock()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(asset_ids=["asset_id"], external_ids=None)
@@ -204,6 +209,7 @@ class TestCheckWarnEmptyList(TestCase):
         kili = MutationsAsset()
         kili.graphql_client = MagicMock()
         kili.http_client = MagicMock()
+        kili.kili_api_gateway = MagicMock()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(["asset_id"], None)

@@ -16,14 +16,14 @@ from typing import (
 import pandas as pd
 from typeguard import typechecked
 
-from kili.core.graphql import QueryOptions
-from kili.core.graphql.operations.asset.queries import AssetQuery, AssetWhere
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
-from kili.core.helpers import (
-    disable_tqdm_if_as_generator,
-    validate_category_search_query,
-)
+from kili.core.helpers import validate_category_search_query
+from kili.domain.asset import AssetFilters
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.presentation.client.helpers.common_validators import (
+    disable_tqdm_if_as_generator,
+)
 from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
@@ -68,7 +68,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         skip: int = 0,
         type_in: Optional[List[str]] = None,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         output_format: Literal["dict"] = "dict",
         *,
@@ -104,7 +104,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         skip: int = 0,
         type_in: Optional[List[str]] = None,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         output_format: Literal["dict"] = "dict",
         *,
@@ -140,7 +140,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         skip: int = 0,
         type_in: Optional[List[str]] = None,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         output_format: Literal["parsed_label"] = "parsed_label",
         *,
@@ -176,7 +176,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         skip: int = 0,
         type_in: Optional[List[str]] = None,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         output_format: Literal["parsed_label"] = "parsed_label",
         *,
@@ -213,7 +213,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         skip: int = 0,
         type_in: Optional[List[str]] = None,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         output_format: Literal["dict", "parsed_label"] = "dict",
         *,
@@ -344,7 +344,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[True],
@@ -370,7 +370,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
@@ -396,7 +396,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         *,
         as_generator: bool = False,
@@ -487,7 +487,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[True],
@@ -513,7 +513,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
@@ -539,7 +539,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         *,
         as_generator: bool = False,
@@ -638,8 +638,8 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             A pandas DataFrame containing the labels.
         """
         get_project(self, project_id, ["id"])
-        assets_gen = AssetQuery(self.graphql_client, self.http_client)(
-            AssetWhere(project_id=project_id),
+        assets_gen = self.kili_api_gateway.list_assets(
+            AssetFilters(project_id=project_id),
             asset_fields + ["labels." + field for field in fields],
             QueryOptions(disable_tqdm=False),
         )
@@ -731,7 +731,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_ids: Optional[List[str]] = None,
         layout: SplitOption = "split",
         single_file: bool = False,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
         with_assets: bool = True,
         external_ids: Optional[List[str]] = None,
         annotation_modifier: Optional[CocoAnnotationModifier] = None,
@@ -817,7 +817,9 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         """
         if external_ids is not None and asset_ids is None:
             id_map = infer_ids_from_external_ids(
-                kili=self, asset_external_ids=external_ids, project_id=project_id
+                kili_api_gateway=self.kili_api_gateway,
+                asset_external_ids=external_ids,
+                project_id=project_id,
             )
             asset_ids = [id_map[id] for id in external_ids]
 

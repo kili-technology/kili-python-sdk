@@ -1,8 +1,11 @@
 """Helpers for the asset mutations."""
 from typing import Callable, Dict, List, Optional, Union
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.helpers import convert_to_list_of_none, format_metadata, is_none_or_empty
-from kili.entrypoints.mutations.helpers import check_asset_identifier_arguments
+from kili.presentation.client.helpers.common_validators import (
+    check_asset_identifier_arguments,
+)
 from kili.services.helpers import infer_ids_from_external_ids
 from kili.utils.assets import PageResolution
 
@@ -93,7 +96,7 @@ def _handle_json_metadata(json_metadatas) -> List:
 
 
 def get_asset_ids_or_throw_error(
-    kili,
+    kili_api_gateway: KiliAPIGateway,
     asset_ids: Optional[List[str]],
     external_ids: Optional[List[str]],
     project_id: Optional[str],
@@ -103,8 +106,8 @@ def get_asset_ids_or_throw_error(
 
     if asset_ids is None:
         id_map = infer_ids_from_external_ids(
-            kili=kili, asset_external_ids=external_ids, project_id=project_id  # type: ignore
-        )
+            kili_api_gateway, external_ids, project_id  # type: ignore
+        )  # type: ignore
         asset_ids = [id_map[id] for id in external_ids]  # type: ignore
 
     return asset_ids

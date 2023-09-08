@@ -3,11 +3,6 @@ import pytest
 from kili.client import Kili
 
 
-@pytest.fixture
-def kili() -> Kili:
-    return Kili()
-
-
 @pytest.fixture()
 def src_project(kili):
     interface = {

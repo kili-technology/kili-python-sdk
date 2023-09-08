@@ -11,8 +11,8 @@ from kili.entrypoints.queries.api_key import QueriesApiKey
 class InternalClientMethods(MutationsOrganization, QueriesApiKey):
     """Kili client methods for internal use by Kili Technology only."""
 
-    def __init__(self, kili):
-        """Initializes the class.
+    def __init__(self, kili) -> None:
+        """Initialize the class.
 
         Args:
             kili: Kili object

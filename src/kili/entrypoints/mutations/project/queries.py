@@ -67,17 +67,6 @@ mutation(
 }}
 """
 
-GQL_CREATE_PROJECT = f"""
-mutation(
-    $data: CreateProjectData!
-  ) {{
-  data: createProject(
-    data: $data
-  ) {{
-      {PROJECT_FRAGMENT_ID}
-  }}
-}}
-"""
 
 GQL_UPDATE_PROPERTIES_IN_ROLE = f"""
 mutation(
