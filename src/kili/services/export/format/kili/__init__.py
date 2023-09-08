@@ -151,23 +151,25 @@ class KiliExporter(AbstractExporter):
         self, json_resp: Dict, asset: Dict, annotation_scaler: Callable[[Dict, Dict], None]
     ) -> None:
         for job_name in json_resp.keys():
-            if not (
-                # some old labels might not up to date with the json interface
-                job_name in self.project["jsonInterface"]["jobs"]
-                and (
-                    self.project["jsonInterface"]["jobs"][job_name]["mlTask"] == "OBJECT_DETECTION"
-                    or (
-                        self.project["inputType"] == "PDF"
-                        and self.project["jsonInterface"]["jobs"][job_name]["mlTask"]
-                        == "NAMED_ENTITIES_RECOGNITION"  # PDF NER jobs have vertices
-                    )
-                )
+            if self._can_scale_vertices_for_job_name(job_name) and json_resp.get(job_name, {}).get(
+                "annotations"
             ):
-                continue
-
-            if json_resp.get(job_name, {}).get("annotations"):
                 for ann in json_resp[job_name]["annotations"]:
                     annotation_scaler(ann, asset)
+
+    def _can_scale_vertices_for_job_name(self, job_name: str) -> bool:
+        return (
+            # some old labels might not up to date with the json interface
+            job_name in self.project["jsonInterface"]["jobs"]
+            and (
+                self.project["jsonInterface"]["jobs"][job_name]["mlTask"] == "OBJECT_DETECTION"
+                or (
+                    self.project["inputType"] == "PDF"
+                    and self.project["jsonInterface"]["jobs"][job_name]["mlTask"]
+                    == "NAMED_ENTITIES_RECOGNITION"  # PDF NER jobs have vertices
+                )
+            )
+        )
 
 
 def _scale_vertex(vertex: Dict, width: int, height: int) -> Dict:
