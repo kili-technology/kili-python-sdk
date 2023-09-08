@@ -21,7 +21,7 @@ NUMBER_OBJECT_IN_DB = 250
 
 
 @pytest.fixture
-def graphql_client() -> GraphQLClient:
+def mocked_graphql_client() -> GraphQLClient:
     mocked_graphql_client = MagicMock(spec=GraphQLClient)
 
     def mocked_client_execute(query, payload):
@@ -37,12 +37,12 @@ def graphql_client() -> GraphQLClient:
     return mocked_graphql_client
 
 
-def test_given_a_query_the_function_returns_a_generator(graphql_client: GraphQLClient):
+def test_given_a_query_the_function_returns_a_generator(mocked_graphql_client: GraphQLClient):
     # given
     options = QueryOptions(disable_tqdm=False)
 
     # when
-    gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
+    gen = PaginatedGraphQLQuery(mocked_graphql_client).execute_query_from_paginated_call(
         QUERY, WHERE, options, "", COUNT_QUERY
     )
 
@@ -51,20 +51,20 @@ def test_given_a_query_the_function_returns_a_generator(graphql_client: GraphQLC
 
 
 def test_given_a_query_it_runs_several_paginated_call_if_needed(
-    graphql_client: GraphQLClient, http_client: HttpClient
+    mocked_graphql_client: GraphQLClient, mocked_http_client: HttpClient
 ):
     # given
     options = QueryOptions(disable_tqdm=False)
 
     # when
-    gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
+    gen = PaginatedGraphQLQuery(mocked_graphql_client).execute_query_from_paginated_call(
         QUERY, WHERE, options, "", COUNT_QUERY
     )
     list(gen)
 
     # then
-    print(graphql_client.execute.mock_calls)
-    graphql_client.execute.assert_has_calls(
+    print(mocked_graphql_client.execute.mock_calls)
+    mocked_graphql_client.execute.assert_has_calls(
         [
             call(COUNT_QUERY, {"where": {"projectID": PROJECT_ID}}),
             call(QUERY, {"where": {"projectID": PROJECT_ID}, "skip": 0, "first": 100}),
@@ -82,20 +82,20 @@ def test_given_a_query_it_runs_several_paginated_call_if_needed(
 
 
 def test_given_a_query_with_skip_argument_it_skips_elements(
-    graphql_client: GraphQLClient, http_client: HttpClient
+    mocked_graphql_client: GraphQLClient, mocked_http_client: HttpClient
 ):
     # given
     skip = 30
     options = QueryOptions(disable_tqdm=False, skip=skip)
 
     # when
-    gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
+    gen = PaginatedGraphQLQuery(mocked_graphql_client).execute_query_from_paginated_call(
         QUERY, WHERE, options, "", COUNT_QUERY
     )
     list(gen)
 
     # then
-    graphql_client.execute.assert_has_calls(
+    mocked_graphql_client.execute.assert_has_calls(
         [
             call(COUNT_QUERY, {"where": {"projectID": PROJECT_ID}}),
             call(
@@ -116,7 +116,7 @@ def test_given_a_query_with_skip_argument_it_skips_elements(
 
 
 def test_given_a_query_with_skip_and_first_arguments_it_queries_the_right_elements(
-    graphql_client: GraphQLClient,
+    mocked_graphql_client: GraphQLClient,
 ):
     # given
     skip = 30
@@ -124,13 +124,13 @@ def test_given_a_query_with_skip_and_first_arguments_it_queries_the_right_elemen
     options = QueryOptions(disable_tqdm=False, skip=skip, first=first)
 
     # when
-    gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
+    gen = PaginatedGraphQLQuery(mocked_graphql_client).execute_query_from_paginated_call(
         QUERY, WHERE, options, "", COUNT_QUERY
     )
     elements = list(gen)
 
     # then
-    graphql_client.execute.assert_has_calls(
+    mocked_graphql_client.execute.assert_has_calls(
         [
             call(COUNT_QUERY, {"where": {"projectID": PROJECT_ID}}),
             call(
@@ -143,13 +143,13 @@ def test_given_a_query_with_skip_and_first_arguments_it_queries_the_right_elemen
 
 
 def test_given_a_query_and_a_number_of_elements_to_query_i_have_a_progress_bar(
-    graphql_client, capsys
+    mocked_graphql_client, capsys
 ):
     # given
     options = QueryOptions(disable_tqdm=False)
 
     # when
-    gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
+    gen = PaginatedGraphQLQuery(mocked_graphql_client).execute_query_from_paginated_call(
         QUERY, WHERE, options, "", COUNT_QUERY
     )
     list(gen)
@@ -160,12 +160,14 @@ def test_given_a_query_and_a_number_of_elements_to_query_i_have_a_progress_bar(
     assert "100%|██████████| 250/250" in captured.err
 
 
-def test_given_a_query_without_a_count_query_I_do_not_have_a_progress_bar(graphql_client, capsys):
+def test_given_a_query_without_a_count_query_I_do_not_have_a_progress_bar(
+    mocked_graphql_client, capsys
+):
     # given
     options = QueryOptions(disable_tqdm=False)
 
     # when
-    gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
+    gen = PaginatedGraphQLQuery(mocked_graphql_client).execute_query_from_paginated_call(
         QUERY, WHERE, options, "", None
     )
     list(gen)
