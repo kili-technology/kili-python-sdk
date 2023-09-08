@@ -6,6 +6,7 @@ from typeguard import typechecked
 
 from kili.core.enums import ProjectType
 from kili.domain.project import InputType, ProjectFilters, ProjectId
+from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
 from kili.use_cases.project.project import ProjectUseCases
 from kili.use_cases.tag import TagUseCases
@@ -84,7 +85,7 @@ class ProjectClientMethods(BaseClientMethods):
             tag_use_cases = TagUseCases(self.kili_api_gateway)
             tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
             tag_use_cases.tag_project(
-                project_id=project_id, tag_ids=cast(ListOrTuple[str], tag_ids), disable_tqdm=True
+                project_id=project_id, tag_ids=cast(ListOrTuple[TagId], tag_ids), disable_tqdm=True
             )
 
         return {"id": project_id}

@@ -50,7 +50,7 @@ def test_given_tag_ids_when_tagging_project_then_it_tags_the_project(
 
     # When
     applied_tags = TagUseCases(kili_api_gateway).tag_project(
-        project_id="fake_proj_id", tag_ids=["tag1_id", "tag2_id"], disable_tqdm=True
+        project_id="fake_proj_id", tag_ids=[TagId("tag1_id"), TagId("tag2_id")], disable_tqdm=True
     )
 
     # Then
@@ -68,7 +68,7 @@ def test_when_untagging_project_then_it_removes_some_tags(kili_api_gateway: Kili
 
     # When
     deleted_tags = TagUseCases(kili_api_gateway).untag_project(
-        project_id="fake_proj_id", tag_ids=["tag1_id", "tag2_id"], disable_tqdm=True
+        project_id="fake_proj_id", tag_ids=[TagId("tag1_id"), TagId("tag2_id")], disable_tqdm=True
     )
 
     # Then
@@ -108,7 +108,7 @@ def test_when_tagging_project_with_invalid_organization_tag_then_it_crashes(
     ):
         tag_use_cases.tag_project(
             project_id="fake_proj_id",
-            tag_ids=["this_tag_does_not_exist_it_is_fake"],
+            tag_ids=[TagId("this_tag_does_not_exist_it_is_fake")],
             disable_tqdm=True,
         )
 
