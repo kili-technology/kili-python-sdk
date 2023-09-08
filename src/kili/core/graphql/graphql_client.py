@@ -94,7 +94,7 @@ class GraphQLClient:
             timeout=30,
             verify=verify,
             retries=10,
-            retry_backoff_factor=0.5,
+            retry_backoff_factor=0.1,  # last retry will take 0.1*2**10 = 100s
             retry_status_forcelist=(
                 429,  # 429 Too Many Requests
                 502,  # 502 Bad Gateway
