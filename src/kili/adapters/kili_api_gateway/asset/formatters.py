@@ -17,6 +17,6 @@ def load_asset_json_fields(asset: Dict, fields: ListOrTuple[str]) -> Dict:
         for label in asset_labels:
             label["jsonResponse"] = json.loads(label["jsonResponse"])
     if "latestLabel.jsonResponse" in fields and asset.get("latestLabel") is not None:
-        latest_label = asset["latestLabel"]
-        latest_label["jsonResponse"] = json.loads(latest_label["jsonResponse"])
+        asset["latestLabel"]["jsonResponse"] = json.loads(asset["latestLabel"]["jsonResponse"])
+
     return asset

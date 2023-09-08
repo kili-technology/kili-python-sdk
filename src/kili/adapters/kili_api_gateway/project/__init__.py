@@ -9,6 +9,10 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     QueryOptions,
     fragment_builder,
 )
+from kili.adapters.kili_api_gateway.project.formatters import (
+    PROJECT_JSON_FIELDS,
+    load_project_json_fields,
+)
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
 from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
@@ -69,6 +73,9 @@ class ProjectOperationMixin(BaseOperationMixin):
         fragment = fragment_builder(fields)
         query = get_projects_query(fragment)
         where = project_where_mapper(filters=project_filters)
-        return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
+        projects_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving projects", GQL_COUNT_PROJECTS
         )
+        if any(json_field in fields for json_field in PROJECT_JSON_FIELDS):
+            projects_gen = (load_project_json_fields(project, fields) for project in projects_gen)
+        return projects_gen
