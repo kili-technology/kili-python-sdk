@@ -1,6 +1,7 @@
 """Base class for all KiliAPIGateway Operation Mixin classes."""
 from abc import ABC
 
+from kili.adapters.http_client import HttpClient
 from kili.core.graphql.graphql_client import GraphQLClient
 
 
@@ -13,3 +14,4 @@ class BaseOperationMixin(ABC):
     """
 
     graphql_client: GraphQLClient  # instantiated in the Kili API Gateway child class
+    http_client: HttpClient  # instantiated in the Kili API Gateway child class

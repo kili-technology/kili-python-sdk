@@ -445,7 +445,6 @@ class BaseAbstractAssetImporter(abc.ABC):
             AssetFilters(project_id=self.project_params.project_id),
             ["externalId"],
             QueryOptions(disable_tqdm=True),
-            None,
         )
         external_ids_in_project = [asset["externalId"] for asset in assets_in_project]
         filtered_assets = [

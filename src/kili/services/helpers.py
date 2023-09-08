@@ -95,7 +95,6 @@ def _build_id_map(kili_api_gateway: KiliAPIGateway, asset_external_ids, project_
                 AssetFilters(project_id, external_id_strictly_in=external_ids_batch),
                 ["id", "externalId"],
                 QueryOptions(disable_tqdm=True),
-                None,
             )
         )
     assets = chain(*assets_generators)

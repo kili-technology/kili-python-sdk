@@ -1,9 +1,12 @@
 """Asset use cases."""
-from typing import Generator, Literal, Optional
+import itertools
+from typing import Dict, Generator, List, Literal, Optional
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import validate_category_search_query
+from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
@@ -35,7 +38,7 @@ class AssetUseCases:
         if filters.label_category_search:
             validate_category_search_query(filters.label_category_search)
 
-        post_call_function, fields = get_download_assets_function(
+        download_media_function, fields = get_download_assets_function(
             self._kili_api_gateway,
             download_media,
             fields,
@@ -43,9 +46,14 @@ class AssetUseCases:
             local_media_dir,
         )
         options = QueryOptions(skip=skip, first=first, disable_tqdm=disable_tqdm)
-        assets_gen = self._kili_api_gateway.list_assets(
-            filters, fields, options, post_call_function
-        )
+        assets_gen = self._kili_api_gateway.list_assets(filters, fields, options)
+
+        if download_media_function is not None:
+            # TODO: modify download_media function so it can take a generator of assets
+            assets_lists: List[List[Dict]] = []
+            for assets_batch in batcher(assets_gen, QUERY_BATCH_SIZE):
+                assets_lists.append(download_media_function(assets_batch))
+            assets_gen = (asset for asset in itertools.chain(*assets_lists))
 
         if label_output_format == "parsed_label":
             project = LabelParsingProject(
