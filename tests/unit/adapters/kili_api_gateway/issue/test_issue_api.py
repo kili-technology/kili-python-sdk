@@ -17,8 +17,11 @@ def test_create_issue(mocker, mocked_graphql_client: GraphQLClient, mocked_http_
         object_mid="object_mid",
     )
 
+    issue_operations = IssueOperationMixin()
+    issue_operations.graphql_client = mocked_graphql_client
+    issue_operations.http_client = mocked_http_client
     mocker.patch(
-        "kili.adapters.kili_api_gateway.base.BaseOperationMixin._get_labels_asset_ids_map",
+        issue_operations._get_labels_asset_ids_map,
         return_value={LabelId("label_id"): AssetId("asset_id")},
     )
 
@@ -60,12 +63,14 @@ def test_get_labels_asset_ids_map(
             ]
         ),
     ):
-        assert KiliAPIGateway(
-            FakeKili.graphql_client, FakeKili.http_client
-        )._get_labels_asset_ids_map(
+        # When
+        labels_id_map = issue_operations._get_labels_asset_ids_map(
             ProjectId("project_id"),
             [LabelId("label_id_1"), LabelId("label_id_2")],
-        ) == {
+        )
+
+        # Then
+        assert labels_id_map == {
             "label_id_1": "asset_id_1",
             "label_id_2": "asset_id_1",
         }
