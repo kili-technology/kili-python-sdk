@@ -20,8 +20,9 @@ def test_create_issue(mocker, mocked_graphql_client: GraphQLClient, mocked_http_
     issue_operations = IssueOperationMixin()
     issue_operations.graphql_client = mocked_graphql_client
     issue_operations.http_client = mocked_http_client
-    mocker.patch(
-        issue_operations._get_labels_asset_ids_map,
+    mocker.patch.object(
+        issue_operations,
+        "_get_labels_asset_ids_map",
         return_value={LabelId("label_id"): AssetId("asset_id")},
     )
 
