@@ -5,14 +5,14 @@ from kili.use_cases.asset.media_downloader import MediaDownloader
 from kili.utils.labels.parsing import ParsedLabel
 
 
-def test_given_query_parameters_I_can_query_assets(kili_api_gateway: KiliAPIGateway):
+def test_given_query_parameters_I_can_query_assets(mocked_kili_api_gateway: KiliAPIGateway):
     # mocking
     nb_assets = 200
     assets = [{"id": "asset_id"}] * nb_assets
-    kili_api_gateway.list_assets.return_value = assets
+    mocked_kili_api_gateway.list_assets.return_value = assets
 
     # given parameters to query assets
-    asset_use_cases = AssetUseCases(kili_api_gateway)
+    asset_use_cases = AssetUseCases(mocked_kili_api_gateway)
     filters = AssetFilters(project_id="project_id")
     fields = ["id"]
 
@@ -33,7 +33,7 @@ def test_given_query_parameters_I_can_query_assets(kili_api_gateway: KiliAPIGate
 
 
 def test_given_query_parameters_I_can_query_assets_and_get_their_labels_parsed(
-    kili_api_gateway: KiliAPIGateway,
+    mocked_kili_api_gateway: KiliAPIGateway,
 ):
     # mocking
     label = {
@@ -60,14 +60,14 @@ def test_given_query_parameters_I_can_query_assets_and_get_their_labels_parsed(
     json_interface = {
         "jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}}
     }
-    kili_api_gateway.list_assets.return_value = (asset for asset in [asset])
-    kili_api_gateway.get_project.return_value = {
+    mocked_kili_api_gateway.list_assets.return_value = (asset for asset in [asset])
+    mocked_kili_api_gateway.get_project.return_value = {
         "jsonInterface": json_interface,
         "inputType": "TEXT",
     }
 
     # given parameters to query assets
-    asset_use_cases = AssetUseCases(kili_api_gateway)
+    asset_use_cases = AssetUseCases(mocked_kili_api_gateway)
     filters = AssetFilters(project_id="project_id")
     fields = [
         "content",
@@ -110,14 +110,14 @@ def test_given_query_parameters_I_can_query_assets_and_get_their_labels_parsed(
 
 
 def test_given_query_parameters_I_can_query_assets_and_download_their_media(
-    kili_api_gateway: KiliAPIGateway, mocker
+    mocked_kili_api_gateway: KiliAPIGateway, mocker
 ):
     # mocking
-    kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+    mocked_kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
     media_downlaoder_mock = mocker.patch.object(MediaDownloader, "__init__", return_value=None)
 
     # given parameters to query assets
-    asset_use_cases = AssetUseCases(kili_api_gateway)
+    asset_use_cases = AssetUseCases(mocked_kili_api_gateway)
     filters = AssetFilters(project_id="project_id")
     fields = ["id", "content"]
 
@@ -139,5 +139,5 @@ def test_given_query_parameters_I_can_query_assets_and_download_their_media(
         "project_id",
         False,
         "IMAGE",
-        kili_api_gateway.http_client,
+        mocked_kili_api_gateway.http_client,
     )

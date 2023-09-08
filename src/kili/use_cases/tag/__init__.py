@@ -27,7 +27,7 @@ class TagUseCases:
         )
 
     def tag_project(
-        self, project_id: str, tag_ids: ListOrTuple[str], disable_tqdm: Optional[bool]
+        self, project_id: str, tag_ids: ListOrTuple[TagId], disable_tqdm: Optional[bool]
     ) -> List[TagId]:
         """Assign tags to a project."""
         tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
@@ -52,7 +52,7 @@ class TagUseCases:
         self,
         project_id: str,
         tag_ids: ListOrTuple[str],
-        disable_tqdm: bool,
+        disable_tqdm: Optional[bool],
     ) -> List[TagId]:
         """Remove tags from a project."""
         tag_ids_of_project = {
@@ -112,3 +112,18 @@ class TagUseCases:
             The updated tag.
         """
         return self._kili_api_gateway.update_tag(tag_id=TagId(tag_id), label=new_tag_name)
+
+    def delete_tag(self, tag_id: str) -> bool:
+        """Delete the given tag.
+
+        This operation is organization-wide.
+        The tag will no longer be proposed for projects of the organization.
+        If this tag is checked for one or more projects of the organization, it will be unchecked.
+
+        Args:
+            tag_id: Id of the tag to remove.
+
+        Returns:
+            Whether the tag was successfully removed.
+        """
+        return self._kili_api_gateway.delete_tag(tag_id=TagId(tag_id))

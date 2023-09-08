@@ -4,9 +4,12 @@ from typing import Dict, List, Optional
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import validate_category_search_query
+from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters
 from kili.domain.project import ProjectId
+from kili.orm import Asset
 from kili.services.export.types import ExportType
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 
@@ -78,7 +81,7 @@ def fetch_assets(
     download_media: bool,
     local_media_dir: Optional[str],
     asset_filter_kwargs: Optional[Dict[str, object]],
-) -> List[Dict]:
+) -> List[Asset]:
     """Fetches assets.
 
     Fetches assets where ID are in asset_ids if the list has more than one element,
@@ -148,12 +151,20 @@ def fetch_assets(
             )
 
     options = QueryOptions(disable_tqdm=disable_tqdm)
-    post_call_function, fields = get_download_assets_function(
+    download_media_function, fields = get_download_assets_function(
         kili.kili_api_gateway, download_media, fields, ProjectId(project_id), local_media_dir
     )
-    assets = list(kili.kili_api_gateway.list_assets(filters, fields, options, post_call_function))
+    assets_gen = kili.kili_api_gateway.list_assets(filters, fields, options)
+    if download_media_function is not None:
+        assets: List[Dict] = []
+        # TODO: modify download_media function so it can take a generator of assets
+        for assets_batch in batcher(assets_gen, QUERY_BATCH_SIZE):
+            assets.extend(download_media_function(assets_batch))
+    else:
+        assets = list(assets_gen)
     attach_name_to_assets_labels_author(assets, export_type)
-    return assets
+    formated_assets = [Asset(asset) for asset in assets]
+    return formated_assets
 
 
 def get_fields_to_fetch(export_type: ExportType):

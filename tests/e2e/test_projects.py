@@ -32,7 +32,7 @@ def projects_uuid(kili: Kili):
 
 
 def test_projects_query_archived_project(kili: Kili, projects_uuid: str):
-    search_query = f"%{projects_uuid}%"
+    search_query = f"%{projects_uuid}"
 
     # should have 2 projects not archived
     assert kili.count_projects(search_query=search_query, archived=False) == 2
@@ -48,3 +48,17 @@ def test_projects_query_archived_project(kili: Kili, projects_uuid: str):
     assert kili.count_projects(search_query=search_query) == 3
     projects = kili.projects(fields=["id", "title"], search_query=search_query)
     assert len(projects) == 3
+
+
+def test_given_projects_when_i_query_projects_with_filters_then_i_get_projects(
+    projects_uuid: str, kili: Kili
+):
+    # Given
+
+    # When
+    retrieved_projects = kili.projects(search_query=f"%{projects_uuid}", fields=("jsonInterface",))
+
+    # Then
+    assert len(retrieved_projects) == 3
+    # make sure jsoninterface is serialized (it's a GraphQL string type field)
+    assert all(isinstance(proj["jsonInterface"], dict) for proj in retrieved_projects)

@@ -1,7 +1,7 @@
 """GraphQL Asset operations."""
 
 
-def get_asset_query(fragment: str):
+def get_assets_query(fragment: str) -> str:
     """Return the GraphQL assets query."""
     return f"""
         query assets($where: AssetWhere!, $first: PageSize!, $skip: Int!) {{

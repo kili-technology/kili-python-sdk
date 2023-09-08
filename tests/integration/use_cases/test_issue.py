@@ -9,14 +9,18 @@ from kili.use_cases.issue import IssueUseCases
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
 
 
-def test_create_one_issue(kili_api_gateway: KiliAPIGateway, mocker: pytest_mock.MockerFixture):
-    kili_api_gateway.create_issues.return_value = [IssueId("created_issue_id")]
+def test_create_one_issue(
+    mocked_kili_api_gateway: KiliAPIGateway, mocker: pytest_mock.MockerFixture
+):
+    mocked_kili_api_gateway.create_issues.return_value = [IssueId("created_issue_id")]
 
     # given one issue to create
     issue = IssueToCreateUseCaseInput(label_id="label_id", text="text", object_mid="object_mid")
 
     # when creating one issue
-    issues = IssueUseCases(kili_api_gateway).create_issues(project_id="project_id", issues=[issue])
+    issues = IssueUseCases(mocked_kili_api_gateway).create_issues(
+        project_id="project_id", issues=[issue]
+    )
 
     # then
     assert issues == [IssueId("created_issue_id")]

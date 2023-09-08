@@ -86,7 +86,7 @@ class TagClientMethods(BaseClientMethods):
         tags: Optional[ListOrTuple[str]] = None,
         tag_ids: Optional[ListOrTuple[str]] = None,
         all: Optional[bool] = None,  # pylint: disable=redefined-builtin
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
     ) -> List[Dict[Literal["id"], str]]:
         """Remove tags from a project.
 
@@ -149,3 +149,25 @@ class TagClientMethods(BaseClientMethods):
                 tag_use_cases.update_tag(tag_id=tag_id, new_tag_name=new_tag_name).updated_tag_id
             )
         }
+
+    def delete_tag(self, tag_name: Optional[str] = None, tag_id: Optional[str] = None) -> bool:
+        """Delete the given tag.
+
+        This operation is organization-wide.
+        The tag will no longer be proposed for projects of the organization.
+        If this tag is checked for one or more projects of the organization, it will be unchecked.
+
+        Args:
+            tag_name: Name of the tag to remove.
+            tag_id: Id of the tag to remove.
+                Use this argument if you have several tags with the same name.
+
+        Returns:
+            Whether the tag was successfully removed.
+        """
+        tag_use_cases = TagUseCases(self.kili_api_gateway)
+        if tag_id is None:
+            if tag_name is None:
+                raise ValueError("Either `tag_name` or `tag_id` must be provided.")
+            tag_id = tag_use_cases.get_tag_ids_from_labels(labels=(tag_name,))[0]
+        return tag_use_cases.delete_tag(tag_id=tag_id)

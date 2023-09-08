@@ -7,13 +7,12 @@ from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
 from kili.adapters.kili_api_gateway.asset.operations import (
     GQL_COUNT_ASSETS,
-    get_asset_query,
+    get_assets_query,
 )
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
     fragment_builder,
-    get_number_of_elements_to_query,
 )
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.utils import pagination
@@ -30,8 +29,8 @@ class BaseOperationMixin(ABC):
     It is not meant to be used and instantiated directly.
     """
 
-    graphql_client: GraphQLClient  # instantiated in the Kili API Gateway child class
-    http_client: HttpClient  # instantiated in the Kili API Gateway child class
+    graphql_client: GraphQLClient  # instantiated in the KiliAPIGateway child class
+    http_client: HttpClient  # instantiated in the KiliAPIGateway child class
 
     def _get_asset_ids_or_throw_error(
         self,
@@ -91,14 +90,12 @@ class BaseOperationMixin(ABC):
     ) -> Generator[Dict[Literal["id", "externalId"], str], None, None]:
         """List assets with given options."""
         fragment = fragment_builder(["id", "externalId"])
-        query = get_asset_query(fragment)
+        query = get_assets_query(fragment)
         where = asset_where_mapper(
             AssetFilters(project_id, external_id_strictly_in=[str(e) for e in asset_external_ids])
         )
         query_options = QueryOptions(disable_tqdm=True)
-        nb_elements_to_query = get_number_of_elements_to_query(
-            self.graphql_client, GQL_COUNT_ASSETS, where, query_options
-        )
+
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
-            query, where, query_options, "", nb_elements_to_query, None
+            query, where, query_options, "", GQL_COUNT_ASSETS
         )

@@ -6,14 +6,16 @@ from kili.domain.question import QuestionId
 from kili.use_cases.question import QuestionUseCases
 
 
-def test_create_one_question(kili_api_gateway: KiliAPIGateway):
+def test_create_one_question(mocked_kili_api_gateway: KiliAPIGateway):
     # given one issue to create
-    kili_api_gateway.create_questions.return_value = [{"id": QuestionId("created_question_id")}]
+    mocked_kili_api_gateway.create_questions.return_value = [
+        {"id": QuestionId("created_question_id")}
+    ]
 
     question = QuestionsToCreateGatewayInput(text="text", asset_id=AssetId("asset_id"))
 
     # when creating one issue
-    created_questions = QuestionUseCases(kili_api_gateway).create_questions(
+    created_questions = QuestionUseCases(mocked_kili_api_gateway).create_questions(
         project_id=ProjectId("project_id"), questions=[question], disable_tqdm=True
     )
 

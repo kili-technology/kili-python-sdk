@@ -23,8 +23,8 @@ from kili.presentation.client.asset import AssetClientMethods
         ((), {"project_id": "project-id", "as_generator": False}, List[Dict]),
     ],
 )
-def test_assets_query_return_type(kili_api_gateway, args, kwargs, expected_return_type):
+def test_assets_query_return_type(mocked_kili_api_gateway, args, kwargs, expected_return_type):
     asset_client_methods = AssetClientMethods()
-    asset_client_methods.kili_api_gateway = kili_api_gateway
+    asset_client_methods.kili_api_gateway = mocked_kili_api_gateway
     result = asset_client_methods.assets(*args, **kwargs)
     assert check_type("result", result, expected_return_type) is None

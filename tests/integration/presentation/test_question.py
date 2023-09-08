@@ -3,12 +3,14 @@ from kili.domain.question import QuestionId
 from kili.presentation.client.question import QuestionClientMethods
 
 
-def test_create_one_question(kili_api_gateway: KiliAPIGateway):
+def test_create_one_question(mocked_kili_api_gateway: KiliAPIGateway):
     # given one issue to create
     kili = QuestionClientMethods()
-    kili_api_gateway.create_questions.return_value = [{"id": QuestionId("created_question_id")}]
+    mocked_kili_api_gateway.create_questions.return_value = [
+        {"id": QuestionId("created_question_id")}
+    ]
 
-    kili.kili_api_gateway = kili_api_gateway
+    kili.kili_api_gateway = mocked_kili_api_gateway
 
     # when creating one issue
     created_questions = kili.create_questions(
