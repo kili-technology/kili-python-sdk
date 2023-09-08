@@ -52,7 +52,7 @@ class TagUseCases:
         self,
         project_id: str,
         tag_ids: ListOrTuple[str],
-        disable_tqdm: bool,
+        disable_tqdm: Optional[bool],
     ) -> List[TagId]:
         """Remove tags from a project."""
         tag_ids_of_project = {
