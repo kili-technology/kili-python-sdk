@@ -51,8 +51,8 @@ class TagUseCases:
     def untag_project(
         self,
         project_id: str,
-        tag_ids: ListOrTuple[TagId],
-        disable_tqdm: bool,
+        tag_ids: ListOrTuple[str],
+        disable_tqdm: Optional[bool],
     ) -> List[TagId]:
         """Remove tags from a project."""
         tag_ids_of_project = {
