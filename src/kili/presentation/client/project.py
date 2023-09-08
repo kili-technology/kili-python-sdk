@@ -193,7 +193,7 @@ class ProjectClientMethods(BaseClientMethods):
         Args:
             project_id: Select a specific project through its project_id.
             search_query: Returned projects with a title or a description matching this [PostgreSQL ILIKE](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE) pattern.
-            should_relaunch_kpi_computation: Technical field, added to indicate changes in honeypot or consensus settings.
+            should_relaunch_kpi_computation: Deprecated, do not use.
             updated_at_gte: Returned projects should have a label whose update date is greater or equal
                 to this date.
             updated_at_lte: Returned projects should have a label whose update date is lower or equal to this date.

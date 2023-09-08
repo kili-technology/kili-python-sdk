@@ -75,7 +75,7 @@ class PaginatedGraphQLQuery:
                     payload = {"where": where, "skip": skip, "first": first}
                     elements = self._graphql_client.execute(query, payload)["data"]
                     if not isinstance(elements, list):
-                        raise ValueError(
+                        raise TypeError(
                             "PaginatedGraphQLQuery only support operations returning a list of"
                             " objects"
                         )
