@@ -10,7 +10,7 @@ from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
 from kili.adapters.kili_api_gateway.asset.operations import (
     GQL_COUNT_ASSETS,
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
-    get_asset_query,
+    get_assets_query,
 )
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
@@ -34,7 +34,7 @@ class AssetOperationMixin(BaseOperationMixin):
     ) -> Generator[Dict, None, None]:
         """List assets with given options."""
         fragment = fragment_builder(fields)
-        query = get_asset_query(fragment)
+        query = get_assets_query(fragment)
         where = asset_where_mapper(filters)
         assets_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving assets", GQL_COUNT_ASSETS
