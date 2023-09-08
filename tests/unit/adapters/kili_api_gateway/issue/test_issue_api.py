@@ -3,6 +3,7 @@ from kili.adapters.kili_api_gateway.issue import IssueOperationMixin
 from kili.adapters.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.core.graphql.graphql_client import GraphQLClient
+from kili.core.graphql.operations.label.queries import LabelQuery
 from kili.domain.asset import AssetId
 from kili.domain.label import LabelId
 from kili.domain.project import ProjectId
@@ -16,9 +17,6 @@ def test_create_issue(mocker, mocked_graphql_client: GraphQLClient, mocked_http_
         object_mid="object_mid",
     )
 
-    issue_operations = IssueOperationMixin()
-    issue_operations.graphql_client = mocked_graphql_client
-    issue_operations.http_client = mocked_http_client
     mocker.patch(
         "kili.adapters.kili_api_gateway.base.BaseOperationMixin._get_labels_asset_ids_map",
         return_value={LabelId("label_id"): AssetId("asset_id")},
@@ -42,3 +40,32 @@ def test_create_issue(mocker, mocked_graphql_client: GraphQLClient, mocked_http_
         "where": {"idIn": ["asset_id"]},
     }
     issue_operations.graphql_client.execute.assert_called_with(GQL_CREATE_ISSUES, payload)
+
+
+def test_get_labels_asset_ids_map(
+    mocker, mocked_graphql_client: GraphQLClient, mocked_http_client: HttpClient
+):
+    # Given
+    issue_operations = IssueOperationMixin()
+    issue_operations.graphql_client = mocked_graphql_client
+    issue_operations.http_client = mocked_http_client
+
+    with mocker.patch.object(
+        LabelQuery,
+        "__call__",
+        return_value=iter(
+            [
+                {"id": "label_id_1", "labelOf": {"id": "asset_id_1"}},
+                {"id": "label_id_2", "labelOf": {"id": "asset_id_1"}},
+            ]
+        ),
+    ):
+        assert KiliAPIGateway(
+            FakeKili.graphql_client, FakeKili.http_client
+        )._get_labels_asset_ids_map(
+            ProjectId("project_id"),
+            [LabelId("label_id_1"), LabelId("label_id_2")],
+        ) == {
+            "label_id_1": "asset_id_1",
+            "label_id_2": "asset_id_1",
+        }

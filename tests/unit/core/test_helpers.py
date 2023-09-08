@@ -109,28 +109,6 @@ def test_retry_long_wait_warner():
         MyTestClass().my_method_takes_some_time()
 
 
-def test_get_labels_asset_ids_map():
-    with patch.object(
-        LabelQuery,
-        "__call__",
-        return_value=iter(
-            [
-                {"id": "label_id_1", "labelOf": {"id": "asset_id_1"}},
-                {"id": "label_id_2", "labelOf": {"id": "asset_id_1"}},
-            ]
-        ),
-    ):
-        assert KiliAPIGateway(
-            FakeKili.graphql_client, FakeKili.http_client
-        )._get_labels_asset_ids_map(
-            ProjectId("project_id"),
-            [LabelId("label_id_1"), LabelId("label_id_2")],
-        ) == {
-            "label_id_1": "asset_id_1",
-            "label_id_2": "asset_id_1",
-        }
-
-
 @patch("kili.entrypoints.mutations.asset.mutate_from_paginated_call", return_value=[{"data": None}])
 class TestCheckWarnEmptyList(TestCase):
     """Tests for the check_warn_empty_list helper."""

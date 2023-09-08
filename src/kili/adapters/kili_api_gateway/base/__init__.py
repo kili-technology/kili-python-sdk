@@ -16,10 +16,8 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     get_number_of_elements_to_query,
 )
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.utils import pagination
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
-from kili.domain.label import LabelId
 from kili.domain.project import ProjectId
 from kili.exceptions import NotFound
 
@@ -104,40 +102,3 @@ class BaseOperationMixin(ABC):
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, query_options, "", nb_elements_to_query, None
         )
-
-    def _get_labels_asset_ids_map(
-        self,
-        project_id: ProjectId,
-        label_id_array: List[LabelId],
-    ) -> Dict[LabelId, AssetId]:
-        """Return a dictionary that gives for every label id, its associated asset id.
-
-        Args:
-            kili_api_gateway: instance of KiliAPIGateway
-            project_id: id of the project
-            label_id_array: list of label ids
-
-        Returns:
-            a dict of key->value a label id->its associated asset id for the given label ids
-
-        Raises:
-            NotFound error if at least one label was not found with its given id
-        """
-        options = QueryOptions(disable_tqdm=True)
-        where = LabelWhere(
-            project_id=project_id,
-            id_contains=[str(lab) for lab in label_id_array],
-        )
-        labels = list(
-            LabelQuery(self.graphql_client, self.http_client)(
-                where=where, fields=["labelOf.id", "id"], options=options
-            )
-        )
-        labels_not_found = [
-            label_id
-            for label_id in label_id_array
-            if label_id not in [label["id"] for label in labels]
-        ]
-        if len(labels_not_found) > 0:
-            raise NotFound(str(labels_not_found))
-        return {LabelId(label["id"]): AssetId(label["labelOf"]["id"]) for label in labels}
