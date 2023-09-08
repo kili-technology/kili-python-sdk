@@ -39,7 +39,7 @@ class ProjectOperationMixin(BaseOperationMixin):
                 f"project ID: {project_id}. The project does not exist or you do not have access"
                 " to it."
             )
-        return projects[0]
+        return load_project_json_fields(projects[0], fields)
 
     # pylint: disable=too-many-arguments
     def create_project(
