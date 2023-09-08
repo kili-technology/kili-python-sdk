@@ -1,14 +1,16 @@
 """Pagination utils."""
 from time import sleep
-from typing import Any, Callable, Dict, Iterator, List, Optional
+from typing import Any, Callable, Dict, Generic, Iterator, List, Optional, TypeVar
 
 from kili.core.constants import MUTATION_BATCH_SIZE
 from kili.exceptions import GraphQLError
 
 # pylint: disable=too-many-arguments
 
+T = TypeVar("T")
 
-class BatchIteratorBuilder:
+
+class BatchIteratorBuilder(Generic[T]):
     """Generate an paginated iterator from a list.
 
     Args:
@@ -16,15 +18,15 @@ class BatchIteratorBuilder:
         batch_size: the size of the batches to produce
     """
 
-    def __init__(self, iterable: List, batch_size: int = MUTATION_BATCH_SIZE) -> None:
-        self.iterable = iterable
+    def __init__(self, sequence: List[T], batch_size: int = MUTATION_BATCH_SIZE) -> None:
+        self.iterable = sequence
         self.batch_size = batch_size
-        self.nb_batches = (len(iterable) - 1) // batch_size + 1
+        self.nb_batches = (len(sequence) - 1) // batch_size + 1
 
     def __len__(self) -> int:
         return self.nb_batches
 
-    def __next__(self):
+    def __next__(self) -> List[T]:
         next_batch = self.iterable[: self.batch_size]
         self.iterable = self.iterable[self.batch_size :]
         if len(next_batch) > 0:
@@ -52,7 +54,7 @@ def batch_object_builder(
     number_of_batches = len(range(0, number_of_objects, batch_size))
     batched_properties = {
         k: (
-            BatchIteratorBuilder(iterable=v, batch_size=batch_size)
+            BatchIteratorBuilder(sequence=v, batch_size=batch_size)
             if v is not None
             else (item for item in [v] * number_of_batches)
         )
