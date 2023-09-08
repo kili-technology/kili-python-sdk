@@ -27,7 +27,7 @@ class TagUseCases:
         )
 
     def tag_project(
-        self, project_id: str, tag_ids: ListOrTuple[str], disable_tqdm: Optional[bool]
+        self, project_id: str, tag_ids: ListOrTuple[TagId], disable_tqdm: Optional[bool]
     ) -> List[TagId]:
         """Assign tags to a project."""
         tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
@@ -51,7 +51,7 @@ class TagUseCases:
     def untag_project(
         self,
         project_id: str,
-        tag_ids: ListOrTuple[str],
+        tag_ids: ListOrTuple[TagId],
         disable_tqdm: bool,
     ) -> List[TagId]:
         """Remove tags from a project."""
