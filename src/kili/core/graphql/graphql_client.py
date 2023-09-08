@@ -27,6 +27,8 @@ from tenacity import (
     retry_if_exception_message,
     retry_if_exception_type,
     retry_if_not_exception_message,
+    stop_after_delay,
+    wait_exponential,
 )
 from typing_extensions import LiteralString
 
@@ -246,7 +248,7 @@ class GraphQLClient:
         document = query if isinstance(query, DocumentNode) else gql(query)
 
         try:
-            result = self._execute_with_retries(document, variables, **kwargs)
+            return self._execute_with_retries(document, variables, **kwargs)
 
         except graphql.GraphQLError:  # local validation error
             # the local schema might be outdated
@@ -268,17 +270,17 @@ class GraphQLClient:
             # the server refused the query after some retries, we crash
             raise kili.exceptions.GraphQLError(error=err.errors) from err
 
-        return result
-
     @retry(
         reraise=True,  # re-raise the last exception
         retry=retry_all(
-            retry_if_exception_type(exceptions.TransportQueryError),  # server error
+            retry_if_exception_type(exceptions.TransportQueryError),  # error received from server
             retry_if_not_exception_message(
                 match=r'Variable "(\$\w+)" of required type "(\w+!)" was not provided.'
             ),
             retry_if_exception_message(match="Invalid request made to Flagsmith API"),
         ),
+        stop=stop_after_delay(3 * 60),
+        wait=wait_exponential(multiplier=0.5, min=1, max=10),
     )
     def _execute_with_retries(
         self, document: DocumentNode, variables: Optional[Dict], **kwargs

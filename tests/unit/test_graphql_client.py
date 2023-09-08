@@ -7,6 +7,8 @@ from unittest import mock
 import graphql
 import pytest
 import pytest_mock
+from gql import Client
+from gql.transport import exceptions
 from pyrate_limiter import Duration, Limiter, RequestRate
 
 from kili.adapters.http_client import HttpClient
@@ -184,3 +186,172 @@ def test_rate_limiting(mocker: pytest_mock.MockerFixture):
 
     # at least 1 second delay for the last call
     assert last_call_timestamp - before_last_call_timestamp > 1
+
+
+def test_given_gql_client_when_i_send_wrong_query_then_it_refreshes_the_schema_and_retry_once_only(
+    mocker: pytest_mock.MockerFixture,
+):
+    api_endpoint = os.getenv(
+        "KILI_API_ENDPOINT", "https://cloud.kili-technology.com/api/label/v2/graphql"
+    )
+
+    # we need to remove "Authorization" api key from the header
+    # if not, the backend will refuse the introspection query
+    mocker.patch.object(GraphQLClient, "_get_headers", return_value={})
+
+    gql_execute_spy = mocker.spy(Client, "execute")
+
+    # Given
+    client = GraphQLClient(
+        endpoint=api_endpoint,
+        api_key="",
+        client_name=GraphQLClientName.SDK,
+        http_client=HttpClient(
+            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+        ),
+        enable_schema_caching=True,
+    )
+
+    # When I send wrong query, the local validation fails
+    # the client fetches a fresh schema from the backend
+    # and we retry the query once only
+    with pytest.raises(
+        GraphQLError,
+        match=(
+            'GraphQL error: "Cannot query field'
+            " 'my_query_is_clearly_not_valid_according_to_the_kili_schema'"
+        ),
+    ):
+        client.execute(
+            query=(
+                "query MyQuery { my_query_is_clearly_not_valid_according_to_the_kili_schema {"
+                " id } }"
+            )
+        )
+
+    assert gql_execute_spy.call_count == 2  # first call + one retry
+
+
+def test_given_gql_client_when_the_server_refuses_wrong_query_then_it_does_no_retry(
+    mocker: pytest_mock.MockerFixture,
+):
+    mocker.patch("kili.core.graphql.graphql_client.gql", side_effect=lambda x: x)
+
+    nb_times_called = 0
+
+    def mocked_backend_response(*args, **kwargs):
+        nonlocal nb_times_called
+        nb_times_called += 1
+        raise exceptions.TransportQueryError(
+            msg=(
+                "{'message': 'Variable \"$skip\" of required type \"Int!\" was not provided.',"
+                " 'locations': [{'line': 1, 'column': 58}], 'extensions': {'code':"
+                " 'INTERNAL_SERVER_ERROR'}}"
+            ),
+            errors=[
+                {
+                    "message": 'Variable "$skip" of required type "Int!" was not provided.',
+                    "locations": [{"line": 1, "column": 58}],
+                    "extensions": {"code": "INTERNAL_SERVER_ERROR"},
+                }
+            ],
+            data=None,
+            extensions=None,
+        )
+
+    mocked_execute = mocker.patch.object(Client, "execute", side_effect=mocked_backend_response)
+
+    # Given
+    client = GraphQLClient(
+        endpoint="",
+        api_key="",
+        client_name=GraphQLClientName.SDK,
+        http_client=HttpClient(
+            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+        ),
+        enable_schema_caching=False,
+    )
+
+    with pytest.raises(
+        GraphQLError, match=r'Variable "(\$\w+)" of required type "(\w+!)" was not provided.'
+    ):
+        client.execute(query="fake_query")  # When
+
+    assert mocked_execute.call_count == nb_times_called == 1
+
+
+def test_given_gql_client_when_the_server_returns_flagsmith_error_then_it_retries(
+    mocker: pytest_mock.MockerFixture,
+):
+    mocker.patch("kili.core.graphql.graphql_client.gql", side_effect=lambda x: x)
+
+    nb_times_called = 0
+
+    def mocked_backend_response(*args, **kwargs):
+        nonlocal nb_times_called
+        nb_times_called += 1
+        if nb_times_called > 2:
+            return {"data": "all good"}
+        raise exceptions.TransportQueryError(
+            msg=(
+                "[unexpectedRetrieving] Unexpected error when retrieving runtime information."
+                " Please contact our support team if it occurs again. -- This can be due to:"
+                " Invalid request made to Flagsmith API. Response status code: 502 | trace : Error:"
+                " Invalid request made to Flagsmith API. Response status code: 502\n    at new"
+                " FlagsmithAPIError"
+                " (/snapshot/app/node_modules/flagsmith-nodejs/build/sdk/errors.js:30:42)\n    at"
+                " Flagsmith.<anonymous>"
+                " (/snapshot/app/node_modules/flagsmith-nodejs/build/sdk/index.js:373:35)\n    at"
+                " step (/snapshot/app/node_modules/flagsmith-nodejs/build/sdk/index.js:33:23)\n   "
+                " at Object.next"
+                " (/snapshot/app/node_modules/flagsmith-nodejs/build/sdk/index.js:14:53)\n    at"
+                " fulfilled (/snapshot/app/node_modules/flagsmith-nodejs/build/sdk/index.js:5:58)\n"
+                "    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"
+            ),
+            errors=[
+                {
+                    "message": (
+                        "[unexpectedRetrieving] Unexpected error when retrieving runtime"
+                        " information. Please contact our support team if it occurs again. -- This"
+                        " can be due to: Invalid request made to Flagsmith API. Response status"
+                        " code: 502 | trace : Error: Invalid request made to Flagsmith API."
+                        " Response status code: 502\n    at new FlagsmithAPIError"
+                        " (/snapshot/app/node_modules/flagsmith-nodejs/build/sdk/errors.js:30:42)\n"
+                        "    at Flagsmith.<anonymous>"
+                        " (/snapshot/app/node_modules/flagsmith-nodejs/build/sdk/index.js:373:35)\n"
+                        "    at step"
+                        " (/snapshot/app/node_modules/flagsmith-nodejs/build/sdk/index.js:33:23)\n "
+                        "   at Object.next"
+                        " (/snapshot/app/node_modules/flagsmith-nodejs/build/sdk/index.js:14:53)\n "
+                        "   at fulfilled"
+                        " (/snapshot/app/node_modules/flagsmith-nodejs/build/sdk/index.js:5:58)\n  "
+                        "  at process.processTicksAndRejections"
+                        " (node:internal/process/task_queues:95:5)"
+                    ),
+                    "locations": [{"line": 2, "column": 3}],
+                    "path": ["data"],
+                    "extensions": {"code": "OPERATION_RESOLUTION_FAILURE"},
+                }
+            ],
+            data={"data": None},
+        )
+
+    mocked_execute = mocker.patch.object(Client, "execute", side_effect=mocked_backend_response)
+
+    # Given
+    client = GraphQLClient(
+        endpoint="",
+        api_key="",
+        client_name=GraphQLClientName.SDK,
+        http_client=HttpClient(
+            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+        ),
+        enable_schema_caching=False,
+    )
+
+    # When
+    result = client.execute(query="fake_query")
+
+    # Then
+    assert result["data"] == "all good"
+    assert mocked_execute.call_count == nb_times_called == 3
