@@ -230,7 +230,7 @@ def assert_required_fields_existence(assets: List[Dict]) -> None:
     """Check if all fields are available to download assets."""
     required_fields = ["content", "externalId"]
     for field in required_fields:
-        if field not in assets[0].keys():
+        if field not in assets[0]:
             raise MissingPropertyError(
                 f"The asset does not have the {field} field. Please add it to the fields when"
                 " querying assets."

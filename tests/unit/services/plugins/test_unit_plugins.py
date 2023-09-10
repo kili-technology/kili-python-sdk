@@ -18,7 +18,7 @@ from kili.utils.tempfile import TemporaryDirectory
 PLUGIN_NAME = "test_plugin"
 
 
-@pytest.fixture
+@pytest.fixture()
 def kili():
     return MagicMock()
 

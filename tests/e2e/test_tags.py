@@ -38,7 +38,7 @@ def project_with_tags_id(project_id: str, kili: Kili):
     tag_to_add_to_project = org_tags[0]["label"]
     kili.tag_project(project_id, tags=(tag_to_add_to_project,))
 
-    yield project_id
+    return project_id
 
     # kili.delete_project(project_id)  # project is deleted in project_id fixture
 

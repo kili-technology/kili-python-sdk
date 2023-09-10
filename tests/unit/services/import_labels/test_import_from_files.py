@@ -44,7 +44,7 @@ def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
 
 
 @pytest.mark.parametrize(
-    "description,inputs,outputs",
+    ("description", "inputs", "outputs"),
     [
         (test_case["description"], test_case["inputs"], test_case["outputs"])
         for test_case in TEST_CASES
@@ -188,7 +188,7 @@ def test_import_labels_wrong_target_job(mocker):
 
 
 @pytest.mark.parametrize(
-    "name,filename,lines,label_format, expected",
+    ("name", "filename", "lines", "label_format", "expected"),
     [
         (
             "YOLO v4 1st layout",

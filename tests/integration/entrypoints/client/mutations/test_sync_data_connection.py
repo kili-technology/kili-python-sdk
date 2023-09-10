@@ -60,7 +60,7 @@ class MockerGetDataConnection:
 
 
 @pytest.mark.parametrize(
-    "delete_extraneous_files,data_connection_ret_values,log_messages",
+    ("delete_extraneous_files", "data_connection_ret_values", "log_messages"),
     [
         (
             False,
