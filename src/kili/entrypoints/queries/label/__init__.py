@@ -273,8 +273,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
 
             These operations can be separated by OR and AND operators
 
-            Example:
-
+        Example:
                 category_search = `JOB_CLASSIF.CATEGORY_A.count > 0`
                 category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
                 category_search = `(JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
@@ -640,14 +639,8 @@ class QueriesLabel(BaseOperationEntrypointMixin):
     def export_labels_as_df(
         self,
         project_id: str,
-        fields: List[str] = [
-            "author.email",
-            "author.id",
-            "createdAt",
-            "id",
-            "labelType",
-        ],
-        asset_fields: List[str] = ["externalId"],
+        fields: ListOrTuple[str] = ("author.email", "author.id", "createdAt", "id", "labelType"),
+        asset_fields: ListOrTuple[str] = ("externalId",),
     ) -> pd.DataFrame:
         # pylint: disable=line-too-long
         """Get the labels of a project as a pandas DataFrame.
@@ -665,7 +658,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         get_project(self, project_id, ["id"])
         assets_gen = self.kili_api_gateway.list_assets(
             AssetFilters(project_id=project_id),
-            asset_fields + ["labels." + field for field in fields],
+            tuple(asset_fields) + tuple("labels." + field for field in fields),
             QueryOptions(disable_tqdm=False),
         )
         labels = [
@@ -676,8 +669,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             for asset in assets_gen
             for label in asset["labels"]
         ]
-        labels_df = pd.DataFrame(labels)
-        return labels_df
+        return pd.DataFrame(labels)
 
     @typechecked
     def count_labels(
