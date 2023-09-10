@@ -2,10 +2,11 @@
 
 
 from datetime import datetime
-from typing import List, NamedTuple, Optional
+from typing import NamedTuple, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
 from kili.core.graphql.queries import GraphQLQuery, QueryOptions
+from kili.domain.types import ListOrTuple
 
 
 class PluginBuildErrorsWhere(NamedTuple):
@@ -106,7 +107,7 @@ class PluginQuery(GraphQLQuery):
         }}
         """
 
-    def list(self, fields: List[str]):
+    def list(self, fields: ListOrTuple[str]):
         """List plugins."""
         fragment = fragment_builder(fields)
         query = self.gql_list_plugins(fragment)

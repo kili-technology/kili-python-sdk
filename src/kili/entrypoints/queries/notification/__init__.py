@@ -9,6 +9,7 @@ from kili.core.graphql.operations.notification.queries import (
     NotificationQuery,
     NotificationWhere,
 )
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -25,14 +26,14 @@ class QueriesNotification(BaseOperationEntrypointMixin):
     @overload
     def notifications(
         self,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "createdAt",
             "hasBeenSeen",
             "id",
             "message",
             "status",
             "userID",
-        ],
+        ),
         first: Optional[int] = None,
         has_been_seen: Optional[bool] = None,
         notification_id: Optional[str] = None,
@@ -47,14 +48,14 @@ class QueriesNotification(BaseOperationEntrypointMixin):
     @overload
     def notifications(
         self,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "createdAt",
             "hasBeenSeen",
             "id",
             "message",
             "status",
             "userID",
-        ],
+        ),
         first: Optional[int] = None,
         has_been_seen: Optional[bool] = None,
         notification_id: Optional[str] = None,
@@ -69,14 +70,14 @@ class QueriesNotification(BaseOperationEntrypointMixin):
     @typechecked
     def notifications(
         self,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "createdAt",
             "hasBeenSeen",
             "id",
             "message",
             "status",
             "userID",
-        ],
+        ),
         first: Optional[int] = None,
         has_been_seen: Optional[bool] = None,
         notification_id: Optional[str] = None,

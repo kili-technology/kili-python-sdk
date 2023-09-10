@@ -20,6 +20,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import validate_category_search_query
 from kili.domain.asset import AssetFilters
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -51,7 +52,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "author.email",
             "author.id",
             "id",
@@ -59,7 +60,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "labelType",
             "secondsToLabel",
             "assetId",
-        ],
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -87,7 +88,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "author.email",
             "author.id",
             "id",
@@ -95,7 +96,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "labelType",
             "secondsToLabel",
             "assetId",
-        ],
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -123,7 +124,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "author.email",
             "author.id",
             "id",
@@ -131,7 +132,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "labelType",
             "secondsToLabel",
             "assetId",
-        ],
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -159,7 +160,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "author.email",
             "author.id",
             "id",
@@ -167,7 +168,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "labelType",
             "secondsToLabel",
             "assetId",
-        ],
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -195,7 +196,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "author.email",
             "author.id",
             "id",
@@ -204,7 +205,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "secondsToLabel",
             "isLatestLabelForUser",
             "assetId",
-        ],
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,

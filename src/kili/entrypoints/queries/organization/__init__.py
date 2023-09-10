@@ -12,6 +12,7 @@ from kili.core.graphql.operations.organization.queries import (
     OrganizationQuery,
     OrganizationWhere,
 )
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -32,7 +33,7 @@ class QueriesOrganization(BaseOperationEntrypointMixin):
         self,
         email: Optional[str] = None,
         organization_id: Optional[str] = None,
-        fields: List[str] = ["id", "name"],
+        fields: ListOrTuple[str] = ("id", "name"),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -46,7 +47,7 @@ class QueriesOrganization(BaseOperationEntrypointMixin):
         self,
         email: Optional[str] = None,
         organization_id: Optional[str] = None,
-        fields: List[str] = ["id", "name"],
+        fields: ListOrTuple[str] = ("id", "name"),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -60,7 +61,7 @@ class QueriesOrganization(BaseOperationEntrypointMixin):
         self,
         email: Optional[str] = None,
         organization_id: Optional[str] = None,
-        fields: List[str] = ["id", "name"],
+        fields: ListOrTuple[str] = ("id", "name"),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
