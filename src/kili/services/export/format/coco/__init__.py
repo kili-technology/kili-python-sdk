@@ -19,12 +19,11 @@ from kili.services.export.format.coco.types import (
     CocoFormat,
     CocoImage,
 )
+from kili.services.export.media.image import get_frame_dimensions, get_image_dimensions
+from kili.services.export.media.video import cut_video, get_video_dimensions
 from kili.services.export.types import CocoAnnotationModifier
 from kili.services.types import Job, JobName
 from kili.utils.tqdm import tqdm
-
-from ...media.image import get_frame_dimensions, get_image_dimensions
-from ...media.video import cut_video, get_video_dimensions
 
 DATA_SUBDIR = "data"
 
@@ -139,7 +138,6 @@ def _convert_kili_semantic_to_coco(
 
     Note: the jobs should only contains elligible jobs.
     """
-
     infos_coco = {
         "year": time.strftime("%Y"),
         "version": "1.0",
@@ -200,10 +198,12 @@ def _convert_kili_semantic_to_coco(
 def _get_coco_categories_with_mapping(
     jobs: Dict[JobName, Job], merged: bool
 ) -> Tuple[Dict[JobName, Dict[str, int]], List[CocoCategory]]:
-    """Get the mapping between a category name in Kili of a given job and the COCO category id, and
-    also return the list of COCO categories."""
+    """_get_coco_categories_with_mapping.
+
+    Get the mapping between a category name in Kili of a given job and the COCO category id, and
+    also return the list of COCO categories.
+    """
     if merged:
-        # id_offset: int = 0
         mapping_cat_name_cat_kili_id: Dict[str, str] = {}
         cat_kili_id_to_coco_id: Dict[JobName, Dict[str, int]] = {}
         id_offset = 0
@@ -214,7 +214,7 @@ def _get_coco_categories_with_mapping(
                 "/".join([job_name, cat["name"]]): cat_id for cat_id, cat in job_cats.items()
             }
 
-            cat_kili_ids = list(sorted(mapping_cat_name_cat_kili_id.values()))
+            cat_kili_ids = sorted(mapping_cat_name_cat_kili_id.values())
             cat_kili_id_to_coco_id[job_name] = {
                 str(category_id): i + id_offset for i, category_id in enumerate(cat_kili_ids)
             }
@@ -224,8 +224,8 @@ def _get_coco_categories_with_mapping(
         assert (
             len(list(jobs.values())) == 1
         ), "When this method is called with merged = False, the jobs should only contain 1 job"
-        job_name = list(jobs.keys())[0]
-        cats = list(jobs.values())[0]["content"]["categories"]
+        job_name = next(iter(jobs.keys()))
+        cats = next(iter(jobs.values()))["content"]["categories"]
         mapping_cat_name_cat_kili_id = {cat["name"]: cat_id for cat_id, cat in cats.items()}
         cat_kili_ids = list(mapping_cat_name_cat_kili_id.values())
         cat_kili_id_to_coco_id = {
@@ -282,7 +282,7 @@ def _get_images_and_annotation_for_images(
         coco_images.append(coco_image)
         if is_single_job:
             assert len(list(jobs.keys())) == 1
-            job_name = list(jobs.keys())[0]
+            job_name = next(iter(jobs.keys()))
 
             if job_name not in asset["latestLabel"]["jsonResponse"]:
                 coco_img_annotations = []
@@ -297,8 +297,7 @@ def _get_images_and_annotation_for_images(
                 )
             coco_annotations.extend(coco_img_annotations)
         else:
-            # coco_img_annotations = []
-            for job_name in jobs.keys():
+            for job_name in jobs:
                 if job_name not in asset["latestLabel"]["jsonResponse"]:
                     continue
                     # annotation offset is unchanged
@@ -360,7 +359,7 @@ def _get_images_and_annotation_for_videos(
             coco_images.append(coco_image)
 
             if is_single_job:
-                job_name = list(jobs.keys())[0]
+                job_name = next(iter(jobs.keys()))
                 if job_name not in json_response:
                     coco_img_annotations = []
                     # annotation offset is unchanged
@@ -374,7 +373,7 @@ def _get_images_and_annotation_for_videos(
                     )
                 coco_annotations.extend(coco_img_annotations)
             else:
-                for job_name in jobs.keys():
+                for job_name in jobs:
                     if job_name not in asset["latestLabel"]["jsonResponse"]:
                         continue
                     coco_img_annotations, annotation_offset = _get_coco_image_annotations(
@@ -460,7 +459,7 @@ def _get_coco_categories(cat_kili_id_to_coco_id, merged) -> List[CocoCategory]:
             categories_coco.append(
                 {
                     "id": cat_coco_id,
-                    "name": cat_kili_id if not merged else "/".join([job_name, cat_kili_id]),
+                    "name": cat_kili_id if not merged else f"{job_name}/{cat_kili_id}",
                     "supercategory": job_name,
                 }
             )

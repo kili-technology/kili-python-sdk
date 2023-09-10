@@ -18,6 +18,7 @@ from kili.core.graphql.operations.project_user.queries import (
     ProjectUserQuery,
     ProjectUserWhere,
 )
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -42,7 +43,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             "ACTIVATED",
             "ORG_ADMIN",
         ),
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "activated",
             "id",
             "role",
@@ -50,7 +51,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             "user.email",
             "user.id",
             "status",
-        ],
+        ),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -70,7 +71,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             "ACTIVATED",
             "ORG_ADMIN",
         ),
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "activated",
             "id",
             "role",
@@ -78,7 +79,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             "user.email",
             "user.id",
             "status",
-        ],
+        ),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -98,7 +99,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             "ACTIVATED",
             "ORG_ADMIN",
         ),
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "activated",
             "id",
             "role",
@@ -106,7 +107,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             "user.email",
             "user.id",
             "status",
-        ],
+        ),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,

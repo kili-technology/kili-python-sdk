@@ -9,6 +9,7 @@ from kili.core.graphql.operations.project_version.queries import (
     ProjectVersionQuery,
     ProjectVersionWhere,
 )
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -28,7 +29,7 @@ class QueriesProjectVersion(BaseOperationEntrypointMixin):
         project_id: str,
         first: Optional[int] = None,
         skip: int = 0,
-        fields: List[str] = ["createdAt", "id", "content", "name", "projectId"],
+        fields: ListOrTuple[str] = ("createdAt", "id", "content", "name", "projectId"),
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
@@ -41,7 +42,7 @@ class QueriesProjectVersion(BaseOperationEntrypointMixin):
         project_id: str,
         first: Optional[int] = None,
         skip: int = 0,
-        fields: List[str] = ["createdAt", "id", "content", "name", "projectId"],
+        fields: ListOrTuple[str] = ("createdAt", "id", "content", "name", "projectId"),
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
@@ -54,7 +55,7 @@ class QueriesProjectVersion(BaseOperationEntrypointMixin):
         project_id: str,
         first: Optional[int] = None,
         skip: int = 0,
-        fields: List[str] = ["createdAt", "id", "content", "name", "projectId"],
+        fields: ListOrTuple[str] = ("createdAt", "id", "content", "name", "projectId"),
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
