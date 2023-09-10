@@ -164,7 +164,8 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             [label_asset_external_id] if label_asset_external_id else None,
         )
         if label_asset_id is None:
-            assert label_asset_external_id and project_id
+            assert label_asset_external_id
+            assert project_id
             label_asset_id = infer_ids_from_external_ids(
                 self.kili_api_gateway, [label_asset_external_id], project_id
             )[label_asset_external_id]

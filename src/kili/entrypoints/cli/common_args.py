@@ -73,7 +73,7 @@ class Options:  # pylint: disable=too-few-public-methods
 
 
 def from_csv(required_columns: List[str], optionnal_columns: List[str]):
-    """--from-csv shared click option"""
+    """--from-csv shared click option."""
     help_ = (
         "path to a csv file with required columns:"
         + ", ".join(required_columns)

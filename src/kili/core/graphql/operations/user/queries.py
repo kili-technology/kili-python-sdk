@@ -14,7 +14,7 @@ class UserWhere(BaseQueryWhere):
         api_key: Optional[str] = None,
         email: Optional[str] = None,
         organization_id: Optional[str] = None,
-    ):
+    ) -> None:
         self.api_key = api_key
         self.email = email
         self.organization_id = organization_id

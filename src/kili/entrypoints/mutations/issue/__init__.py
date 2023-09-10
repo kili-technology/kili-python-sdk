@@ -64,11 +64,13 @@ class MutationsIssue(BaseOperationEntrypointMixin):
                 project_id=project_id,
                 label_id=label_id,
             )
-            asset_id: str = list(
-                LabelQuery(self.graphql_client, self.http_client)(
-                    where=where, fields=["labelOf.id"], options=options
+            asset_id: str = next(
+                iter(
+                    LabelQuery(self.graphql_client, self.http_client)(
+                        where=where, fields=["labelOf.id"], options=options
+                    )
                 )
-            )[0]["labelOf"]["id"]
+            )["labelOf"]["id"]
         except:
             # pylint: disable=raise-missing-from
             raise ValueError(
