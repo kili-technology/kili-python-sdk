@@ -56,7 +56,6 @@ dev_extra = [
     "black",
     "pre-commit>=3.3.0,<4.0.0",
     "pylint==2.17.5",
-    "flake8-unused-arguments",
     "pyright==1.1.326",
     # notebooks tests
     "nbformat",
