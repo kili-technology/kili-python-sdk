@@ -275,9 +275,9 @@ class GraphQLClient:
         retry=retry_all(
             retry_if_exception_type(exceptions.TransportQueryError),  # error received from server
             retry_if_not_exception_message(
-                match=r'Variable "(\$\w+)" of required type "(\w+!)" was not provided.'
+                match=r'.*Variable "(\$\w+)" of required type "(\w+!)" was not provided.*'
             ),
-            retry_if_exception_message(match="Invalid request made to Flagsmith API"),
+            retry_if_exception_message(match=".*Invalid request made to Flagsmith API.*"),
         ),
         stop=stop_after_delay(3 * 60),
         wait=wait_exponential(multiplier=0.5, min=1, max=10),
