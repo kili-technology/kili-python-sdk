@@ -16,7 +16,7 @@ class IssueWhere(BaseQueryWhere):
         asset_id_in: Optional[List[str]] = None,
         issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
         status: Optional[Literal["OPEN", "SOLVED"]] = None,
-    ):
+    ) -> None:
         self.project_id = project_id
         self.asset_id = asset_id
         self.asset_id_in = asset_id_in

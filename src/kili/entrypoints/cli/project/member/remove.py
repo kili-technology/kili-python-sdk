@@ -98,7 +98,7 @@ def remove_member(
 
     for member in members_to_rm:
         email = member["email"]
-        if email in existing_members_email_map.keys():
+        if email in existing_members_email_map:
             kili.delete_from_roles(role_id=existing_members_email_map[email])
             count += 1
         else:

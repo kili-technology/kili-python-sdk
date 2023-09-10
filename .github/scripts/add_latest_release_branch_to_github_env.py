@@ -39,7 +39,7 @@ while True:
     except urllib.error.HTTPError as err:
         print(f"Error while fetching branches: {err}")
         if err.code != 403:
-            raise err
+            raise
         sleep(2**retries)
         retries += 1
         continue

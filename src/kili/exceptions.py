@@ -24,18 +24,18 @@ class GraphQLError(Exception):
 class NotFound(Exception):
     """Used when a given object is not found in Kili."""
 
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         super().__init__()
         self.name = name
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Not found: '{self.name}'"
 
 
 class AuthenticationFailed(Exception):
     """Used when the authentification fails."""
 
-    def __init__(self, api_key, api_endpoint, error_msg: Optional[str] = None):
+    def __init__(self, api_key, api_endpoint, error_msg: Optional[str] = None) -> None:
         if api_key is None:
             super().__init__(
                 "You need to provide an API KEY to connect."

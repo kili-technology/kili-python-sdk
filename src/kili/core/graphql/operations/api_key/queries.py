@@ -14,7 +14,7 @@ class APIKeyWhere(BaseQueryWhere):
         api_key_id: Optional[str] = None,
         user_id: Optional[str] = None,
         api_key: Optional[str] = None,
-    ):
+    ) -> None:
         self.api_key_id = api_key_id
         self.user_id = user_id
         self.api_key = api_key

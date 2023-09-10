@@ -2,6 +2,7 @@
 
 from typing import List
 
+from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.issue.mappers import issue_where_mapper
 from kili.adapters.kili_api_gateway.issue.operations import (
     GQL_COUNT_ISSUES,
@@ -11,8 +12,6 @@ from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatew
 from kili.core.utils.pagination import BatchIteratorBuilder
 from kili.domain.issue import IssueFilters, IssueId, IssueType
 from kili.utils import tqdm
-
-from ..base import BaseOperationMixin
 
 
 class IssueOperationMixin(BaseOperationMixin):

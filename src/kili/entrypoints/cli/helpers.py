@@ -19,14 +19,16 @@ def dict_type_check(
     type_check: Callable[[str, str, Optional[HttpClient]], str],
     http_client: Optional[HttpClient],
 ):
-    """Check if elements in row have correct type and return [row]"""
+    """Check if elements in row have correct type and return [row]."""
     warnings_message = ""
     for key, value in dict_.items():
         warnings_message += type_check(key, value, http_client)
     if len(warnings_message) == 0:
         return [dict_]
 
-    warnings.warn(f"{warnings_message} {list(dict_.values())[0]}  will not be added.", stacklevel=2)
+    warnings.warn(
+        f"{warnings_message} {next(iter(dict_.values()))}  will not be added.", stacklevel=2
+    )
     return []
 
 

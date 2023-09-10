@@ -26,7 +26,7 @@ def check_asset_type(key: str, value: str, http_client: Optional[HttpClient]) ->
     # not require http requests.
     if key == "content" and not os.path.isfile(value):
         resp = http_client.get(value)
-        if not resp.status_code == 200:
+        if resp.status_code != 200:
             return f"{value} is not a valid url or path to a file."
 
     return ""

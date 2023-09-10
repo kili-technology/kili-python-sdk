@@ -14,7 +14,7 @@ class OrganizationWhere(BaseQueryWhere):
         self,
         email: Optional[str] = None,
         organization_id: Optional[str] = None,
-    ):
+    ) -> None:
         self.email = email
         self.organization_id = organization_id
         super().__init__()
@@ -37,7 +37,7 @@ class OrganizationMetricsWhere(BaseQueryWhere):
         organization_id: str,
         start_date: datetime,
         end_date: datetime,
-    ):
+    ) -> None:
         self.organization_id = organization_id
         self.start_date = start_date
         self.end_date = end_date

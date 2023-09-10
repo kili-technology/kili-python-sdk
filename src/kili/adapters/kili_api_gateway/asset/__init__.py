@@ -12,6 +12,7 @@ from kili.adapters.kili_api_gateway.asset.operations import (
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
     get_assets_query,
 )
+from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
@@ -19,8 +20,6 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 )
 from kili.domain.asset import AssetFilters
 from kili.domain.types import ListOrTuple
-
-from ..base import BaseOperationMixin
 
 
 class AssetOperationMixin(BaseOperationMixin):

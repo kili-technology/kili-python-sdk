@@ -214,8 +214,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         response = self.http_client.get(url, timeout=30)
         if response.status_code == 200 and '"version":' in response.text:
             response_json = response.json()
-            version = response_json["version"]
-            return version
+            return response_json["version"]
         return None
 
     @staticmethod

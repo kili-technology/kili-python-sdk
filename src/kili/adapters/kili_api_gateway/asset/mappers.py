@@ -5,7 +5,6 @@ from kili.domain.asset import AssetFilters
 
 def asset_where_mapper(filters: AssetFilters):
     """Build the GraphQL AssetWhere variable to be sent in an operation."""
-
     return {
         "id": filters.asset_id,
         "project": {
