@@ -2,12 +2,12 @@
 
 from typing import Dict, List
 
+from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
 
-from ..base import BaseOperationMixin
 from .operations import (
     GQL_CHECK_TAG,
     GQL_DELETE_TAG,

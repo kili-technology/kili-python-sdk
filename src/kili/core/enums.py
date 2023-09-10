@@ -1,4 +1,4 @@
-"""DEPRECATED
+"""DEPRECATED.
 
 From https://docs.kili-technology.com/reference/graphql-api#enums.
 """
