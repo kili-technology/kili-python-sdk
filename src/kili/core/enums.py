@@ -1,5 +1,7 @@
 """DEPRECATED
-From https://docs.kili-technology.com/reference/graphql-api#enums."""
+
+From https://docs.kili-technology.com/reference/graphql-api#enums.
+"""
 from typing import Literal
 
 DataIntegrationPlatform = Literal["AWS", "Azure", "GCP"]

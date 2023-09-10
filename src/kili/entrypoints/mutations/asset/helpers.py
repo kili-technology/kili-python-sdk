@@ -28,8 +28,10 @@ def process_update_properties_in_assets_parameters(
     resolution_array: Optional[List[dict]] = None,
     page_resolutions_array: Optional[Union[List[List[dict]], List[List[PageResolution]]]] = None,
 ) -> Dict:
-    """Process arguments of the update_properties_in_assets method
-    and return the properties for the paginating loop."""
+    """Process arguments of the update_properties_in_assets method.
+
+    Return the properties for the paginating loop.
+    """
     assert asset_ids
     nb_assets_to_modify = len(asset_ids)
 

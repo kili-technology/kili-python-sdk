@@ -8,6 +8,7 @@ from typeguard import typechecked
 
 from kili.core.helpers import deprecate, is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
@@ -185,7 +186,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
     def append_labels(  # pylint: disable=dangerous-default-value
         self,
         asset_id_array: Optional[List[str]] = None,
-        json_response_array: List[Dict] = [],
+        json_response_array: ListOrTuple[Dict] = (),
         author_id_array: Optional[List[str]] = None,
         seconds_to_label_array: Optional[List[int]] = None,
         model_name: Optional[str] = None,
