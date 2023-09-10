@@ -30,11 +30,11 @@ class TagOperationMixin(BaseOperationMixin):
 
     def list_tags_by_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> List[Dict]:
         """Send a GraphQL request calling listTagsByProject resolver."""
-        # fragment = fragment_builder(fields=fields)
-        # query = get_list_tags_by_project_query(fragment)
-        # variables = {"projectId": project_id}
-        # result = self.graphql_client.execute(query, variables)
-        # return result["data"]
+        # fragment = fragment_builder(fields=fields)  # noqa: ERA001
+        # query = get_list_tags_by_project_query(fragment)# noqa: ERA001
+        # variables = {"projectId": project_id}# noqa: ERA001
+        # result = self.graphql_client.execute(query, variables)# noqa: ERA001
+        # return result["data"]  # noqa: ERA001
         # TODO: listTagsByProject is broken currently. Use listTagsByOrg instead.
 
         fields_with_project_ids = (
