@@ -38,7 +38,7 @@ def test_wrong_api_key_no_need_to_obfuscate(mocker: pytest_mock.MockerFixture):
         _ = Kili()
 
 
-@pytest.fixture
+@pytest.fixture()
 def prepare_cache_dir():
     """Prepare cache dir."""
 

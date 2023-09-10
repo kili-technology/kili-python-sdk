@@ -63,7 +63,7 @@ def get_file_tree(folder: str):
 
 
 @pytest.mark.parametrize(
-    "name,test_case",
+    ("name", "test_case"),
     [
         (
             "YOLO v5 format with split files",
@@ -629,51 +629,50 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
         return_value=True,
     )
 
-    with TemporaryDirectory() as export_folder:
-        with TemporaryDirectory() as extract_folder:
-            path_zipfile = Path(export_folder) / "export.zip"
-            path_zipfile.parent.mkdir(parents=True, exist_ok=True)
+    with TemporaryDirectory() as export_folder, TemporaryDirectory() as extract_folder:
+        path_zipfile = Path(export_folder) / "export.zip"
+        path_zipfile.parent.mkdir(parents=True, exist_ok=True)
 
-            mock_ffmpeg(mocker_ffmpeg)
+        mock_ffmpeg(mocker_ffmpeg)
 
-            fake_kili = FakeKili()
-            fake_kili.kili_api_gateway.list_assets.side_effect = mocked_AssetQuery
-            fake_kili.kili_api_gateway.count_assets.side_effect = mocked_AssetQuery_count
-            fake_kili.kili_api_gateway.get_project.side_effect = mocked_kili_api_gateway_get_project
-            default_kwargs = {
-                "asset_ids": [],
-                "split_option": "merged",
-                "export_type": "latest",
-                "single_file": False,
-                "output_file": str(path_zipfile),
-                "disable_tqdm": True,
-                "log_level": "INFO",
-                "with_assets": True,
-                "annotation_modifier": None,
-                "asset_filter_kwargs": None,
-                "normalized_coordinates": None,
-            }
+        fake_kili = FakeKili()
+        fake_kili.kili_api_gateway.list_assets.side_effect = mocked_AssetQuery
+        fake_kili.kili_api_gateway.count_assets.side_effect = mocked_AssetQuery_count
+        fake_kili.kili_api_gateway.get_project.side_effect = mocked_kili_api_gateway_get_project
+        default_kwargs = {
+            "asset_ids": [],
+            "split_option": "merged",
+            "export_type": "latest",
+            "single_file": False,
+            "output_file": str(path_zipfile),
+            "disable_tqdm": True,
+            "log_level": "INFO",
+            "with_assets": True,
+            "annotation_modifier": None,
+            "asset_filter_kwargs": None,
+            "normalized_coordinates": None,
+        }
 
-            default_kwargs.update(test_case["export_kwargs"])
+        default_kwargs.update(test_case["export_kwargs"])
 
-            export_labels(
-                fake_kili,  # type: ignore
-                **default_kwargs,
-            )
+        export_labels(
+            fake_kili,  # type: ignore
+            **default_kwargs,
+        )
 
-            Path(extract_folder).mkdir(parents=True, exist_ok=True)
-            with ZipFile(path_zipfile, "r") as z_f:
-                z_f.extractall(extract_folder)
+        Path(extract_folder).mkdir(parents=True, exist_ok=True)
+        with ZipFile(path_zipfile, "r") as z_f:
+            z_f.extractall(extract_folder)
 
-            file_tree_result = get_file_tree(extract_folder)
+        file_tree_result = get_file_tree(extract_folder)
 
-            file_tree_expected = test_case["file_tree_expected"]
+        file_tree_expected = test_case["file_tree_expected"]
 
-            assert file_tree_result == file_tree_expected
+        assert file_tree_result == file_tree_expected
 
 
 @pytest.mark.parametrize(
-    "name,test_case,error",
+    ("name", "test_case", "error"),
     [
         (
             "Export text classification to Yolo format to throw error",

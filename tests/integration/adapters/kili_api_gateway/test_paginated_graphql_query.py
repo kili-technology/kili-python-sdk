@@ -20,7 +20,7 @@ WHERE = {"projectID": PROJECT_ID}
 NUMBER_OBJECT_IN_DB = 250
 
 
-@pytest.fixture
+@pytest.fixture()
 def graphql_client() -> GraphQLClient:
     mocked_graphql_client = MagicMock(spec=GraphQLClient)
 

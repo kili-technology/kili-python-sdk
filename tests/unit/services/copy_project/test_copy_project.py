@@ -5,7 +5,7 @@ from kili.services.copy_project import ProjectCopier
 
 
 @pytest.mark.parametrize(
-    "existing_projects, expected",
+    ("existing_projects", "expected"),
     [
         ([{"title": "Title"}], "Title (copy)"),
         ([{"title": "Title"}, {"title": "Title (copy)"}], "Title (copy 1)"),
