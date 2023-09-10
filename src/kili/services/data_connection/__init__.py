@@ -214,7 +214,7 @@ def synchronize_data_connection(
 
     if dry_run:
         # pylint: disable=unnecessary-lambda-assignment
-        validate_data_differences_func = lambda *args, **kwargs: None  # noqa: E731
+        validate_data_differences_func = lambda *args, **kwargs: None
         logger.info("Dry run: no data will be added or removed.")
     else:
         validate_data_differences_func = validate_data_differences
