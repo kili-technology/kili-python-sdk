@@ -9,6 +9,7 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -29,13 +30,13 @@ class QueriesDataConnection(BaseOperationEntrypointMixin):
         cloud_storage_connection_id: Optional[str] = None,
         cloud_storage_integration_id: Optional[str] = None,
         project_id: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "id",
             "lastChecked",
             "numberOfAssets",
             "selectedFolders",
             "projectId",
-        ],
+        ),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -50,13 +51,13 @@ class QueriesDataConnection(BaseOperationEntrypointMixin):
         cloud_storage_connection_id: Optional[str] = None,
         cloud_storage_integration_id: Optional[str] = None,
         project_id: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "id",
             "lastChecked",
             "numberOfAssets",
             "selectedFolders",
             "projectId",
-        ],
+        ),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -71,13 +72,13 @@ class QueriesDataConnection(BaseOperationEntrypointMixin):
         cloud_storage_connection_id: Optional[str] = None,
         cloud_storage_integration_id: Optional[str] = None,
         project_id: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "id",
             "lastChecked",
             "numberOfAssets",
             "selectedFolders",
             "projectId",
-        ],
+        ),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
