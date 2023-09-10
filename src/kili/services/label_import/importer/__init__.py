@@ -41,7 +41,7 @@ class LoggerParams(NamedTuple):
 class AbstractLabelImporter(ABC):
     """Abstract Label Importer."""
 
-    def __init__(self, kili, logger_params: LoggerParams, input_format: LabelFormat):
+    def __init__(self, kili, logger_params: LoggerParams, input_format: LabelFormat) -> None:
         self.kili = kili
         self.logger_params = logger_params
         self.input_format: LabelFormat = input_format
@@ -153,7 +153,6 @@ class AbstractLabelImporter(ABC):
         self, labels_files: List[Path], label_parser: AbstractLabelParser
     ) -> List[Dict]:
         """Extracts the labels files and their metadata from the label files."""
-
         label_paths = get_file_paths_to_upload(
             [str(f) for f in labels_files],
             lambda path: path.endswith(self._get_label_file_extension()),

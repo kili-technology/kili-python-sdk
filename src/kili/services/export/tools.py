@@ -27,7 +27,8 @@ COMMON_FIELDS = [
     "resolution.width",
 ]
 
-DEFAULT_FIELDS = COMMON_FIELDS + [
+DEFAULT_FIELDS = [
+    *COMMON_FIELDS,
     "labels.jsonResponse",
     "labels.author.id",
     "labels.author.email",
@@ -38,7 +39,8 @@ DEFAULT_FIELDS = COMMON_FIELDS + [
     "labels.labelType",
     "labels.modelName",
 ]
-LATEST_LABEL_FIELDS = COMMON_FIELDS + [
+LATEST_LABEL_FIELDS = [
+    *COMMON_FIELDS,
     "latestLabel.jsonResponse",
     "latestLabel.author.id",
     "latestLabel.author.email",
@@ -163,8 +165,7 @@ def fetch_assets(
     else:
         assets = list(assets_gen)
     attach_name_to_assets_labels_author(assets, export_type)
-    formated_assets = [Asset(asset) for asset in assets]
-    return formated_assets
+    return [Asset(asset) for asset in assets]
 
 
 def get_fields_to_fetch(export_type: ExportType):
