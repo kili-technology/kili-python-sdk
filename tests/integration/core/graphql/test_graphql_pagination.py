@@ -30,7 +30,7 @@ def mocked_query_method(query, payload):
 
 
 @pytest.mark.parametrize(
-    "name,test_case",
+    ("name", "test_case"),
     [
         (
             "When I query objects with first=50, I get the first 50 objects",

@@ -2,12 +2,10 @@
 """Tests that the external id check is strict."""
 import pytest
 
-from kili.client import Kili
-
 
 @pytest.fixture()
 def text():
-    return "Youʼll see Johnʼs car"
+    return "Youʼll see Johnʼs car"  # noqa: RUF001
 
 
 @pytest.fixture()
@@ -45,7 +43,6 @@ def project_with_assets(kili, text):
 
     yield project
 
-    kili.delete_many_from_dataset(list(a["id"] for a in kili.assets(project["id"], fields=["id"])))
     kili.delete_project(project["id"])
 
 

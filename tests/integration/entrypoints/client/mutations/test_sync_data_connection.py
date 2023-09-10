@@ -17,14 +17,16 @@ class MockerGetDataConnection:
         is_checking: bool,
         project_id: str,
         selected_folders: Optional[List[str]],
-        data_integration: Dict = {
-            "azureIsUsingServiceCredentials": False,
-            "platform": "AWS",
-            "azureSASToken": "fake_token",
-            "azureConnectionURL": "fake_url",
-            "id": "fake_data_integration_id",
-        },
+        data_integration: Optional[Dict] = None,
     ) -> None:
+        if data_integration is None:
+            data_integration = {
+                "azureIsUsingServiceCredentials": False,
+                "platform": "AWS",
+                "azureSASToken": "fake_token",
+                "azureConnectionURL": "fake_url",
+                "id": "fake_data_integration_id",
+            }
         self.added = added
         self.removed = removed
         self.total = total

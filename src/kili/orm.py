@@ -1,5 +1,4 @@
-"""This script defines object-relational mapping helpers to ease
-the manipulation of Kili data structures."""
+"""This script defines object-relational mapping helpers."""
 import warnings
 from dataclasses import dataclass
 from typing import Dict, Literal
