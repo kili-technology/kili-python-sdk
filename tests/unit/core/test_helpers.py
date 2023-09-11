@@ -87,7 +87,7 @@ def test_format_result_with_type_conversion_int():
 
 def test_retry_long_wait_warner():
     class MyTestClass:
-        def __init__(self):
+        def __init__(self) -> None:
             self.start_time = None
 
         @retry(
@@ -102,7 +102,6 @@ def test_retry_long_wait_warner():
             self.start_time = self.start_time or time.time()
             if time.time() - self.start_time < 0.5:
                 raise TryAgain("Try again")
-            return
 
     with pytest.warns(match="warn_message_defined_by_user"):
         MyTestClass().my_method_takes_some_time()
@@ -163,10 +162,9 @@ class TestCheckWarnEmptyList(TestCase):
         """Test that the helper does not raise a warning if args are None."""
         kili = MutationsAsset()
         kili.kili_api_gateway = MagicMock()
-        with pytest.raises(MissingArgumentError):
-            with warnings.catch_warnings():
-                warnings.simplefilter("error")
-                kili.add_to_review()
+        with pytest.raises(MissingArgumentError), warnings.catch_warnings():
+            warnings.simplefilter("error")
+            kili.add_to_review()
         mocked_mutate_from_paginated_call.assert_not_called()
 
     def test_kwargs_one_empty(self, mocked_mutate_from_paginated_call):
@@ -230,7 +228,7 @@ class TestCheckWarnEmptyList(TestCase):
 
 
 @pytest.mark.parametrize(
-    "case, query, raise_error",
+    ("case", "query", "raise_error"),
     [
         (
             "user does not provide job",

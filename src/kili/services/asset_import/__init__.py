@@ -44,5 +44,4 @@ def import_assets(  # pylint: disable=too-many-arguments
     if input_type not in importer_by_type:
         raise NotImplementedError(f"There is no imported for the input type: {input_type}")
     asset_importer = importer_by_type[input_type](*importer_params)
-    created_asset_ids = asset_importer.import_assets(assets=cast(List[AssetLike], assets))
-    return created_asset_ids
+    return asset_importer.import_assets(assets=cast(List[AssetLike], assets))

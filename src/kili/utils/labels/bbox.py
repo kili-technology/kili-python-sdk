@@ -87,14 +87,12 @@ def bbox_points_to_normalized_vertices(
     if (img_width is None) != (img_height is None):
         raise ValueError("img_width and img_height must be both None or both not None.")
 
-    vertices = [
+    return [
         point_to_normalized_point(
             point, img_width=img_width, img_height=img_height, origin_location=origin_location
         )
         for point in (bottom_left, top_left, top_right, bottom_right)
     ]
-
-    return vertices
 
 
 def normalized_vertices_to_bbox_points(

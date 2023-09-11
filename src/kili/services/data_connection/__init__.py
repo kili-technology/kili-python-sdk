@@ -1,7 +1,7 @@
 """Services for data connections."""
 import logging
 import time
-from typing import Any, Dict, List, Literal
+from typing import Any, Dict, Literal
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -15,6 +15,7 @@ from kili.core.graphql.operations.data_connection.queries import (
 )
 from kili.core.helpers import format_result
 from kili.domain.asset import AssetFilters
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.mutations.data_connection.queries import (
     GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES,
     GQL_VALIDATE_DATA_DIFFERENCES,
@@ -35,7 +36,7 @@ def _get_logger() -> logging.Logger:
     return LOGGER
 
 
-def get_data_connection(kili, data_connection_id: str, fields: List[str]) -> Dict:
+def get_data_connection(kili, data_connection_id: str, fields: ListOrTuple[str]) -> Dict:
     """Get data connection information."""
     where = DataConnectionIdWhere(data_connection_id=data_connection_id)
     options = QueryOptions(first=1, disable_tqdm=True)
@@ -56,8 +57,7 @@ def trigger_validate_data_differences(
         "processingParameters": None,
     }
     result = kili.graphql_client.execute(GQL_VALIDATE_DATA_DIFFERENCES, variables)
-    data_connection = format_result("data", result, None, kili.http_client)
-    return data_connection
+    return format_result("data", result, None, kili.http_client)
 
 
 def validate_data_differences(
@@ -141,8 +141,7 @@ def compute_differences(kili, data_connection_id: str) -> Dict:
     if blob_paths is not None:
         variables["data"] = {"blobPaths": blob_paths}
     result = kili.graphql_client.execute(GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES, variables)
-    data_connection = format_result("data", result, None, kili.http_client)
-    return data_connection
+    return format_result("data", result, None, kili.http_client)
 
 
 def verify_diff_computed(kili, data_connection_id: str) -> None:
@@ -215,7 +214,7 @@ def synchronize_data_connection(
 
     if dry_run:
         # pylint: disable=unnecessary-lambda-assignment
-        validate_data_differences_func = lambda *args, **kwargs: None  # noqa: E731
+        validate_data_differences_func = lambda *args, **kwargs: None
         logger.info("Dry run: no data will be added or removed.")
     else:
         validate_data_differences_func = validate_data_differences

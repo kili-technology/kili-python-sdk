@@ -1,8 +1,5 @@
 import pytest
 
-from kili.services.label_data_parsing.json_response import ParsedJobs
-from kili.services.label_data_parsing.types import Project
-
 
 @pytest.mark.skip(reason="Not implemented yet")
 def test_create_transcription_label():

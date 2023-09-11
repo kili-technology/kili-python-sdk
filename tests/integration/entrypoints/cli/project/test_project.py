@@ -29,12 +29,10 @@ def test_list(mocker: pytest_mock.MockerFixture):
 
     runner = CliRunner()
     result = runner.invoke(list_projects)
-    assert (
-        (result.exit_code == 0)
-        and (result.output.count("100.0%") == 1)
-        and (result.output.count("0.0%") == 2)
-        and (result.output.count("nan") == 1)
-    )
+    assert result.exit_code == 0
+    assert result.output.count("100.0%") == 1
+    assert result.output.count("0.0%") == 2
+    assert result.output.count("nan") == 1
 
 
 def test_create_project(*_):
@@ -61,16 +59,14 @@ def test_describe_project(mocker: pytest_mock.MockerFixture):
     runner = CliRunner()
     result = runner.invoke(describe_project, ["project_id"])
     debug_subprocess_pytest(result)
-    assert (
-        (result.output.count("40.8%") == 1)
-        and (result.output.count("N/A") == 2)
-        and (result.output.count("Number of remaining assets") == 1)
-        and (result.output.count("project title") == 1)
-    )
+    assert result.output.count("40.8%") == 1
+    assert result.output.count("N/A") == 2
+    assert result.output.count("Number of remaining assets") == 1
+    assert result.output.count("project title") == 1
 
 
 @pytest.mark.parametrize(
-    "case_name,files,options,flags,expected_service_payload",
+    ("case_name", "files", "options", "flags", "expected_service_payload"),
     [
         (
             "AAU, when I import a list of file to an image project, I see a success",
@@ -120,36 +116,6 @@ def test_describe_project(mocker: pytest_mock.MockerFixture):
                         "content": str(Path("test_tree") / "leaf" / "image4.jpg"),
                         "external_id": "image4",
                     },
-                ],
-                ANY,
-            ),
-        ),
-        (
-            "AAU, when I import a files to a text project, I see a success",
-            [str(Path("test_tree/")), str(Path("test_tree") / "leaf")],
-            {"project-id": "text_project"},
-            None,
-            (
-                ANY,
-                "text_project",
-                [
-                    {"content": str(Path("test_tree") / "image1.png"), "external_id": "image1"},
-                    {"content": str(Path("test_tree") / "image2.jpg"), "external_id": "image2"},
-                    {
-                        "content": str(Path("test_tree") / "leaf" / "image3.png"),
-                        "external_id": "image3",
-                    },
-                    {
-                        "content": str(Path("test_tree") / "leaf" / "image4.jpg"),
-                        "external_id": "image4",
-                    },
-                    {
-                        "content": str(Path("test_tree") / "leaf" / "texte2.txt"),
-                        "external_id": "texte2",
-                    },
-                    {"content": str(Path("test_tree") / "texte1.txt"), "external_id": "texte1"},
-                    {"content": str(Path("test_tree") / "video1.mp4"), "external_id": "video1"},
-                    {"content": str(Path("test_tree") / "video2.mp4"), "external_id": "video2"},
                 ],
                 ANY,
             ),
@@ -409,7 +375,7 @@ def test_import(
 
 
 @pytest.mark.parametrize(
-    "name,test_case",
+    ("name", "test_case"),
     [
         (
             "Export to Yolo v4 format using CLI",

@@ -7,7 +7,7 @@ from kili.presentation.client.asset import AssetClientMethods
 
 
 @pytest.mark.parametrize(
-    "args, kwargs, expected_return_type",
+    ("args", "kwargs", "expected_return_type"),
     [
         (("project-id",), {}, List[Dict]),
         (("project-id",), {"as_generator": False}, List[Dict]),

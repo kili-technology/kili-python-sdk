@@ -67,7 +67,5 @@ def test_append_to_roles(kili: Kili, src_project):
         == mutated_user["user"]["email"]
         == "test_append_to_roles@kili-technology.com"
     )
-    assert (
-        added_user["user"]["id"] is not None
-        and mutated_user["user"]["id"] == added_user["user"]["id"]
-    )
+    assert added_user["user"]["id"] is not None
+    assert mutated_user["user"]["id"] == added_user["user"]["id"]

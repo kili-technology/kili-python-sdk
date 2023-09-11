@@ -18,6 +18,7 @@ def test_given_a_query_returning_serialized_json_it_parses_json_fields(graphql_c
             }
         elif "query countAssets" in query:
             return {"data": 1}
+        return None
 
     graphql_client.execute.side_effect = mock_graphql_execute
 

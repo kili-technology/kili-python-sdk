@@ -11,7 +11,7 @@ from tests.fakes.fake_kili import (
 
 
 @pytest.mark.parametrize(
-    "name,asset_count",
+    ("name", "asset_count"),
     (
         ("Given 150 external ids, the id <-> external_id mapping is correct", 150),
         ("Given 2400 external ids, the id <-> external_id mapping is correct", 2400),

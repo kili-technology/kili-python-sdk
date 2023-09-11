@@ -1,15 +1,18 @@
 import os
 import tempfile
+from typing import TYPE_CHECKING
 
 import pytest
 import pytest_mock
 
-from kili.client import Kili
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.services.asset_import_csv import get_text_assets_from_csv
 
+if TYPE_CHECKING:
+    from kili.client import Kili
 
-@pytest.fixture
+
+@pytest.fixture()
 def csv_file_path():
     csv_content = """content,category_column,externalId
 asset_content_1,category_1,external_id_1

@@ -96,7 +96,7 @@ def update_member(
 
     for member in members_to_update:
         email = member["email"]
-        if email in existing_members.keys():
+        if email in existing_members:
             if existing_members[email]["role"] != member["role"]:
                 kili.update_properties_in_role(
                     role_id=existing_members[email]["role_id"],

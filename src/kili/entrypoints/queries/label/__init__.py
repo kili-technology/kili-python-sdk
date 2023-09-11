@@ -20,6 +20,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import validate_category_search_query
 from kili.domain.asset import AssetFilters
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -38,7 +39,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesLabel(BaseOperationEntrypointMixin):
     """Set of Label queries."""
 
-    # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value
+    # pylint: disable=too-many-arguments,too-many-locals
 
     @overload
     def labels(
@@ -51,7 +52,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "author.email",
             "author.id",
             "id",
@@ -59,7 +60,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "labelType",
             "secondsToLabel",
             "assetId",
-        ],
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -87,7 +88,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "author.email",
             "author.id",
             "id",
@@ -95,7 +96,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "labelType",
             "secondsToLabel",
             "assetId",
-        ],
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -123,7 +124,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "author.email",
             "author.id",
             "id",
@@ -131,7 +132,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "labelType",
             "secondsToLabel",
             "assetId",
-        ],
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -159,7 +160,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "author.email",
             "author.id",
             "id",
@@ -167,7 +168,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "labelType",
             "secondsToLabel",
             "assetId",
-        ],
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -195,7 +196,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "author.email",
             "author.id",
             "id",
@@ -204,7 +205,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "secondsToLabel",
             "isLatestLabelForUser",
             "assetId",
-        ],
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -272,8 +273,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
 
             These operations can be separated by OR and AND operators
 
-            Example:
-
+        Example:
                 category_search = `JOB_CLASSIF.CATEGORY_A.count > 0`
                 category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
                 category_search = `(JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
@@ -336,7 +336,14 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: Optional[List[str]] = None,
+        fields: ListOrTuple[str] = (
+            "author.email",
+            "author.id",
+            "id",
+            "jsonResponse",
+            "labelType",
+            "modelName",
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -362,7 +369,14 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: Optional[List[str]] = None,
+        fields: ListOrTuple[str] = (
+            "author.email",
+            "author.id",
+            "id",
+            "jsonResponse",
+            "labelType",
+            "modelName",
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -388,7 +402,14 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: Optional[List[str]] = None,
+        fields: ListOrTuple[str] = (
+            "author.email",
+            "author.id",
+            "id",
+            "jsonResponse",
+            "labelType",
+            "modelName",
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -436,15 +457,6 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         Examples:
             >>> kili.predictions(project_id=project_id) # returns a list of prediction labels of a project
         """
-        if fields is None:
-            fields = [
-                "author.email",
-                "author.id",
-                "id",
-                "jsonResponse",
-                "labelType",
-                "modelName",
-            ]
         return self.labels(
             project_id=project_id,
             asset_id=asset_id,
@@ -479,7 +491,14 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: Optional[List[str]] = None,
+        fields: ListOrTuple[str] = (
+            "author.email",
+            "author.id",
+            "id",
+            "jsonResponse",
+            "labelType",
+            "modelName",
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -505,7 +524,14 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: Optional[List[str]] = None,
+        fields: ListOrTuple[str] = (
+            "author.email",
+            "author.id",
+            "id",
+            "jsonResponse",
+            "labelType",
+            "modelName",
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -531,7 +557,14 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
-        fields: Optional[List[str]] = None,
+        fields: ListOrTuple[str] = (
+            "author.email",
+            "author.id",
+            "id",
+            "jsonResponse",
+            "labelType",
+            "modelName",
+        ),
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
@@ -579,15 +612,6 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         Examples:
             >>> kili.inferences(project_id=project_id) # returns a list of inference labels of a project
         """
-        if fields is None:
-            fields = [
-                "author.email",
-                "author.id",
-                "id",
-                "jsonResponse",
-                "labelType",
-                "modelName",
-            ]
         return self.labels(
             project_id=project_id,
             asset_id=asset_id,
@@ -615,14 +639,8 @@ class QueriesLabel(BaseOperationEntrypointMixin):
     def export_labels_as_df(
         self,
         project_id: str,
-        fields: List[str] = [
-            "author.email",
-            "author.id",
-            "createdAt",
-            "id",
-            "labelType",
-        ],
-        asset_fields: List[str] = ["externalId"],
+        fields: ListOrTuple[str] = ("author.email", "author.id", "createdAt", "id", "labelType"),
+        asset_fields: ListOrTuple[str] = ("externalId",),
     ) -> pd.DataFrame:
         # pylint: disable=line-too-long
         """Get the labels of a project as a pandas DataFrame.
@@ -640,7 +658,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         get_project(self, project_id, ["id"])
         assets_gen = self.kili_api_gateway.list_assets(
             AssetFilters(project_id=project_id),
-            asset_fields + ["labels." + field for field in fields],
+            tuple(asset_fields) + tuple("labels." + field for field in fields),
             QueryOptions(disable_tqdm=False),
         )
         labels = [
@@ -651,8 +669,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             for asset in assets_gen
             for label in asset["labels"]
         ]
-        labels_df = pd.DataFrame(labels)
-        return labels_df
+        return pd.DataFrame(labels)
 
     @typechecked
     def count_labels(

@@ -11,7 +11,7 @@ from kili.utils.tempfile import TemporaryDirectory
 
 
 @pytest.mark.parametrize(
-    "input_asset,expected_filename",
+    ("input_asset", "expected_filename"),
     [
         (
             {
@@ -70,7 +70,7 @@ from kili.utils.tempfile import TemporaryDirectory
     ],
 )
 def test_download_single_asset_mixed(input_asset, expected_filename):
-    """Tests download_single_asset with asset["content"]"""
+    """Tests download_single_asset with asset["content"]."""
     with TemporaryDirectory() as tmp_dir:
         output_asset = MediaDownloader(
             tmp_dir,
@@ -149,7 +149,7 @@ def test_download_media_jsoncontent_field_added_but_useless():
         )
         assets = [{"content": "", "externalId": "", "jsonContent": ""}]
         ret = media_downloader.download_assets(assets)[0]
-        assert "jsonContent" not in ret.keys()
+        assert "jsonContent" not in ret
 
 
 def test_download_media_jsoncontent_field_added_but_useful():
@@ -176,7 +176,7 @@ def test_download_media_jsoncontent_field_added_but_useful():
 
 
 @pytest.mark.parametrize(
-    "content,jsoncontent,should_call_requests_get",
+    ("content", "jsoncontent", "should_call_requests_get"),
     [
         ("", None, False),
         ("", "", False),

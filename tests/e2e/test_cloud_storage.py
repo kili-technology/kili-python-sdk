@@ -63,7 +63,13 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
 
 # pylint: disable=line-too-long
 @pytest.mark.parametrize(
-    "endpoint_short_name,platform_name,data_integration_id_hash,selected_folders,expected_nb_assets_after_sync",
+    (
+        "endpoint_short_name",
+        "platform_name",
+        "data_integration_id_hash",
+        "selected_folders",
+        "expected_nb_assets_after_sync",
+    ),
     [
         ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", None, 4),
         ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", ["chickens"], 4),

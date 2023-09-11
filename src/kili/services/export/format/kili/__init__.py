@@ -6,11 +6,10 @@ from pathlib import Path
 from typing import Callable, Dict, List
 
 from kili.orm import Asset
+from kili.services.export.exceptions import NotCompatibleInputType, NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
+from kili.services.export.media.video import cut_video
 from kili.services.types import Job
-
-from ...exceptions import NotCompatibleInputType, NotCompatibleOptions
-from ...media.video import cut_video
 
 
 class KiliExporter(AbstractExporter):
@@ -150,7 +149,7 @@ class KiliExporter(AbstractExporter):
     def _scale_json_response_vertices(
         self, json_resp: Dict, asset: Dict, annotation_scaler: Callable[[Dict, Dict], None]
     ) -> None:
-        for job_name in json_resp.keys():
+        for job_name in json_resp:
             if self._can_scale_vertices_for_job_name(job_name) and json_resp.get(job_name, {}).get(
                 "annotations"
             ):

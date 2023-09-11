@@ -83,7 +83,7 @@ class ImportTestCase(TestCase):
         def graphql_execute_side_effect(*args, **kwargs):
             if args[0] == GQL_APPEND_MANY_ASSETS:
                 nb_asset_batch = len(args[1]["data"]["contentArray"])
-                return {"data": [{"id": f"id{str(i)}"} for i in range(nb_asset_batch)]}
+                return {"data": [{"id": f"id{i}"} for i in range(nb_asset_batch)]}
             else:
                 return MagicMock()
 

@@ -38,7 +38,6 @@ def project_with_assets(kili):
 
     yield project
 
-    kili.delete_many_from_dataset(list(a["id"] for a in kili.assets(project["id"], fields=["id"])))
     kili.delete_project(project["id"])
 
 

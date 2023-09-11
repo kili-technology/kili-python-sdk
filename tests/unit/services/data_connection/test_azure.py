@@ -6,7 +6,7 @@ from kili.services.data_connection.azure import AzureBucket
 
 
 @pytest.mark.parametrize(
-    "blob_names,expected_tree",
+    ("blob_names", "expected_tree"),
     [
         (
             ["bears/bear-01.png", "bears/bear-02.jpg", "bears/bear-03.jpg"],

@@ -1,5 +1,4 @@
-"""This script defines object-relational mapping helpers to ease
-the manipulation of Kili data structures."""
+"""This script defines object-relational mapping helpers."""
 import warnings
 from dataclasses import dataclass
 from typing import Dict, Literal
@@ -8,7 +7,7 @@ from typing import Dict, Literal
 class DictClass(dict):
     """A python class that acts like dict and can be used to access its attributes as dict keys."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.__dict__ = self
 
@@ -177,7 +176,7 @@ class Label(DictClass):
 class Asset(DictClass):
     """Asset class."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)  # will add keys in *args and **kwargs to self
         if "labels" in self:
             labels = []

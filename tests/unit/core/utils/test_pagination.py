@@ -5,7 +5,7 @@ from kili.core.utils.pagination import BatchIteratorBuilder, batch_object_builde
 
 
 @pytest.mark.parametrize(
-    "name,test_case",
+    ("name", "test_case"),
     [
         (
             "When the size of the iterable is not a multiple of the batch_size, I see a success",
@@ -26,7 +26,7 @@ def test_batch_iterator_builder(name, test_case):
 
 
 @pytest.mark.parametrize(
-    "name,test_case",
+    ("name", "test_case"),
     [
         (
             "When I have one property I see that it returns paginated batches",

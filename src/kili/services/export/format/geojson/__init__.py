@@ -5,13 +5,12 @@ from pathlib import Path
 from typing import Dict, List
 
 from kili.orm import JobMLTask, JobTool
+from kili.services.export.exceptions import NotCompatibleInputType, NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.tools import is_geotiff_asset_with_lat_lon_coords
 from kili.services.types import Job
 from kili.utils.labels.geojson import kili_json_response_to_feature_collection
 from kili.utils.tqdm import tqdm
-
-from ...exceptions import NotCompatibleInputType, NotCompatibleOptions
 
 
 class GeoJsonExporter(AbstractExporter):

@@ -560,7 +560,6 @@ class AssetClientMethods(BaseClientMethods):
             - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
         """
-
         if external_id_contains is not None:
             warnings.warn(
                 "external_id_contains is deprecated, use external_id_strictly_in instead",

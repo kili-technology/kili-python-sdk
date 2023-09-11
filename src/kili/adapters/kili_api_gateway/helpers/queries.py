@@ -24,7 +24,7 @@ class PaginatedGraphQLQuery:
     It factorizes code for executing paginated queries.
     """
 
-    def __init__(self, graphql_client: GraphQLClient):
+    def __init__(self, graphql_client: GraphQLClient) -> None:
         self._graphql_client = graphql_client
 
     # pylint: disable=too-many-arguments

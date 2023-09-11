@@ -11,7 +11,7 @@ def test_catch_deprecated_elements_to_remove():
     functions_warning = []
     for function_name, function in functions:
         if hasattr(function, "removed_in"):
-            deprecation_version = getattr(function, "removed_in")
+            deprecation_version = function.removed_in  # pyright:ignore[reportGeneralTypeIssues]
             if __version__.split(".")[:2] >= deprecation_version.split("."):
                 functions_warning.append(function_name)
     assert len(functions_warning) == 0, (

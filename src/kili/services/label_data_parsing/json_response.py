@@ -23,8 +23,8 @@ class _ParsedVideoJobs:
         json_interface = project_info["jsonInterface"]
 
         # all job names in the json response should be in the json interface too
-        for _, frame_response in json_response.items():
-            for job_name in frame_response.keys():
+        for frame_response in json_response.values():
+            for job_name in frame_response:
                 if job_name not in json_interface:
                     raise JobNotExistingError(job_name)
 
@@ -104,8 +104,7 @@ class _ParsedJobs:
     def to_dict(self) -> Dict[str, Dict]:
         """Returns the parsed json response as a dict."""
         ret = {job_name: job_payload.to_dict() for job_name, job_payload in self._json_data.items()}
-        ret = {k: v for k, v in ret.items() if v}  # remove empty json responses
-        return ret
+        return {k: v for k, v in ret.items() if v}  # remove empty json responses
 
 
 def _is_video_response(project_info: Project, json_response: Dict) -> bool:
@@ -113,14 +112,14 @@ def _is_video_response(project_info: Project, json_response: Dict) -> bool:
     if "VIDEO" not in project_info["inputType"]:
         return False
 
-    if not all(frame_id.isdigit() for frame_id in json_response.keys()):
+    if not all(frame_id.isdigit() for frame_id in json_response):
         return False
 
     for frame_response in json_response.values():
         if len(frame_response) == 0:
             continue
 
-        for job_name in frame_response.keys():
+        for job_name in frame_response:
             if not (isinstance(job_name, str) and job_name in project_info["jsonInterface"]):
                 return False
 

@@ -5,7 +5,7 @@ import pytest
 from kili.client import Kili
 
 
-@pytest.fixture
+@pytest.fixture()
 def project(kili: Kili):
     interface = {
         "jobs": {

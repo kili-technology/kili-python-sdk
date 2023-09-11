@@ -2,9 +2,8 @@
 
 import re
 import warnings
-from typing import Callable, Iterable, Optional
+from typing import TYPE_CHECKING, Callable, Iterable, Optional
 
-from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.client import Kili
 from kili.core.graphql.operations.project_user.queries import (
@@ -13,6 +12,9 @@ from kili.core.graphql.operations.project_user.queries import (
 )
 from kili.entrypoints.cli.common_args import ROLES
 from kili.entrypoints.cli.helpers import collect_from_csv
+
+if TYPE_CHECKING:
+    from kili.adapters.http_client import HttpClient
 
 REGEX_EMAIL = re.compile(r"([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+")
 
@@ -43,7 +45,7 @@ def collect_members_from_csv(csv_path: str, role: Optional[str]):
     if len(members_to_add) == 0:
         raise ValueError(f"No active member were found in csv: {csv_path}")
 
-    if "role" in members_to_add[0].keys():
+    if "role" in members_to_add[0]:
         if role is not None:
             raise ValueError(
                 "--role cannot be used if the argument passed is a path to a csv file with roles"
@@ -107,9 +109,9 @@ def check_exclusive_options(
     emails: Optional[Iterable[str]],
     all_members: Optional[bool],
 ) -> None:
-    """Forbid mutual use of options and argument(s)"""
+    """Forbid mutual use of options and argument(s)."""
     if not emails:
-        return None
+        return
     emails = list(emails)
     if all_members is None:
         if (csv_path is not None) + (project_id_src is not None) + (len(emails) > 0) > 1:
@@ -129,4 +131,4 @@ def check_exclusive_options(
             raise ValueError(
                 "You must either provide emails arguments or use one option --from-csv or --all"
             )
-    return None
+    return

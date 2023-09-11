@@ -4,6 +4,7 @@
 import json
 from typing import Dict, Generator, Optional
 
+from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
@@ -18,7 +19,6 @@ from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
-from ..base import BaseOperationMixin
 from .mappers import project_where_mapper
 from .operations import GQL_COUNT_PROJECTS, GQL_CREATE_PROJECT
 

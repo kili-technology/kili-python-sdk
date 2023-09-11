@@ -16,8 +16,15 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsWhere,
 )
 from kili.orm import Asset, Label
+from kili.services.export.exceptions import (
+    NotCompatibleOptions,
+    NotExportableAssetError,
+)
 from kili.services.export.repository import AbstractContentRepository
-from kili.services.export.tools import fetch_assets
+from kili.services.export.tools import (
+    fetch_assets,
+    is_geotiff_asset_with_lat_lon_coords,
+)
 from kili.services.export.types import (
     CocoAnnotationModifier,
     ExportType,
@@ -27,9 +34,6 @@ from kili.services.export.types import (
 from kili.services.project import get_project
 from kili.services.types import Job, ProjectId
 from kili.utils.tempfile import TemporaryDirectory
-
-from ..exceptions import NotCompatibleOptions, NotExportableAssetError
-from ..tools import is_geotiff_asset_with_lat_lon_coords
 
 
 class ExportParams(NamedTuple):
@@ -293,6 +297,4 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                     asset["latestLabel"] = clean_label
             assets_in_format.append(asset)
 
-        clean_assets = AbstractExporter._filter_out_autosave_labels(assets_in_format)
-
-        return clean_assets
+        return AbstractExporter._filter_out_autosave_labels(assets_in_format)

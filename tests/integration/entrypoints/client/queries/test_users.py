@@ -9,7 +9,7 @@ from kili.entrypoints.queries.user import QueriesUser
 
 
 @pytest.mark.parametrize(
-    "args, kwargs, expected_return_type",
+    ("args", "kwargs", "expected_return_type"),
     [
         ((), {}, List[Dict]),
         ((), {"as_generator": True}, Generator[Dict, None, None]),
