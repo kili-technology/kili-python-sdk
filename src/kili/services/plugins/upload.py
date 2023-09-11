@@ -176,9 +176,7 @@ class PluginUploader:
 
             self.handler_types = handler_types
 
-            file_paths = list(self.plugin_path.glob("**/*.py"))
-
-            return file_paths
+            return list(self.plugin_path.glob("**/*.py"))
 
         file_path = self.plugin_path
 
@@ -236,8 +234,7 @@ class PluginUploader:
             result = self.kili.graphql_client.execute(GQL_CREATE_PLUGIN, variables)
 
         check_errors_plugin_upload(result, self.plugin_path, self.plugin_name)
-        upload_url = self.kili.format_result("data", result)
-        return upload_url
+        return self.kili.format_result("data", result)
 
     def _create_zip(self, tmp_directory: Path):
         """Create a zip file from python file and requirements.txt.

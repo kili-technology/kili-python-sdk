@@ -95,7 +95,6 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         Examples:
             >>> kili.create_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
         """
-
         return WebhookUploader(
             self, webhook_url, plugin_name, header, verbose, handler_types
         ).create_webhook()
@@ -130,7 +129,6 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         Examples:
             >>> kili.update_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
         """
-
         return WebhookUploader(
             self, new_webhook_url, plugin_name, new_header, verbose, handler_types
         ).update_webhook()

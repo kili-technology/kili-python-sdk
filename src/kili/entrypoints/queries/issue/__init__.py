@@ -5,6 +5,7 @@ from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.issue.queries import IssueQuery, IssueWhere
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -16,18 +17,18 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesIssue(BaseOperationEntrypointMixin):
     """Set of Issue queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
 
     @overload
     def issues(
         self,
         project_id: str,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "id",
             "createdAt",
             "status",
             "type",
-        ],
+        ),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -44,12 +45,12 @@ class QueriesIssue(BaseOperationEntrypointMixin):
     def issues(
         self,
         project_id: str,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "id",
             "createdAt",
             "status",
             "type",
-        ],
+        ),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -66,13 +67,13 @@ class QueriesIssue(BaseOperationEntrypointMixin):
     def issues(
         self,
         project_id: str,
-        fields: List[str] = [
+        fields: ListOrTuple[str] = (
             "id",
             "createdAt",
             "status",
             "type",
             "assetId",
-        ],
+        ),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -103,13 +104,13 @@ class QueriesIssue(BaseOperationEntrypointMixin):
             skip: Number of issues to skip (they are ordered by their date of creation, first to last).
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the issues is returned.
+
         Returns:
             An iterable of issues objects represented as `dict`.
 
         Examples:
             >>> kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors
         """
-
         if asset_id and asset_id_in:
             raise ValueError(
                 "You cannot provide both `asset_id` and `asset_id_in` at the same time"
@@ -146,6 +147,7 @@ class QueriesIssue(BaseOperationEntrypointMixin):
             issue_type: Type of the issue to return. An issue object both
                 represents issues and questions in the app
             status: Status of the issues to return.
+
         Returns:
             The number of issues with the parameters provided
         """

@@ -3,7 +3,7 @@
 from typing import Callable, Tuple
 
 
-def for_all_properties(decorator: Callable, exclude: Tuple[str, ...] = tuple()) -> Callable:
+def for_all_properties(decorator: Callable, exclude: Tuple[str, ...] = ()) -> Callable:
     """Class decorator to decorate all the properties of the decorated class.
 
     Decorates with a decorator passed as argument.

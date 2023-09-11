@@ -2,8 +2,11 @@
 
 
 class MimeTypeError(Exception):
-    """Raised when the mime type of a file is not found or
-    is not compatible with the project type to import in."""
+    """MimeTypeError.
+
+    Raised when the mime type of a file is not found
+    or not compatible with the project type to import in.
+    """
 
 
 class ImportValidationError(Exception):

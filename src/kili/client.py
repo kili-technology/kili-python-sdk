@@ -185,7 +185,11 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
 
     @log_call
     def _is_api_key_valid(self) -> bool:
-        """Check that the api_key provided is valid."""
+        """Check that the api_key provided is valid.
+
+        Note that this method does not rely on the GraphQL client, but on the HTTP client.
+        It must stay this way since the GraphQL client might retry in case of 401 http error.
+        """
         response = self.http_client.post(
             url=self.api_endpoint,
             data='{"query":"{ me { id email } }"}',
@@ -210,8 +214,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         response = self.http_client.get(url, timeout=30)
         if response.status_code == 200 and '"version":' in response.text:
             response_json = response.json()
-            version = response_json["version"]
-            return version
+            return response_json["version"]
         return None
 
     @staticmethod

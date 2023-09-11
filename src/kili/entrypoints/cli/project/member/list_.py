@@ -55,9 +55,8 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
         axis=1,
     )
     members = members.loc[members["activated"]]
-    members.rename(
+    members = members.rename(
         columns={"role": "ROLE", "email": "EMAIL", "id": "ID", "name": "ORGANIZATION"},
-        inplace=True,
     )
     members["NAME"] = members["firstname"].str.title() + " " + members["lastname"].str.title()
     members = members.sort_values(

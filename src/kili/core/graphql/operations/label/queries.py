@@ -30,7 +30,7 @@ class LabelWhere(BaseQueryWhere):
         user_id: Optional[str] = None,
         category_search: Optional[str] = None,
         reviewer_in: Optional[List[str]] = None,
-    ):
+    ) -> None:
         self.project_id = project_id
         self.asset_id = asset_id
         self.asset_status_in = asset_status_in

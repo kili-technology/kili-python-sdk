@@ -1,7 +1,5 @@
 from copy import deepcopy
 
-import pytest
-
 from kili.services.label_data_parsing.json_response import ParsedJobs
 from kili.services.label_data_parsing.types import Project
 

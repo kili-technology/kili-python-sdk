@@ -22,14 +22,13 @@ from kili.entrypoints.mutations.asset.queries import (
     GQL_SEND_BACK_ASSETS_TO_QUEUE,
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
 )
+from kili.entrypoints.mutations.exceptions import MutationError
 from kili.exceptions import MissingArgumentError
 from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv
 from kili.utils.assets import PageResolution
 from kili.utils.logcontext import for_all_methods, log_call
-
-from ..exceptions import MutationError
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -526,7 +525,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 ),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
-                None,
             )
             result["asset_ids"] = [asset["id"] for asset in assets_in_review]
         return result
@@ -610,7 +608,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 AssetFilters(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
-                None,
             )
             result["asset_ids"] = [asset["id"] for asset in assets_in_queue]
         return result

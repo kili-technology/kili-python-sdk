@@ -9,6 +9,7 @@ from kili.core.graphql.operations.data_integration.queries import (
     DataIntegrationsQuery,
     DataIntegrationWhere,
 )
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -20,7 +21,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesDataIntegration(BaseOperationEntrypointMixin):
     """Set of cloud storage integration queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
 
     @overload
     def cloud_storage_integrations(
@@ -30,7 +31,7 @@ class QueriesDataIntegration(BaseOperationEntrypointMixin):
         platform: Optional[Literal["AWS", "Azure", "GCP"]] = None,
         status: Optional[Literal["CONNECTED", "DISCONNECTED", "CHECKING"]] = None,
         organization_id: Optional[str] = None,
-        fields: List[str] = ["name", "id", "platform", "status"],
+        fields: ListOrTuple[str] = ("name", "id", "platform", "status"),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -47,7 +48,7 @@ class QueriesDataIntegration(BaseOperationEntrypointMixin):
         platform: Optional[Literal["AWS", "Azure", "GCP"]] = None,
         status: Optional[Literal["CONNECTED", "DISCONNECTED", "CHECKING"]] = None,
         organization_id: Optional[str] = None,
-        fields: List[str] = ["name", "id", "platform", "status"],
+        fields: ListOrTuple[str] = ("name", "id", "platform", "status"),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -64,7 +65,7 @@ class QueriesDataIntegration(BaseOperationEntrypointMixin):
         platform: Optional[Literal["AWS", "Azure", "GCP"]] = None,
         status: Optional[Literal["CONNECTED", "DISCONNECTED", "CHECKING"]] = None,
         organization_id: Optional[str] = None,
-        fields: List[str] = ["name", "id", "platform", "status"],
+        fields: ListOrTuple[str] = ("name", "id", "platform", "status"),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,

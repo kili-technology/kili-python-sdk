@@ -334,13 +334,12 @@ class AssetClientMethods(BaseClientMethods):
             - `[comparaison_operator]` can be one of: [`==`, `>=`, `<=`, `<`, `>`]
             - `[value]` is an integer that represents the count of such objects of the given category in the label
 
-            These operations can be separated by OR and AND operators
-
-            Example:
-
+            These operations can be separated by OR and AND operators:
+                ```python
                 label_category_search = `JOB_CLASSIF.CATEGORY_A.count > 0`
                 label_category_search = `JOB_CLASSIF.CATEGORY_A.count > 0 OR JOB_NER.CATEGORY_B.count > 0`
                 label_category_search = `(JOB_CLASSIF.CATEGORY_A.count == 1 OR JOB_NER.CATEGORY_B.count > 0) AND JOB_BBOX.CATEGORY_C.count > 10`
+                ```
         """
         if format == "pandas" and as_generator:
             raise ValueError(
@@ -561,7 +560,6 @@ class AssetClientMethods(BaseClientMethods):
             - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
         """
-
         if external_id_contains is not None:
             warnings.warn(
                 "external_id_contains is deprecated, use external_id_strictly_in instead",

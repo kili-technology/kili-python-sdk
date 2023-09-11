@@ -11,12 +11,11 @@ from kili.services.export.exceptions import (
     NotCompatibleOptions,
 )
 from kili.services.export.format.base import AbstractExporter
+from kili.services.export.media.video import cut_video
 from kili.services.export.repository import AbstractContentRepository, DownloadError
 from kili.services.export.types import JobCategory, LabelFormat, SplitOption
 from kili.services.types import Job
 from kili.utils.tqdm import tqdm
-
-from ...media.video import cut_video
 
 
 class YoloExporter(AbstractExporter):
@@ -311,7 +310,7 @@ def _process_asset(
     # pylint: disable=too-many-locals, too-many-arguments
     """Process an asset for all job_ids of category_ids."""
     asset_remote_content = []
-    job_ids = set(map(lambda job_category: job_category.job_id, category_ids.values()))
+    job_ids = {job_category.job_id for job_category in category_ids.values()}
 
     label_frames = _LabelFrames.from_asset(asset, job_ids)
 

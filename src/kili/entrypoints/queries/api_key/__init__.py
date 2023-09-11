@@ -6,6 +6,7 @@ from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -17,7 +18,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesApiKey(BaseOperationEntrypointMixin):
     """Set of ApiKey queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
     @overload
     def api_keys(
         self,
@@ -25,7 +26,7 @@ class QueriesApiKey(BaseOperationEntrypointMixin):
         user_id: Optional[str] = None,
         api_key: Optional[str] = None,
         skip: int = 0,
-        fields: List[str] = ["id", "name", "createdAt", "revoked"],
+        fields: ListOrTuple[str] = ("id", "name", "createdAt", "revoked"),
         first: Optional[int] = None,
         disable_tqdm: Optional[bool] = None,
         *,
@@ -40,7 +41,7 @@ class QueriesApiKey(BaseOperationEntrypointMixin):
         user_id: Optional[str] = None,
         api_key: Optional[str] = None,
         skip: int = 0,
-        fields: List[str] = ["id", "name", "createdAt", "revoked"],
+        fields: ListOrTuple[str] = ("id", "name", "createdAt", "revoked"),
         first: Optional[int] = None,
         disable_tqdm: Optional[bool] = None,
         *,
@@ -55,7 +56,7 @@ class QueriesApiKey(BaseOperationEntrypointMixin):
         user_id: Optional[str] = None,
         api_key: Optional[str] = None,
         skip: int = 0,
-        fields: List[str] = ["id", "name", "createdAt", "revoked"],
+        fields: ListOrTuple[str] = ("id", "name", "createdAt", "revoked"),
         first: Optional[int] = None,
         disable_tqdm: Optional[bool] = None,
         *,

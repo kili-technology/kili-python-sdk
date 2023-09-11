@@ -14,7 +14,7 @@ class NotificationWhere(BaseQueryWhere):
         has_been_seen: Optional[bool] = None,
         notification_id: Optional[str] = None,
         user_id: Optional[str] = None,
-    ):
+    ) -> None:
         self.has_been_seen = has_been_seen
         self.notification_id = notification_id
         self.user_id = user_id

@@ -104,7 +104,7 @@ def test__get_coco_image_annotations():
 
 
 @pytest.mark.parametrize(
-    "name,normalized_vertices,expected_angle,expected_bounding_box",
+    ("name", "normalized_vertices", "expected_angle", "expected_bounding_box"),
     [
         (
             "rotated bbox",
@@ -264,7 +264,7 @@ def test__get_coco_image_annotations_without_annotation():
 
 
 @pytest.mark.parametrize(
-    "jobs,expected_error",
+    ("jobs", "expected_error"),
     [
         ({"JOB_0": {"tools": ["rectangle"], "mlTask": "SPEECH_TO_TEXT"}}, NoCompatibleJobError),
         ({"JOB_0": {"tools": ["rectangle"], "mlTask": "OBJECT_DETECTION"}}, None),

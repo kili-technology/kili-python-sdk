@@ -48,9 +48,7 @@ class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-me
                     }
                 )
 
-        kili_json_response = {self.target_job: {"annotations": annotations}}
-
-        return kili_json_response
+        return {self.target_job: {"annotations": annotations}}
 
     @staticmethod
     def _parse(row) -> Tuple[List[List[float]], int, Optional[float]]:

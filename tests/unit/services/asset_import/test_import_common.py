@@ -1,7 +1,8 @@
 from unittest.mock import MagicMock, patch
 from uuid import UUID
 
-from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
+import pytest
+
 from kili.core.graphql.operations.asset.mutations import GQL_APPEND_MANY_ASSETS
 from kili.core.graphql.operations.organization.queries import OrganizationQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
@@ -31,21 +32,21 @@ class TestContentType(ImportTestCase):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "image"}]
-        with self.assertRaises(MimeTypeError):
+        with pytest.raises(MimeTypeError):
             import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
     def test_cannot_import_files_not_found_to_an_image_project(self, *_):
         path = "./doesnotexist.png"
         assets = [{"content": path, "external_id": "image"}]
-        with self.assertRaises(FileNotFoundError):
+        with pytest.raises(FileNotFoundError):
             import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("PDF"))
     def test_cannot_upload_raw_text_to_pdf_project(self, *_):
         path = "Hello world"
         assets = [{"content": path, "external_id": "image"}]
-        with self.assertRaises(FileNotFoundError):
+        with pytest.raises(FileNotFoundError):
             import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))

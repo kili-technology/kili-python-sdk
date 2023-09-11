@@ -12,11 +12,10 @@ from kili.services.export.exceptions import (
     NotCompatibleOptions,
 )
 from kili.services.export.format.base import AbstractExporter
+from kili.services.export.media.image import get_frame_dimensions, get_image_dimensions
+from kili.services.export.media.video import cut_video, get_video_dimensions
 from kili.services.types import Job
 from kili.utils.tqdm import tqdm
-
-from ...media.image import get_frame_dimensions, get_image_dimensions
-from ...media.video import cut_video, get_video_dimensions
 
 
 class VocExporter(AbstractExporter):
@@ -203,6 +202,4 @@ def _convert_from_kili_to_voc_format(
 
     _parse_annotations(response, xml_label, img_width, img_height, valid_jobs)
 
-    xmlstr = minidom.parseString(ET.tostring(xml_label)).toprettyxml(indent="   ")
-
-    return xmlstr
+    return minidom.parseString(ET.tostring(xml_label)).toprettyxml(indent="   ")

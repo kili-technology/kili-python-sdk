@@ -81,3 +81,4 @@ def mocked__ProjectQuery(where, *_):
                 "consensusMark": None,
             }
         ]
+    return None

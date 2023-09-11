@@ -18,5 +18,4 @@ class PdfDataImporter(BaseAbstractAssetImporter):
         batch_importer = ContentBatchImporter(
             self.kili, self.project_params, batch_params, self.pbar
         )
-        created_asset_ids = self.import_assets_by_batch(assets, batch_importer)
-        return created_asset_ids
+        return self.import_assets_by_batch(assets, batch_importer)

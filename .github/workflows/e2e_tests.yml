@@ -266,7 +266,7 @@ jobs:
       - name: Notebook tests
         # we don't run notebook tests on push to main
         if: github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'main')
-        timeout-minutes: 30
+        timeout-minutes: 45
         run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/e2e/test_notebooks.py
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}

@@ -73,7 +73,9 @@ class LoggerParams(NamedTuple):
 class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
     """Base class for BatchImporters."""
 
-    def __init__(self, kili, project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm):
+    def __init__(
+        self, kili, project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm
+    ) -> None:
         self.kili = kili
         self.project_id = project_params.project_id
         self.input_type = project_params.input_type
@@ -89,7 +91,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
     def import_batch(self, assets: List[AssetLike], verify: bool) -> List[str]:
         """Base actions to import a batch of asset.
 
-        returns:
+        Returns:
             created_assets_ids: list of ids of the created assets
         """
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
@@ -205,12 +207,10 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         }
         result = self.kili.graphql_client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
         format_result("data", result, Asset, self.kili.http_client)
-        created_assets_ids = []
-        return created_assets_ids
+        return []
 
     def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets with synchronous resolver."""
-
         payload = {
             "data": {
                 "contentArray": [asset["content"] for asset in assets],
@@ -229,7 +229,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
     def import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets to Kili with the right resolver.
 
-        returns:
+        Returns:
             created_assets_ids: list of ids of the created assets
         """
         if self.is_asynchronous:
@@ -276,7 +276,7 @@ class ContentBatchImporter(BaseBatchImporter):
         ]
         signed_urls = bucket.request_signed_urls(self.kili, asset_content_paths)
         data_and_content_type_array = self.get_type_and_data_from_content_array(
-            list(map(lambda asset: asset.get("content"), assets))
+            [asset.get("content") for asset in assets]
         )
         data_array, content_type_array = zip(*data_and_content_type_array)
         with ThreadPoolExecutor() as threads:
@@ -343,7 +343,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         project_params: ProjectParams,
         processing_params: ProcessingParams,
         logger_params: LoggerParams,
-    ):
+    ) -> None:
         self.kili = kili
         self.project_params = project_params
         self.raise_error = processing_params.raise_error
@@ -354,7 +354,7 @@ class BaseAbstractAssetImporter(abc.ABC):
     def import_assets(self, assets: List[AssetLike]) -> List[str]:
         """Import assets into Kili.
 
-        returns:
+        Returns:
             created_assets_ids: list of ids of the created assets
         """
         raise NotImplementedError
@@ -381,11 +381,13 @@ class BaseAbstractAssetImporter(abc.ABC):
             email=user_me["email"],
         )
         options = QueryOptions(disable_tqdm=True)
-        organization = list(
-            OrganizationQuery(self.kili.graphql_client, self.kili.http_client)(
-                where, ["license.uploadLocalData"], options
+        organization = next(
+            iter(
+                OrganizationQuery(self.kili.graphql_client, self.kili.http_client)(
+                    where, ["license.uploadLocalData"], options
+                )
             )
-        )[0]
+        )
         return organization["license"]["uploadLocalData"]
 
     def _check_upload_is_allowed(self, assets: List[AssetLike]) -> None:
@@ -405,9 +407,9 @@ class BaseAbstractAssetImporter(abc.ABC):
             try:
                 self.check_mime_type_compatibility(path)
                 filtered_assets.append(asset)
-            except (FileNotFoundError, MimeTypeError) as err:
+            except (FileNotFoundError, MimeTypeError):
                 if raise_error:
-                    raise err
+                    raise
         if len(filtered_assets) == 0:
             # pylint: disable=line-too-long
             raise ImportValidationError(
@@ -445,7 +447,6 @@ class BaseAbstractAssetImporter(abc.ABC):
             AssetFilters(project_id=self.project_params.project_id),
             ["externalId"],
             QueryOptions(disable_tqdm=True),
-            None,
         )
         external_ids_in_project = [asset["externalId"] for asset in assets_in_project]
         filtered_assets = [

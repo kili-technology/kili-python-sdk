@@ -7,7 +7,7 @@ from kili.utils.labels.bbox import (
 
 
 @pytest.mark.parametrize(
-    "test_name,inputs,output,origin_location",
+    ("test_name", "inputs", "output", "origin_location"),
     [
         (
             "box full image pixels",

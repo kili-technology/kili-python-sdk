@@ -7,9 +7,8 @@ from typing import Dict, List, Optional, Tuple
 
 import ffmpeg
 
+from kili.services.export.exceptions import NotExportableAssetError
 from kili.utils.tempfile import TemporaryDirectory
-
-from ..exceptions import NotExportableAssetError
 
 
 class FFmpegError(Exception):
@@ -59,7 +58,7 @@ def cut_video(
             frame_rate_string = video_info["r_frame_rate"].split("/")
             final_framerate = int(frame_rate_string[0]) / int(frame_rate_string[1])
         except ffmpeg.Error as error:
-            raise FFmpegError(f"ffmpeg error for asset {video_path.name}: {str(error)}") from error
+            raise FFmpegError(f"ffmpeg error for asset {video_path.name}: {error}") from error
 
     output_frames = []
     try:
@@ -73,6 +72,6 @@ def cut_video(
                 shutil.move(str(temp_dir / file), str(output_dir / new_filename))
                 output_frames.append(output_dir / new_filename)
     except ffmpeg.Error as error:
-        raise FFmpegError(f"ffmpeg error for asset {video_path.name}: {str(error)}") from error
+        raise FFmpegError(f"ffmpeg error for asset {video_path.name}: {error}") from error
 
     return sorted(output_frames)

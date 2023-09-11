@@ -212,5 +212,4 @@ class VideoDataImporter(BaseAbstractAssetImporter):
             batch_size = IMPORT_BATCH_SIZE
         else:
             raise ImportValidationError
-        created_asset_ids = self.import_assets_by_batch(assets, batch_importer, batch_size)
-        return created_asset_ids
+        return self.import_assets_by_batch(assets, batch_importer, batch_size)

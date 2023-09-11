@@ -189,9 +189,7 @@ class GraphQLClient:
             fetch_schema_from_transport=True,
             introspection_args=self._get_introspection_args(),
         ) as session:
-            schema_str = print_schema(session.client.schema)  # type: ignore
-
-        return schema_str
+            return print_schema(session.client.schema)  # type: ignore
 
     def _cache_graphql_schema(self, graphql_schema_path: Path, schema_str: str) -> None:
         """Cache the graphql schema on disk."""
@@ -316,7 +314,7 @@ class SubscriptionGraphQLClient:
 
     # pylint: disable=too-many-instance-attributes, too-many-arguments
 
-    def __init__(self, url):
+    def __init__(self, url) -> None:
         self.ws_url = url
         self._id = None
         self._paused = False
@@ -421,7 +419,7 @@ class SubscriptionGraphQLClient:
         """
         self._conn_init(headers, authorization)
         payload = {"headers": headers, "query": query, "variables": variables}
-        _cc = self._on_message if not callback else callback
+        _cc = callback if callback else self._on_message
         _id = self._start(payload)
         self._id = _id
         return _cc, _id

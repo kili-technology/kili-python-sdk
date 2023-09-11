@@ -77,8 +77,11 @@ def test_parse_labels_classification():
 
 
 def test_parse_labels_classification_to_dict():
-    """Test that checks that parsing the categories to CategoryList and Category
-    objects still allows to convert to dict and json."""
+    """test_parse_labels_classification_to_dict.
+
+    Test that checks that parsing the categories to CategoryList and Category
+    objects still allows to convert to dict and json.
+    """
     labels = [
         {
             "author": {
@@ -138,8 +141,11 @@ def test_parse_labels_classification_to_dict():
 
 
 def test_parse_labels_classification_to_dict_classif_with_bbox():
-    """Test that checks that parsing the categories to custom objects (CategoryList, Category, etc.)
-    still allows to convert to dict and json."""
+    """test_parse_labels_classification_to_dict_classif_with_bbox.
+
+    Test that checks that parsing the categories to custom objects (CategoryList, Category, etc.)
+    still allows to convert to dict and json.
+    """
     vertices = [
         {"x": 0.5141441957015471, "y": 0.6164292619007603},
         {"x": 0.5141441957015471, "y": 0.367821056372058},
@@ -261,7 +267,7 @@ def test_integration_of_label_parsing_in_kili_labels_assert_types(mocker):
 
 
 def test_integration_of_label_parsing_in_kili_labels(mocker):
-    mocker_project_query = mocker.patch(
+    mocker.patch(
         "kili.core.graphql.operations.project.queries.ProjectQuery.__call__",
         side_effect=lambda *args, **kwargs: (
             x
@@ -278,7 +284,7 @@ def test_integration_of_label_parsing_in_kili_labels(mocker):
         ),
     )
 
-    mocker_label_query = mocker.patch(
+    mocker.patch(
         "kili.core.graphql.operations.label.queries.LabelQuery.get_number_of_elements_to_query",
         return_value=1,
     )

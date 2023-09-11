@@ -21,17 +21,18 @@ def mocked_ffmpeg_probe(file_path: str):
                 }
             ]
         }
+    return None
 
 
 def mocked_ffmpeg_input(video_path: str):
     """Mock ffmpeg.input."""
     if Path(video_path).name == "short_video.mp4":
-        fake_ffmpeg_splitter = FakeFFmpegVideoSplitter(video_path)
-        return fake_ffmpeg_splitter
+        return FakeFFmpegVideoSplitter(video_path)
+    return None
 
 
 class FakeFFmpegVideoSplitter:
-    """Fake ffmpeg.input().filter().output().run()"""
+    """Fake ffmpeg.input().filter().output().run()."""
 
     def __init__(self, video_path) -> None:
         self.video_path = video_path

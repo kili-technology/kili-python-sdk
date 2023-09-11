@@ -6,6 +6,7 @@ from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.user.queries import UserQuery, UserWhere
+from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -17,7 +18,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesUser(BaseOperationEntrypointMixin):
     """Set of User queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
 
     @overload
     def users(
@@ -25,7 +26,7 @@ class QueriesUser(BaseOperationEntrypointMixin):
         api_key: Optional[str] = None,
         email: Optional[str] = None,
         organization_id: Optional[str] = None,
-        fields: List[str] = ["email", "id", "firstname", "lastname"],
+        fields: ListOrTuple[str] = ("email", "id", "firstname", "lastname"),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -40,7 +41,7 @@ class QueriesUser(BaseOperationEntrypointMixin):
         api_key: Optional[str] = None,
         email: Optional[str] = None,
         organization_id: Optional[str] = None,
-        fields: List[str] = ["email", "id", "firstname", "lastname"],
+        fields: ListOrTuple[str] = ("email", "id", "firstname", "lastname"),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -55,7 +56,7 @@ class QueriesUser(BaseOperationEntrypointMixin):
         api_key: Optional[str] = None,
         email: Optional[str] = None,
         organization_id: Optional[str] = None,
-        fields: List[str] = ["email", "id", "firstname", "lastname"],
+        fields: ListOrTuple[str] = ("email", "id", "firstname", "lastname"),
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,

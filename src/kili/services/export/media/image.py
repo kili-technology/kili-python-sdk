@@ -5,7 +5,7 @@ from typing import Dict, Tuple
 
 from PIL import Image
 
-from ..exceptions import NotExportableAssetError
+from kili.services.export.exceptions import NotExportableAssetError
 
 
 def _get_image_dimensions(filepath: str) -> Tuple:

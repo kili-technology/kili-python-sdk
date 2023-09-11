@@ -108,7 +108,6 @@ class ProjectUserWithoutProject(TypedDict):
     numberOfLabeledAssets: int
     numberOfLabels: int
     numberOfLabelsCompute: int
-    numberOfLabeledAssets: int
     numberOfLabeledAssetsCompute: int
     role: ProjectRole
     starred: bool

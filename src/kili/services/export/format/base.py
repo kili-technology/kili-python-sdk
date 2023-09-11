@@ -16,8 +16,15 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsWhere,
 )
 from kili.orm import Asset, Label
+from kili.services.export.exceptions import (
+    NotCompatibleOptions,
+    NotExportableAssetError,
+)
 from kili.services.export.repository import AbstractContentRepository
-from kili.services.export.tools import fetch_assets
+from kili.services.export.tools import (
+    fetch_assets,
+    is_geotiff_asset_with_lat_lon_coords,
+)
 from kili.services.export.types import (
     CocoAnnotationModifier,
     ExportType,
@@ -27,9 +34,6 @@ from kili.services.export.types import (
 from kili.services.project import get_project
 from kili.services.types import Job, ProjectId
 from kili.utils.tempfile import TemporaryDirectory
-
-from ..exceptions import NotCompatibleOptions, NotExportableAssetError
-from ..tools import is_geotiff_asset_with_lat_lon_coords
 
 
 class ExportParams(NamedTuple):
@@ -104,7 +108,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         )
 
     @abstractmethod
-    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
+    def process_and_save(self, assets: List[Asset], output_filename: Path) -> None:
         """Converts the asset and save them into an archive file."""
 
     def make_archive(self, root_folder: Path, output_filename: Path) -> Path:
@@ -209,7 +213,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         )
         return len(list(data_connections_gen)) > 0
 
-    def _check_geotiff_export_compatibility(self, assets: List[Dict]) -> None:
+    def _check_geotiff_export_compatibility(self, assets: List[Asset]) -> None:
         # pylint: disable=line-too-long
         """Check if one of the assets is a geotiff asset, and if the export params are compatible.
 
@@ -293,6 +297,4 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                     asset["latestLabel"] = clean_label
             assets_in_format.append(asset)
 
-        clean_assets = AbstractExporter._filter_out_autosave_labels(assets_in_format)
-
-        return clean_assets
+        return AbstractExporter._filter_out_autosave_labels(assets_in_format)

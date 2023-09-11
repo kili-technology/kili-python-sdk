@@ -1,4 +1,5 @@
 """Pagination utils."""
+from itertools import islice
 from time import sleep
 from typing import Any, Callable, Dict, Iterator, List, Optional
 
@@ -48,7 +49,8 @@ def batch_object_builder(
     if len(list(filter(None, properties_to_batch.values()))) == 0:
         yield properties_to_batch
         return
-    number_of_objects = len([v for v in properties_to_batch.values() if v is not None][0])
+    # pylint: disable=stop-iteration-return
+    number_of_objects = len(next(v for v in properties_to_batch.values() if v is not None))
     number_of_batches = len(range(0, number_of_objects, batch_size))
     batched_properties = {
         k: (
@@ -115,3 +117,14 @@ def mutate_from_paginated_call(
     if batch and results and last_batch_callback:
         last_batch_callback(batch, results)
     return results
+
+
+def batcher(iterable: Iterator, batch_size: int):
+    """Break iterable into sub-iterables with batch_size elements each.
+
+    The last yielded list will have fewer than n elements if the
+    length of iterable is not divisible by batch_size:
+    """
+    iterator = iter(iterable)
+    while batch := list(islice(iterator, batch_size)):
+        yield batch
