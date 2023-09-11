@@ -17,7 +17,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesIssue(BaseOperationEntrypointMixin):
     """Set of Issue queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
 
     @overload
     def issues(

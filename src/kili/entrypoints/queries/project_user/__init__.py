@@ -30,7 +30,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesProjectUser(BaseOperationEntrypointMixin):
     """Set of ProjectUser queries."""
 
-    # pylint: disable=too-many-arguments,redefined-builtin,dangerous-default-value,invalid-name
+    # pylint: disable=too-many-arguments,redefined-builtin,invalid-name
 
     @overload
     def project_users(

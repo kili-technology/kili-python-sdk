@@ -18,7 +18,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesApiKey(BaseOperationEntrypointMixin):
     """Set of ApiKey queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
     @overload
     def api_keys(
         self,

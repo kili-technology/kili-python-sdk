@@ -39,7 +39,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesLabel(BaseOperationEntrypointMixin):
     """Set of Label queries."""
 
-    # pylint: disable=too-many-arguments,too-many-locals,dangerous-default-value
+    # pylint: disable=too-many-arguments,too-many-locals
 
     @overload
     def labels(

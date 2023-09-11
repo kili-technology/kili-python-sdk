@@ -49,6 +49,7 @@ def batch_object_builder(
     if len(list(filter(None, properties_to_batch.values()))) == 0:
         yield properties_to_batch
         return
+    # pylint: disable=stop-iteration-return
     number_of_objects = len(next(v for v in properties_to_batch.values() if v is not None))
     number_of_batches = len(range(0, number_of_objects, batch_size))
     batched_properties = {

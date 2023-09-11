@@ -26,7 +26,7 @@ class QueriesOrganization(BaseOperationEntrypointMixin):
 
     graphql_client: GraphQLClient
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
 
     @overload
     def organizations(

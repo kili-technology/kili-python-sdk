@@ -21,7 +21,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesNotification(BaseOperationEntrypointMixin):
     """Set of Notification queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
 
     @overload
     def notifications(

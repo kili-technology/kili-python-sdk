@@ -22,7 +22,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesDataConnection(BaseOperationEntrypointMixin):
     """Set of cloud storage connection queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
 
     @overload
     def cloud_storage_connections(

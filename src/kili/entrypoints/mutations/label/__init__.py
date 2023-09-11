@@ -183,7 +183,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         return self.format_result("data", result, Label)
 
     @typechecked
-    def append_labels(  # pylint: disable=dangerous-default-value
+    def append_labels(
         self,
         asset_id_array: Optional[List[str]] = None,
         json_response_array: ListOrTuple[Dict] = (),

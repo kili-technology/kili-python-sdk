@@ -21,7 +21,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesProjectVersion(BaseOperationEntrypointMixin):
     """Set of ProjectVersion queries."""
 
-    # pylint: disable=too-many-arguments,dangerous-default-value
+    # pylint: disable=too-many-arguments
 
     @overload
     def project_version(
