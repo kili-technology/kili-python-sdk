@@ -42,8 +42,7 @@ class QueriesDataConnection(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
-        ...
+    ) -> Generator[Dict, None, None]: ...
 
     @overload
     def cloud_storage_connections(
@@ -63,8 +62,7 @@ class QueriesDataConnection(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
-        ...
+    ) -> List[Dict]: ...
 
     @typechecked
     def cloud_storage_connections(
