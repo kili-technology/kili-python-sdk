@@ -120,8 +120,7 @@ class ProjectClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
-        ...
+    ) -> Generator[Dict, None, None]: ...
 
     @overload
     # pylint: disable=too-many-arguments
@@ -153,8 +152,7 @@ class ProjectClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
-        ...
+    ) -> List[Dict]: ...
 
     @typechecked
     # pylint: disable=too-many-arguments,too-many-locals

@@ -31,8 +31,7 @@ class QueriesApiKey(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
-        ...
+    ) -> Generator[Dict, None, None]: ...
 
     @overload
     def api_keys(
@@ -46,8 +45,7 @@ class QueriesApiKey(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
-        ...
+    ) -> List[Dict]: ...
 
     @typechecked
     def api_keys(
