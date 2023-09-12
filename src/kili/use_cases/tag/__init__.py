@@ -42,9 +42,11 @@ class TagUseCases:
                 )
 
             if tag_id in tags_of_project_ids:
-                continue
-
-            ret_tags.append(self._kili_api_gateway.check_tag(project_id=project_id, tag_id=tag_id))
+                ret_tags.append(tag_id)
+            else:
+                ret_tags.append(
+                    self._kili_api_gateway.check_tag(project_id=project_id, tag_id=tag_id)
+                )
 
         return ret_tags
 
