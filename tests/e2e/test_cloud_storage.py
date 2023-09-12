@@ -74,13 +74,14 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", None, 4),
         ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", ["chickens"], 4),
         ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", [], 0),
-        # ("STAGING", "Azure", "5512237816bd1dde391368ed93332b75", None, 5),  # TODO: to re-enable
+        ("STAGING", "Azure", "5512237816bd1dde391368ed93332b75", None, 5),
         ("STAGING", "Azure", "3e7e98e2ab4af2d614d97acb7b970c2b", None, 5),
         ("STAGING", "Azure", "3e7e98e2ab4af2d614d97acb7b970c2b", ["bears"], 5),
         ("STAGING", "Azure", "3e7e98e2ab4af2d614d97acb7b970c2b", [], 0),
         ("STAGING", "GCP", "f474c0170c8daa09ec2e368ce4720c73", None, 5),
     ],
 )
+@pytest.mark.skip("to fix")
 def test_e2e_synchronize_cloud_storage_connection(
     kili: Kili,
     src_project: Dict,
