@@ -1,5 +1,4 @@
 """Tag use cases."""
-import warnings
 from collections import defaultdict
 from typing import Dict, List, Optional
 
@@ -43,12 +42,6 @@ class TagUseCases:
                 )
 
             if tag_id in tags_of_project_ids:
-                warnings.warn(
-                    f"Tag with id `{tag_id}` is already tagged to project `{project_id}`. Skipping"
-                    " this tag.",
-                    UserWarning,
-                    stacklevel=2,
-                )
                 continue
 
             ret_tags.append(self._kili_api_gateway.check_tag(project_id=project_id, tag_id=tag_id))
