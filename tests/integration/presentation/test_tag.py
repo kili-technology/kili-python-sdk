@@ -52,8 +52,8 @@ def test_given_tags_when_i_tag_project_with_tag_ids_then_it_is_tagged(
     )
     # Given
     tags = [
-        {"id": "tag1_id", "label": "tag1"},
-        {"id": "tag2_id", "label": "tag2"},
+        {"id": "tag1_id", "label": "tag1", "checkedForProjects": []},
+        {"id": "tag2_id", "label": "tag2", "checkedForProjects": []},
     ]
     kili.kili_api_gateway.list_tags_by_org = mocker.MagicMock(return_value=tags)
 
@@ -76,8 +76,8 @@ def test_given_tags_when_i_tag_project_with_tag_labels_then_it_is_tagged(
     )
     # Given
     tags = [
-        {"id": "tag1_id", "label": "tag1"},
-        {"id": "tag2_id", "label": "tag2"},
+        {"id": "tag1_id", "label": "tag1", "checkedForProjects": []},
+        {"id": "tag2_id", "label": "tag2", "checkedForProjects": []},
     ]
     kili.kili_api_gateway.list_tags_by_org = mocker.MagicMock(return_value=tags)
 
