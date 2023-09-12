@@ -4,6 +4,8 @@ from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
 
+from kili.domain.project import ProjectId
+from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -37,7 +39,9 @@ class TagClientMethods(BaseClientMethods):
         return (
             tag_use_cases.get_tags_of_organization(fields=fields)
             if project_id is None
-            else (tag_use_cases.get_tags_of_project(project_id=project_id, fields=fields))
+            else (
+                tag_use_cases.get_tags_of_project(project_id=ProjectId(project_id), fields=fields)
+            )
         )
 
     @typechecked
@@ -72,7 +76,7 @@ class TagClientMethods(BaseClientMethods):
         return [
             {"id": str(tag_id)}
             for tag_id in tag_use_cases.tag_project(
-                project_id=project_id,
+                project_id=ProjectId(project_id),
                 tag_ids=tag_ids,  # pyright: ignore[reportGeneralTypeIssues]
                 disable_tqdm=disable_tqdm,
             )
@@ -103,6 +107,9 @@ class TagClientMethods(BaseClientMethods):
         Raises:
             ValueError: Either `tags` or `tag_ids` or `all` must be provided.
         """
+        if sum([tags is not None, tag_ids is not None, all is not None]) != 1:
+            raise ValueError("Only one of `tags`, `tag_ids` or `all` must be provided.")
+
         tag_use_cases = TagUseCases(self.kili_api_gateway)
 
         if tag_ids is None:
@@ -114,7 +121,7 @@ class TagClientMethods(BaseClientMethods):
                 tag_ids = [
                     tag["id"]
                     for tag in tag_use_cases.get_tags_of_project(
-                        project_id=project_id, fields=("id",)
+                        project_id=ProjectId(project_id), fields=("id",)
                     )
                 ]
             else:
@@ -123,7 +130,7 @@ class TagClientMethods(BaseClientMethods):
         return [
             {"id": str(tag_id)}
             for tag_id in tag_use_cases.untag_project(
-                project_id=project_id,
+                project_id=ProjectId(project_id),
                 tag_ids=tag_ids,  # pyright: ignore[reportGeneralTypeIssues]
                 disable_tqdm=disable_tqdm,
             )
@@ -170,4 +177,4 @@ class TagClientMethods(BaseClientMethods):
             if tag_name is None:
                 raise ValueError("Either `tag_name` or `tag_id` must be provided.")
             tag_id = tag_use_cases.get_tag_ids_from_labels(labels=(tag_name,))[0]
-        return tag_use_cases.delete_tag(tag_id=tag_id)
+        return tag_use_cases.delete_tag(tag_id=TagId(tag_id))

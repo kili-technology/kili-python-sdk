@@ -1,6 +1,7 @@
 import pytest
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 from kili.use_cases.tag import TagUseCases
 
@@ -30,7 +31,7 @@ def test_when_get_tags_of_project_then_i_get_tags(kili_api_gateway: KiliAPIGatew
 
     # When
     fetched_tags = TagUseCases(kili_api_gateway).get_tags_of_project(
-        project_id="fake_proj_id", fields=["id", "label"]
+        project_id=ProjectId("fake_proj_id"), fields=["id", "label"]
     )
 
     # Then
@@ -50,7 +51,9 @@ def test_given_tag_ids_when_tagging_project_then_it_tags_the_project(
 
     # When
     applied_tags = TagUseCases(kili_api_gateway).tag_project(
-        project_id="fake_proj_id", tag_ids=[TagId("tag1_id"), TagId("tag2_id")], disable_tqdm=True
+        project_id=ProjectId("fake_proj_id"),
+        tag_ids=[TagId("tag1_id"), TagId("tag2_id")],
+        disable_tqdm=True,
     )
 
     # Then
@@ -68,7 +71,9 @@ def test_when_untagging_project_then_it_removes_some_tags(kili_api_gateway: Kili
 
     # When
     deleted_tags = TagUseCases(kili_api_gateway).untag_project(
-        project_id="fake_proj_id", tag_ids=[TagId("tag1_id"), TagId("tag2_id")], disable_tqdm=True
+        project_id=ProjectId("fake_proj_id"),
+        tag_ids=[TagId("tag1_id"), TagId("tag2_id")],
+        disable_tqdm=True,
     )
 
     # Then
@@ -107,7 +112,7 @@ def test_when_tagging_project_with_invalid_organization_tag_then_it_crashes(
         ValueError, match="Tag this_tag_does_not_exist_it_is_fake not found in organization"
     ):
         tag_use_cases.tag_project(
-            project_id="fake_proj_id",
+            project_id=ProjectId("fake_proj_id"),
             tag_ids=[TagId("this_tag_does_not_exist_it_is_fake")],
             disable_tqdm=True,
         )
@@ -135,7 +140,7 @@ def test_given_tag_to_delete_when_deleting_it_it_works(kili_api_gateway: KiliAPI
     kili_api_gateway.list_tags_by_org.return_value = tags
 
     # When
-    TagUseCases(kili_api_gateway).delete_tag(tag_id="tag1_id")
+    TagUseCases(kili_api_gateway).delete_tag(tag_id=TagId("tag1_id"))
 
     # Then
     kili_api_gateway.delete_tag.assert_called_once_with(tag_id="tag1_id")
