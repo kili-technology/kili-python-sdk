@@ -39,9 +39,7 @@ class TagClientMethods(BaseClientMethods):
         return (
             tag_use_cases.get_tags_of_organization(fields=fields)
             if project_id is None
-            else (
-                tag_use_cases.get_tags_of_project(project_id=ProjectId(project_id), fields=fields)
-            )
+            else tag_use_cases.get_tags_of_project(project_id=ProjectId(project_id), fields=fields)
         )
 
     @typechecked
