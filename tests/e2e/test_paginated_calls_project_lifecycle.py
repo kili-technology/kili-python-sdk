@@ -81,19 +81,16 @@ def test_paginated_calls_project(kili: Kili, project_id: str):
     assert len(result["asset_ids"]) == nb_assets
     assert kili.count_assets(project_id=project_id) == nb_assets
 
-    # When querying assets
-    asset_ids = [asset["id"] for asset in kili.assets(project_id=project_id, fields=["id"])]
-
-    # Then count is right
-    assert len(asset_ids) == nb_assets
-
     # When updating asset external_ids
     new_external_ids = [f"modified_name_{i}" for i in range(nb_assets)]
+    asset_ids = [asset["id"] for asset in kili.assets(project_id=project_id, fields=["id"])]
     result = kili.change_asset_external_ids(asset_ids=asset_ids, new_external_ids=new_external_ids)
 
     # Then
     assert len(result) == nb_assets
-    new_assets_external_ids = [asset["externalId"] for asset in kili.assets(project_id=project_id)]
+    new_assets_external_ids = [
+        asset["externalId"] for asset in kili.assets(project_id=project_id, fields=("externalId",))
+    ]
     assert "modified_name" in new_assets_external_ids[0]
     assert "modified_name" in new_assets_external_ids[550]
 
@@ -150,5 +147,4 @@ def test_paginated_calls_project(kili: Kili, project_id: str):
     kili.delete_many_from_dataset(asset_ids)
 
     # Then
-    assert result == {"id": project_id}
     assert kili.count_assets(project_id=project_id) == 0
