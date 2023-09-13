@@ -121,7 +121,9 @@ class ProjectUseCases:
             rules=None,
         )
 
-        fields = tuple(name for name, val in project_data_mapper(project_data) if val is not None)
+        fields = tuple(
+            name for name, val in project_data_mapper(project_data).items() if val is not None
+        )
         if "id" not in fields:
             fields += ("id",)
 

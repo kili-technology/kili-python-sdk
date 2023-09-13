@@ -1,3 +1,4 @@
+"""Types for the Project-related Kili API gateway functions."""
 from dataclasses import dataclass
 from typing import Dict, Optional
 
@@ -52,11 +53,11 @@ def _check_argument_ranges(
     Raises:
         ValueError: if one of the arguments is not in the correct range.
     """
-    if consensus_tot_coverage is not None and not (0 <= consensus_tot_coverage <= 100):
-        raise ValueError('argument "consensus_tot_coverage" must be comprised between 0 and 100')
+    if consensus_tot_coverage is not None and not 0 <= consensus_tot_coverage <= 100:
+        raise ValueError("Argument `consensus_tot_coverage` must be comprised between 0 and 100.")
 
-    if min_consensus_size is not None and not (1 <= min_consensus_size <= 10):
-        raise ValueError('argument "min_consensus_size" must be comprised between 1 and 10')
+    if min_consensus_size is not None and not 1 <= min_consensus_size <= 10:
+        raise ValueError("Argument `min_consensus_size` must be comprised between 1 and 10.")
 
-    if review_coverage is not None and not (0 <= review_coverage <= 100):
-        raise ValueError('argument "review_coverage" must be comprised between 0 and 100')
+    if review_coverage is not None and not 0 <= review_coverage <= 100:
+        raise ValueError("Argument `review_coverage` must be comprised between 0 and 100.")
