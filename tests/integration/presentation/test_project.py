@@ -38,9 +38,11 @@ def test_when_updating_project_then_it_returns_updated_project(mocker: pytest_mo
     kili.kili_api_gateway = KiliAPIGateway(
         graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
     )
+    # Given
+    project_id = "fake_proj_id"
 
     # When
-    kili.update_properties_in_project(project_id="fake_proj_id", review_coverage=42)
+    kili.update_properties_in_project(project_id, review_coverage=42)
 
     # Then
     kili.kili_api_gateway.graphql_client.execute.assert_called_once_with(
