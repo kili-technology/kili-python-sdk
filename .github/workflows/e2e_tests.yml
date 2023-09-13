@@ -77,7 +77,7 @@ jobs:
               # if the push was on a release branch, it can be either
               # the lts branch -> LTS_CYCLE_FIRST_SDK_STAGING mode
               # or the latest release branch -> RELEASE_PREPROD mode
-              if [[ "${{ github.ref_name }}" == release/2.129.0 ]]; then
+              if [[ "${{ github.ref_name }}" == release/2.146.0 ]]; then
                 json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
               else
                 json_str="{\"array\": [\"RELEASE_PREPROD\"]}"
@@ -155,7 +155,7 @@ jobs:
       - name: Set first SDK version of LTS cycle
         if: env.TEST_MODE == 'LTS_CYCLE_FIRST_SDK_STAGING'
         shell: bash
-        run: echo "LTS_CYCLE_FIRST_SDK_REF=release/2.129.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
+        run: echo "LTS_CYCLE_FIRST_SDK_REF=release/2.146.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
       - name: Add latest release branch to github env
         shell: bash
