@@ -1,4 +1,5 @@
 """Project use cases."""
+import json
 from typing import Dict, Generator, Optional
 
 from tenacity import Retrying
@@ -8,8 +9,10 @@ from tenacity.wait import wait_fixed
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway.project.mappers import project_data_mapper
+from kili.adapters.kili_api_gateway.project.types import ProjectDataKiliAPIGatewayInput
 from kili.core.enums import ProjectType
-from kili.domain.project import InputType, ProjectFilters, ProjectId
+from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
@@ -63,4 +66,68 @@ class ProjectUseCases:
             project_filters,
             fields,
             options=QueryOptions(skip=skip, first=first, disable_tqdm=disable_tqdm),
+        )
+
+    # pylint: disable=too-many-locals
+    def update_properties_in_project(
+        self,
+        project_id: ProjectId,
+        *,
+        can_navigate_between_assets: Optional[bool],
+        can_skip_asset: Optional[bool],
+        compliance_tags: Optional[ListOrTuple[ComplianceTag]],
+        consensus_mark: Optional[float],
+        consensus_tot_coverage: Optional[int],
+        description: Optional[str],
+        honeypot_mark: Optional[float],
+        instructions: Optional[str],
+        input_type: Optional[InputType],
+        json_interface: Optional[Dict],
+        min_consensus_size: Optional[int],
+        number_of_assets: Optional[int],
+        number_of_skipped_assets: Optional[int],
+        number_of_remaining_assets: Optional[int],
+        number_of_reviewed_assets: Optional[int],
+        review_coverage: Optional[int],
+        should_relaunch_kpi_computation: Optional[bool],
+        title: Optional[str],
+        use_honeypot: Optional[bool],
+        metadata_types: Optional[Dict],
+    ) -> Dict[str, object]:
+        """Update properties in a project."""
+        project_filters = ProjectFilters(id=project_id)
+        project_data = ProjectDataKiliAPIGatewayInput(
+            can_navigate_between_assets=can_navigate_between_assets,
+            can_skip_asset=can_skip_asset,
+            consensus_mark=consensus_mark,
+            consensus_tot_coverage=consensus_tot_coverage,
+            compliance_tags=compliance_tags,
+            description=description,
+            honeypot_mark=honeypot_mark,
+            instructions=instructions,
+            input_type=input_type,
+            json_interface=json.dumps(json_interface) if json_interface is not None else None,
+            metadata_types=metadata_types,
+            min_consensus_size=min_consensus_size,
+            number_of_assets=number_of_assets,
+            number_of_skipped_assets=number_of_skipped_assets,
+            number_of_remaining_assets=number_of_remaining_assets,
+            number_of_reviewed_assets=number_of_reviewed_assets,
+            review_coverage=review_coverage,
+            should_relaunch_kpi_computation=should_relaunch_kpi_computation,
+            title=title,
+            use_honeypot=use_honeypot,
+            archived=None,
+            author=None,
+            rules=None,
+        )
+
+        fields = tuple(name for name, val in project_data_mapper(project_data) if val is not None)
+        if "id" not in fields:
+            fields += ("id",)
+
+        return self._kili_api_gateway.update_properties_in_project(
+            project_data,
+            project_filters,
+            fields,
         )
