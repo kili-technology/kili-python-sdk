@@ -87,15 +87,14 @@ class ProjectOperationMixin(BaseOperationMixin):
 
     def update_properties_in_project(
         self,
+        project_id: ProjectId,
         project_data: ProjectDataKiliAPIGatewayInput,
-        project_filters: ProjectFilters,
         fields: ListOrTuple[str],
     ) -> Dict:
         """Update properties in a project."""
         fragment = fragment_builder(fields)
         query = get_update_properties_in_project_mutation(fragment)
-        where = project_where_mapper(filters=project_filters)
         data = project_data_mapper(data=project_data)
-        variables = {"data": data, "where": where}
+        variables = {"data": data, "where": {"id": project_id}}
         result = self.graphql_client.execute(query, variables)
         return load_project_json_fields(result["data"], fields)

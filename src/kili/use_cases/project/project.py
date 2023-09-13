@@ -95,7 +95,6 @@ class ProjectUseCases:
         metadata_types: Optional[Dict],
     ) -> Dict[str, object]:
         """Update properties in a project."""
-        project_filters = ProjectFilters(id=project_id)
         project_data = ProjectDataKiliAPIGatewayInput(
             can_navigate_between_assets=can_navigate_between_assets,
             can_skip_asset=can_skip_asset,
@@ -126,8 +125,4 @@ class ProjectUseCases:
         if "id" not in fields:
             fields += ("id",)
 
-        return self._kili_api_gateway.update_properties_in_project(
-            project_data,
-            project_filters,
-            fields,
-        )
+        return self._kili_api_gateway.update_properties_in_project(project_id, project_data, fields)

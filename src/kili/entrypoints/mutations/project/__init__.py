@@ -23,7 +23,6 @@ from .queries import (
 class MutationsProject(BaseOperationEntrypointMixin):
     """Set of Project mutations."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
     @typechecked
     def append_to_roles(
         self,
