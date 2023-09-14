@@ -10,8 +10,6 @@ InputType = Literal["IMAGE", "PDF", "TEXT", "VIDEO"]
 
 ComplianceTag = Literal["PHI", "PII"]
 
-ComplianceTag = Literal["PHI", "PII"]
-
 
 @dataclass
 # pylint: disable=too-many-instance-attributes
