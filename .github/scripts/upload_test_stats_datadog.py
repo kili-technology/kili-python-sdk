@@ -18,10 +18,10 @@ from tqdm import tqdm
 # map the test name to the metrics name on datadog
 TESTS_TO_PLOT_ON_DATADOG_MAP = {
     "tests/e2e/test_notebooks.py::test_all_recipes[tests/e2e/plugin_workflow.ipynb]": (
-        "recipes_set_up_workflows_ipynb"
+        "plugin_workflow_ipynb"
     ),
     "tests/e2e/test_notebooks.py::test_all_recipes[tests/e2e/import_predictions.ipynb]": (
-        "tests_e2e_plugin_workflow_ipynb"
+        "import_predictions_ipynb"
     ),
 }
 
