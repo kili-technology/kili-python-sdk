@@ -8,6 +8,7 @@ from typeguard import typechecked
 
 from kili.core.helpers import deprecate, is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
+from kili.domain.asset.helpers import check_asset_identifier_arguments
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.label.queries import (
@@ -19,11 +20,10 @@ from kili.entrypoints.mutations.label.queries import (
 from kili.orm import Label
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
-    check_asset_identifier_arguments,
 )
-from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.label_import import import_labels_from_dict
 from kili.services.types import LabelType
+from kili.use_cases.utils.use_cases_utils import UseCasesUtils
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -167,8 +167,8 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         if label_asset_id is None:
             assert label_asset_external_id
             assert project_id
-            label_asset_id = infer_ids_from_external_ids(
-                self.kili_api_gateway, [label_asset_external_id], project_id
+            label_asset_id = UseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
+                [label_asset_external_id], project_id
             )[label_asset_external_id]
         variables = {
             "data": {
@@ -323,8 +323,8 @@ class MutationsLabel(BaseOperationEntrypointMixin):
                 raise ValueError(
                     "Either provide `asset_id` or `asset_external_id` and `project_id`."
                 )
-            asset_id = infer_ids_from_external_ids(
-                self.kili_api_gateway, [asset_external_id], project_id
+            asset_id = UseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
+                [asset_external_id], project_id
             )[asset_external_id]
 
         variables = {

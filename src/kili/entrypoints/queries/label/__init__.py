@@ -28,9 +28,9 @@ from kili.presentation.client.helpers.common_validators import (
 from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
-from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.project import get_project
 from kili.services.types import ProjectId
+from kili.use_cases.utils import UseCasesUtils
 from kili.utils.labels.parsing import ParsedLabel, parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -830,8 +830,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             ```
         """
         if external_ids is not None and asset_ids is None:
-            id_map = infer_ids_from_external_ids(
-                kili_api_gateway=self.kili_api_gateway,
+            id_map = UseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
                 asset_external_ids=external_ids,
                 project_id=project_id,
             )

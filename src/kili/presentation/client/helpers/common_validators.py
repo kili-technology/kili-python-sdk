@@ -4,7 +4,6 @@ import warnings
 from typing import Any, List, Optional
 
 from kili.domain.types import ListOrTuple
-from kili.exceptions import IncompatibleArgumentsError, MissingArgumentError
 
 
 def disable_tqdm_if_as_generator(
@@ -31,23 +30,3 @@ def assert_all_arrays_have_same_size(
             raise ValueError("All arrays should have the same length")
         return False
     return True
-
-
-def check_asset_identifier_arguments(
-    project_id: Optional[str],
-    asset_id_array: Optional[List[str]],
-    asset_external_id_array: Optional[List[str]],
-) -> None:
-    # pylint: disable=line-too-long
-    """Check that a list of assets can be identified either by their asset IDs or their external IDs."""
-    if asset_id_array is not None:
-        if asset_external_id_array is not None:
-            raise IncompatibleArgumentsError(
-                "Either provide asset IDs or asset external IDs. Not both at the same time."
-            )
-        return
-
-    if project_id is None or asset_external_id_array is None:
-        raise MissingArgumentError(
-            "Either provide asset IDs or project ID with asset external IDs."
-        )

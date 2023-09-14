@@ -12,10 +12,7 @@ from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
 from kili.core.helpers import get_file_paths_to_upload
 from kili.core.utils import pagination
 from kili.orm import Label
-from kili.services.helpers import (
-    get_external_id_from_file_path,
-    infer_ids_from_external_ids,
-)
+from kili.services.helpers import get_external_id_from_file_path
 from kili.services.label_import.exceptions import (
     LabelParsingError,
     MissingMetadataError,
@@ -28,6 +25,7 @@ from kili.services.label_import.parser import (
 )
 from kili.services.label_import.types import Classes, LabelFormat
 from kili.services.types import LabelType, LogLevel, ProjectId
+from kili.use_cases.utils.use_cases_utils import UseCasesUtils
 from kili.utils import tqdm
 
 
@@ -91,8 +89,8 @@ class AbstractLabelImporter(ABC):
         if should_retrieve_asset_ids:
             assert project_id
             asset_external_ids = [label["asset_external_id"] for label in labels]
-            asset_id_map = infer_ids_from_external_ids(
-                self.kili.kili_api_gateway, asset_external_ids, project_id
+            asset_id_map = UseCasesUtils(self.kili.kili_api_gateway).infer_ids_from_external_ids(
+                asset_external_ids, project_id
             )
             labels = [
                 {**label, "asset_id": asset_id_map[label["asset_external_id"]]} for label in labels
