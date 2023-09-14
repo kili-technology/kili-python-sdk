@@ -1,17 +1,14 @@
 """Project mutations."""
 
-from json import dumps
-from typing import Any, Dict, Literal, Optional
+from typing import Dict, Literal, Optional
 
 from typeguard import typechecked
 
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.exceptions import MutationError
 from kili.services.copy_project import ProjectCopier
-from kili.services.project import get_project
 from kili.utils.logcontext import for_all_methods, log_call
 
-from .helpers import verify_argument_ranges
 from .queries import (
     GQL_APPEND_TO_ROLES,
     GQL_DELETE_FROM_ROLES,
@@ -26,7 +23,6 @@ from .queries import (
 class MutationsProject(BaseOperationEntrypointMixin):
     """Set of Project mutations."""
 
-    # pylint: disable=too-many-arguments,too-many-locals
     @typechecked
     def append_to_roles(
         self,
@@ -68,121 +64,6 @@ class MutationsProject(BaseOperationEntrypointMixin):
         raise MutationError(
             f"Failed to mutate user {user_email} to role {role} for project {project_id}."
         )
-
-    @typechecked
-    def update_properties_in_project(
-        self,
-        project_id: str,
-        can_navigate_between_assets: Optional[bool] = None,
-        can_skip_asset: Optional[bool] = None,
-        consensus_mark: Optional[float] = None,
-        consensus_tot_coverage: Optional[int] = None,
-        description: Optional[str] = None,
-        honeypot_mark: Optional[float] = None,
-        instructions: Optional[str] = None,
-        input_type: Optional[str] = None,
-        json_interface: Optional[dict] = None,
-        min_consensus_size: Optional[int] = None,
-        number_of_assets: Optional[int] = None,
-        number_of_skipped_assets: Optional[int] = None,
-        number_of_remaining_assets: Optional[int] = None,
-        number_of_reviewed_assets: Optional[int] = None,
-        review_coverage: Optional[int] = None,
-        should_relaunch_kpi_computation: Optional[bool] = None,
-        title: Optional[str] = None,
-        use_honeypot: Optional[bool] = None,
-        metadata_types: Optional[dict] = None,
-    ) -> Dict[str, Any]:
-        """Update properties of a project.
-
-        Args:
-            project_id: Identifier of the project.
-            can_navigate_between_assets:
-                Activate / Deactivate the use of next and previous buttons in labeling interface.
-            can_skip_asset: Activate / Deactivate the use of skip button in labeling interface.
-            consensus_mark: Should be between 0 and 1.
-            consensus_tot_coverage: Should be between 0 and 100.
-                It is the percentage of the dataset that will be annotated several times.
-            description: Description of the project.
-            honeypot_mark: Should be between 0 and 1
-            instructions: Instructions of the project.
-            input_type: Currently, one of `IMAGE`, `PDF`, `TEXT` or `VIDEO`.
-            json_interface: The json parameters of the project, see Edit your interface.
-            min_consensus_size: Should be between 1 and 10
-                Number of people that will annotate the same asset, for consensus computation.
-            number_of_assets: Defaults to 0
-            number_of_skipped_assets: Defaults to 0
-            number_of_remaining_assets: Defaults to 0
-            number_of_reviewed_assets: Defaults to 0
-            review_coverage: Allow to set the percentage of assets
-                that will be queued in the review interface.
-                Should be between 0 and 100
-            should_relaunch_kpi_computation: Technical field, added to indicate changes
-                in honeypot or consensus settings
-            title: Title of the project
-            use_honeypot: Activate / Deactivate the use of honeypot in the project
-            metadata_types: Types of the project metadata.
-                Should be a `dict` of metadata fields name as keys and metadata types as values.
-                Currently, possible types are: `string`, `number`
-
-        Returns:
-            A dict with the changed properties which indicates if the mutation was successful,
-                else an error message.
-
-        !!! example "Change Metadata Types"
-            Metadata fields are by default interpreted as `string` types. To change the type
-            of a metadata field, you can use the `update_properties_in_project` function with the
-            metadata_types argument. `metadata_types` is given as a dict of metadata field names
-            as keys and metadata types as values.
-
-            ```python
-            kili.update_properties_in_project(
-                project_id = project_id,
-                metadata_types = {
-                    'customConsensus': 'number',
-                    'sensitiveData': 'string',
-                    'uploadedFromCloud': 'string',
-                    'modelLabelErrorScore': 'number'
-                }
-            )
-            ```
-
-            Not providing a type for a metadata field or providing an unsupported one
-            will default to the `string` type.
-        """
-        verify_argument_ranges(consensus_tot_coverage, min_consensus_size, review_coverage)
-
-        variables = {
-            "canNavigateBetweenAssets": can_navigate_between_assets,
-            "canSkipAsset": can_skip_asset,
-            "consensusMark": consensus_mark,
-            "consensusTotCoverage": consensus_tot_coverage,
-            "description": description,
-            "honeypotMark": honeypot_mark,
-            "instructions": instructions,
-            "inputType": input_type,
-            "jsonInterface": dumps(json_interface) if json_interface is not None else None,
-            "metadataTypes": metadata_types,
-            "minConsensusSize": min_consensus_size,
-            "numberOfAssets": number_of_assets,
-            "numberOfSkippedAssets": number_of_skipped_assets,
-            "numberOfRemainingAssets": number_of_remaining_assets,
-            "numberOfReviewedAssets": number_of_reviewed_assets,
-            "projectID": project_id,
-            "reviewCoverage": review_coverage,
-            "shouldRelaunchKpiComputation": should_relaunch_kpi_computation,
-            "title": title,
-            "useHoneyPot": use_honeypot,
-        }
-        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT, variables)
-        result = self.format_result("data", result)
-
-        variables.pop("projectID")
-        variables = {k: v for k, v in variables.items() if v is not None}
-
-        new_project_settings = get_project(self, project_id, list(variables.keys()))
-
-        return {**result, **new_project_settings}
 
     @typechecked
     def update_properties_in_role(

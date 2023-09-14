@@ -14,6 +14,8 @@ InputType = Literal[
     "VIDEO_LEGACY",
 ]
 
+ComplianceTag = Literal["PHI", "PII"]
+
 
 @dataclass
 # pylint: disable=too-many-instance-attributes
@@ -21,12 +23,12 @@ class ProjectFilters:
     """Project filters for running a project search."""
 
     id: Optional[ProjectId]  # pylint: disable=invalid-name
-    archived: Optional[bool]
-    search_query: Optional[str]
-    should_relaunch_kpi_computation: Optional[bool]
-    starred: Optional[bool]
-    updated_at_gte: Optional[str]
-    updated_at_lte: Optional[str]
-    created_at_gte: Optional[str]
-    created_at_lte: Optional[str]
-    tag_ids: Optional[ListOrTuple[TagId]]
+    archived: Optional[bool] = None
+    search_query: Optional[str] = None
+    should_relaunch_kpi_computation: Optional[bool] = None
+    starred: Optional[bool] = None
+    updated_at_gte: Optional[str] = None
+    updated_at_lte: Optional[str] = None
+    created_at_gte: Optional[str] = None
+    created_at_lte: Optional[str] = None
+    tag_ids: Optional[ListOrTuple[TagId]] = None

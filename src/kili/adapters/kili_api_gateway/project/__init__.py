@@ -19,8 +19,13 @@ from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
-from .mappers import project_where_mapper
-from .operations import GQL_COUNT_PROJECTS, GQL_CREATE_PROJECT
+from .mappers import project_data_mapper, project_where_mapper
+from .operations import (
+    GQL_COUNT_PROJECTS,
+    GQL_CREATE_PROJECT,
+    get_update_properties_in_project_mutation,
+)
+from .types import ProjectDataKiliAPIGatewayInput
 
 
 class ProjectOperationMixin(BaseOperationMixin):
@@ -79,3 +84,17 @@ class ProjectOperationMixin(BaseOperationMixin):
         if any(json_field in fields for json_field in PROJECT_JSON_FIELDS):
             projects_gen = (load_project_json_fields(project, fields) for project in projects_gen)
         return projects_gen
+
+    def update_properties_in_project(
+        self,
+        project_id: ProjectId,
+        project_data: ProjectDataKiliAPIGatewayInput,
+        fields: ListOrTuple[str],
+    ) -> Dict:
+        """Update properties in a project."""
+        fragment = fragment_builder(fields)
+        mutation = get_update_properties_in_project_mutation(fragment)
+        data = project_data_mapper(data=project_data)
+        variables = {"data": data, "where": {"id": project_id}}
+        result = self.graphql_client.execute(mutation, variables)
+        return load_project_json_fields(result["data"], fields)
