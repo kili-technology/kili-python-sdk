@@ -11,7 +11,7 @@ from typing import Dict, List, Literal, Optional
 # import matplotlib.pyplot as plt
 import pandas as pd
 import requests
-from datadog import initialize
+from datadog import initialize  # pyright: ignore[reportMissingImports]
 from tqdm import tqdm
 
 # https://docs.datadoghq.com/developers/guide/what-best-practices-are-recommended-for-naming-metrics-and-tags/#rules-and-best-practices-for-naming-metrics
