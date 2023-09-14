@@ -5,7 +5,7 @@
 A plugin is an uploaded Python script triggered by an event. It can be defined as either :
 
 - a single `python` file with everything inside
-- a plugin module (a folder) containing multiple `python` files and a non mandatory `requirements.txt` file listing all the dependencies you need for you plugin.
+- a plugin module (a folder) containing multiple `python` files and a non mandatory `requirements.txt` file listing all the dependencies you need for you plugin (providing `requirements.txt` is not available for On-Premise deployments - see details below).
 
 In the case of the module type plugin, at the root of the folder a file named `main.py` is strictly necessary, as it serves as the entrypoint of the plugin. In this `main.py` file, you can import what you need from other `python` files in the folder. The structure of the folder can be the following (the only constraint being the presence of the `main.py` file):
 
@@ -64,6 +64,32 @@ class PluginHandler(PluginCore):
 
 !!! note
     The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run.
+
+## On-Premise deployment details
+
+The plugins for the on-premise deployments work exactly the same as the plugins for the SaaS version of Kili, with only a few small exceptions :
+
+1. It's not possible to add custom python packages to your plugin with the help of the `requirements.txt` file, but we selected a list of the most useful packages that you can directly use, including :
+    * `numpy`, `pandas`, `scikit-learn`, `opencv-python-headless`, `Pillow`, `requests`, `uuid` and of course `kili`
+2. In order to save the logs during the execution of your plugin, you should only use the provided logger in the plugin class (the simple `print` function will not save the log). For an example, see the code below:
+
+```python
+from logging import Logger
+from typing import Dict
+from kili.plugins import PluginCore
+
+def custom_function(label: Dict, logger: Logger):
+    logger.info("Custom function called")
+    # Do something...
+
+class PluginHandler(PluginCore):
+    """Custom plugin"""
+
+    def on_submit(self, label: Dict, asset_id: str) -> None:
+        """Dedicated handler for Submit action"""
+        self.logger.info("On Submit called")
+        custom_function(label, self.logger)
+```
 
 ## Model for Plugins
 
