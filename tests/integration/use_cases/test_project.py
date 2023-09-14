@@ -17,6 +17,7 @@ def test_when_create_project_it_works(kili_api_gateway: KiliAPIGateway):
         title="test",
         description="description",
         project_type=None,
+        compliance_tags=None,
     )
 
     # Then

@@ -15,7 +15,8 @@ from kili.adapters.kili_api_gateway.project.formatters import (
     load_project_json_fields,
 )
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
-from kili.domain.project import ProjectFilters, ProjectId
+from kili.core.enums import ProjectType
+from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
@@ -49,11 +50,12 @@ class ProjectOperationMixin(BaseOperationMixin):
     # pylint: disable=too-many-arguments
     def create_project(
         self,
-        input_type: str,
-        json_interface: dict,
+        input_type: InputType,
+        json_interface: Dict,
         title: str,
         description: str,
-        project_type: Optional[str],
+        project_type: Optional[ProjectType],
+        compliance_tags: Optional[ListOrTuple[ComplianceTag]],
     ) -> ProjectId:
         """Create a project."""
         variables = {
@@ -63,6 +65,7 @@ class ProjectOperationMixin(BaseOperationMixin):
                 "jsonInterface": json.dumps(json_interface),
                 "projectType": project_type,
                 "title": title,
+                "complianceTags": compliance_tags,
             }
         }
         result = self.graphql_client.execute(GQL_CREATE_PROJECT, variables)

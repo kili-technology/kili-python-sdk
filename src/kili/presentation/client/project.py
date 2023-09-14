@@ -39,6 +39,7 @@ class ProjectClientMethods(BaseClientMethods):
         description: str = "",
         project_type: Optional[ProjectType] = None,
         tags: Optional[ListOrTuple[str]] = None,
+        compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
     ) -> Dict[Literal["id"], str]:
         # pylint: disable=line-too-long
         """Create a project.
@@ -72,6 +73,10 @@ class ProjectClientMethods(BaseClientMethods):
                 - `VIDEO_FRAME_OBJECT_TRACKING`
 
             tags: Tags to add to the project. The tags must already exist in the organization.
+            compliance_tags: Compliance tags of the project.
+                Compliance tags are used to categorize projects based on the sensitivity of
+                the data being handled and the legal constraints associated with it.
+                Possible values are: `PHI` and `PII`.
 
         Returns:
             A dict with the id of the created project.
@@ -89,6 +94,7 @@ class ProjectClientMethods(BaseClientMethods):
             title=title,
             description=description,
             project_type=project_type,
+            compliance_tags=compliance_tags,
         )
 
         if tags is not None:
@@ -288,9 +294,9 @@ class ProjectClientMethods(BaseClientMethods):
                 Activate / Deactivate the use of next and previous buttons in labeling interface.
             can_skip_asset: Activate / Deactivate the use of skip button in labeling interface.
             compliance_tags: Compliance tags of the project.
-                  Compliance tags are used to categorize projects based on the sensitivity of
-                  the data being handled and the legal constraints associated with it.
-                  Possible values are: `PHI` and `PII`.
+                Compliance tags are used to categorize projects based on the sensitivity of
+                the data being handled and the legal constraints associated with it.
+                Possible values are: `PHI` and `PII`.
             consensus_mark: Should be between 0 and 1.
             consensus_tot_coverage: Should be between 0 and 100.
                 It is the percentage of the dataset that will be annotated several times.
