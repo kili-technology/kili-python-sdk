@@ -93,7 +93,7 @@ class ProjectOperationMixin(BaseOperationMixin):
     ) -> Dict:
         """Update properties in a project."""
         fragment = fragment_builder(fields)
-        query = get_update_properties_in_project_mutation(fragment)
+        mutation = get_update_properties_in_project_mutation(fragment)
         data = project_data_mapper(data=project_data)
         variables = {"data": data, "where": {"id": project_id}}
         result = self.graphql_client.execute(query, variables)
