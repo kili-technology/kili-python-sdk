@@ -6,13 +6,7 @@ from .tag import TagId
 from .types import ListOrTuple
 
 ProjectId = NewType("ProjectId", str)
-InputType = Literal[
-    "IMAGE",
-    "PDF",
-    "TEXT",
-    "VIDEO",
-    "VIDEO_LEGACY",
-]
+InputType = Literal["IMAGE", "PDF", "TEXT", "VIDEO"]
 
 ComplianceTag = Literal["PHI", "PII"]
 

@@ -31,6 +31,7 @@ class ProjectUseCases:
         title: str,
         description: str,
         project_type: Optional[ProjectType],
+        compliance_tags: Optional[ListOrTuple[ComplianceTag]],
     ) -> ProjectId:
         """Create a project."""
         project_id = self._kili_api_gateway.create_project(
@@ -39,6 +40,7 @@ class ProjectUseCases:
             title=title,
             description=description,
             project_type=project_type,
+            compliance_tags=compliance_tags,
         )
 
         # The project is not immediately available after creation
@@ -49,7 +51,7 @@ class ProjectUseCases:
             reraise=True,
         ):
             with attempt:
-                _ = self._kili_api_gateway.get_project(project_id=project_id, fields=["id"])
+                _ = self._kili_api_gateway.get_project(project_id=project_id, fields=("id",))
 
         return ProjectId(project_id)
 
