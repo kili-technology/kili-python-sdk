@@ -95,6 +95,17 @@ class ProjectUseCases:
         metadata_types: Optional[Dict],
     ) -> Dict[str, object]:
         """Update properties in a project."""
+        if consensus_tot_coverage is not None and not 0 <= consensus_tot_coverage <= 100:
+            raise ValueError(
+                "Argument `consensus_tot_coverage` must be comprised between 0 and 100."
+            )
+
+        if min_consensus_size is not None and not 1 <= min_consensus_size <= 10:
+            raise ValueError("Argument `min_consensus_size` must be comprised between 1 and 10.")
+
+        if review_coverage is not None and not 0 <= review_coverage <= 100:
+            raise ValueError("Argument `review_coverage` must be comprised between 0 and 100.")
+
         project_data = ProjectDataKiliAPIGatewayInput(
             can_navigate_between_assets=can_navigate_between_assets,
             can_skip_asset=can_skip_asset,
