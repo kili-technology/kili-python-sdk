@@ -252,6 +252,9 @@ def upload_to_datadog(df: pd.DataFrame) -> None:
     initialize(api_host="https://api.datadoghq.eu")
 
     for test_name in tqdm(df["test_name"].unique()):
+        if test_name not in TESTS_TO_PLOT_ON_DATADOG_MAP:
+            continue
+            
         df_of_test = df[df["test_name"] == test_name]
 
         durations: List[float] = []
