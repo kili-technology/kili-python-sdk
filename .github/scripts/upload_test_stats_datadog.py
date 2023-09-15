@@ -10,7 +10,7 @@ from typing import Dict, List, Literal, Optional
 # import matplotlib.pyplot as plt
 import pandas as pd
 import requests
-from datadog import initialize  # pyright: ignore[reportMissingImports]
+from datadog import api, initialize
 from tqdm import tqdm
 
 # https://docs.datadoghq.com/developers/guide/what-best-practices-are-recommended-for-naming-metrics-and-tags/#rules-and-best-practices-for-naming-metrics
@@ -294,17 +294,16 @@ def upload_to_datadog(df: pd.DataFrame) -> None:
             timestamps.append(int(row["date"].timestamp()))
 
         short_test_name = TESTS_TO_PLOT_ON_DATADOG_MAP[test_name]
-        points = list(zip(timestamps, durations))
+        points = sorted(zip(timestamps, durations), key=lambda x: x[0])
         datadog_metric_name = f"sdk.tests.{short_test_name}.duration"
 
         print("\nSending metric to datadog: ", datadog_metric_name)
         print(points)
 
-        # TODO: uncomment when finished testing
-        # response = api.Metric.send(metric=datadog_metric_name, points=points, type="gauge")
-        # assert (
-        #     response["status"] == "ok"
-        # ), f"Error when sending metric {datadog_metric_name}: {response}"
+        response = api.Metric.send(metric=datadog_metric_name, points=points, type="gauge")
+        assert (
+            response["status"] == "ok"
+        ), f"Error when sending metric {datadog_metric_name}: {response}. {points}"
 
 
 if __name__ == "__main__":
