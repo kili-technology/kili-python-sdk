@@ -24,4 +24,4 @@ def test_users_query_return_type(mocker, args, kwargs, expected_return_type):
     kili.http_client = mocker.MagicMock()
 
     result = kili.users(*args, **kwargs)
-    assert check_type("result", result, expected_return_type) is None
+    check_type(result, expected_return_type)
