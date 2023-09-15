@@ -19,7 +19,7 @@ from typeguard import typechecked
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import validate_category_search_query
-from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
+from kili.domain.asset import AssetExternalId, AssetFilters
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
@@ -836,12 +836,12 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             )
             resolved_asset_ids = [id_map[AssetExternalId(i)] for i in external_ids]
         else:
-            resolved_asset_ids = [AssetId(i) for i in asset_ids]  # type: ignore
+            resolved_asset_ids = asset_ids  # type: ignore
 
         try:
             export_labels(
                 self,
-                asset_ids=resolved_asset_ids,
+                asset_ids=resolved_asset_ids,  # type: ignore
                 project_id=cast(ProjectId, project_id),
                 export_type="latest",
                 label_format=fmt,
