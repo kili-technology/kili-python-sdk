@@ -179,7 +179,7 @@ class AssetClientMethods(BaseClientMethods):
         as_generator: Literal[False] = False,
     ) -> List[Dict]: ...
 
-    @typechecked
+    # @typechecked
     def assets(
         self,
         project_id: str,
@@ -446,7 +446,7 @@ class AssetClientMethods(BaseClientMethods):
         )
 
         if format == "pandas":
-            import pandas as pd
+            import pandas as pd  # pylint: disable=import-outside-toplevel
 
             return pd.DataFrame(list(assets_gen))
         if as_generator:

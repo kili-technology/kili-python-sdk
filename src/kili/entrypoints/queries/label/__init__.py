@@ -664,7 +664,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             for asset in assets_gen
             for label in asset["labels"]
         ]
-        import pandas as pd
+        import pandas as pd  # pylint: disable=import-outside-toplevel
 
         return pd.DataFrame(labels)
 
