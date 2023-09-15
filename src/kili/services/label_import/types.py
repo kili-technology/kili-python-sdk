@@ -1,5 +1,5 @@
 """Types specific to import."""
-from typing import Any, Dict, List, Literal, NewType, Optional
+from typing import Dict, List, Literal, NewType, Optional
 
 from pydantic import BaseModel, StrictInt, StrictStr, field_validator
 
@@ -24,21 +24,23 @@ class ClientInputLabelsValidator(BaseModel, extra="forbid"):
 
     @field_validator("labels")
     @classmethod
-    def label_validator(cls, label: Dict) -> Dict[str, Any]:
+    def label_validator(cls, labels: List[Dict]) -> List[Dict]:
         """Validate the data of one label."""
-        if label.get("asset_external_id") is None and label.get("asset_id") is None:
-            raise ValueError("You must either provide the asset_id or external_id")
-        return ClientInputLabelData(**label).model_dump()
+        for i, _ in enumerate(labels):
+            if labels[i].get("asset_external_id") is None and labels[i].get("asset_id") is None:
+                raise ValueError("You must either provide the `asset_id` or `external_id`.")
+            labels[i] = ClientInputLabelData(**labels[i]).model_dump()
+        return labels
 
     @field_validator("labels")
     @classmethod
-    def all_labels_use_the_same_asset_identifier(cls, labels: List[Dict]):
+    def all_labels_use_the_same_asset_identifier(cls, labels: List[Dict]) -> List[Dict]:
         """Validate the data of all labels."""
         if not all(label.get("asset_id") for label in labels) and not all(
             label.get("asset_external_id") for label in labels
         ):
             raise ValueError(
-                "Please use the same asset identifier for all labels: either only asset_id or only"
-                " asset_external_id"
+                "Please use the same asset identifier for all labels: either only `asset_id` or"
+                " only `asset_external_id`."
             )
         return labels
