@@ -6,12 +6,12 @@ import click
 from typeguard import typechecked
 from typing_extensions import get_args
 
+from kili.domain.project import ProjectId
 from kili.entrypoints.cli.common_args import Options
 from kili.entrypoints.cli.helpers import get_kili_client
 from kili.services.export import export_labels as service_export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import LabelFormat, SplitOption
-from kili.services.types import ProjectId
 
 
 @click.command(name="export")

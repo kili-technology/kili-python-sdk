@@ -5,8 +5,10 @@ from typing import Dict, List, Optional
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.utils import pagination
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.asset.helpers import check_asset_identifier_arguments
+from kili.domain.project import ProjectId
+from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
 
@@ -19,10 +21,10 @@ class UseCasesUtils:
 
     def get_asset_ids_or_throw_error(
         self,
-        asset_ids: Optional[List[str]],
-        external_ids: Optional[List[str]],
-        project_id: Optional[str],
-    ) -> List[str]:
+        asset_ids: Optional[ListOrTuple[AssetId]],
+        external_ids: Optional[ListOrTuple[AssetExternalId]],
+        project_id: Optional[ProjectId],
+    ) -> List[AssetId]:
         """Check if external id to internal id conversion is valid and needed."""
         check_asset_identifier_arguments(project_id, asset_ids, external_ids)
 
@@ -33,8 +35,8 @@ class UseCasesUtils:
         return asset_ids  # type: ignore
 
     def infer_ids_from_external_ids(
-        self, asset_external_ids: List[str], project_id: str
-    ) -> Dict[str, str]:
+        self, asset_external_ids: ListOrTuple[AssetExternalId], project_id: ProjectId
+    ) -> Dict[AssetExternalId, AssetId]:
         """Infer asset ids from their external ids and project Id.
 
         Args:
@@ -65,18 +67,23 @@ class UseCasesUtils:
             )
         return id_map
 
-    def _build_id_map(self, asset_external_ids: List[str], project_id: str) -> Dict[str, str]:
+    def _build_id_map(
+        self, asset_external_ids: ListOrTuple[AssetExternalId], project_id: ProjectId
+    ) -> Dict[AssetExternalId, AssetId]:
+        # we batch the queries because too many assets in a "in" query makes the query fail
         assets_generators = (
             self.kili_api_gateway.list_assets(
                 AssetFilters(project_id, external_id_strictly_in=external_ids_batch),
                 ["id", "externalId"],
                 QueryOptions(disable_tqdm=True),
             )
-            for external_ids_batch in pagination.BatchIteratorBuilder(asset_external_ids, 1000)
+            for external_ids_batch in pagination.BatchIteratorBuilder(
+                list(asset_external_ids), 1000
+            )
         )
         assets = chain(*assets_generators)
-        id_map: Dict[str, str] = {}
+        id_map: Dict[AssetExternalId, AssetId] = {}
         asset_external_ids_set = set(asset_external_ids)
         for asset in (asset for asset in assets if asset["externalId"] in asset_external_ids_set):
-            id_map[asset["externalId"]] = asset["id"]
+            id_map[AssetExternalId(asset["externalId"])] = AssetId(asset["id"])
         return id_map

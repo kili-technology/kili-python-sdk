@@ -1,4 +1,4 @@
 """Asset domain."""
-from .asset import AssetFilters, AssetId
+from .asset import AssetExternalId, AssetFilters, AssetId
 
-__all__ = ["AssetFilters", "AssetId"]
+__all__ = ["AssetFilters", "AssetId", "AssetExternalId"]

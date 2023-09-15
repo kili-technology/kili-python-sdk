@@ -11,6 +11,7 @@ import yaml
 from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
 from kili.core.helpers import get_file_paths_to_upload
 from kili.core.utils import pagination
+from kili.domain.project import ProjectId
 from kili.orm import Label
 from kili.services.helpers import get_external_id_from_file_path
 from kili.services.label_import.exceptions import (
@@ -24,8 +25,8 @@ from kili.services.label_import.parser import (
     YoloLabelParser,
 )
 from kili.services.label_import.types import Classes, LabelFormat
-from kili.services.types import LabelType, LogLevel, ProjectId
-from kili.use_cases.utils.use_cases_utils import UseCasesUtils
+from kili.services.types import LabelType, LogLevel
+from kili.use_cases.utils import UseCasesUtils
 from kili.utils import tqdm
 
 
@@ -90,7 +91,7 @@ class AbstractLabelImporter(ABC):
             assert project_id
             asset_external_ids = [label["asset_external_id"] for label in labels]
             asset_id_map = UseCasesUtils(self.kili.kili_api_gateway).infer_ids_from_external_ids(
-                asset_external_ids, project_id
+                asset_external_ids, ProjectId(project_id)
             )
             labels = [
                 {**label, "asset_id": asset_id_map[label["asset_external_id"]]} for label in labels

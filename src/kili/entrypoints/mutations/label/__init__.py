@@ -23,7 +23,7 @@ from kili.presentation.client.helpers.common_validators import (
 )
 from kili.services.label_import import import_labels_from_dict
 from kili.services.types import LabelType
-from kili.use_cases.utils.use_cases_utils import UseCasesUtils
+from kili.use_cases.utils import UseCasesUtils
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -159,16 +159,20 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             user = self.get_user()  # type: ignore  # pylint: disable=no-member
             author_id = user["id"]
 
+        # fmt: off
         check_asset_identifier_arguments(
-            project_id,
-            [label_asset_id] if label_asset_id else None,
-            [label_asset_external_id] if label_asset_external_id else None,
+            project_id,  # type: ignore
+            [label_asset_id] if label_asset_id else None,  # type: ignore
+            [label_asset_external_id] if label_asset_external_id else None,  # type: ignore
         )
-        if label_asset_id is None:
-            assert label_asset_external_id
-            assert project_id
+        # fmt: on
+        if (
+            label_asset_id is None
+            and label_asset_external_id is not None
+            and project_id is not None
+        ):
             label_asset_id = UseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
-                [label_asset_external_id], project_id
+                [label_asset_external_id], project_id  # type: ignore
             )[label_asset_external_id]
         variables = {
             "data": {
@@ -226,7 +230,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             raise ValueError(
                 "json_response_array is empty, you must provide at least one label to upload"
             )
-        check_asset_identifier_arguments(project_id, asset_id_array, asset_external_id_array)
+        check_asset_identifier_arguments(project_id, asset_id_array, asset_external_id_array)  # type: ignore
         assert_all_arrays_have_same_size(
             [
                 seconds_to_label_array,
@@ -324,7 +328,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
                     "Either provide `asset_id` or `asset_external_id` and `project_id`."
                 )
             asset_id = UseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
-                [asset_external_id], project_id
+                [asset_external_id], project_id  # type: ignore
             )[asset_external_id]
 
         variables = {

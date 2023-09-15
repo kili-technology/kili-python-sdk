@@ -4,8 +4,6 @@ from typing import Any, Dict, List, Literal, NamedTuple, NewType, Union
 from typing_extensions import TypedDict
 
 InputType = Literal["TEXT", "IMAGE"]
-AssetId = NewType("AssetId", str)
-ProjectId = NewType("ProjectId", str)
 
 LogLevel = Union[int, Literal["ERROR", "WARNING", "DEBUG", "INFO", "CRITICAL"]]
 

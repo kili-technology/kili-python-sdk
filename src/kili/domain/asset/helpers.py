@@ -1,13 +1,16 @@
 """Helpers for the asset domain."""
-from typing import List, Optional
+from typing import Optional
 
+from kili.domain.asset import AssetExternalId, AssetId
+from kili.domain.project import ProjectId
+from kili.domain.types import ListOrTuple
 from kili.exceptions import IncompatibleArgumentsError, MissingArgumentError
 
 
 def check_asset_identifier_arguments(
-    project_id: Optional[str],
-    asset_id_array: Optional[List[str]],
-    asset_external_id_array: Optional[List[str]],
+    project_id: Optional[ProjectId],
+    asset_id_array: Optional[ListOrTuple[AssetId]],
+    asset_external_id_array: Optional[ListOrTuple[AssetExternalId]],
 ) -> None:
     # pylint: disable=line-too-long
     """Check that a list of assets can be identified either by their asset IDs or their external IDs."""
