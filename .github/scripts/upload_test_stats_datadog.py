@@ -3,7 +3,6 @@ import os
 import re
 import sys
 import zipfile
-from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, List, Literal, Optional
@@ -90,6 +89,8 @@ class WorkflowRun:
     endpoint: Literal["staging", "preprod", "lts", "prod"]
     git_ref: str
     started_at: datetime
+    created_at: datetime
+    updated_at: datetime
 
 
 def parse_workflow_runs(workflow_runs: List[Dict]):
@@ -114,9 +115,8 @@ def parse_workflow_runs(workflow_runs: List[Dict]):
                 with z.open(filename) as f:
                     full_logs = f.read().decode("utf-8")
                     if re.search(PYTEST_TEST_DURATIONS_REGEX_PATTERN, full_logs):
-                        date = datetime.strptime(run_json["run_started_at"], r"%Y-%m-%dT%H:%M:%SZ")
                         run_id = run_json["id"]
-                        test_durations.extend(get_test_durations_from_logs(full_logs, date, run_id))
+                        test_durations.extend(get_test_durations_from_logs(full_logs, run_id))
                         git_ref = get_git_ref_from_logs(full_logs)
                         if git_ref is None:
                             continue
@@ -129,7 +129,15 @@ def parse_workflow_runs(workflow_runs: List[Dict]):
                                 title=run_json["display_title"],
                                 platform="windows" if "windows-latest" in full_logs else "ubuntu",
                                 endpoint=get_endpoint_from_logs(full_logs),
-                                started_at=date,
+                                created_at=datetime.strptime(
+                                    run_json["created_at"], r"%Y-%m-%dT%H:%M:%SZ"
+                                ),
+                                started_at=datetime.strptime(
+                                    run_json["run_started_at"], r"%Y-%m-%dT%H:%M:%SZ"
+                                ),
+                                updated_at=datetime.strptime(
+                                    run_json["updated_at"], r"%Y-%m-%dT%H:%M:%SZ"
+                                ),
                                 git_ref=git_ref,
                             )
                         )
@@ -151,11 +159,13 @@ class TestDuration:
     run_id: str
 
 
-def get_test_durations_from_logs(logs: str, date: datetime, run_id: str) -> List[TestDuration]:
+def get_test_durations_from_logs(logs: str, run_id: str) -> List[TestDuration]:
     """Extract the test durations from the logs of a workflow run."""
-    test_name_to_durations = defaultdict(dict)
+    logs_split = [l for l in logs.split("\n") if l]
 
-    # find all matches (there are two)
+    test_name_to_infos = {}
+
+    # find all matches
     # Twice, one for e2e tests, the other one for notebook tests.
     for match in re.finditer(PYTEST_TEST_DURATIONS_REGEX_PATTERN, logs):
         assert match is not None
@@ -175,12 +185,32 @@ def get_test_durations_from_logs(logs: str, date: datetime, run_id: str) -> List
                 except ValueError:
                     print("Cannot parse line: ", line)
                     continue
-                test_name_to_durations[test_name][call_or_setup] = duration
+
+                lines_matching_test_name = [
+                    l for l in logs_split if test_name in l and "PASSED" in l
+                ]
+                if len(lines_matching_test_name) == 0:
+                    # print("Cannot find test finished date for test: ", test_name)
+                    continue
+                if len(lines_matching_test_name) > 1:
+                    raise ValueError(f"Found too many matches: {lines_matching_test_name}")
+
+                date = datetime.strptime(
+                    lines_matching_test_name[0].split(" ")[0][:19], r"%Y-%m-%dT%H:%M:%S"
+                )
+
+                test_name_to_infos[test_name] = (date, call_or_setup, duration)
                 nb_tests_in_log -= 1
 
     return [
-        TestDuration(test_name, durations.get("call"), durations.get("setup"), date, run_id)
-        for test_name, durations in test_name_to_durations.items()
+        TestDuration(
+            test_name=test_name,
+            call_duration=duration if call_or_setup == "call" else None,
+            setup_duration=duration if call_or_setup == "setup" else None,
+            date=date,
+            run_id=run_id,
+        )
+        for test_name, (date, call_or_setup, duration) in test_name_to_infos.items()
     ]
 
 
