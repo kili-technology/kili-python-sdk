@@ -187,7 +187,7 @@ def get_test_durations_from_logs(logs: str, run_id: str) -> List[TestDuration]:
                     continue
 
                 lines_matching_test_name = [
-                    l for l in logs_split if test_name in l and "PASSED" in l
+                    l for l in logs_split if f" {test_name} \x1b[32mPASSED\x1b[0m" in l
                 ]
                 if len(lines_matching_test_name) == 0:
                     # print("Cannot find test finished date for test: ", test_name)
