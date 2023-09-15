@@ -28,7 +28,7 @@ TESTS_TO_PLOT_ON_DATADOG_MAP = {
 OWNER = "kili-technology"
 REPO = "kili-python-sdk"
 WORKFLOW = "e2e_tests.yml"
-GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 HEADERS = {
     "Authorization": f"Bearer {GITHUB_TOKEN}",
     "Accept": "application/vnd.github.v3+json",
