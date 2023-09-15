@@ -20,6 +20,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import validate_category_search_query
 from kili.domain.asset import AssetExternalId, AssetFilters
+from kili.domain.asset.asset import AssetId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
@@ -831,18 +832,18 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         """
         if external_ids is not None and asset_ids is None:
             id_map = UseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
-                asset_external_ids=external_ids,  # type: ignore
+                asset_external_ids=cast(List[AssetExternalId], external_ids),
                 project_id=ProjectId(project_id),
             )
             resolved_asset_ids = [id_map[AssetExternalId(i)] for i in external_ids]
         else:
-            resolved_asset_ids = asset_ids  # type: ignore
+            resolved_asset_ids = cast(List[AssetId], asset_ids)
 
         try:
             export_labels(
                 self,
-                asset_ids=resolved_asset_ids,  # type: ignore
-                project_id=cast(ProjectId, project_id),
+                asset_ids=resolved_asset_ids,
+                project_id=ProjectId(project_id),
                 export_type="latest",
                 label_format=fmt,
                 split_option=layout,

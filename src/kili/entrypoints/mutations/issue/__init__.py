@@ -13,7 +13,6 @@ from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
 )
-from kili.use_cases.utils import UseCasesUtils
 from kili.utils import tqdm
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -114,8 +113,10 @@ class MutationsIssue(BaseOperationEntrypointMixin):
             A list of dictionaries with the `id` key of the created questions.
         """
         assert_all_arrays_have_same_size([text_array, asset_id_array])
-        resolved_asset_id_array = UseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
-            asset_id_array, asset_external_id_array, project_id  # type: ignore
+        resolved_asset_id_array = self._resolve_asset_ids(
+            asset_id_array,
+            asset_external_id_array,
+            project_id,
         )
         created_questions: List[Dict[str, str]] = []
         with tqdm.tqdm(total=len(text_array), desc="Creating questions") as pbar:

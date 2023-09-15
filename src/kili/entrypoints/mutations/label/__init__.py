@@ -2,12 +2,13 @@
 
 import warnings
 from json import dumps
-from typing import Dict, List, Literal, Optional
+from typing import Dict, List, Literal, Optional, cast
 
 from typeguard import typechecked
 
 from kili.core.helpers import deprecate, is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
+from kili.domain.asset import AssetExternalId, AssetId
 from kili.domain.asset.helpers import check_asset_identifier_arguments
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
@@ -162,9 +163,10 @@ class MutationsLabel(BaseOperationEntrypointMixin):
 
         # fmt: off
         check_asset_identifier_arguments(
-            project_id,  # type: ignore
-            [label_asset_id] if label_asset_id else None,  # type: ignore
-            [label_asset_external_id] if label_asset_external_id else None,  # type: ignore
+            ProjectId(project_id) if project_id else None,
+            cast(ListOrTuple[AssetId], [label_asset_id]) if label_asset_id else None,
+            cast(ListOrTuple[AssetExternalId], [label_asset_external_id])
+              if label_asset_external_id else None,
         )
         # fmt: on
         if (
@@ -173,8 +175,8 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             and project_id is not None
         ):
             label_asset_id = UseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
-                [label_asset_external_id], project_id  # type: ignore
-            )[label_asset_external_id]
+                cast(List[AssetExternalId], [label_asset_external_id]), ProjectId(project_id)
+            )[AssetExternalId(label_asset_external_id)]
         variables = {
             "data": {
                 "authorID": author_id,
@@ -232,9 +234,13 @@ class MutationsLabel(BaseOperationEntrypointMixin):
                 "json_response_array is empty, you must provide at least one label to upload"
             )
         check_asset_identifier_arguments(
-            ProjectId(project_id) if project_id is not None else None,
-            asset_id_array,  # type: ignore
-            asset_external_id_array,  # type: ignore
+            ProjectId(project_id) if project_id else None,
+            cast(ListOrTuple[AssetId], asset_id_array) if asset_id_array else None,
+            (
+                cast(ListOrTuple[AssetExternalId], asset_external_id_array)
+                if asset_external_id_array
+                else None
+            ),
         )
         assert_all_arrays_have_same_size(
             [
@@ -333,8 +339,9 @@ class MutationsLabel(BaseOperationEntrypointMixin):
                     "Either provide `asset_id` or `asset_external_id` and `project_id`."
                 )
             asset_id = UseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
-                [asset_external_id], project_id  # type: ignore
-            )[asset_external_id]
+                cast(ListOrTuple[AssetExternalId], [asset_external_id]),
+                ProjectId(project_id),
+            )[AssetExternalId(asset_external_id)]
 
         variables = {
             "data": {"jsonResponse": dumps(json_response)},

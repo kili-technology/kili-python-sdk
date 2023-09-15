@@ -1,6 +1,6 @@
 """Asset mutations."""
 import warnings
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union, cast
 
 from tenacity import retry
 from tenacity.retry import retry_if_exception_type
@@ -26,7 +26,6 @@ from kili.exceptions import MissingArgumentError
 from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv
-from kili.use_cases.utils import UseCasesUtils
 from kili.utils.assets import PageResolution
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -279,12 +278,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             )
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
 
-        resolved_asset_ids = UseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
-            asset_ids, external_ids, project_id  # type: ignore
-        )
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
         properties_to_batch = process_update_properties_in_assets_parameters(
-            resolved_asset_ids,  # type: ignore
+            cast(List[str], resolved_asset_ids),
             priorities=priorities,
             json_metadatas=json_metadatas,
             consensus_marks=consensus_marks,
@@ -346,12 +343,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ):
             return []
 
-        resolved_asset_ids = UseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
-            asset_ids, external_ids, project_id  # type: ignore
-        )
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
         properties_to_batch = process_update_properties_in_assets_parameters(
-            asset_ids=resolved_asset_ids,  # type: ignore
+            asset_ids=cast(List[str], resolved_asset_ids),
             external_ids=new_external_ids,
         )
 
@@ -394,9 +389,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ) or is_empty_list_with_warning("delete_many_from_dataset", "external_ids", external_ids):
             return None
 
-        resolved_asset_ids = UseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
-            asset_ids, external_ids, project_id  # type: ignore
-        )
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": resolved_asset_ids}
 
@@ -473,9 +466,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ) or is_empty_list_with_warning("add_to_review", "external_ids", external_ids):
             return None
 
-        resolved_asset_ids = UseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
-            asset_ids, external_ids, project_id  # type: ignore
-        )
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": resolved_asset_ids}
 
@@ -522,7 +513,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             assets_in_review = self.kili_api_gateway.list_assets(
                 AssetFilters(
                     project_id=result["id"],
-                    asset_id_in=resolved_asset_ids,  # type: ignore
+                    asset_id_in=cast(Optional[List[str]], resolved_asset_ids),
                     status_in=["TO_REVIEW"],
                 ),
                 ["id"],
@@ -562,9 +553,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ) or is_empty_list_with_warning("send_back_to_queue", "external_ids", external_ids):
             return None
 
-        resolved_asset_ids = UseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
-            asset_ids, external_ids, project_id  # type: ignore
-        )
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
         properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": resolved_asset_ids}
 
@@ -609,7 +598,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             assets_in_queue = self.kili_api_gateway.list_assets(
                 AssetFilters(
                     project_id=result["id"],
-                    asset_id_in=resolved_asset_ids,  # type: ignore
+                    asset_id_in=cast(List[str], resolved_asset_ids),
                     status_in=["ONGOING"],
                 ),
                 ["id"],

@@ -1,6 +1,6 @@
 """Utils for use cases."""
 from itertools import chain
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, cast
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -30,9 +30,11 @@ class UseCasesUtils:
 
         if asset_ids is None and external_ids is not None and project_id is not None:
             id_map = self.infer_ids_from_external_ids(external_ids, project_id)
-            asset_ids = [id_map[ext_id] for ext_id in external_ids]
+            resolved_asset_ids = [id_map[ext_id] for ext_id in external_ids]
+        else:
+            resolved_asset_ids = asset_ids or []
 
-        return asset_ids  # type: ignore
+        return cast(List[AssetId], resolved_asset_ids)
 
     def infer_ids_from_external_ids(
         self, asset_external_ids: ListOrTuple[AssetExternalId], project_id: ProjectId
