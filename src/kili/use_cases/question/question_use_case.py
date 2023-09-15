@@ -1,7 +1,10 @@
+"""Question use cases."""
+
 from dataclasses import dataclass
 from typing import List, Optional
 
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
+from kili.domain.asset.asset import AssetExternalId, AssetId
 from kili.domain.project import ProjectId
 from kili.domain.question import QuestionId
 from kili.use_cases.base import BaseUseCases
@@ -19,17 +22,19 @@ class QuestionToCreateUseCaseInput:
 
 class QuestionUseCases(BaseUseCases):
     def create_questions(
-        self, project_id: ProjectId, questions: List[QuestionToCreateUseCaseInput]
+        self,
+        project_id: ProjectId,
+        questions: List[QuestionToCreateUseCaseInput],
+        external_id_array: Optional[List[AssetExternalId]] = None,
     ) -> List[QuestionId]:
-        external_id_array = [question.asset_external_id for question in questions]
-        asset_id_array = [question.asset_id for question in questions]
-        if all(e is None for e in external_id_array):
-            external_id_array = None
-        if all(e is None for e in asset_id_array):
+        if questions[0].asset_id is not None:
+            # we assume that if 1 question is not None, all there others are too
+            asset_id_array = [AssetId(question.asset_id) for question in questions]  # type: ignore
+        else:
             asset_id_array = None
 
         asset_ids = UseCasesUtils(self._kili_api_gateway).get_asset_ids_or_throw_error(
-            asset_ids=asset_id_array, external_ids=external_id_array, project_id=project_id  # type: ignore
+            asset_ids=asset_id_array, external_ids=external_id_array, project_id=project_id
         )
 
         gateway_issues = [
