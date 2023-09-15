@@ -2,6 +2,7 @@ import io
 import os
 import re
 import sys
+import time
 import zipfile
 from dataclasses import dataclass
 from datetime import datetime
@@ -300,10 +301,12 @@ def upload_to_datadog(df: pd.DataFrame) -> None:
         print("\nSending metric to datadog: ", datadog_metric_name)
         print(points)
 
-        response = api.Metric.send(metric=datadog_metric_name, points=points, type="gauge")
-        assert (
-            response["status"] == "ok"
-        ), f"Error when sending metric {datadog_metric_name}: {response}. {points}"
+        for point in points:
+            response = api.Metric.send(metric=datadog_metric_name, points=[point], type="gauge")
+            assert (
+                response["status"] == "ok"
+            ), f"Error when sending metric {datadog_metric_name}: {response}. {point}"
+            time.sleep(0.1)
 
 
 if __name__ == "__main__":
