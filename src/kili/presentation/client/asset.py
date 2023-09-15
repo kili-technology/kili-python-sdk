@@ -179,7 +179,7 @@ class AssetClientMethods(BaseClientMethods):
         as_generator: Literal[False] = False,
     ) -> List[Dict]: ...
 
-    # @typechecked
+    @typechecked
     def assets(
         self,
         project_id: str,
