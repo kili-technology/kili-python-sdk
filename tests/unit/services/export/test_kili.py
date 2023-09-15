@@ -247,21 +247,24 @@ def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "PDF"}
 
-    kili.export_labels(
-        "fake_proj_id", "export_pixel_coords_kili_pdf.zip", fmt="kili", normalized_coordinates=False
-    )
+    with TemporaryDirectory() as export_folder:
+        export_filename = str(Path(export_folder) / "export_pixel_coords_kili_pdf.zip")
 
-    with TemporaryDirectory() as extract_folder:
-        with ZipFile("export_pixel_coords_kili_pdf.zip", "r") as z_f:
-            # extract in a temp dir
-            z_f.extractall(extract_folder)
+        kili.export_labels(
+            "fake_proj_id", export_filename, fmt="kili", normalized_coordinates=False
+        )
 
-        assert Path(f"{extract_folder}/README.kili.txt").is_file()
-        assert Path(f"{extract_folder}/labels").is_dir()
-        assert Path(f"{extract_folder}/labels/Cas_technique_n9.pdf.json").is_file()
+        with TemporaryDirectory() as extract_folder:
+            with ZipFile(export_filename, "r") as z_f:
+                # extract in a temp dir
+                z_f.extractall(extract_folder)
 
-        with Path(f"{extract_folder}/labels/Cas_technique_n9.pdf.json").open() as f:
-            output = json.load(f)
+            assert Path(f"{extract_folder}/README.kili.txt").is_file()
+            assert Path(f"{extract_folder}/labels").is_dir()
+            assert Path(f"{extract_folder}/labels/Cas_technique_n9.pdf.json").is_file()
+
+            with Path(f"{extract_folder}/labels/Cas_technique_n9.pdf.json").open() as f:
+                output = json.load(f)
 
     assert output == pdf_project_asset_unnormalized
 
@@ -391,24 +394,26 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
 
-    kili.export_labels(
-        "fake_proj_id",
-        "export_pixel_coords_kili_image.zip",
-        fmt="kili",
-        normalized_coordinates=False,
-    )
+    with TemporaryDirectory() as export_folder:
+        export_filename = str(Path(export_folder) / "export_pixel_coords_kili_image.zip")
+        kili.export_labels(
+            "fake_proj_id",
+            export_filename,
+            fmt="kili",
+            normalized_coordinates=False,
+        )
 
-    with TemporaryDirectory() as extract_folder:
-        with ZipFile("export_pixel_coords_kili_image.zip", "r") as z_f:
-            # extract in a temp dir
-            z_f.extractall(extract_folder)
+        with TemporaryDirectory() as extract_folder:
+            with ZipFile(export_filename, "r") as z_f:
+                # extract in a temp dir
+                z_f.extractall(extract_folder)
 
-        assert Path(f"{extract_folder}/README.kili.txt").is_file()
-        assert Path(f"{extract_folder}/labels").is_dir()
-        assert Path(f"{extract_folder}/labels/42015077eed072c50d59232dcc0ad0b1.jpg.json").is_file()
+            assert Path(f"{extract_folder}/README.kili.txt").is_file()
+            assert Path(f"{extract_folder}/labels").is_dir()
+            assert Path(f"{extract_folder}/labels/42015077eed072c50d59232dcc0ad0b1.jpg.json").is_file()
 
-        with Path(f"{extract_folder}/labels/42015077eed072c50d59232dcc0ad0b1.jpg.json").open() as f:
-            output = json.load(f)
+            with Path(f"{extract_folder}/labels/42015077eed072c50d59232dcc0ad0b1.jpg.json").open() as f:
+                output = json.load(f)
 
     assert output == image_project_asset_unnormalized
 
@@ -460,23 +465,26 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
 
-    kili.export_labels(
-        "fake_proj_id",
-        "export_pixel_coords_kili_video.zip",
-        fmt="kili",
-        normalized_coordinates=False,
-    )
+    with TemporaryDirectory() as export_folder:
+        export_filename = str(Path(export_folder) / "export_pixel_coords_kili_video.zip")
 
-    with TemporaryDirectory() as extract_folder:
-        with ZipFile("export_pixel_coords_kili_video.zip", "r") as z_f:
-            # extract in a temp dir
-            z_f.extractall(extract_folder)
+        kili.export_labels(
+            "fake_proj_id",
+            export_filename,
+            fmt="kili",
+            normalized_coordinates=False,
+        )
 
-        assert Path(f"{extract_folder}/README.kili.txt").is_file()
-        assert Path(f"{extract_folder}/labels").is_dir()
-        assert Path(f"{extract_folder}/labels/Click_here_to_start.json").is_file()
+        with TemporaryDirectory() as extract_folder:
+            with ZipFile(export_filename, "r") as z_f:
+                # extract in a temp dir
+                z_f.extractall(extract_folder)
 
-        with Path(f"{extract_folder}/labels/Click_here_to_start.json").open() as f:
-            output = json.load(f)
+            assert Path(f"{extract_folder}/README.kili.txt").is_file()
+            assert Path(f"{extract_folder}/labels").is_dir()
+            assert Path(f"{extract_folder}/labels/Click_here_to_start.json").is_file()
+
+            with Path(f"{extract_folder}/labels/Click_here_to_start.json").open() as f:
+                output = json.load(f)
 
     assert output == video_project_asset_unnormalized
