@@ -65,9 +65,12 @@ class ProjectOperationMixin(BaseOperationMixin):
                 "jsonInterface": json.dumps(json_interface),
                 "projectType": project_type,
                 "title": title,
-                "complianceTags": compliance_tags,
             }
         }
+        # complience tags are only available for Kili app > 2.138
+        if compliance_tags:
+            variables["data"]["complianceTags"] = compliance_tags
+
         result = self.graphql_client.execute(GQL_CREATE_PROJECT, variables)
         return ProjectId(result["data"]["id"])
 
@@ -98,6 +101,11 @@ class ProjectOperationMixin(BaseOperationMixin):
         fragment = fragment_builder(fields)
         mutation = get_update_properties_in_project_mutation(fragment)
         data = project_data_mapper(data=project_data)
+
+        # complience tags are only available for Kili app > 2.138
+        if "complianceTags" in data and data["complianceTags"] is None:
+            del data["complianceTags"]
+
         variables = {"data": data, "where": {"id": project_id}}
         result = self.graphql_client.execute(mutation, variables)
         return load_project_json_fields(result["data"], fields)
