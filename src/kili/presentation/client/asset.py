@@ -1,9 +1,18 @@
 """Client presentation methods for assets."""
 
 import warnings
-from typing import Dict, Generator, Iterable, List, Literal, Optional, Union, overload
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    Union,
+    overload,
+)
 
-import pandas as pd
 from typeguard import typechecked
 
 from kili.domain.asset import AssetFilters
@@ -16,6 +25,9 @@ from kili.use_cases.asset import AssetUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .base import BaseClientMethods
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -237,7 +249,7 @@ class AssetClientMethods(BaseClientMethods):
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         *,
         as_generator: bool = False,
-    ) -> Union[Iterable[Dict], pd.DataFrame]:
+    ) -> Union[Iterable[Dict], "pd.DataFrame"]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
@@ -434,6 +446,8 @@ class AssetClientMethods(BaseClientMethods):
         )
 
         if format == "pandas":
+            import pandas as pd  # pylint: disable=import-outside-toplevel
+
             return pd.DataFrame(list(assets_gen))
         if as_generator:
             return assets_gen

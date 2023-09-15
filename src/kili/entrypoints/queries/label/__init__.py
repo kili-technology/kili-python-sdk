@@ -2,6 +2,7 @@
 
 from functools import partial
 from typing import (
+    TYPE_CHECKING,
     Dict,
     Generator,
     Iterable,
@@ -13,7 +14,6 @@ from typing import (
     overload,
 )
 
-import pandas as pd
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -33,6 +33,9 @@ from kili.services.project import get_project
 from kili.services.types import ProjectId
 from kili.utils.labels.parsing import ParsedLabel, parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -633,7 +636,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         project_id: str,
         fields: ListOrTuple[str] = ("author.email", "author.id", "createdAt", "id", "labelType"),
         asset_fields: ListOrTuple[str] = ("externalId",),
-    ) -> pd.DataFrame:
+    ) -> "pd.DataFrame":
         # pylint: disable=line-too-long
         """Get the labels of a project as a pandas DataFrame.
 
@@ -661,6 +664,8 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             for asset in assets_gen
             for label in asset["labels"]
         ]
+        import pandas as pd  # pylint: disable=import-outside-toplevel
+
         return pd.DataFrame(labels)
 
     @typechecked
