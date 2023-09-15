@@ -1,4 +1,4 @@
-name: E2E tests
+name: Pytest stats to Datadog
 on:
   workflow_dispatch:
   schedule:
