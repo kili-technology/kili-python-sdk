@@ -16,7 +16,7 @@ py_version = 38
 known_first_party = ['kili']
 
 [tool.pyright]
-exclude = ["**/__pycache__"]
+exclude = ["**/__pycache__", ".github/scripts/upload_test_stats_datadog.py"]
 pythonVersion = "3.8"
 typeCheckingMode = "basic"
 
