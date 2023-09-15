@@ -9,6 +9,7 @@ from typeguard import typechecked
 from kili.core.helpers import deprecate, is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
 from kili.domain.asset.helpers import check_asset_identifier_arguments
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.label.queries import (
@@ -230,7 +231,11 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             raise ValueError(
                 "json_response_array is empty, you must provide at least one label to upload"
             )
-        check_asset_identifier_arguments(project_id, asset_id_array, asset_external_id_array)  # type: ignore
+        check_asset_identifier_arguments(
+            ProjectId(project_id) if project_id is not None else None,
+            asset_id_array,  # type: ignore
+            asset_external_id_array,  # type: ignore
+        )
         assert_all_arrays_have_same_size(
             [
                 seconds_to_label_array,

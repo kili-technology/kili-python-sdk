@@ -521,7 +521,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         if isinstance(result, dict) and "id" in result:
             assets_in_review = self.kili_api_gateway.list_assets(
                 AssetFilters(
-                    project_id=result["id"], asset_id_in=resolved_asset_ids, status_in=["TO_REVIEW"]  # type: ignore
+                    project_id=result["id"],
+                    asset_id_in=resolved_asset_ids,  # type: ignore
+                    status_in=["TO_REVIEW"],
                 ),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
@@ -605,7 +607,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         result = self.format_result("data", results[0])
         if isinstance(result, dict) and "id" in result:
             assets_in_queue = self.kili_api_gateway.list_assets(
-                AssetFilters(project_id=result["id"], asset_id_in=resolved_asset_ids, status_in=["ONGOING"]),  # type: ignore
+                AssetFilters(
+                    project_id=result["id"],
+                    asset_id_in=resolved_asset_ids,  # type: ignore
+                    status_in=["ONGOING"],
+                ),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
             )
