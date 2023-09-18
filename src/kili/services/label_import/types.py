@@ -21,13 +21,18 @@ def check_input_labels(labels: List[Dict]) -> None:
         )
 
 
-VALID_LABEL_KEYS = (
-    "asset_id",
-    "asset_external_id",
-    "json_response",
-    "author_id",
-    "seconds_to_label",
-)
+MANDATORY_LABEL_KEYS_TYPES = {
+    "json_response": Dict,
+}
+
+OPTIONAL_LABEL_KEYS_TYPES = {
+    "asset_id": str,
+    "asset_external_id": str,
+    "author_id": str,
+    "seconds_to_label": int,
+}
+
+VALID_KEYS = set(MANDATORY_LABEL_KEYS_TYPES.keys()).union(OPTIONAL_LABEL_KEYS_TYPES.keys())
 
 
 @typechecked
@@ -36,18 +41,17 @@ def check_input_label(label: Dict) -> None:
     if label.get("asset_external_id") is None and label.get("asset_id") is None:
         raise ValueError("You must either provide the `asset_id` or `external_id`.")
 
-    if not isinstance(label["json_response"], Dict):
-        raise TypeError("The `json_response` field must be a dictionary.")
+    for key in label:
+        if key not in VALID_KEYS:
+            raise ValueError(f"The `{key}` key is not a valid key.")
 
-    for key, expected_type in (
-        ("seconds_to_label", int),
-        ("author_id", str),
-        ("asset_id", str),
-        ("asset_external_id", str),
-    ):
-        if label.get(key) is not None and not isinstance(label[key], expected_type):
+    for key, expected_type in MANDATORY_LABEL_KEYS_TYPES.items():
+        if key not in label:
+            raise ValueError(f"The `{key}` key is mandatory.")
+
+        if not isinstance(label[key], expected_type):
             raise TypeError(f"The `{key}` field must be of type `{expected_type}`.")
 
-    for key in label:
-        if key not in VALID_LABEL_KEYS:
-            raise ValueError(f"The `{key}` key is not a valid key.")
+    for key, expected_type in OPTIONAL_LABEL_KEYS_TYPES.items():
+        if label.get(key) is not None and not isinstance(label[key], expected_type):
+            raise TypeError(f"The `{key}` field must be of type `{expected_type}`.")
