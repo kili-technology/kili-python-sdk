@@ -1,7 +1,6 @@
 import json
 from unittest.mock import MagicMock
 
-import pydantic
 import pytest
 
 from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
@@ -151,7 +150,7 @@ class TestImportLabelsFromDict:
         labels = [
             {"json_response": self.json_response, "asset_id": "asset_id", "unexisting_field": 3}
         ]
-        with pytest.raises(pydantic.ValidationError):
+        with pytest.raises(ValueError, match="The `unexisting_field` key is not a valid key."):
             import_labels_from_dict(
                 self.kili, project_id, labels, label_type, overwrite, model_name
             )
@@ -168,12 +167,12 @@ class TestImportLabelsFromDict:
                 "seconds_to_label": "wrong_type",
             }
         ]
-        with pytest.raises(pydantic.ValidationError):
+        with pytest.raises(TypeError):
             import_labels_from_dict(
                 self.kili, project_id, labels, label_type, overwrite, model_name
             )
 
-    def test_import_predictions(self, mocker):
+    def test_import_predictions(self):
         project_id = "project_id"
         label_type = "PREDICTION"
         model_name = "model_name"
@@ -212,7 +211,7 @@ class TestImportLabelsFromDict:
             GQL_APPEND_MANY_LABELS, call, timeout=60
         )
 
-    def test_import_predictions_with_overwritting(self, mocker):
+    def test_import_predictions_with_overwritting(self):
         project_id = "project_id"
         label_type = "PREDICTION"
         model_name = "model_name"

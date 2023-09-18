@@ -11,7 +11,7 @@ from kili.services.label_import.importer import (
     LoggerParams,
     YoloLabelImporter,
 )
-from kili.services.label_import.types import ClientInputLabelsValidator, LabelFormat
+from kili.services.label_import.types import LabelFormat, check_input_labels
 from kili.services.project import get_project
 from kili.services.types import LabelType, LogLevel, ProjectId
 
@@ -74,7 +74,7 @@ def import_labels_from_dict(  # pylint: disable=too-many-arguments
     disable_tqdm: Optional[bool] = None,
 ) -> List:
     """Imports labels from a list of dictionaries."""
-    ClientInputLabelsValidator(labels=labels)
+    check_input_labels(labels)
     if label_type == "PREDICTION" and not model_name:
         raise ValueError("You must provide model_name when uploading predictions")
     logger_params = LoggerParams(disable_tqdm=disable_tqdm, level=cast(LogLevel, "WARNING"))
