@@ -161,14 +161,15 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             user = self.get_user()  # type: ignore  # pylint: disable=no-member
             author_id = user["id"]
 
-        # fmt: off
         check_asset_identifier_arguments(
             ProjectId(project_id) if project_id else None,
             cast(ListOrTuple[AssetId], [label_asset_id]) if label_asset_id else None,
-            cast(ListOrTuple[AssetExternalId], [label_asset_external_id])
-              if label_asset_external_id else None,
+            (
+                cast(ListOrTuple[AssetExternalId], [label_asset_external_id])
+                if label_asset_external_id
+                else None
+            ),
         )
-        # fmt: on
         if (
             label_asset_id is None
             and label_asset_external_id is not None
