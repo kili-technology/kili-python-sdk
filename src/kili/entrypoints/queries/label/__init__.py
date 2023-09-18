@@ -19,7 +19,9 @@ from typeguard import typechecked
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import validate_category_search_query
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetExternalId, AssetFilters
+from kili.domain.asset.asset import AssetId
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
@@ -28,9 +30,8 @@ from kili.presentation.client.helpers.common_validators import (
 from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
-from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.project import get_project
-from kili.services.types import ProjectId
+from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.labels.parsing import ParsedLabel, parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -830,18 +831,19 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             ```
         """
         if external_ids is not None and asset_ids is None:
-            id_map = infer_ids_from_external_ids(
-                kili_api_gateway=self.kili_api_gateway,
-                asset_external_ids=external_ids,
-                project_id=project_id,
+            id_map = AssetUseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
+                asset_external_ids=cast(List[AssetExternalId], external_ids),
+                project_id=ProjectId(project_id),
             )
-            asset_ids = [id_map[id] for id in external_ids]
+            resolved_asset_ids = [id_map[AssetExternalId(i)] for i in external_ids]
+        else:
+            resolved_asset_ids = cast(List[AssetId], asset_ids)
 
         try:
             export_labels(
                 self,
-                asset_ids=asset_ids,
-                project_id=cast(ProjectId, project_id),
+                asset_ids=resolved_asset_ids,
+                project_id=ProjectId(project_id),
                 export_type="latest",
                 label_format=fmt,
                 split_option=layout,

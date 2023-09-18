@@ -10,7 +10,6 @@ from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
 from kili.core.utils.pagination import BatchIteratorBuilder
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
 )
@@ -114,18 +113,22 @@ class MutationsIssue(BaseOperationEntrypointMixin):
             A list of dictionaries with the `id` key of the created questions.
         """
         assert_all_arrays_have_same_size([text_array, asset_id_array])
-        asset_id_array = get_asset_ids_or_throw_error(
-            self.kili_api_gateway, asset_id_array, asset_external_id_array, project_id
+        resolved_asset_id_array = self._resolve_asset_ids(
+            asset_id_array,
+            asset_external_id_array,
+            project_id,
         )
         created_questions: List[Dict[str, str]] = []
         with tqdm.tqdm(total=len(text_array), desc="Creating questions") as pbar:
-            for batch_questions in BatchIteratorBuilder(list(zip(asset_id_array, text_array))):
+            for batch_questions in BatchIteratorBuilder(
+                list(zip(resolved_asset_id_array, text_array))
+            ):
                 variables = {
                     "issues": [
                         {"issueNumber": 0, "type": "QUESTION", "assetId": asset_id, "text": text}
                         for (asset_id, text) in batch_questions
                     ],
-                    "where": {"idIn": asset_id_array},
+                    "where": {"idIn": resolved_asset_id_array},
                 }
 
                 result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
