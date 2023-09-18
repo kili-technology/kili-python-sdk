@@ -12,7 +12,7 @@ from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
 
-class UseCasesUtils:
+class AssetUseCasesUtils:
     """Utils for use cases."""
 
     def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:

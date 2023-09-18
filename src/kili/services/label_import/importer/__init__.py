@@ -26,7 +26,7 @@ from kili.services.label_import.parser import (
 )
 from kili.services.label_import.types import Classes, LabelFormat
 from kili.services.types import LabelType, LogLevel
-from kili.use_cases.utils import UseCasesUtils
+from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils import tqdm
 
 
@@ -90,9 +90,9 @@ class AbstractLabelImporter(ABC):
         if should_retrieve_asset_ids:
             assert project_id
             asset_external_ids = [label["asset_external_id"] for label in labels]
-            asset_id_map = UseCasesUtils(self.kili.kili_api_gateway).infer_ids_from_external_ids(
-                asset_external_ids, ProjectId(project_id)
-            )
+            asset_id_map = AssetUseCasesUtils(
+                self.kili.kili_api_gateway
+            ).infer_ids_from_external_ids(asset_external_ids, ProjectId(project_id))
             labels = [
                 {**label, "asset_id": asset_id_map[label["asset_external_id"]]} for label in labels
             ]
