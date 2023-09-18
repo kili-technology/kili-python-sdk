@@ -1,41 +1,53 @@
 """Types specific to import."""
-from typing import Dict, List, Literal, NewType, Optional
+from typing import Dict, List, Literal, NewType
 
-from pydantic import BaseModel, StrictInt, StrictStr, field_validator
+from typeguard import typechecked
 
 Classes = NewType("Classes", Dict[int, str])
 LabelFormat = Literal["yolo_v4", "yolo_v5", "yolo_v7", "kili", "raw"]
 
 
-class ClientInputLabelData(BaseModel, extra="forbid"):
-    """Data about a label to append, given by client in client-side function."""
+@typechecked
+def check_input_labels(labels: List[Dict]) -> None:
+    """Check that input labels are valid."""
+    for label in labels:
+        check_input_label(label)
 
-    asset_id: Optional[StrictStr] = None
-    asset_external_id: Optional[StrictStr] = None
-    json_response: dict
-    author_id: Optional[StrictStr] = None
-    seconds_to_label: Optional[StrictInt] = None
+    is_using_asset_id = labels[0].get("asset_id") is not None
+    if is_using_asset_id and not all(label.get("asset_id") for label in labels):
+        raise ValueError(
+            "Please use the same asset identifier for all labels: either only `asset_id` or"
+            " only `asset_external_id`."
+        )
 
 
-class ClientInputLabelsValidator(BaseModel, extra="forbid"):
-    """Validates the data about labels to append."""
+VALID_LABEL_KEYS = (
+    "asset_id",
+    "asset_external_id",
+    "json_response",
+    "author_id",
+    "seconds_to_label",
+)
 
-    labels: List[Dict]
 
-    @field_validator("labels")
-    @classmethod
-    def label_validator(cls, labels: List[Dict]) -> List[Dict]:
-        """Validate the labels."""
-        for i, _ in enumerate(labels):
-            if labels[i].get("asset_external_id") is None and labels[i].get("asset_id") is None:
-                raise ValueError("You must either provide the `asset_id` or `external_id`.")
-            labels[i] = ClientInputLabelData(**labels[i]).model_dump()
+@typechecked
+def check_input_label(label: Dict) -> None:
+    """Check that input label is valid."""
+    if label.get("asset_external_id") is None and label.get("asset_id") is None:
+        raise ValueError("You must either provide the `asset_id` or `external_id`.")
 
-        if not all(label.get("asset_id") for label in labels) and not all(
-            label.get("asset_external_id") for label in labels
-        ):
-            raise ValueError(
-                "Please use the same asset identifier for all labels: either only `asset_id` or"
-                " only `asset_external_id`."
-            )
-        return labels
+    if not isinstance(label["json_response"], Dict):
+        raise TypeError("The `json_response` field must be a dictionary.")
+
+    for key, expected_type in (
+        ("seconds_to_label", int),
+        ("author_id", str),
+        ("asset_id", str),
+        ("asset_external_id", str),
+    ):
+        if label.get(key) is not None and not isinstance(label[key], expected_type):
+            raise TypeError(f"The `{key}` field must be of type `{expected_type}`.")
+
+    for key in label:
+        if key not in VALID_LABEL_KEYS:
+            raise ValueError(f"The `{key}` key is not a valid key.")
