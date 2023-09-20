@@ -31,7 +31,7 @@ from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.services.project import get_project
-from kili.use_cases.utils import UseCasesUtils
+from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.labels.parsing import ParsedLabel, parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -831,7 +831,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             ```
         """
         if external_ids is not None and asset_ids is None:
-            id_map = UseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
+            id_map = AssetUseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
                 asset_external_ids=cast(List[AssetExternalId], external_ids),
                 project_id=ProjectId(project_id),
             )

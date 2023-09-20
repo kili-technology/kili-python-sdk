@@ -9,13 +9,6 @@ from kili.adapters.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-<<<<<<< HEAD
-from kili.presentation.client.helpers.common_validators import (
-    assert_all_arrays_have_same_size,
-)
-from kili.utils import tqdm
-=======
->>>>>>> 63043b5a (wip)
 from kili.utils.logcontext import for_all_methods, log_call
 
 

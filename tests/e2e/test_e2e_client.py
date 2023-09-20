@@ -1,3 +1,5 @@
+import os
+
 import pytest_mock
 from pyinstrument.profiler import Profiler
 
@@ -11,7 +13,8 @@ def test_client_init_not_too_long_with_checks_enabled():
         _ = Kili()
 
     time_spent = profiler.last_session.duration  # type: ignore
-    assert time_spent < 5, profiler.output_text(unicode=False)
+    limit = 7 if os.name == "nt" else 5  # Windows is slower
+    assert time_spent < limit, profiler.output_text(unicode=False)
 
 
 def test_client_init_not_too_long_with_checks_disabled(mocker: pytest_mock.MockerFixture):
@@ -21,4 +24,5 @@ def test_client_init_not_too_long_with_checks_disabled(mocker: pytest_mock.Mocke
         _ = Kili()
 
     time_spent = profiler.last_session.duration  # type: ignore
-    assert time_spent < 1, profiler.output_text(unicode=False)
+    limit = 2 if os.name == "nt" else 1  # Windows is slower
+    assert time_spent < limit, profiler.output_text(unicode=False)

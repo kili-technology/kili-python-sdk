@@ -1,17 +1,21 @@
 """Client presentation methods for questions."""
 
 from itertools import repeat
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, cast
 
 from typeguard import typechecked
 
-from kili.use_cases.question import QuestionUseCase
+from kili.domain.asset.asset import AssetExternalId
+from kili.domain.project import ProjectId
+from kili.use_cases.question import QuestionUseCases
 from kili.use_cases.question.question_use_case import QuestionToCreateUseCaseInput
 
 from .base import BaseClientMethods
 
 
 class QuestionClientMethods(BaseClientMethods):
+    """Client presentation methods for questions."""
+
     @typechecked
     def create_questions(
         self,
@@ -40,10 +44,14 @@ class QuestionClientMethods(BaseClientMethods):
                 text_array, asset_id_array or repeat(None), asset_external_id_array or repeat(None)
             )
         ]
-        questions = QuestionUseCase(self.kili_api_gateway).create_questions(
-            project_id=project_id,
+        question_ids = QuestionUseCases(self.kili_api_gateway).create_questions(
+            project_id=ProjectId(project_id),
             questions=use_case_questions,
-            external_id_array=asset_external_id_array,
+            external_id_array=(
+                cast(List[AssetExternalId], asset_external_id_array)
+                if asset_external_id_array
+                else None
+            ),
         )
 
-        return [{"id": question.id} for question in questions]
+        return [{"id": question_id} for question_id in question_ids]

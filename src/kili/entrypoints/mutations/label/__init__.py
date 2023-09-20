@@ -25,7 +25,7 @@ from kili.presentation.client.helpers.common_validators import (
 )
 from kili.services.label_import import import_labels_from_dict
 from kili.services.types import LabelType
-from kili.use_cases.utils import UseCasesUtils
+from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -165,16 +165,18 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         check_asset_identifier_arguments(
             ProjectId(project_id) if project_id else None,
             cast(ListOrTuple[AssetId], [label_asset_id]) if label_asset_id else None,
-            cast(ListOrTuple[AssetExternalId], [label_asset_external_id])
-              if label_asset_external_id else None,
+            (
+                cast(ListOrTuple[AssetExternalId], [label_asset_external_id])
+                if label_asset_external_id
+                else None
+            ),
         )
-        # fmt: on
         if (
             label_asset_id is None
             and label_asset_external_id is not None
             and project_id is not None
         ):
-            label_asset_id = UseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
+            label_asset_id = AssetUseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
                 cast(List[AssetExternalId], [label_asset_external_id]), ProjectId(project_id)
             )[AssetExternalId(label_asset_external_id)]
         variables = {
@@ -338,7 +340,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
                 raise ValueError(
                     "Either provide `asset_id` or `asset_external_id` and `project_id`."
                 )
-            asset_id = UseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
+            asset_id = AssetUseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
                 cast(ListOrTuple[AssetExternalId], [asset_external_id]),
                 ProjectId(project_id),
             )[AssetExternalId(asset_external_id)]

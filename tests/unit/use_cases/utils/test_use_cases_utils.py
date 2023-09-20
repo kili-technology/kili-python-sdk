@@ -4,7 +4,7 @@ import pytest_mock
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetExternalId
 from kili.domain.project import ProjectId
-from kili.use_cases.utils import UseCasesUtils
+from kili.use_cases.asset.utils import AssetUseCasesUtils
 from tests.fakes.fake_kili import mocked_AssetQuery, mocked_AssetQuery_count
 
 
@@ -27,7 +27,7 @@ def test__build_id_map_when_project_has_less_than_2000_assets(
     project_id = ProjectId("object_detection_2500_assets")
 
     # When
-    id_map = UseCasesUtils(kili_api_gateway)._build_id_map(  # pylint: disable=protected-access
+    id_map = AssetUseCasesUtils(kili_api_gateway)._build_id_map(  # pylint: disable=protected-access
         asset_external_ids, project_id
     )
 

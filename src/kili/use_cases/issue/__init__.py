@@ -18,7 +18,7 @@ class IssueUseCases(BaseUseCases):
         """Create issues with issue type."""
         label_id_array = [issue.label_id for issue in issues]
         label_asset_ids_map = get_labels_asset_ids_map(
-            self._kili_api_gateway, project_id, label_id_array
+            self.kili_api_gateway, project_id, label_id_array
         )  # TODO: should be done in the backend
         gateway_issues = [
             IssueToCreateKiliAPIGatewayInput(
@@ -29,6 +29,6 @@ class IssueUseCases(BaseUseCases):
             )
             for issue in issues
         ]
-        return self._kili_api_gateway.create_issues(
+        return self.kili_api_gateway.create_issues(
             type_="ISSUE", issues=gateway_issues, description="Creating issues"
         )

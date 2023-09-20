@@ -21,19 +21,22 @@ class QuestionToCreateUseCaseInput:
 
 
 class QuestionUseCases(BaseUseCases):
+    """Question use cases."""
+
     def create_questions(
         self,
         project_id: ProjectId,
         questions: List[QuestionToCreateUseCaseInput],
         external_id_array: Optional[List[AssetExternalId]] = None,
     ) -> List[QuestionId]:
+        """Create questions."""
         if questions[0].asset_id is not None:
             # we assume that if 1 question is not None, all there others are too
             asset_id_array = [AssetId(question.asset_id) for question in questions]  # type: ignore
         else:
             asset_id_array = None
 
-        asset_ids = UseCasesUtils(self._kili_api_gateway).get_asset_ids_or_throw_error(
+        asset_ids = UseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
             asset_ids=asset_id_array, external_ids=external_id_array, project_id=project_id
         )
 
@@ -48,13 +51,7 @@ class QuestionUseCases(BaseUseCases):
         ]
         return [
             QuestionId(str(id_))
-            for id_ in self._kili_api_gateway.create_issues(
+            for id_ in self.kili_api_gateway.create_issues(
                 type_="QUESTION", issues=gateway_issues, description="Creating questions"
             )
         ]
-
-        # # with tqdm.tqdm(total=len(text_array), desc="Creating questions") as pbar:
-        # #     for batch_questions in BatchIteratorBuilder(list(zip(asset_id_array, text_array))):
-        # #             "issues": [
-        # #                 for (asset_id, text) in batch_questions
-        # #             ],
