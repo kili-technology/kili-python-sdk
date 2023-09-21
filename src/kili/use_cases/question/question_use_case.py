@@ -27,14 +27,15 @@ class QuestionUseCases(BaseUseCases):
         self,
         project_id: ProjectId,
         questions: List[QuestionToCreateUseCaseInput],
-        external_id_array: Optional[List[AssetExternalId]] = None,
     ) -> List[QuestionId]:
         """Create questions."""
         if questions[0].asset_id is not None:
-            # we assume that if 1 question is not None, all there others are too
+            # we assume that if 1 question asset Id is not None, all there others are too
             asset_id_array = [AssetId(question.asset_id) for question in questions]  # type: ignore
+            external_id_array = None
         else:
             asset_id_array = None
+            external_id_array = [AssetExternalId(question.asset_external_id) for question in questions]  # type: ignore
 
         asset_ids = UseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
             asset_ids=asset_id_array, external_ids=external_id_array, project_id=project_id
