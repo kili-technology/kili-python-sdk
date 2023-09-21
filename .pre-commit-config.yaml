@@ -19,7 +19,7 @@ repos:
         args: [--py38-plus]
 
   - repo: https://github.com/srstevenson/nb-clean
-    rev: 3.0.0
+    rev: 3.0.1
     hooks:
       - id: nb-clean
         args:
