@@ -410,9 +410,13 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
 
             assert Path(f"{extract_folder}/README.kili.txt").is_file()
             assert Path(f"{extract_folder}/labels").is_dir()
-            assert Path(f"{extract_folder}/labels/42015077eed072c50d59232dcc0ad0b1.jpg.json").is_file()
+            assert Path(
+                f"{extract_folder}/labels/42015077eed072c50d59232dcc0ad0b1.jpg.json"
+            ).is_file()
 
-            with Path(f"{extract_folder}/labels/42015077eed072c50d59232dcc0ad0b1.jpg.json").open() as f:
+            with Path(
+                f"{extract_folder}/labels/42015077eed072c50d59232dcc0ad0b1.jpg.json"
+            ).open() as f:
                 output = json.load(f)
 
     assert output == image_project_asset_unnormalized

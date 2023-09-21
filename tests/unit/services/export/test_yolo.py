@@ -311,8 +311,8 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
             assert Path(f"{extract_folder}/README.kili.txt").is_file()
 
             assert Path(f"{extract_folder}/data.yaml").read_text() == """nc: 4
-    names: ['OBJECT_DETECTION_JOB/A', 'OBJECT_DETECTION_JOB/B', 'POLYGON_JOB/F', 'POLYGON_JOB/G']
-    """
+names: ['OBJECT_DETECTION_JOB/A', 'OBJECT_DETECTION_JOB/B', 'POLYGON_JOB/F', 'POLYGON_JOB/G']
+"""
 
             assert Path(f"{extract_folder}/labels").is_dir()
 
@@ -361,11 +361,11 @@ def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
 
             assert Path(f"{extract_folder}/README.kili.txt").is_file()
             assert Path(f"{extract_folder}/OBJECT_DETECTION_JOB/data.yaml").read_text() == """nc: 2
-    names: ['A', 'B']
-    """
+names: ['A', 'B']
+"""
             assert Path(f"{extract_folder}/POLYGON_JOB/data.yaml").read_text() == """nc: 2
-    names: ['F', 'G']
-    """
+names: ['F', 'G']
+"""
 
             assert (
                 Path(f"{extract_folder}/OBJECT_DETECTION_JOB/labels/trees.txt").read_text()
