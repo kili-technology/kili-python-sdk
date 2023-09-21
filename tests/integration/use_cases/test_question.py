@@ -61,7 +61,6 @@ def test_given_text_and_external_ids_when_calling_create_questions_it_creates_qu
     mocker, kili_api_gateway
 ):
     # Given
-    # Given
     questions = [
         QuestionToCreateUseCaseInput(
             text="Where is the cat?",

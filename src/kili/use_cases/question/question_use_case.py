@@ -35,7 +35,10 @@ class QuestionUseCases(BaseUseCases):
             external_id_array = None
         else:
             asset_id_array = None
-            external_id_array = [AssetExternalId(question.asset_external_id) for question in questions]  # type: ignore
+            external_id_array = [
+                AssetExternalId(question.asset_external_id)  # type: ignore
+                for question in questions
+            ]
 
         asset_ids = UseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
             asset_ids=asset_id_array, external_ids=external_id_array, project_id=project_id
