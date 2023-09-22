@@ -1,7 +1,7 @@
 """Question use cases."""
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, cast
 
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.domain.asset.asset import AssetExternalId, AssetId
@@ -16,8 +16,8 @@ class QuestionToCreateUseCaseInput:
     """Question to create use case input."""
 
     text: Optional[str]
-    asset_id: Optional[str]
-    asset_external_id: Optional[str]
+    asset_id: Optional[AssetId]
+    asset_external_id: Optional[AssetExternalId]
 
 
 class QuestionUseCases(BaseUseCases):
@@ -31,13 +31,12 @@ class QuestionUseCases(BaseUseCases):
         """Create questions."""
         if questions[0].asset_id is not None:
             # we assume that if 1 question asset Id is not None, all there others are too
-            asset_id_array = [AssetId(question.asset_id) for question in questions]  # type: ignore
+            asset_id_array = [cast(AssetId, question.asset_id) for question in questions]
             external_id_array = None
         else:
             asset_id_array = None
             external_id_array = [
-                AssetExternalId(question.asset_external_id)  # type: ignore
-                for question in questions
+                cast(AssetExternalId, question.asset_external_id) for question in questions
             ]
 
         asset_ids = UseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(

@@ -3,6 +3,7 @@ from typing import List, Optional, cast
 import pytest_mock
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.domain.asset.asset import AssetId
 from kili.domain.project import ProjectId
 from kili.domain.question import QuestionId
 from kili.presentation.client.question import QuestionClientMethods
@@ -34,10 +35,14 @@ def test_given_text_and_asset_ids_when_calling_create_questions_it_creates_quest
         project_id=ProjectId("fake_project_id"),
         questions=[
             QuestionToCreateUseCaseInput(
-                text="Where is the cat?", asset_id="fake_asset_id_1", asset_external_id=None
+                text="Where is the cat?",
+                asset_id=AssetId("fake_asset_id_1"),
+                asset_external_id=None,
             ),
             QuestionToCreateUseCaseInput(
-                text="Where is the dog?", asset_id="fake_asset_id_2", asset_external_id=None
+                text="Where is the dog?",
+                asset_id=AssetId("fake_asset_id_2"),
+                asset_external_id=None,
             ),
         ],
     )

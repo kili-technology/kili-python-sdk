@@ -1,11 +1,13 @@
 """Client presentation methods for questions."""
 
 from itertools import repeat
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
 
+from kili.domain.asset.asset import AssetExternalId, AssetId
 from kili.domain.project import ProjectId
+from kili.domain.types import ListOrTuple
 from kili.use_cases.question import QuestionToCreateUseCaseInput, QuestionUseCases
 
 from .base import BaseClientMethods
@@ -18,10 +20,10 @@ class QuestionClientMethods(BaseClientMethods):
     def create_questions(
         self,
         project_id: str,
-        text_array: List[Optional[str]],
-        asset_id_array: Optional[List[str]] = None,
-        asset_external_id_array: Optional[List[str]] = None,
-    ) -> List[Dict]:
+        text_array: ListOrTuple[Optional[str]],
+        asset_id_array: Optional[ListOrTuple[str]] = None,
+        asset_external_id_array: Optional[ListOrTuple[str]] = None,
+    ) -> List[Dict[Literal["id"], str]]:
         # pylint:disable=line-too-long
         """Create questions.
 
@@ -36,7 +38,9 @@ class QuestionClientMethods(BaseClientMethods):
         """
         use_case_questions = [
             QuestionToCreateUseCaseInput(
-                text=text, asset_id=asset_id, asset_external_id=asset_external_id
+                text=text,
+                asset_id=AssetId(asset_id) if asset_id else None,
+                asset_external_id=AssetExternalId(asset_external_id) if asset_external_id else None,
             )
             for (text, asset_id, asset_external_id) in zip(
                 text_array, asset_id_array or repeat(None), asset_external_id_array or repeat(None)
