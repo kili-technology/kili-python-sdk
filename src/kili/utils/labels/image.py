@@ -3,7 +3,7 @@
 from typing import Dict, List, Tuple, Union
 
 try:
-    import cv2  # type: ignore
+    import cv2
     import numpy as np
 except ModuleNotFoundError as err:
     raise ModuleNotFoundError(
@@ -15,12 +15,28 @@ except ModuleNotFoundError as err:
 def _opencv_contour_to_normalized_vertices(
     contour: np.ndarray, img_width: Union[int, float], img_height: Union[int, float]
 ) -> List[Dict[str, float]]:
+    max_y = max_x = 0
+    for point in contour:
+        x = point[0][0]  # pylint:disable=invalid-name
+        y = point[0][1]  # pylint:disable=invalid-name
+        if x > max_x:
+            max_x = x
+        if y > max_y:
+            max_y = y
+
     contour_points = []
     for point in contour:
-        point = point[0]
-        x = point[0]  # pylint:disable=invalid-name
-        y = point[1]  # pylint:disable=invalid-name
+        x = point[0][0]  # pylint:disable=invalid-name
+        y = point[0][1]  # pylint:disable=invalid-name
+
+        # OpenCV contour points are shifted by 1 pixel
+        if x == max_x:
+            x += 1  # pylint:disable=invalid-name
+        if y == max_y:
+            y += 1  # pylint:disable=invalid-name
+
         contour_points.append({"x": x / img_width, "y": y / img_height})
+
     return contour_points
 
 
@@ -80,7 +96,9 @@ def mask_to_normalized_vertices(
 
     img_height, img_width = image.shape
     # pylint:disable=no-member
-    contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)  # type: ignore
+    contours, hierarchy = cv2.findContours(  # pyright: ignore[reportGeneralTypeIssues]
+        image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE  # pyright: ignore[reportGeneralTypeIssues]
+    )
 
     contours = [
         _opencv_contour_to_normalized_vertices(contour, img_width, img_height)
@@ -131,6 +149,17 @@ def normalized_vertices_to_mask(
         ]
         for vertice in normalized_vertices
     ]
-    polygon = np.array([polygon])
-    cv2.fillPoly(img=mask, pts=polygon, color=255)  # type: ignore  # pylint:disable=no-member
+
+    polygon = np.array([polygon])  # shape: (1, n_vertices, 2)
+
+    max_x = np.max(polygon[0, :, 0])
+    max_y = np.max(polygon[0, :, 1])
+
+    # OpenCV contour points are shifted by 1 pixel
+    polygon[0, :, 0] = np.where(polygon[0, :, 0] == max_x, max_x - 1, polygon[0, :, 0])
+    polygon[0, :, 1] = np.where(polygon[0, :, 1] == max_y, max_y - 1, polygon[0, :, 1])
+
+    cv2.fillPoly(  # pyright: ignore[reportGeneralTypeIssues]  # pylint:disable=no-member
+        img=mask, pts=polygon, color=255
+    )
     return mask
