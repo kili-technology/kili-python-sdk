@@ -159,7 +159,7 @@ def normalized_vertices_to_mask(
     polygon[0, :, 0] = np.where(polygon[0, :, 0] == max_x, max_x - 1, polygon[0, :, 0])
     polygon[0, :, 1] = np.where(polygon[0, :, 1] == max_y, max_y - 1, polygon[0, :, 1])
 
-    cv2.fillPoly(  # pyright: ignore[reportGeneralTypeIssues]  # pylint:disable=no-member
-        img=mask, pts=polygon, color=255
+    cv2.fillPoly(  # pylint:disable=no-member # pyright: ignore[reportGeneralTypeIssues]
+        img=mask, pts=polygon, color=255  # pyright: ignore[reportGeneralTypeIssues]
     )
     return mask
