@@ -119,5 +119,5 @@ jobs:
           python -m pip install --find-links=dist --no-index kili
           python -c 'from kili.client import Kili; k=Kili(); print("Everything OK!")'
         env:
-          KILI_API_ENDPOINT: https://staging.cloud.kili-technology.com/api/label/v2/graphql
-          KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY_STAGING }}
+          KILI_API_ENDPOINT: https://cloud.kili-technology.com/api/label/v2/graphql
+          KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
