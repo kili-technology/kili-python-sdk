@@ -48,9 +48,11 @@ def get_and_dump_data() -> None:
     runs, test_durations = parse_workflow_runs(workflow_runs_dict)
 
     df_tests = pd.DataFrame(test_durations)
+    print(f"Writing test_durations.csv dataframe with {len(df_tests)} rows.")
     df_tests.to_csv("test_durations.csv", index=False)
 
     df_runs = pd.DataFrame(runs)
+    print(f"Writing workflow_runs.csv dataframe with {len(df_runs)} rows.")
     df_runs.to_csv("workflow_runs.csv", index=False)
 
 
@@ -254,8 +256,12 @@ def get_git_ref_from_logs(logs: str) -> Optional[str]:
 
 def filter_data() -> pd.DataFrame:
     """Filter the data to keep only some test durations."""
-    df_runs = pd.read_csv("workflow_runs.csv")
-    df_tests = pd.read_csv("test_durations.csv")
+    try:
+        df_runs = pd.read_csv("workflow_runs.csv")
+        df_tests = pd.read_csv("test_durations.csv")
+    except pd.errors.EmptyDataError:
+        print("No data to filter.")
+        raise
 
     # keep only tests with a call duration
     df_tests = df_tests[df_tests["call_duration"].notna()]
@@ -314,7 +320,12 @@ if __name__ == "__main__":
         if sys.argv[1] == "fetch":
             get_and_dump_data()
         elif sys.argv[1] == "upload":
-            upload_to_datadog(filter_data())
+            try:
+                df = filter_data()
+            except pd.errors.EmptyDataError:
+                print("No data to upload.")
+            else:
+                upload_to_datadog(df)
 
 
 # Viz utils
