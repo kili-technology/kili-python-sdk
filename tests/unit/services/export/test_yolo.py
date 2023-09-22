@@ -292,28 +292,31 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
 
-    kili.export_labels(
-        "clktm4vzz001a0j324elr5dsy",
-        filename="export_yolo_v8.zip",
-        fmt="yolo_v8",
-        layout="merged",
-        with_assets=False,
-    )
+    with TemporaryDirectory() as export_folder:
+        export_filename = str(Path(export_folder) / "export_yolo_v8.zip")
 
-    with TemporaryDirectory() as extract_folder:
-        with ZipFile("export_yolo_v8.zip", "r") as z_f:
-            # extract in a temp dir
-            z_f.extractall(extract_folder)
+        kili.export_labels(
+            "clktm4vzz001a0j324elr5dsy",
+            filename=export_filename,
+            fmt="yolo_v8",
+            layout="merged",
+            with_assets=False,
+        )
 
-        assert Path(f"{extract_folder}/README.kili.txt").is_file()
+        with TemporaryDirectory() as extract_folder:
+            with ZipFile(export_filename, "r") as z_f:
+                # extract in a temp dir
+                z_f.extractall(extract_folder)
 
-        assert Path(f"{extract_folder}/data.yaml").read_text() == """nc: 4
+            assert Path(f"{extract_folder}/README.kili.txt").is_file()
+
+            assert Path(f"{extract_folder}/data.yaml").read_text() == """nc: 4
 names: ['OBJECT_DETECTION_JOB/A', 'OBJECT_DETECTION_JOB/B', 'POLYGON_JOB/F', 'POLYGON_JOB/G']
 """
 
-        assert Path(f"{extract_folder}/labels").is_dir()
+            assert Path(f"{extract_folder}/labels").is_dir()
 
-        label = Path(f"{extract_folder}/labels/trees.txt").read_text()
+            label = Path(f"{extract_folder}/labels/trees.txt").read_text()
 
         # bbox annotation: class bbox_center_x bbox_center_y bbox_w bbox_h
         assert "0 0.65 0.1 0.5 0.09999999999999999" in label
@@ -340,32 +343,35 @@ def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
 
-    kili.export_labels(
-        "clktm4vzz001a0j324elr5dsy",
-        filename="export_yolo_v8.zip",
-        fmt="yolo_v8",
-        layout="split",
-        with_assets=False,
-    )
-
     with TemporaryDirectory() as extract_folder:
-        with ZipFile("export_yolo_v8.zip", "r") as z_f:
-            # extract in a temp dir
-            z_f.extractall(extract_folder)
+        export_filename = str(Path(extract_folder) / "export_yolo_v8.zip")
 
-        assert Path(f"{extract_folder}/README.kili.txt").is_file()
-        assert Path(f"{extract_folder}/OBJECT_DETECTION_JOB/data.yaml").read_text() == """nc: 2
+        kili.export_labels(
+            "clktm4vzz001a0j324elr5dsy",
+            filename=export_filename,
+            fmt="yolo_v8",
+            layout="split",
+            with_assets=False,
+        )
+
+        with TemporaryDirectory() as extract_folder:
+            with ZipFile(export_filename, "r") as z_f:
+                # extract in a temp dir
+                z_f.extractall(extract_folder)
+
+            assert Path(f"{extract_folder}/README.kili.txt").is_file()
+            assert Path(f"{extract_folder}/OBJECT_DETECTION_JOB/data.yaml").read_text() == """nc: 2
 names: ['A', 'B']
 """
-        assert Path(f"{extract_folder}/POLYGON_JOB/data.yaml").read_text() == """nc: 2
+            assert Path(f"{extract_folder}/POLYGON_JOB/data.yaml").read_text() == """nc: 2
 names: ['F', 'G']
 """
 
-        assert (
-            Path(f"{extract_folder}/OBJECT_DETECTION_JOB/labels/trees.txt").read_text()
-            == "0 0.65 0.1 0.5 0.09999999999999999\n"
-        )
-        assert (
-            Path(f"{extract_folder}/POLYGON_JOB/labels/trees.txt").read_text()
-            == "0 0.75 0.23 0.35 0.22 0.07 0.35\n"
-        )
+            assert (
+                Path(f"{extract_folder}/OBJECT_DETECTION_JOB/labels/trees.txt").read_text()
+                == "0 0.65 0.1 0.5 0.09999999999999999\n"
+            )
+            assert (
+                Path(f"{extract_folder}/POLYGON_JOB/labels/trees.txt").read_text()
+                == "0 0.75 0.23 0.35 0.22 0.07 0.35\n"
+            )
