@@ -120,4 +120,4 @@ jobs:
           python -c 'from kili.client import Kili; k=Kili(); print("Everything OK!")'
         env:
           KILI_API_ENDPOINT: https://cloud.kili-technology.com/api/label/v2/graphql
-          KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY }}
+          KILI_API_KEY: ${{ secrets.KILI_USER_API_KEY_PROD }}
