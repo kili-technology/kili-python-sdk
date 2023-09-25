@@ -54,7 +54,7 @@ dev_extra = [
     # linting
     "black",
     "pre-commit>=3.3.0,<4.0.0",
-    "pylint==2.17.5",
+    "pylint==2.17.6",
     "pyright==1.1.327",
     # notebooks tests
     "nbformat",
