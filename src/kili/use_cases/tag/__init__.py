@@ -7,10 +7,11 @@ from kili.adapters.kili_api_gateway.tag.types import UpdateTagReturnData
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
+from kili.use_cases.base import BaseUseCases
 from kili.utils.tqdm import tqdm
 
 
-class TagUseCases:
+class TagUseCases(BaseUseCases):
     """Tag use cases."""
 
     def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:
