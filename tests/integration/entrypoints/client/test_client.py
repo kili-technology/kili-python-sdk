@@ -123,7 +123,8 @@ def test_given_an_api_key_close_to_expiration_when_I_check_expiry_of_key_is_clos
         _ = Kili()
 
 
-def test_given_an_api_key_away_to_expiration_when_I_check_expiry_of_key_is_close_then_it_does_not_output_anything(
+@patch.dict(os.environ, {"KILI_API_KEY": "fake_key"})
+def test_given_an_api_key_away_to_expiration_when_I_check_expiry_of_key_is_not_close_then_it_does_not_output_anything(
     mocker: pytest_mock.MockerFixture,
 ):
     # Given
