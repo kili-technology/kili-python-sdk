@@ -2,18 +2,15 @@
 
 from typing import List
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.domain.issue import IssueId
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
+from kili.use_cases.base import BaseUseCases
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
 
 
-class IssueUseCases:
+class IssueUseCases(BaseUseCases):
     """Issue use cases."""
-
-    def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:
-        self._kili_api_gateway = kili_api_gateway
 
     def create_issues(
         self, project_id: str, issues: List[IssueToCreateUseCaseInput]

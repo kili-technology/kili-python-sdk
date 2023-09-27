@@ -1,4 +1,4 @@
-"""Mixin extending Kili API Gateway class with Asset related operations."""
+"""Mixin extending Kili API Gateway class with Api Keys related operations."""
 
 from datetime import datetime
 from typing import Dict, Generator
@@ -21,7 +21,7 @@ from kili.exceptions import NotFound
 
 
 class ApiKeyOperationMixin(BaseOperationMixin):
-    """Mixin extending Kili API Gateway class with Assets related operations."""
+    """Mixin extending Kili API Gateway class with API Keys related operations."""
 
     def list_api_keys(
         self,
@@ -46,10 +46,7 @@ class ApiKeyOperationMixin(BaseOperationMixin):
         return count
 
     def get_api_key_expiry_date(self, api_key: str) -> datetime:
-        """Get the expiry date of a given api key.
-
-        Returns it in the fomat `%Y-%m-%dT%H:%M:%S.%fZ`
-        """
+        """Get the expiry date of a given api key as a datetime type."""
         payload = {"where": {"key": api_key}}
         result = self.graphql_client.execute(GQL_API_KEY_EXPIRY_DATE, payload)
         fetched_key = next(iter(result["data"] or []), None)

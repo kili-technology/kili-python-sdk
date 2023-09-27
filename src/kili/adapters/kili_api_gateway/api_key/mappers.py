@@ -1,4 +1,4 @@
-"""GraphQL payload data mappers for asset operations."""
+"""GraphQL payload data mappers for api keys operations."""
 
 from kili.domain.api_key import ApiKeyFilters
 
