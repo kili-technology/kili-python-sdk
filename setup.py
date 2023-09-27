@@ -55,7 +55,7 @@ dev_extra = [
     "black",
     "pre-commit>=3.3.0,<4.0.0",
     "pylint==2.17.6",
-    "pyright==1.1.328",
+    "pyright==1.1.329",
     # notebooks tests
     "nbformat",
     "nbconvert",
