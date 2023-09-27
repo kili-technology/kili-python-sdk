@@ -3,7 +3,6 @@
 from datetime import datetime
 from typing import Dict, Generator
 
-from kili import __version__
 from kili.adapters.kili_api_gateway.api_key.mappers import api_key_where_mapper
 from kili.adapters.kili_api_gateway.api_key.operations import (
     GQL_API_KEY_EXPIRY_DATE,
@@ -19,7 +18,6 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 from kili.domain.api_key import ApiKeyFilters
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
-from kili.utils.logcontext import LogContext, log_call
 
 
 class ApiKeyOperationMixin(BaseOperationMixin):
@@ -58,29 +56,3 @@ class ApiKeyOperationMixin(BaseOperationMixin):
         if fetched_key is None:
             raise NotFound(f"Could not find api key {api_key}")
         return datetime.strptime(fetched_key["expiryDate"], r"%Y-%m-%dT%H:%M:%S.%fZ")
-
-    @log_call
-    def is_api_key_valid(self, api_key: str) -> bool:
-        """Check that the api_key provided is valid.
-
-        Note that this method does not rely on the GraphQL client, but on the HTTP client.
-        It must stay this way since the GraphQL client might retry in case of 401 http error.
-        """
-        response = self.http_client.post(
-            url=self.graphql_client.endpoint,
-            data='{"query":"{ me { id email } }"}',
-            timeout=30,
-            headers={
-                "Authorization": f"X-API-Key: {api_key}",
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "apollographql-client-name": self.graphql_client.client_name.value,
-                "apollographql-client-version": __version__,
-                **LogContext(),
-            },
-        )
-        return (
-            response.status_code == 200  # noqa: PLR2004
-            and "email" in response.text
-            and "id" in response.text
-        )

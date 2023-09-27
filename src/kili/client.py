@@ -6,6 +6,7 @@ import sys
 import warnings
 from typing import Dict, Optional, Union
 
+from kili.adapters.authentification import is_api_key_valid
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
@@ -150,6 +151,17 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         self.verify = verify
         self.client_name = client_name
         self.http_client = HttpClient(kili_endpoint=api_endpoint, verify=verify, api_key=api_key)
+
+        skip_checks = os.getenv("KILI_SDK_SKIP_CHECKS") is not None
+        if not skip_checks and not is_api_key_valid(
+            self.http_client, api_key, api_endpoint, client_name
+        ):
+            raise AuthenticationFailed(
+                api_key=self.api_key,
+                api_endpoint=self.api_endpoint,
+                error_msg="Api key does not seem to be valid.",
+            )
+
         self.graphql_client = GraphQLClient(
             endpoint=api_endpoint,
             api_key=api_key,
@@ -161,16 +173,8 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         self.kili_api_gateway = KiliAPIGateway(self.graphql_client, self.http_client)
         self.internal = InternalClientMethods(self.kili_api_gateway)
 
-        skip_checks = os.getenv("KILI_SDK_SKIP_CHECKS") is not None
         if not skip_checks:
             api_key_use_cases = ApiKeyUseCases(self.kili_api_gateway)
-            if not api_key_use_cases.is_api_key_valid(api_key):
-                raise AuthenticationFailed(
-                    api_key=self.api_key,
-                    api_endpoint=self.api_endpoint,
-                    error_msg="Api key does not seem to be valid.",
-                )
-
             api_key_use_cases.check_expiry_of_key_is_close(api_key)
 
     def get_user(self) -> Dict:

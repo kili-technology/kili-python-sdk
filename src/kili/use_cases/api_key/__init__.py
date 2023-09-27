@@ -45,7 +45,3 @@ class ApiKeyUseCases:
                 Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
                 You should generate a new one on My account > API KEY."""
             warnings.warn(message, UserWarning, stacklevel=2)
-
-    def is_api_key_valid(self, api_key: str) -> bool:
-        """Check that the api_key provided is valid."""
-        return self._kili_api_gateway.is_api_key_valid(api_key)
