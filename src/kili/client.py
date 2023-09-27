@@ -4,15 +4,11 @@ import logging
 import os
 import sys
 import warnings
-from datetime import datetime, timedelta
-from typing import Callable, Dict, Optional, Union
+from typing import Dict, Optional, Union
 
-from kili import __version__
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway import KiliAPIGateway
-from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
-from kili.core.graphql.operations.api_key.queries import APIKeyQuery, APIKeyWhere
 from kili.core.graphql.operations.user.queries import GQL_ME
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.data_connection import MutationsDataConnection
@@ -41,7 +37,7 @@ from kili.presentation.client.internal import InternalClientMethods
 from kili.presentation.client.issue import IssueClientMethods
 from kili.presentation.client.project import ProjectClientMethods
 from kili.presentation.client.tag import TagClientMethods
-from kili.utils.logcontext import LogContext, log_call
+from kili.use_cases.api_key import ApiKeyUseCases
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
@@ -153,19 +149,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         self.api_endpoint = api_endpoint
         self.verify = verify
         self.client_name = client_name
-        self.graphql_client_params = graphql_client_params
-
-        skip_checks = os.getenv("KILI_SDK_SKIP_CHECKS") is not None
-
         self.http_client = HttpClient(kili_endpoint=api_endpoint, verify=verify, api_key=api_key)
-
-        if not skip_checks and not self._is_api_key_valid():
-            raise AuthenticationFailed(
-                api_key=self.api_key,
-                api_endpoint=self.api_endpoint,
-                error_msg="Api key does not seem to be valid.",
-            )
-
         self.graphql_client = GraphQLClient(
             endpoint=api_endpoint,
             api_key=api_key,
@@ -174,70 +158,23 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             http_client=self.http_client,
             **(graphql_client_params or {}),  # pyright: ignore[reportGeneralTypeIssues]
         )
-
         self.kili_api_gateway = KiliAPIGateway(self.graphql_client, self.http_client)
+        self.internal = InternalClientMethods(self.kili_api_gateway)
 
+        skip_checks = os.getenv("KILI_SDK_SKIP_CHECKS") is not None
         if not skip_checks:
-            api_key_query = APIKeyQuery(self.graphql_client, self.http_client)
-            self._check_expiry_of_key_is_close(api_key_query, self.api_key)
+            api_key_use_cases = ApiKeyUseCases(self.kili_api_gateway)
+            if not api_key_use_cases.is_api_key_valid(api_key):
+                raise AuthenticationFailed(
+                    api_key=self.api_key,
+                    api_endpoint=self.api_endpoint,
+                    error_msg="Api key does not seem to be valid.",
+                )
 
-        self.internal = InternalClientMethods(self)
-
-    @log_call
-    def _is_api_key_valid(self) -> bool:
-        """Check that the api_key provided is valid.
-
-        Note that this method does not rely on the GraphQL client, but on the HTTP client.
-        It must stay this way since the GraphQL client might retry in case of 401 http error.
-        """
-        response = self.http_client.post(
-            url=self.api_endpoint,
-            data='{"query":"{ me { id email } }"}',
-            timeout=30,
-            headers={
-                "Authorization": f"X-API-Key: {self.api_key}",
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "apollographql-client-name": self.client_name.value,
-                "apollographql-client-version": __version__,
-                **LogContext(),
-            },
-        )
-        return response.status_code == 200 and "email" in response.text and "id" in response.text
-
-    def _get_kili_app_version(self) -> Optional[str]:
-        """Get the version of the Kili app server.
-
-        Returns None if the version cannot be retrieved.
-        """
-        url = self.api_endpoint.replace("/graphql", "/version")
-        response = self.http_client.get(url, timeout=30)
-        if response.status_code == 200 and '"version":' in response.text:
-            response_json = response.json()
-            return response_json["version"]
-        return None
-
-    @staticmethod
-    def _check_expiry_of_key_is_close(api_key_query: Callable, api_key: str) -> None:
-        """Check that the expiration date of the api_key is not too close."""
-        warn_days = 30
-
-        api_keys = api_key_query(
-            fields=["expiryDate"],
-            where=APIKeyWhere(api_key=api_key),
-            options=QueryOptions(disable_tqdm=True),
-        )
-
-        key_expiry = datetime.strptime(next(api_keys)["expiryDate"], r"%Y-%m-%dT%H:%M:%S.%fZ")
-        key_remaining_time = key_expiry - datetime.now()
-        key_soon_deprecated = key_remaining_time < timedelta(days=warn_days)
-        if key_soon_deprecated:
-            message = f"""
-                Your api key will be deprecated on {key_expiry:%Y-%m-%d}.
-                You should generate a new one on My account > API KEY."""
-            warnings.warn(message, UserWarning, stacklevel=2)
+            api_key_use_cases.check_expiry_of_key_is_close(api_key)
 
     def get_user(self) -> Dict:
+        # TODO: move this method
         """Get the current user from the api_key provided."""
         result = self.graphql_client.execute(GQL_ME)
         user = self.format_result("data", result)
