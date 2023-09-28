@@ -63,7 +63,7 @@ def upload_data_via_rest(
     if "blob.core.windows.net" in url_to_use_for_upload:
         headers["x-ms-blob-type"] = "BlockBlob"
 
-    response = http_client.put(url_to_use_for_upload, data=data, headers=headers, timeout=30)
+    response = http_client.put(url_to_use_for_upload, data=data, headers=headers)
     response.raise_for_status()
     return url_with_id
 
