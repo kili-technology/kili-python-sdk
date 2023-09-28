@@ -2,7 +2,7 @@
 
 import json
 from datetime import datetime
-from typing import Optional
+from typing import Dict, List, Optional
 
 from typeguard import typechecked
 
@@ -95,7 +95,7 @@ class QueriesPlugins(BaseOperationEntrypointMixin):
         self,
         plugin_name: str,
         verbose: bool = True,
-    ):
+    ) -> str:
         """Update a plugin with new code.
 
         Args:
@@ -116,7 +116,7 @@ class QueriesPlugins(BaseOperationEntrypointMixin):
     def list_plugins(
         self,
         fields: ListOrTuple[str] = ("name", "projectIds", "id", "createdAt", "updatedAt"),
-    ):
+    ) -> List[Dict]:
         # pylint: disable=line-too-long
         """List all plugins from your organization.
 
