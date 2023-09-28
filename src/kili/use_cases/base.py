@@ -1,6 +1,7 @@
 """Base class for all use cases."""
 
 import abc
+
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 
 
