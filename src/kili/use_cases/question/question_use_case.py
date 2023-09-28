@@ -1,14 +1,23 @@
 """Question use cases."""
 
-from typing import List, cast
+from dataclasses import dataclass
+from typing import List, Optional, cast
 
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.domain.asset.asset import AssetExternalId, AssetId
 from kili.domain.project import ProjectId
 from kili.domain.question import QuestionId
 from kili.use_cases.base import BaseUseCases
-from kili.use_cases.question.types import QuestionToCreateUseCaseInput
 from kili.use_cases.utils import UseCasesUtils
+
+
+@dataclass
+class QuestionToCreateUseCaseInput:
+    """Question to create use case input."""
+
+    text: Optional[str]
+    asset_id: Optional[AssetId]
+    asset_external_id: Optional[AssetExternalId]
 
 
 class QuestionUseCases(BaseUseCases):
