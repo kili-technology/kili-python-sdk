@@ -52,6 +52,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -63,6 +64,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "jsonResponse",
             "labelType",
             "secondsToLabel",
+            "isLatestLabelForUser",
             "assetId",
         ),
         first: Optional[int] = None,
@@ -87,6 +89,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -98,6 +101,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "jsonResponse",
             "labelType",
             "secondsToLabel",
+            "isLatestLabelForUser",
             "assetId",
         ),
         first: Optional[int] = None,
@@ -122,6 +126,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -133,6 +138,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "jsonResponse",
             "labelType",
             "secondsToLabel",
+            "isLatestLabelForUser",
             "assetId",
         ),
         first: Optional[int] = None,
@@ -157,6 +163,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -168,6 +175,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "jsonResponse",
             "labelType",
             "secondsToLabel",
+            "isLatestLabelForUser",
             "assetId",
         ),
         first: Optional[int] = None,
@@ -192,6 +200,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -229,6 +238,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`.
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
+            asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have their creation date equal to this date.
@@ -286,6 +296,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             asset_id=asset_id,
             asset_status_in=asset_status_in,
             asset_external_id_in=asset_external_id_in,
+            asset_external_id_strictly_in=asset_external_id_strictly_in,
             author_in=author_in,
             created_at=created_at,
             created_at_gte=created_at_gte,
@@ -676,6 +687,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -697,6 +709,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
+            asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -724,6 +737,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             asset_id=asset_id,
             asset_status_in=asset_status_in,
             asset_external_id_in=asset_external_id_in,
+            asset_external_id_strictly_in=asset_external_id_strictly_in,
             author_in=author_in,
             created_at=created_at,
             created_at_gte=created_at_gte,
