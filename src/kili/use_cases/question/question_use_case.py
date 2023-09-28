@@ -7,8 +7,8 @@ from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatew
 from kili.domain.asset.asset import AssetExternalId, AssetId
 from kili.domain.project import ProjectId
 from kili.domain.question import QuestionId
+from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.base import BaseUseCases
-from kili.use_cases.utils import UseCasesUtils
 
 
 @dataclass
@@ -39,7 +39,7 @@ class QuestionUseCases(BaseUseCases):
                 cast(AssetExternalId, question.asset_external_id) for question in questions
             ]
 
-        asset_ids = UseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
+        asset_ids = AssetUseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
             asset_ids=asset_id_array, external_ids=external_id_array, project_id=project_id
         )
 

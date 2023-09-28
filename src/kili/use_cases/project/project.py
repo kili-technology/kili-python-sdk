@@ -7,7 +7,6 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_fixed
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.project.mappers import project_data_mapper
 from kili.adapters.kili_api_gateway.project.types import ProjectDataKiliAPIGatewayInput
@@ -32,7 +31,7 @@ class ProjectUseCases(BaseUseCases):
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
     ) -> ProjectId:
         """Create a project."""
-        project_id = self._kili_api_gateway.create_project(
+        project_id = self.kili_api_gateway.create_project(
             input_type=input_type,
             json_interface=json_interface,
             title=title,
@@ -49,7 +48,7 @@ class ProjectUseCases(BaseUseCases):
             reraise=True,
         ):
             with attempt:
-                _ = self._kili_api_gateway.get_project(project_id=project_id, fields=("id",))
+                _ = self.kili_api_gateway.get_project(project_id=project_id, fields=("id",))
 
         return ProjectId(project_id)
 
@@ -62,7 +61,7 @@ class ProjectUseCases(BaseUseCases):
         disable_tqdm: Optional[bool],
     ) -> Generator[Dict, None, None]:
         """Return a generator of projects that match the filter."""
-        return self._kili_api_gateway.list_projects(
+        return self.kili_api_gateway.list_projects(
             project_filters,
             fields,
             options=QueryOptions(skip=skip, first=first, disable_tqdm=disable_tqdm),
@@ -138,4 +137,4 @@ class ProjectUseCases(BaseUseCases):
         if "id" not in fields:
             fields += ("id",)
 
-        return self._kili_api_gateway.update_properties_in_project(project_id, project_data, fields)
+        return self.kili_api_gateway.update_properties_in_project(project_id, project_data, fields)
