@@ -131,7 +131,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         label_type: LabelType = "DEFAULT",
         project_id: Optional[str] = None,
         seconds_to_label: Optional[int] = 0,
-    ):
+    ) -> Dict[Literal["id"], str]:
         """!!! danger "[DEPRECATED]"
             append_to_labels method is deprecated. Please use append_labels instead.
             This new function allows to import several labels 10 times faster.
