@@ -7,7 +7,6 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_fixed
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.project.mappers import project_data_mapper
 from kili.adapters.kili_api_gateway.project.types import ProjectDataKiliAPIGatewayInput
@@ -15,13 +14,11 @@ from kili.core.enums import ProjectType
 from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
+from kili.use_cases.base import BaseUseCases
 
 
-class ProjectUseCases:
+class ProjectUseCases(BaseUseCases):
     """Project use cases."""
-
-    def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:
-        self._kili_api_gateway = kili_api_gateway
 
     # pylint: disable=too-many-arguments
     def create_project(
