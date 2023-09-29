@@ -5,6 +5,7 @@ from typing import Dict, Iterable, Optional
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.api_key import ApiKeyFilters
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.mutations.organization import MutationsOrganization
@@ -96,7 +97,9 @@ class InternalClientMethods(MutationsOrganization):
         """
         api_key_use_cases = ApiKeyUseCases(self.kili_api_gateway)
         filters = ApiKeyFilters(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
-        api_keys_gen = api_key_use_cases.list_api_keys(filters, fields, first, skip, disable_tqdm)
+        api_keys_gen = api_key_use_cases.list_api_keys(
+            filters, fields, QueryOptions(first=first, skip=skip, disable_tqdm=disable_tqdm)
+        )
 
         if as_generator:
             return api_keys_gen

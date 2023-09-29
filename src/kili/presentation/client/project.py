@@ -14,10 +14,14 @@ from typing import (
 
 from typeguard import typechecked
 
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.enums import ProjectType
 from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
+from kili.presentation.client.helpers.common_validators import (
+    disable_tqdm_if_as_generator,
+)
 from kili.use_cases.project.project import ProjectUseCases
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -237,6 +241,8 @@ class ProjectClientMethods(BaseClientMethods):
             TagUseCases(self.kili_api_gateway).get_tag_ids_from_labels(tags_in) if tags_in else None
         )
 
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+
         projects_gen = ProjectUseCases(self.kili_api_gateway).list_projects(
             ProjectFilters(
                 id=ProjectId(project_id) if project_id else None,
@@ -251,9 +257,7 @@ class ProjectClientMethods(BaseClientMethods):
                 tag_ids=tag_ids,
             ),
             fields,
-            first,
-            skip,
-            disable_tqdm,
+            options=QueryOptions(disable_tqdm=disable_tqdm, first=first, skip=skip),
         )
 
         if as_generator:
