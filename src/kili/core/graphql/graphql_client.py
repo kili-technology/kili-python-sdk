@@ -243,7 +243,9 @@ class GraphQLClient:
 
             new_value = value
             if isinstance(value, dict):
-                new_value = cls._remove_keys_with_none_values(value)
+                dict_without_nones = cls._remove_keys_with_none_values(value)
+                if len(dict_without_nones):
+                    new_value = dict_without_nones
 
             output_dict[key] = new_value
 
