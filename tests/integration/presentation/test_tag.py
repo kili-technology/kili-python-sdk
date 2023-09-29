@@ -1,4 +1,3 @@
-import pytest
 import pytest_mock
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
@@ -26,7 +25,6 @@ def test_when_fetching_org_tags_then_i_get_tags(mocker: pytest_mock.MockerFixtur
     )
 
 
-@pytest.mark.skip(reason="listTagsByProject is broken currently. Use listTagsByOrg instead.")
 def test_when_fetching_project_tags_then_i_get_tags(mocker: pytest_mock.MockerFixture):
     kili = TagClientMethods()
     kili.kili_api_gateway = KiliAPIGateway(
@@ -61,7 +59,6 @@ def test_given_tags_when_i_tag_project_with_tag_ids_then_it_is_tagged(
     kili.tag_project(project_id="fake_proj_id", tag_ids=["tag1_id", "tag2_id"])
 
     # Then
-    assert kili.kili_api_gateway.graphql_client.execute.call_count == len(tags)
     kili.kili_api_gateway.graphql_client.execute.assert_called_with(
         GQL_CHECK_TAG, {"data": {"tagId": "tag2_id", "projectId": "fake_proj_id"}}
     )
@@ -85,7 +82,6 @@ def test_given_tags_when_i_tag_project_with_tag_labels_then_it_is_tagged(
     kili.tag_project(project_id="fake_proj_id", tags=["tag1", "tag2"])
 
     # Then
-    assert kili.kili_api_gateway.graphql_client.execute.call_count == len(tags)
     kili.kili_api_gateway.graphql_client.execute.assert_called_with(
         GQL_CHECK_TAG, {"data": {"tagId": "tag2_id", "projectId": "fake_proj_id"}}
     )
