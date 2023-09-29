@@ -233,8 +233,8 @@ class GraphQLClient:
             return response_json["version"]
         return None
 
-    @classmethod
-    def _remove_nullable_inputs(cls, variables: Dict) -> Dict:
+    @staticmethod
+    def _remove_nullable_inputs(variables: Dict) -> Dict:
         """Remove nullable inputs from the variables."""
         return {k: v for k, v in variables.items() if v is not None}
 
