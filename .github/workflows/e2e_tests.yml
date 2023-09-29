@@ -255,7 +255,7 @@ jobs:
         id: e2e
         if: github.event.inputs.runE2ETests != 'false'
         timeout-minutes: 60
-        run: pytest -ra -sv --color yes --code-highlight yes --durations=0 -vv --ignore tests/e2e/test_notebooks.py tests/e2e
+        run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv --ignore tests/e2e/test_notebooks.py tests/e2e
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
@@ -269,7 +269,7 @@ jobs:
         # we run regardless of the outcome of the e2e tests
         if: ${{ !cancelled() }} && github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'main') && (steps.e2e.outcome != 'cancelled')
         timeout-minutes: 60
-        run: pytest -ra -sv --color yes --code-highlight yes --durations=0 -vv tests/e2e/test_notebooks.py
+        run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv tests/e2e/test_notebooks.py
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
