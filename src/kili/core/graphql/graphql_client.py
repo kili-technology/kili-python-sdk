@@ -189,7 +189,7 @@ class GraphQLClient:
             fetch_schema_from_transport=True,
             introspection_args=self._get_introspection_args(),
         ) as session:
-            return print_schema(session.client.schema)  # type: ignore
+            return print_schema(session.client.schema)  # pyright: ignore[reportGeneralTypeIssues]
 
     def _cache_graphql_schema(self, graphql_schema_path: Path, schema_str: str) -> None:
         """Cache the graphql schema on disk."""
@@ -233,6 +233,22 @@ class GraphQLClient:
             return response_json["version"]
         return None
 
+    @classmethod
+    def _remove_keys_with_none_values(cls, variables: Dict) -> Dict:
+        """Remove keys with None values from a nested dictionary."""
+        output_dict = {}
+        for key, value in variables.items():
+            if value is None:
+                continue
+
+            new_value = value
+            if isinstance(value, dict):
+                new_value = cls._remove_keys_with_none_values(value)
+
+            output_dict[key] = new_value
+
+        return output_dict
+
     def execute(
         self, query: Union[str, DocumentNode], variables: Optional[Dict] = None, **kwargs
     ) -> Dict[str, Any]:
@@ -244,6 +260,7 @@ class GraphQLClient:
             kwargs: additional arguments to pass to the GraphQL client
         """
         document = query if isinstance(query, DocumentNode) else gql(query)
+        variables = self._remove_keys_with_none_values(variables) if variables else None
 
         try:
             return self._execute_with_retries(document, variables, **kwargs)
