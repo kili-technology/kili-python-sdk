@@ -14,6 +14,7 @@ from .operations import (
     GQL_UNCHECK_TAG,
     GQL_UPDATE_TAG,
     get_list_tags_by_org_query,
+    get_list_tags_by_project_query,
 )
 from .types import UpdateTagReturnData
 
@@ -30,24 +31,11 @@ class TagOperationMixin(BaseOperationMixin):
 
     def list_tags_by_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> List[Dict]:
         """Send a GraphQL request calling listTagsByProject resolver."""
-        # fragment = fragment_builder(fields=fields)  # noqa: ERA001
-        # query = get_list_tags_by_project_query(fragment)# noqa: ERA001
-        # variables = {"projectId": project_id}# noqa: ERA001
-        # result = self.graphql_client.execute(query, variables)# noqa: ERA001
-        # return result["data"]  # noqa: ERA001
-        # TODO: listTagsByProject is broken currently. Use listTagsByOrg instead.
-
-        fields_with_project_ids = (
-            ("checkedForProjects", *fields) if "checkedForProjects" not in fields else fields
-        )
-        tags_of_org = self.list_tags_by_org(fields=fields_with_project_ids)
-        tags_of_project = [tag for tag in tags_of_org if project_id in tag["checkedForProjects"]]
-
-        if "checkedForProjects" not in fields:
-            for tag in tags_of_project:
-                del tag["checkedForProjects"]
-
-        return tags_of_project
+        fragment = fragment_builder(fields=fields)
+        query = get_list_tags_by_project_query(fragment)
+        variables = {"projectId": project_id}
+        result = self.graphql_client.execute(query, variables)
+        return result["data"]
 
     def check_tag(self, project_id: ProjectId, tag_id: TagId) -> TagId:
         """Send a GraphQL request calling checkTag resolver."""
