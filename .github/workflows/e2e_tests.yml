@@ -267,7 +267,7 @@ jobs:
       - name: Notebook tests
         # we don't run notebook tests on push to main
         # we run regardless of the outcome of the e2e tests
-        if: ${{ !cancelled() }} && github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'main') && (steps.e2e.outcome != 'cancelled')
+        if: ${{ !cancelled() && github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'main') && (steps.e2e.outcome != 'cancelled') }}
         timeout-minutes: 60
         run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv tests/e2e/test_notebooks.py
         env:
