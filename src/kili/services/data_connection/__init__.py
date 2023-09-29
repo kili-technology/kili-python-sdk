@@ -108,7 +108,7 @@ def compute_differences(kili, data_connection_id: str) -> Dict:
 
     data_integration = data_connection["dataIntegration"]
 
-    blob_paths = None
+    blob_paths = warnings = None
 
     # for azure using credentials, it is required to provide the blob paths to compute the diffs
     if (
@@ -149,6 +149,7 @@ def compute_differences(kili, data_connection_id: str) -> Dict:
     variables: Dict[str, Any] = {"where": {"id": data_connection_id}}
     if blob_paths is not None:
         variables["data"] = {"blobPaths": blob_paths, "warnings": warnings}
+
     result = kili.graphql_client.execute(GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES, variables)
     return format_result("data", result, None, kili.http_client)
 
