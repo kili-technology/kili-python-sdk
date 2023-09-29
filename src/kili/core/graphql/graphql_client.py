@@ -189,7 +189,7 @@ class GraphQLClient:
             fetch_schema_from_transport=True,
             introspection_args=self._get_introspection_args(),
         ) as session:
-            return print_schema(session.client.schema)  # type: ignore
+            return print_schema(session.client.schema)  # pyright: ignore[reportGeneralTypeIssues]
 
     def _cache_graphql_schema(self, graphql_schema_path: Path, schema_str: str) -> None:
         """Cache the graphql schema on disk."""
@@ -233,6 +233,11 @@ class GraphQLClient:
             return response_json["version"]
         return None
 
+    @staticmethod
+    def _remove_nullable_inputs(variables: Dict) -> Dict:
+        """Remove nullable inputs from the variables."""
+        return {k: v for k, v in variables.items() if v is not None}
+
     def execute(
         self, query: Union[str, DocumentNode], variables: Optional[Dict] = None, **kwargs
     ) -> Dict[str, Any]:
@@ -244,6 +249,7 @@ class GraphQLClient:
             kwargs: additional arguments to pass to the GraphQL client
         """
         document = query if isinstance(query, DocumentNode) else gql(query)
+        variables = self._remove_nullable_inputs(variables) if variables else None
 
         try:
             return self._execute_with_retries(document, variables, **kwargs)

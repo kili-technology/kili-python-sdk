@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from time import time
+from typing import Dict
 from unittest import mock
 
 import graphql
@@ -355,3 +356,75 @@ def test_given_gql_client_when_the_server_returns_flagsmith_error_then_it_retrie
     # Then
     assert result["data"] == "all good"
     assert mocked_execute.call_count == nb_times_called == 3
+
+
+@pytest.mark.parametrize(
+    ("variables", "expected"),
+    [
+        ({"id": "123456"}, {"id": "123456"}),
+        ({"id": None}, {}),
+        (
+            {
+                "project": {"id": "project_id"},
+                "asset": {"id": None},
+                "assetIn": ["123456"],
+                "status": "some_status",
+                "type": None,
+            },
+            {
+                "project": {"id": "project_id"},
+                "asset": {"id": None},
+                "assetIn": ["123456"],
+                "status": "some_status",
+            },
+        ),
+        (
+            {
+                "id": None,
+                "searchQuery": "truc",
+                "shouldRelaunchKpiComputation": None,
+                "starred": True,
+                "updatedAtGte": None,
+                "updatedAtLte": None,
+                "createdAtGte": None,
+                "createdAtLte": None,
+                "tagIds": ["tag_id"],
+            },
+            {
+                "searchQuery": "truc",
+                "starred": True,
+                "tagIds": ["tag_id"],
+            },
+        ),
+        (  # assetwhere
+            {
+                "externalIdStrictlyIn": ["truc"],
+                "externalIdIn": None,
+                "honeypotMarkGte": None,
+                "honeypotMarkLte": 0.0,
+                "id": "fake_asset_id",
+                "metadata": {"key": None},  # this field is a JSON graphql type. It should be kept
+                "project": {"id": "fake_proj_id"},
+                "skipped": True,
+                "updatedAtLte": None,
+            },
+            {
+                "externalIdStrictlyIn": ["truc"],
+                "honeypotMarkLte": 0.0,
+                "id": "fake_asset_id",
+                "metadata": {"key": None},
+                "project": {"id": "fake_proj_id"},
+                "skipped": True,
+            },
+        ),
+    ],
+)
+def test_given_variables_when_i_remove_null_values_then_it_works(variables: Dict, expected: Dict):
+    # Given
+    _ = variables
+
+    # When
+    output = GraphQLClient._remove_nullable_inputs(variables)
+
+    # Then
+    assert output == expected
