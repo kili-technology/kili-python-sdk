@@ -20,6 +20,7 @@ from kili.entrypoints.mutations.data_connection.queries import (
     GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES,
     GQL_VALIDATE_DATA_DIFFERENCES,
 )
+from kili.services.project import get_project_field
 
 LOGGER = None
 
@@ -124,22 +125,30 @@ def compute_differences(kili, data_connection_id: str) -> Dict:
 
         try:
             # pylint: disable=import-outside-toplevel
-            from .azure import (
-                get_blob_paths_azure_data_connection_with_service_credentials,
-            )
+            from .azure import AzureBucket
         except ImportError as err:
             raise ImportError(
                 "The azure-storage-blob package is required to use Azure buckets. "
                 " Run `pip install kili[azure]` to install it."
             ) from err
 
-        blob_paths = get_blob_paths_azure_data_connection_with_service_credentials(
-            data_connection=data_connection, data_integration=data_integration
+        blob_paths, warnings = AzureBucket(
+            sas_token=data_integration["azureSASToken"],
+            connection_url=data_integration["azureConnectionURL"],
+        ).get_blob_paths_azure_data_connection_with_service_credentials(
+            data_connection["selectedFolders"],
+            input_type=get_project_field(
+                kili,
+                project_id=get_data_connection(
+                    kili, data_connection_id=data_connection_id, fields=("projectId",)
+                )["projectId"],
+                field="inputType",
+            ),
         )
 
     variables: Dict[str, Any] = {"where": {"id": data_connection_id}}
     if blob_paths is not None:
-        variables["data"] = {"blobPaths": blob_paths}
+        variables["data"] = {"blobPaths": blob_paths, "warnings": warnings}
     result = kili.graphql_client.execute(GQL_COMPUTE_DATA_CONNECTION_DIFFERENCES, variables)
     return format_result("data", result, None, kili.http_client)
 
