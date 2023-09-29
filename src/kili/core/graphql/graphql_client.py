@@ -234,22 +234,9 @@ class GraphQLClient:
         return None
 
     @classmethod
-    def _remove_keys_with_none_values(cls, variables: Dict) -> Dict:
-        """Remove keys with None values from a nested dictionary."""
-        output_dict = {}
-        for key, value in variables.items():
-            if value is None:
-                continue
-
-            new_value = value
-            if isinstance(value, dict):
-                dict_without_nones = cls._remove_keys_with_none_values(value)
-                if len(dict_without_nones):
-                    new_value = dict_without_nones
-
-            output_dict[key] = new_value
-
-        return output_dict
+    def _remove_nullable_inputs(cls, variables: Dict) -> Dict:
+        """Remove nullable inputs from the variables."""
+        return {k: v for k, v in variables.items() if v is not None}
 
     def execute(
         self, query: Union[str, DocumentNode], variables: Optional[Dict] = None, **kwargs
@@ -262,7 +249,7 @@ class GraphQLClient:
             kwargs: additional arguments to pass to the GraphQL client
         """
         document = query if isinstance(query, DocumentNode) else gql(query)
-        variables = self._remove_keys_with_none_values(variables) if variables else None
+        variables = self._remove_nullable_inputs(variables) if variables else None
 
         try:
             return self._execute_with_retries(document, variables, **kwargs)
