@@ -67,6 +67,10 @@ class ProjectUseCases(BaseUseCases):
             options=QueryOptions(skip=skip, first=first, disable_tqdm=disable_tqdm),
         )
 
+    def count_projects(self, project_filters: ProjectFilters) -> int:
+        """Return the number of projects that match the filter."""
+        return self._kili_api_gateway.count_projects(project_filters)
+
     # pylint: disable=too-many-locals
     def update_properties_in_project(
         self,

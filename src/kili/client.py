@@ -27,7 +27,6 @@ from kili.entrypoints.queries.label import QueriesLabel
 from kili.entrypoints.queries.notification import QueriesNotification
 from kili.entrypoints.queries.organization import QueriesOrganization
 from kili.entrypoints.queries.plugins import QueriesPlugins
-from kili.entrypoints.queries.project import QueriesProject
 from kili.entrypoints.queries.project_user import QueriesProjectUser
 from kili.entrypoints.queries.project_version import QueriesProjectVersion
 from kili.entrypoints.queries.user import QueriesUser
@@ -71,7 +70,6 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     QueriesNotification,
     QueriesOrganization,
     QueriesPlugins,
-    QueriesProject,
     QueriesProjectUser,
     QueriesProjectVersion,
     QueriesUser,
