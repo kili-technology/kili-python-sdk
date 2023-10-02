@@ -77,7 +77,7 @@ jobs:
               # if the push was on a release branch, it can be either
               # the lts branch -> LTS_CYCLE_FIRST_SDK_STAGING mode
               # or the latest release branch -> RELEASE_PREPROD mode
-              if [[ "${{ github.ref_name }}" == release/2.129.0 ]]; then
+              if [[ "${{ github.ref_name }}" == release/2.146.0 ]]; then
                 json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
               else
                 json_str="{\"array\": [\"RELEASE_PREPROD\"]}"
@@ -155,7 +155,7 @@ jobs:
       - name: Set first SDK version of LTS cycle
         if: env.TEST_MODE == 'LTS_CYCLE_FIRST_SDK_STAGING'
         shell: bash
-        run: echo "LTS_CYCLE_FIRST_SDK_REF=release/2.129.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
+        run: echo "LTS_CYCLE_FIRST_SDK_REF=release/2.146.0" >> $GITHUB_ENV # this should be updated when a new LTS cycle starts
 
       - name: Add latest release branch to github env
         shell: bash
@@ -254,8 +254,8 @@ jobs:
       - name: E2E tests
         id: e2e
         if: github.event.inputs.runE2ETests != 'false'
-        timeout-minutes: 30
-        run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv --ignore tests/e2e/test_notebooks.py tests/e2e
+        timeout-minutes: 60
+        run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv --ignore tests/e2e/test_notebooks.py tests/e2e
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
@@ -267,9 +267,9 @@ jobs:
       - name: Notebook tests
         # we don't run notebook tests on push to main
         # we run regardless of the outcome of the e2e tests
-        if: ${{ !cancelled() }} && github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'main') && (steps.e2e.outcome != 'cancelled')
-        timeout-minutes: 45
-        run: pytest -ra -sv --color yes --code-highlight yes --durations=15 -vv tests/e2e/test_notebooks.py
+        if: ${{ !cancelled() && github.event.inputs.runNotebookTests != 'false' && (github.event_name != 'push' || github.ref_name != 'main') && (steps.e2e.outcome != 'cancelled') }}
+        timeout-minutes: 60
+        run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv tests/e2e/test_notebooks.py
         env:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
