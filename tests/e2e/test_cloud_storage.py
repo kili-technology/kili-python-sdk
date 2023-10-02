@@ -81,7 +81,6 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         ("STAGING", "GCP", "f474c0170c8daa09ec2e368ce4720c73", None, 5),
     ],
 )
-@pytest.mark.skip("to fix")
 def test_e2e_synchronize_cloud_storage_connection(
     kili: Kili,
     src_project: Dict,
