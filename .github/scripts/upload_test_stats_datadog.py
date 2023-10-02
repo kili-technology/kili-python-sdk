@@ -38,7 +38,7 @@ BATCH_SIZE = 100
 url = f"https://api.github.com/repos/{OWNER}/{REPO}/actions/workflows/{WORKFLOW}/runs?per_page={BATCH_SIZE}"
 
 
-PYTEST_TEST_DURATIONS_REGEX_PATTERN = r"=+ slowest \d+ durations =+"
+PYTEST_TEST_DURATIONS_REGEX_PATTERN = r"=+ slowest .*durations =+"
 
 
 def get_and_dump_data() -> None:
