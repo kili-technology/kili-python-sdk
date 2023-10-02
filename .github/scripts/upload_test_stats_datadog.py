@@ -173,11 +173,8 @@ def get_test_durations_from_logs(logs: str, run_id: str) -> List[TestDuration]:
     for match in re.finditer(PYTEST_TEST_DURATIONS_REGEX_PATTERN, logs):
         assert match is not None
         index = match.start()
-        nb_tests_in_log = int(match.group().split(" ")[2])
         lines = logs[index:].splitlines()
         for line in lines:
-            if nb_tests_in_log == 0:
-                break
             if "FAILED" in line or "ERROR" in line or "PASSED" in line:
                 continue
             if "test" in line and ("call" in line or "setup" in line):
@@ -203,7 +200,6 @@ def get_test_durations_from_logs(logs: str, run_id: str) -> List[TestDuration]:
                 )
 
                 test_name_to_infos[test_name] = (date, call_or_setup, duration)
-                nb_tests_in_log -= 1
 
     return [
         TestDuration(
