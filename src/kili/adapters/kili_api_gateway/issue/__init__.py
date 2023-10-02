@@ -25,11 +25,11 @@ class IssueOperationMixin(BaseOperationMixin):
     """GraphQL Mixin extending GraphQL Gateway class with Issue related operations."""
 
     def create_issues(
-        self, type_: IssueType, issues: List[IssueToCreateKiliAPIGatewayInput]
+        self, type_: IssueType, issues: List[IssueToCreateKiliAPIGatewayInput], description: str
     ) -> List[IssueId]:
         """Send a GraphQL request calling createIssues resolver."""
         created_issue_entities: List[IssueId] = []
-        with tqdm.tqdm(total=len(issues), desc="Creating issues") as pbar:
+        with tqdm.tqdm(total=len(issues), desc=description) as pbar:
             for issues_batch in BatchIteratorBuilder(issues):
                 batch_targeted_asset_ids = [issue.asset_id for issue in issues_batch]
                 payload = {

@@ -12,7 +12,6 @@ from kili.use_cases.base import BaseUseCases
 class ApiKeyUseCases(BaseUseCases):
     """Api Keys use cases."""
 
-    # pylint: disable=too-many-arguments
     def list_api_keys(
         self, filters: ApiKeyFilters, fields: ListOrTuple[str], options: QueryOptions
     ) -> Generator[Dict, None, None]:

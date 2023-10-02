@@ -31,7 +31,9 @@ class IssueUseCases(BaseUseCases):
             )
             for issue in issues
         ]
-        return self._kili_api_gateway.create_issues(type_="ISSUE", issues=gateway_issues)
+        return self._kili_api_gateway.create_issues(
+            type_="ISSUE", issues=gateway_issues, description="Creating issues"
+        )
 
     def count_issues(self, filters: IssueFilters) -> int:
         """Count issues."""
