@@ -15,6 +15,7 @@ from typing import (
 
 from typeguard import typechecked
 
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.asset import AssetFilters
 from kili.domain.issue import IssueStatus, IssueType
 from kili.domain.types import ListOrTuple
@@ -437,12 +438,10 @@ class AssetClientMethods(BaseClientMethods):
         assets_gen = asset_use_cases.list_assets(
             filters,
             fields,
-            first,
-            skip,
-            disable_tqdm,
-            download_media,
-            local_media_dir,
-            label_output_format,
+            download_media=download_media,
+            local_media_dir=local_media_dir,
+            label_output_format=label_output_format,
+            options=QueryOptions(disable_tqdm=disable_tqdm, first=first, skip=skip),
         )
 
         if format == "pandas":

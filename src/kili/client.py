@@ -22,7 +22,6 @@ from kili.entrypoints.mutations.project_version import MutationsProjectVersion
 from kili.entrypoints.mutations.user import MutationsUser
 from kili.entrypoints.queries.data_connection import QueriesDataConnection
 from kili.entrypoints.queries.data_integration import QueriesDataIntegration
-from kili.entrypoints.queries.issue import QueriesIssue
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.entrypoints.queries.notification import QueriesNotification
 from kili.entrypoints.queries.organization import QueriesOrganization
@@ -65,7 +64,6 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsUser,
     QueriesDataConnection,
     QueriesDataIntegration,
-    QueriesIssue,
     QueriesLabel,
     QueriesNotification,
     QueriesOrganization,

@@ -23,9 +23,7 @@ class AssetUseCases(BaseUseCases):
         self,
         filters: AssetFilters,
         fields: ListOrTuple[str],
-        first: Optional[int],
-        skip: int,
-        disable_tqdm: Optional[bool],
+        options: QueryOptions,
         download_media: bool,
         local_media_dir: Optional[str],
         label_output_format: Literal["dict", "parsed_label"],
@@ -41,7 +39,6 @@ class AssetUseCases(BaseUseCases):
             ProjectId(filters.project_id),
             local_media_dir,
         )
-        options = QueryOptions(skip=skip, first=first, disable_tqdm=disable_tqdm)
         assets_gen = self._kili_api_gateway.list_assets(filters, fields, options)
 
         if download_media_function is not None:

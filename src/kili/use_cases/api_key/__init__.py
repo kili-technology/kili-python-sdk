@@ -1,7 +1,7 @@
 """Api Keys use cases."""
 import warnings
 from datetime import datetime, timedelta
-from typing import Dict, Generator, Optional
+from typing import Dict, Generator
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.api_key import ApiKeyFilters
@@ -14,15 +14,9 @@ class ApiKeyUseCases(BaseUseCases):
 
     # pylint: disable=too-many-arguments
     def list_api_keys(
-        self,
-        filters: ApiKeyFilters,
-        fields: ListOrTuple[str],
-        first: Optional[int],
-        skip: int,
-        disable_tqdm: Optional[bool],
+        self, filters: ApiKeyFilters, fields: ListOrTuple[str], options: QueryOptions
     ) -> Generator[Dict, None, None]:
         """List api keys with given options."""
-        options = QueryOptions(skip=skip, first=first, disable_tqdm=disable_tqdm)
         return self._kili_api_gateway.list_api_keys(filters, fields, options)
 
     def count_api_keys(self, filters: ApiKeyFilters) -> int:
