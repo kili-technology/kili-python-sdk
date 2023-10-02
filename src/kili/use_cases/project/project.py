@@ -56,16 +56,14 @@ class ProjectUseCases(BaseUseCases):
         self,
         project_filters: ProjectFilters,
         fields: ListOrTuple[str],
-        first: Optional[int],
-        skip: int,
-        disable_tqdm: Optional[bool],
+        options: QueryOptions,
     ) -> Generator[Dict, None, None]:
         """Return a generator of projects that match the filter."""
-        return self._kili_api_gateway.list_projects(
-            project_filters,
-            fields,
-            options=QueryOptions(skip=skip, first=first, disable_tqdm=disable_tqdm),
-        )
+        return self._kili_api_gateway.list_projects(project_filters, fields, options=options)
+
+    def count_projects(self, project_filters: ProjectFilters) -> int:
+        """Return the number of projects that match the filter."""
+        return self._kili_api_gateway.count_projects(project_filters)
 
     # pylint: disable=too-many-locals
     def update_properties_in_project(

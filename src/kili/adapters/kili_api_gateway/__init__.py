@@ -1,6 +1,8 @@
 """Kili API Gateway module for interacting with Kili."""
 
+
 from kili.adapters.http_client import HttpClient
+from kili.adapters.kili_api_gateway.api_key import ApiKeyOperationMixin
 from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
 from kili.adapters.kili_api_gateway.issue import IssueOperationMixin
 from kili.adapters.kili_api_gateway.project import ProjectOperationMixin
@@ -13,6 +15,7 @@ class KiliAPIGateway(
     AssetOperationMixin,
     ProjectOperationMixin,
     TagOperationMixin,
+    ApiKeyOperationMixin,
 ):
     """GraphQL gateway to communicate with Kili backend."""
 
