@@ -88,6 +88,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': ''}]`.
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
+                - For Image projects, if you work with geotiff, you can specify a value with key 'processingParameters' to specify the minimum and maximum zoom level.
+                    Example for one asset: `json_metadata_array = [{'processingParameters': {'minZoom': 17, 'maxZoom': 19}}]`.
             disable_tqdm: If `True`, the progress bar will be disabled
             wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.
                 If `False`, the function will return faster but the assets might not be fully processed by the server.
