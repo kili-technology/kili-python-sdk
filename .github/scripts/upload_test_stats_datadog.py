@@ -4,6 +4,7 @@ import re
 import sys
 import time
 import zipfile
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, List, Literal, Optional
@@ -166,7 +167,7 @@ def get_test_durations_from_logs(logs: str, run_id: str) -> List[TestDuration]:
     """Extract the test durations from the logs of a workflow run."""
     logs_split = [l for l in logs.split("\n") if l]
 
-    test_name_to_infos = {}
+    test_name_to_infos = defaultdict(list)
 
     # find all matches
     # Twice, one for e2e tests, the other one for notebook tests.
@@ -199,7 +200,7 @@ def get_test_durations_from_logs(logs: str, run_id: str) -> List[TestDuration]:
                     lines_matching_test_name[0].split(" ")[0][:19], r"%Y-%m-%dT%H:%M:%S"
                 )
 
-                test_name_to_infos[test_name] = (date, call_or_setup, duration)
+                test_name_to_infos[test_name].append((date, call_or_setup, duration))
 
     return [
         TestDuration(
@@ -209,7 +210,8 @@ def get_test_durations_from_logs(logs: str, run_id: str) -> List[TestDuration]:
             date=date,
             run_id=run_id,
         )
-        for test_name, (date, call_or_setup, duration) in test_name_to_infos.items()
+        for test_name, test_entries in test_name_to_infos.items()
+        for (date, call_or_setup, duration) in test_entries
     ]
 
 
