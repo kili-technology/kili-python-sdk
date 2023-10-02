@@ -49,6 +49,7 @@ def project_id(kili: Kili):
         ({"asset_external_id_in": ["asset_"]}, 2),
         ({"asset_external_id_in": ["asset_1"]}, 1),
         ({"asset_external_id_strictly_in": ["asset_1"]}, 1),
+        ({"asset_external_id_strictly_in": ["asset_2"]}, 1),
         ({"asset_external_id_strictly_in": ["asset_"]}, 0),
     ],
 )
