@@ -54,10 +54,6 @@ jobs:
           # make sure release_version is greater than last github release
           latest_release=$(get_last_release_tag_github)
           echo "Latest release: $latest_release"
-          if ! [[ $(version_to_int "$release_version") -gt $(version_to_int "$latest_release") ]]; then
-              echo "The release you are trying to create ($release_version) is older than the latest release on github ($latest_release)"
-              exit 1
-          fi
 
           # tag and push the tag
           # -f to overwrite the tag if it already exists
