@@ -1,9 +1,12 @@
 """Mixin extending Kili API Gateway class with Issue related operations."""
-
-from typing import List
+from typing import Dict, Generator, List
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
-from kili.adapters.kili_api_gateway.issue.mappers import issue_where_mapper
+from kili.adapters.kili_api_gateway.helpers.queries import (
+    PaginatedGraphQLQuery,
+    QueryOptions,
+    fragment_builder,
+)
 from kili.adapters.kili_api_gateway.issue.operations import (
     GQL_COUNT_ISSUES,
     GQL_CREATE_ISSUES,
@@ -11,18 +14,22 @@ from kili.adapters.kili_api_gateway.issue.operations import (
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.core.utils.pagination import BatchIteratorBuilder
 from kili.domain.issue import IssueFilters, IssueId, IssueType
+from kili.domain.types import ListOrTuple
 from kili.utils import tqdm
+
+from .mappers import issue_where_mapper
+from .operations import get_issues_query
 
 
 class IssueOperationMixin(BaseOperationMixin):
     """GraphQL Mixin extending GraphQL Gateway class with Issue related operations."""
 
     def create_issues(
-        self, type_: IssueType, issues: List[IssueToCreateKiliAPIGatewayInput]
+        self, type_: IssueType, issues: List[IssueToCreateKiliAPIGatewayInput], description: str
     ) -> List[IssueId]:
         """Send a GraphQL request calling createIssues resolver."""
         created_issue_entities: List[IssueId] = []
-        with tqdm.tqdm(total=len(issues), desc="Creating issues") as pbar:
+        with tqdm.tqdm(total=len(issues), desc=description) as pbar:
             for issues_batch in BatchIteratorBuilder(issues):
                 batch_targeted_asset_ids = [issue.asset_id for issue in issues_batch]
                 payload = {
@@ -53,3 +60,14 @@ class IssueOperationMixin(BaseOperationMixin):
         payload = {"where": where}
         count_result = self.graphql_client.execute(GQL_COUNT_ISSUES, payload)
         return count_result["data"]
+
+    def list_issues(
+        self, filters: IssueFilters, fields: ListOrTuple[str], options: QueryOptions
+    ) -> Generator[Dict, None, None]:
+        """Send a GraphQL request calling issues resolver."""
+        fragment = fragment_builder(fields)
+        query = get_issues_query(fragment)
+        where = issue_where_mapper(filters=filters)
+        return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
+            query, where, options, "Retrieving issues", GQL_COUNT_ISSUES
+        )

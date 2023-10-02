@@ -1,6 +1,6 @@
 """Issue mutations."""
 
-from typing import Dict, List, Literal, Optional
+from typing import Dict, Literal, Optional
 
 from typeguard import typechecked
 
@@ -8,13 +8,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
-from kili.core.utils.pagination import BatchIteratorBuilder
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.entrypoints.mutations.asset.helpers import get_asset_ids_or_throw_error
-from kili.presentation.client.helpers.common_validators import (
-    assert_all_arrays_have_same_size,
-)
-from kili.utils import tqdm
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -92,43 +86,3 @@ class MutationsIssue(BaseOperationEntrypointMixin):
 
         result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
         return self.format_result("data", result)[0]
-
-    @typechecked
-    def create_questions(
-        self,
-        project_id: str,
-        text_array: List[Optional[str]],
-        asset_id_array: Optional[List[str]] = None,
-        asset_external_id_array: Optional[List[str]] = None,
-    ) -> List[Dict]:
-        # pylint:disable=line-too-long
-        """Create questions.
-
-        Args:
-            project_id: Id of the project.
-            text_array: List of question strings.
-            asset_id_array: List of the assets to add the questions to.
-            asset_external_id_array: List of the assets to add the questions to. Used if `asset_id_array` is not given.
-
-        Returns:
-            A list of dictionaries with the `id` key of the created questions.
-        """
-        assert_all_arrays_have_same_size([text_array, asset_id_array])
-        asset_id_array = get_asset_ids_or_throw_error(
-            self.kili_api_gateway, asset_id_array, asset_external_id_array, project_id
-        )
-        created_questions: List[Dict[str, str]] = []
-        with tqdm.tqdm(total=len(text_array), desc="Creating questions") as pbar:
-            for batch_questions in BatchIteratorBuilder(list(zip(asset_id_array, text_array))):
-                variables = {
-                    "issues": [
-                        {"issueNumber": 0, "type": "QUESTION", "assetId": asset_id, "text": text}
-                        for (asset_id, text) in batch_questions
-                    ],
-                    "where": {"idIn": asset_id_array},
-                }
-
-                result = self.graphql_client.execute(GQL_CREATE_ISSUES, variables)
-                created_questions.extend(self.format_result("data", result))
-                pbar.update(len(batch_questions))
-        return created_questions

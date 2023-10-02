@@ -12,6 +12,14 @@ on:
         required: true
         type: string
         default: "X.XXX.0"
+      checkAgainstLatestRelease:
+        description: >
+          "Check that the release version is greater than the latest release on github.
+          If not, the workflow will fail.
+          Enter 'true' to check against the latest release on github, 'false' otherwise:"
+        required: true
+        type: boolean
+        default: true
 
 jobs:
   create_draft_release:

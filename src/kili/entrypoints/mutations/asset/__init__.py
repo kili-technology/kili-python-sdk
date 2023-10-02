@@ -1,6 +1,6 @@
 """Asset mutations."""
 import warnings
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Union, cast
 
 from tenacity import retry
 from tenacity.retry import retry_if_exception_type
@@ -13,7 +13,6 @@ from kili.core.utils.pagination import mutate_from_paginated_call
 from kili.domain.asset import AssetFilters
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
-    get_asset_ids_or_throw_error,
     process_update_properties_in_assets_parameters,
 )
 from kili.entrypoints.mutations.asset.queries import (
@@ -29,6 +28,9 @@ from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv
 from kili.utils.assets import PageResolution
 from kili.utils.logcontext import for_all_methods, log_call
+
+if TYPE_CHECKING:
+    from kili.domain.types import ListOrTuple
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -86,6 +88,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': ''}]`.
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
+                - For Image projects, if you work with geotiff, you can specify a value with key 'processingParameters' to specify the minimum and maximum zoom level.
+                    Example for one asset: `json_metadata_array = [{'processingParameters': {'minZoom': 17, 'maxZoom': 19}}]`.
             disable_tqdm: If `True`, the progress bar will be disabled
             wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.
                 If `False`, the function will return faster but the assets might not be fully processed by the server.
@@ -279,12 +283,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             )
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
 
-        asset_ids = get_asset_ids_or_throw_error(
-            self.kili_api_gateway, asset_ids, external_ids, project_id
-        )
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
         properties_to_batch = process_update_properties_in_assets_parameters(
-            asset_ids,
+            cast(List[str], resolved_asset_ids),
             priorities=priorities,
             json_metadatas=json_metadatas,
             consensus_marks=consensus_marks,
@@ -346,12 +348,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ):
             return []
 
-        asset_ids = get_asset_ids_or_throw_error(
-            self.kili_api_gateway, asset_ids, external_ids, project_id
-        )
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
         properties_to_batch = process_update_properties_in_assets_parameters(
-            asset_ids=asset_ids,
+            asset_ids=cast(List[str], resolved_asset_ids),
             external_ids=new_external_ids,
         )
 
@@ -394,11 +394,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ) or is_empty_list_with_warning("delete_many_from_dataset", "external_ids", external_ids):
             return None
 
-        asset_ids = get_asset_ids_or_throw_error(
-            self.kili_api_gateway, asset_ids, external_ids, project_id
-        )
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
-        properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
+        properties_to_batch: Dict[str, Optional[ListOrTuple[Any]]] = {
+            "asset_ids": resolved_asset_ids
+        }
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
@@ -473,11 +473,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ) or is_empty_list_with_warning("add_to_review", "external_ids", external_ids):
             return None
 
-        asset_ids = get_asset_ids_or_throw_error(
-            self.kili_api_gateway, asset_ids, external_ids, project_id
-        )
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
-        properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
+        properties_to_batch: Dict[str, Optional[ListOrTuple[Any]]] = {
+            "asset_ids": resolved_asset_ids
+        }
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
@@ -521,7 +521,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         if isinstance(result, dict) and "id" in result:
             assets_in_review = self.kili_api_gateway.list_assets(
                 AssetFilters(
-                    project_id=result["id"], asset_id_in=asset_ids, status_in=["TO_REVIEW"]
+                    project_id=result["id"],
+                    asset_id_in=cast(Optional[List[str]], resolved_asset_ids),
+                    status_in=["TO_REVIEW"],
                 ),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
@@ -560,11 +562,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ) or is_empty_list_with_warning("send_back_to_queue", "external_ids", external_ids):
             return None
 
-        asset_ids = get_asset_ids_or_throw_error(
-            self.kili_api_gateway, asset_ids, external_ids, project_id
-        )
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
-        properties_to_batch: Dict[str, Optional[List[Any]]] = {"asset_ids": asset_ids}
+        properties_to_batch: Dict[str, Optional[ListOrTuple[Any]]] = {
+            "asset_ids": resolved_asset_ids
+        }
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
@@ -605,7 +607,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         result = self.format_result("data", results[0])
         if isinstance(result, dict) and "id" in result:
             assets_in_queue = self.kili_api_gateway.list_assets(
-                AssetFilters(project_id=result["id"], asset_id_in=asset_ids, status_in=["ONGOING"]),
+                AssetFilters(
+                    project_id=result["id"],
+                    asset_id_in=cast(List[str], resolved_asset_ids),
+                    status_in=["ONGOING"],
+                ),
                 ["id"],
                 QueryOptions(disable_tqdm=True),
             )

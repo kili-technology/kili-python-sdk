@@ -1,10 +1,12 @@
 """Code specific to Azure blob storage."""
 
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 from urllib.parse import urlparse
 
 from azure.storage.blob import BlobServiceClient
+
+from kili.domain.project import InputType
 
 
 class AzureBucket:
@@ -33,10 +35,6 @@ class AzureBucket:
         container_name = url_connection.path.lstrip("/")
         return storage_account, container_name
 
-    def get_blob_paths(self) -> List[str]:
-        """List files in the Azure bucket."""
-        return list(self.storage_bucket.list_blob_names())
-
     def get_blob_paths_as_tree(self) -> Dict:
         """Get a tree representation of the Azure bucket.
 
@@ -58,28 +56,68 @@ class AzureBucket:
 
         return filetree
 
+    def get_blob_paths_azure_data_connection_with_service_credentials(
+        self, selected_folders: Optional[List[str]], input_type: InputType
+    ) -> Tuple[List[str], List[Optional[str]]]:
+        """Get the blob paths for an Azure data connection using service credentials."""
+        blob_paths = []
+        warnings = set()
+        for blob in self.storage_bucket.list_blobs():
+            if not hasattr(blob, "name") or not isinstance(blob.name, str):
+                continue
 
-def get_blob_paths_azure_data_connection_with_service_credentials(
-    data_integration: Dict, data_connection: Dict
-) -> List[str]:
-    """Get the blob paths for an Azure data connection using service credentials."""
-    azure_client = AzureBucket(
-        sas_token=data_integration["azureSASToken"],
-        connection_url=data_integration["azureConnectionURL"],
-    )
+            # blob_paths_in_bucket contains all blob paths in the bucket, we need to filter them
+            # to keep only the ones in the data connection selected folders
+            if isinstance(selected_folders, List) and not any(
+                blob.name.startswith(selected_folder) for selected_folder in selected_folders
+            ):
+                continue
 
-    blob_paths = azure_client.get_blob_paths()
-
-    # blob_paths_in_bucket contains all blob paths in the bucket, we need to filter them
-    # to keep only the ones in the data connection selected folders
-    if isinstance(data_connection["selectedFolders"], List):
-        blob_paths = [
-            blob_path
-            for blob_path in blob_paths
-            if any(
-                blob_path.startswith(selected_folder)
-                for selected_folder in data_connection["selectedFolders"]
+            has_content_type_field = (
+                hasattr(blob, "content_settings")
+                and hasattr(blob.content_settings, "content_type")
+                and isinstance(blob.content_settings.content_type, str)
             )
-        ]
+            if not has_content_type_field:
+                warnings.add("Objects with missing content-type were ignored")
 
-    return blob_paths
+            elif not self._is_content_type_compatible_with_input_type(
+                blob.content_settings.content_type,  # pyright: ignore[reportGeneralTypeIssues]
+                input_type,
+            ):
+                warnings.add(
+                    "Objects with unsupported content-type for this type of project were ignored"
+                )
+
+            else:
+                blob_paths.append(blob.name)
+
+        return blob_paths, list(warnings)
+
+    @staticmethod
+    def _is_content_type_compatible_with_input_type(
+        content_type: str, input_type: InputType
+    ) -> bool:
+        """Check if the content type is compatible with the input type."""
+        if input_type == "IMAGE":
+            return content_type.startswith("image")
+
+        if input_type == "VIDEO":
+            return content_type.startswith("video")
+
+        if input_type == "PDF":
+            return content_type.startswith("application/pdf")
+
+        if input_type == "TEXT":
+            return any(
+                content_type.startswith(text_type)
+                for text_type in (
+                    "application/json",
+                    "text/plain",
+                    "text/html",
+                    "text/csv",
+                    "text/xml",
+                )
+            )
+
+        raise ValueError(f"Unknown project input type: {input_type}")

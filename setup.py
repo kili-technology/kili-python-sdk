@@ -11,7 +11,7 @@ install_requires = [
     "tabulate>=0.9.0,<0.10.0",
     "tenacity>=8.0.0,<9.0.0",
     "tqdm>=4.0.0,<5.0.0",
-    "typeguard>=2.0.0,<3.0.0",
+    "typeguard>=4,<5",
     "typing_extensions>=4.1.0,<5.0.0",
     "pyparsing>=3.0.0,<4.0.0",
     "websocket-client>=1.0.0,<2.0.0",
@@ -54,8 +54,8 @@ dev_extra = [
     # linting
     "black",
     "pre-commit>=3.3.0,<4.0.0",
-    "pylint==2.17.5",
-    "pyright==1.1.326",
+    "pylint==2.17.7",
+    "pyright==1.1.329",
     # notebooks tests
     "nbformat",
     "nbconvert",

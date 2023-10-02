@@ -9,13 +9,13 @@ import pytest
 import yaml
 
 from kili.core.graphql.operations.project.queries import ProjectQuery
+from kili.domain.project import ProjectId
 from kili.exceptions import NotFound
 from kili.services.label_import import import_labels_from_files
 from kili.services.label_import.exceptions import LabelParsingError
 from kili.services.label_import.importer import YoloLabelImporter
 from kili.services.label_import.parser import YoloLabelParser
 from kili.services.label_import.types import Classes
-from kili.services.types import ProjectId
 from tests.unit.services.import_labels import fakes
 from tests.unit.services.import_labels.test_cases_from_files import TEST_CASES
 

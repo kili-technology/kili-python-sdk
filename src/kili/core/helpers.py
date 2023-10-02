@@ -1,6 +1,4 @@
 """Helpers for GraphQL Queries and Mutations."""
-
-import base64
 import functools
 import glob
 import mimetypes
@@ -44,18 +42,6 @@ def format_result(
     return object_(formatted_json)  # type:ignore
 
 
-def content_escape(content: str) -> str:
-    """Escapes the content.
-
-    Args:
-        content (str): string to escape
-
-    Returns:
-        str: escaped string
-    """
-    return content.replace("\\", "\\\\").replace("\n", "\\n").replace('"', '\\"')
-
-
 def get_data_type(path: str):
     """Get the data type, either image/png or application/pdf.
 
@@ -64,17 +50,6 @@ def get_data_type(path: str):
     """
     mime_type, _ = mimetypes.guess_type(path.lower())
     return mime_type if mime_type else ""
-
-
-def encode_base64(path: str):
-    """Encode a file in base 64.
-
-    Args:
-        path: path of the file
-    """
-    data_type = get_data_type(path)
-    with open(path, "rb") as image_file:
-        return f"data:{data_type};base64," + base64.b64encode(image_file.read()).decode("ascii")
 
 
 def is_url(path: object):
@@ -218,15 +193,6 @@ def is_none_or_empty(object_: object) -> bool:
     return object_ is None or object_is_empty
 
 
-def list_is_not_none_else_none(object_: object):
-    """Formats an object as a singleton if not none.
-
-    Args:
-        object_: a python object
-    """
-    return [object_] if object_ is not None else None
-
-
 def validate_category_search_query(query: str):
     """Validate the category search query.
 
@@ -304,15 +270,6 @@ def get_file_paths_to_upload(
             print("Paths skipped either do not exist or point towards an incorrect file")
     file_paths_to_upload.sort()
     return file_paths_to_upload
-
-
-def file_check_function_from_input_type(input_type: str):
-    """Returns check_file_mime_type function with input_type and verbose as preset argument."""
-
-    def output_function(path: str):
-        return check_file_mime_type(path, input_type, raise_error=False)
-
-    return output_function
 
 
 def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:

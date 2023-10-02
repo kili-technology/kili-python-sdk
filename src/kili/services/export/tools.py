@@ -7,7 +7,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import validate_category_search_query
 from kili.core.utils.pagination import batcher
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetFilters, AssetId
 from kili.domain.project import ProjectId
 from kili.orm import Asset
 from kili.services.export.types import ExportType
@@ -76,7 +76,7 @@ THRESHOLD_WARN_MANY_ASSETS = 1000
 def fetch_assets(
     kili,
     project_id: str,
-    asset_ids: Optional[List[str]],
+    asset_ids: Optional[List[AssetId]],
     export_type: ExportType,
     label_type_in: Optional[List[str]],
     disable_tqdm: Optional[bool],

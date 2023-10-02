@@ -1,4 +1,4 @@
 #!/usr/bin/env python
 """Kili Python SDK."""
 
-__version__ = "2.146.1"
+__version__ = "2.147.0"

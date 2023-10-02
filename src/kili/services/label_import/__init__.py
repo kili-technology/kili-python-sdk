@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Dict, List, Optional, Type, cast
 
+from kili.domain.project import ProjectId
 from kili.exceptions import NotFound
 from kili.services.helpers import is_target_job_in_json_interface
 from kili.services.label_import.importer import (
@@ -13,7 +14,7 @@ from kili.services.label_import.importer import (
 )
 from kili.services.label_import.types import LabelFormat, check_input_labels
 from kili.services.project import get_project
-from kili.services.types import LabelType, LogLevel, ProjectId
+from kili.services.types import LabelType, LogLevel
 
 
 def import_labels_from_files(  # pylint: disable=too-many-arguments

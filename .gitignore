@@ -20,4 +20,5 @@ launch.json
 
 # testing
 .coverage
+.coverage.*
 cov.xml

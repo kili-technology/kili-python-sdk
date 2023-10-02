@@ -18,6 +18,7 @@ class LabelWhere(BaseQueryWhere):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -35,6 +36,7 @@ class LabelWhere(BaseQueryWhere):
         self.asset_id = asset_id
         self.asset_status_in = asset_status_in
         self.asset_external_id_in = asset_external_id_in
+        self.asset_external_id_strictly_in = asset_external_id_strictly_in
         self.author_in = author_in
         self.created_at = created_at
         self.created_at_gte = created_at_gte
@@ -55,7 +57,8 @@ class LabelWhere(BaseQueryWhere):
             "id": self.label_id,
             "asset": {
                 "id": self.asset_id,
-                "externalIdStrictlyIn": self.asset_external_id_in,
+                "externalIdIn": self.asset_external_id_in,
+                "externalIdStrictlyIn": self.asset_external_id_strictly_in,
                 "statusIn": self.asset_status_in,
             },
             "project": {
@@ -83,7 +86,7 @@ class LabelQuery(GraphQLQuery):
     FORMAT_TYPE = LabelFormatType
 
     @staticmethod
-    def query(fragment):
+    def query(fragment: str) -> str:
         """Return the GraphQL labels query."""
         return f"""
         query labels($where: LabelWhere!, $first: PageSize!, $skip: Int!) {{

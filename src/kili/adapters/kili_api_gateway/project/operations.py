@@ -12,6 +12,17 @@ def get_projects_query(fragment: str) -> str:
         """
 
 
+def get_update_properties_in_project_mutation(fragment: str) -> str:
+    """Return the GraphQL updatePropertiesInProject mutation."""
+    return f"""
+        mutation updatePropertiesInProject($data: ProjectData!, $where: ProjectWhere!) {{
+            data: updatePropertiesInProject(data: $data, where: $where) {{
+                {fragment}
+            }}
+        }}
+        """
+
+
 GQL_COUNT_PROJECTS = """
 query countProjects($where: ProjectWhere!) {
     data: countProjects(where: $where)

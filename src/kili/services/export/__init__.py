@@ -5,6 +5,8 @@ from typing import Dict, List, Optional, Type
 
 from typing_extensions import get_args
 
+from kili.domain.asset import AssetId
+from kili.domain.project import ProjectId
 from kili.services.export.format.base import AbstractExporter, ExportParams
 from kili.services.export.format.coco import CocoExporter
 from kili.services.export.format.geojson import GeoJsonExporter
@@ -20,12 +22,12 @@ from kili.services.export.types import (
     SplitOption,
 )
 from kili.services.project import get_project
-from kili.services.types import LogLevel, ProjectId
+from kili.services.types import LogLevel
 
 
 def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     kili,
-    asset_ids: Optional[List[str]],
+    asset_ids: Optional[List[AssetId]],
     project_id: ProjectId,
     export_type: ExportType,
     label_format: LabelFormat,

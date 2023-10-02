@@ -1,13 +1,27 @@
 """Client presentation methods for projects."""
 
-from typing import Dict, Generator, Iterable, List, Literal, Optional, cast, overload
+from typing import (
+    Any,
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    cast,
+    overload,
+)
 
 from typeguard import typechecked
 
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.enums import ProjectType
-from kili.domain.project import InputType, ProjectFilters, ProjectId
+from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
+from kili.presentation.client.helpers.common_validators import (
+    disable_tqdm_if_as_generator,
+)
 from kili.use_cases.project.project import ProjectUseCases
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -29,6 +43,7 @@ class ProjectClientMethods(BaseClientMethods):
         description: str = "",
         project_type: Optional[ProjectType] = None,
         tags: Optional[ListOrTuple[str]] = None,
+        compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
     ) -> Dict[Literal["id"], str]:
         # pylint: disable=line-too-long
         """Create a project.
@@ -62,6 +77,10 @@ class ProjectClientMethods(BaseClientMethods):
                 - `VIDEO_FRAME_OBJECT_TRACKING`
 
             tags: Tags to add to the project. The tags must already exist in the organization.
+            compliance_tags: Compliance tags of the project.
+                Compliance tags are used to categorize projects based on the sensitivity of
+                the data being handled and the legal constraints associated with it.
+                Possible values are: `PHI` and `PII`.
 
         Returns:
             A dict with the id of the created project.
@@ -79,6 +98,7 @@ class ProjectClientMethods(BaseClientMethods):
             title=title,
             description=description,
             project_type=project_type,
+            compliance_tags=compliance_tags,
         )
 
         if tags is not None:
@@ -221,6 +241,8 @@ class ProjectClientMethods(BaseClientMethods):
             TagUseCases(self.kili_api_gateway).get_tag_ids_from_labels(tags_in) if tags_in else None
         )
 
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+
         projects_gen = ProjectUseCases(self.kili_api_gateway).list_projects(
             ProjectFilters(
                 id=ProjectId(project_id) if project_id else None,
@@ -235,11 +257,164 @@ class ProjectClientMethods(BaseClientMethods):
                 tag_ids=tag_ids,
             ),
             fields,
-            first,
-            skip,
-            disable_tqdm,
+            options=QueryOptions(disable_tqdm=disable_tqdm, first=first, skip=skip),
         )
 
         if as_generator:
             return projects_gen
         return list(projects_gen)
+
+    @typechecked
+    # pylint: disable=too-many-arguments,too-many-locals
+    def update_properties_in_project(
+        self,
+        project_id: str,
+        can_navigate_between_assets: Optional[bool] = None,
+        can_skip_asset: Optional[bool] = None,
+        compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
+        consensus_mark: Optional[float] = None,
+        consensus_tot_coverage: Optional[int] = None,
+        description: Optional[str] = None,
+        honeypot_mark: Optional[float] = None,
+        instructions: Optional[str] = None,
+        input_type: Optional[InputType] = None,
+        json_interface: Optional[dict] = None,
+        min_consensus_size: Optional[int] = None,
+        number_of_assets: Optional[int] = None,
+        number_of_skipped_assets: Optional[int] = None,
+        number_of_remaining_assets: Optional[int] = None,
+        number_of_reviewed_assets: Optional[int] = None,
+        review_coverage: Optional[int] = None,
+        should_relaunch_kpi_computation: Optional[bool] = None,
+        title: Optional[str] = None,
+        use_honeypot: Optional[bool] = None,
+        metadata_types: Optional[dict] = None,
+    ) -> Dict[str, Any]:
+        """Update properties of a project.
+
+        Args:
+            project_id: Identifier of the project.
+            can_navigate_between_assets:
+                Activate / Deactivate the use of next and previous buttons in labeling interface.
+            can_skip_asset: Activate / Deactivate the use of skip button in labeling interface.
+            compliance_tags: Compliance tags of the project.
+                Compliance tags are used to categorize projects based on the sensitivity of
+                the data being handled and the legal constraints associated with it.
+                Possible values are: `PHI` and `PII`.
+            consensus_mark: Should be between 0 and 1.
+            consensus_tot_coverage: Should be between 0 and 100.
+                It is the percentage of the dataset that will be annotated several times.
+            description: Description of the project.
+            honeypot_mark: Should be between 0 and 1
+            instructions: Instructions of the project.
+            input_type: Currently, one of `IMAGE`, `PDF`, `TEXT` or `VIDEO`.
+            json_interface: The json parameters of the project, see Edit your interface.
+            min_consensus_size: Should be between 1 and 10
+                Number of people that will annotate the same asset, for consensus computation.
+            number_of_assets: Defaults to 0
+            number_of_skipped_assets: Defaults to 0
+            number_of_remaining_assets: Defaults to 0
+            number_of_reviewed_assets: Defaults to 0
+            review_coverage: Allow to set the percentage of assets
+                that will be queued in the review interface.
+                Should be between 0 and 100
+            should_relaunch_kpi_computation: Technical field, added to indicate changes
+                in honeypot or consensus settings
+            title: Title of the project
+            use_honeypot: Activate / Deactivate the use of honeypot in the project
+            metadata_types: Types of the project metadata.
+                Should be a `dict` of metadata fields name as keys and metadata types as values.
+                Currently, possible types are: `string`, `number`
+
+        Returns:
+            A dict with the changed properties which indicates if the mutation was successful,
+                else an error message.
+
+        !!! example "Change Metadata Types"
+            Metadata fields are by default interpreted as `string` types. To change the type
+            of a metadata field, you can use the `update_properties_in_project` function with the
+            metadata_types argument. `metadata_types` is given as a dict of metadata field names
+            as keys and metadata types as values.
+
+            ```python
+            kili.update_properties_in_project(
+                project_id = project_id,
+                metadata_types = {
+                    'customConsensus': 'number',
+                    'sensitiveData': 'string',
+                    'uploadedFromCloud': 'string',
+                    'modelLabelErrorScore': 'number'
+                }
+            )
+            ```
+
+            Not providing a type for a metadata field or providing an unsupported one
+            will default to the `string` type.
+        """
+        return ProjectUseCases(self.kili_api_gateway).update_properties_in_project(
+            ProjectId(project_id),
+            can_navigate_between_assets=can_navigate_between_assets,
+            can_skip_asset=can_skip_asset,
+            compliance_tags=compliance_tags,
+            consensus_mark=consensus_mark,
+            consensus_tot_coverage=consensus_tot_coverage,
+            description=description,
+            honeypot_mark=honeypot_mark,
+            instructions=instructions,
+            input_type=input_type,
+            json_interface=json_interface,
+            min_consensus_size=min_consensus_size,
+            number_of_assets=number_of_assets,
+            number_of_skipped_assets=number_of_skipped_assets,
+            number_of_remaining_assets=number_of_remaining_assets,
+            number_of_reviewed_assets=number_of_reviewed_assets,
+            review_coverage=review_coverage,
+            should_relaunch_kpi_computation=should_relaunch_kpi_computation,
+            use_honeypot=use_honeypot,
+            title=title,
+            metadata_types=metadata_types,
+        )
+
+    @typechecked
+    # pylint: disable=too-many-arguments
+    def count_projects(
+        self,
+        project_id: Optional[str] = None,
+        search_query: Optional[str] = None,
+        should_relaunch_kpi_computation: Optional[bool] = None,
+        updated_at_gte: Optional[str] = None,
+        updated_at_lte: Optional[str] = None,
+        archived: Optional[bool] = None,
+    ) -> int:
+        # pylint: disable=line-too-long
+        """Count the number of projects with a search_query.
+
+        Args:
+            project_id: Select a specific project through its project_id.
+            search_query: Returned projects with a title or a description matching this [PostgreSQL ILIKE](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE) pattern.
+            should_relaunch_kpi_computation: Technical field, added to indicate changes in honeypot
+                or consensus settings
+            updated_at_gte: Returned projects should have a label
+                whose update date is greater
+                or equal to this date.
+            updated_at_lte: Returned projects should have a label
+                whose update date is lower or equal to this date.
+            archived: If `True`, only archived projects are returned, if `False`, only active projects are returned.
+                None disable this filter.
+
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
+
+        Returns:
+            The number of projects with the parameters provided
+        """
+        return ProjectUseCases(self.kili_api_gateway).count_projects(
+            ProjectFilters(
+                id=ProjectId(project_id) if project_id else None,
+                search_query=search_query,
+                should_relaunch_kpi_computation=should_relaunch_kpi_computation,
+                updated_at_gte=updated_at_gte,
+                updated_at_lte=updated_at_lte,
+                archived=archived,
+            )
+        )

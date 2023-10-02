@@ -10,6 +10,7 @@ from kili.orm import Asset
 
 
 def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
+    # Given
     get_project_return_val = {
         "jsonInterface": {"jobs": {"JOB": {"tools": ["rectangle"], "mlTask": "OBJECT_DETECTION"}}},
         "inputType": "IMAGE",
@@ -43,25 +44,30 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
 
-    kili.export_labels(
-        "fake_proj_id",
-        filename="export_geojson.zip",
-        fmt="geojson",
-        with_assets=False,
-        layout="merged",
-    )
+    with TemporaryDirectory() as export_folder:
+        export_filename = str(Path(export_folder) / "export_geojson.zip")
 
-    with TemporaryDirectory() as extract_folder:
-        with ZipFile("export_geojson.zip", "r") as z_f:
-            # extract in a temp dir
-            z_f.extractall(extract_folder)
+        # When
+        kili.export_labels(
+            "fake_proj_id",
+            filename=export_filename,
+            fmt="geojson",
+            with_assets=False,
+            layout="merged",
+        )
 
-        assert Path(f"{extract_folder}/README.kili.txt").is_file()
-        assert Path(f"{extract_folder}/labels").is_dir()
-        assert Path(f"{extract_folder}/labels/sample.geojson").is_file()
+        with TemporaryDirectory() as extract_folder:
+            with ZipFile(export_filename, "r") as z_f:
+                # extract in a temp dir
+                z_f.extractall(extract_folder)
 
-        with Path(f"{extract_folder}/labels/sample.geojson").open() as f:
-            output = json.load(f)
+            # Then
+            assert Path(f"{extract_folder}/README.kili.txt").is_file()
+            assert Path(f"{extract_folder}/labels").is_dir()
+            assert Path(f"{extract_folder}/labels/sample.geojson").is_file()
+
+            with Path(f"{extract_folder}/labels/sample.geojson").open() as f:
+                output = json.load(f)
 
     assert output["type"] == "FeatureCollection"
     assert len(output["features"]) == 5  # 5 annotations in geotiff_image_project_assets.json

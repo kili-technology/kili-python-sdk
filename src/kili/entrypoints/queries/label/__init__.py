@@ -2,6 +2,7 @@
 
 from functools import partial
 from typing import (
+    TYPE_CHECKING,
     Dict,
     Generator,
     Iterable,
@@ -13,13 +14,14 @@ from typing import (
     overload,
 )
 
-import pandas as pd
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import validate_category_search_query
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetExternalId, AssetFilters
+from kili.domain.asset.asset import AssetId
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
@@ -28,11 +30,13 @@ from kili.presentation.client.helpers.common_validators import (
 from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
-from kili.services.helpers import infer_ids_from_external_ids
 from kili.services.project import get_project
-from kili.services.types import ProjectId
+from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.labels.parsing import ParsedLabel, parse_labels
 from kili.utils.logcontext import for_all_methods, log_call
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -48,6 +52,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -59,6 +64,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "jsonResponse",
             "labelType",
             "secondsToLabel",
+            "isLatestLabelForUser",
             "assetId",
         ),
         first: Optional[int] = None,
@@ -83,6 +89,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -94,6 +101,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "jsonResponse",
             "labelType",
             "secondsToLabel",
+            "isLatestLabelForUser",
             "assetId",
         ),
         first: Optional[int] = None,
@@ -118,6 +126,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -129,6 +138,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "jsonResponse",
             "labelType",
             "secondsToLabel",
+            "isLatestLabelForUser",
             "assetId",
         ),
         first: Optional[int] = None,
@@ -153,6 +163,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -164,6 +175,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             "jsonResponse",
             "labelType",
             "secondsToLabel",
+            "isLatestLabelForUser",
             "assetId",
         ),
         first: Optional[int] = None,
@@ -188,6 +200,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -225,6 +238,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`.
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
+            asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have their creation date equal to this date.
@@ -282,6 +296,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             asset_id=asset_id,
             asset_status_in=asset_status_in,
             asset_external_id_in=asset_external_id_in,
+            asset_external_id_strictly_in=asset_external_id_strictly_in,
             author_in=author_in,
             created_at=created_at,
             created_at_gte=created_at_gte,
@@ -633,7 +648,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         project_id: str,
         fields: ListOrTuple[str] = ("author.email", "author.id", "createdAt", "id", "labelType"),
         asset_fields: ListOrTuple[str] = ("externalId",),
-    ) -> pd.DataFrame:
+    ) -> "pd.DataFrame":
         # pylint: disable=line-too-long
         """Get the labels of a project as a pandas DataFrame.
 
@@ -661,6 +676,8 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             for asset in assets_gen
             for label in asset["labels"]
         ]
+        import pandas as pd  # pylint: disable=import-outside-toplevel
+
         return pd.DataFrame(labels)
 
     @typechecked
@@ -670,6 +687,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[List[str]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_external_id_strictly_in: Optional[List[str]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -691,6 +709,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
+            asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -718,6 +737,7 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             asset_id=asset_id,
             asset_status_in=asset_status_in,
             asset_external_id_in=asset_external_id_in,
+            asset_external_id_strictly_in=asset_external_id_strictly_in,
             author_in=author_in,
             created_at=created_at,
             created_at_gte=created_at_gte,
@@ -825,18 +845,19 @@ class QueriesLabel(BaseOperationEntrypointMixin):
             ```
         """
         if external_ids is not None and asset_ids is None:
-            id_map = infer_ids_from_external_ids(
-                kili_api_gateway=self.kili_api_gateway,
-                asset_external_ids=external_ids,
-                project_id=project_id,
+            id_map = AssetUseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
+                asset_external_ids=cast(List[AssetExternalId], external_ids),
+                project_id=ProjectId(project_id),
             )
-            asset_ids = [id_map[id] for id in external_ids]
+            resolved_asset_ids = [id_map[AssetExternalId(i)] for i in external_ids]
+        else:
+            resolved_asset_ids = cast(List[AssetId], asset_ids)
 
         try:
             export_labels(
                 self,
-                asset_ids=asset_ids,
-                project_id=cast(ProjectId, project_id),
+                asset_ids=resolved_asset_ids,
+                project_id=ProjectId(project_id),
                 export_type="latest",
                 label_format=fmt,
                 split_option=layout,

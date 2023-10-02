@@ -15,6 +15,8 @@ from kili.core.graphql.operations.data_connection.queries import (
     DataConnectionsQuery,
     DataConnectionsWhere,
 )
+from kili.domain.asset import AssetId
+from kili.domain.project import ProjectId
 from kili.orm import Asset, Label
 from kili.services.export.exceptions import (
     NotCompatibleOptions,
@@ -32,14 +34,14 @@ from kili.services.export.types import (
     SplitOption,
 )
 from kili.services.project import get_project
-from kili.services.types import Job, ProjectId
+from kili.services.types import Job
 from kili.utils.tempfile import TemporaryDirectory
 
 
 class ExportParams(NamedTuple):
     """Contains all parameters that change the result of the export."""
 
-    assets_ids: Optional[List[str]]
+    assets_ids: Optional[List[AssetId]]
     export_type: ExportType
     project_id: ProjectId
     label_format: LabelFormat
@@ -66,7 +68,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     ) -> None:
         """Initialize the exporter."""
         self.project_id: ProjectId = export_params.project_id
-        self.assets_ids: Optional[List[str]] = export_params.assets_ids
+        self.assets_ids: Optional[List[AssetId]] = export_params.assets_ids
         self.export_type: ExportType = export_params.export_type
         self.label_format: LabelFormat = export_params.label_format
         self.single_file: bool = export_params.single_file
