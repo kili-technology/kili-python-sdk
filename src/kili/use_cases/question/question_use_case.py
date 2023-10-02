@@ -39,7 +39,7 @@ class QuestionUseCases(BaseUseCases):
                 cast(AssetExternalId, question.asset_external_id) for question in questions
             ]
 
-        asset_ids = AssetUseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(
+        asset_ids = AssetUseCasesUtils(self._kili_api_gateway).get_asset_ids_or_throw_error(
             asset_ids=asset_id_array, external_ids=external_id_array, project_id=project_id
         )
 
@@ -54,7 +54,7 @@ class QuestionUseCases(BaseUseCases):
         ]
         return [
             QuestionId(str(id_))
-            for id_ in self.kili_api_gateway.create_issues(
+            for id_ in self._kili_api_gateway.create_issues(
                 type_="QUESTION", issues=gateway_issues, description="Creating questions"
             )
         ]

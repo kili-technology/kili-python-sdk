@@ -35,14 +35,14 @@ class AssetUseCases(BaseUseCases):
             validate_category_search_query(filters.label_category_search)
 
         download_media_function, fields = get_download_assets_function(
-            self.kili_api_gateway,
+            self._kili_api_gateway,
             download_media,
             fields,
             ProjectId(filters.project_id),
             local_media_dir,
         )
         options = QueryOptions(skip=skip, first=first, disable_tqdm=disable_tqdm)
-        assets_gen = self.kili_api_gateway.list_assets(filters, fields, options)
+        assets_gen = self._kili_api_gateway.list_assets(filters, fields, options)
 
         if download_media_function is not None:
             # TODO: modify download_media function so it can take a generator of assets
@@ -53,7 +53,7 @@ class AssetUseCases(BaseUseCases):
 
         if label_output_format == "parsed_label":
             project = LabelParsingProject(
-                **self.kili_api_gateway.get_project(
+                **self._kili_api_gateway.get_project(
                     ProjectId(filters.project_id), ("jsonInterface", "inputType")
                 )
             )
@@ -65,4 +65,4 @@ class AssetUseCases(BaseUseCases):
         """Send a GraphQL request calling countAssets resolver."""
         if filters.label_category_search:
             validate_category_search_query(filters.label_category_search)
-        return self.kili_api_gateway.count_assets(filters)
+        return self._kili_api_gateway.count_assets(filters)

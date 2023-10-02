@@ -15,20 +15,20 @@ class TagUseCases(BaseUseCases):
 
     def get_tags_of_organization(self, fields: ListOrTuple[str]) -> List[Dict]:
         """Get tags of organization."""
-        return self.kili_api_gateway.list_tags_by_org(fields=fields)
+        return self._kili_api_gateway.list_tags_by_org(fields=fields)
 
     def get_tags_of_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> List[Dict]:
         """Get tags of project."""
-        return self.kili_api_gateway.list_tags_by_project(project_id=project_id, fields=fields)
+        return self._kili_api_gateway.list_tags_by_project(project_id=project_id, fields=fields)
 
     def tag_project(
         self, project_id: ProjectId, tag_ids: ListOrTuple[TagId], disable_tqdm: Optional[bool]
     ) -> List[TagId]:
         """Assign tags to a project."""
-        tags_of_orga = self.kili_api_gateway.list_tags_by_org(fields=("id",))
+        tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
         tags_of_orga_ids = [tag["id"] for tag in tags_of_orga]
 
-        tags_of_project = self.kili_api_gateway.list_tags_by_project(project_id, fields=("id",))
+        tags_of_project = self._kili_api_gateway.list_tags_by_project(project_id, fields=("id",))
         tags_of_project_ids = [tag["id"] for tag in tags_of_project]
 
         ret_tags = []
@@ -42,7 +42,7 @@ class TagUseCases(BaseUseCases):
                 ret_tags.append(tag_id)
             else:
                 ret_tags.append(
-                    self.kili_api_gateway.check_tag(project_id=project_id, tag_id=tag_id)
+                    self._kili_api_gateway.check_tag(project_id=project_id, tag_id=tag_id)
                 )
 
         return ret_tags
@@ -56,7 +56,7 @@ class TagUseCases(BaseUseCases):
         """Remove tags from a project."""
         tag_ids_of_project = {
             tag["id"]
-            for tag in self.kili_api_gateway.list_tags_by_project(
+            for tag in self._kili_api_gateway.list_tags_by_project(
                 project_id=ProjectId(project_id), fields=("id",)
             )
         }
@@ -68,7 +68,7 @@ class TagUseCases(BaseUseCases):
                 )
 
         return [
-            self.kili_api_gateway.uncheck_tag(
+            self._kili_api_gateway.uncheck_tag(
                 project_id=ProjectId(project_id), tag_id=TagId(tag_id)
             )
             for tag_id in tqdm(tag_ids, desc="Untagging project", disable=disable_tqdm)
@@ -76,7 +76,7 @@ class TagUseCases(BaseUseCases):
 
     def get_tag_ids_from_labels(self, labels: ListOrTuple[str]) -> List[TagId]:
         """Get tag ids from labels."""
-        tags_of_orga = self.kili_api_gateway.list_tags_by_org(fields=("id", "label"))
+        tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id", "label"))
 
         tag_label_to_id = defaultdict(list)
         for tag in tags_of_orga:
@@ -110,7 +110,7 @@ class TagUseCases(BaseUseCases):
         Returns:
             The updated tag.
         """
-        return self.kili_api_gateway.update_tag(tag_id=tag_id, label=new_tag_name)
+        return self._kili_api_gateway.update_tag(tag_id=tag_id, label=new_tag_name)
 
     def delete_tag(self, tag_id: TagId) -> bool:
         """Delete the given tag.
@@ -125,4 +125,4 @@ class TagUseCases(BaseUseCases):
         Returns:
             Whether the tag was successfully removed.
         """
-        return self.kili_api_gateway.delete_tag(tag_id=tag_id)
+        return self._kili_api_gateway.delete_tag(tag_id=tag_id)
