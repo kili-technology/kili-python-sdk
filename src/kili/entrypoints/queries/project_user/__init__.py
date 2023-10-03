@@ -1,5 +1,4 @@
 """Project user queries."""
-
 from typing import (
     Dict,
     Generator,
@@ -30,7 +29,7 @@ from kili.utils.logcontext import for_all_methods, log_call
 class QueriesProjectUser(BaseOperationEntrypointMixin):
     """Set of ProjectUser queries."""
 
-    # pylint: disable=too-many-arguments,redefined-builtin,invalid-name
+    # pylint: disable=too-many-arguments,redefined-builtin
 
     @overload
     def project_users(
