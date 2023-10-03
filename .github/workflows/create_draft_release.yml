@@ -48,7 +48,7 @@ jobs:
           source ./utils.sh   # to get the bump_version function
 
           # Get release version
-          release_version=$(get_sdk_version_from_setup_cfg)
+          release_version=$(get_sdk_version_from_pyproject_toml)
           echo "Release version: $release_version"
 
           # make sure release_version is greater than last github release
