@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from kili.client import Kili
+from kili.use_cases.api_key import ApiKeyUseCases
 
 
 class _FakeDatetime:
@@ -40,9 +41,8 @@ class _FakePlatform:
 
 
 def test_log_context(mocker, monkeypatch):
-    mocker.patch.object(Kili, "_is_api_key_valid")
-    mocker.patch.object(Kili, "_check_expiry_of_key_is_close")
-    mocker.patch.object(Kili, "get_user")
+    mocker.patch("kili.client.is_api_key_valid")
+    mocker.patch.object(ApiKeyUseCases, "check_expiry_of_key_is_close")
     mocker.patch("kili.client.GraphQLClient")
     mocker.patch("kili.utils.logcontext.datetime", _FakeDatetime())
     mocker.patch("kili.utils.logcontext.uuid", _FakeUUID())

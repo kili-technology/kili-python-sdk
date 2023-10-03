@@ -138,4 +138,15 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Build
-        run: mkdocs build
+        run: |
+          mkdocs build 2>&1 | tee doc-build.log
+
+      - name: Look for Warnings
+        run: |
+          if grep -q "WARNING" doc-build.log; then
+            echo $(grep "WARNING" doc-build.log)
+            echo "::error::Documentation build completed with warnings"
+            exit 1
+          else
+            echo "Documentation build completed successfully"
+          fi

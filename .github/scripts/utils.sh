@@ -1,7 +1,7 @@
 #!/bin/bash
 
 get_sdk_version_from_pyproject_toml() {
-    sdk_version=$(cat pyproject.toml | grep version | cut -d ' ' -f 3 | sed -r s,"^\"(.*)\"$","\1",)
+    sdk_version=$(cat pyproject.toml | grep "^version" | cut -d '"' -f 2)
     echo "$sdk_version"
 }
 

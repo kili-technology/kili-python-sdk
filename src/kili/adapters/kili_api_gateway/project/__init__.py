@@ -91,6 +91,13 @@ class ProjectOperationMixin(BaseOperationMixin):
             projects_gen = (load_project_json_fields(project, fields) for project in projects_gen)
         return projects_gen
 
+    def count_projects(self, project_filters: ProjectFilters) -> int:
+        """Return the number of projects."""
+        where = project_where_mapper(filters=project_filters)
+        variables = {"where": where}
+        result = self.graphql_client.execute(GQL_COUNT_PROJECTS, variables)
+        return result["data"]
+
     def update_properties_in_project(
         self,
         project_id: ProjectId,

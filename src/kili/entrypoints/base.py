@@ -8,6 +8,7 @@ from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import format_result
 from kili.domain.asset import AssetExternalId, AssetId
 from kili.domain.project import ProjectId
+from kili.domain.types import ListOrTuple
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 
 T = TypeVar("T")
@@ -34,7 +35,7 @@ class BaseOperationEntrypointMixin(abc.ABC):
         asset_ids: Optional[List[str]],
         external_ids: Optional[List[str]],
         project_id: Optional[str],
-    ) -> List[AssetId]:
+    ) -> ListOrTuple[AssetId]:
         # FIXME: temporary method to be removed once all methods have been
         # moved to the new architecture
         return AssetUseCasesUtils(self.kili_api_gateway).get_asset_ids_or_throw_error(

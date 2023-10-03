@@ -14,10 +14,14 @@ from typing import (
 
 from typeguard import typechecked
 
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.enums import ProjectType
 from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
+from kili.presentation.client.helpers.common_validators import (
+    disable_tqdm_if_as_generator,
+)
 from kili.use_cases.project.project import ProjectUseCases
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -237,6 +241,8 @@ class ProjectClientMethods(BaseClientMethods):
             TagUseCases(self.kili_api_gateway).get_tag_ids_from_labels(tags_in) if tags_in else None
         )
 
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+
         projects_gen = ProjectUseCases(self.kili_api_gateway).list_projects(
             ProjectFilters(
                 id=ProjectId(project_id) if project_id else None,
@@ -251,9 +257,7 @@ class ProjectClientMethods(BaseClientMethods):
                 tag_ids=tag_ids,
             ),
             fields,
-            first,
-            skip,
-            disable_tqdm,
+            options=QueryOptions(disable_tqdm=disable_tqdm, first=first, skip=skip),
         )
 
         if as_generator:
@@ -369,4 +373,48 @@ class ProjectClientMethods(BaseClientMethods):
             use_honeypot=use_honeypot,
             title=title,
             metadata_types=metadata_types,
+        )
+
+    @typechecked
+    # pylint: disable=too-many-arguments
+    def count_projects(
+        self,
+        project_id: Optional[str] = None,
+        search_query: Optional[str] = None,
+        should_relaunch_kpi_computation: Optional[bool] = None,
+        updated_at_gte: Optional[str] = None,
+        updated_at_lte: Optional[str] = None,
+        archived: Optional[bool] = None,
+    ) -> int:
+        # pylint: disable=line-too-long
+        """Count the number of projects with a search_query.
+
+        Args:
+            project_id: Select a specific project through its project_id.
+            search_query: Returned projects with a title or a description matching this [PostgreSQL ILIKE](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE) pattern.
+            should_relaunch_kpi_computation: Technical field, added to indicate changes in honeypot
+                or consensus settings
+            updated_at_gte: Returned projects should have a label
+                whose update date is greater
+                or equal to this date.
+            updated_at_lte: Returned projects should have a label
+                whose update date is lower or equal to this date.
+            archived: If `True`, only archived projects are returned, if `False`, only active projects are returned.
+                None disable this filter.
+
+        !!! info "Dates format"
+            Date strings should have format: "YYYY-MM-DD"
+
+        Returns:
+            The number of projects with the parameters provided
+        """
+        return ProjectUseCases(self.kili_api_gateway).count_projects(
+            ProjectFilters(
+                id=ProjectId(project_id) if project_id else None,
+                search_query=search_query,
+                should_relaunch_kpi_computation=should_relaunch_kpi_computation,
+                updated_at_gte=updated_at_gte,
+                updated_at_lte=updated_at_lte,
+                archived=archived,
+            )
         )

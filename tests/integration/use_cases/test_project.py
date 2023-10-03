@@ -1,6 +1,7 @@
 from types import GeneratorType
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.project.types import ProjectDataKiliAPIGatewayInput
 from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
@@ -52,9 +53,7 @@ def test_when_i_query_projects_i_get_a_generator_of_projects(kili_api_gateway: K
             tag_ids=None,
         ),
         fields=("id", "title", "jsonInterface", "inputType"),
-        first=None,
-        skip=0,
-        disable_tqdm=None,
+        options=QueryOptions(disable_tqdm=None, first=None, skip=0),
     )
 
     # Then

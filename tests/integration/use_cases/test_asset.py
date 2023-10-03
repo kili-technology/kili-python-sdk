@@ -1,4 +1,5 @@
 from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.asset import AssetFilters
 from kili.use_cases.asset import AssetUseCases
 from kili.use_cases.asset.media_downloader import MediaDownloader
@@ -20,12 +21,10 @@ def test_given_query_parameters_I_can_query_assets(kili_api_gateway: KiliAPIGate
     asset_gen = asset_use_cases.list_assets(
         filters,
         fields,
-        first=None,
-        skip=0,
-        disable_tqdm=False,
         download_media=False,
         local_media_dir=None,
         label_output_format="dict",
+        options=QueryOptions(disable_tqdm=False, first=None, skip=0),
     )
 
     # then
@@ -90,12 +89,10 @@ def test_given_query_parameters_I_can_query_assets_and_get_their_labels_parsed(
     asset_gen = asset_use_cases.list_assets(
         filters,
         fields,
-        first=None,
-        skip=0,
-        disable_tqdm=False,
         download_media=False,
         local_media_dir=None,
         label_output_format="parsed_label",
+        options=QueryOptions(first=None, skip=0, disable_tqdm=False),
     )
 
     # then
@@ -125,12 +122,10 @@ def test_given_query_parameters_I_can_query_assets_and_download_their_media(
     asset_use_cases.list_assets(
         filters,
         fields,
-        first=None,
-        skip=0,
-        disable_tqdm=False,
         download_media=True,
         local_media_dir="temp_dir",
         label_output_format="dict",
+        options=QueryOptions(first=None, skip=0, disable_tqdm=False),
     )
 
     # then
