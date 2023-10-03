@@ -144,7 +144,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
                 signed_urls,
                 data_array,
                 content_type_array,
-                repeat(True),
+                repeat(self.auth.ssl_verify),
             )
         cleaned_urls = (bucket.clean_signed_url(url, self.auth.api_endpoint) for url in url_gen)
         return AssetLike(**{**asset, "json_content": list(cleaned_urls)})

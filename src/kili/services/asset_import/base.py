@@ -326,7 +326,7 @@ class ContentBatchImporter(BaseBatchImporter):
                 signed_urls,
                 data_array,
                 content_type_array,
-                repeat(True),
+                repeat(self.auth.ssl_verify),
             )
         return [
             AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)  # noqa
@@ -369,7 +369,7 @@ class JsonContentBatchImporter(BaseBatchImporter):
                 signed_urls,
                 json_content_array,
                 ["text/plain"] * len(assets),
-                repeat(True),
+                repeat(self.auth.ssl_verify),
             )
         return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]
 
