@@ -16,7 +16,7 @@ ComplianceTag = Literal["PHI", "PII"]
 class ProjectFilters:
     """Project filters for running a project search."""
 
-    id: Optional[ProjectId]  # pylint: disable=invalid-name
+    id: Optional[ProjectId]
     archived: Optional[bool] = None
     search_query: Optional[str] = None
     should_relaunch_kpi_computation: Optional[bool] = None
