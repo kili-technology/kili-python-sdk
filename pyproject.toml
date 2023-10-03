@@ -1,3 +1,96 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[project]
+name = "kili"
+version = "2.147.0"
+description = "Python client for Kili Technology labeling tool"
+readme = "README.md"
+authors = [{ name = "Kili Technology", email = "contact@kili-technology.com" }]
+license = { file = "LICENSE.txt" }
+requires-python = ">=3.8"
+classifiers = [
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python",
+  "Topic :: Software Development",
+  "Topic :: Scientific/Engineering",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX",
+  "Operating System :: Unix",
+  "Operating System :: MacOS",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "pandas >= 1.0.0, < 3.0.0",
+  "click >= 8.0.0, < 9.0.0",
+  "requests >= 2.0.0, < 3.0.0",
+  "tabulate >= 0.9.0, < 0.10.0",
+  "tenacity >= 8.0.0, < 9.0.0",
+  "tqdm >= 4.0.0, < 5.0.0",
+  "typeguard >= 4, < 5",
+  "typing-extensions >= 4.1.0, < 5.0.0",
+  "pyparsing >= 3.0.0, < 4.0.0",
+  "websocket-client >= 1.0.0, < 2.0.0",
+  "pyyaml >= 6.0, < 7.0",
+  "Pillow >= 9.0.0, < 10.1.0",
+  "cuid >= 0.4, < 0.5",
+  "urllib3 >= 1.26, < 3",
+  "ffmpeg-python >= 0.2.0, < 0.3.0",
+  "gql[requests,websockets] >= 3.5.0b5, < 4.0.0",
+  "filelock >= 3.0.0, < 4.0.0",
+  "pip-system-certs >= 4.0.0, < 5.0.0; platform_system=='Windows'",
+  "pyrate-limiter >= 2, < 3",
+]
+urls = { homepage = "https://github.com/kili-technology/kili-python-sdk" }
+
+[project.scripts]
+kili = "kili.entrypoints.cli:main"
+
+
+[project.optional-dependencies]
+dev = [
+  # release
+  "bump2version",
+  # tests
+  "pytest",
+  "pytest-mock",
+  "pytest-cov",
+  "pytest-xdist[psutil]",
+  "pytest-timeout",
+  # documentation
+  "mkdocs",
+  "mkdocs-material",
+  "mkdocstrings",
+  "mkdocstrings-python-legacy",
+  "mkdocs-click",
+  "mike",
+  "pymdown-extensions",
+  # linting
+  "black",
+  "pre-commit >= 3.3.0, < 4.0.0",
+  "pylint == 2.17.7",
+  "pyright == 1.1.329",
+  # notebooks tests
+  "nbformat",
+  "nbconvert",
+  "ipykernel",
+  # profiling
+  "pyinstrument",
+  # other optional dependencies
+  "opencv-python >= 4.0.0, < 5.0.0",
+  "azure-storage-blob >= 12.0.0, < 13.0.0",
+]
+image-utils = ["opencv-python >= 4.0.0, < 5.0.0"]
+azure = ["azure-storage-blob >= 12.0.0, < 13.0.0"]
+
 [tool.black]
 line-length = 100
 preview = true
@@ -63,5 +156,6 @@ ignore = [
 [tool.ruff.pydocstyle]
 convention = "google"
 
-[tool.pytest.ini_options]
-pythonpath = ["src", "."]
+[tool.pytest]
+ini_options = { pythonpath = ["src", "."] }
+aliases = ["test = pytest"]
