@@ -1,7 +1,7 @@
 #!/bin/bash
 
-get_sdk_version_from_setup_cfg() {
-    sdk_version=$(cat setup.cfg | grep current_version | cut -d ' ' -f 3)
+get_sdk_version_from_pyproject_toml() {
+    sdk_version=$(cat pyproject.toml | grep "^version" | cut -d '"' -f 2)
     echo "$sdk_version"
 }
 
@@ -11,9 +11,10 @@ bump_version() {
     new_version=$(bump2version \
         --list \
         --"$1" \
-        --current-version "$(get_sdk_version_from_setup_cfg)" \
+        --current-version "$(get_sdk_version_from_pyproject_toml)" \
         "$2" \
         src/kili/__init__.py \
+        pyproject.toml \
         | grep new_version | sed -r s,"^.*=",,)
 
     echo "$new_version"

@@ -25,11 +25,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install setuptools twine wheel
+          pip install build twine
 
       - name: Build
         run: |
-          python setup.py sdist bdist_wheel
+          python -m build
 
       - name: Test the Build
         run: |
@@ -95,7 +95,7 @@ jobs:
           curl https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/.github/scripts/utils.sh --output utils.sh
           source ./utils.sh   # to get the bump_version function
 
-          sdk_version=$(get_sdk_version_from_setup_cfg)
+          sdk_version=$(get_sdk_version_from_pyproject_toml)
 
           # create a branch to merge the release branch and main
           git checkout -b merge_release/$sdk_version
