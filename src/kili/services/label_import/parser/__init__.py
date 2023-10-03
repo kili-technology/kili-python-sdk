@@ -53,9 +53,9 @@ class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-me
     @staticmethod
     def _parse(row) -> Tuple[List[List[float]], int, Optional[float]]:
         try:
-            class_id, x, y, width, height, proba = row  # pylint: disable=invalid-name
+            class_id, x, y, width, height, proba = row
         except ValueError:
-            class_id, x, y, width, height = row  # pylint: disable=invalid-name
+            class_id, x, y, width, height = row
             proba = None
         _class_id = int(class_id)
         half_width = float(width) / 2
