@@ -1,0 +1,24 @@
+"""GraphQL payload data mappers for cloud storage operations."""
+
+from typing import Dict
+
+from kili.domain.cloud_storage import DataConnectionFilters, DataIntegrationFilters
+
+
+def data_integration_where_mapper(filters: DataIntegrationFilters) -> Dict:
+    """Build the GraphQL DataIntegrationWhere variable to be sent in an operation."""
+    return {
+        "status": filters.status,
+        "id": filters.id,
+        "name": filters.name,
+        "organizationId": filters.organization_id,
+        "platform": filters.platform,
+    }
+
+
+def data_connection_where_mapper(filters: DataConnectionFilters) -> Dict:
+    """Build the GraphQL DataConnectionsWhere variable to be sent in an operation."""
+    return {
+        "projectId": filters.project_id,
+        "integrationId": filters.integration_id,
+    }

@@ -4,15 +4,6 @@ From https://docs.kili-technology.com/reference/graphql-api#enums.
 """
 from typing import Literal
 
-DataIntegrationPlatform = Literal["AWS", "Azure", "GCP"]
-
-
-DataIntegrationStatus = Literal["CONNECTEDDISCONNECTEDCHECKING"]
-
-
-DataIntegrationType = Literal["REMOTE_STORAGE"]
-
-
 ExportType = Literal["LATESTNORMAL"]
 
 

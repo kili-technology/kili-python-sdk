@@ -9,10 +9,6 @@ from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_exponential
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.graphql.operations.data_connection.queries import (
-    DataConnectionIdWhere,
-    DataConnectionQuery,
-)
 from kili.core.helpers import format_result
 from kili.domain.asset import AssetFilters
 from kili.domain.types import ListOrTuple

@@ -14,10 +14,7 @@ from tenacity.wait import wait_random
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.graphql.operations.data_connection.queries import (
-    DataConnectionsQuery,
-    DataConnectionsWhere,
-)
+from kili.domain.cloud_storage import DataConnectionFilters
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 
@@ -46,10 +43,8 @@ def get_download_assets_function(
 
     # We need to query the data connections to know if the assets are hosted in a cloud storage
     # If so, we remove the fields "content" and "jsonContent" from the query
-    data_connections_gen = DataConnectionsQuery(
-        kili_api_gateway.graphql_client, kili_api_gateway.http_client
-    )(
-        where=DataConnectionsWhere(project_id=project_id),
+    data_connections_gen = kili_api_gateway.list_data_connections(
+        DataConnectionFilters(project_id=project_id, integration_id=None),
         fields=("id",),
         options=QueryOptions(disable_tqdm=True, first=1, skip=0),
     )
@@ -220,7 +215,7 @@ def download_file(url: str, external_id: str, local_dir_path: Path, http_client:
     if not local_path.is_file():
         with http_client.get(url, stream=True, timeout=20) as response:
             response.raise_for_status()
-            with open(local_path, "wb") as file:
+            with local_path.open("wb") as file:
                 for chunk in response.iter_content(chunk_size=1024 * 1024):
                     file.write(chunk)
     return str(local_path)
