@@ -12,7 +12,6 @@ from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.core.graphql.operations.user.queries import GQL_ME
 from kili.entrypoints.mutations.asset import MutationsAsset
-from kili.entrypoints.mutations.data_connection import MutationsDataConnection
 from kili.entrypoints.mutations.issue import MutationsIssue
 from kili.entrypoints.mutations.label import MutationsLabel
 from kili.entrypoints.mutations.notification import MutationsNotification
@@ -53,7 +52,6 @@ logging.getLogger("urllib3.connectionpool").addFilter(FilterPoolFullWarning())
 
 class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsAsset,
-    MutationsDataConnection,
     MutationsIssue,
     MutationsLabel,
     MutationsNotification,

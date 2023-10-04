@@ -4,7 +4,10 @@ from typing import Dict
 
 from kili.domain.cloud_storage import DataConnectionFilters, DataIntegrationFilters
 
-from .types import AddDataConnectionKiliAPIGatewayInput
+from .types import (
+    AddDataConnectionKiliAPIGatewayInput,
+    DataConnectionComputeDifferencesKiliAPIGatewayInput,
+)
 
 
 def data_integration_where_mapper(filters: DataIntegrationFilters) -> Dict:
@@ -34,4 +37,14 @@ def add_data_connection_data_mapper(data: AddDataConnectionKiliAPIGatewayInput) 
         "isChecking": data.is_checking,
         "lastChecked": data.last_checked.isoformat(sep="T", timespec="milliseconds") + "Z",
         "selectedFolders": data.selected_folders,
+    }
+
+
+def compute_data_connection_difference_data_mapper(
+    data: DataConnectionComputeDifferencesKiliAPIGatewayInput,
+) -> Dict:
+    """Build the GraphQL DataConnectionComputeDifferencesPayload variable."""
+    return {
+        "blobPaths": data.blob_paths,
+        "warnings": data.warnings,
     }

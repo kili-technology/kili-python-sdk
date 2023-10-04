@@ -16,3 +16,11 @@ class AddDataConnectionKiliAPIGatewayInput:
     last_checked: datetime
     project_id: ProjectId
     selected_folders: Optional[List[str]]
+
+
+@dataclass
+class DataConnectionComputeDifferencesKiliAPIGatewayInput:
+    """Data connection compute differences input data for Kili API Gateway."""
+
+    blob_paths: List[str]
+    warnings: List[Optional[str]]

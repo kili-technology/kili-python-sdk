@@ -1,5 +1,6 @@
 """Cloud Storage domain."""
 from dataclasses import dataclass
+from enum import Enum
 from typing import Literal, NewType, Optional
 
 from .organization import OrganizationId
@@ -12,6 +13,13 @@ DataIntegrationPlatform = Literal["AWS", "Azure", "GCP"]
 
 
 DataIntegrationStatus = Literal["CONNECTED", "DISCONNECTED", "CHECKING"]
+
+
+class DataDifferenceType(Enum, str):
+    """Data difference type."""
+
+    ADD = "ADD"
+    REMOVE = "REMOVE"
 
 
 @dataclass

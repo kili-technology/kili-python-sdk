@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Cloud Storage related operations."""
 
-from typing import Dict, Generator
+from typing import Dict, Generator, Optional
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -11,23 +11,30 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 from kili.domain.cloud_storage import (
     DataConnectionFilters,
     DataConnectionId,
+    DataDifferenceType,
     DataIntegrationFilters,
 )
 from kili.domain.types import ListOrTuple
 
 from .mappers import (
     add_data_connection_data_mapper,
+    compute_data_connection_difference_data_mapper,
     data_connection_where_mapper,
     data_integration_where_mapper,
 )
 from .operations import (
     GQL_COUNT_DATA_INTEGRATIONS,
-    get_add_data_connection_query,
+    get_add_data_connection_mutation,
+    get_compute_data_connection_differences_mutation,
     get_data_connection_query,
     get_list_data_connections_query,
     get_list_data_integrations_query,
+    get_validate_data_connection_differences_mutation,
 )
-from .types import AddDataConnectionKiliAPIGatewayInput
+from .types import (
+    AddDataConnectionKiliAPIGatewayInput,
+    DataConnectionComputeDifferencesKiliAPIGatewayInput,
+)
 
 
 class CloudStorageOperationMixin(BaseOperationMixin):
@@ -84,7 +91,35 @@ class CloudStorageOperationMixin(BaseOperationMixin):
     ) -> Dict:
         """Add data connection to a project."""
         fragment = fragment_builder(fields)
-        query = get_add_data_connection_query(fragment)
+        query = get_add_data_connection_mutation(fragment)
         variables = {"data": add_data_connection_data_mapper(data)}
+        result = self.graphql_client.execute(query, variables)
+        return result["data"]
+
+    def compute_data_connection_differences(
+        self,
+        data_connection_id: DataConnectionId,
+        data: Optional[DataConnectionComputeDifferencesKiliAPIGatewayInput],
+        fields: ListOrTuple[str],
+    ) -> Dict:
+        """Compute data connection differences."""
+        fragment = fragment_builder(fields)
+        query = get_compute_data_connection_differences_mutation(fragment)
+        variables = {"where": {"id": data_connection_id}}
+        if data is not None:
+            variables["data"] = compute_data_connection_difference_data_mapper(data)
+        result = self.graphql_client.execute(query, variables)
+        return result["data"]
+
+    def validate_data_connection_differences(
+        self,
+        data_connection_id: DataConnectionId,
+        data_difference_type: DataDifferenceType,
+        fields: ListOrTuple[str],
+    ) -> Dict:
+        """Validate data connection differences."""
+        fragment = fragment_builder(fields)
+        query = get_validate_data_connection_differences_mutation(fragment)
+        variables = {"where": {"connectionId": data_connection_id, "type": data_difference_type}}
         result = self.graphql_client.execute(query, variables)
         return result["data"]

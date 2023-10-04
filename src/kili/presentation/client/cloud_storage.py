@@ -1,5 +1,6 @@
 """Client presentation methods for cloud storage."""
 
+import logging
 from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
@@ -8,6 +9,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.cloud_storage import (
     DataConnectionFilters,
     DataConnectionId,
+    DataDifferenceType,
     DataIntegrationFilters,
     DataIntegrationId,
     DataIntegrationPlatform,
@@ -23,6 +25,10 @@ from kili.use_cases.cloud_storage import CloudStorageUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .base import BaseClientMethods
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler())
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -312,7 +318,9 @@ class CloudStorageClientMethods(BaseClientMethods):
         )["id"]
 
         # We trigger data difference computation (same behavior as in the frontend)
-        data_connection_service.compute_differences(self, data_connection_id)
+        cloud_storage_use_cases.compute_differences(
+            data_connection_id, fields=("id",), wait_until_done=False
+        )
 
         return {"id": data_connection_id}
 
@@ -341,6 +349,74 @@ class CloudStorageClientMethods(BaseClientMethods):
         Returns:
             A dict with the cloud storage connection Id.
         """
-        return CloudStorageUseCases(self.kili_api_gateway).synchronize_data_connection(
-            self, cloud_storage_connection_id, delete_extraneous_files, dry_run
+        data_connection_id = DataConnectionId(cloud_storage_connection_id)
+
+        logger.info("Synchronizing data connection: %s", data_connection_id)
+
+        cloud_storage_use_cases = CloudStorageUseCases(self.kili_api_gateway)
+
+        cloud_storage_use_cases.compute_differences(
+            data_connection_id, fields=("id",), wait_until_done=True
+        )
+
+        data_connection = cloud_storage_use_cases.get_data_connection(
+            data_connection_id,
+            fields=(
+                "id",
+                "dataDifferencesSummary.added",
+                "dataDifferencesSummary.removed",
+                "dataDifferencesSummary.total",
+                "isChecking",
+                "numberOfAssets",
+                "projectId",
+            ),
+        )
+        if data_connection["isChecking"]:
+            raise ValueError(f"Data connection should not be checking: {data_connection}")
+
+        added = data_connection["dataDifferencesSummary"]["added"]
+        removed = data_connection["dataDifferencesSummary"]["removed"]
+        total = data_connection["dataDifferencesSummary"]["total"]
+        nb_assets = data_connection["numberOfAssets"]
+
+        logger.info("Currently %d asset(s) imported from the data connection.", nb_assets)
+
+        if total == 0:
+            logger.info("No differences found. Nothing to synchronize.")
+            return data_connection
+
+        logger.info(
+            "Found %d difference(s): %d asset(s) to add, %d asset(s) to remove.",
+            total,
+            added,
+            removed,
+        )
+
+        if dry_run:
+            # pylint: disable=unnecessary-lambda-assignment
+            validate_data_differences_func = lambda *args, **kwargs: None  # noqa: ARG005
+            logger.info("Dry run: no data will be added or removed.")
+        else:
+            validate_data_differences_func = cloud_storage_use_cases.validate_data_differences
+
+        if removed > 0:
+            if delete_extraneous_files:
+                validate_data_differences_func(
+                    DataDifferenceType.REMOVE, data_connection_id, wait_until_done=True
+                )
+                logger.info("Removed %d extraneous file(s).", removed)
+            else:
+                logger.info(
+                    "Use delete_extraneous_files=True to remove %d extraneous file(s).",
+                    removed,
+                )
+
+        if added > 0:
+            validate_data_differences_func(
+                DataDifferenceType.ADD, data_connection_id, wait_until_done=True
+            )
+            logger.info("Added %d file(s).", added)
+
+        return cloud_storage_use_cases.get_data_connection(
+            data_connection_id=data_connection_id, fields=("numberOfAssets", "projectId")
         )
