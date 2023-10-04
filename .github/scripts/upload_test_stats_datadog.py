@@ -18,11 +18,12 @@ from tqdm import tqdm
 # https://docs.datadoghq.com/developers/guide/what-best-practices-are-recommended-for-naming-metrics-and-tags/#rules-and-best-practices-for-naming-metrics
 # map the test name to the metrics name on datadog
 TESTS_TO_PLOT_ON_DATADOG_MAP = {
-    "tests/e2e/test_notebooks.py::test_all_recipes[tests/e2e/plugin_workflow.ipynb]": (
-        "plugin_workflow_ipynb"
-    ),
     "tests/e2e/test_notebooks.py::test_all_recipes[tests/e2e/import_predictions.ipynb]": (
         "import_predictions_ipynb"
+    ),
+    "tests/e2e/test_copy_project.py::test_copy_project_e2e_video": "copy_project_e2e_video",
+    "tests/e2e/test_copy_project.py::test_copy_project_e2e_with_ocr_metadata": (
+        "copy_project_e2e_with_ocr_metadata"
     ),
 }
 
@@ -37,9 +38,6 @@ HEADERS = {
 BATCH_SIZE = 100
 
 url = f"https://api.github.com/repos/{OWNER}/{REPO}/actions/workflows/{WORKFLOW}/runs?per_page={BATCH_SIZE}"
-
-
-PYTEST_TEST_DURATIONS_REGEX_PATTERN = r"=+ slowest .*durations =+"
 
 
 def get_and_dump_data() -> None:
@@ -118,7 +116,7 @@ def parse_workflow_runs(workflow_runs: List[Dict]):
 
                 with z.open(filename) as f:
                     full_logs = f.read().decode("utf-8")
-                    if re.search(PYTEST_TEST_DURATIONS_REGEX_PATTERN, full_logs):
+                    if re.search(r"=+ slowest .*durations =+", full_logs):
                         run_id = run_json["id"]
                         test_durations.extend(get_test_durations_from_logs(full_logs, run_id))
                         git_ref = get_git_ref_from_logs(full_logs)
@@ -170,37 +168,32 @@ def get_test_durations_from_logs(logs: str, run_id: str) -> List[TestDuration]:
     test_name_to_infos = defaultdict(list)
 
     # find all matches
-    # Twice, one for e2e tests, the other one for notebook tests.
-    for match in re.finditer(PYTEST_TEST_DURATIONS_REGEX_PATTERN, logs):
-        assert match is not None
-        index = match.start()
-        lines = logs[index:].splitlines()
-        for line in lines:
-            if "FAILED" in line or "ERROR" in line or "PASSED" in line:
+    for line in logs_split:
+        if any(x in line for x in ("FAILED", "ERROR", "PASSED", "SKIPPED")):
+            continue
+        if "s " in line and "tests/e2e" in line and ("call" in line or "setup" in line):
+            split_ = line.split(" ")
+            split_ = [s for s in split_ if s]
+            try:
+                _, duration, call_or_setup, test_name = split_
+            except ValueError:
+                print("Cannot parse line: ", line)
                 continue
-            if "test" in line and ("call" in line or "setup" in line):
-                split_ = line.split(" ")
-                split_ = [s for s in split_ if s]
-                try:
-                    _, duration, call_or_setup, test_name = split_
-                except ValueError:
-                    print("Cannot parse line: ", line)
-                    continue
 
-                lines_matching_test_name = [
-                    l for l in logs_split if f" {test_name} \x1b[32mPASSED\x1b[0m" in l
-                ]
-                if len(lines_matching_test_name) == 0:
-                    # print("Cannot find test finished date for test: ", test_name)
-                    continue
-                if len(lines_matching_test_name) > 1:
-                    raise ValueError(f"Found too many matches: {lines_matching_test_name}")
+            lines_matching_test_name = [
+                l for l in logs_split if f" {test_name} \x1b[32mPASSED\x1b[0m" in l
+            ]
+            if len(lines_matching_test_name) == 0:
+                # print("Cannot find test finished date for test: ", test_name)
+                continue
+            if len(lines_matching_test_name) > 1:
+                raise ValueError(f"Found too many matches: {lines_matching_test_name}")
 
-                date = datetime.strptime(
-                    lines_matching_test_name[0].split(" ")[0][:19], r"%Y-%m-%dT%H:%M:%S"
-                )
+            date = datetime.strptime(
+                lines_matching_test_name[0].split(" ")[0][:19], r"%Y-%m-%dT%H:%M:%S"
+            )
 
-                test_name_to_infos[test_name].append((date, call_or_setup, duration))
+            test_name_to_infos[test_name].append((date, call_or_setup, duration))
 
     return [
         TestDuration(
@@ -300,7 +293,7 @@ def upload_to_datadog(df: pd.DataFrame) -> None:
 
         short_test_name = TESTS_TO_PLOT_ON_DATADOG_MAP[test_name]
         points = sorted(zip(timestamps, durations), key=lambda x: x[0])
-        datadog_metric_name = f"sdk.tests.{short_test_name}.duration"
+        datadog_metric_name = f"sdk.tests.{short_test_name}.duration_seconds"
 
         print("\nSending metric to datadog: ", datadog_metric_name)
         print(points)
