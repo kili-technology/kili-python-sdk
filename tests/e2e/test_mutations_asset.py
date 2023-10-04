@@ -146,3 +146,49 @@ def test_update_properties_in_assets_external_id(kili, src_project):
 
     assert [asset["externalId"] for asset in assets_new] == ["1", "2", "3"]
     assert [asset["priority"] for asset in assets_new] == [1, 0, 0]
+
+
+@pytest.fixture()
+def src_project_no_assets(kili: Kili):
+    interface = {
+        "jobs": {
+            "DETECTION": {
+                "mlTask": "OBJECT_DETECTION",
+                "tools": ["rectangle"],
+                "instruction": "Is there a defect ? Where ? What kind ?",
+                "required": 0,
+                "isChild": False,
+                "content": {
+                    "categories": {
+                        "DEFECT_CLASS_1": {"name": "defect of class 1"},
+                        "DEFECT_CLASS_2": {"name": "defect of class 2"},
+                        "DEFECT_CLASS_3": {"name": "defect of class 3"},
+                        "DEFECT_CLASS_4": {"name": "defect of class 4"},
+                    },
+                    "input": "radio",
+                },
+            }
+        }
+    }
+
+    project = kili.create_project(
+        input_type="IMAGE",
+        json_interface=interface,
+        title="e2e test_add_many_assets",
+    )
+
+    yield project["id"]
+
+    kili.delete_project(project["id"])
+
+
+def test_append_many_assets(kili: Kili, src_project_no_assets: str):
+    NB_ASSETS = 500
+    img_url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
+
+    kili.append_many_to_dataset(
+        project_id=src_project_no_assets,
+        content_array=[img_url] * NB_ASSETS,
+    )
+
+    assert kili.count_assets(src_project_no_assets) == NB_ASSETS

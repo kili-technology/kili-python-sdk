@@ -6,6 +6,20 @@ from kili.client import Kili
 
 
 @pytest.fixture()
+def project_name(kili: Kili):
+    project_name = "e2e test_create_project " + str(uuid.uuid4())
+
+    yield project_name
+
+    project_id = kili.projects(search_query=f"%{project_name}%", first=1)[0]["id"]
+    kili.delete_project(project_id)
+
+
+def test_create_project(project_name: str, kili: Kili):
+    _ = kili.create_project(input_type="TEXT", json_interface={}, title=project_name)
+
+
+@pytest.fixture()
 def projects_uuid(kili: Kili):
     projects_uuid = str(uuid.uuid4())
     proj_id_archived = kili.create_project(

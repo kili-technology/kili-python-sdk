@@ -92,3 +92,51 @@ def test_e2e_append_labels_overwrite(kili: Kili, project: Dict):
     ]
     for label_id in old_pred_ids_asset_1:
         assert label_id not in new_label_ids
+
+
+@pytest.fixture()
+def project_and_asset_id(kili: Kili):
+    interface = {
+        "jobs": {
+            "CLASSIFICATION_JOB": {
+                "content": {"categories": {"A": {"children": [], "name": "A"}}, "input": "radio"},
+                "instruction": "classif",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": False,
+            }
+        }
+    }
+
+    project = kili.create_project(
+        input_type="TEXT",
+        json_interface=interface,
+        title="test_append_many_labels",
+    )
+
+    kili.append_many_to_dataset(
+        project_id=project["id"],
+        content_array=["asset_content_1"],
+        external_id_array=["1"],
+    )
+
+    asset_id = kili.assets(project_id=project["id"], fields=("id",))[0]
+
+    yield project["id"], asset_id["id"]
+
+    kili.delete_project(project["id"])
+
+
+def test_append_many_labels(kili: Kili, project_and_asset_id):
+    project_id, asset_id = project_and_asset_id
+
+    N_LABELS = 1000
+
+    kili.append_labels(
+        project_id=project_id,
+        asset_id_array=[asset_id] * N_LABELS,
+        json_response_array=[{"CLASSIFICATION_JOB": {"categories": [{"name": "A"}]}}] * N_LABELS,
+        label_type="DEFAULT",
+    )
+
+    assert kili.count_labels(project_id=project_id) == N_LABELS

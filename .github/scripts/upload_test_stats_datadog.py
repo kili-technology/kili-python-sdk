@@ -25,6 +25,9 @@ TESTS_TO_PLOT_ON_DATADOG_MAP = {
     "tests/e2e/test_copy_project.py::test_copy_project_e2e_with_ocr_metadata": (
         "copy_project_e2e_with_ocr_metadata"
     ),
+    "tests/e2e/test_projects.py::test_create_project": "create_project",
+    "tests/e2e/test_mutations_label.py::test_append_many_labels": "append_many_labels",
+    "tests/e2e/test_mutations_asset.py::test_append_many_assets": "append_many_assets",
 }
 
 OWNER = "kili-technology"
