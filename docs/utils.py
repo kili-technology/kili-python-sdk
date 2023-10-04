@@ -257,7 +257,7 @@ def check_notebook_tested(ipynb_filepath: Path):
     if f"recipes/{ipynb_filepath.name}" in IGNORED_NOTEBOOKS:
         return
 
-    with open("tests/test_notebooks.py", encoding="utf-8") as file:
+    with open("tests/e2e/test_notebooks.py", encoding="utf-8") as file:
         test_notebooks_module_str = file.read()
 
     if f"recipes/{ipynb_filepath.name}" not in test_notebooks_module_str:
@@ -276,7 +276,7 @@ def check_colab_link_in_notebook(ipynb_filepath: Path):
         notebook_str = file.read()
     # pylint: disable=line-too-long
     if (
-        f"https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/master/recipes/{ipynb_filepath.name}"
+        f"https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/main/recipes/{ipynb_filepath.name}"
         not in notebook_str
     ):
         raise ColabLinkMissingError(f"Colab link not found in {ipynb_filepath.name}.")
