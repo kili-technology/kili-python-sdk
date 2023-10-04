@@ -40,6 +40,7 @@ from kili.core.graphql.clientnames import GraphQLClientName
 from kili.utils.logcontext import LogContext
 
 gql_requests_logger.setLevel(logging.WARNING)
+
 # _limiter and _execute_lock must be kept at module-level
 # they need to be shared between all instances of Kili client within the same process
 
@@ -286,6 +287,7 @@ class GraphQLClient:
                 match=r'.*Field "(\w+)" is not defined by type "(\w+)".*'
             ),
             retry_if_exception_message(match=r".*Invalid request made to Flagsmith API.*"),
+            retry_if_exception_message(match=r".*Failed to fetch data connection.*"),
         ),
         stop=stop_after_delay(3 * 60),
         wait=wait_exponential(multiplier=0.5, min=1, max=10),
