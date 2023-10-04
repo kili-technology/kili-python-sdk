@@ -18,11 +18,11 @@ DataIntegrationStatus = Literal["CONNECTED", "DISCONNECTED", "CHECKING"]
 class DataIntegrationFilters:
     """Data Integration filters."""
 
-    status: Optional[DataIntegrationStatus]
     id: Optional[DataIntegrationId]
-    name: Optional[str]
-    organization_id: Optional[OrganizationId]
-    platform: Optional[DataIntegrationPlatform]
+    status: Optional[DataIntegrationStatus] = None
+    name: Optional[str] = None
+    organization_id: Optional[OrganizationId] = None
+    platform: Optional[DataIntegrationPlatform] = None
 
 
 @dataclass

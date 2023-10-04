@@ -4,6 +4,8 @@ from typing import Dict
 
 from kili.domain.cloud_storage import DataConnectionFilters, DataIntegrationFilters
 
+from .types import AddDataConnectionKiliAPIGatewayInput
+
 
 def data_integration_where_mapper(filters: DataIntegrationFilters) -> Dict:
     """Build the GraphQL DataIntegrationWhere variable to be sent in an operation."""
@@ -21,4 +23,15 @@ def data_connection_where_mapper(filters: DataConnectionFilters) -> Dict:
     return {
         "projectId": filters.project_id,
         "integrationId": filters.integration_id,
+    }
+
+
+def add_data_connection_data_mapper(data: AddDataConnectionKiliAPIGatewayInput) -> Dict:
+    """Build the GraphQL DataConnectionInput variable to be sent in an operation."""
+    return {
+        "projectId": data.project_id,
+        "integrationId": data.integration_id,
+        "isChecking": data.is_checking,
+        "lastChecked": data.last_checked.isoformat(sep="T", timespec="milliseconds") + "Z",
+        "selectedFolders": data.selected_folders,
     }

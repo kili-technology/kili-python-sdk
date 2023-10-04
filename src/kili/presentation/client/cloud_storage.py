@@ -273,3 +273,74 @@ class CloudStorageClientMethods(BaseClientMethods):
                 ),
             )
         )
+
+    @typechecked
+    def add_cloud_storage_connection(
+        self,
+        project_id: str,
+        cloud_storage_integration_id: str,
+        selected_folders: Optional[List[str]] = None,
+    ) -> Dict:
+        """Connect a cloud storage to a project.
+
+        Args:
+            project_id: Id of the project.
+            cloud_storage_integration_id: Id of the cloud storage integration.
+            selected_folders: List of folders of the data integration to connect to the project.
+                If not provided, all folders of the data integration will be connected.
+
+        Returns:
+            A dict with the DataConnection Id.
+        """
+        cloud_storage_use_cases = CloudStorageUseCases(self.kili_api_gateway)
+
+        if (
+            cloud_storage_use_cases.count_data_integrations(
+                DataIntegrationFilters(id=DataIntegrationId(cloud_storage_integration_id))
+            )
+            == 0
+        ):
+            raise ValueError(
+                f"Cloud storage integration with id {cloud_storage_integration_id} not found."
+            )
+
+        data_connection_id = cloud_storage_use_cases.add_data_connection(
+            project_id=ProjectId(project_id),
+            data_integration_id=DataIntegrationId(cloud_storage_integration_id),
+            selected_folders=selected_folders,
+            fields=("id",),
+        )["id"]
+
+        # We trigger data difference computation (same behavior as in the frontend)
+        data_connection_service.compute_differences(self, data_connection_id)
+
+        return {"id": data_connection_id}
+
+    @typechecked
+    def synchronize_cloud_storage_connection(
+        self,
+        cloud_storage_connection_id: str,
+        delete_extraneous_files: bool = False,
+        dry_run: bool = False,
+    ) -> Dict:
+        """Synchronize a cloud storage connection.
+
+        This method will compute differences between the cloud storage connection and the project,
+            and then validate the differences.
+
+        If `delete_extraneous_files` is True, it will also delete files that are not in the
+            cloud storage integration anymore but that are still in the project.
+
+        Args:
+            cloud_storage_connection_id: Id of the cloud storage connection.
+            delete_extraneous_files: If True, delete extraneous files.
+            dry_run: If True, will not synchronize the data connection but only print the
+                differences. This is useful to check the differences before applying them to the
+                project.
+
+        Returns:
+            A dict with the cloud storage connection Id.
+        """
+        return CloudStorageUseCases(self.kili_api_gateway).synchronize_data_connection(
+            self, cloud_storage_connection_id, delete_extraneous_files, dry_run
+        )

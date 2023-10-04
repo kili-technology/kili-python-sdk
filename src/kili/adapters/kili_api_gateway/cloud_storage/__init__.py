@@ -15,13 +15,19 @@ from kili.domain.cloud_storage import (
 )
 from kili.domain.types import ListOrTuple
 
-from .mappers import data_connection_where_mapper, data_integration_where_mapper
+from .mappers import (
+    add_data_connection_data_mapper,
+    data_connection_where_mapper,
+    data_integration_where_mapper,
+)
 from .operations import (
     GQL_COUNT_DATA_INTEGRATIONS,
+    get_add_data_connection_query,
     get_data_connection_query,
     get_list_data_connections_query,
     get_list_data_integrations_query,
 )
+from .types import AddDataConnectionKiliAPIGatewayInput
 
 
 class CloudStorageOperationMixin(BaseOperationMixin):
@@ -71,4 +77,14 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(
             query=query, variables={"where": {"id": data_connection_id}}
         )
+        return result["data"]
+
+    def add_data_connection(
+        self, data: AddDataConnectionKiliAPIGatewayInput, fields: ListOrTuple[str]
+    ) -> Dict:
+        """Add data connection to a project."""
+        fragment = fragment_builder(fields)
+        query = get_add_data_connection_query(fragment)
+        variables = {"data": add_data_connection_data_mapper(data)}
+        result = self.graphql_client.execute(query, variables)
         return result["data"]
