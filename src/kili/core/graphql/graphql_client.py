@@ -24,6 +24,7 @@ from pyrate_limiter import Duration, Limiter, RequestRate
 from tenacity import (
     retry,
     retry_all,
+    retry_any,
     retry_if_exception_message,
     retry_if_exception_type,
     retry_if_not_exception_message,
@@ -286,8 +287,10 @@ class GraphQLClient:
             retry_if_not_exception_message(
                 match=r'.*Field "(\w+)" is not defined by type "(\w+)".*'
             ),
-            retry_if_exception_message(match=r".*Invalid request made to Flagsmith API.*"),
-            retry_if_exception_message(match=r".*Failed to fetch data connection.*"),
+            retry_any(
+                retry_if_exception_message(match=r".*Invalid request made to Flagsmith API.*"),
+                retry_if_exception_message(match=r".*Failed to fetch data connection.*"),
+            ),
         ),
         stop=stop_after_delay(3 * 60),
         wait=wait_exponential(multiplier=0.5, min=1, max=10),
