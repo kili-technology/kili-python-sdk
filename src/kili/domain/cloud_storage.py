@@ -15,7 +15,7 @@ DataIntegrationPlatform = Literal["AWS", "Azure", "GCP"]
 DataIntegrationStatus = Literal["CONNECTED", "DISCONNECTED", "CHECKING"]
 
 
-class DataDifferenceType(Enum, str):
+class DataDifferenceType(str, Enum):
     """Data difference type."""
 
     ADD = "ADD"
