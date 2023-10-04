@@ -8,7 +8,11 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.cloud_storage import (
     DataConnectionFilters,
     DataConnectionId,
+    DataIntegrationFilters,
     DataIntegrationId,
+    DataIntegrationPlatform,
+    DataIntegrationStatus,
+    OrganizationId,
     ProjectId,
 )
 from kili.domain.types import ListOrTuple
@@ -138,3 +142,134 @@ class CloudStorageClientMethods(BaseClientMethods):
         if as_generator:
             return data_connections_gen
         return list(data_connections_gen)
+
+    @overload
+    def cloud_storage_integrations(
+        self,
+        cloud_storage_integration_id: Optional[str] = None,
+        name: Optional[str] = None,
+        platform: Optional[DataIntegrationPlatform] = None,
+        status: Optional[DataIntegrationStatus] = None,
+        organization_id: Optional[str] = None,
+        fields: ListOrTuple[str] = ("name", "id", "platform", "status"),
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: Optional[bool] = None,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[Dict, None, None]: ...
+
+    @overload
+    def cloud_storage_integrations(
+        self,
+        cloud_storage_integration_id: Optional[str] = None,
+        name: Optional[str] = None,
+        platform: Optional[DataIntegrationPlatform] = None,
+        status: Optional[DataIntegrationStatus] = None,
+        organization_id: Optional[str] = None,
+        fields: ListOrTuple[str] = ("name", "id", "platform", "status"),
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: Optional[bool] = None,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> List[Dict]: ...
+
+    @typechecked
+    def cloud_storage_integrations(
+        self,
+        cloud_storage_integration_id: Optional[str] = None,
+        name: Optional[str] = None,
+        platform: Optional[DataIntegrationPlatform] = None,
+        status: Optional[DataIntegrationStatus] = None,
+        organization_id: Optional[str] = None,
+        fields: ListOrTuple[str] = ("name", "id", "platform", "status"),
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: Optional[bool] = None,
+        *,
+        as_generator: bool = False,
+    ) -> Iterable[Dict]:
+        # pylint: disable=line-too-long
+        """Get a generator or a list of cloud storage integrations that match a set of criteria.
+
+        Args:
+            cloud_storage_integration_id: ID of the cloud storage integration.
+            name: Name of the cloud storage integration.
+            platform: Platform of the cloud storage integration.
+            status: Status of the cloud storage integration.
+            organization_id: ID of the organization.
+            fields: All the fields to request among the possible fields for the cloud storage integrations.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataintegration) for all possible fields.
+            first: Maximum number of cloud storage integrations to return.
+            skip: Number of skipped cloud storage integrations.
+            disable_tqdm: If `True`, the progress bar will be disabled.
+            as_generator: If `True`, a generator on the cloud storage integrations is returned.
+
+        Returns:
+            A list or a generator of the cloud storage integrations that match the criteria.
+
+        Examples:
+            >>> kili.cloud_storage_integrations()
+            [{'name': 'My bucket', 'id': '123456789', 'platform': 'AWS', 'status': 'CONNECTED'}]
+        """
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+        options = QueryOptions(disable_tqdm, first, skip)
+        data_integrations_gen = CloudStorageUseCases(self.kili_api_gateway).list_data_integrations(
+            data_integration_filters=DataIntegrationFilters(
+                status=status,
+                id=(
+                    DataIntegrationId(cloud_storage_integration_id)
+                    if cloud_storage_integration_id is not None
+                    else None
+                ),
+                name=name,
+                platform=platform,
+                organization_id=(
+                    OrganizationId(organization_id) if organization_id is not None else None
+                ),
+            ),
+            fields=fields,
+            options=options,
+        )
+
+        if as_generator:
+            return data_integrations_gen
+        return list(data_integrations_gen)
+
+    @typechecked
+    def count_cloud_storage_integrations(
+        self,
+        cloud_storage_integration_id: Optional[str] = None,
+        name: Optional[str] = None,
+        platform: Optional[DataIntegrationPlatform] = None,
+        status: Optional[DataIntegrationStatus] = None,
+        organization_id: Optional[str] = None,
+    ) -> int:
+        """Count and return the number of cloud storage integrations that match a set of criteria.
+
+        Args:
+            cloud_storage_integration_id: ID of the cloud storage integration.
+            name: Name of the cloud storage integration.
+            platform: Platform of the cloud storage integration.
+            status: Status of the cloud storage integration.
+            organization_id: ID of the organization.
+
+        Returns:
+            The number of cloud storage integrations that match the criteria.
+        """
+        return CloudStorageUseCases(self.kili_api_gateway).count_data_integrations(
+            DataIntegrationFilters(
+                status=status,
+                id=(
+                    DataIntegrationId(cloud_storage_integration_id)
+                    if cloud_storage_integration_id is not None
+                    else None
+                ),
+                name=name,
+                platform=platform,
+                organization_id=(
+                    OrganizationId(organization_id) if organization_id is not None else None
+                ),
+            )
+        )
