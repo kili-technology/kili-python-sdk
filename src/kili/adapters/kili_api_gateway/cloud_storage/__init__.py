@@ -8,12 +8,17 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     QueryOptions,
     fragment_builder,
 )
-from kili.domain.cloud_storage import DataConnectionFilters, DataIntegrationFilters
+from kili.domain.cloud_storage import (
+    DataConnectionFilters,
+    DataConnectionId,
+    DataIntegrationFilters,
+)
 from kili.domain.types import ListOrTuple
 
 from .mappers import data_connection_where_mapper, data_integration_where_mapper
 from .operations import (
     GQL_COUNT_DATA_INTEGRATIONS,
+    get_data_connection_query,
     get_list_data_connections_query,
     get_list_data_integrations_query,
 )
@@ -56,3 +61,14 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving data connections", GQL_COUNT_DATA_INTEGRATIONS
         )
+
+    def get_data_connection(
+        self, data_connection_id: DataConnectionId, fields: ListOrTuple[str]
+    ) -> Dict:
+        """Get data connection."""
+        fragment = fragment_builder(fields)
+        query = get_data_connection_query(fragment)
+        result = self.graphql_client.execute(
+            query=query, variables={"where": {"id": data_connection_id}}
+        )
+        return result["data"]

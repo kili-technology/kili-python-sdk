@@ -23,6 +23,17 @@ def get_list_data_connections_query(fragment: str) -> str:
         """
 
 
+def get_data_connection_query(fragment: str) -> str:
+    """Return the GraphQL query to get a data connection."""
+    return f"""
+        query dataConnection($where: DataConnectionIdWhere!) {{
+          data: dataConnection(where: $where) {{
+            {fragment}
+          }}
+        }}
+        """
+
+
 GQL_COUNT_DATA_INTEGRATIONS = """
     query countDataIntegrations($where: DataIntegrationWhere!) {
       data: countDataIntegrations(where: $where)

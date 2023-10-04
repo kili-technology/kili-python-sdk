@@ -44,7 +44,7 @@ def get_download_assets_function(
     # We need to query the data connections to know if the assets are hosted in a cloud storage
     # If so, we remove the fields "content" and "jsonContent" from the query
     data_connections_gen = kili_api_gateway.list_data_connections(
-        DataConnectionFilters(project_id=project_id, integration_id=None),
+        DataConnectionFilters(project_id=project_id, integration_id=None, data_connection_id=None),
         fields=("id",),
         options=QueryOptions(disable_tqdm=True, first=1, skip=0),
     )

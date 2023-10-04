@@ -29,5 +29,6 @@ class DataIntegrationFilters:
 class DataConnectionFilters:
     """Data Connection filters."""
 
+    data_connection_id: Optional[DataConnectionId]
     project_id: Optional[ProjectId]
     integration_id: Optional[DataIntegrationId]

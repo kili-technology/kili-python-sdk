@@ -208,7 +208,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             self.kili.graphql_client, self.kili.http_client
         ).list_data_connections(
             data_connection_filters=DataConnectionFilters(
-                project_id=self.project_id, integration_id=None
+                project_id=self.project_id, integration_id=None, data_connection_id=None
             ),
             options=QueryOptions(disable_tqdm=True, first=1, skip=0),
             fields=("id",),

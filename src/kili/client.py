@@ -20,8 +20,6 @@ from kili.entrypoints.mutations.plugins import MutationsPlugins
 from kili.entrypoints.mutations.project import MutationsProject
 from kili.entrypoints.mutations.project_version import MutationsProjectVersion
 from kili.entrypoints.mutations.user import MutationsUser
-from kili.entrypoints.queries.data_connection import QueriesDataConnection
-from kili.entrypoints.queries.data_integration import QueriesDataIntegration
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.entrypoints.queries.notification import QueriesNotification
 from kili.entrypoints.queries.organization import QueriesOrganization
@@ -32,6 +30,7 @@ from kili.entrypoints.queries.user import QueriesUser
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
 from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.presentation.client.asset import AssetClientMethods
+from kili.presentation.client.cloud_storage import CloudStorageClientMethods
 from kili.presentation.client.internal import InternalClientMethods
 from kili.presentation.client.issue import IssueClientMethods
 from kili.presentation.client.project import ProjectClientMethods
@@ -62,8 +61,6 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsProject,
     MutationsProjectVersion,
     MutationsUser,
-    QueriesDataConnection,
-    QueriesDataIntegration,
     QueriesLabel,
     QueriesNotification,
     QueriesOrganization,
@@ -76,6 +73,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     AssetClientMethods,
     TagClientMethods,
     ProjectClientMethods,
+    CloudStorageClientMethods,
 ):
     """Kili Client."""
 

@@ -1,28 +1,29 @@
-"""Data connection queries."""
+"""Client presentation methods for cloud storage."""
 
 from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.graphql.operations.data_connection.queries import (
-    DataConnectionsQuery,
-    DataConnectionsWhere,
+from kili.domain.cloud_storage import (
+    DataConnectionFilters,
+    DataConnectionId,
+    DataIntegrationId,
+    ProjectId,
 )
 from kili.domain.types import ListOrTuple
-from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )
-from kili.services.data_connection import get_data_connection
+from kili.use_cases.cloud_storage import CloudStorageUseCases
 from kili.utils.logcontext import for_all_methods, log_call
+
+from .base import BaseClientMethods
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesDataConnection(BaseOperationEntrypointMixin):
-    """Set of cloud storage connection queries."""
-
-    # pylint: disable=too-many-arguments
+class CloudStorageClientMethods(BaseClientMethods):
+    """Methods attached to the Kili client, to run actions on cloud storage."""
 
     @overload
     def cloud_storage_connections(
@@ -114,22 +115,24 @@ class QueriesDataConnection(BaseOperationEntrypointMixin):
                 " project_id must be specified"
             )
 
-        # call dataConnection resolver
-        if cloud_storage_connection_id is not None:
-            data_connection = get_data_connection(self, cloud_storage_connection_id, fields)
-            data_connection_list = [data_connection]
-            if as_generator:
-                return iter(data_connection_list)
-            return data_connection_list
-
-        # call dataConnections resolver
-        where = DataConnectionsWhere(
-            project_id=project_id, data_integration_id=cloud_storage_integration_id
-        )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
-        options = QueryOptions(disable_tqdm, first, skip)
-        data_connections_gen = DataConnectionsQuery(self.graphql_client, self.http_client)(
-            where, fields, options
+
+        data_connections_gen = CloudStorageUseCases(self.kili_api_gateway).list_data_connections(
+            data_connection_filters=DataConnectionFilters(
+                data_connection_id=(
+                    DataConnectionId(cloud_storage_connection_id)
+                    if cloud_storage_connection_id is not None
+                    else None
+                ),
+                project_id=ProjectId(project_id) if project_id is not None else None,
+                integration_id=(
+                    DataIntegrationId(cloud_storage_integration_id)
+                    if cloud_storage_integration_id is not None
+                    else None
+                ),
+            ),
+            fields=fields,
+            options=QueryOptions(disable_tqdm, first, skip),
         )
 
         if as_generator:
