@@ -140,7 +140,7 @@ jobs:
       - name: Build
         run: |
           set -e
-          mkdocs build > doc-build.log 2>&1
+          mkdocs build 2>&1 | tee doc-build.log
 
       - name: Look for Warnings
         run: |
