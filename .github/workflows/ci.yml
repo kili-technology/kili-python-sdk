@@ -139,6 +139,7 @@ jobs:
 
       - name: Build
         run: |
+          set -e  # Enable "exit on error" behavior
           mkdocs build 2>&1 | tee doc-build.log
 
       - name: Look for Warnings
