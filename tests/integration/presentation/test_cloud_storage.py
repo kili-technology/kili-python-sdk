@@ -1,8 +1,77 @@
 from typing import Any, Dict, List, Optional
 
 import pytest
+import pytest_mock
 
-from kili.entrypoints.mutations.data_connection import MutationsDataConnection
+from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.helpers.queries import PaginatedGraphQLQuery
+from kili.presentation.client.cloud_storage import CloudStorageClientMethods
+from kili.use_cases.cloud_storage import CloudStorageUseCases
+
+
+def test_given_data_connections_when_querying_them_then_it_calls_proper_resolver(
+    mocker: pytest_mock.MockerFixture,
+):
+    # Given
+    kili = CloudStorageClientMethods()
+    kili.kili_api_gateway = KiliAPIGateway(
+        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
+    )
+    mocker.patch.object(PaginatedGraphQLQuery, "get_number_of_elements_to_query", return_value=2)
+    kili.kili_api_gateway.graphql_client.execute.return_value = {
+        "data": [
+            {"id": "data_connection_id_1"},
+            {"id": "data_connection_id_2"},
+        ]
+    }
+
+    # When
+    data_connections = kili.cloud_storage_connections(project_id="fake_proj_id")
+
+    # Then
+    assert data_connections == [
+        {"id": "data_connection_id_1"},
+        {"id": "data_connection_id_2"},
+    ]
+    kili.kili_api_gateway.graphql_client.execute.assert_called_once()
+    query_sent = kili.kili_api_gateway.graphql_client.execute.call_args[0][0]
+    variables = kili.kili_api_gateway.graphql_client.execute.call_args[0][1]
+    assert (
+        "query dataConnections($where: DataConnectionsWhere!, $first: PageSize!, $skip: Int!)"
+        in query_sent
+    )
+    assert "data: dataConnections(where: $where, first: $first, skip: $skip)" in query_sent
+    assert "id lastChecked numberOfAssets selectedFolders projectId" in query_sent
+
+    assert variables == {
+        "where": {"integrationId": None, "projectId": "fake_proj_id"},
+        "first": 2,
+        "skip": 0,
+    }
+
+
+def test_given_data_connection_when_querying_it_then_it_calls_proper_resolver(mocker):
+    """Test data_connection query."""
+    # Given
+    kili = CloudStorageClientMethods()
+    kili.kili_api_gateway = KiliAPIGateway(
+        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
+    )
+    kili.kili_api_gateway.graphql_client.execute.return_value = {
+        "data": {"id": "fake_data_connection_id"},
+    }
+
+    # When
+    data_connections = kili.cloud_storage_connections(
+        cloud_storage_connection_id="fake_data_connection_id"
+    )
+
+    # Then
+    assert data_connections == [{"id": "fake_data_connection_id"}]
+    assert (
+        "query dataConnection("
+        in kili.kili_api_gateway.graphql_client.execute.call_args[1]["query"]
+    )
 
 
 class MockerGetDataConnection:
@@ -36,7 +105,7 @@ class MockerGetDataConnection:
         self.selected_folders = selected_folders
         self.data_integration = data_integration
 
-    def __call__(self, auth, data_connection_id: str, fields: List[str]) -> Dict[str, Any]:
+    def __call__(self, data_connection_id: str, fields: List[str]) -> Dict[str, Any]:
         ret: Dict[str, Any] = {"id": data_connection_id}
 
         ret["dataDifferencesSummary"] = {}
@@ -134,45 +203,48 @@ class MockerGetDataConnection:
         ),
     ],
 )
-def test_synchronize_cloud_storage_connection(
+def test_given_kili_client_when_calling_synchronize_cloud_storage_connection_then_it_calls_proper_resolvers(
     delete_extraneous_files,
     data_connection_ret_values,
     log_messages,
     caplog,
     mocker,
 ) -> None:
-    """Test synchronize_cloud_storage_connection mutation."""
-    mocked_trigger_validate_data_differences = mocker.patch(
-        "kili.services.data_connection.trigger_validate_data_differences"
+    # Given
+    mocked_trigger_validate_data_differences = mocker.patch.object(
+        CloudStorageUseCases, "validate_data_differences"
     )
-    mocked_get_data_connection = mocker.patch("kili.services.data_connection.get_data_connection")
+    mocker.patch.object(CloudStorageUseCases, "compute_differences")
+    mocker.patch("kili.use_cases.cloud_storage.Retrying", return_value=[])
+    mocked_get_data_connection = mocker.patch.object(KiliAPIGateway, "get_data_connection")
     mocked_get_data_connection.side_effect = MockerGetDataConnection(**data_connection_ret_values)
-    mocker.patch("kili.services.data_connection.Retrying", return_value=[])
 
-    kili = MutationsDataConnection()
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
-    kili.kili_api_gateway = mocker.MagicMock()
+    kili = CloudStorageClientMethods()
+    kili.kili_api_gateway = KiliAPIGateway(
+        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
+    )
 
+    # When
     kili.synchronize_cloud_storage_connection(
         cloud_storage_connection_id="my_data_connection_id",
         delete_extraneous_files=delete_extraneous_files,
     )
 
+    # Then
     assert "Synchronizing data connection: my_data_connection_id" in caplog.text
     for log_msg in log_messages:
         assert log_msg in caplog.text
 
     if delete_extraneous_files and data_connection_ret_values["removed"] > 0:
         mocked_trigger_validate_data_differences.assert_any_call(
-            kili,
             "REMOVE",
             "my_data_connection_id",
+            wait_until_done=True,
         )
 
     if data_connection_ret_values["added"] > 0:
         mocked_trigger_validate_data_differences.assert_any_call(
-            kili,
             "ADD",
             "my_data_connection_id",
+            wait_until_done=True,
         )

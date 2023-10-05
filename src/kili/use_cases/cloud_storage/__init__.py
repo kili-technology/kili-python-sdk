@@ -199,7 +199,13 @@ class CloudStorageUseCases(BaseUseCases):
             wait_until_done: whether to wait until the validation is done.
         """
         data_connection = self._kili_api_gateway.get_data_connection(
-            data_connection_id, fields=("dataDifferencesSummary", "projectId")
+            data_connection_id,
+            fields=(
+                "dataDifferencesSummary.added",
+                "dataDifferencesSummary.removed",
+                "dataDifferencesSummary.total",
+                "projectId",
+            ),
         )
         asset_diff: int = data_connection["dataDifferencesSummary"][
             "added" if data_difference_type == DataDifferenceType.ADD else "removed"
@@ -227,7 +233,7 @@ class CloudStorageUseCases(BaseUseCases):
                 nb_assets_after = self._kili_api_gateway.count_assets(filters)
                 if abs(nb_assets_after - nb_assets_before) != asset_diff:
                     raise ValueError(
-                        "Number of assets in project after validation is not correct: before"
-                        f" {nb_assets_before} assets, after {nb_assets_after} assets,"
-                        f" dataDifferencesSummary diff {asset_diff}"
+                        "Number of assets in project after validation is not correct: before:"
+                        f" {nb_assets_before} assets, after: {nb_assets_after} assets,"
+                        f" dataDifferencesSummary: {asset_diff}"
                     )
