@@ -325,9 +325,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         )["id"]
 
         # We trigger data difference computation (same behavior as in the frontend)
-        cloud_storage_use_cases.compute_differences(
-            data_connection_id, fields=("id",), wait_until_done=False
-        )
+        cloud_storage_use_cases.compute_differences(data_connection_id, wait_until_done=False)
 
         return {"id": data_connection_id}
 
@@ -362,9 +360,7 @@ class CloudStorageClientMethods(BaseClientMethods):
 
         cloud_storage_use_cases = CloudStorageUseCases(self.kili_api_gateway)
 
-        cloud_storage_use_cases.compute_differences(
-            data_connection_id, fields=("id",), wait_until_done=True
-        )
+        cloud_storage_use_cases.compute_differences(data_connection_id, wait_until_done=True)
 
         data_connection = cloud_storage_use_cases.get_data_connection(
             data_connection_id,

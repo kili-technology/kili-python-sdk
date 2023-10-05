@@ -85,7 +85,6 @@ class CloudStorageUseCases(BaseUseCases):
     def compute_differences(
         self,
         data_connection_id: DataConnectionId,
-        fields: ListOrTuple[str],
         wait_until_done: bool,
     ) -> None:
         """Compute differences for a data connection."""
@@ -147,7 +146,7 @@ class CloudStorageUseCases(BaseUseCases):
 
         self._kili_api_gateway.compute_data_connection_differences(
             data_connection_id=data_connection_id,
-            fields=fields,
+            fields=("id",),
             data=(
                 DataConnectionComputeDifferencesKiliAPIGatewayInput(
                     blob_paths=blob_paths, warnings=warnings
