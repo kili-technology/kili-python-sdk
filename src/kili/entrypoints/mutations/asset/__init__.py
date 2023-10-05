@@ -73,7 +73,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 If None, random identifiers are created.
             id_array: Disabled parameter. Do not use.
             is_honeypot_array:  Whether to use the asset for honeypot
-            status_array: DEPRECATED and not used anymore.
+            status_array: DEPRECATED and does not have any effect.
             json_content_array: Useful for `VIDEO` or `TEXT` projects only.
 
                 - For `VIDEO` projects, each element is a sequence of frames, i.e. a
@@ -211,7 +211,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 is a text formatted using RichText.
                 - For a Video project, the`json_content` is a json containg urls pointing
                     to each frame of the video.
-            status_array: DEPRECATED and not used anymore.
+            status_array: DEPRECATED and does not have any effect.
             is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.
             is_honeypot_array: Whether to use the asset for honeypot.
             project_id: The project ID. Only required if `external_ids` argument is provided.
