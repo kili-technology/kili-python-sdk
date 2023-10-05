@@ -14,7 +14,7 @@ from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.domain.asset import AssetFilters
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.orm import Asset
-from kili.services.export import export_labels
+from kili.services.export import AbstractExporter, export_labels
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
@@ -628,6 +628,7 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
         "kili.services.export.format.geojson.is_geotiff_asset_with_lat_lon_coords",
         return_value=True,
     )
+    mocker.patch.object(AbstractExporter, "_check_and_ensure_asset_access", return_value=None)
 
     with TemporaryDirectory() as export_folder, TemporaryDirectory() as extract_folder:
         path_zipfile = Path(export_folder) / "export.zip"
