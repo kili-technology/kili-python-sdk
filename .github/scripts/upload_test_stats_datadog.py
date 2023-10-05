@@ -21,9 +21,23 @@ TESTS_TO_PLOT_ON_DATADOG_MAP = {
     "tests/e2e/test_notebooks.py::test_all_recipes[tests/e2e/import_predictions.ipynb]": (
         "import_predictions_ipynb"
     ),
+    "tests/e2e/test_notebooks.py::test_all_recipes[recipes/export_a_kili_project.ipynb]": (
+        "export_a_kili_project_ipynb"
+    ),
+    "tests/e2e/test_notebooks.py::test_all_recipes[recipes/importing_video_assets.ipynb]": (
+        "importing_video_assets_ipynb"
+    ),
     "tests/e2e/test_copy_project.py::test_copy_project_e2e_video": "copy_project_e2e_video",
     "tests/e2e/test_copy_project.py::test_copy_project_e2e_with_ocr_metadata": (
         "copy_project_e2e_with_ocr_metadata"
+    ),
+    "tests/e2e/test_projects.py::test_create_project": "create_project",
+    "tests/e2e/test_mutations_label.py::test_append_many_labels": "append_many_labels",
+    "tests/e2e/test_mutations_asset.py::test_append_many_assets": "append_many_assets",
+    "tests/e2e/test_mutations_asset.py::test_send_back_to_queue": "send_back_to_queue",
+    "tests/e2e/test_mutations_asset.py::test_delete_many_from_dataset": "delete_many_from_dataset",
+    "tests/e2e/test_mutations_asset.py::test_change_asset_external_ids": (
+        "change_asset_external_ids"
     ),
 }
 
