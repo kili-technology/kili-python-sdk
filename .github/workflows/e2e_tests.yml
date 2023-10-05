@@ -257,11 +257,8 @@ jobs:
         timeout-minutes: 60
         run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv tests/e2e/org_admin
         env:
-          KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
           KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
-          KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
-          KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
           KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
 
       - name: E2E tests (org user)
@@ -270,12 +267,8 @@ jobs:
         timeout-minutes: 60
         run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv tests/e2e/org_user
         env:
-          KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
           KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}_USER', env.TEST_AGAINST)] }}
-          KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
-          KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
-          KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
 
       - name: Notebook tests
         # we don't run notebook tests on push to main
