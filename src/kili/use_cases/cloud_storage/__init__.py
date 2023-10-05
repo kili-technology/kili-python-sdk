@@ -151,7 +151,7 @@ class CloudStorageUseCases(BaseUseCases):
                 DataConnectionComputeDifferencesKiliAPIGatewayInput(
                     blob_paths=blob_paths, warnings=warnings
                 )
-                if blob_paths and warnings
+                if blob_paths is not None and warnings is not None
                 else None
             ),
         )
