@@ -35,8 +35,7 @@ class DataIntegrationFilters:
 
 @dataclass
 class DataConnectionFilters:
-    """Data Connection filters."""
+    """DataConnectionsWhere filters."""
 
-    data_connection_id: Optional[DataConnectionId]
     project_id: Optional[ProjectId]
     integration_id: Optional[DataIntegrationId]

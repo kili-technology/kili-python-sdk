@@ -127,23 +127,30 @@ class CloudStorageClientMethods(BaseClientMethods):
 
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
-        data_connections_gen = CloudStorageUseCases(self.kili_api_gateway).list_data_connections(
-            data_connection_filters=DataConnectionFilters(
-                data_connection_id=(
-                    DataConnectionId(cloud_storage_connection_id)
-                    if cloud_storage_connection_id is not None
-                    else None
+        cloud_storage_use_cases = CloudStorageUseCases(self.kili_api_gateway)
+
+        if cloud_storage_connection_id is None:
+            data_connections_gen = cloud_storage_use_cases.list_data_connections(
+                data_connection_filters=DataConnectionFilters(
+                    project_id=ProjectId(project_id) if project_id is not None else None,
+                    integration_id=(
+                        DataIntegrationId(cloud_storage_integration_id)
+                        if cloud_storage_integration_id is not None
+                        else None
+                    ),
                 ),
-                project_id=ProjectId(project_id) if project_id is not None else None,
-                integration_id=(
-                    DataIntegrationId(cloud_storage_integration_id)
-                    if cloud_storage_integration_id is not None
-                    else None
-                ),
-            ),
-            fields=fields,
-            options=QueryOptions(disable_tqdm, first, skip),
-        )
+                fields=fields,
+                options=QueryOptions(disable_tqdm, first, skip),
+            )
+        else:
+            data_connections_gen = (
+                i
+                for i in [
+                    cloud_storage_use_cases.get_data_connection(
+                        DataConnectionId(cloud_storage_connection_id), fields=fields
+                    )
+                ]
+            )
 
         if as_generator:
             return data_connections_gen

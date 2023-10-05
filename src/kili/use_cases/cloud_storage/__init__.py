@@ -1,7 +1,7 @@
 """Cloud storage use cases."""
 import time
 from datetime import datetime
-from typing import Dict, Generator, Iterable, List, Optional
+from typing import Dict, Generator, List, Optional
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -34,19 +34,10 @@ class CloudStorageUseCases(BaseUseCases):
         data_connection_filters: DataConnectionFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Iterable[Dict]:
+    ) -> Generator[Dict, None, None]:
         """List data connections."""
-        if data_connection_filters.data_connection_id is None:
-            return self._kili_api_gateway.list_data_connections(
-                data_connection_filters=data_connection_filters, fields=fields, options=options
-            )
-
-        return iter(
-            [
-                self._kili_api_gateway.get_data_connection(
-                    data_connection_id=data_connection_filters.data_connection_id, fields=fields
-                )
-            ]
+        return self._kili_api_gateway.list_data_connections(
+            data_connection_filters=data_connection_filters, fields=fields, options=options
         )
 
     def get_data_connection(
