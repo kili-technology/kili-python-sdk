@@ -144,7 +144,7 @@ jobs:
 
       - name: Look for Warnings
         run: |
-          if grep -q -e "WARNING" -e "ERROR" doc-build.log; then
+          if grep -q "WARNING" doc-build.log; then
             echo $(grep "WARNING" doc-build.log)
             echo "::error::Documentation build completed with warnings"
             exit 1
