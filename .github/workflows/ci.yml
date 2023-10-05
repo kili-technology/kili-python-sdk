@@ -139,7 +139,8 @@ jobs:
 
       - name: Build
         run: |
-          mkdocs build
+          set -e
+          mkdocs build > doc-build.log 2>&1
 
       - name: Look for Warnings
         run: |
