@@ -795,6 +795,7 @@ def test_export_with_asset_filter_kwargs(mocker):
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
     mocker.patch.object(KiliExporter, "process_and_save", return_value=None)
+    mocker.patch.object(KiliExporter, "_check_and_ensure_asset_access", return_value=None)
     kili = QueriesLabel()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
@@ -876,6 +877,7 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
     )
     mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
     mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
+    mocker.patch.object(KiliExporter, "_check_and_ensure_asset_access", return_value=None)
     kili = QueriesLabel()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
@@ -918,11 +920,7 @@ def mock_kili(mocker, with_data_connection):
     mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
-    if with_data_connection:
-        mocker.patch(
-            "kili.services.export.format.base.DataConnectionsQuery.__call__",
-            return_value=(i for i in [{"id": "fake_data_connection_id"}]),
-        )
+    mocker.patch.object(AbstractExporter, "_has_data_connection", return_value=with_data_connection)
 
     kili = QueriesLabel()
     kili.kili_api_gateway = mocker.MagicMock()
@@ -938,6 +936,7 @@ def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
+    mocker.patch.object(AbstractExporter, "_has_data_connection", return_value=True)
 
     with pytest.raises(
         NotCompatibleOptions,

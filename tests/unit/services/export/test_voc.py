@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from kili.entrypoints.queries.label import QueriesLabel
+from kili.services.export import VocExporter
 from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.format.voc import _convert_from_kili_to_voc_format
 from tests.fakes.fake_data import asset_image_1, asset_image_1_without_annotation
@@ -49,10 +50,7 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
     mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
-    mocker.patch(
-        "kili.services.export.format.base.DataConnectionsQuery.__call__",
-        return_value=(i for i in [{"id": "fake_data_connection_id"}]),
-    )
+    mocker.patch.object(VocExporter, "_has_data_connection", return_value=True)
 
     kili = QueriesLabel()
     kili.api_endpoint = "https://"  # type: ignore

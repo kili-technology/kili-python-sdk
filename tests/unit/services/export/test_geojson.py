@@ -7,6 +7,7 @@ import pytest_mock
 
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.orm import Asset
+from kili.services.export import AbstractExporter
 
 
 def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
@@ -22,10 +23,7 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
     mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
-    mocker.patch(
-        "kili.services.export.format.base.DataConnectionsQuery.__call__",
-        return_value=(i for i in [{"id": "fake_data_connection_id"}]),
-    )
+    mocker.patch.object(AbstractExporter, "_check_and_ensure_asset_access", return_value=None)
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[
