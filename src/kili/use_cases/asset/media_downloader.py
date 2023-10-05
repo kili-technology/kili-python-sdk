@@ -13,11 +13,6 @@ from tenacity.wait import wait_random
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway import KiliAPIGateway
-from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.graphql.operations.data_connection.queries import (
-    DataConnectionsQuery,
-    DataConnectionsWhere,
-)
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 
@@ -41,19 +36,14 @@ def get_download_assets_function(
     if not download_media:
         return None, fields
 
-    project = kili_api_gateway.get_project(project_id=project_id, fields=("inputType",))
+    project = kili_api_gateway.get_project(
+        project_id=project_id, fields=("inputType", "dataConnections.id")
+    )
     input_type = project["inputType"]
 
     # We need to query the data connections to know if the assets are hosted in a cloud storage
     # If so, we remove the fields "content" and "jsonContent" from the query
-    data_connections_gen = DataConnectionsQuery(
-        kili_api_gateway.graphql_client, kili_api_gateway.http_client
-    )(
-        where=DataConnectionsWhere(project_id=project_id),
-        fields=("id",),
-        options=QueryOptions(disable_tqdm=True, first=1, skip=0),
-    )
-    if len(list(data_connections_gen)) > 0:
+    if project["dataConnections"]:
         raise DownloadNotAllowedError(
             "The download of assets from a project connected to a cloud storage is not allowed."
             " Asset download is disabled."
