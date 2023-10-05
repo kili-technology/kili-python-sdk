@@ -139,17 +139,11 @@ jobs:
 
       - name: Build
         run: |
-          mkdocs build 2>&1 | tee doc-build.log
-
-          # Check the exit status of the mkdocs build command
-          if [ $? -ne 0 ]; then
-            echo "MkDocs build failed"
-            exit 1
-          fi
+          mkdocs build
 
       - name: Look for Warnings
         run: |
-          if grep -q "WARNING" doc-build.log; then
+          if grep -q -e "WARNING" -e "ERROR" doc-build.log; then
             echo $(grep "WARNING" doc-build.log)
             echo "::error::Documentation build completed with warnings"
             exit 1
