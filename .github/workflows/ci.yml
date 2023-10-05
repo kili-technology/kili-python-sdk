@@ -139,8 +139,13 @@ jobs:
 
       - name: Build
         run: |
-          set -e  # Enable "exit on error" behavior
           mkdocs build 2>&1 | tee doc-build.log
+
+          # Check the exit status of the mkdocs build command
+          if [ $? -ne 0 ]; then
+            echo "MkDocs build failed"
+            exit 1
+          fi
 
       - name: Look for Warnings
         run: |
