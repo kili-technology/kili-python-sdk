@@ -304,27 +304,12 @@ class CloudStorageClientMethods(BaseClientMethods):
         Returns:
             A dict with the DataConnection Id.
         """
-        cloud_storage_use_cases = CloudStorageUseCases(self.kili_api_gateway)
-
-        if (
-            cloud_storage_use_cases.count_data_integrations(
-                DataIntegrationFilters(id=DataIntegrationId(cloud_storage_integration_id))
-            )
-            == 0
-        ):
-            raise ValueError(
-                f"Cloud storage integration with id {cloud_storage_integration_id} not found."
-            )
-
-        data_connection_id = cloud_storage_use_cases.add_data_connection(
+        data_connection_id = CloudStorageUseCases(self.kili_api_gateway).add_data_connection(
             project_id=ProjectId(project_id),
             data_integration_id=DataIntegrationId(cloud_storage_integration_id),
             selected_folders=selected_folders,
             fields=("id",),
         )["id"]
-
-        # We trigger data difference computation (same behavior as in the frontend)
-        cloud_storage_use_cases.compute_differences(data_connection_id, wait_until_done=False)
 
         return {"id": data_connection_id}
 

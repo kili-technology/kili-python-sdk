@@ -23,4 +23,4 @@ class DataConnectionComputeDifferencesKiliAPIGatewayInput:
     """Data connection compute differences input data for Kili API Gateway."""
 
     blob_paths: List[str]
-    warnings: List[Optional[str]]
+    warnings: List[str]
