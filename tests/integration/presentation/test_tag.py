@@ -10,11 +10,11 @@ from kili.adapters.kili_api_gateway.tag.operations import (
 from kili.presentation.client.tag import TagClientMethods
 
 
-def test_when_fetching_org_tags_then_i_get_tags(
-    kili_api_gateway: KiliAPIGateway, mocker: pytest_mock.MockerFixture
-):
+def test_when_fetching_org_tags_then_i_get_tags(mocker: pytest_mock.MockerFixture):
     kili = TagClientMethods()
-    kili.kili_api_gateway = kili_api_gateway
+    kili.kili_api_gateway = KiliAPIGateway(
+        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
+    )
 
     # When
     kili.tags()
@@ -25,11 +25,11 @@ def test_when_fetching_org_tags_then_i_get_tags(
     )
 
 
-def test_when_fetching_project_tags_then_i_get_tags(
-    kili_api_gateway: KiliAPIGateway, mocker: pytest_mock.MockerFixture
-):
+def test_when_fetching_project_tags_then_i_get_tags(mocker: pytest_mock.MockerFixture):
     kili = TagClientMethods()
-    kili.kili_api_gateway = kili_api_gateway
+    kili.kili_api_gateway = KiliAPIGateway(
+        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
+    )
 
     # When
     kili.tags(project_id="fake_proj_id")
@@ -42,11 +42,12 @@ def test_when_fetching_project_tags_then_i_get_tags(
 
 
 def test_given_tags_when_i_tag_project_with_tag_ids_then_it_is_tagged(
-    kili_api_gateway: KiliAPIGateway,
     mocker: pytest_mock.MockerFixture,
 ):
     kili = TagClientMethods()
-    kili.kili_api_gateway = kili_api_gateway
+    kili.kili_api_gateway = KiliAPIGateway(
+        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
+    )
     # Given
     tags = [
         {"id": "tag1_id", "label": "tag1", "checkedForProjects": []},
@@ -64,11 +65,12 @@ def test_given_tags_when_i_tag_project_with_tag_ids_then_it_is_tagged(
 
 
 def test_given_tags_when_i_tag_project_with_tag_labels_then_it_is_tagged(
-    kili_api_gateway: KiliAPIGateway,
     mocker: pytest_mock.MockerFixture,
 ):
     kili = TagClientMethods()
-    kili.kili_api_gateway = kili_api_gateway
+    kili.kili_api_gateway = KiliAPIGateway(
+        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
+    )
     # Given
     tags = [
         {"id": "tag1_id", "label": "tag1", "checkedForProjects": []},
@@ -86,11 +88,12 @@ def test_given_tags_when_i_tag_project_with_tag_labels_then_it_is_tagged(
 
 
 def test_given_tags_when_i_untag_all_project_tags_then_it_removes_all_tags(
-    kili_api_gateway: KiliAPIGateway,
     mocker: pytest_mock.MockerFixture,
 ):
     kili = TagClientMethods()
-    kili.kili_api_gateway = kili_api_gateway
+    kili.kili_api_gateway = KiliAPIGateway(
+        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
+    )
     kili.kili_api_gateway.uncheck_tag = mocker.MagicMock()
     # Given
     tags = [
@@ -110,11 +113,12 @@ def test_given_tags_when_i_untag_all_project_tags_then_it_removes_all_tags(
 
 
 def test_given_tags_when_i_delete_them_then_it_works(
-    kili_api_gateway: KiliAPIGateway,
     mocker: pytest_mock.MockerFixture,
 ):
     kili = TagClientMethods()
-    kili.kili_api_gateway = kili_api_gateway
+    kili.kili_api_gateway = KiliAPIGateway(
+        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
+    )
 
     # Given
     tags = [
