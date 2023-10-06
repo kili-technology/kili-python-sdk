@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
 from kili.domain.asset import AssetId
-from kili.domain.cloud_storage import DataConnectionFilters
 from kili.domain.project import ProjectId
 from kili.orm import Asset, Label
 from kili.services.export.exceptions import (
