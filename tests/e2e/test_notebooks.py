@@ -16,50 +16,62 @@ def process_notebook(notebook_filename: str) -> None:
 
 
 @pytest.mark.parametrize(
-    "notebook_file",
+    ("notebook_file", "requires_admin_rights"),
     [
-        "tests/e2e/create_project.ipynb",
-        "tests/e2e/export_labels.ipynb",
-        "tests/e2e/import_assets.ipynb",
-        "tests/e2e/import_predictions.ipynb",
+        ("tests/e2e/create_project.ipynb", False),
+        ("tests/e2e/export_labels.ipynb", False),
+        ("tests/e2e/import_assets.ipynb", False),
+        ("tests/e2e/import_predictions.ipynb", False),
         pytest.param(
             "tests/e2e/plugin_workflow.ipynb",
+            False,
             marks=pytest.mark.skipif(
                 "lts.cloud" in os.environ["KILI_API_ENDPOINT"],
                 reason="Feature not available on premise",
             ),
         ),
-        "recipes/basic_project_setup.ipynb",
-        "recipes/export_a_kili_project.ipynb",
-        "recipes/frame_dicom_data.ipynb",
+        ("recipes/basic_project_setup.ipynb", False),
+        ("recipes/export_a_kili_project.ipynb", True),
+        ("recipes/frame_dicom_data.ipynb", False),
         # "recipes/finetuning_dinov2.ipynb",  # not testable because requires GPU
-        "recipes/geojson.ipynb",
-        "recipes/importing_coco.ipynb",
-        "recipes/importing_pascalvoc.ipynb",
-        "recipes/import_text_assets.ipynb",
-        "recipes/importing_assets_and_metadata.ipynb",
-        "recipes/importing_pdf_assets.ipynb",
-        "recipes/importing_labels.ipynb",
-        "recipes/importing_video_assets.ipynb",
-        "recipes/inference_labels.ipynb",
-        "recipes/label_parsing.ipynb",
-        "recipes/medical_imaging.ipynb",
-        # "recipes/ner_pre_annotations_openai.ipynb",
-        "recipes/ocr_pre_annotations.ipynb",
-        "recipes/pixel_level_masks.ipynb",
+        ("recipes/geojson.ipynb", False),
+        ("recipes/importing_coco.ipynb", False),
+        ("recipes/importing_pascalvoc.ipynb", False),
+        ("recipes/import_text_assets.ipynb", False),
+        ("recipes/importing_assets_and_metadata.ipynb", False),
+        ("recipes/importing_pdf_assets.ipynb", False),
+        ("recipes/importing_labels.ipynb", False),
+        ("recipes/importing_video_assets.ipynb", False),
+        ("recipes/inference_labels.ipynb", False),
+        ("recipes/label_parsing.ipynb", False),
+        ("recipes/medical_imaging.ipynb", False),
+        ("recipes/ner_pre_annotations_openai.ipynb", False),
+        ("recipes/ocr_pre_annotations.ipynb", False),
+        ("recipes/pixel_level_masks.ipynb", False),
         pytest.param(
             "recipes/plugins_example.ipynb",
+            False,
             marks=pytest.mark.skipif(
                 "lts.cloud" in os.environ["KILI_API_ENDPOINT"],
                 reason="Feature not available on premise",
             ),
         ),
-        # "recipes/plugins_development.ipynb"
-        "recipes/set_up_workflows.ipynb",
+        # "recipes/plugins_development.ipynb", False
+        ("recipes/set_up_workflows.ipynb", False),
         # "recipes/tagtog_to_kili.ipynb",  # not testable because data is private
-        "recipes/webhooks_example.ipynb",
+        ("recipes/webhooks_example.ipynb", False),
     ],
 )
-def test_all_recipes(notebook_file: str):
+def test_all_recipes(
+    notebook_file: str,
+    requires_admin_rights: bool,  # noqa: FBT001
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Runs `process_notebook` on all notebooks in the git repository."""
-    process_notebook(notebook_file)
+    initial_api_key = os.environ["KILI_API_KEY"]
+    try:
+        if requires_admin_rights:
+            monkeypatch.setenv("KILI_API_KEY", os.environ["KILI_API_KEY_ADMIN"])
+        process_notebook(notebook_file)
+    finally:
+        monkeypatch.setenv("KILI_API_KEY", initial_api_key)
