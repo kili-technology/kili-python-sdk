@@ -21,6 +21,7 @@ from kili.services.export.exceptions import (
     NotCompatibleOptions,
 )
 from kili.services.export.format.kili import KiliExporter
+from kili.services.export.format.voc import VocExporter
 from tests.fakes.fake_kili import (
     FakeKili,
     mocked_AssetQuery,
@@ -795,7 +796,7 @@ def test_export_with_asset_filter_kwargs(mocker):
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
     mocker.patch.object(KiliExporter, "process_and_save", return_value=None)
-    mocker.patch.object(KiliExporter, "_check_and_ensure_asset_access", return_value=None)
+    mocker.patch.object(KiliExporter, "_has_data_connection", return_value=False)
     kili = QueriesLabel()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
@@ -877,7 +878,7 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
     )
     mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
     mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
-    mocker.patch.object(KiliExporter, "_check_and_ensure_asset_access", return_value=None)
+    mocker.patch.object(KiliExporter, "_has_data_connection", return_value=False)
     kili = QueriesLabel()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
@@ -1050,3 +1051,59 @@ def test_when_exporting_geotiff_asset_with_incompatible_options_then_it_crashes(
         ),
     ):
         kili.export_labels("fake_proj_id", "export.zip", fmt="kili", normalized_coordinates=False)
+
+
+def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
+    mocker: pytest_mock.MockerFixture,
+):
+    """Test that the dataconnection resolver is not called when exporting.
+
+    Export for projects with data connections is forbidden.
+    But dataConnections() resolver requires high permissions.
+    This test ensures that the resolver is not called when exporting.
+    """
+    # Given
+    project_return_val = {
+        "jsonInterface": {
+            "jobs": {
+                "OBJECT_DETECTION_JOB": {
+                    "content": {
+                        "categories": {
+                            "GDGF": {
+                                "children": [],
+                                "color": "#472CED",
+                                "name": "gdgf",
+                            }
+                        },
+                        "input": "radio",
+                    },
+                    "instruction": "df",
+                    "mlTask": "OBJECT_DETECTION",
+                    "required": 1,
+                    "tools": ["rectangle"],
+                    "isChild": False,
+                }
+            }
+        },
+        "inputType": "IMAGE",
+        "title": "",
+        "dataConnections": None,
+    }
+    mocker.patch.object(ProjectQuery, "__call__", return_value=[project_return_val])
+    mocker.patch("kili.services.export.format.base.fetch_assets", return_value=[])
+    process_and_save_mock = mocker.patch.object(VocExporter, "process_and_save", return_value=None)
+    kili = QueriesLabel()
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+
+    # When
+    kili.export_labels(
+        project_id="fake_proj_id", filename="exp.zip", fmt="pascal_voc", layout="merged"
+    )
+
+    # Then
+    process_and_save_mock.assert_called_once()
+    kili.graphql_client.execute.assert_not_called()

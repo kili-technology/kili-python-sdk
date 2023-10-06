@@ -26,7 +26,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         "inputType",
         "description",
         "id",
-        "dataConnections.dataIntegrationId",
+        "dataConnections.id",
     )
     FIELDS_JSON_INTERFACE = ("jsonInterface",)
     FIELDS_QUALITY_SETTINGS = (
@@ -87,7 +87,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
         src_project = get_project(self.kili, from_project_id, fields)
 
-        if len(src_project["dataConnections"]) > 0 and copy_assets:
+        if src_project["dataConnections"] and copy_assets:
             raise NotImplementedError("Copying projects with cloud storage is not supported.")
 
         new_project_title = title or self._generate_project_title(src_title=src_project["title"])

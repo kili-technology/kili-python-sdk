@@ -93,6 +93,7 @@ def mocked_ProjectQuery(where, _fields, _options):
                 "description": "This is a test project",
                 "jsonInterface": json_interface,
                 "inputType": "IMAGE",
+                "dataConnections": None,
             }
         ]
     elif project_id == "object_detection_video_project":
@@ -122,6 +123,7 @@ def mocked_ProjectQuery(where, _fields, _options):
                 "description": "This is a test project",
                 "jsonInterface": json_interface,
                 "inputType": "VIDEO",
+                "dataConnections": None,
             }
         ]
     elif project_id == "text_classification":
@@ -155,6 +157,7 @@ def mocked_ProjectQuery(where, _fields, _options):
                 "description": "This is a TC test project",
                 "jsonInterface": json_interface,
                 "inputType": "TEXT",
+                "dataConnections": None,
             }
         ]
     elif project_id == "semantic_segmentation":
@@ -198,6 +201,7 @@ def mocked_ProjectQuery(where, _fields, _options):
                 "description": "This is a semantic segmentation test project",
                 "jsonInterface": json_interface,
                 "inputType": "IMAGE",
+                "dataConnections": None,
             }
         ]
     else:

@@ -73,8 +73,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 If None, random identifiers are created.
             id_array: Disabled parameter. Do not use.
             is_honeypot_array:  Whether to use the asset for honeypot
-            status_array: By default, all imported assets are set to `TODO`. Other options:
-                `ONGOING`, `LABELED`, `REVIEWED`.
+            status_array: DEPRECATED and does not have any effect.
             json_content_array: Useful for `VIDEO` or `TEXT` projects only.
 
                 - For `VIDEO` projects, each element is a sequence of frames, i.e. a
@@ -88,7 +87,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': ''}]`.
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
-                - For Image projects, if you work with geotiff, you can specify a value with key 'processingParameters' to specify the minimum and maximum zoom level.
+                - In Image projects with geoTIFF assets, you can specify the `minZoom` and `maxZoom` values for the `processingParameters` key.
+                    The `minZoom` parameter defines the zoom level that users are not allowed to zoom out from.
+                    The `maxZoom` value affects asset generation: the higher the value, the greater the level of details and the size of the asset.
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'minZoom': 17, 'maxZoom': 19}}]`.
             disable_tqdm: If `True`, the progress bar will be disabled
             wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.
@@ -134,8 +135,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         if status_array is not None:
             warnings.warn(
-                "status_array is deprecated, asset status is automatically computed based on"
-                " its labels and cannot be overwritten.",
+                "status_array is deprecated and will not be sent in the call. Asset status is"
+                " automatically computed based on its labels and cannot be overwritten.",
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -154,7 +155,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             "json_content": json_content_array,
             "external_id": external_id_array,
             "id": id_array,
-            "status": status_array,
             "json_metadata": json_metadata_array,
             "is_honeypot": is_honeypot_array,
         }
@@ -213,8 +213,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 is a text formatted using RichText.
                 - For a Video project, the`json_content` is a json containg urls pointing
                     to each frame of the video.
-            status_array: Each element should be in `TODO`, `ONGOING`, `LABELED`,
-                `TO_REVIEW`, `REVIEWED`.
+            status_array: DEPRECATED and does not have any effect.
             is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.
             is_honeypot_array: Whether to use the asset for honeypot.
             project_id: The project ID. Only required if `external_ids` argument is provided.
@@ -238,7 +237,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     is_honeypot_array=[True, True],
                     is_used_for_consensus_array=[True, False],
                     priorities=[None, 2],
-                    status_array=['LABELED', 'REVIEWED'],
                     to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
                 )
 
@@ -266,12 +264,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         if status_array is not None:
             warnings.warn(
-                "status_array is deprecated, asset status is automatically computed based on"
-                " its labels and cannot be overwritten.",
+                "status_array is deprecated and will not be sent in the call. Asset status is"
+                " automatically computed based on its labels and cannot be overwritten.",
                 DeprecationWarning,
                 stacklevel=1,
             )
-
         if asset_ids is not None and external_ids is not None:
             warnings.warn(
                 "The use of `external_ids` argument has changed. It is now used to identify"
@@ -294,7 +291,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             to_be_labeled_by_array=to_be_labeled_by_array,
             contents=contents,
             json_contents=json_contents,
-            status_array=status_array,
             is_used_for_consensus_array=is_used_for_consensus_array,
             is_honeypot_array=is_honeypot_array,
             resolution_array=resolution_array,
