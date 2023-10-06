@@ -251,24 +251,16 @@ jobs:
         shell: bash
         run: echo "KILI_SDK_VERSION=$(python -c "from kili import __version__; print(__version__)")" >> $GITHUB_ENV
 
-      - name: E2E tests (org admin)
+      - name: E2E tests
         id: e2e
         if: github.event.inputs.runE2ETests != 'false'
         timeout-minutes: 60
-        run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv tests/e2e/org_admin
-        env:
-          KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
-          KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
-          KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
-
-      - name: E2E tests (org user)
-        id: e2e_user
-        if: github.event.inputs.runE2ETests != 'false'
-        timeout-minutes: 60
-        run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv tests/e2e/org_user
+        run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv --ignore tests/e2e/test_notebooks.py tests/e2e
         env:
           KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
           KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}_USER', env.TEST_AGAINST)] }}
+          KILI_API_KEY_ADMIN: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
+          KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
 
       - name: Notebook tests
         # we don't run notebook tests on push to main

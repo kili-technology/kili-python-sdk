@@ -11,7 +11,7 @@ from kili.client import Kili
 
 
 @pytest.fixture()
-def src_project(kili: Kili):
+def src_project(kili_admin: Kili):
     interface = {
         "jobs": {
             "JOB_0": {
@@ -32,7 +32,7 @@ def src_project(kili: Kili):
         }
     }
 
-    project = kili.create_project(
+    project = kili_admin.create_project(
         input_type="IMAGE",
         json_interface=interface,
         title="test_e2e_synchronize_cloud_storage_connection",
@@ -41,7 +41,7 @@ def src_project(kili: Kili):
 
     yield project
 
-    kili.delete_project(project["id"])
+    kili_admin.delete_project(project["id"])
 
 
 def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
@@ -82,7 +82,7 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
     ],
 )
 def test_e2e_synchronize_cloud_storage_connection(
-    kili: Kili,
+    kili_admin: Kili,
     src_project: Dict,
     endpoint_short_name: str,
     platform_name: str,
@@ -91,9 +91,9 @@ def test_e2e_synchronize_cloud_storage_connection(
     expected_nb_assets_after_sync: int,
 ) -> None:
     """E2e test for cloud storage methods."""
-    if not is_same_endpoint(endpoint_short_name, kili.api_endpoint):
+    if not is_same_endpoint(endpoint_short_name, kili_admin.api_endpoint):
         pytest.skip(
-            f"Skipping test because endpoint {kili.api_endpoint} does not match"
+            f"Skipping test because endpoint {kili_admin.api_endpoint} does not match"
             f" {endpoint_short_name}"
         )
 
@@ -113,21 +113,21 @@ def test_e2e_synchronize_cloud_storage_connection(
 
     # Check that the data integration exists
     print("Data integration used:", data_integration_id)
-    data_integrations = kili.cloud_storage_integrations(
+    data_integrations = kili_admin.cloud_storage_integrations(
         status="CONNECTED", cloud_storage_integration_id=data_integration_id
     )
     if len(data_integrations) != 1:
         raise ValueError(f"Data integration {data_integration_id} not found. Cannot run test.")
 
     # Create a data connection
-    data_connection_id = kili.add_cloud_storage_connection(
+    data_connection_id = kili_admin.add_cloud_storage_connection(
         project_id=project_id,
         cloud_storage_integration_id=data_integration_id,
         selected_folders=selected_folders,
     )["id"]
 
     # Check that the data connection has been created
-    data_connections = kili.cloud_storage_connections(
+    data_connections = kili_admin.cloud_storage_connections(
         cloud_storage_connection_id=data_connection_id,
         project_id=project_id,
         fields=[
@@ -149,15 +149,15 @@ def test_e2e_synchronize_cloud_storage_connection(
     assert data_connection["dataIntegrationId"] == data_integration_id, data_connection
     print("Data connection:", data_connection)
 
-    nb_assets = kili.count_assets(project_id=project_id)
+    nb_assets = kili_admin.count_assets(project_id=project_id)
     assert nb_assets == 0, f"Expected no asset before sync. Got {nb_assets} assets."
 
-    kili.synchronize_cloud_storage_connection(
+    kili_admin.synchronize_cloud_storage_connection(
         cloud_storage_connection_id=data_connection_id,
         delete_extraneous_files=True,
     )
 
-    nb_assets = kili.count_assets(project_id=project_id)
+    nb_assets = kili_admin.count_assets(project_id=project_id)
     assert (
         nb_assets == expected_nb_assets_after_sync
     ), f"Expected {expected_nb_assets_after_sync} assets after sync. Got {nb_assets} assets."
