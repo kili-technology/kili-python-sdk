@@ -1,6 +1,8 @@
 """Cloud storage use cases."""
+import logging
 import time
 from datetime import datetime
+from logging import Logger
 from typing import Dict, Generator, List, Optional
 
 from tenacity import Retrying
@@ -227,3 +229,77 @@ class CloudStorageUseCases(BaseUseCases):
                         f" {nb_assets_before} assets, after: {nb_assets_after} assets,"
                         f" dataDifferencesSummary: {asset_diff}"
                     )
+
+    def synchronize_data_connection(
+        self,
+        data_connection_id: DataConnectionId,
+        delete_extraneous_files: bool,
+        dry_run: bool,
+        logger: Optional[Logger],
+    ) -> None:
+        """Synchronize data connection."""
+        if logger is None:
+            logger = logging.getLogger(__name__)
+            logger.addHandler(logging.NullHandler())
+
+        logger.info("Synchronizing data connection: %s", data_connection_id)
+
+        self.compute_differences(data_connection_id, wait_until_done=True)
+
+        data_connection = self._kili_api_gateway.get_data_connection(
+            data_connection_id,
+            fields=(
+                "id",
+                "dataDifferencesSummary.added",
+                "dataDifferencesSummary.removed",
+                "dataDifferencesSummary.total",
+                "isChecking",
+                "numberOfAssets",
+                "projectId",
+            ),
+        )
+        if data_connection["isChecking"]:
+            raise ValueError(f"Data connection should not be checking: {data_connection}")
+
+        added = data_connection["dataDifferencesSummary"]["added"]
+        removed = data_connection["dataDifferencesSummary"]["removed"]
+        total = data_connection["dataDifferencesSummary"]["total"]
+        nb_assets = data_connection["numberOfAssets"]
+
+        logger.info("Currently %d asset(s) imported from the data connection.", nb_assets)
+
+        if total == 0:
+            logger.info("No differences found. Nothing to synchronize.")
+            return
+
+        logger.info(
+            "Found %d difference(s): %d asset(s) to add, %d asset(s) to remove.",
+            total,
+            added,
+            removed,
+        )
+
+        if dry_run:
+            # pylint: disable=unnecessary-lambda-assignment
+            validate_data_differences_func = lambda *args, **kwargs: None  # noqa: ARG005
+            logger.info("Dry run: no data will be added or removed.")
+        else:
+            validate_data_differences_func = self.validate_data_differences
+
+        if removed > 0:
+            if delete_extraneous_files:
+                validate_data_differences_func(
+                    DataDifferenceType.REMOVE, data_connection_id, wait_until_done=True
+                )
+                logger.info("Removed %d extraneous file(s).", removed)
+            else:
+                logger.info(
+                    "Use delete_extraneous_files=True to remove %d extraneous file(s).",
+                    removed,
+                )
+
+        if added > 0:
+            validate_data_differences_func(
+                DataDifferenceType.ADD, data_connection_id, wait_until_done=True
+            )
+            logger.info("Added %d file(s).", added)
