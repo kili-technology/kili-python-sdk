@@ -87,7 +87,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': ''}]`.
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
-                - For Image projects, if you work with geotiff, you can specify a value with key 'processingParameters' to specify the minimum and maximum zoom level.
+                - In Image projects with geoTIFF assets, you can specify the `minZoom` and `maxZoom` values for the `processingParameters` key.
+                    The `minZoom` parameter defines the zoom level that users are not allowed to zoom out from.
+                    The `maxZoom` value affects asset generation: the higher the value, the greater the level of details and the size of the asset.
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'minZoom': 17, 'maxZoom': 19}}]`.
             disable_tqdm: If `True`, the progress bar will be disabled
             wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.
