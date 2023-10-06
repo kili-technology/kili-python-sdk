@@ -25,7 +25,7 @@ def process_notebook(notebook_filename: str) -> None:
         pytest.param(
             "tests/e2e/plugin_workflow.ipynb",
             marks=pytest.mark.skipif(
-                "lts.cloud" in os.environ["KILI_API_ENDPOINT"],
+                "lts.cloud" in os.getenv("KILI_API_ENDPOINT", ""),
                 reason="Feature not available on premise",
             ),
         ),
@@ -50,7 +50,7 @@ def process_notebook(notebook_filename: str) -> None:
         pytest.param(
             "recipes/plugins_example.ipynb",
             marks=pytest.mark.skipif(
-                "lts.cloud" in os.environ["KILI_API_ENDPOINT"],
+                "lts.cloud" in os.getenv("KILI_API_ENDPOINT", ""),
                 reason="Feature not available on premise",
             ),
         ),

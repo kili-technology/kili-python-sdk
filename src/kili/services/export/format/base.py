@@ -10,11 +10,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
-from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.graphql.operations.data_connection.queries import (
-    DataConnectionsQuery,
-    DataConnectionsWhere,
-)
 from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
 from kili.orm import Asset, Label
@@ -206,14 +201,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             )
 
     def _has_data_connection(self) -> bool:
-        data_connections_gen = DataConnectionsQuery(
-            self.kili.graphql_client, self.kili.http_client
-        )(
-            where=DataConnectionsWhere(project_id=self.project_id),
-            fields=["id"],
-            options=QueryOptions(disable_tqdm=True, first=1, skip=0),
-        )
-        return len(list(data_connections_gen)) > 0
+        project = get_project(self.kili, self.project_id, ["dataConnections.id"])
+        return bool(project["dataConnections"])
 
     def _check_geotiff_export_compatibility(self, assets: List[Asset]) -> None:
         # pylint: disable=line-too-long

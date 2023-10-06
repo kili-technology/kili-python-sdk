@@ -113,7 +113,7 @@ def test_given_query_parameters_I_can_query_assets_and_download_their_media(
     kili_api_gateway: KiliAPIGateway, mocker
 ):
     # mocking
-    kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+    kili_api_gateway.get_project.return_value = {"inputType": "IMAGE", "dataConnections": None}
     media_downlaoder_mock = mocker.patch.object(MediaDownloader, "__init__", return_value=None)
 
     # given parameters to query assets

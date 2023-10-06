@@ -16,7 +16,6 @@ from kili.services.export.format.coco import (
     _get_coco_categories_with_mapping,
     _get_coco_geometry_from_kili_bpoly,
 )
-from kili.services.export.format.kili import KiliExporter
 from kili.services.types import Job, JobName
 from kili.utils.tempfile import TemporaryDirectory
 
@@ -579,12 +578,9 @@ def test_when_exporting_to_coco_given_a_project_with_data_connection_then_it_sho
     mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
-    mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
-    mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
-    mocker.patch(
-        "kili.services.export.format.base.DataConnectionsQuery.__call__",
-        return_value=(i for i in [{"id": "fake_data_connection_id"}]),
-    )
+    mocker.patch.object(CocoExporter, "_check_arguments_compatibility", return_value=None)
+    mocker.patch.object(CocoExporter, "_check_project_compatibility", return_value=None)
+    mocker.patch.object(CocoExporter, "_has_data_connection", return_value=True)
 
     kili = QueriesLabel()
     kili.api_key = ""  # type: ignore
