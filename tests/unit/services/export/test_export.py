@@ -1104,4 +1104,4 @@ def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
 
     # Then
     process_and_save_mock.assert_called_once()
-    assert not kili.graphql_client.execute.called
+    kili.graphql_client.execute.assert_not_called()
