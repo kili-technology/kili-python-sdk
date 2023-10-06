@@ -10,6 +10,7 @@ from kili.adapters.http_client import HttpClient
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.orm import Asset
 from kili.services.export.format.yolo import (
+    YoloExporter,
     _convert_from_kili_to_yolo_format,
     _process_asset,
     _write_class_file,
@@ -283,6 +284,7 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
         "kili.services.export.format.base.fetch_assets",
         return_value=[Asset(asset) for asset in assets],
     )
+    mocker.patch.object(YoloExporter, "_has_data_connection", return_value=False)
 
     kili = QueriesLabel()
     kili.api_endpoint = "https://"  # type: ignore
@@ -334,6 +336,7 @@ def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
         "kili.services.export.format.base.fetch_assets",
         return_value=[Asset(asset) for asset in assets],
     )
+    mocker.patch.object(YoloExporter, "_has_data_connection", return_value=False)
 
     kili = QueriesLabel()
     kili.api_endpoint = "https://"  # type: ignore

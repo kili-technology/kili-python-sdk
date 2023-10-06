@@ -189,6 +189,7 @@ def test_kili_exporter_convert_to_pixel_coords_pdf(mocker: pytest_mock.MockerFix
 def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture):
     get_project_return_val = {
         "inputType": "PDF",
+        "dataConnections": None,
         "id": "fake_proj_id",
         "title": "fake_proj_title",
         "description": "fake_proj_description",
@@ -273,6 +274,7 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
     get_project_return_val = {
         "id": "fake_proj_id",
         "title": "hgfhfg",
+        "dataConnections": None,
         "inputType": "IMAGE",
         "jsonInterface": {
             "jobs": {
@@ -444,6 +446,7 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
         "title": "Object tracking on video",
         "description": "Use bounding-box to track objects across video frames.",
         "id": "fake_proj_id",
+        "dataConnections": None,
     }
 
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
