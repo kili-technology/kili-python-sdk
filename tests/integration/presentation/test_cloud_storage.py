@@ -4,7 +4,6 @@ import pytest
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.presentation.client.cloud_storage import CloudStorageClientMethods
-from kili.use_cases.cloud_storage import CloudStorageUseCases
 
 
 def test_given_data_connections_when_querying_them_then_it_calls_proper_resolver(
@@ -184,16 +183,14 @@ def test_given_kili_client_when_calling_synchronize_cloud_storage_connection_the
     kili_api_gateway: KiliAPIGateway,
 ) -> None:
     # Given
-    mocked_trigger_validate_data_differences = mocker.patch.object(
-        CloudStorageUseCases, "validate_data_differences"
-    )
-    mocker.patch.object(CloudStorageUseCases, "compute_differences")
+    mocker.patch("kili.use_cases.cloud_storage._compute_differences")
     mocker.patch("kili.use_cases.cloud_storage.Retrying", return_value=[])
-    mocked_get_data_connection = mocker.patch.object(KiliAPIGateway, "get_data_connection")
-    mocked_get_data_connection.side_effect = MockerGetDataConnection(**data_connection_ret_values)
 
     kili = CloudStorageClientMethods()
     kili.kili_api_gateway = kili_api_gateway
+    kili.kili_api_gateway.get_data_connection.side_effect = MockerGetDataConnection(
+        **data_connection_ret_values
+    )
 
     # When
     kili.synchronize_cloud_storage_connection(
@@ -207,15 +204,15 @@ def test_given_kili_client_when_calling_synchronize_cloud_storage_connection_the
         assert log_msg in caplog.text
 
     if delete_extraneous_files and data_connection_ret_values["removed"] > 0:
-        mocked_trigger_validate_data_differences.assert_any_call(
-            "REMOVE",
-            "my_data_connection_id",
-            wait_until_done=True,
+        kili.kili_api_gateway.validate_data_connection_differences.assert_any_call(
+            data_connection_id="my_data_connection_id",
+            data_difference_type="REMOVE",
+            fields=("id",),
         )
 
     if data_connection_ret_values["added"] > 0:
-        mocked_trigger_validate_data_differences.assert_any_call(
-            "ADD",
-            "my_data_connection_id",
-            wait_until_done=True,
+        kili.kili_api_gateway.validate_data_connection_differences.assert_any_call(
+            data_connection_id="my_data_connection_id",
+            data_difference_type="ADD",
+            fields=("id",),
         )
