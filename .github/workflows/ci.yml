@@ -9,7 +9,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: 3.8
-          cache: 'pip'
+          cache: "pip"
       - uses: pre-commit/action@v3.0.0
 
   pylint:
@@ -17,14 +17,14 @@ jobs:
     name: Pylint test
     strategy:
       matrix:
-        python-version: ['3.8', '3.11']
+        python-version: ["3.8", "3.11"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
+          cache: "pip"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -37,13 +37,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['3.8', '3.11']
+        version: ["3.8", "3.11"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.version }}
-          cache: 'pip'
+          cache: "pip"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -72,7 +72,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -138,4 +138,16 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Build
-        run: mkdocs build
+        run: |
+          mkdocs build
+
+      - name: Look for Warnings
+        run: |
+          mkdocs build 2>&1 | tee doc-build.log
+          if grep -q "WARNING" doc-build.log; then
+            echo $(grep "WARNING" doc-build.log)
+            echo "::error::Documentation build completed with warnings"
+            exit 1
+          else
+            echo "Documentation build completed successfully"
+          fi
