@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.3">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.4">
     
     
       
@@ -28,10 +28,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.79e020e9.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bd3936ea.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.a5377069.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.356b1318.min.css">
       
       
 
@@ -670,13 +670,6 @@
         <li class="md-nav__item">
   <a href="#kili.presentation.client.project.ProjectClientMethods.update_properties_in_project" class="md-nav__link">
     update_properties_in_project()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kili.entrypoints.queries.project.__init__.QueriesProject.count_projects" class="md-nav__link">
-    count_projects()
   </a>
   
 </li>
@@ -1716,13 +1709,6 @@
         <li class="md-nav__item">
   <a href="#kili.presentation.client.project.ProjectClientMethods.update_properties_in_project" class="md-nav__link">
     update_properties_in_project()
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kili.entrypoints.queries.project.__init__.QueriesProject.count_projects" class="md-nav__link">
-    count_projects()
   </a>
   
 </li>
@@ -2932,223 +2918,6 @@ will default to the <code>string</code> type.</p>
 
     <div class="doc doc-contents first">
 
-      <p>Set of Project queries.</p>
-
-        <details class="quote">
-          <summary>Source code in <code>kili/entrypoints/queries/project/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">QueriesProject</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Project queries.&quot;&quot;&quot;</span>
-
-    <span class="c1"># pylint: disable=too-many-arguments</span>
-
-    <span class="nd">@typechecked</span>
-    <span class="k">def</span> <span class="nf">count_projects</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">search_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">should_relaunch_kpi_computation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">updated_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">archived</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Count the number of projects with a search_query.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            project_id: Select a specific project through its project_id.</span>
-<span class="sd">            search_query: Returned projects with a title or a description matching this [PostgreSQL ILIKE](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE) pattern.</span>
-<span class="sd">            should_relaunch_kpi_computation: Technical field, added to indicate changes in honeypot</span>
-<span class="sd">                or consensus settings</span>
-<span class="sd">            updated_at_gte: Returned projects should have a label</span>
-<span class="sd">                whose update date is greater</span>
-<span class="sd">                or equal to this date.</span>
-<span class="sd">            updated_at_lte: Returned projects should have a label</span>
-<span class="sd">                whose update date is lower or equal to this date.</span>
-<span class="sd">            archived: If `True`, only archived projects are returned, if `False`, only active projects are returned.</span>
-<span class="sd">                None disable this filter.</span>
-
-<span class="sd">        !!! info &quot;Dates format&quot;</span>
-<span class="sd">            Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            The number of projects with the parameters provided</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectWhere</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-            <span class="n">search_query</span><span class="o">=</span><span class="n">search_query</span><span class="p">,</span>
-            <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="n">should_relaunch_kpi_computation</span><span class="p">,</span>
-            <span class="n">updated_at_gte</span><span class="o">=</span><span class="n">updated_at_gte</span><span class="p">,</span>
-            <span class="n">updated_at_lte</span><span class="o">=</span><span class="n">updated_at_lte</span><span class="p">,</span>
-            <span class="n">archived</span><span class="o">=</span><span class="n">archived</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">ProjectQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h3 id="kili.entrypoints.queries.project.__init__.QueriesProject.count_projects" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">count_projects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">search_query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">archived</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-
-</h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Count the number of projects with a search_query.</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>project_id</code></td>
-        <td><code>Optional[str]</code></td>
-        <td><p>Select a specific project through its project_id.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>search_query</code></td>
-        <td><code>Optional[str]</code></td>
-        <td><p>Returned projects with a title or a description matching this <a href="https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE">PostgreSQL ILIKE</a> pattern.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>should_relaunch_kpi_computation</code></td>
-        <td><code>Optional[bool]</code></td>
-        <td><p>Technical field, added to indicate changes in honeypot
-or consensus settings</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>updated_at_gte</code></td>
-        <td><code>Optional[str]</code></td>
-        <td><p>Returned projects should have a label
-whose update date is greater
-or equal to this date.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>updated_at_lte</code></td>
-        <td><code>Optional[str]</code></td>
-        <td><p>Returned projects should have a label
-whose update date is lower or equal to this date.</p></td>
-        <td><code>None</code></td>
-      </tr>
-      <tr>
-        <td><code>archived</code></td>
-        <td><code>Optional[bool]</code></td>
-        <td><p>If <code>True</code>, only archived projects are returned, if <code>False</code>, only active projects are returned.
-None disable this filter.</p></td>
-        <td><code>None</code></td>
-      </tr>
-  </tbody>
-</table>      <div class="admonition info">
-<p class="admonition-title">Dates format</p>
-<p>Date strings should have format: "YYYY-MM-DD"</p>
-</div>
-
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>int</code></td>
-      <td><p>The number of projects with the parameters provided</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>kili/entrypoints/queries/project/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">count_projects</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-    <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">search_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">should_relaunch_kpi_computation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">updated_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">updated_at_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">archived</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count the number of projects with a search_query.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        project_id: Select a specific project through its project_id.</span>
-<span class="sd">        search_query: Returned projects with a title or a description matching this [PostgreSQL ILIKE](https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE) pattern.</span>
-<span class="sd">        should_relaunch_kpi_computation: Technical field, added to indicate changes in honeypot</span>
-<span class="sd">            or consensus settings</span>
-<span class="sd">        updated_at_gte: Returned projects should have a label</span>
-<span class="sd">            whose update date is greater</span>
-<span class="sd">            or equal to this date.</span>
-<span class="sd">        updated_at_lte: Returned projects should have a label</span>
-<span class="sd">            whose update date is lower or equal to this date.</span>
-<span class="sd">        archived: If `True`, only archived projects are returned, if `False`, only active projects are returned.</span>
-<span class="sd">            None disable this filter.</span>
-
-<span class="sd">    !!! info &quot;Dates format&quot;</span>
-<span class="sd">        Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The number of projects with the parameters provided</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectWhere</span><span class="p">(</span>
-        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-        <span class="n">search_query</span><span class="o">=</span><span class="n">search_query</span><span class="p">,</span>
-        <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="n">should_relaunch_kpi_computation</span><span class="p">,</span>
-        <span class="n">updated_at_gte</span><span class="o">=</span><span class="n">updated_at_gte</span><span class="p">,</span>
-        <span class="n">updated_at_lte</span><span class="o">=</span><span class="n">updated_at_lte</span><span class="p">,</span>
-        <span class="n">archived</span><span class="o">=</span><span class="n">archived</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">ProjectQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-    <div class="doc doc-contents first">
-
       <p>Set of Project mutations.</p>
 
         <details class="quote">
@@ -4218,10 +3987,10 @@ Possible choices are: <code>ADMIN</code>, <code>TEAM_MANAGER</code>, <code>REVIE
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.6eac0284.min.js"></script>
+      <script src="../../assets/javascripts/bundle.94c44541.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
       

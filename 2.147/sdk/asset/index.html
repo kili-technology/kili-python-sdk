@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.3">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.4">
     
     
       
@@ -28,10 +28,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.79e020e9.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bd3936ea.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.a5377069.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.356b1318.min.css">
       
       
 
@@ -3653,8 +3653,7 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
 <span class="sd">                If None, random identifiers are created.</span>
 <span class="sd">            id_array: Disabled parameter. Do not use.</span>
 <span class="sd">            is_honeypot_array:  Whether to use the asset for honeypot</span>
-<span class="sd">            status_array: By default, all imported assets are set to `TODO`. Other options:</span>
-<span class="sd">                `ONGOING`, `LABELED`, `REVIEWED`.</span>
+<span class="sd">            status_array: DEPRECATED and does not have any effect.</span>
 <span class="sd">            json_content_array: Useful for `VIDEO` or `TEXT` projects only.</span>
 
 <span class="sd">                - For `VIDEO` projects, each element is a sequence of frames, i.e. a</span>
@@ -3668,7 +3667,9 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
 <span class="sd">                    Example for one asset: `json_metadata_array = [{&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}]`.</span>
 <span class="sd">                - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key &#39;processingParameters&#39; to specify the sampling rate (default: 30).</span>
 <span class="sd">                    Example for one asset: `json_metadata_array = [{&#39;processingParameters&#39;: {&#39;framesPlayedPerSecond&#39;: 10}}]`.</span>
-<span class="sd">                - For Image projects, if you work with geotiff, you can specify a value with key &#39;processingParameters&#39; to specify the minimum and maximum zoom level.</span>
+<span class="sd">                - In Image projects with geoTIFF assets, you can specify the `minZoom` and `maxZoom` values for the `processingParameters` key.</span>
+<span class="sd">                    The `minZoom` parameter defines the zoom level that users are not allowed to zoom out from.</span>
+<span class="sd">                    The `maxZoom` value affects asset generation: the higher the value, the greater the level of details and the size of the asset.</span>
 <span class="sd">                    Example for one asset: `json_metadata_array = [{&#39;processingParameters&#39;: {&#39;minZoom&#39;: 17, &#39;maxZoom&#39;: 19}}]`.</span>
 <span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
 <span class="sd">            wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.</span>
@@ -3714,8 +3715,8 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
 
         <span class="k">if</span> <span class="n">status_array</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;status_array is deprecated, asset status is automatically computed based on&quot;</span>
-                <span class="s2">&quot; its labels and cannot be overwritten.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;status_array is deprecated and will not be sent in the call. Asset status is&quot;</span>
+                <span class="s2">&quot; automatically computed based on its labels and cannot be overwritten.&quot;</span><span class="p">,</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
@@ -3734,7 +3735,6 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
             <span class="s2">&quot;json_content&quot;</span><span class="p">:</span> <span class="n">json_content_array</span><span class="p">,</span>
             <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="n">external_id_array</span><span class="p">,</span>
             <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">id_array</span><span class="p">,</span>
-            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status_array</span><span class="p">,</span>
             <span class="s2">&quot;json_metadata&quot;</span><span class="p">:</span> <span class="n">json_metadata_array</span><span class="p">,</span>
             <span class="s2">&quot;is_honeypot&quot;</span><span class="p">:</span> <span class="n">is_honeypot_array</span><span class="p">,</span>
         <span class="p">}</span>
@@ -3793,8 +3793,7 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
 <span class="sd">                is a text formatted using RichText.</span>
 <span class="sd">                - For a Video project, the`json_content` is a json containg urls pointing</span>
 <span class="sd">                    to each frame of the video.</span>
-<span class="sd">            status_array: Each element should be in `TODO`, `ONGOING`, `LABELED`,</span>
-<span class="sd">                `TO_REVIEW`, `REVIEWED`.</span>
+<span class="sd">            status_array: DEPRECATED and does not have any effect.</span>
 <span class="sd">            is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.</span>
 <span class="sd">            is_honeypot_array: Whether to use the asset for honeypot.</span>
 <span class="sd">            project_id: The project ID. Only required if `external_ids` argument is provided.</span>
@@ -3818,7 +3817,6 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
 <span class="sd">                    is_honeypot_array=[True, True],</span>
 <span class="sd">                    is_used_for_consensus_array=[True, False],</span>
 <span class="sd">                    priorities=[None, 2],</span>
-<span class="sd">                    status_array=[&#39;LABELED&#39;, &#39;REVIEWED&#39;],</span>
 <span class="sd">                    to_be_labeled_by_array=[[&#39;test+pierre@kili-technology.com&#39;], None],</span>
 <span class="sd">                )</span>
 
@@ -3846,12 +3844,11 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
 
         <span class="k">if</span> <span class="n">status_array</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;status_array is deprecated, asset status is automatically computed based on&quot;</span>
-                <span class="s2">&quot; its labels and cannot be overwritten.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;status_array is deprecated and will not be sent in the call. Asset status is&quot;</span>
+                <span class="s2">&quot; automatically computed based on its labels and cannot be overwritten.&quot;</span><span class="p">,</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
-
         <span class="k">if</span> <span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="s2">&quot;The use of `external_ids` argument has changed. It is now used to identify&quot;</span>
@@ -3874,7 +3871,6 @@ For example, with <code>external_id_in=['abc']</code>, any asset with an externa
             <span class="n">to_be_labeled_by_array</span><span class="o">=</span><span class="n">to_be_labeled_by_array</span><span class="p">,</span>
             <span class="n">contents</span><span class="o">=</span><span class="n">contents</span><span class="p">,</span>
             <span class="n">json_contents</span><span class="o">=</span><span class="n">json_contents</span><span class="p">,</span>
-            <span class="n">status_array</span><span class="o">=</span><span class="n">status_array</span><span class="p">,</span>
             <span class="n">is_used_for_consensus_array</span><span class="o">=</span><span class="n">is_used_for_consensus_array</span><span class="p">,</span>
             <span class="n">is_honeypot_array</span><span class="o">=</span><span class="n">is_honeypot_array</span><span class="p">,</span>
             <span class="n">resolution_array</span><span class="o">=</span><span class="n">resolution_array</span><span class="p">,</span>
@@ -4449,8 +4445,7 @@ If None, random identifiers are created.</p></td>
       <tr>
         <td><code>status_array</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>By default, all imported assets are set to <code>TODO</code>. Other options:
-<code>ONGOING</code>, <code>LABELED</code>, <code>REVIEWED</code>.</p></td>
+        <td><p>DEPRECATED and does not have any effect.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -4475,7 +4470,9 @@ rich-text assets</a>.</li>
     Example for one asset: <code>json_metadata_array = [{'imageUrl': '','text': '','url': ''}]</code>.</li>
 <li>For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
     Example for one asset: <code>json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]</code>.</li>
-<li>For Image projects, if you work with geotiff, you can specify a value with key 'processingParameters' to specify the minimum and maximum zoom level.
+<li>In Image projects with geoTIFF assets, you can specify the <code>minZoom</code> and <code>maxZoom</code> values for the <code>processingParameters</code> key.
+    The <code>minZoom</code> parameter defines the zoom level that users are not allowed to zoom out from.
+    The <code>maxZoom</code> value affects asset generation: the higher the value, the greater the level of details and the size of the asset.
     Example for one asset: <code>json_metadata_array = [{'processingParameters': {'minZoom': 17, 'maxZoom': 19}}]</code>.</li>
 </ul></td>
         <td><code>None</code></td>
@@ -4577,8 +4574,7 @@ In the case where assets are uploaded asynchronously (for video imported as fram
 <span class="sd">            If None, random identifiers are created.</span>
 <span class="sd">        id_array: Disabled parameter. Do not use.</span>
 <span class="sd">        is_honeypot_array:  Whether to use the asset for honeypot</span>
-<span class="sd">        status_array: By default, all imported assets are set to `TODO`. Other options:</span>
-<span class="sd">            `ONGOING`, `LABELED`, `REVIEWED`.</span>
+<span class="sd">        status_array: DEPRECATED and does not have any effect.</span>
 <span class="sd">        json_content_array: Useful for `VIDEO` or `TEXT` projects only.</span>
 
 <span class="sd">            - For `VIDEO` projects, each element is a sequence of frames, i.e. a</span>
@@ -4592,7 +4588,9 @@ In the case where assets are uploaded asynchronously (for video imported as fram
 <span class="sd">                Example for one asset: `json_metadata_array = [{&#39;imageUrl&#39;: &#39;&#39;,&#39;text&#39;: &#39;&#39;,&#39;url&#39;: &#39;&#39;}]`.</span>
 <span class="sd">            - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key &#39;processingParameters&#39; to specify the sampling rate (default: 30).</span>
 <span class="sd">                Example for one asset: `json_metadata_array = [{&#39;processingParameters&#39;: {&#39;framesPlayedPerSecond&#39;: 10}}]`.</span>
-<span class="sd">            - For Image projects, if you work with geotiff, you can specify a value with key &#39;processingParameters&#39; to specify the minimum and maximum zoom level.</span>
+<span class="sd">            - In Image projects with geoTIFF assets, you can specify the `minZoom` and `maxZoom` values for the `processingParameters` key.</span>
+<span class="sd">                The `minZoom` parameter defines the zoom level that users are not allowed to zoom out from.</span>
+<span class="sd">                The `maxZoom` value affects asset generation: the higher the value, the greater the level of details and the size of the asset.</span>
 <span class="sd">                Example for one asset: `json_metadata_array = [{&#39;processingParameters&#39;: {&#39;minZoom&#39;: 17, &#39;maxZoom&#39;: 19}}]`.</span>
 <span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
 <span class="sd">        wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.</span>
@@ -4638,8 +4636,8 @@ In the case where assets are uploaded asynchronously (for video imported as fram
 
     <span class="k">if</span> <span class="n">status_array</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;status_array is deprecated, asset status is automatically computed based on&quot;</span>
-            <span class="s2">&quot; its labels and cannot be overwritten.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;status_array is deprecated and will not be sent in the call. Asset status is&quot;</span>
+            <span class="s2">&quot; automatically computed based on its labels and cannot be overwritten.&quot;</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
@@ -4658,7 +4656,6 @@ In the case where assets are uploaded asynchronously (for video imported as fram
         <span class="s2">&quot;json_content&quot;</span><span class="p">:</span> <span class="n">json_content_array</span><span class="p">,</span>
         <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="n">external_id_array</span><span class="p">,</span>
         <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">id_array</span><span class="p">,</span>
-        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status_array</span><span class="p">,</span>
         <span class="s2">&quot;json_metadata&quot;</span><span class="p">:</span> <span class="n">json_metadata_array</span><span class="p">,</span>
         <span class="s2">&quot;is_honeypot&quot;</span><span class="p">:</span> <span class="n">is_honeypot_array</span><span class="p">,</span>
     <span class="p">}</span>
@@ -5207,8 +5204,7 @@ is a text formatted using RichText.</li>
       <tr>
         <td><code>status_array</code></td>
         <td><code>Optional[List[str]]</code></td>
-        <td><p>Each element should be in <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>,
-<code>TO_REVIEW</code>, <code>REVIEWED</code>.</p></td>
+        <td><p>DEPRECATED and does not have any effect.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -5272,7 +5268,6 @@ corresponding asset. Each resolution can be passed as a
         <span class="n">is_honeypot_array</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
         <span class="n">is_used_for_consensus_array</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
         <span class="n">priorities</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
-        <span class="n">status_array</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;LABELED&#39;</span><span class="p">,</span> <span class="s1">&#39;REVIEWED&#39;</span><span class="p">],</span>
         <span class="n">to_be_labeled_by_array</span><span class="o">=</span><span class="p">[[</span><span class="s1">&#39;test+pierre@kili-technology.com&#39;</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
     <span class="p">)</span>
 </code></pre></div>
@@ -5336,8 +5331,7 @@ corresponding asset. Each resolution can be passed as a
 <span class="sd">            is a text formatted using RichText.</span>
 <span class="sd">            - For a Video project, the`json_content` is a json containg urls pointing</span>
 <span class="sd">                to each frame of the video.</span>
-<span class="sd">        status_array: Each element should be in `TODO`, `ONGOING`, `LABELED`,</span>
-<span class="sd">            `TO_REVIEW`, `REVIEWED`.</span>
+<span class="sd">        status_array: DEPRECATED and does not have any effect.</span>
 <span class="sd">        is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.</span>
 <span class="sd">        is_honeypot_array: Whether to use the asset for honeypot.</span>
 <span class="sd">        project_id: The project ID. Only required if `external_ids` argument is provided.</span>
@@ -5361,7 +5355,6 @@ corresponding asset. Each resolution can be passed as a
 <span class="sd">                is_honeypot_array=[True, True],</span>
 <span class="sd">                is_used_for_consensus_array=[True, False],</span>
 <span class="sd">                priorities=[None, 2],</span>
-<span class="sd">                status_array=[&#39;LABELED&#39;, &#39;REVIEWED&#39;],</span>
 <span class="sd">                to_be_labeled_by_array=[[&#39;test+pierre@kili-technology.com&#39;], None],</span>
 <span class="sd">            )</span>
 
@@ -5389,12 +5382,11 @@ corresponding asset. Each resolution can be passed as a
 
     <span class="k">if</span> <span class="n">status_array</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;status_array is deprecated, asset status is automatically computed based on&quot;</span>
-            <span class="s2">&quot; its labels and cannot be overwritten.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;status_array is deprecated and will not be sent in the call. Asset status is&quot;</span>
+            <span class="s2">&quot; automatically computed based on its labels and cannot be overwritten.&quot;</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
-
     <span class="k">if</span> <span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;The use of `external_ids` argument has changed. It is now used to identify&quot;</span>
@@ -5417,7 +5409,6 @@ corresponding asset. Each resolution can be passed as a
         <span class="n">to_be_labeled_by_array</span><span class="o">=</span><span class="n">to_be_labeled_by_array</span><span class="p">,</span>
         <span class="n">contents</span><span class="o">=</span><span class="n">contents</span><span class="p">,</span>
         <span class="n">json_contents</span><span class="o">=</span><span class="n">json_contents</span><span class="p">,</span>
-        <span class="n">status_array</span><span class="o">=</span><span class="n">status_array</span><span class="p">,</span>
         <span class="n">is_used_for_consensus_array</span><span class="o">=</span><span class="n">is_used_for_consensus_array</span><span class="p">,</span>
         <span class="n">is_honeypot_array</span><span class="o">=</span><span class="n">is_honeypot_array</span><span class="p">,</span>
         <span class="n">resolution_array</span><span class="o">=</span><span class="n">resolution_array</span><span class="p">,</span>
@@ -5495,10 +5486,10 @@ corresponding asset. Each resolution can be passed as a
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.6eac0284.min.js"></script>
+      <script src="../../assets/javascripts/bundle.94c44541.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
       
