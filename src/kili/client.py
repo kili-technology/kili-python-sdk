@@ -12,7 +12,6 @@ from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.core.graphql.operations.user.queries import GQL_ME
 from kili.entrypoints.mutations.asset import MutationsAsset
-from kili.entrypoints.mutations.data_connection import MutationsDataConnection
 from kili.entrypoints.mutations.issue import MutationsIssue
 from kili.entrypoints.mutations.label import MutationsLabel
 from kili.entrypoints.mutations.notification import MutationsNotification
@@ -20,8 +19,6 @@ from kili.entrypoints.mutations.plugins import MutationsPlugins
 from kili.entrypoints.mutations.project import MutationsProject
 from kili.entrypoints.mutations.project_version import MutationsProjectVersion
 from kili.entrypoints.mutations.user import MutationsUser
-from kili.entrypoints.queries.data_connection import QueriesDataConnection
-from kili.entrypoints.queries.data_integration import QueriesDataIntegration
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.entrypoints.queries.notification import QueriesNotification
 from kili.entrypoints.queries.organization import QueriesOrganization
@@ -32,6 +29,7 @@ from kili.entrypoints.queries.user import QueriesUser
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
 from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.presentation.client.asset import AssetClientMethods
+from kili.presentation.client.cloud_storage import CloudStorageClientMethods
 from kili.presentation.client.internal import InternalClientMethods
 from kili.presentation.client.issue import IssueClientMethods
 from kili.presentation.client.project import ProjectClientMethods
@@ -54,7 +52,6 @@ logging.getLogger("urllib3.connectionpool").addFilter(FilterPoolFullWarning())
 
 class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsAsset,
-    MutationsDataConnection,
     MutationsIssue,
     MutationsLabel,
     MutationsNotification,
@@ -62,8 +59,6 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsProject,
     MutationsProjectVersion,
     MutationsUser,
-    QueriesDataConnection,
-    QueriesDataIntegration,
     QueriesLabel,
     QueriesNotification,
     QueriesOrganization,
@@ -76,6 +71,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     AssetClientMethods,
     TagClientMethods,
     ProjectClientMethods,
+    CloudStorageClientMethods,
 ):
     """Kili Client."""
 

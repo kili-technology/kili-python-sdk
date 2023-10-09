@@ -126,6 +126,8 @@ ignore = [
   "EM101",   # use variable instead of string literal in exception
   "EM102",   # avoid using f-string in exception messages
   "FA100",   # Missing `from __future__ import annotations`, but uses `typing`
+  "FBT001",  # boolean-type-hint-positional-argument
+  "FBT002",  # boolean-type-hint-keyword-argument
   "I001",    # isort already takes care of imports
   "PLR0913", # Too many arguments to function call
   "TRY003",  # Avoid specifying long messages outside the exception class

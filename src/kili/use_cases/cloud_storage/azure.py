@@ -9,6 +9,25 @@ from azure.storage.blob import BlobServiceClient
 from kili.domain.project import InputType
 
 
+def get_blob_paths_azure_data_connection_with_service_credentials(
+    data_connection: Dict, data_integration: Dict, input_type: InputType
+) -> Tuple[List[str], List[str]]:
+    """Get the blob paths for an Azure data connection using service credentials."""
+    if not (data_integration["azureSASToken"] and data_integration["azureConnectionURL"]):
+        raise ValueError(
+            f"Cannot retrieve blob paths for data connection {data_connection['id']} with data"
+            f" integration {data_integration['id']}. Need to provide \"azureSASToken\" and"
+            f' "azureConnectionURL" in data integration: {data_integration}'
+        )
+
+    return AzureBucket(
+        sas_token=data_integration["azureSASToken"],
+        connection_url=data_integration["azureConnectionURL"],
+    ).get_blob_paths_azure_data_connection_with_service_credentials(
+        data_connection["selectedFolders"], input_type=input_type
+    )
+
+
 class AzureBucket:
     """Class for Azure blob storage buckets."""
 
@@ -31,7 +50,11 @@ class AzureBucket:
         """Split the connection url into storage account and container name."""
         split_value = ".blob.core.windows.net"
         url_connection = urlparse(connection_url)
-        storage_account = url_connection.hostname.split(split_value)[0]  # type: ignore
+        storage_account = (
+            url_connection.hostname.split(  # pyright: ignore[reportOptionalMemberAccess]
+                split_value
+            )[0]
+        )
         container_name = url_connection.path.lstrip("/")
         return storage_account, container_name
 
@@ -58,7 +81,7 @@ class AzureBucket:
 
     def get_blob_paths_azure_data_connection_with_service_credentials(
         self, selected_folders: Optional[List[str]], input_type: InputType
-    ) -> Tuple[List[str], List[Optional[str]]]:
+    ) -> Tuple[List[str], List[str]]:
         """Get the blob paths for an Azure data connection using service credentials."""
         blob_paths = []
         warnings = set()

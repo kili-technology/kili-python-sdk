@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import pytest
 
-from kili.services.data_connection.azure import AzureBucket
+from kili.use_cases.cloud_storage.azure import AzureBucket
 
 
 @pytest.mark.parametrize(
