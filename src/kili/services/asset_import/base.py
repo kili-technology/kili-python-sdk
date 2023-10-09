@@ -27,6 +27,7 @@ from kili.core.graphql.operations.organization.queries import (
 from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
 from kili.core.utils import pagination
 from kili.domain.asset import AssetFilters
+from kili.domain.types import ListOrTuple
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,
@@ -88,7 +89,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         self.logger = logging.getLogger("kili.services.asset_import.base")
         self.logger.setLevel(logging.INFO)
 
-    def import_batch(self, assets: List[AssetLike], verify: bool) -> List[str]:
+    def import_batch(self, assets: ListOrTuple[AssetLike], verify: bool) -> List[str]:
         """Base actions to import a batch of asset.
 
         Returns:
@@ -179,10 +180,12 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         )
 
     @staticmethod
-    def loop_on_batch(func: Callable[[AssetLike], T]) -> Callable[[List[AssetLike]], List[T]]:
+    def loop_on_batch(
+        func: Callable[[AssetLike], T]
+    ) -> Callable[[ListOrTuple[AssetLike]], List[T]]:
         """Apply a function, that takes a single asset as input, on the whole batch."""
 
-        def loop_func(assets: List[AssetLike]):
+        def loop_func(assets: ListOrTuple[AssetLike]):
             return [func(asset) for asset in assets]
 
         return loop_func
