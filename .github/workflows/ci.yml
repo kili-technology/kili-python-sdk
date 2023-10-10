@@ -17,7 +17,7 @@ jobs:
     name: Pylint test
     strategy:
       matrix:
-        python-version: ['3.8', '3.12']
+        python-version: ["3.8", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['3.8', '3.12']
+        version: ["3.8", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
@@ -102,6 +102,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.8
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -131,6 +132,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.8
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -150,4 +152,51 @@ jobs:
             exit 1
           else
             echo "Documentation build completed successfully"
+          fi
+
+  find-dead-code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Find dead code with vulture
+        run: vulture src/kili tests 2>&1 | tee dead_code.txt
+
+      - name: Find dead code with dead
+        run: dead 2>&1 | tee -a dead_code.txt
+
+      - name: Filter dead code
+        run: |
+          cat dead_code.txt | \
+          grep -e "src/kili" | \
+          grep -v \
+          -e "is only referenced in tests" \
+          -e "_ is never read" \
+          -e "affected_rows" \
+          -e "src/kili/orm" \
+          -e "src/kili/entrypoints" \
+          -e "src/kili/services" \
+          -e "src/kili/types.py" \
+          -e "src/kili/core/graphql/ws_graphql_client" \
+          -e "internal" \
+          > dead_code_filtered.txt || true
+
+      - name: Crash if dead code found
+        run: |
+          if [ $(cat dead_code_filtered.txt | wc -l) -gt 0 ]; then
+            cat dead_code_filtered.txt
+            exit 1
+          else
+            echo "No dead code found"
           fi
