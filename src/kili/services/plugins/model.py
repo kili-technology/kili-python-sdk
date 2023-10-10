@@ -138,8 +138,9 @@ class PluginCore:
         self,
         settings_updated: List[Dict],
     ) -> None:
-        """Handler for the project updated action,
-        triggered when a project setting is updated on Kili.
+        """Handler for the project updated action.
+
+        Triggered when a project setting is updated on Kili.
 
         !!! warning
             This handler is in beta and is still in active development,

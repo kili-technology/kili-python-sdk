@@ -4,7 +4,8 @@ from typing import Callable
 
 from typeguard import typechecked
 
-from kili.core.graphql.graphql_client import GraphQLClient, SubscriptionGraphQLClient
+from kili.core.graphql.graphql_client import GraphQLClient
+from kili.core.graphql.ws_graphql_client import SubscriptionGraphQLClient
 
 from .subscriptions import GQL_LABEL_CREATED_OR_UPDATED
 

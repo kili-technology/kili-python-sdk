@@ -116,7 +116,10 @@ def test_e2e_synchronize_cloud_storage_connection(
     data_integrations = kili.cloud_storage_integrations(
         status="CONNECTED", cloud_storage_integration_id=data_integration_id
     )
-    if len(data_integrations) != 1:
+    count_data_integrations = kili.count_cloud_storage_integrations(
+        cloud_storage_integration_id=data_integration_id
+    )
+    if not len(data_integrations) == count_data_integrations == 1:
         raise ValueError(f"Data integration {data_integration_id} not found. Cannot run test.")
 
     # Create a data connection

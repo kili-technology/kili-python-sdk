@@ -19,7 +19,3 @@ class NotCompatibleInputType(ValueError):
 
 class NotExportableAssetError(ValueError):
     """Exception thrown when the assets can't be exported."""
-
-
-class NotAccessibleAssetError(ValueError):
-    """Exception thrown when the assets can't be accessed."""
