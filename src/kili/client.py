@@ -18,14 +18,12 @@ from kili.entrypoints.mutations.notification import MutationsNotification
 from kili.entrypoints.mutations.plugins import MutationsPlugins
 from kili.entrypoints.mutations.project import MutationsProject
 from kili.entrypoints.mutations.project_version import MutationsProjectVersion
-from kili.entrypoints.mutations.user import MutationsUser
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.entrypoints.queries.notification import QueriesNotification
 from kili.entrypoints.queries.organization import QueriesOrganization
 from kili.entrypoints.queries.plugins import QueriesPlugins
 from kili.entrypoints.queries.project_user import QueriesProjectUser
 from kili.entrypoints.queries.project_version import QueriesProjectVersion
-from kili.entrypoints.queries.user import QueriesUser
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
 from kili.exceptions import AuthenticationFailed, UserNotFoundError
 from kili.presentation.client.asset import AssetClientMethods
@@ -34,6 +32,7 @@ from kili.presentation.client.internal import InternalClientMethods
 from kili.presentation.client.issue import IssueClientMethods
 from kili.presentation.client.project import ProjectClientMethods
 from kili.presentation.client.tag import TagClientMethods
+from kili.presentation.client.user import UserClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
@@ -58,20 +57,19 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsPlugins,
     MutationsProject,
     MutationsProjectVersion,
-    MutationsUser,
     QueriesLabel,
     QueriesNotification,
     QueriesOrganization,
     QueriesPlugins,
     QueriesProjectUser,
     QueriesProjectVersion,
-    QueriesUser,
     SubscriptionsLabel,
     IssueClientMethods,
     AssetClientMethods,
     TagClientMethods,
     ProjectClientMethods,
     CloudStorageClientMethods,
+    UserClientMethods,
 ):
     """Kili Client."""
 

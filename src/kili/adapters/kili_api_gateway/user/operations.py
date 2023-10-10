@@ -1,0 +1,99 @@
+"""GraphQL User operations."""
+
+
+def get_users_query(fragment: str) -> str:
+    """Return the GraphQL users query."""
+    return f"""
+        query users($where: UserWhere!, $first: PageSize!, $skip: Int!) {{
+            data: users(where: $where, first: $first, skip: $skip) {{
+                {fragment}
+            }}
+        }}
+        """
+
+
+def get_current_user_query(fragment: str) -> str:
+    """Return the GraphQL current user query."""
+    return f"""
+      query me {{
+          data: me {{
+              {fragment}
+          }}
+      }}
+    """
+
+
+def get_create_user_mutation(fragment: str) -> str:
+    """Return the GraphQL create user mutation."""
+    return f"""
+      mutation(
+          $data: CreateUserData!
+      ) {{
+        data: createUser(
+            data: $data
+        ) {{
+          {fragment}
+        }}
+      }}
+    """
+
+
+def get_update_password_mutation(fragment: str) -> str:
+    """Return the GraphQL update password mutation."""
+    return f"""
+mutation(
+    $data: UpdatePasswordData!
+    $where: UserWhere!
+) {{
+  data: updatePassword(
+    data: $data
+    where: $where
+  ) {{
+    {fragment}
+  }}
+}}
+"""
+
+
+def get_update_user_mutation(fragment: str) -> str:
+    """Return the GraphQL update user mutation."""
+    return f"""
+mutation(
+    $email: String!
+    $firstname: String
+    $lastname: String
+    $organizationId: String
+    $organizationRole: OrganizationRole
+    $activated: Boolean
+) {{
+  data: updatePropertiesInUser(
+    where: {{email: $email}}
+    data: {{
+      firstname: $firstname
+      lastname: $lastname
+      email: $email
+      organizationId: $organizationId
+      organizationRole: $organizationRole
+      activated: $activated
+    }}
+  ) {{
+    {fragment}
+  }}
+}}
+"""
+
+
+GQL_COUNT_USERS = """
+    query countUsers($where: UserWhere!) {
+        data: countUsers(where: $where)
+    }
+    """
+
+
+GQL_RESET_PASSWORD = f"""
+mutation($where: UserWhere!) {{
+  data: resetPassword(where: $where) {{
+    {USER_FRAGMENT}
+  }}
+}}
+"""
