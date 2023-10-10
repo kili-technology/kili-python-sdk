@@ -90,10 +90,12 @@ GQL_COUNT_USERS = """
     """
 
 
-GQL_RESET_PASSWORD = f"""
-mutation($where: UserWhere!) {{
-  data: resetPassword(where: $where) {{
-    {USER_FRAGMENT}
-  }}
-}}
+def get_reset_password_mutation(fragment: str) -> str:
+    """Return the GraphQL reset password mutation."""
+    return f"""
+    mutation($where: UserWhere!) {{
+      data: resetPassword(where: $where) {{
+        {fragment}
+      }}
+    }}
 """
