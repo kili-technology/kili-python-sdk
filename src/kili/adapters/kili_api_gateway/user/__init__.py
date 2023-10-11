@@ -45,7 +45,8 @@ class UserOperationMixin(BaseOperationMixin):
     def get_current_user(self, fields: ListOrTuple[str]) -> Dict:
         """Return the current user."""
         fragment = fragment_builder(fields)
-        result = self.graphql_client.execute(get_current_user_query(fragment=fragment))
+        query = get_current_user_query(fragment=fragment)
+        result = self.graphql_client.execute(query)
         return result["data"]
 
     def create_user(self, data: CreateUserDataKiliGatewayInput, fields: ListOrTuple[str]) -> Dict:

@@ -16,6 +16,6 @@ class UserFilter:
     activated: Optional[bool]
     api_key: Optional[str]
     email: Optional[str]
-    id: Optional[UserId]
+    id: Optional[UserId]  # noqa: A003
     id_in: Optional[List[UserId]]
     organization_id: Optional[OrganizationId]
