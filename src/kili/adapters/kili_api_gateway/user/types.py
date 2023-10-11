@@ -22,14 +22,14 @@ class CreateUserDataKiliGatewayInput:
 class UserDataKiliGatewayInput:
     """Input type for updating a user in Kili Gateway."""
 
-    activated: Optional[bool]
-    api_key: Optional[str]
-    auth0_id: Optional[str]
-    email: Optional[str]
-    firstname: Optional[str]
-    has_completed_labeling_tour: Optional[bool]
-    hubspot_subscription_status: Optional[HubspotSubscriptionStatus]
-    lastname: Optional[str]
-    organization: Optional[str]
-    organization_id: Optional[OrganizationId]
-    organization_role: Optional[OrganizationRole]
+    activated: Optional[bool] = None
+    api_key: Optional[str] = None
+    auth0_id: Optional[str] = None
+    email: Optional[str] = None
+    firstname: Optional[str] = None
+    has_completed_labeling_tour: Optional[bool] = None
+    hubspot_subscription_status: Optional[HubspotSubscriptionStatus] = None
+    lastname: Optional[str] = None
+    organization: Optional[str] = None
+    organization_id: Optional[OrganizationId] = None
+    organization_role: Optional[OrganizationRole] = None

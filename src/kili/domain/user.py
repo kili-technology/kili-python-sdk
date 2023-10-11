@@ -13,9 +13,9 @@ HubspotSubscriptionStatus = Literal["SUBSCRIBED", "UNSUBSCRIBED"]
 class UserFilter:
     """User filters for running a users search."""
 
-    activated: Optional[bool]
-    api_key: Optional[str]
-    email: Optional[str]
     id: Optional[UserId]  # noqa: A003
-    id_in: Optional[List[UserId]]
-    organization_id: Optional[OrganizationId]
+    activated: Optional[bool] = None
+    api_key: Optional[str] = None
+    email: Optional[str] = None
+    id_in: Optional[List[UserId]] = None
+    organization_id: Optional[OrganizationId] = None
