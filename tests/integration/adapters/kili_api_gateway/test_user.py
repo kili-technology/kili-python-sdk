@@ -136,7 +136,7 @@ def test_given_kili_gateway_when_updating_user_it_calls_proper_resolver(
 
     # When
     _ = kili_gateway.update_user(
-        user_filter=UserFilter(id="fake_user_id"),
+        user_filter=UserFilter(id=UserId("fake_user_id")),
         fields=("id",),
         data=UserDataKiliGatewayInput(organization_role="USER"),
     )
