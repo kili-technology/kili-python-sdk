@@ -58,29 +58,12 @@ mutation(
 def get_update_user_mutation(fragment: str) -> str:
     """Return the GraphQL update user mutation."""
     return f"""
-mutation(
-    $email: String!
-    $firstname: String
-    $lastname: String
-    $organizationId: String
-    $organizationRole: OrganizationRole
-    $activated: Boolean
-) {{
-  data: updatePropertiesInUser(
-    where: {{email: $email}}
-    data: {{
-      firstname: $firstname
-      lastname: $lastname
-      email: $email
-      organizationId: $organizationId
-      organizationRole: $organizationRole
-      activated: $activated
-    }}
-  ) {{
-    {fragment}
-  }}
-}}
-"""
+      mutation updatePropertiesInUser( $data: UserData!, $where: UserWhere!) {{
+        data: updatePropertiesInUser( data: $data,  where: $where) {{
+          {fragment}
+        }}
+      }}
+      """
 
 
 GQL_COUNT_USERS = """

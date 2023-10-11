@@ -148,7 +148,6 @@ def test_given_kili_gateway_when_updating_user_it_calls_proper_resolver(
             "data": {
                 "activated": None,
                 "apiKey": None,
-                "auth0Id": None,
                 "email": None,
                 "firstname": None,
                 "hasCompletedLabelingTour": None,

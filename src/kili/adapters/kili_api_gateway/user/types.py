@@ -24,7 +24,7 @@ class UserDataKiliGatewayInput:
 
     activated: Optional[bool] = None
     api_key: Optional[str] = None
-    auth0_id: Optional[str] = None
+    # auth0_id: Optional[str] = None  # refused by the backend: only used for service account  # noqa: ERA001  # pylint: disable=line-too-long
     email: Optional[str] = None
     firstname: Optional[str] = None
     has_completed_labeling_tour: Optional[bool] = None

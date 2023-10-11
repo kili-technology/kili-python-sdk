@@ -86,7 +86,6 @@ class UserUseCases(BaseUseCases):
                 organization_id=organization_id,
                 organization_role=organization_role,
                 api_key=None,
-                auth0_id=None,
                 email=None,
                 has_completed_labeling_tour=None,
                 hubspot_subscription_status=None,
