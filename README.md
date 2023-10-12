@@ -23,9 +23,9 @@ Kili is a platform that empowers a data-centric approach to Machine Learning thr
 
 ### Annotation tools examples
 
-|   Named Entities Extraction and Relation    | PDF classification and bounding-box |   Object detection (bounding-box)   |
-| :-----------------------------------------: | :---------------------------------: | :---------------------------------: |
-| ![](./recipes/img/relations-extraction.png) | ![](./recipes/img/pdf_classif.png)  | ![](./recipes/img/bounding-box.jpg) |
+|                                      Named Entities Extraction and Relation                                      |                                   PDF classification and bounding-box                                   |                                     Object detection (bounding-box)                                      |
+| :--------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------: |
+| ![](https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/relations-extraction.png) | ![](https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/pdf_classif.png) | ![](https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/bounding-box.jpg) |
 
 and [many more](https://docs.kili-technology.com/docs/labeling-overview).
 
