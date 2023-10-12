@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from json import dumps
 from pathlib import Path
-from typing import Callable, List, NamedTuple, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Callable, List, NamedTuple, Optional, Tuple, Union
 from uuid import uuid4
 
 from tenacity import Retrying
@@ -43,6 +43,9 @@ from kili.services.asset_import.types import AssetLike, KiliResolverAsset
 from kili.utils import bucket
 from kili.utils.tqdm import tqdm
 
+if TYPE_CHECKING:
+    from kili.client import Kili
+
 
 class BatchParams(NamedTuple):
     """Contains all parameters related to the batch to import."""
@@ -75,7 +78,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
     """Base class for BatchImporters."""
 
     def __init__(
-        self, kili, project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm
+        self, kili: "Kili", project_params: ProjectParams, batch_params: BatchParams, pbar: tqdm
     ) -> None:
         self.kili = kili
         self.project_id = project_params.project_id
@@ -86,7 +89,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         self.http_client = kili.http_client
 
         logging.basicConfig()
-        self.logger = logging.getLogger("kili.services.asset_import.base")
+        self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
 
     def import_batch(self, assets: ListOrTuple[AssetLike], verify: bool) -> List[str]:
@@ -342,7 +345,7 @@ class BaseAbstractAssetImporter(abc.ABC):
 
     def __init__(
         self,
-        kili,
+        kili: "Kili",
         project_params: ProjectParams,
         processing_params: ProcessingParams,
         logger_params: LoggerParams,
@@ -379,7 +382,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         return False
 
     def _can_upload_from_local_data(self):
-        user_me = self.kili.get_user()
+        user_me = self.kili.kili_api_gateway.get_current_user(fields=("email",))
         where = OrganizationWhere(
             email=user_me["email"],
         )
