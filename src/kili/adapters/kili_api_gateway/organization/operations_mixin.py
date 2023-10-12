@@ -58,3 +58,11 @@ class OrganizationOperationMixin(BaseOperationMixin):
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, description, get_count_organizations_query()
         )
+
+    def count_organizations(self, filters: OrganizationFilters) -> int:
+        """Send a GraphQL request calling countOrganizations resolver."""
+        where = map_organization_where(filters=filters)
+        payload = {"where": where}
+        count_result = self.graphql_client.execute(get_count_organizations_query(), payload)
+        count: int = count_result["data"]
+        return count

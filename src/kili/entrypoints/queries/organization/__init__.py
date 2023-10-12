@@ -9,7 +9,6 @@ from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.graphql.operations.organization.queries import (
     OrganizationMetricsWhere,
     OrganizationQuery,
-    OrganizationWhere,
 )
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.utils.logcontext import for_all_methods, log_call
@@ -20,25 +19,6 @@ class QueriesOrganization(BaseOperationEntrypointMixin):
     """Set of Organization queries."""
 
     graphql_client: GraphQLClient
-
-    @typechecked
-    def count_organizations(
-        self, email: Optional[str] = None, organization_id: Optional[str] = None
-    ) -> int:
-        """Count organizations that match a set of criteria.
-
-        Args:
-            email: Email of a user of the organization
-            organization_id: Identifier of the organization
-
-        Returns:
-            An integer corresponding to the number of organizations that match the criteria.
-        """
-        where = OrganizationWhere(
-            email=email,
-            organization_id=organization_id,
-        )
-        return OrganizationQuery(self.graphql_client, self.http_client).count(where)
 
     @typechecked
     def organization_metrics(

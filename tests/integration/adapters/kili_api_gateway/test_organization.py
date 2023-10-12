@@ -87,4 +87,33 @@ def test_list_organization(mocker, graphql_client):
 
     # Then
     assert next(organizations)["name"] == organization_name
-    print(execute.calls)
+    execute.assert_called_with(
+        "\n        query organizations($where: OrganizationWhere!, $first: PageSize!, $skip:"
+        " Int!) {\n            data: organizations(where: $where, first: $first, skip: $skip)"
+        " {\n                 id name\n            }\n        }\n        ",
+        {"where": {"id": None, "user": {"email": None}}, "skip": 0, "first": 1},
+    )
+
+
+def test_count_organization(mocker, graphql_client):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+    execute = mocker.patch.object(
+        kili_api_gateway.graphql_client,
+        "execute",
+        return_value={"data": 6},
+    )
+
+    # When
+    count = kili_api_gateway.count_organizations(
+        filters=OrganizationFilters(),
+    )
+
+    # Then
+    assert count == 6
+    execute.assert_called_with(
+        "\n        query countOrganizations($where: OrganizationWhere!) {\n        data:"
+        " countOrganizations(where: $where)\n        }\n    ",
+        {"where": {"id": None, "user": {"email": None}}},
+    )

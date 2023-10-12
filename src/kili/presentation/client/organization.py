@@ -131,3 +131,22 @@ class OrganizationClientMethods(BaseClientMethods):
         if as_generator:
             return organization_gen
         return list(organization_gen)
+
+    @typechecked
+    def count_organizations(
+        self, email: Optional[str] = None, organization_id: Optional[str] = None
+    ) -> int:
+        """Count organizations that match a set of criteria.
+
+        Args:
+            email: Email of a user of the organization
+            organization_id: Identifier of the organization
+
+        Returns:
+            An integer corresponding to the number of organizations that match the criteria.
+        """
+        where = OrganizationFilters(
+            email=email,
+            organization_id=OrganizationId(organization_id) if organization_id else None,
+        )
+        return OrganizationUseCases(self.kili_api_gateway).count_organizations(where)
