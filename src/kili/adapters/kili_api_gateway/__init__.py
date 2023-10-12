@@ -6,18 +6,22 @@ from kili.adapters.kili_api_gateway.api_key import ApiKeyOperationMixin
 from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
 from kili.adapters.kili_api_gateway.cloud_storage import CloudStorageOperationMixin
 from kili.adapters.kili_api_gateway.issue import IssueOperationMixin
+from kili.adapters.kili_api_gateway.organization.operations_mixin import (
+    OrganizationOperationMixin,
+)
 from kili.adapters.kili_api_gateway.project import ProjectOperationMixin
 from kili.adapters.kili_api_gateway.tag import TagOperationMixin
 from kili.core.graphql.graphql_client import GraphQLClient
 
 
 class KiliAPIGateway(
-    IssueOperationMixin,
+    ApiKeyOperationMixin,
     AssetOperationMixin,
+    CloudStorageOperationMixin,
+    IssueOperationMixin,
+    OrganizationOperationMixin,
     ProjectOperationMixin,
     TagOperationMixin,
-    ApiKeyOperationMixin,
-    CloudStorageOperationMixin,
 ):
     """GraphQL gateway to communicate with Kili backend."""
 

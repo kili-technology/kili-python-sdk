@@ -1,9 +1,11 @@
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.organization.operations_mixin import (
     OrganizationOperationMixin,
 )
 from kili.adapters.kili_api_gateway.organization.types import (
     KiliAPIGateWayCreateOrganizationInput,
 )
+from kili.domain.organization import OrganizationFilters
 
 
 def test_create_organization(mocker, graphql_client):
@@ -43,10 +45,46 @@ def test_create_organization(mocker, graphql_client):
         "\nmutation(\n    $data: CreateOrganizationData!\n) {\n  data: createOrganization(\n   "
         " data: $data\n  ) {\n    \nid\n\n  }\n}\n",
         {
-            "name": "test_organization",
-            "address": "1, rue de Rivoli",
-            "city": "Paris",
-            "country": "France",
-            "zipCode": "75001",
+            "data": {
+                "name": "test_organization",
+                "address": "1, rue de Rivoli",
+                "city": "Paris",
+                "country": "France",
+                "zipCode": "75001",
+            }
         },
     )
+
+
+def test_list_organization(mocker, graphql_client):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+    organization_name = "test_organization"
+    execute = mocker.patch.object(
+        kili_api_gateway.graphql_client,
+        "execute",
+        side_effect=[
+            {"data": 1},  # response to count query
+            {  # response to list query
+                "data": [
+                    {
+                        "id": "fake_organization_id",
+                        "name": organization_name,
+                    }
+                ]
+            },
+        ],
+    )
+
+    # When
+    organizations = kili_api_gateway.list_organizations(
+        filters=OrganizationFilters(),
+        fields=["id", "name"],
+        description="List organizations",
+        options=QueryOptions(disable_tqdm=False),
+    )
+
+    # Then
+    assert next(organizations)["name"] == organization_name
+    print(execute.calls)

@@ -11,11 +11,11 @@ from kili.domain.types import ListOrTuple
 from kili.entrypoints.mutations.organization import MutationsOrganization
 from kili.entrypoints.mutations.project.queries import GQL_DELETE_PROJECT
 from kili.entrypoints.mutations.user.queries import GQL_RESET_PASSWORD
-from kili.presentation.client.organization import MutationsOrganization
+from kili.presentation.client.organization import InternalOrganizationClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
 
 
-class InternalClientMethods(MutationsOrganization):
+class InternalClientMethods(InternalOrganizationClientMethods, MutationsOrganization):
     """Kili client methods for internal use by Kili Technology only."""
 
     def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:

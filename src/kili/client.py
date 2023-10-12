@@ -32,6 +32,7 @@ from kili.presentation.client.asset import AssetClientMethods
 from kili.presentation.client.cloud_storage import CloudStorageClientMethods
 from kili.presentation.client.internal import InternalClientMethods
 from kili.presentation.client.issue import IssueClientMethods
+from kili.presentation.client.organization import OrganizationClientMethods
 from kili.presentation.client.project import ProjectClientMethods
 from kili.presentation.client.tag import TagClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
@@ -72,6 +73,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     TagClientMethods,
     ProjectClientMethods,
     CloudStorageClientMethods,
+    OrganizationClientMethods,
 ):
     """Kili Client."""
 
