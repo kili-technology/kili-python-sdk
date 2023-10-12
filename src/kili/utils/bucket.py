@@ -12,10 +12,6 @@ from tenacity.wait import wait_random
 
 from kili.adapters.http_client import HttpClient
 
-AZURE_STRING = "blob.core.windows.net"
-GCP_STRING = "storage.googleapis.com"
-GCP_STRING_PUBLIC = "storage.cloud.google.com"
-
 MAX_NUMBER_SIGNED_URLS_TO_FETCH = 30
 
 

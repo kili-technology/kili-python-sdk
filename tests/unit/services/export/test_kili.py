@@ -239,6 +239,7 @@ def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture
             )
         ],
     )
+    mocker.patch.object(AbstractExporter, "_check_and_ensure_asset_access", return_value=None)
 
     kili = QueriesLabel()
     kili.api_endpoint = "https://"  # type: ignore
@@ -387,6 +388,7 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
             )
         ],
     )
+    mocker.patch.object(AbstractExporter, "_check_and_ensure_asset_access", return_value=None)
 
     kili = QueriesLabel()
     kili.api_endpoint = "https://"  # type: ignore
@@ -463,6 +465,7 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
             )
         ],
     )
+    mocker.patch.object(AbstractExporter, "_check_and_ensure_asset_access", return_value=None)
 
     kili = QueriesLabel()
     kili.api_endpoint = "https://"  # type: ignore

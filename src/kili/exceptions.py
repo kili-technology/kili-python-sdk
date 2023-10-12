@@ -57,10 +57,6 @@ class AuthenticationFailed(Exception):
         return input_str
 
 
-class NonExistingFieldError(ValueError):
-    """Raised when querying a field that does not exist on an object."""
-
-
 class MissingArgumentError(ValueError):
     """Raised when an required argument was not given by the user."""
 

@@ -18,8 +18,8 @@ def _opencv_contour_to_normalized_vertices(
     contour_points = []
     for point in contour:
         point = point[0]
-        x = point[0]  # pylint:disable=invalid-name
-        y = point[1]  # pylint:disable=invalid-name
+        x = point[0]
+        y = point[1]
         contour_points.append({"x": x / img_width, "y": y / img_height})
     return contour_points
 

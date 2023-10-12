@@ -31,15 +31,19 @@ def format_result(
     """
     formatted_json = format_json(result[name], http_client)
     if object_ is None:
-        return formatted_json  # type:ignore X
+        return formatted_json  # pyright: ignore[reportGeneralTypeIssues]
     if isinstance(formatted_json, list):
         if get_origin(object_) is list:
             obj = get_args(object_)[0]
-            return [obj(element) for element in formatted_json]  # type:ignore
+            return [
+                obj(element) for element in formatted_json
+            ]  # pyright: ignore[reportGeneralTypeIssues]
         # the legacy "orm" objects fall into this category.
-        return [object_(element) for element in formatted_json]  # type:ignore
+        return [
+            object_(element) for element in formatted_json
+        ]  # pyright: ignore[reportGeneralTypeIssues]
 
-    return object_(formatted_json)  # type:ignore
+    return object_(formatted_json)
 
 
 def get_data_type(path: str):

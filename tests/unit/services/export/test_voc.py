@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from kili.entrypoints.queries.label import QueriesLabel
+from kili.services.export import VocExporter
 from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.format.voc import (
     VocExporter,

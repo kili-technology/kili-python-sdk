@@ -1,8 +1,9 @@
 """Asset domain."""
 from dataclasses import dataclass
-from typing import List, NewType, Optional
+from typing import NewType, Optional
 
 from kili.domain.issue import IssueStatus, IssueType
+from kili.domain.types import ListOrTuple
 
 AssetId = NewType("AssetId", str)
 AssetExternalId = NewType("AssetExternalId", str)
@@ -15,15 +16,15 @@ class AssetFilters:
     # pylint: disable=too-many-instance-attributes
     project_id: str
     asset_id: Optional[str] = None
-    asset_id_in: Optional[List[str]] = None
-    asset_id_not_in: Optional[List[str]] = None
+    asset_id_in: Optional[ListOrTuple[str]] = None
+    asset_id_not_in: Optional[ListOrTuple[str]] = None
     consensus_mark_gte: Optional[float] = None
     consensus_mark_lte: Optional[float] = None
-    external_id_strictly_in: Optional[List[str]] = None
-    external_id_in: Optional[List[str]] = None
+    external_id_strictly_in: Optional[ListOrTuple[str]] = None
+    external_id_in: Optional[ListOrTuple[str]] = None
     honeypot_mark_gte: Optional[float] = None
     honeypot_mark_lte: Optional[float] = None
-    label_author_in: Optional[List[str]] = None
+    label_author_in: Optional[ListOrTuple[str]] = None
     label_consensus_mark_gte: Optional[float] = None
     label_consensus_mark_lte: Optional[float] = None
     label_created_at: Optional[str] = None
@@ -31,11 +32,11 @@ class AssetFilters:
     label_created_at_lte: Optional[str] = None
     label_honeypot_mark_gte: Optional[float] = None
     label_honeypot_mark_lte: Optional[float] = None
-    label_type_in: Optional[List[str]] = None
-    label_reviewer_in: Optional[List[str]] = None
+    label_type_in: Optional[ListOrTuple[str]] = None
+    label_reviewer_in: Optional[ListOrTuple[str]] = None
     metadata_where: Optional[dict] = None
     skipped: Optional[bool] = None
-    status_in: Optional[List[str]] = None
+    status_in: Optional[ListOrTuple[str]] = None
     updated_at_gte: Optional[str] = None
     updated_at_lte: Optional[str] = None
     label_category_search: Optional[str] = None

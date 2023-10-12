@@ -4,41 +4,6 @@ From https://docs.kili-technology.com/reference/graphql-api#enums.
 """
 from typing import Literal
 
-DataIntegrationPlatform = Literal["AWS", "Azure", "GCP"]
-
-
-DataIntegrationStatus = Literal["CONNECTEDDISCONNECTEDCHECKING"]
-
-
-DataIntegrationType = Literal["REMOTE_STORAGE"]
-
-
-ExportType = Literal["LATESTNORMAL"]
-
-
-GraphScale = Literal["DAYMONTHWEEK"]
-
-
-GraphType = Literal["COUNT_BY_CATEGORIESNUMBER_OF_LABELSHighestRoleInProject"]
-
-
-HighestRoleInProject = Literal["NAADMINTEAM_MANAGERREVIEWERLABELER"]
-
-
-HubspotSubscriptionStatus = Literal[
-    "SUBSCRIBED",
-    "UNSUBSCRIBED",
-]
-
-
-LabelFormat = Literal[
-    "RAW",
-    "SIMPLE",
-    "YOLO_V4",
-    "YOLO_V5",
-]
-
-
 LabelType = Literal[
     "AUTOSAVE",
     "DEFAULT",
@@ -126,38 +91,10 @@ Right = Literal[
 ]
 
 
-SplitOption = Literal[
-    "MERGED_FOLDER",
-    "SPLITTED_FOLDER",
-]
-
-
 Status = Literal[
     "TODO",
     "ONGOING",
     "LABELED",
     "REVIEWED",
     "TO_REVIEW",
-]
-
-
-UploadType = Literal[
-    "VIDEO",
-    "GEO_SATELLITE",
-]
-
-
-WarningTypes = Literal[
-    "DUPLICATED_ID",
-    "EMPTY_ARRAY",
-    "FAILED_ASSET_CREATION",
-    "FFMPEG_NOT_INSTALLED",
-    "INPUT_UNDEFINED",
-    "MAX_INPUT_SIZE",
-    "MAX_PROJECT_SIZE",
-    "MISSING_ID",
-    "NON_INTEGER_FPS",
-    "UNSUPPORTED_TYPE",
-    "UNSPECIFIED_ERROR",
-    "WRONG_CSV_FORMAT",
 ]

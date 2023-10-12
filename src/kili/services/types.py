@@ -12,7 +12,7 @@ class JobCategory(NamedTuple):
     """Contains information for a category."""
 
     category_name: str
-    id: int
+    id: int  # noqa: A003
     job_id: str
 
 
