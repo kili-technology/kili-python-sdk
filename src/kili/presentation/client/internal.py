@@ -25,8 +25,6 @@ class InternalClientMethods(MutationsOrganization):
         """
         super().__init__()
         self.kili_api_gateway = kili_api_gateway
-        self.http_client = kili_api_gateway.http_client
-        self.graphql_client = kili_api_gateway.graphql_client
 
     @typechecked
     def reset_password(self, email: str):
