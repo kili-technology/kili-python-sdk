@@ -11,6 +11,7 @@ from kili.domain.types import ListOrTuple
 from kili.entrypoints.mutations.organization import MutationsOrganization
 from kili.entrypoints.mutations.project.queries import GQL_DELETE_PROJECT
 from kili.entrypoints.mutations.user.queries import GQL_RESET_PASSWORD
+from kili.presentation.client.organization import MutationsOrganization
 from kili.use_cases.api_key import ApiKeyUseCases
 
 
