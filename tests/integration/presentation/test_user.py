@@ -34,3 +34,4 @@ def test_given_users_query_when_i_call_it_i_get_correct_return_type(
 
     # Then
     check_type(result, expected_return_type)
+    assert list(result) == [{"id": "fake_user_id_1"}, {"id": "fake_user_id_2"}]
