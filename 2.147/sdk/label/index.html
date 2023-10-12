@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.4">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.5">
     
     
       
@@ -28,7 +28,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.bd3936ea.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6a10b989.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.356b1318.min.css">
@@ -1915,6 +1915,7 @@
         <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_strictly_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1926,6 +1927,7 @@
             <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
             <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
             <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;isLatestLabelForUser&quot;</span><span class="p">,</span>
             <span class="s2">&quot;assetId&quot;</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1950,6 +1952,7 @@
         <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_strictly_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1961,6 +1964,7 @@
             <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
             <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
             <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;isLatestLabelForUser&quot;</span><span class="p">,</span>
             <span class="s2">&quot;assetId&quot;</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1985,6 +1989,7 @@
         <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_strictly_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1996,6 +2001,7 @@
             <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
             <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
             <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;isLatestLabelForUser&quot;</span><span class="p">,</span>
             <span class="s2">&quot;assetId&quot;</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2020,6 +2026,7 @@
         <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_strictly_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2031,6 +2038,7 @@
             <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span>
             <span class="s2">&quot;labelType&quot;</span><span class="p">,</span>
             <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;isLatestLabelForUser&quot;</span><span class="p">,</span>
             <span class="s2">&quot;assetId&quot;</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2055,6 +2063,7 @@
         <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_strictly_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2092,6 +2101,7 @@
 <span class="sd">            asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
 <span class="sd">                Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`.</span>
 <span class="sd">            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">            asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.</span>
 <span class="sd">            author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">                An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">            created_at: Returned labels should have their creation date equal to this date.</span>
@@ -2149,6 +2159,7 @@
             <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
             <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
             <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
+            <span class="n">asset_external_id_strictly_in</span><span class="o">=</span><span class="n">asset_external_id_strictly_in</span><span class="p">,</span>
             <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
             <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
             <span class="n">created_at_gte</span><span class="o">=</span><span class="n">created_at_gte</span><span class="p">,</span>
@@ -2539,6 +2550,7 @@
         <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_external_id_strictly_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2560,6 +2572,7 @@
 <span class="sd">            asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
 <span class="sd">                Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
 <span class="sd">            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">            asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.</span>
 <span class="sd">            author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">                An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">            created_at: Returned labels should have a label whose creation date is equal to this date.</span>
@@ -2587,6 +2600,7 @@
             <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
             <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
             <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
+            <span class="n">asset_external_id_strictly_in</span><span class="o">=</span><span class="n">asset_external_id_strictly_in</span><span class="p">,</span>
             <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
             <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
             <span class="n">created_at_gte</span><span class="o">=</span><span class="n">created_at_gte</span><span class="p">,</span>
@@ -2741,7 +2755,7 @@
 
 
 <h3 id="kili.entrypoints.queries.label.__init__.QueriesLabel.count_labels" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">count_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">count_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_strictly_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2784,6 +2798,12 @@ Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>
         <td><code>asset_external_id_in</code></td>
         <td><code>Optional[List[str]]</code></td>
         <td><p>Returned labels should have an external id that belongs to that list, if given.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>asset_external_id_strictly_in</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Returned labels should have an external id that exactly matches one of the ids in that list, if given.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -2882,6 +2902,7 @@ An author can be designated by the first name, the last name, or the first name 
     <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_external_id_strictly_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2903,6 +2924,7 @@ An author can be designated by the first name, the last name, or the first name 
 <span class="sd">        asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
 <span class="sd">            Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`</span>
 <span class="sd">        asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">        asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.</span>
 <span class="sd">        author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">            An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">        created_at: Returned labels should have a label whose creation date is equal to this date.</span>
@@ -2930,6 +2952,7 @@ An author can be designated by the first name, the last name, or the first name 
         <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
         <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
         <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
+        <span class="n">asset_external_id_strictly_in</span><span class="o">=</span><span class="n">asset_external_id_strictly_in</span><span class="p">,</span>
         <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
         <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
         <span class="n">created_at_gte</span><span class="o">=</span><span class="n">created_at_gte</span><span class="p">,</span>
@@ -3617,7 +3640,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#label">the d
 
 
 <h3 id="kili.entrypoints.queries.label.__init__.QueriesLabel.labels" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;labelType&#39;</span><span class="p">,</span> <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">,</span> <span class="s1">&#39;isLatestLabelForUser&#39;</span><span class="p">,</span> <span class="s1">&#39;assetId&#39;</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_strictly_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;author.email&#39;</span><span class="p">,</span> <span class="s1">&#39;author.id&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;labelType&#39;</span><span class="p">,</span> <span class="s1">&#39;secondsToLabel&#39;</span><span class="p">,</span> <span class="s1">&#39;isLatestLabelForUser&#39;</span><span class="p">,</span> <span class="s1">&#39;assetId&#39;</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3660,6 +3683,12 @@ Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>
         <td><code>asset_external_id_in</code></td>
         <td><code>Optional[List[str]]</code></td>
         <td><p>Returned labels should have an external id that belongs to that list, if given.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>asset_external_id_strictly_in</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Returned labels should have an external id that exactly matches one of the ids in that list, if given.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -3820,6 +3849,7 @@ category_search = <code>(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY
     <span class="n">asset_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">asset_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">asset_external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_external_id_strictly_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">author_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">created_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">created_at_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3857,6 +3887,7 @@ category_search = <code>(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY
 <span class="sd">        asset_status_in: Returned labels should have a status that belongs to that list, if given.</span>
 <span class="sd">            Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`.</span>
 <span class="sd">        asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
+<span class="sd">        asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.</span>
 <span class="sd">        author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">            An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">        created_at: Returned labels should have their creation date equal to this date.</span>
@@ -3914,6 +3945,7 @@ category_search = <code>(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY
         <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
         <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
         <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
+        <span class="n">asset_external_id_strictly_in</span><span class="o">=</span><span class="n">asset_external_id_strictly_in</span><span class="p">,</span>
         <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
         <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
         <span class="n">created_at_gte</span><span class="o">=</span><span class="n">created_at_gte</span><span class="p">,</span>
@@ -5726,7 +5758,7 @@ See <a href="https://github.com/kili-technology/kili-python-sdk/blob/main/recipe
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.94c44541.min.js"></script>
+      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
       
