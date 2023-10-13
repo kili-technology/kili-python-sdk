@@ -11,6 +11,7 @@ from kili.domain.api_key import ApiKeyFilters
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.mutations.organization import MutationsOrganization
 from kili.entrypoints.mutations.project.queries import GQL_DELETE_PROJECT
+from kili.presentation.client.organization import InternalOrganizationClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
 
 

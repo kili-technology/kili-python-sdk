@@ -25,6 +25,8 @@ from kili.presentation.client.asset import AssetClientMethods
 )
 def test_assets_query_return_type(kili_api_gateway, args, kwargs, expected_return_type):
     asset_client_methods = AssetClientMethods()
+    kili_api_gateway.list_assets = lambda *args, **kwargs: (a for a in [])
+    kili_api_gateway.get_project = lambda *args, **kwargs: {}
     asset_client_methods.kili_api_gateway = kili_api_gateway
     result = asset_client_methods.assets(*args, **kwargs)
     check_type(result, expected_return_type)
