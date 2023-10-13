@@ -13,14 +13,17 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 from kili.adapters.kili_api_gateway.organization.mappers import (
     map_organization_data,
     map_organization_metrics_where,
+    map_organization_update_data,
     map_organization_where,
 )
 from kili.adapters.kili_api_gateway.organization.types import (
     KiliAPIGateWayCreateOrganizationInput,
+    KiliAPIGateWayUpdateOrganizationInput,
 )
 from kili.domain.organization import (
     Organization,
     OrganizationFilters,
+    OrganizationId,
     OrganizationMetricsFilters,
 )
 from kili.domain.types import ListOrTuple
@@ -31,6 +34,7 @@ from .operations import (
     get_create_organization_mutation,
     get_list_organizations_query,
     get_organization_metrics_query,
+    get_update_properties_in_organization,
 )
 
 
@@ -84,5 +88,20 @@ class OrganizationOperationMixin(BaseOperationMixin):
             where = map_organization_metrics_where(filters=filters)
             payload = {"where": where}
             result = self.graphql_client.execute(get_organization_metrics_query(), payload)
+            pbar.update(1)
+        return result["data"]
+
+    def update_organization(
+        self,
+        organization_id: OrganizationId,
+        organization_data: KiliAPIGateWayUpdateOrganizationInput,
+        disable_tqdm: Optional[bool],
+    ) -> Organization:
+        """Send a GraphQL request calling updateOrganization resolver."""
+        with tqdm.tqdm(total=1, desc="Update organization", disable=disable_tqdm) as pbar:
+            variables = map_organization_update_data(organization_id, organization_data)
+            result = self.graphql_client.execute(
+                get_update_properties_in_organization(ORGANIZATION_FRAGMENT), variables
+            )
             pbar.update(1)
         return result["data"]

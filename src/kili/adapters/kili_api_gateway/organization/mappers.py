@@ -1,10 +1,16 @@
 """Mappers for Organization API calls."""
+import json
 from typing import Dict
 
 from kili.adapters.kili_api_gateway.organization.types import (
     KiliAPIGateWayCreateOrganizationInput,
+    KiliAPIGateWayUpdateOrganizationInput,
 )
-from kili.domain.organization import OrganizationFilters, OrganizationMetricsFilters
+from kili.domain.organization import (
+    OrganizationFilters,
+    OrganizationId,
+    OrganizationMetricsFilters,
+)
 
 
 def map_organization_data(data: KiliAPIGateWayCreateOrganizationInput) -> Dict:
@@ -37,3 +43,16 @@ def map_organization_metrics_where(filters: OrganizationMetricsFilters) -> Dict:
         "startDate": filters.start_datetime.isoformat(sep="T", timespec="milliseconds") + "Z",
         "endDate": filters.end_datetime.isoformat(sep="T", timespec="milliseconds") + "Z",
     }
+
+
+def map_organization_update_data(
+    organization_id: OrganizationId, organization_data: KiliAPIGateWayUpdateOrganizationInput
+) -> Dict:
+    """Build the GraphQL OrganizationData variable to be sent in an operation."""
+    license_str = None if not organization_data.license else json.dumps(organization_data.license)
+    variables = {"id": str(organization_id)}
+    if organization_data.name is not None:
+        variables["name"] = organization_data.name
+    if license_str is not None:
+        variables["license"] = license_str
+    return variables

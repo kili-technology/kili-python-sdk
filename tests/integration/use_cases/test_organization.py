@@ -109,3 +109,24 @@ def test_given_existing_organization_when_I_call_organization_metrics_the_it_ret
 
     # Then
     assert organization_metrics["nbUsers"] == 4
+
+
+def test_given_a_stored_organization_when_i_call_update_properties_in_organization_it_updates_it(
+    graphql_client, http_client, mocker
+):
+    # Given
+    kili_api_gateway = KiliAPIGateway(graphql_client, http_client)
+    mocker.patch.object(
+        kili_api_gateway,
+        "update_properties_in_organization",
+        return_value={"id": "fake_organization_id", "name": "new_name"},
+    )
+
+    # When
+    organization_use_cases = OrganizationUseCases(kili_api_gateway)
+    organization = organization_use_cases.update_properties_in_organization(
+        organization_id="fake_organization_id", name="new_name", license={}
+    )
+
+    # Then
+    assert organization["name"] == "new_name"

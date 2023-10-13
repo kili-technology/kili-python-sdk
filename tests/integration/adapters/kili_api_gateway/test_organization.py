@@ -9,6 +9,7 @@ from kili.adapters.kili_api_gateway.organization.operations_mixin import (
 )
 from kili.adapters.kili_api_gateway.organization.types import (
     KiliAPIGateWayCreateOrganizationInput,
+    KiliAPIGateWayUpdateOrganizationInput,
 )
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.organization import (
@@ -166,3 +167,30 @@ def test_get_organization_metrics(mocker: MockerFixture, graphql_client: GraphQL
             }
         },
     )
+
+
+def test_update_organization(mocker: MockerFixture, graphql_client: GraphQLClient):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+    execute = mocker.patch.object(
+        kili_api_gateway.graphql_client,
+        "execute",
+        return_value={"data": {"id": "fake_organization_id", "name": "new_name"}},
+    )
+
+    # When
+    organization = kili_api_gateway.update_organization(
+        OrganizationId("fake_organization_id"),
+        KiliAPIGateWayUpdateOrganizationInput(name="new_name"),
+        disable_tqdm=None,
+    )
+
+    # Then
+    execute.assert_called_with(
+        "\nmutation(\n    $id: ID!\n    $name: String\n    $license: String\n) {\n  data:"
+        " updatePropertiesInOrganization(\n    where: {id: $id}\n    data: {\n      name:"
+        " $name\n      license: $license\n    }\n  ) {\n    \nid\n\n  }\n}\n",
+        {"id": "fake_organization_id", "name": "new_name"},
+    )
+    assert organization["name"] == "new_name"

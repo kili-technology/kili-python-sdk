@@ -5,7 +5,7 @@ id
 """
 
 
-def get_create_organization_mutation(fragment):
+def get_create_organization_mutation(fragment: str) -> str:
     """Return the GraphQL createOrganization mutation."""
     return f"""
 mutation(
@@ -20,7 +20,7 @@ mutation(
 """
 
 
-def get_list_organizations_query(fragment):
+def get_list_organizations_query(fragment: str) -> str:
     """Return the GraphQL organizations query."""
     return f"""
         query organizations($where: OrganizationWhere!, $first: PageSize!, $skip: Int!) {{
@@ -31,7 +31,7 @@ def get_list_organizations_query(fragment):
         """
 
 
-def get_count_organizations_query():
+def get_count_organizations_query() -> str:
     """Return the GraphQL countOrganizations query."""
     return """
         query countOrganizations($where: OrganizationWhere!) {
@@ -40,7 +40,7 @@ def get_count_organizations_query():
     """
 
 
-def get_organization_metrics_query():
+def get_organization_metrics_query() -> str:
     """Return the GraphQL getOrganizationMetrics query."""
     return """
     query organizationMetrics($where: OrganizationMetricsWhere!) {
@@ -51,3 +51,24 @@ def get_organization_metrics_query():
         }
     }
     """
+
+
+def get_update_properties_in_organization(fragment: str) -> str:
+    """Return the GraphQL updatePropertiesInOrganization mutation."""
+    return f"""
+mutation(
+    $id: ID!
+    $name: String
+    $license: String
+) {{
+  data: updatePropertiesInOrganization(
+    where: {{id: $id}}
+    data: {{
+      name: $name
+      license: $license
+    }}
+  ) {{
+    {fragment}
+  }}
+}}
+"""

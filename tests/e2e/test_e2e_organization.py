@@ -1,4 +1,8 @@
+import os
+from datetime import datetime
+
 import pytest
+import pytz
 
 from kili.client import Kili
 
@@ -62,3 +66,22 @@ def test_given_stored_organization_when_I_call_organization_metrics_it_retrives_
     assert "numberOfAnnotations" in organization_metrics
     assert "numberOfHours" in organization_metrics
     assert "numberOfLabeledAssets" in organization_metrics
+
+
+def test_given_a_stored_organization_when_I_call_update_properties_in_organization_it_updates_them(
+    kili: Kili,
+):
+    # Given
+    test_organization_id = os.environ["KILI_TEST_ORGANIZATION_ID"]
+    if kili.count_organizations(organization_id=test_organization_id) == 0:
+        pytest.skip("Cannot run test because organization does not exist")
+
+    # When
+    new_name = "new_name_{}".format(datetime.now(tz=pytz.UTC).strftime("%Y-%m-%d %H:%M:%S"))
+    kili.internal.update_properties_in_organization(
+        organization_id=test_organization_id, name=new_name
+    )
+
+    # Then
+    result = kili.organizations(organization_id=test_organization_id, fields=["name"])[0]["name"]
+    assert result == new_name

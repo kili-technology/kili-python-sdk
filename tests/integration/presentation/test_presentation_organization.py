@@ -120,3 +120,27 @@ def test_given_organization_in_kili_when_I_call_organization_metrics_it_retrieve
             end_datetime=datetime(2022, 1, 5, tzinfo=pytz.UTC),
         )
     )
+
+
+def test_given_organization_in_kili_when_I_call_update_properties_in_organization_it_updates_them(
+    kili: Kili, mocker: MockerFixture
+):
+    # Given
+    test_organization_id = "fake_organization_id"
+    new_name = "new_name_{}".format(datetime.now(tz=pytz.UTC).strftime("%Y-%m-%d %H:%M:%S"))
+    update_properties_in_organization_use_case = mocker.patch.object(
+        OrganizationUseCases,
+        "update_properties_in_organization",
+        return_value={"id": test_organization_id, "name": new_name},
+    )
+
+    # When
+    result = kili.internal.update_properties_in_organization(
+        organization_id=test_organization_id, name=new_name
+    )
+
+    # Then
+    update_properties_in_organization_use_case.assert_called_with(
+        organization_id=test_organization_id, name=new_name
+    )
+    assert result["name"] == new_name

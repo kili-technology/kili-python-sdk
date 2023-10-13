@@ -9,6 +9,7 @@ from kili.adapters.kili_api_gateway.organization.types import (
 from kili.domain.organization import (
     Organization,
     OrganizationFilters,
+    OrganizationId,
     OrganizationMetricsFilters,
 )
 from kili.domain.types import ListOrTuple
@@ -43,6 +44,15 @@ class OrganizationUseCases(BaseUseCases):
             ),
             description="Create organization",
             disable_tqdm=disable_tqdm,
+        )
+
+    def update_organization(
+        self, organization_id: OrganizationId, organization: Dict
+    ) -> Organization:
+        """Update an organization."""
+        return self._kili_api_gateway.update_organization(
+            organization_id=organization_id,
+            organization=organization,
         )
 
     def list_organizations(
