@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Organization related operations."""
 
-from typing import Dict, Generator
+from typing import Dict, Generator, Optional
 
 import tqdm
 
@@ -76,9 +76,13 @@ class OrganizationOperationMixin(BaseOperationMixin):
         count: int = count_result["data"]
         return count
 
-    def get_organization_metrics(self, filters: OrganizationMetricsFilters) -> Dict:
+    def get_organization_metrics(
+        self, filters: OrganizationMetricsFilters, description: str, disable_tqdm: Optional[bool]
+    ) -> Dict:
         """Send a GraphQL request calling organizationMetrics resolver."""
-        where = map_organization_metrics_where(filters=filters)
-        payload = {"where": where}
-        result = self.graphql_client.execute(get_organization_metrics_query(), payload)
+        with tqdm.tqdm(total=1, desc=description, disable=disable_tqdm) as pbar:
+            where = map_organization_metrics_where(filters=filters)
+            payload = {"where": where}
+            result = self.graphql_client.execute(get_organization_metrics_query(), payload)
+            pbar.update(1)
         return result["data"]

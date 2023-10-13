@@ -147,7 +147,9 @@ def test_get_organization_metrics(mocker: MockerFixture, graphql_client: GraphQL
             id=OrganizationId("fake_organization_id"),
             start_datetime=datetime(2022, 1, 1, tzinfo=pytz.UTC),
             end_datetime=datetime(2022, 1, 5, tzinfo=pytz.UTC),
-        )
+        ),
+        disable_tqdm=True,
+        description="Get organization metrics",
     )
 
     # Then

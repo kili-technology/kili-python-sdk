@@ -3,8 +3,10 @@ from uuid import UUID
 
 import pytest
 
+from kili.adapters.kili_api_gateway.organization.operations_mixin import (
+    OrganizationOperationMixin,
+)
 from kili.core.graphql.operations.asset.mutations import GQL_APPEND_MANY_ASSETS
-from kili.core.graphql.operations.organization.queries import OrganizationQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import MimeTypeError
@@ -22,8 +24,8 @@ from tests.unit.services.asset_import.mocks import (
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch.object(
-    OrganizationQuery,
-    "__call__",
+    OrganizationOperationMixin,
+    "list_organizations",
     side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
 )
 class TestContentType(ImportTestCase):

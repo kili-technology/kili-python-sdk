@@ -1,6 +1,14 @@
+from datetime import datetime
+
+import pytz
+
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.domain.organization import OrganizationFilters
+from kili.domain.organization import (
+    OrganizationFilters,
+    OrganizationId,
+    OrganizationMetricsFilters,
+)
 from kili.use_cases.organization.use_cases import (
     OrganizationToCreateUseCaseInput,
     OrganizationUseCases,
@@ -89,39 +97,15 @@ def test_given_existing_organization_when_I_call_organization_metrics_the_it_ret
     )
 
     # When
-    organization_use_case = OrganizationUseCases(kili_api_gateway)
-    organization_metrics = organization_use_case.organization_metrics()
+    organization_use_cases = OrganizationUseCases(kili_api_gateway)
+    organization_metrics = organization_use_cases.get_organization_metrics(
+        OrganizationMetricsFilters(
+            id=OrganizationId("fake_organization_id"),
+            start_datetime=datetime.now(tz=pytz.UTC),
+            end_datetime=datetime.now(tz=pytz.UTC),
+        ),
+        disable_tqdm=True,
+    )
 
     # Then
     assert organization_metrics["nbUsers"] == 4
-
-
-"""
-def test_given_organization_in_kili_when_I_call_organization_metrics_it_retrieves_them(
-    kili: Kili, mocker: MockerFixture
-):
-    # Given
-    organization_id = "fake_organization_id"
-    metrics = {"numberOfAnnotations": 18, "numberOfHours": 5, "numberOfLabeledAssets": 3}
-    get_organizations_metrics_use_case = mocker.patch.object(
-        OrganizationUseCases,
-        "get_organization_metrics",
-        return_value=metrics,
-    )
-
-    # When
-    organization_metrics = kili.organization_metrics(
-        organization_id=organization_id,
-        start_date=datetime(2022, 1, 1, tzinfo=pytz.UTC),
-        end_date=datetime(2022, 1, 5, tzinfo=pytz.UTC),
-    )
-
-    # Then
-    assert organization_metrics == metrics
-    get_organizations_metrics_use_case.assert_called_with(
-        OrganizationMetricsFilters(
-            id=OrganizationId(organization_id),
-            start_datetime=datetime(2022, 1, 1, tzinfo=pytz.UTC),
-            end_datetime=datetime(2022, 1, 5, tzinfo=pytz.UTC),
-        )
-    )"""

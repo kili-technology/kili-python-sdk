@@ -1,10 +1,16 @@
 """Organization client methods."""
+from datetime import datetime
 from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
+import pytz
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.domain.organization import OrganizationFilters, OrganizationId
+from kili.domain.organization import (
+    OrganizationFilters,
+    OrganizationId,
+    OrganizationMetricsFilters,
+)
 from kili.domain.types import ListOrTuple
 from kili.presentation.client.base import BaseClientMethods
 from kili.use_cases.organization.use_cases import (
@@ -150,3 +156,34 @@ class OrganizationClientMethods(BaseClientMethods):
             organization_id=OrganizationId(organization_id) if organization_id else None,
         )
         return OrganizationUseCases(self.kili_api_gateway).count_organizations(where)
+
+    @typechecked
+    def organization_metrics(
+        self,
+        organization_id: str,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        disable_tqdm: Optional[bool] = None,
+    ) -> Dict:
+        """Get organization metrics.
+
+        Args:
+            organization_id: Identifier of the organization
+            start_date: Start date of the metrics computation
+            end_date: End date of the metrics computation
+            disable_tqdm: If `True`, the progress bar will be disabled
+
+        Returns:
+            A dictionary containing the metrics of the organization.
+        """
+        if start_date is None:
+            start_date = datetime.now(tz=pytz.UTC)
+        if end_date is None:
+            end_date = datetime.now(tz=pytz.UTC)
+        filters = OrganizationMetricsFilters(
+            id=OrganizationId(organization_id), start_datetime=start_date, end_datetime=end_date
+        )
+
+        return OrganizationUseCases(self.kili_api_gateway).get_organization_metrics(
+            filters, disable_tqdm=disable_tqdm
+        )

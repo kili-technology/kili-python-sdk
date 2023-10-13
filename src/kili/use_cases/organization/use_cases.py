@@ -1,6 +1,6 @@
 """Organization use cases."""
 from dataclasses import dataclass
-from typing import Dict, Generator
+from typing import Dict, Generator, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.organization.types import (
@@ -60,6 +60,10 @@ class OrganizationUseCases(BaseUseCases):
         """Count organizations."""
         return self._kili_api_gateway.count_organizations(filters=where)
 
-    def get_organization_metrics(self, where: OrganizationMetricsFilters) -> Dict:
+    def get_organization_metrics(
+        self, where: OrganizationMetricsFilters, disable_tqdm: Optional[bool]
+    ) -> Dict:
         """Get organization metrics."""
-        return self._kili_api_gateway.get_organization_metrics(filters=where)
+        return self._kili_api_gateway.get_organization_metrics(
+            filters=where, description="Retrieve organization metrics", disable_tqdm=disable_tqdm
+        )
