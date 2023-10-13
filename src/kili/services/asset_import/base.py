@@ -20,13 +20,10 @@ from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
 )
-from kili.core.graphql.operations.organization.queries import (
-    OrganizationQuery,
-    OrganizationWhere,
-)
 from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
 from kili.core.utils import pagination
 from kili.domain.asset import AssetFilters
+from kili.domain.organization import OrganizationFilters
 from kili.domain.types import ListOrTuple
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
@@ -380,14 +377,14 @@ class BaseAbstractAssetImporter(abc.ABC):
 
     def _can_upload_from_local_data(self):
         user_me = self.kili.get_user()
-        where = OrganizationWhere(
-            email=user_me["email"],
-        )
         options = QueryOptions(disable_tqdm=True)
         organization = next(
             iter(
-                OrganizationQuery(self.kili.graphql_client, self.kili.http_client)(
-                    where, ["license.uploadLocalData"], options
+                self.kili.kili_api_gateway.list_organizations(
+                    filters=OrganizationFilters(email=user_me["email"]),
+                    fields=["license.uploadLocalData"],
+                    description="List organizations",
+                    options=options,
                 )
             )
         )

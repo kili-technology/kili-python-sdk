@@ -1,3 +1,8 @@
+from datetime import datetime
+
+import pytz
+from pytest_mock import MockerFixture
+
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.organization.operations_mixin import (
     OrganizationOperationMixin,
@@ -5,7 +10,12 @@ from kili.adapters.kili_api_gateway.organization.operations_mixin import (
 from kili.adapters.kili_api_gateway.organization.types import (
     KiliAPIGateWayCreateOrganizationInput,
 )
-from kili.domain.organization import OrganizationFilters
+from kili.core.graphql.graphql_client import GraphQLClient
+from kili.domain.organization import (
+    OrganizationFilters,
+    OrganizationId,
+    OrganizationMetricsFilters,
+)
 
 
 def test_create_organization(mocker, graphql_client):
@@ -107,7 +117,7 @@ def test_count_organization(mocker, graphql_client):
 
     # When
     count = kili_api_gateway.count_organizations(
-        filters=OrganizationFilters(),
+        filters=OrganizationFilters(email="jean.philippe@kili-technology.com"),
     )
 
     # Then
@@ -115,5 +125,42 @@ def test_count_organization(mocker, graphql_client):
     execute.assert_called_with(
         "\n        query countOrganizations($where: OrganizationWhere!) {\n        data:"
         " countOrganizations(where: $where)\n        }\n    ",
-        {"where": {"id": None, "user": {"email": None}}},
+        {"where": {"id": None, "user": {"email": "jean.philippe@kili-technology.com"}}},
+    )
+
+
+def test_get_organization_metrics(mocker: MockerFixture, graphql_client: GraphQLClient):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+    execute = mocker.patch.object(
+        kili_api_gateway.graphql_client,
+        "execute",
+        return_value={
+            "data": {"numberOfAnnotations": 18, "numberOfHours": 5, "numberOfLabeledAssets": 3}
+        },
+    )
+
+    # When
+    metrics = kili_api_gateway.get_organization_metrics(
+        filters=OrganizationMetricsFilters(
+            id=OrganizationId("fake_organization_id"),
+            start_datetime=datetime(2022, 1, 1, tzinfo=pytz.UTC),
+            end_datetime=datetime(2022, 1, 5, tzinfo=pytz.UTC),
+        )
+    )
+
+    # Then
+    assert metrics == {"numberOfAnnotations": 18, "numberOfHours": 5, "numberOfLabeledAssets": 3}
+    execute.assert_called_with(
+        "\n    query organizationMetrics($where: OrganizationMetricsWhere!) {\n        data:"
+        " organizationMetrics(where: $where) {\n            numberOfAnnotations\n           "
+        " numberOfHours\n            numberOfLabeledAssets\n        }\n    }\n    ",
+        {
+            "where": {
+                "organizationId": "fake_organization_id",
+                "startDate": "2022-01-01T00:00:00.000+00:00Z",
+                "endDate": "2022-01-05T00:00:00.000+00:00Z",
+            }
+        },
     )

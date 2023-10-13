@@ -12,18 +12,25 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 )
 from kili.adapters.kili_api_gateway.organization.mappers import (
     map_organization_data,
+    map_organization_metrics_where,
     map_organization_where,
 )
 from kili.adapters.kili_api_gateway.organization.types import (
     KiliAPIGateWayCreateOrganizationInput,
 )
-from kili.domain.organization import Organization, OrganizationFilters
+from kili.domain.organization import (
+    Organization,
+    OrganizationFilters,
+    OrganizationMetricsFilters,
+)
 from kili.domain.types import ListOrTuple
 
 from .operations import (
-    GQL_CREATE_ORGANIZATION,
+    ORGANIZATION_FRAGMENT,
     get_count_organizations_query,
+    get_create_organization_mutation,
     get_list_organizations_query,
+    get_organization_metrics_query,
 )
 
 
@@ -39,7 +46,9 @@ class OrganizationOperationMixin(BaseOperationMixin):
         """Send a GraphQL request calling createOrganization resolver."""
         with tqdm.tqdm(total=1, desc=description, disable=disable_tqdm) as pbar:
             payload = map_organization_data(organization)
-            result = self.graphql_client.execute(GQL_CREATE_ORGANIZATION, payload)
+            result = self.graphql_client.execute(
+                get_create_organization_mutation(ORGANIZATION_FRAGMENT), payload
+            )
             pbar.update(1)
 
         return result["data"]
@@ -66,3 +75,10 @@ class OrganizationOperationMixin(BaseOperationMixin):
         count_result = self.graphql_client.execute(get_count_organizations_query(), payload)
         count: int = count_result["data"]
         return count
+
+    def get_organization_metrics(self, filters: OrganizationMetricsFilters) -> Dict:
+        """Send a GraphQL request calling organizationMetrics resolver."""
+        where = map_organization_metrics_where(filters=filters)
+        payload = {"where": where}
+        result = self.graphql_client.execute(get_organization_metrics_query(), payload)
+        return result["data"]
