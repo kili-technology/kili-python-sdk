@@ -11,6 +11,7 @@ from kili.adapters.kili_api_gateway.organization.operations_mixin import (
 )
 from kili.adapters.kili_api_gateway.project import ProjectOperationMixin
 from kili.adapters.kili_api_gateway.tag import TagOperationMixin
+from kili.adapters.kili_api_gateway.user.operation_mixin import UserOperationMixin
 from kili.core.graphql.graphql_client import GraphQLClient
 
 
@@ -22,6 +23,7 @@ class KiliAPIGateway(
     OrganizationOperationMixin,
     ProjectOperationMixin,
     TagOperationMixin,
+    UserOperationMixin,
 ):
     """GraphQL gateway to communicate with Kili backend."""
 

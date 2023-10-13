@@ -6,12 +6,11 @@ from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway.user.operations import get_reset_password_mutation
 from kili.domain.api_key import ApiKeyFilters
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.mutations.organization import MutationsOrganization
 from kili.entrypoints.mutations.project.queries import GQL_DELETE_PROJECT
-from kili.entrypoints.mutations.user.queries import GQL_RESET_PASSWORD
-from kili.presentation.client.organization import InternalOrganizationClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
 
 
@@ -40,8 +39,9 @@ class InternalClientMethods(InternalOrganizationClientMethods, MutationsOrganiza
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
+        query = get_reset_password_mutation(fragment="id")
         variables = {"where": {"email": email}}
-        result = self.kili_api_gateway.graphql_client.execute(GQL_RESET_PASSWORD, variables)
+        result = self.kili_api_gateway.graphql_client.execute(query, variables)
         return result["data"]
 
     @typechecked

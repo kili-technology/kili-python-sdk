@@ -10,7 +10,6 @@ from kili.adapters.authentification import is_api_key_valid
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
-from kili.core.graphql.operations.user.queries import GQL_ME
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.issue import MutationsIssue
 from kili.entrypoints.mutations.label import MutationsLabel
@@ -18,15 +17,13 @@ from kili.entrypoints.mutations.notification import MutationsNotification
 from kili.entrypoints.mutations.plugins import MutationsPlugins
 from kili.entrypoints.mutations.project import MutationsProject
 from kili.entrypoints.mutations.project_version import MutationsProjectVersion
-from kili.entrypoints.mutations.user import MutationsUser
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.entrypoints.queries.notification import QueriesNotification
 from kili.entrypoints.queries.plugins import QueriesPlugins
 from kili.entrypoints.queries.project_user import QueriesProjectUser
 from kili.entrypoints.queries.project_version import QueriesProjectVersion
-from kili.entrypoints.queries.user import QueriesUser
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
-from kili.exceptions import AuthenticationFailed, UserNotFoundError
+from kili.exceptions import AuthenticationFailed
 from kili.presentation.client.asset import AssetClientMethods
 from kili.presentation.client.cloud_storage import CloudStorageClientMethods
 from kili.presentation.client.internal import InternalClientMethods
@@ -34,6 +31,7 @@ from kili.presentation.client.issue import IssueClientMethods
 from kili.presentation.client.organization import OrganizationClientMethods
 from kili.presentation.client.project import ProjectClientMethods
 from kili.presentation.client.tag import TagClientMethods
+from kili.presentation.client.user import UserClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
@@ -58,13 +56,11 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsPlugins,
     MutationsProject,
     MutationsProjectVersion,
-    MutationsUser,
     QueriesLabel,
     QueriesNotification,
     QueriesPlugins,
     QueriesProjectUser,
     QueriesProjectVersion,
-    QueriesUser,
     SubscriptionsLabel,
     IssueClientMethods,
     AssetClientMethods,
@@ -72,6 +68,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     ProjectClientMethods,
     CloudStorageClientMethods,
     OrganizationClientMethods,
+    UserClientMethods,
 ):
     """Kili Client."""
 
@@ -168,12 +165,3 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         if not skip_checks:
             api_key_use_cases = ApiKeyUseCases(self.kili_api_gateway)
             api_key_use_cases.check_expiry_of_key_is_close(api_key)
-
-    def get_user(self) -> Dict:
-        # TODO: move this method
-        """Get the current user from the api_key provided."""
-        result = self.graphql_client.execute(GQL_ME)
-        user = self.format_result("data", result)
-        if user is None or user["id"] is None or user["email"] is None:
-            raise UserNotFoundError("No user attached to the API key was found")
-        return user

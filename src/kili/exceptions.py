@@ -63,7 +63,3 @@ class MissingArgumentError(ValueError):
 
 class IncompatibleArgumentsError(ValueError):
     """Raised when the user gave at least two incompatible arguments."""
-
-
-class UserNotFoundError(Exception):
-    """Raised when the user is not found."""
