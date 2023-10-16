@@ -53,7 +53,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         wait_until_availability: bool = True,
         from_csv: Optional[str] = None,
         csv_separator: str = ",",
-    ) -> Optional[Dict[Literal["id", "asset_ids"], Union[str, List[str]]]]:
+    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
