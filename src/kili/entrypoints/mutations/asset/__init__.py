@@ -131,7 +131,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ) or is_empty_list_with_warning(
             "append_many_to_dataset", "json_content_array", json_content_array
         ):
-            return None
+            return {"id": project_id, "asset_ids": []}
 
         if status_array is not None:
             warnings.warn(
