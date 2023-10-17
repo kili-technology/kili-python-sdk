@@ -53,7 +53,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         wait_until_availability: bool = True,
         from_csv: Optional[str] = None,
         csv_separator: str = ",",
-    ) -> Optional[Dict[Literal["id", "asset_ids"], Union[str, List[str]]]]:
+    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -131,7 +131,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ) or is_empty_list_with_warning(
             "append_many_to_dataset", "json_content_array", json_content_array
         ):
-            return None
+            return {"id": project_id, "asset_ids": []}
 
         if status_array is not None:
             warnings.warn(
