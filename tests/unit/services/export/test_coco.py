@@ -513,20 +513,16 @@ def test_coco_export_with_multi_jobs():
         Image.new("RGB", (image_width, image_height)).save(local_file_path)
         assets = [
             Asset(
-                **{
-                    "latestLabel": {"jsonResponse": json_response_dessert},
-                    "externalId": "car_1",
-                    "jsonContent": "",
-                    "content": str(output_dir / Path("image1.jpg")),
-                }
+                latestLabel={"jsonResponse": json_response_dessert},
+                externalId="car_1",
+                jsonContent="",
+                content=str(output_dir / Path("image1.jpg")),
             ),
             Asset(
-                **{
-                    "latestLabel": {"jsonResponse": json_response_main},
-                    "externalId": "car_2",
-                    "jsonContent": "",
-                    "content": str(output_dir / Path("image1.jpg")),
-                }
+                latestLabel={"jsonResponse": json_response_main},
+                externalId="car_2",
+                jsonContent="",
+                content=str(output_dir / Path("image1.jpg")),
             ),
         ]
 
