@@ -11,7 +11,10 @@ from kili.domain.organization import (
     OrganizationId,
     OrganizationMetricsFilters,
 )
-from kili.use_cases.organization.use_cases import OrganizationUseCases
+from kili.use_cases.organization.use_cases import (
+    OrganizationToUpdateUseCaseInput,
+    OrganizationUseCases,
+)
 
 
 @pytest.fixture()
@@ -130,7 +133,7 @@ def test_given_organization_in_kili_when_I_call_update_properties_in_organizatio
     new_name = "new_name_{}".format(datetime.now(tz=pytz.UTC).strftime("%Y-%m-%d %H:%M:%S"))
     update_properties_in_organization_use_case = mocker.patch.object(
         OrganizationUseCases,
-        "update_properties_in_organization",
+        "update_organization",
         return_value={"id": test_organization_id, "name": new_name},
     )
 
@@ -141,6 +144,8 @@ def test_given_organization_in_kili_when_I_call_update_properties_in_organizatio
 
     # Then
     update_properties_in_organization_use_case.assert_called_with(
-        organization_id=test_organization_id, name=new_name
+        "fake_organization_id",
+        OrganizationToUpdateUseCaseInput(name=new_name, license=None),
+        disable_tqdm=None,
     )
     assert result["name"] == new_name

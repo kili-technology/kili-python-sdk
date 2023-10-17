@@ -15,6 +15,7 @@ from kili.domain.types import ListOrTuple
 from kili.presentation.client.base import BaseClientMethods
 from kili.use_cases.organization.use_cases import (
     OrganizationToCreateUseCaseInput,
+    OrganizationToUpdateUseCaseInput,
     OrganizationUseCases,
 )
 from kili.utils.logcontext import for_all_methods, log_call
@@ -69,7 +70,8 @@ class InternalOrganizationClientMethods(BaseClientMethods):
         self,
         organization_id: str,
         name: Optional[str] = None,
-        license: Optional[dict] = None,
+        license: Optional[dict] = None,  # noqa: A002
+        disable_tqdm: Optional[bool] = None,
     ):  # pylint: disable=redefined-builtin
         """Modify an organization.
 
@@ -79,19 +81,18 @@ class InternalOrganizationClientMethods(BaseClientMethods):
             organization_id: Identifier of the organization
             name: New name of the organization
             license: New license of the organization
+            disable_tqdm: If `True`, the progress bar will be disabled
 
         Returns:
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        license_str = None if not license else json.dumps(license)
-        variables = {"id": organization_id}
-        if name is not None:
-            variables["name"] = name
-        if license_str is not None:
-            variables["license"] = license_str
-        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_ORGANIZATION, variables)
-        return self.format_result("data", result)
+        use_cases = OrganizationUseCases(self.kili_api_gateway)
+        return use_cases.update_organization(
+            OrganizationId(organization_id),
+            OrganizationToUpdateUseCaseInput(name=name, license=license),
+            disable_tqdm=disable_tqdm,
+        )
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -109,7 +110,8 @@ class OrganizationClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]: ...
+    ) -> Generator[Dict, None, None]:
+        ...
 
     @overload
     def organizations(
@@ -122,7 +124,8 @@ class OrganizationClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]: ...
+    ) -> List[Dict]:
+        ...
 
     @typechecked
     def organizations(

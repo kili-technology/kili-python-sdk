@@ -95,6 +95,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
         self,
         organization_id: OrganizationId,
         organization_data: KiliAPIGateWayUpdateOrganizationInput,
+        description: str,
         disable_tqdm: Optional[bool],
     ) -> Organization:
         """Send a GraphQL request calling updateOrganization resolver."""

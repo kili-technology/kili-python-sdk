@@ -11,6 +11,7 @@ from kili.domain.organization import (
 )
 from kili.use_cases.organization.use_cases import (
     OrganizationToCreateUseCaseInput,
+    OrganizationToUpdateUseCaseInput,
     OrganizationUseCases,
 )
 
@@ -118,14 +119,16 @@ def test_given_a_stored_organization_when_i_call_update_properties_in_organizati
     kili_api_gateway = KiliAPIGateway(graphql_client, http_client)
     mocker.patch.object(
         kili_api_gateway,
-        "update_properties_in_organization",
+        "update_organization",
         return_value={"id": "fake_organization_id", "name": "new_name"},
     )
 
     # When
     organization_use_cases = OrganizationUseCases(kili_api_gateway)
-    organization = organization_use_cases.update_properties_in_organization(
-        organization_id="fake_organization_id", name="new_name", license={}
+    organization = organization_use_cases.update_organization(
+        organization_id=OrganizationId("fake_organization_id"),
+        organization=OrganizationToUpdateUseCaseInput(name="new_name", license={}),
+        disable_tqdm=True,
     )
 
     # Then

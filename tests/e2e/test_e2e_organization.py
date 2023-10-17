@@ -55,7 +55,7 @@ def test_given_stored_organizations_when_I_call_count_organizations_it_counts_th
     assert organization_count > 0
 
 
-def test_given_stored_organization_when_I_call_organization_metrics_it_retrives_them(kili: Kili):
+def test_given_stored_organization_when_I_call_organization_metrics_it_retrieves_them(kili: Kili):
     # Given
     organization = kili.organizations(as_generator=False, first=1)[0]
 

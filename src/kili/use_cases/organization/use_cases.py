@@ -5,6 +5,7 @@ from typing import Dict, Generator, Optional
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.organization.types import (
     KiliAPIGateWayCreateOrganizationInput,
+    KiliAPIGateWayUpdateOrganizationInput,
 )
 from kili.domain.organization import (
     Organization,
@@ -27,6 +28,14 @@ class OrganizationToCreateUseCaseInput:
     zip_code: str
 
 
+@dataclass
+class OrganizationToUpdateUseCaseInput:
+    """Organization to update use case input."""
+
+    name: Optional[str]
+    license: Optional[Dict]  # noqa: A003
+
+
 class OrganizationUseCases(BaseUseCases):
     """Organization use cases."""
 
@@ -47,12 +56,19 @@ class OrganizationUseCases(BaseUseCases):
         )
 
     def update_organization(
-        self, organization_id: OrganizationId, organization: Dict
+        self,
+        organization_id: OrganizationId,
+        organization: OrganizationToUpdateUseCaseInput,
+        disable_tqdm: Optional[bool],
     ) -> Organization:
         """Update an organization."""
         return self._kili_api_gateway.update_organization(
             organization_id=organization_id,
-            organization=organization,
+            organization_data=KiliAPIGateWayUpdateOrganizationInput(
+                name=organization.name, license=organization.license
+            ),
+            description="Update organization",
+            disable_tqdm=disable_tqdm,
         )
 
     def list_organizations(
