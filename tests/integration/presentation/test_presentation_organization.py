@@ -121,7 +121,8 @@ def test_given_organization_in_kili_when_I_call_organization_metrics_it_retrieve
             id=OrganizationId(organization_id),
             start_datetime=datetime(2022, 1, 1, tzinfo=pytz.UTC),
             end_datetime=datetime(2022, 1, 5, tzinfo=pytz.UTC),
-        )
+        ),
+        disable_tqdm=None,
     )
 
 
