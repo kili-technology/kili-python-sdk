@@ -99,7 +99,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
         disable_tqdm: Optional[bool],
     ) -> Organization:
         """Send a GraphQL request calling updateOrganization resolver."""
-        with tqdm.tqdm(total=1, desc="Update organization", disable=disable_tqdm) as pbar:
+        with tqdm.tqdm(total=1, desc=description, disable=disable_tqdm) as pbar:
             variables = map_organization_update_data(organization_id, organization_data)
             result = self.graphql_client.execute(
                 get_update_properties_in_organization(ORGANIZATION_FRAGMENT), variables
