@@ -53,10 +53,8 @@ def test_create_organization(mocker, graphql_client):
     print(execute.calls)
 
     execute.assert_called_with(
-        (
-            "\nmutation(\n    $data: CreateOrganizationData!\n) {\n  data: createOrganization(\n   "
-            " data: $data\n  ) {\n    \nid\n\n  }\n}\n"
-        ),
+        "\nmutation(\n    $data: CreateOrganizationData!\n) {\n  data: createOrganization(\n   "
+        " data: $data\n  ) {\n    \nid\n\n  }\n}\n",
         {
             "data": {
                 "name": "test_organization",
@@ -101,11 +99,9 @@ def test_list_organization(mocker, graphql_client):
     # Then
     assert next(organizations)["name"] == organization_name
     execute.assert_called_with(
-        (
-            "\n        query organizations($where: OrganizationWhere!, $first: PageSize!, $skip:"
-            " Int!) {\n            data: organizations(where: $where, first: $first, skip: $skip)"
-            " {\n                 id name\n            }\n        }\n        "
-        ),
+        "\n        query organizations($where: OrganizationWhere!, $first: PageSize!, $skip:"
+        " Int!) {\n            data: organizations(where: $where, first: $first, skip: $skip)"
+        " {\n                 id name\n            }\n        }\n        ",
         {"where": {"id": None, "user": {"email": None}}, "skip": 0, "first": 1},
     )
 
@@ -128,10 +124,8 @@ def test_count_organization(mocker, graphql_client):
     # Then
     assert count == 6
     execute.assert_called_with(
-        (
-            "\n        query countOrganizations($where: OrganizationWhere!) {\n        data:"
-            " countOrganizations(where: $where)\n        }\n    "
-        ),
+        "\n        query countOrganizations($where: OrganizationWhere!) {\n        data:"
+        " countOrganizations(where: $where)\n        }\n    ",
         {"where": {"id": None, "user": {"email": "jean.philippe@kili-technology.com"}}},
     )
 
@@ -162,11 +156,9 @@ def test_get_organization_metrics(mocker: MockerFixture, graphql_client: GraphQL
     # Then
     assert metrics == {"numberOfAnnotations": 18, "numberOfHours": 5, "numberOfLabeledAssets": 3}
     execute.assert_called_with(
-        (
-            "\n    query organizationMetrics($where: OrganizationMetricsWhere!) {\n        data:"
-            " organizationMetrics(where: $where) {\n            numberOfAnnotations\n           "
-            " numberOfHours\n            numberOfLabeledAssets\n        }\n    }\n    "
-        ),
+        "\n    query organizationMetrics($where: OrganizationMetricsWhere!) {\n        data:"
+        " organizationMetrics(where: $where) {\n            numberOfAnnotations\n           "
+        " numberOfHours\n            numberOfLabeledAssets\n        }\n    }\n    ",
         {
             "where": {
                 "organizationId": "fake_organization_id",
@@ -197,11 +189,9 @@ def test_update_organization(mocker: MockerFixture, graphql_client: GraphQLClien
 
     # Then
     execute.assert_called_with(
-        (
-            "\nmutation(\n    $id: ID!\n    $name: String\n    $license: String\n) {\n  data:"
-            " updatePropertiesInOrganization(\n    where: {id: $id}\n    data: {\n      name:"
-            " $name\n      license: $license\n    }\n  ) {\n    \nid\n\n  }\n}\n"
-        ),
+        "\nmutation(\n    $id: ID!\n    $name: String\n    $license: String\n) {\n  data:"
+        " updatePropertiesInOrganization(\n    where: {id: $id}\n    data: {\n      name:"
+        " $name\n      license: $license\n    }\n  ) {\n    \nid\n\n  }\n}\n",
         {"id": "fake_organization_id", "name": "new_name"},
     )
     assert organization["name"] == "new_name"
