@@ -113,7 +113,10 @@ def _process_asset(
     elif project_input_type == "IMAGE":
         json_response = asset["latestLabel"]["jsonResponse"]
         width, height = get_image_dimensions(asset)
-        parameters = {"filename": Path(asset["content"]).name}
+        filename = (
+            Path(asset["content"]).name if Path(asset["content"]).is_file() else asset["externalId"]
+        )
+        parameters = {"filename": filename}
         annotations = _convert_from_kili_to_voc_format(
             json_response, width, height, parameters, valid_jobs
         )
