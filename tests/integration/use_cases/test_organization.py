@@ -54,7 +54,7 @@ def test_given_existing_organization_when_I_call_list_organisations_then_it_list
     mocker.patch.object(
         kili_api_gateway,
         "list_organizations",
-        return_value=[{"id": "fake_organization_id", "name": organization_name}],
+        return_value=(o for o in [{"id": "fake_organization_id", "name": organization_name}]),
     )
 
     # When
@@ -93,7 +93,7 @@ def test_given_existing_organization_when_I_call_organization_metrics_the_it_ret
     kili_api_gateway = KiliAPIGateway(graphql_client, http_client)
     mocker.patch.object(
         kili_api_gateway,
-        "organization_metrics",
+        "get_organization_metrics",
         return_value={"nbUsers": 4},
     )
 
