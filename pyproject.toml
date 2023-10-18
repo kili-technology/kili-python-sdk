@@ -78,7 +78,7 @@ dev = [
   "black",
   "pre-commit >= 3.3.0, < 4.0.0",
   "pylint == 3.0.1",
-  "pyright == 1.1.331",
+  "pyright ==1.1.332",
   # notebooks tests
   "nbformat",
   "nbconvert",
