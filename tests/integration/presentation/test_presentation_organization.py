@@ -4,12 +4,17 @@ import pytest
 import pytz
 from pytest_mock import MockerFixture
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.client import Kili
 from kili.domain.organization import (
     OrganizationFilters,
     OrganizationId,
     OrganizationMetricsFilters,
+)
+from kili.presentation.client.organization import (
+    InternalOrganizationClientMethods,
+    OrganizationClientMethods,
 )
 from kili.use_cases.organization.use_cases import (
     OrganizationToUpdateUseCaseInput,
@@ -18,12 +23,16 @@ from kili.use_cases.organization.use_cases import (
 
 
 @pytest.fixture()
-def kili():
-    return Kili()
+def kili_client(kili_api_gateway: KiliAPIGateway):
+    kili = OrganizationClientMethods()
+    kili.kili_api_gateway = kili_api_gateway
+    kili.internal = InternalOrganizationClientMethods()  # type: ignore
+    kili.internal.kili_api_gateway = kili_api_gateway  # type: ignore
+    return kili
 
 
 def test_given_orginization_info_when_I_call_create_it_creates_the_organization(
-    kili: Kili, mocker: MockerFixture
+    kili_client: Kili, mocker: MockerFixture
 ):
     # Given
     organization_name = "test_organization"
@@ -34,7 +43,7 @@ def test_given_orginization_info_when_I_call_create_it_creates_the_organization(
     )
 
     # When
-    organization = kili.internal.create_organization(
+    organization = kili_client.internal.create_organization(
         name=organization_name,
         address="1, rue de Rivoli",
         city="Paris",
@@ -47,7 +56,7 @@ def test_given_orginization_info_when_I_call_create_it_creates_the_organization(
 
 
 def test_given_organization_in_kili_when_I_call_organizations_it_lists_the_organization(
-    kili: Kili, mocker: MockerFixture
+    kili_client: Kili, mocker: MockerFixture
 ):
     # Given
     organization_name = "test_organization"
@@ -58,7 +67,7 @@ def test_given_organization_in_kili_when_I_call_organizations_it_lists_the_organ
     )
 
     # When
-    organizations = kili.organizations(
+    organizations = kili_client.organizations(
         organization_id="fake_organization_id",
         fields=["id", "name", "license"],
         skip=0,
@@ -76,7 +85,7 @@ def test_given_organization_in_kili_when_I_call_organizations_it_lists_the_organ
 
 
 def test_given_organization_in_kili_when_I_call_count_organizations_it_counts_the_organizations(
-    kili: Kili, mocker: MockerFixture
+    kili_client: Kili, mocker: MockerFixture
 ):
     # Given
     count_organizations_use_case = mocker.patch.object(
@@ -86,7 +95,7 @@ def test_given_organization_in_kili_when_I_call_count_organizations_it_counts_th
     )
 
     # When
-    organization_count = kili.count_organizations(email="jean.philippe@kili-technology.com")
+    organization_count = kili_client.count_organizations(email="jean.philippe@kili-technology.com")
 
     # Then
     assert organization_count == 5
@@ -96,7 +105,7 @@ def test_given_organization_in_kili_when_I_call_count_organizations_it_counts_th
 
 
 def test_given_organization_in_kili_when_I_call_organization_metrics_it_retrieves_them(
-    kili: Kili, mocker: MockerFixture
+    kili_client: Kili, mocker: MockerFixture
 ):
     # Given
     organization_id = "fake_organization_id"
@@ -108,7 +117,7 @@ def test_given_organization_in_kili_when_I_call_organization_metrics_it_retrieve
     )
 
     # When
-    organization_metrics = kili.organization_metrics(
+    organization_metrics = kili_client.organization_metrics(
         organization_id=organization_id,
         start_date=datetime(2022, 1, 1, tzinfo=pytz.UTC),
         end_date=datetime(2022, 1, 5, tzinfo=pytz.UTC),
@@ -127,7 +136,7 @@ def test_given_organization_in_kili_when_I_call_organization_metrics_it_retrieve
 
 
 def test_given_organization_in_kili_when_I_call_update_properties_in_organization_it_updates_them(
-    kili: Kili, mocker: MockerFixture
+    kili_client: Kili, mocker: MockerFixture
 ):
     # Given
     test_organization_id = "fake_organization_id"
@@ -139,7 +148,7 @@ def test_given_organization_in_kili_when_I_call_update_properties_in_organizatio
     )
 
     # When
-    result = kili.internal.update_properties_in_organization(
+    result = kili_client.internal.update_properties_in_organization(
         organization_id=test_organization_id, name=new_name
     )
 

@@ -8,7 +8,16 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from json import dumps
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, List, NamedTuple, Optional, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    List,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+)
 from uuid import uuid4
 
 from tenacity import Retrying
@@ -381,17 +390,18 @@ class BaseAbstractAssetImporter(abc.ABC):
     def _can_upload_from_local_data(self):
         user_me = self.kili.kili_api_gateway.get_current_user(fields=("email",))
         options = QueryOptions(disable_tqdm=True)
-        organization = next(
-            iter(
-                self.kili.kili_api_gateway.list_organizations(
-                    filters=OrganizationFilters(email=user_me["email"]),
-                    fields=["license.uploadLocalData"],
-                    description="List organizations",
-                    options=options,
-                )
+        organization = self._get_organization(user_me, options)
+        return organization["license"]["uploadLocalData"]
+
+    def _get_organization(self, user_me: Dict, options: QueryOptions) -> Dict:
+        return next(
+            self.kili.kili_api_gateway.list_organizations(
+                filters=OrganizationFilters(email=user_me["email"]),
+                fields=["license.uploadLocalData"],
+                description="",
+                options=options,
             )
         )
-        return organization["license"]["uploadLocalData"]
 
     def _check_upload_is_allowed(self, assets: List[AssetLike]) -> None:
         if not self.is_hosted_content(assets) and not self._can_upload_from_local_data():

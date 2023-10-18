@@ -11,11 +11,11 @@ from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
 from tests.unit.services.asset_import.base import ImportTestCase
 from tests.unit.services.asset_import.mocks import (
-    mocked_organization_with_upload_from_local,
     mocked_project_input_type,
     mocked_request_signed_urls,
     mocked_unique_id,
     mocked_upload_data_via_rest,
+    organization_generator,
 )
 
 
@@ -27,7 +27,7 @@ from tests.unit.services.asset_import.mocks import (
 @patch.object(
     OrganizationOperationMixin,
     "list_organizations",
-    side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
+    side_effect=organization_generator(upload_local_data=True),
 )
 class PDFTestCase(ImportTestCase):
     def test_upload_from_one_local_pdf(self, *_):
@@ -60,12 +60,10 @@ class PDFTestCase(ImportTestCase):
     def test_upload_from_several_batches(self, *_):
         self.assert_upload_several_batches()
 
-    @patch.object(
-        OrganizationOperationMixin,
-        "list_organizations",
-        side_effect=mocked_organization_with_upload_from_local(upload_local_data=False),
-    )
     def test_upload_from_one_hosted_pdf_authorized_while_local_forbidden(self, *_):
+        self.kili.kili_api_gateway.list_organizations = MagicMock(
+            return_value=organization_generator(upload_local_data=False)
+        )
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]

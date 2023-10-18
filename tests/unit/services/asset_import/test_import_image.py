@@ -2,33 +2,29 @@ from unittest.mock import MagicMock, call, patch
 
 import pytest
 
-from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
-from kili.adapters.kili_api_gateway.organization.operations_mixin import (
-    OrganizationOperationMixin,
-)
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
 from tests.unit.services.asset_import.base import ImportTestCase
 from tests.unit.services.asset_import.mocks import (
-    mocked_organization_with_upload_from_local,
     mocked_project_input_type,
     mocked_request_signed_urls,
     mocked_unique_id,
     mocked_upload_data_via_rest,
+    organization_generator,
 )
 
 
+# @patch("kili.adapters.kili_api_gateway", "list_assets", MagicMock(return_value=[]))
+# @patch(
+#     "kili.client.Kili.kili_api_gateway",
+#     "list_organizations",
+#     MagicMock(return_value=organization_generator(upload_local_data=True)),
+# )
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
-@patch.object(AssetOperationMixin, "list_assets", MagicMock(return_value=[]))
-@patch.object(
-    OrganizationOperationMixin,
-    "list_organizations",
-    side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
-)
 class ImageTestCase(ImportTestCase):
     def test_upload_from_one_local_image(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
@@ -100,12 +96,10 @@ class ImageTestCase(ImportTestCase):
     def test_upload_from_several_batches(self, *_):
         self.assert_upload_several_batches()
 
-    @patch.object(
-        OrganizationOperationMixin,
-        "list_organizations",
-        side_effect=mocked_organization_with_upload_from_local(upload_local_data=False),
-    )
     def test_upload_from_one_hosted_image_authorized_while_local_forbidden(self, *_):
+        self.kili.kili_api_gateway.list_organizations = MagicMock(
+            return_value=organization_generator(upload_local_data=False)
+        )
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
