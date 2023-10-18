@@ -40,7 +40,7 @@ class OrganizationUseCases(BaseUseCases):
     """Organization use cases."""
 
     def create_organization(
-        self, organization: OrganizationToCreateUseCaseInput, disable_tqdm: bool
+        self, organization: OrganizationToCreateUseCaseInput, disable_tqdm: Optional[bool]
     ) -> Organization:
         """Create an organization."""
         return self._kili_api_gateway.create_organization(

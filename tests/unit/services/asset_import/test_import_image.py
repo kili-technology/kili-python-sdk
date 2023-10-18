@@ -15,12 +15,6 @@ from tests.unit.services.asset_import.mocks import (
 )
 
 
-# @patch("kili.adapters.kili_api_gateway", "list_assets", MagicMock(return_value=[]))
-# @patch(
-#     "kili.client.Kili.kili_api_gateway",
-#     "list_organizations",
-#     MagicMock(return_value=organization_generator(upload_local_data=True)),
-# )
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)

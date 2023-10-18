@@ -33,7 +33,7 @@ class InternalOrganizationClientMethods(BaseClientMethods):
         zip_code: str,
         city: str,
         country: str,
-        disable_tqdm: bool = False,
+        disable_tqdm: Optional[bool] = None,
     ) -> Dict:
         """Create an organization.
 

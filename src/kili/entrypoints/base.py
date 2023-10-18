@@ -1,17 +1,15 @@
 """Base class for entrypoints dealing with GraphQL operations."""
 import abc
-from typing import TYPE_CHECKING, List, Optional, Type, TypeVar, cast
+from typing import List, Optional, Type, TypeVar, cast
 
 from kili.adapters.http_client import HttpClient
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import format_result
 from kili.domain.asset import AssetExternalId, AssetId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.use_cases.asset.utils import AssetUseCasesUtils
-
-if TYPE_CHECKING:
-    from kili.adapters.kili_api_gateway import KiliAPIGateway
 
 T = TypeVar("T")
 
@@ -23,7 +21,7 @@ class BaseOperationEntrypointMixin(abc.ABC):
     # all methods have been moved to the new architecture
     graphql_client: GraphQLClient
     http_client: HttpClient
-    kili_api_gateway: "KiliAPIGateway"
+    kili_api_gateway: KiliAPIGateway
 
     def format_result(self, name: str, result: dict, object_: Optional[Type[T]] = None) -> T:
         """Format the result of a graphQL query.

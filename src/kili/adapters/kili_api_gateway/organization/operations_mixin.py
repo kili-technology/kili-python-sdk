@@ -45,7 +45,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
         self,
         organization: KiliAPIGateWayCreateOrganizationInput,
         description: str,
-        disable_tqdm: bool,
+        disable_tqdm: Optional[bool],
     ) -> Organization:
         """Send a GraphQL request calling createOrganization resolver."""
         with tqdm.tqdm(total=1, desc=description, disable=disable_tqdm) as pbar:
