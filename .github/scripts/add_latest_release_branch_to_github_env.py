@@ -1,4 +1,5 @@
 """This script adds the latest release branch to the github env file."""
+
 import json
 import os
 import urllib.error

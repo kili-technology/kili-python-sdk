@@ -1,6 +1,5 @@
 """Tests for issues use cases."""
 
-
 from typing import Generator
 
 import pytest_mock

@@ -1,6 +1,5 @@
 """GraphQL Queries of Organizations."""
 
-
 from datetime import datetime
 from typing import Dict, Optional
 

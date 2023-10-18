@@ -1,4 +1,5 @@
 """My custom plugin for bills."""
+
 from typing import Dict, List, Optional
 
 from kili.plugins import PluginCore

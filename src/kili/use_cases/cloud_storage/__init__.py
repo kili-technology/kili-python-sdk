@@ -1,4 +1,5 @@
 """Cloud storage use cases."""
+
 import logging
 import time
 from datetime import datetime

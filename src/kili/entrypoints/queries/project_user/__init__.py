@@ -1,4 +1,5 @@
 """Project user queries."""
+
 from typing import (
     Dict,
     Generator,

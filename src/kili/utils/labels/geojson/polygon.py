@@ -1,4 +1,5 @@
 """Polygon label utils."""
+
 from typing import Any, Dict, List, Optional
 
 

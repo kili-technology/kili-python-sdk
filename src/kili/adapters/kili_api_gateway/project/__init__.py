@@ -1,6 +1,5 @@
 """Mixin extending Kili API Gateway class with Projects related operations."""
 
-
 import json
 from typing import Dict, Generator, Optional
 

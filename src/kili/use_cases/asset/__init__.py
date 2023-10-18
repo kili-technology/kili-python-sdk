@@ -1,4 +1,5 @@
 """Asset use cases."""
+
 import itertools
 from typing import Dict, Generator, List, Literal, Optional
 

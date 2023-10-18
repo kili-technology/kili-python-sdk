@@ -1,4 +1,5 @@
 """Utils to log calls."""
+
 import functools
 import platform
 import uuid

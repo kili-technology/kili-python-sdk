@@ -1,4 +1,5 @@
 """Kili CLI."""
+
 import click
 
 from kili import __version__

@@ -1,6 +1,5 @@
 """Export-related exceptions."""
 
-
 class DownloadError(Exception):
     """Exception thrown when the contents cannot be downloaded."""
 

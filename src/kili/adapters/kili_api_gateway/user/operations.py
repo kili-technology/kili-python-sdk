@@ -1,6 +1,5 @@
 """GraphQL User operations."""
 
-
 def get_users_query(fragment: str) -> str:
     """Return the GraphQL users query."""
     return f"""

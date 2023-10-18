@@ -1,4 +1,5 @@
 """Helpers for the asset domain."""
+
 from typing import Optional
 
 from kili.domain.asset import AssetExternalId, AssetId

@@ -1,4 +1,5 @@
 """Parser classes."""
+
 import csv
 import json
 from abc import abstractmethod

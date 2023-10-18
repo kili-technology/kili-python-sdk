@@ -1,4 +1,5 @@
 """HTTP client."""
+
 from typing import Union
 
 import requests

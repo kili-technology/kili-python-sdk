@@ -1,4 +1,5 @@
 """Geojson linestring utilities."""
+
 from typing import Any, Dict, List, Optional
 
 

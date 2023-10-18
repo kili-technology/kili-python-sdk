@@ -1,6 +1,5 @@
 """GraphQL Queries of Labels."""
 
-
 from typing import List, Optional
 
 from kili.core.graphql.queries import BaseQueryWhere, GraphQLQuery

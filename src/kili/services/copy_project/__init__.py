@@ -1,4 +1,5 @@
 """Copy project implementation."""
+
 import itertools
 import json
 import logging

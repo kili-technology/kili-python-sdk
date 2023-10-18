@@ -1,4 +1,5 @@
 """Authentification functions that does not rely on the graphQL client."""
+
 from kili import __version__
 from kili.adapters.http_client import HttpClient
 from kili.core.graphql.clientnames import GraphQLClientName

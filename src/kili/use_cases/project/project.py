@@ -1,4 +1,5 @@
 """Project use cases."""
+
 import json
 from typing import Dict, Generator, Optional
 

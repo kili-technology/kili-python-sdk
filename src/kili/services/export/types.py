@@ -1,4 +1,5 @@
 """Types used by the conversion service."""
+
 from typing import Callable, Dict, Literal, NamedTuple
 
 ExportType = Literal["latest", "normal"]

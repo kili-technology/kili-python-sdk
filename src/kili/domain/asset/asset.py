@@ -1,4 +1,5 @@
 """Asset domain."""
+
 from dataclasses import dataclass
 from typing import NewType, Optional
 

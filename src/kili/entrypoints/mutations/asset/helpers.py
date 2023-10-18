@@ -1,4 +1,5 @@
 """Helpers for the asset mutations."""
+
 from typing import Callable, Dict, List, Optional, Union
 
 from kili.core.helpers import convert_to_list_of_none, format_metadata, is_none_or_empty
