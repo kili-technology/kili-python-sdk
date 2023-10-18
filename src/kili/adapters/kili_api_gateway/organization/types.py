@@ -1,4 +1,5 @@
 """Organization types for Kili API Gateway."""
+
 from dataclasses import dataclass
 from typing import Optional
 

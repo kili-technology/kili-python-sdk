@@ -1,4 +1,5 @@
 """Organization client methods."""
+
 from datetime import datetime
 from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 

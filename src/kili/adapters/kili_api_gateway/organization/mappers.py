@@ -1,4 +1,5 @@
 """Mappers for Organization API calls."""
+
 import json
 from typing import Dict
 
