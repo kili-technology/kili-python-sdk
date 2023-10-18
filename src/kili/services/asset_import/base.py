@@ -372,7 +372,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         raise NotImplementedError
 
     @staticmethod
-    def is_hosted_content(assets: List[AssetLike]):
+    def is_hosted_content(assets: List[AssetLike]) -> bool:
         """Determine if the assets to upload are from local files or hosted data.
 
         Raise an error if a mix of both.
@@ -387,7 +387,7 @@ class BaseAbstractAssetImporter(abc.ABC):
             )
         return False
 
-    def _can_upload_from_local_data(self):
+    def _can_upload_from_local_data(self) -> bool:
         user_me = self.kili.kili_api_gateway.get_current_user(fields=("email",))
         options = QueryOptions(disable_tqdm=True)
         organization = self._get_organization(user_me, options)

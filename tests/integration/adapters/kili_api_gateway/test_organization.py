@@ -162,8 +162,8 @@ def test_get_organization_metrics(mocker: MockerFixture, graphql_client: GraphQL
         {
             "where": {
                 "organizationId": "fake_organization_id",
-                "startDate": "2022-01-01T00:00:00.000+00:00Z",
-                "endDate": "2022-01-05T00:00:00.000+00:00Z",
+                "startDate": "2022-01-01T00:00:00Z",
+                "endDate": "2022-01-05T00:00:00Z",
             }
         },
     )
