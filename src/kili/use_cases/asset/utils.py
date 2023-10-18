@@ -1,4 +1,5 @@
 """Utils for use cases."""
+
 from itertools import chain
 from typing import Dict, Optional
 

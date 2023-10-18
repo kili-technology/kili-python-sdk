@@ -1,4 +1,5 @@
 """Types for the user-related Kili API gateway functions."""
+
 from dataclasses import dataclass
 from typing import Optional
 

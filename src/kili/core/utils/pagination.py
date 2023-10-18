@@ -1,4 +1,5 @@
 """Pagination utils."""
+
 from itertools import islice
 from time import sleep
 from typing import Any, Callable, Dict, Iterator, List, Optional

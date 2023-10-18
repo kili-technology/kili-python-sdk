@@ -1,4 +1,5 @@
 """Types used by the conversion service."""
+
 from typing import Any, Dict, List, Literal, NamedTuple, NewType, Union
 
 from typing_extensions import TypedDict

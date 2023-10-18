@@ -1,4 +1,5 @@
 """This script defines object-relational mapping helpers."""
+
 import warnings
 from dataclasses import dataclass
 from typing import Dict, Literal

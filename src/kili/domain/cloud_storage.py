@@ -1,4 +1,5 @@
 """Cloud Storage domain."""
+
 from dataclasses import dataclass
 from enum import Enum
 from typing import Literal, NewType, Optional

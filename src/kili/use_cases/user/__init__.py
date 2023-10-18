@@ -1,4 +1,5 @@
 """User use cases."""
+
 from typing import Dict, Generator, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions

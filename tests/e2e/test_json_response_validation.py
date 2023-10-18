@@ -1,6 +1,5 @@
 """Module to test validation of jsonResponse in the backend."""
 
-
 import pytest
 from gql.transport import exceptions
 

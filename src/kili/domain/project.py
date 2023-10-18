@@ -1,4 +1,5 @@
 """Project domain."""
+
 from dataclasses import dataclass
 from typing import Literal, NewType, Optional
 

@@ -1,6 +1,5 @@
 """This script lists package constants."""
 
-
 INPUT_TYPE = [
     "AUDIO",
     "IMAGE",

@@ -1,4 +1,5 @@
 """Types for the Tag-related Kili API gateway functions."""
+
 from dataclasses import dataclass
 
 from kili.domain.tag import TagId

@@ -1,4 +1,5 @@
 """Base class for entrypoints dealing with GraphQL operations."""
+
 import abc
 from typing import List, Optional, Type, TypeVar, cast
 

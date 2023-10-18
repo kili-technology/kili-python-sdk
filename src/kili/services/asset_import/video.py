@@ -1,4 +1,5 @@
 """Functions to import assets into a VIDEO_LEGACY project."""
+
 import mimetypes
 import os
 from concurrent.futures import ThreadPoolExecutor

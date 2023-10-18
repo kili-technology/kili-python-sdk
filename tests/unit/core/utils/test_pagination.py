@@ -1,4 +1,5 @@
 """Unit tests for core utils pagination module."""
+
 import pytest
 
 from kili.core.utils.pagination import BatchIteratorBuilder, batch_object_builder
