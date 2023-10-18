@@ -14,8 +14,8 @@ bump_version() {
         --current-version "$(get_sdk_version_from_pyproject_toml)" \
         "$2" \
         src/kili/__init__.py \
-        pyproject.toml |
-        grep new_version | sed -r s,"^.*=",,)
+        pyproject.toml \
+        | grep new_version | sed -r s,"^.*=",,)
 
     echo "$new_version"
 }
@@ -24,8 +24,8 @@ bump_version() {
 # 2.129.1 -> 2129001
 version_to_int() {
     version=$1
-    as_int=$(echo "$version" | awk -F. '{ printf("%03d%03d%03d\n", $1,$2,$3); }')
-    echo "$((10#$as_int))" # interpret as base 10
+    as_int=$(echo "$version" | awk -F. '{ printf("%03d%03d%03d\n", $1,$2,$3); }';)
+    echo "$((10#$as_int))"  # interpret as base 10
 }
 
 get_last_release_tag_github() {
