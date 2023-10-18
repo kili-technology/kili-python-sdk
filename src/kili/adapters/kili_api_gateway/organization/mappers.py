@@ -38,10 +38,11 @@ def map_organization_where(filters: OrganizationFilters) -> Dict:
 
 def map_organization_metrics_where(filters: OrganizationMetricsFilters) -> Dict:
     """Build the GraphQL OrganizationMetricsWhere variable to be sent in an operation."""
+    date_string_fmt = "%Y-%m-%dT%H:%M:%SZ"
     return {
         "organizationId": filters.id,
-        "startDate": filters.start_datetime.isoformat(sep="T", timespec="milliseconds") + "Z",
-        "endDate": filters.end_datetime.isoformat(sep="T", timespec="milliseconds") + "Z",
+        "startDate": filters.start_datetime.strftime(date_string_fmt),
+        "endDate": filters.end_datetime.strftime(date_string_fmt),
     }
 
 
