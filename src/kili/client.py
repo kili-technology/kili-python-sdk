@@ -62,12 +62,12 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     QueriesProjectUser,
     QueriesProjectVersion,
     SubscriptionsLabel,
-    IssueClientMethods,
     AssetClientMethods,
-    TagClientMethods,
-    ProjectClientMethods,
     CloudStorageClientMethods,
+    IssueClientMethods,
     OrganizationClientMethods,
+    ProjectClientMethods,
+    TagClientMethods,
     UserClientMethods,
 ):
     """Kili Client."""
