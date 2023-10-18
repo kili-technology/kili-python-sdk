@@ -270,10 +270,14 @@ def _get_images_and_annotation_for_images(
 
     for asset_i, asset in tqdm(enumerate(assets), desc="Convert to coco format"):
         width, height = get_image_dimensions(asset)
+        if Path(asset["content"]).is_file():
+            filename = str(DATA_SUBDIR + "/" + Path(asset["content"]).name)
+        else:
+            filename = str(DATA_SUBDIR + "/" + asset["externalId"])
         coco_image = CocoImage(
             id=asset_i,
             license=0,
-            file_name=str(DATA_SUBDIR + "/" + Path(asset["content"]).name),
+            file_name=filename,
             height=height,
             width=width,
             date_captured=None,
