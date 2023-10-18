@@ -1,6 +1,5 @@
 """GraphQL Project operations."""
 
-
 def get_projects_query(fragment: str) -> str:
     """Return the GraphQL projects query."""
     return f"""

@@ -1,4 +1,5 @@
 """Project mutations."""
+
 from typing import List, Optional
 
 from typeguard import typechecked

@@ -1,6 +1,5 @@
 """Label import-specific errors."""
 
-
 class LabelParsingError(ValueError):
     """Raised when there is a failure to parse a label."""
 

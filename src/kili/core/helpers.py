@@ -1,4 +1,5 @@
 """Helpers for GraphQL Queries and Mutations."""
+
 import functools
 import glob
 import mimetypes

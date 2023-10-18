@@ -1,6 +1,5 @@
 """Exceptions for label response module."""
 
-
 class JobNotExistingError(Exception):
     """Raised when the job does not exist."""
 

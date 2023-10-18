@@ -1,4 +1,5 @@
 """Functions to import assets into a TEXT project."""
+
 import os
 from enum import Enum
 from typing import List, Optional, Tuple

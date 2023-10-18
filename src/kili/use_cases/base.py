@@ -1,4 +1,5 @@
 """Module with base class for use cases."""
+
 from abc import ABC
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway

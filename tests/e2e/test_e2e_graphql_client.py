@@ -1,4 +1,5 @@
 """Test module for the GraphQL client."""
+
 import concurrent.futures
 from pathlib import Path
 from unittest import mock

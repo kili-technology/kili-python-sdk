@@ -1,4 +1,5 @@
 """Test notebooks with pytest."""
+
 import os
 
 import nbformat

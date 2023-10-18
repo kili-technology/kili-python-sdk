@@ -1,4 +1,5 @@
 """Types for the Cloud storage related Kili API gateway functions."""
+
 from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional

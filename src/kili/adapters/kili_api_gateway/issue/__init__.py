@@ -1,4 +1,5 @@
 """Mixin extending Kili API Gateway class with Issue related operations."""
+
 from typing import Dict, Generator, List
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin

@@ -1,4 +1,5 @@
 """Module for the "categories" key parsing of a job response."""
+
 from typing import Any, Dict, Iterator, List, Optional
 
 from typeguard import typechecked

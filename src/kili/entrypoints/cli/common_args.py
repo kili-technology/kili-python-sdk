@@ -1,4 +1,5 @@
 """Common arguments and options for the CLI."""
+
 from typing import List
 
 import click

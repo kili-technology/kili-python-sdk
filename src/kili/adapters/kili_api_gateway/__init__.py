@@ -1,6 +1,5 @@
 """Kili API Gateway module for interacting with Kili."""
 
-
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.api_key import ApiKeyOperationMixin
 from kili.adapters.kili_api_gateway.asset import AssetOperationMixin

@@ -1,6 +1,5 @@
 """GraphQL Queries of Plugins."""
 
-
 from datetime import datetime
 from typing import NamedTuple, Optional
 

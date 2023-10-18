@@ -1,4 +1,5 @@
 """Utilities to handle assets."""
+
 from dataclasses import dataclass
 from typing import Any, Dict
 

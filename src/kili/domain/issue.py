@@ -1,4 +1,5 @@
 """Issue domain."""
+
 from dataclasses import dataclass
 from typing import List, Literal, NewType, Optional
 

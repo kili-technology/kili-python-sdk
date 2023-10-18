@@ -1,6 +1,5 @@
 """Module for managing bucket's signed urls."""
 
-
 import itertools
 from typing import List, Union
 from urllib.parse import parse_qs, urlparse

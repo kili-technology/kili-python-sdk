@@ -1,4 +1,5 @@
 """Exceptions of the package."""
+
 from typing import Dict, List, Optional
 
 
