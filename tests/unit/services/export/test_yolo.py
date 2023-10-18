@@ -9,6 +9,7 @@ import pytest_mock
 from kili.adapters.http_client import HttpClient
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.orm import Asset
+from kili.services.export import YoloExporter
 from kili.services.export.format.yolo import (
     YoloExporter,
     _convert_from_kili_to_yolo_format,

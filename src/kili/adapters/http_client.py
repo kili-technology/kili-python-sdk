@@ -1,4 +1,5 @@
 """HTTP client."""
+
 from typing import Union
 
 import requests
@@ -54,10 +55,6 @@ class HttpClient:
     def patch(self, url: str, **kwargs) -> requests.Response:
         """Send a PATCH request to the given URL."""
         return self._send_request("PATCH", url, **kwargs)
-
-    def delete(self, url: str, **kwargs) -> requests.Response:
-        """Send a DELETE request to the given URL."""
-        return self._send_request("DELETE", url, **kwargs)
 
     def options(self, url: str, **kwargs) -> requests.Response:
         """Send a OPTIONS request to the given URL."""

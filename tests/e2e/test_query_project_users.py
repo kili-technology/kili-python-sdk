@@ -30,7 +30,7 @@ def test_given_project_when_querying_project_users_it_works(
 ):
     # Given
     project_id, suspended_user_email = project_id_suspended_user_email
-    api_user = kili.get_user()
+    api_user = kili.kili_api_gateway.get_current_user(fields=("email",))
     fields = ["activated", "deletedAt", "id", "role", "user.email", "user.id", "status"]
 
     # When

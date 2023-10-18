@@ -1,9 +1,11 @@
 """Pagination utils."""
+
 from itertools import islice
 from time import sleep
 from typing import Any, Callable, Dict, Iterator, List, Optional
 
 from kili.core.constants import MUTATION_BATCH_SIZE
+from kili.domain.types import ListOrTuple
 from kili.exceptions import GraphQLError
 
 # pylint: disable=too-many-arguments
@@ -17,7 +19,7 @@ class BatchIteratorBuilder:
         batch_size: the size of the batches to produce
     """
 
-    def __init__(self, iterable: List, batch_size: int = MUTATION_BATCH_SIZE) -> None:
+    def __init__(self, iterable: ListOrTuple, batch_size: int = MUTATION_BATCH_SIZE) -> None:
         self.iterable = iterable
         self.batch_size = batch_size
         self.nb_batches = (len(iterable) - 1) // batch_size + 1
@@ -37,9 +39,9 @@ class BatchIteratorBuilder:
 
 
 def batch_object_builder(
-    properties_to_batch: Dict[str, Optional[List[Any]]],
+    properties_to_batch: Dict[str, Optional[ListOrTuple[Any]]],
     batch_size: int = MUTATION_BATCH_SIZE,
-) -> Iterator[Dict[str, Optional[List[Any]]]]:
+) -> Iterator[Dict[str, Optional[ListOrTuple[Any]]]]:
     """Generate a paginated iterator for several variables.
 
     Args:
@@ -69,7 +71,7 @@ def batch_object_builder(
 # pylint: disable=missing-type-doc
 def mutate_from_paginated_call(
     kili,
-    properties_to_batch: Dict[str, Optional[List[Any]]],
+    properties_to_batch: Dict[str, Optional[ListOrTuple[Any]]],
     generate_variables: Callable,
     request: str,
     batch_size: int = MUTATION_BATCH_SIZE,

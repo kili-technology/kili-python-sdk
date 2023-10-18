@@ -1,4 +1,5 @@
 """Client names."""
+
 from enum import Enum
 
 

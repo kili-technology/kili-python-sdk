@@ -1,6 +1,7 @@
 """Utils for use cases."""
+
 from itertools import chain
-from typing import Dict, List, Optional, cast
+from typing import Dict, Optional
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -24,7 +25,7 @@ class AssetUseCasesUtils:
         asset_ids: Optional[ListOrTuple[AssetId]],
         external_ids: Optional[ListOrTuple[AssetExternalId]],
         project_id: Optional[ProjectId],
-    ) -> List[AssetId]:
+    ) -> ListOrTuple[AssetId]:
         """Check if external id to internal id conversion is valid and needed."""
         check_asset_identifier_arguments(project_id, asset_ids, external_ids)
 
@@ -34,7 +35,7 @@ class AssetUseCasesUtils:
         else:
             resolved_asset_ids = asset_ids or []
 
-        return cast(List[AssetId], resolved_asset_ids)
+        return resolved_asset_ids
 
     def infer_ids_from_external_ids(
         self, asset_external_ids: ListOrTuple[AssetExternalId], project_id: ProjectId

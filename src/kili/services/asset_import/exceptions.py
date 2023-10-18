@@ -1,6 +1,5 @@
 """Import service exceptions."""
 
-
 class MimeTypeError(Exception):
     """MimeTypeError.
 

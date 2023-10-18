@@ -1,20 +1,18 @@
 """Tag use cases."""
+
 from collections import defaultdict
 from typing import Dict, List, Optional
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.tag.types import UpdateTagReturnData
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
+from kili.use_cases.base import BaseUseCases
 from kili.utils.tqdm import tqdm
 
 
-class TagUseCases:
+class TagUseCases(BaseUseCases):
     """Tag use cases."""
-
-    def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:
-        self._kili_api_gateway = kili_api_gateway
 
     def get_tags_of_organization(self, fields: ListOrTuple[str]) -> List[Dict]:
         """Get tags of organization."""

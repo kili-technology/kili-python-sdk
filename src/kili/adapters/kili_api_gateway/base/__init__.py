@@ -1,4 +1,5 @@
 """Base class for all KiliAPIGateway Operation Mixin classes."""
+
 from abc import ABC
 
 from kili.adapters.http_client import HttpClient

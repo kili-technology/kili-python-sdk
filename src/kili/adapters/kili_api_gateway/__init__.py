@@ -1,10 +1,13 @@
 """Kili API Gateway module for interacting with Kili."""
 
 from kili.adapters.http_client import HttpClient
+from kili.adapters.kili_api_gateway.api_key import ApiKeyOperationMixin
 from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
+from kili.adapters.kili_api_gateway.cloud_storage import CloudStorageOperationMixin
 from kili.adapters.kili_api_gateway.issue import IssueOperationMixin
 from kili.adapters.kili_api_gateway.project import ProjectOperationMixin
 from kili.adapters.kili_api_gateway.tag import TagOperationMixin
+from kili.adapters.kili_api_gateway.user.operation_mixin import UserOperationMixin
 from kili.core.graphql.graphql_client import GraphQLClient
 
 
@@ -13,6 +16,9 @@ class KiliAPIGateway(
     AssetOperationMixin,
     ProjectOperationMixin,
     TagOperationMixin,
+    ApiKeyOperationMixin,
+    UserOperationMixin,
+    CloudStorageOperationMixin,
 ):
     """GraphQL gateway to communicate with Kili backend."""
 

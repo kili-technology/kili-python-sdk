@@ -1,8 +1,8 @@
 """Asset use cases."""
+
 import itertools
 from typing import Dict, Generator, List, Literal, Optional
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import validate_category_search_query
@@ -13,23 +13,18 @@ from kili.domain.types import ListOrTuple
 from kili.services.label_data_parsing.types import Project as LabelParsingProject
 from kili.use_cases.asset.asset_label_parsing import parse_labels_of_asset
 from kili.use_cases.asset.media_downloader import get_download_assets_function
+from kili.use_cases.base import BaseUseCases
 
 
-class AssetUseCases:
+class AssetUseCases(BaseUseCases):
     """Asset use cases."""
-
-    def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:
-        """Init AssetUseCases."""
-        self._kili_api_gateway = kili_api_gateway
 
     # pylint: disable=too-many-arguments
     def list_assets(
         self,
         filters: AssetFilters,
         fields: ListOrTuple[str],
-        first: Optional[int],
-        skip: int,
-        disable_tqdm: Optional[bool],
+        options: QueryOptions,
         download_media: bool,
         local_media_dir: Optional[str],
         label_output_format: Literal["dict", "parsed_label"],
@@ -45,7 +40,6 @@ class AssetUseCases:
             ProjectId(filters.project_id),
             local_media_dir,
         )
-        options = QueryOptions(skip=skip, first=first, disable_tqdm=disable_tqdm)
         assets_gen = self._kili_api_gateway.list_assets(filters, fields, options)
 
         if download_media_function is not None:

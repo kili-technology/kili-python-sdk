@@ -236,8 +236,15 @@ def src_project_text(kili):
 
     kili.append_many_to_dataset(
         project_id=project["id"],
-        content_array=["kili", "kili"],
-        external_id_array=["text1", "text1.txt"],
+        content_array=[
+            "kili",
+            "kili",
+            (
+                "The completion of this 33 million-dollar investment strengthens"
+                " Google’s presence in this market."  # noqa: RUF001
+            ),
+        ],
+        external_id_array=["text1", "text1.txt", "text_with_weird_chars"],
         json_content_array=None,
     )
 
@@ -267,6 +274,31 @@ def src_project_text(kili):
     yield project
 
     kili.delete_project(project["id"])
+
+
+def test_given_asset_with_weird_chars_when_downloading_it_then_the_content_is_correct(
+    kili: Kili, src_project_text, tmp_path: Path
+):
+    # Given
+    asset_external_id = "text_with_weird_chars"
+    project_id = src_project_text["id"]
+
+    # When
+    asset = kili.assets(
+        project_id,
+        external_id_strictly_in=[asset_external_id],
+        download_media=True,
+        local_media_dir=str(tmp_path),
+    )[0]
+
+    # Then
+    with Path(asset["content"]).open("r", encoding="utf-8") as file:
+        content = file.read()
+    assert (
+        content
+        == "The completion of this 33 million-dollar investment strengthens Google’s presence in"
+        " this market."
+    )
 
 
 def test_download_assets_text(kili, src_project_text):
@@ -300,11 +332,11 @@ def test_download_assets_text(kili, src_project_text):
             expected_content=os.path.join(str(tmp_dir.resolve()), "text1.txt"),
             expected_json_content="",
         )
-        # asset[2] is jsoncontent richtext
+        # asset[3] is jsoncontent richtext
         assert_helper_for_asset(
-            assets[2],
+            assets[3],
             expected_externalid="richtext",
-            check_is_file=assets[2]["jsonContent"],
+            check_is_file=assets[3]["jsonContent"],
             expected_content="",
             expected_json_content=os.path.join(str(tmp_dir.resolve()), "richtext.txt"),
         )

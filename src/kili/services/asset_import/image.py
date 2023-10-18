@@ -1,4 +1,5 @@
 """Functions to import assets into an IMAGE project."""
+
 import mimetypes
 import os
 from typing import List

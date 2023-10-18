@@ -132,8 +132,9 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         project_id: Optional[str] = None,
         seconds_to_label: Optional[int] = 0,
     ) -> Dict[Literal["id"], str]:
-        """!!! danger "[DEPRECATED]"
-            append_to_labels method is deprecated. Please use append_labels instead.
+        """!!! danger "[DEPRECATED]".
+
+        append_to_labels method is deprecated. Please use append_labels instead.
             This new function allows to import several labels 10 times faster.
 
         Append a label to an asset.
@@ -158,7 +159,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
         """
         if author_id is None:
-            user = self.get_user()  # type: ignore  # pylint: disable=no-member
+            user = self.kili_api_gateway.get_current_user(fields=("id",))
             author_id = user["id"]
 
         check_asset_identifier_arguments(

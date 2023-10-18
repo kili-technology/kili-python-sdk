@@ -1,4 +1,5 @@
 """Types used by the conversion service."""
+
 from typing import Any, Dict, List, Literal, NamedTuple, NewType, Union
 
 from typing_extensions import TypedDict
@@ -12,7 +13,7 @@ class JobCategory(NamedTuple):
     """Contains information for a category."""
 
     category_name: str
-    id: int
+    id: int  # noqa: A003
     job_id: str
 
 

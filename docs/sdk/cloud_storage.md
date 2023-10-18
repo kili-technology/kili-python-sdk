@@ -19,11 +19,4 @@
     pip install kili[azure]
     ```
 
-## Queries
-
-::: kili.entrypoints.queries.data_integration.__init__.QueriesDataIntegration
-::: kili.entrypoints.queries.data_connection.__init__.QueriesDataConnection
-
-## Mutations
-
-:::kili.entrypoints.mutations.data_connection.__init__.MutationsDataConnection
+::: kili.presentation.client.cloud_storage.CloudStorageClientMethods

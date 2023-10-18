@@ -1,6 +1,5 @@
 """CLI's project label subcommand."""
 
-
 import os
 from typing import Optional, Tuple
 

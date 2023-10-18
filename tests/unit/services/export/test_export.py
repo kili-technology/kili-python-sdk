@@ -629,6 +629,7 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
         "kili.services.export.format.geojson.is_geotiff_asset_with_lat_lon_coords",
         return_value=True,
     )
+    mocker.patch.object(AbstractExporter, "_check_and_ensure_asset_access", return_value=None)
 
     with TemporaryDirectory() as export_folder, TemporaryDirectory() as extract_folder:
         path_zipfile = Path(export_folder) / "export.zip"
@@ -936,6 +937,7 @@ def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
     kili.http_client = mocker.MagicMock()
+    mocker.patch.object(AbstractExporter, "_has_data_connection", return_value=True)
 
     with pytest.raises(
         NotCompatibleOptions,

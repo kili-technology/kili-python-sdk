@@ -1,6 +1,5 @@
 """Helpers for the issue mutations."""
 
-
 from typing import Dict, List
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway

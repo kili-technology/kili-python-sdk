@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -13,7 +13,7 @@ repos:
         args: [--in-place,  --black, --wrap-summaries=0, --wrap-descriptions=0]
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.13.0
+    rev: v3.15.0
     hooks:
       - id: pyupgrade
         args: [--py38-plus]
@@ -29,7 +29,7 @@ repos:
           - --
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.291
+    rev: v0.1.0
     hooks:
       - id: ruff
         args:
@@ -48,7 +48,7 @@ repos:
         name: isort (python)
 
   - repo: https://github.com/psf/black
-    rev: 23.9.1
+    rev: 23.10.0
     hooks:
       - id: black
       - id: black-jupyter

@@ -1,6 +1,5 @@
 """GraphQL Queries of Project Users."""
 
-
 from typing import Literal, Optional
 
 from kili.core.graphql.queries import BaseQueryWhere, GraphQLQuery

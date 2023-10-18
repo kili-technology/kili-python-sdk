@@ -1,4 +1,5 @@
 """Parsing of the labels of an asset."""
+
 from typing import Dict
 
 from kili.services.label_data_parsing.types import Project as LabelParsingProject

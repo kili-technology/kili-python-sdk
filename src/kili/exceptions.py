@@ -1,4 +1,5 @@
 """Exceptions of the package."""
+
 from typing import Dict, List, Optional
 
 
@@ -57,17 +58,9 @@ class AuthenticationFailed(Exception):
         return input_str
 
 
-class NonExistingFieldError(ValueError):
-    """Raised when querying a field that does not exist on an object."""
-
-
 class MissingArgumentError(ValueError):
     """Raised when an required argument was not given by the user."""
 
 
 class IncompatibleArgumentsError(ValueError):
     """Raised when the user gave at least two incompatible arguments."""
-
-
-class UserNotFoundError(Exception):
-    """Raised when the user is not found."""

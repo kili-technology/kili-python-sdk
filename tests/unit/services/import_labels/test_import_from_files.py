@@ -1,4 +1,5 @@
 """Tests the label import service."""
+
 import csv
 from pathlib import Path
 from tempfile import TemporaryDirectory

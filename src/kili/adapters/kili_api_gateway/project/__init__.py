@@ -1,6 +1,5 @@
 """Mixin extending Kili API Gateway class with Projects related operations."""
 
-
 import json
 from typing import Dict, Generator, Optional
 
@@ -90,6 +89,13 @@ class ProjectOperationMixin(BaseOperationMixin):
         if any(json_field in fields for json_field in PROJECT_JSON_FIELDS):
             projects_gen = (load_project_json_fields(project, fields) for project in projects_gen)
         return projects_gen
+
+    def count_projects(self, project_filters: ProjectFilters) -> int:
+        """Return the number of projects."""
+        where = project_where_mapper(filters=project_filters)
+        variables = {"where": where}
+        result = self.graphql_client.execute(GQL_COUNT_PROJECTS, variables)
+        return result["data"]
 
     def update_properties_in_project(
         self,

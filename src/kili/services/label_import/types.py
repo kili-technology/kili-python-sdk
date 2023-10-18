@@ -1,4 +1,5 @@
 """Types specific to import."""
+
 from typing import Dict, List, Literal, NewType
 
 from typeguard import typechecked

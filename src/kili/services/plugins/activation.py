@@ -1,6 +1,5 @@
 """Functions to activate/deactivate a plugin."""
 
-
 from typing import Optional
 
 from kili.core.graphql.operations.plugin.mutations import (

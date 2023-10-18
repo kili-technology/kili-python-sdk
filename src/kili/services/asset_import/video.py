@@ -1,4 +1,5 @@
 """Functions to import assets into a VIDEO_LEGACY project."""
+
 import mimetypes
 import os
 from concurrent.futures import ThreadPoolExecutor
@@ -39,7 +40,9 @@ class VideoMixin:
     def get_video_processing_parameters(asset: AssetLike, from_frames: bool):
         """Base method for adding video processing parameters."""
         json_metadata = asset.get("json_metadata", {})
-        processing_parameters = json_metadata.get("processingParameters", {})  # type: ignore X
+        processing_parameters = json_metadata.get(  # pyright: ignore[reportGeneralTypeIssues]
+            "processingParameters", {}
+        )
         video_parameters = [
             ("shouldKeepNativeFrameRate", not from_frames),
             ("framesPlayedPerSecond", 30),
@@ -56,7 +59,9 @@ class VideoMixin:
         assert json_content
         json_content_index = range(len(json_content))
         json_content = dict(zip(json_content_index, json_content))
-        return AssetLike(**{**asset, "json_content": json_content})  # type: ignore
+        return AssetLike(
+            **{**asset, "json_content": json_content}  # pyright: ignore[reportGeneralTypeIssues]
+        )
 
 
 class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):

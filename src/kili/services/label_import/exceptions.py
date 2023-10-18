@@ -1,6 +1,5 @@
 """Label import-specific errors."""
 
-
 class LabelParsingError(ValueError):
     """Raised when there is a failure to parse a label."""
 
@@ -11,7 +10,3 @@ class MissingMetadataError(ValueError):
 
 class MissingTargetJobError(ValueError):
     """Raised when the target job is missing."""
-
-
-class MissingExternalIdError(ValueError):
-    """Raised when the external id of the labels are missing."""

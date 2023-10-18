@@ -210,7 +210,7 @@ def download_file(url: str, external_id: str, local_dir_path: Path, http_client:
     if not local_path.is_file():
         with http_client.get(url, stream=True, timeout=20) as response:
             response.raise_for_status()
-            with open(local_path, "wb") as file:
+            with local_path.open("wb") as file:
                 for chunk in response.iter_content(chunk_size=1024 * 1024):
                     file.write(chunk)
     return str(local_path)

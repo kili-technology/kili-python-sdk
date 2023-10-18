@@ -55,18 +55,18 @@ class PluginCore:
             asset_id: Id of the asset on which the label was submitted
 
         !!! example
-             ```python
-             def on_submit(self, label: Dict, asset_id: str):
-                 json_response = label.get('jsonResponse')
-                 if label_is_respecting_business_rule(json_response):
-                     return
-                 else:
-                     self.kili.send_back_to_queue(asset_ids=[asset_id])
-             ```
+            ```python
+            def on_submit(self, label: Dict, asset_id: str):
+                json_response = label.get('jsonResponse')
+                if label_is_respecting_business_rule(json_response):
+                    return
+                else:
+                    self.kili.send_back_to_queue(asset_ids=[asset_id])
+            ```
         """
         # pylint: disable=unused-argument
         self.logger.warning("Method not implemented. Define a custom on_submit on your plugin")
-        pass  # pylint: disable=unnecessary-pass
+        ...  # pylint: disable=unnecessary-ellipsis
 
     def on_review(
         self,
@@ -97,7 +97,7 @@ class PluginCore:
         """
         # pylint: disable=unused-argument
         self.logger.warning("Method not implemented. Define a custom on_review on your plugin")
-        pass  # pylint: disable=unnecessary-pass
+        ...  # pylint: disable=unnecessary-ellipsis
 
     def on_custom_interface_click(
         self,
@@ -138,8 +138,9 @@ class PluginCore:
         self,
         settings_updated: List[Dict],
     ) -> None:
-        """Handler for the project updated action,
-        triggered when a project setting is updated on Kili.
+        """Handler for the project updated action.
+
+        Triggered when a project setting is updated on Kili.
 
         !!! warning
             This handler is in beta and is still in active development,

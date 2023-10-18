@@ -1,4 +1,5 @@
 """Method to import assets from a csv file."""
+
 import csv
 from typing import List, Tuple
 
