@@ -18,7 +18,7 @@ from kili.domain.types import ListOrTuple
 from kili.use_cases.base import BaseUseCases
 
 
-@dataclass
+@dataclass(frozen=True)
 class OrganizationToCreateUseCaseInput:
     """Organization to create use case input."""
 
@@ -29,7 +29,7 @@ class OrganizationToCreateUseCaseInput:
     zip_code: str
 
 
-@dataclass
+@dataclass(frozen=True)
 class OrganizationToUpdateUseCaseInput:
     """Organization to update use case input."""
 
