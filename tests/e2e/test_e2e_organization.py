@@ -7,11 +7,6 @@ import pytz
 from kili.client import Kili
 
 
-@pytest.fixture()
-def kili():
-    return Kili()
-
-
 @pytest.mark.skip(
     "Skipping this test, because there is no way to remove an organization. To be run manually"
     " only."
