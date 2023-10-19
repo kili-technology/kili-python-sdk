@@ -54,7 +54,7 @@ def test_create_organization(mocker, graphql_client):
 
     execute.assert_called_with(
         "\nmutation(\n    $data: CreateOrganizationData!\n) {\n  data: createOrganization(\n   "
-        " data: $data\n  ) {\n    \nid\n\n  }\n}\n",
+        " data: $data\n  ) {\n     id\n  }\n}\n",
         {
             "data": {
                 "name": "test_organization",
@@ -191,7 +191,7 @@ def test_update_organization(mocker: MockerFixture, graphql_client: GraphQLClien
     execute.assert_called_with(
         "\nmutation(\n    $id: ID!\n    $name: String\n    $license: String\n) {\n  data:"
         " updatePropertiesInOrganization(\n    where: {id: $id}\n    data: {\n      name:"
-        " $name\n      license: $license\n    }\n  ) {\n    \nid\n\n  }\n}\n",
+        " $name\n      license: $license\n    }\n  ) {\n     id\n  }\n}\n",
         {"id": "fake_organization_id", "name": "new_name"},
     )
     assert organization["name"] == "new_name"

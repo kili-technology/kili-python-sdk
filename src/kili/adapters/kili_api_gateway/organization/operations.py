@@ -1,10 +1,5 @@
 """Collection of Organization's related GraphQL queries and mutations."""
 
-ORGANIZATION_FRAGMENT = """
-id
-"""
-
-
 def get_create_organization_mutation(fragment: str) -> str:
     """Return the GraphQL createOrganization mutation."""
     return f"""
@@ -31,18 +26,14 @@ def get_list_organizations_query(fragment: str) -> str:
         """
 
 
-def get_count_organizations_query() -> str:
-    """Return the GraphQL countOrganizations query."""
-    return """
+COUNT_ORGANIZATIONS_QUERY = """
         query countOrganizations($where: OrganizationWhere!) {
         data: countOrganizations(where: $where)
         }
     """
 
 
-def get_organization_metrics_query() -> str:
-    """Return the GraphQL getOrganizationMetrics query."""
-    return """
+GET_ORGANIZATION_METRICS_QUERY = """
     query organizationMetrics($where: OrganizationMetricsWhere!) {
         data: organizationMetrics(where: $where) {
             numberOfAnnotations
