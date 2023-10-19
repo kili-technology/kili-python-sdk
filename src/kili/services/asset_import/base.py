@@ -390,7 +390,7 @@ class BaseAbstractAssetImporter(abc.ABC):
 
     def _can_upload_from_local_data(self) -> bool:
         user_me = self.kili.kili_api_gateway.get_current_user(fields=("email",))
-        options = QueryOptions(disable_tqdm=True)
+        options = QueryOptions(first=1, disable_tqdm=True)
         organization = self._get_organization(user_me, options)
         return organization["license"]["uploadLocalData"]
 
