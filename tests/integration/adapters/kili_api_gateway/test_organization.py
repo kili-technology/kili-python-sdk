@@ -24,16 +24,12 @@ def test_create_organization(mocker, graphql_client):
     kili_api_gateway = OrganizationOperationMixin()
     kili_api_gateway.graphql_client = graphql_client
     organization_name = "test_organization"
-    execute = mocker.patch.object(
-        kili_api_gateway.graphql_client,
-        "execute",
-        return_value={
-            "data": {
-                "id": "fake_organization_id",
-                "name": organization_name,
-            }
-        },
-    )
+    kili_api_gateway.graphql_client.execute.return_value = {
+        "data": {
+            "id": "fake_organization_id",
+            "name": organization_name,
+        }
+    }
 
     # When
     organization = kili_api_gateway.create_organization(
@@ -50,9 +46,8 @@ def test_create_organization(mocker, graphql_client):
 
     # Then
     assert organization["name"] == organization_name
-    print(execute.calls)
 
-    execute.assert_called_with(
+    kili_api_gateway.graphql_client.execute.assert_called_with(
         "\nmutation(\n    $data: CreateOrganizationData!\n) {\n  data: createOrganization(\n   "
         " data: $data\n  ) {\n     id\n  }\n}\n",
         {
@@ -72,21 +67,17 @@ def test_list_organization(mocker, graphql_client):
     kili_api_gateway = OrganizationOperationMixin()
     kili_api_gateway.graphql_client = graphql_client
     organization_name = "test_organization"
-    execute = mocker.patch.object(
-        kili_api_gateway.graphql_client,
-        "execute",
-        side_effect=[
-            {"data": 1},  # response to count query
-            {  # response to list query
-                "data": [
-                    {
-                        "id": "fake_organization_id",
-                        "name": organization_name,
-                    }
-                ]
-            },
-        ],
-    )
+    kili_api_gateway.graphql_client.execute.side_effect = [
+        {"data": 1},  # response to count query
+        {  # response to list query
+            "data": [
+                {
+                    "id": "fake_organization_id",
+                    "name": organization_name,
+                }
+            ]
+        },
+    ]
 
     # When
     organizations = kili_api_gateway.list_organizations(
@@ -98,7 +89,7 @@ def test_list_organization(mocker, graphql_client):
 
     # Then
     assert next(organizations)["name"] == organization_name
-    execute.assert_called_with(
+    kili_api_gateway.graphql_client.execute.assert_called_with(
         "\n        query organizations($where: OrganizationWhere!, $first: PageSize!, $skip:"
         " Int!) {\n            data: organizations(where: $where, first: $first, skip: $skip)"
         " {\n                 id name\n            }\n        }\n        ",
@@ -110,11 +101,7 @@ def test_count_organization(mocker, graphql_client):
     # Given
     kili_api_gateway = OrganizationOperationMixin()
     kili_api_gateway.graphql_client = graphql_client
-    execute = mocker.patch.object(
-        kili_api_gateway.graphql_client,
-        "execute",
-        return_value={"data": 6},
-    )
+    kili_api_gateway.graphql_client.execute.return_value = {"data": 6}
 
     # When
     count = kili_api_gateway.count_organizations(
@@ -123,7 +110,7 @@ def test_count_organization(mocker, graphql_client):
 
     # Then
     assert count == 6
-    execute.assert_called_with(
+    kili_api_gateway.graphql_client.execute.assert_called_with(
         "\n        query countOrganizations($where: OrganizationWhere!) {\n        data:"
         " countOrganizations(where: $where)\n        }\n    ",
         {"where": {"id": None, "user": {"email": "jean.philippe@kili-technology.com"}}},
@@ -134,13 +121,9 @@ def test_get_organization_metrics(mocker: MockerFixture, graphql_client: GraphQL
     # Given
     kili_api_gateway = OrganizationOperationMixin()
     kili_api_gateway.graphql_client = graphql_client
-    execute = mocker.patch.object(
-        kili_api_gateway.graphql_client,
-        "execute",
-        return_value={
-            "data": {"numberOfAnnotations": 18, "numberOfHours": 5, "numberOfLabeledAssets": 3}
-        },
-    )
+    kili_api_gateway.graphql_client.execute.return_value = {
+        "data": {"numberOfAnnotations": 18, "numberOfHours": 5, "numberOfLabeledAssets": 3}
+    }
 
     # When
     metrics = kili_api_gateway.get_organization_metrics(
@@ -155,7 +138,7 @@ def test_get_organization_metrics(mocker: MockerFixture, graphql_client: GraphQL
 
     # Then
     assert metrics == {"numberOfAnnotations": 18, "numberOfHours": 5, "numberOfLabeledAssets": 3}
-    execute.assert_called_with(
+    kili_api_gateway.graphql_client.execute.assert_called_with(
         "\n    query organizationMetrics($where: OrganizationMetricsWhere!) {\n        data:"
         " organizationMetrics(where: $where) {\n            numberOfAnnotations\n           "
         " numberOfHours\n            numberOfLabeledAssets\n        }\n    }\n    ",
@@ -173,11 +156,9 @@ def test_update_organization(mocker: MockerFixture, graphql_client: GraphQLClien
     # Given
     kili_api_gateway = OrganizationOperationMixin()
     kili_api_gateway.graphql_client = graphql_client
-    execute = mocker.patch.object(
-        kili_api_gateway.graphql_client,
-        "execute",
-        return_value={"data": {"id": "fake_organization_id", "name": "new_name"}},
-    )
+    kili_api_gateway.graphql_client.execute.return_value = {
+        "data": {"id": "fake_organization_id", "name": "new_name"}
+    }
 
     # When
     organization = kili_api_gateway.update_organization(
@@ -188,7 +169,7 @@ def test_update_organization(mocker: MockerFixture, graphql_client: GraphQLClien
     )
 
     # Then
-    execute.assert_called_with(
+    kili_api_gateway.graphql_client.execute.assert_called_with(
         "\nmutation(\n    $id: ID!\n    $name: String\n    $license: String\n) {\n  data:"
         " updatePropertiesInOrganization(\n    where: {id: $id}\n    data: {\n      name:"
         " $name\n      license: $license\n    }\n  ) {\n     id\n  }\n}\n",
