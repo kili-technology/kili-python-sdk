@@ -314,6 +314,12 @@ class AssetClientMethods(BaseClientMethods):
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
 
+        !!! info "Filtering by label properties"
+            When the assets are filtered by label properties using any of `label_*` filter arguments, as soon as **one**
+            label matches **all** the label property criteria, the asset is kept and returned by the method. If any of the
+            `labels.*` or `latestLabel.*` subfields are queried, **all** the labels of the kept assets are returned together
+            with the assets (and not only the ones matching the criteria)
+
         Returns:
             An asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
