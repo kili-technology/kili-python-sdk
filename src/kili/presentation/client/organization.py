@@ -11,14 +11,12 @@ from kili.domain.organization import (
     OrganizationFilters,
     OrganizationId,
     OrganizationMetricsFilters,
+    OrganizationToCreateInput,
+    OrganizationToUpdateInput,
 )
 from kili.domain.types import ListOrTuple
 from kili.presentation.client.base import BaseClientMethods
-from kili.use_cases.organization.use_cases import (
-    OrganizationToCreateUseCaseInput,
-    OrganizationToUpdateUseCaseInput,
-    OrganizationUseCases,
-)
+from kili.use_cases.organization.use_cases import OrganizationUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -56,7 +54,7 @@ class InternalOrganizationClientMethods(BaseClientMethods):
         """
         organization_use_case = OrganizationUseCases(self.kili_api_gateway)
         return organization_use_case.create_organization(
-            OrganizationToCreateUseCaseInput(
+            OrganizationToCreateInput(
                 name=name,
                 address=address,
                 zip_code=zip_code,
@@ -91,7 +89,7 @@ class InternalOrganizationClientMethods(BaseClientMethods):
         use_cases = OrganizationUseCases(self.kili_api_gateway)
         return use_cases.update_organization(
             OrganizationId(organization_id),
-            OrganizationToUpdateUseCaseInput(name=name, license=license),
+            OrganizationToUpdateInput(name=name, license=license),
             disable_tqdm=disable_tqdm,
         )
 

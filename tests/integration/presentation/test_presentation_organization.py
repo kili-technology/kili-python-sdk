@@ -11,15 +11,13 @@ from kili.domain.organization import (
     OrganizationFilters,
     OrganizationId,
     OrganizationMetricsFilters,
+    OrganizationToUpdateInput,
 )
 from kili.presentation.client.organization import (
     InternalOrganizationClientMethods,
     OrganizationClientMethods,
 )
-from kili.use_cases.organization.use_cases import (
-    OrganizationToUpdateUseCaseInput,
-    OrganizationUseCases,
-)
+from kili.use_cases.organization.use_cases import OrganizationUseCases
 
 
 @pytest.fixture()
@@ -155,7 +153,7 @@ def test_given_organization_in_kili_when_I_call_update_properties_in_organizatio
     # Then
     update_properties_in_organization_use_case.assert_called_with(
         "fake_organization_id",
-        OrganizationToUpdateUseCaseInput(name=new_name, license=None),
+        OrganizationToUpdateInput(name=new_name, license=None),
         disable_tqdm=None,
     )
     assert result["name"] == new_name

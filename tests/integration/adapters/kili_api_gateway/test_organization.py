@@ -7,15 +7,13 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.organization.operations_mixin import (
     OrganizationOperationMixin,
 )
-from kili.adapters.kili_api_gateway.organization.types import (
-    KiliAPIGateWayCreateOrganizationInput,
-    KiliAPIGateWayUpdateOrganizationInput,
-)
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.organization import (
     OrganizationFilters,
     OrganizationId,
     OrganizationMetricsFilters,
+    OrganizationToCreateInput,
+    OrganizationToUpdateInput,
 )
 
 
@@ -33,7 +31,7 @@ def test_create_organization(mocker, graphql_client):
 
     # When
     organization = kili_api_gateway.create_organization(
-        KiliAPIGateWayCreateOrganizationInput(
+        OrganizationToCreateInput(
             name=organization_name,
             address="1, rue de Rivoli",
             city="Paris",
@@ -163,7 +161,7 @@ def test_update_organization(mocker: MockerFixture, graphql_client: GraphQLClien
     # When
     organization = kili_api_gateway.update_organization(
         OrganizationId("fake_organization_id"),
-        KiliAPIGateWayUpdateOrganizationInput(name="new_name"),
+        OrganizationToUpdateInput(name="new_name"),
         disable_tqdm=None,
         description="Update organization",
     )

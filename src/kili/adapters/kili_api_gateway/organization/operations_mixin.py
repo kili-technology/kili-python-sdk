@@ -16,15 +16,13 @@ from kili.adapters.kili_api_gateway.organization.mappers import (
     map_organization_update_data,
     map_organization_where,
 )
-from kili.adapters.kili_api_gateway.organization.types import (
-    KiliAPIGateWayCreateOrganizationInput,
-    KiliAPIGateWayUpdateOrganizationInput,
-)
 from kili.domain.organization import (
     Organization,
     OrganizationFilters,
     OrganizationId,
     OrganizationMetricsFilters,
+    OrganizationToCreateInput,
+    OrganizationToUpdateInput,
 )
 from kili.domain.types import ListOrTuple
 
@@ -42,7 +40,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
 
     def create_organization(
         self,
-        organization: KiliAPIGateWayCreateOrganizationInput,
+        organization: OrganizationToCreateInput,
         description: str,
         disable_tqdm: Optional[bool],
     ) -> Organization:
@@ -94,7 +92,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
     def update_organization(
         self,
         organization_id: OrganizationId,
-        organization_data: KiliAPIGateWayUpdateOrganizationInput,
+        organization_data: OrganizationToUpdateInput,
         description: str,
         disable_tqdm: Optional[bool],
     ) -> Organization:

@@ -3,18 +3,16 @@
 import json
 from typing import Dict
 
-from kili.adapters.kili_api_gateway.organization.types import (
-    KiliAPIGateWayCreateOrganizationInput,
-    KiliAPIGateWayUpdateOrganizationInput,
-)
 from kili.domain.organization import (
     OrganizationFilters,
     OrganizationId,
     OrganizationMetricsFilters,
+    OrganizationToCreateInput,
+    OrganizationToUpdateInput,
 )
 
 
-def map_organization_data(data: KiliAPIGateWayCreateOrganizationInput) -> Dict:
+def map_organization_data(data: OrganizationToCreateInput) -> Dict:
     """Build the GraphQL OrganizationData variable to be sent in an operation."""
     return {
         "data": {
@@ -48,7 +46,7 @@ def map_organization_metrics_where(filters: OrganizationMetricsFilters) -> Dict:
 
 
 def map_organization_update_data(
-    organization_id: OrganizationId, organization_data: KiliAPIGateWayUpdateOrganizationInput
+    organization_id: OrganizationId, organization_data: OrganizationToUpdateInput
 ) -> Dict:
     """Build the GraphQL OrganizationData variable to be sent in an operation."""
     license_str = None if not organization_data.license else json.dumps(organization_data.license)

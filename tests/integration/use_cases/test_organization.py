@@ -8,12 +8,10 @@ from kili.domain.organization import (
     OrganizationFilters,
     OrganizationId,
     OrganizationMetricsFilters,
+    OrganizationToCreateInput,
+    OrganizationToUpdateInput,
 )
-from kili.use_cases.organization.use_cases import (
-    OrganizationToCreateUseCaseInput,
-    OrganizationToUpdateUseCaseInput,
-    OrganizationUseCases,
-)
+from kili.use_cases.organization.use_cases import OrganizationUseCases
 
 
 def test_given_orginization_info_when_I_call_create_use_case_it_creates_the_organization(
@@ -31,7 +29,7 @@ def test_given_orginization_info_when_I_call_create_use_case_it_creates_the_orga
     # When
     organization_use_case = OrganizationUseCases(kili_api_gateway)
     organization = organization_use_case.create_organization(
-        OrganizationToCreateUseCaseInput(
+        OrganizationToCreateInput(
             name=organization_name,
             address="1, rue de Rivoli",
             city="Paris",
@@ -127,7 +125,7 @@ def test_given_a_stored_organization_when_i_call_update_properties_in_organizati
     organization_use_cases = OrganizationUseCases(kili_api_gateway)
     organization = organization_use_cases.update_organization(
         organization_id=OrganizationId("fake_organization_id"),
-        organization=OrganizationToUpdateUseCaseInput(name="new_name", license={}),
+        organization_data=OrganizationToUpdateInput(name="new_name", license={}),
         disable_tqdm=True,
     )
 
