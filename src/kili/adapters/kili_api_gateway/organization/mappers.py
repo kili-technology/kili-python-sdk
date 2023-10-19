@@ -52,9 +52,11 @@ def map_organization_update_data(
 ) -> Dict:
     """Build the GraphQL OrganizationData variable to be sent in an operation."""
     license_str = None if not organization_data.license else json.dumps(organization_data.license)
-    variables = {"id": str(organization_id)}
+    variables = {"where": {"id": str(organization_id)}}
+    variables["data"] = {}
     if organization_data.name is not None:
-        variables["name"] = organization_data.name
+        variables["data"]["name"] = organization_data.name
     if license_str is not None:
-        variables["license"] = license_str
+        variables["data"]["license"] = license_str
+
     return variables
