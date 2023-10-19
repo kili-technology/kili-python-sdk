@@ -54,7 +54,7 @@ kili.update_properties_in_project(project_id=project_id, review_coverage=50)
 
 
 
-    {'id': 'clm0sxbgb05hf082tcq813zrc', 'reviewCoverage': 50}
+    {'reviewCoverage': 50, 'id': 'clnwvhuu000cz088xcqxz1dig'}
 
 
 
@@ -82,9 +82,9 @@ kili.update_properties_in_project(
 
 
 
-    {'id': 'clm0sxbgb05hf082tcq813zrc',
-     'consensusTotCoverage': 1,
-     'minConsensusSize': 3}
+    {'consensusTotCoverage': 1,
+     'minConsensusSize': 3,
+     'id': 'clnwvhuu000cz088xcqxz1dig'}
 
 
 
@@ -104,9 +104,9 @@ kili.update_properties_in_assets(
 
 
 
-    [{'id': 'clm0sxcpf0000ojvz92wfzxix'},
-     {'id': 'clm0sxcpf0001ojvzocjdx4w1'},
-     {'id': 'clm0sxcpf0002ojvz0oynrshg'}]
+    [{'id': 'clnwvhvo00000gsvzinsato00'},
+     {'id': 'clnwvhvo00001gsvzsiqcx5dc'},
+     {'id': 'clnwvhvo00002gsvzzbjtyuif'}]
 
 
 
@@ -117,7 +117,21 @@ For more information on consensus, refer to our [documentation](https://docs.kil
 Honeypot (or __gold standard__) is a tool for auditing the work of labelers by measuring the accuracy of their annotations.
 Honeypot works by interspersing assets with defined ground truth label in the annotation queue. This way you can measure the agreement level between your ground truth and the annotations made by labelers.
 
-You can manually select specific project assets to be used as honeypots.
+First, we need to enable honeypot for our project:
+
+
+```python
+kili.update_properties_in_project(project_id=project_id, use_honeypot=True)
+```
+
+
+
+
+    {'useHoneyPot': True, 'id': 'clnwvhuu000cz088xcqxz1dig'}
+
+
+
+You can now manually select specific project assets to be used as honeypots:
 
 
 ```python
@@ -150,9 +164,9 @@ kili.update_properties_in_assets(
 
 
 
-    [{'id': 'clm0sxcpf0000ojvz92wfzxix'},
-     {'id': 'clm0sxcpf0001ojvzocjdx4w1'},
-     {'id': 'clm0sxcpf0002ojvz0oynrshg'}]
+    [{'id': 'clnwvhvo00000gsvzinsato00'},
+     {'id': 'clnwvhvo00001gsvzsiqcx5dc'},
+     {'id': 'clnwvhvo00002gsvzzbjtyuif'}]
 
 
 
@@ -179,9 +193,9 @@ kili.update_properties_in_assets(
 
 
 
-    [{'id': 'clm0sxcpf0000ojvz92wfzxix'},
-     {'id': 'clm0sxcpf0001ojvzocjdx4w1'},
-     {'id': 'clm0sxcpf0002ojvz0oynrshg'}]
+    [{'id': 'clnwvhvo00000gsvzinsato00'},
+     {'id': 'clnwvhvo00001gsvzsiqcx5dc'},
+     {'id': 'clnwvhvo00002gsvzzbjtyuif'}]
 
 
 
@@ -202,15 +216,6 @@ kili.append_labels(
     label_type="DEFAULT",
 )
 ```
-
-
-
-
-
-
-    [{'id': 'clm0sxm4g05vi0840gu3iewf2'}]
-
-
 
 Now, let's place some assets in the review queue. The method will return a project ID and a list of asset IDs placed in the review queue.
 
