@@ -16,7 +16,6 @@ from kili.adapters.kili_api_gateway.organization.mappers import (
     map_update_organization_where,
 )
 from kili.domain.organization import (
-    Organization,
     OrganizationFilters,
     OrganizationId,
     OrganizationMetricsFilters,
@@ -40,7 +39,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
     def create_organization(
         self,
         organization: OrganizationToCreateInput,
-    ) -> Organization:
+    ) -> Dict:
         """Send a GraphQL request calling createOrganization resolver."""
         payload = {"data": map_create_organization_data(organization)}
         fragment = fragment_builder(["id"])
@@ -85,7 +84,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
         self,
         organization_id: OrganizationId,
         organization_data: OrganizationToUpdateInput,
-    ) -> Organization:
+    ) -> Dict:
         """Send a GraphQL request calling updateOrganization resolver."""
         data = map_update_organization_data(organization_data)
         where = map_update_organization_where(organization_id)

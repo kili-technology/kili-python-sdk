@@ -6,8 +6,6 @@ from typing import NewType, Optional
 
 OrganizationId = NewType("OrganizationId", str)
 
-Organization = NewType("Organization", dict)
-
 
 @dataclass(frozen=True)
 class OrganizationFilters:

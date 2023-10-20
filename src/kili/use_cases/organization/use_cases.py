@@ -4,7 +4,6 @@ from typing import Dict, Generator
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.organization import (
-    Organization,
     OrganizationFilters,
     OrganizationId,
     OrganizationMetricsFilters,
@@ -18,7 +17,7 @@ from kili.use_cases.base import BaseUseCases
 class OrganizationUseCases(BaseUseCases):
     """Organization use cases."""
 
-    def create_organization(self, organization_data: OrganizationToCreateInput) -> Organization:
+    def create_organization(self, organization_data: OrganizationToCreateInput) -> dict:
         """Create an organization."""
         return self._kili_api_gateway.create_organization(
             organization=organization_data,
@@ -28,7 +27,7 @@ class OrganizationUseCases(BaseUseCases):
         self,
         organization_id: OrganizationId,
         organization_data: OrganizationToUpdateInput,
-    ) -> Organization:
+    ) -> dict:
         """Update an organization."""
         return self._kili_api_gateway.update_organization(
             organization_id=organization_id,
