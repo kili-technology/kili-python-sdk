@@ -38,8 +38,6 @@ def test_create_organization(mocker, graphql_client):
             country="France",
             zip_code="75001",
         ),
-        description="Create organization",
-        disable_tqdm=False,
     )
 
     # Then
@@ -130,8 +128,6 @@ def test_get_organization_metrics(mocker: MockerFixture, graphql_client: GraphQL
             start_datetime=datetime(2022, 1, 1, tzinfo=pytz.UTC),
             end_datetime=datetime(2022, 1, 5, tzinfo=pytz.UTC),
         ),
-        disable_tqdm=True,
-        description="Get organization metrics",
     )
 
     # Then
@@ -162,8 +158,6 @@ def test_update_organization(mocker: MockerFixture, graphql_client: GraphQLClien
     organization = kili_api_gateway.update_organization(
         OrganizationId("fake_organization_id"),
         OrganizationToUpdateInput(name="new_name"),
-        disable_tqdm=None,
-        description="Update organization",
     )
 
     # Then

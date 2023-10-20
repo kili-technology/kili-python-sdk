@@ -129,7 +129,6 @@ def test_given_organization_in_kili_when_I_call_organization_metrics_it_retrieve
             start_datetime=datetime(2022, 1, 1, tzinfo=pytz.UTC),
             end_datetime=datetime(2022, 1, 5, tzinfo=pytz.UTC),
         ),
-        disable_tqdm=None,
     )
 
 
@@ -154,6 +153,5 @@ def test_given_organization_in_kili_when_I_call_update_properties_in_organizatio
     update_properties_in_organization_use_case.assert_called_with(
         "fake_organization_id",
         OrganizationToUpdateInput(name=new_name, license=None),
-        disable_tqdm=None,
     )
     assert result["name"] == new_name

@@ -32,7 +32,6 @@ class InternalOrganizationClientMethods(BaseClientMethods):
         zip_code: str,
         city: str,
         country: str,
-        disable_tqdm: Optional[bool] = None,
     ) -> Dict:
         """Create an organization.
 
@@ -46,7 +45,6 @@ class InternalOrganizationClientMethods(BaseClientMethods):
             zip_code : Zip code of the organization
             city : City of the organization
             country : Country of the organization
-            disable_tqdm: If `True`, the progress bar will be disabled
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -61,7 +59,6 @@ class InternalOrganizationClientMethods(BaseClientMethods):
                 city=city,
                 country=country,
             ),
-            disable_tqdm=disable_tqdm,
         )
 
     @typechecked
@@ -70,8 +67,7 @@ class InternalOrganizationClientMethods(BaseClientMethods):
         organization_id: str,
         name: Optional[str] = None,
         license: Optional[dict] = None,  # noqa: A002
-        disable_tqdm: Optional[bool] = None,
-    ):  # pylint: disable=redefined-builtin
+    ) -> Dict:  # pylint: disable=redefined-builtin
         """Modify an organization.
 
         WARNING: This method is for internal use only.
@@ -80,7 +76,6 @@ class InternalOrganizationClientMethods(BaseClientMethods):
             organization_id: Identifier of the organization
             name: New name of the organization
             license: New license of the organization
-            disable_tqdm: If `True`, the progress bar will be disabled
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -90,7 +85,6 @@ class InternalOrganizationClientMethods(BaseClientMethods):
         return use_cases.update_organization(
             OrganizationId(organization_id),
             OrganizationToUpdateInput(name=name, license=license),
-            disable_tqdm=disable_tqdm,
         )
 
 
@@ -195,7 +189,6 @@ class OrganizationClientMethods(BaseClientMethods):
         organization_id: str,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-        disable_tqdm: Optional[bool] = None,
     ) -> Dict:
         """Get organization metrics.
 
@@ -203,7 +196,6 @@ class OrganizationClientMethods(BaseClientMethods):
             organization_id: Identifier of the organization
             start_date: Start date of the metrics computation
             end_date: End date of the metrics computation
-            disable_tqdm: If `True`, the progress bar will be disabled
 
         Returns:
             A dictionary containing the metrics of the organization.
@@ -216,6 +208,4 @@ class OrganizationClientMethods(BaseClientMethods):
             id=OrganizationId(organization_id), start_datetime=start_date, end_datetime=end_date
         )
 
-        return OrganizationUseCases(self.kili_api_gateway).get_organization_metrics(
-            filters, disable_tqdm=disable_tqdm
-        )
+        return OrganizationUseCases(self.kili_api_gateway).get_organization_metrics(filters)

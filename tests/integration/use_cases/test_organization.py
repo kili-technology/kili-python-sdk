@@ -36,7 +36,6 @@ def test_given_orginization_info_when_I_call_create_use_case_it_creates_the_orga
             country="France",
             zip_code="75001",
         ),
-        disable_tqdm=True,
     )
 
     # Then
@@ -103,7 +102,6 @@ def test_given_existing_organization_when_I_call_organization_metrics_the_it_ret
             start_datetime=datetime.now(tz=pytz.UTC),
             end_datetime=datetime.now(tz=pytz.UTC),
         ),
-        disable_tqdm=True,
     )
 
     # Then
@@ -126,7 +124,6 @@ def test_given_a_stored_organization_when_i_call_update_properties_in_organizati
     organization = organization_use_cases.update_organization(
         organization_id=OrganizationId("fake_organization_id"),
         organization_data=OrganizationToUpdateInput(name="new_name", license={}),
-        disable_tqdm=True,
     )
 
     # Then

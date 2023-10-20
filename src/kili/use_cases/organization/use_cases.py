@@ -1,6 +1,6 @@
 """Organization use cases."""
 
-from typing import Dict, Generator, Optional
+from typing import Dict, Generator
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.organization import (
@@ -18,28 +18,21 @@ from kili.use_cases.base import BaseUseCases
 class OrganizationUseCases(BaseUseCases):
     """Organization use cases."""
 
-    def create_organization(
-        self, organization_data: OrganizationToCreateInput, disable_tqdm: Optional[bool]
-    ) -> Organization:
+    def create_organization(self, organization_data: OrganizationToCreateInput) -> Organization:
         """Create an organization."""
         return self._kili_api_gateway.create_organization(
             organization=organization_data,
-            description="Create organization",
-            disable_tqdm=disable_tqdm,
         )
 
     def update_organization(
         self,
         organization_id: OrganizationId,
         organization_data: OrganizationToUpdateInput,
-        disable_tqdm: Optional[bool],
     ) -> Organization:
         """Update an organization."""
         return self._kili_api_gateway.update_organization(
             organization_id=organization_id,
             organization_data=organization_data,
-            description="Update organization",
-            disable_tqdm=disable_tqdm,
         )
 
     def list_organizations(
@@ -57,10 +50,6 @@ class OrganizationUseCases(BaseUseCases):
         """Count organizations."""
         return self._kili_api_gateway.count_organizations(filters=where)
 
-    def get_organization_metrics(
-        self, where: OrganizationMetricsFilters, disable_tqdm: Optional[bool]
-    ) -> Dict:
+    def get_organization_metrics(self, where: OrganizationMetricsFilters) -> Dict:
         """Get organization metrics."""
-        return self._kili_api_gateway.get_organization_metrics(
-            filters=where, description="Retrieve organization metrics", disable_tqdm=disable_tqdm
-        )
+        return self._kili_api_gateway.get_organization_metrics(filters=where)

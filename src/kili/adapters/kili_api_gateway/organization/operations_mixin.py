@@ -1,8 +1,6 @@
 """Mixin extending Kili API Gateway class with Organization related operations."""
 
-from typing import Dict, Generator, Optional
-
-import tqdm
+from typing import Dict, Generator
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -41,17 +39,11 @@ class OrganizationOperationMixin(BaseOperationMixin):
     def create_organization(
         self,
         organization: OrganizationToCreateInput,
-        description: str,
-        disable_tqdm: Optional[bool],
     ) -> Organization:
         """Send a GraphQL request calling createOrganization resolver."""
-        with tqdm.tqdm(total=1, desc=description, disable=disable_tqdm) as pbar:
-            payload = map_organization_data(organization)
-            fragment = fragment_builder(["id"])
-            result = self.graphql_client.execute(
-                get_create_organization_mutation(fragment), payload
-            )
-            pbar.update(1)
+        payload = map_organization_data(organization)
+        fragment = fragment_builder(["id"])
+        result = self.graphql_client.execute(get_create_organization_mutation(fragment), payload)
 
         return result["data"]
 
@@ -78,30 +70,22 @@ class OrganizationOperationMixin(BaseOperationMixin):
         count: int = count_result["data"]
         return count
 
-    def get_organization_metrics(
-        self, filters: OrganizationMetricsFilters, description: str, disable_tqdm: Optional[bool]
-    ) -> Dict:
+    def get_organization_metrics(self, filters: OrganizationMetricsFilters) -> Dict:
         """Send a GraphQL request calling organizationMetrics resolver."""
-        with tqdm.tqdm(total=1, desc=description, disable=disable_tqdm) as pbar:
-            where = map_organization_metrics_where(filters=filters)
-            payload = {"where": where}
-            result = self.graphql_client.execute(GET_ORGANIZATION_METRICS_QUERY, payload)
-            pbar.update(1)
+        where = map_organization_metrics_where(filters=filters)
+        payload = {"where": where}
+        result = self.graphql_client.execute(GET_ORGANIZATION_METRICS_QUERY, payload)
         return result["data"]
 
     def update_organization(
         self,
         organization_id: OrganizationId,
         organization_data: OrganizationToUpdateInput,
-        description: str,
-        disable_tqdm: Optional[bool],
     ) -> Organization:
         """Send a GraphQL request calling updateOrganization resolver."""
-        with tqdm.tqdm(total=1, desc=description, disable=disable_tqdm) as pbar:
-            variables = map_organization_update_data(organization_id, organization_data)
-            fragment = fragment_builder(["id"])
-            result = self.graphql_client.execute(
-                get_update_properties_in_organization(fragment), variables
-            )
-            pbar.update(1)
+        variables = map_organization_update_data(organization_id, organization_data)
+        fragment = fragment_builder(["id"])
+        result = self.graphql_client.execute(
+            get_update_properties_in_organization(fragment), variables
+        )
         return result["data"]
