@@ -162,9 +162,9 @@ def test_update_organization(mocker: MockerFixture, graphql_client: GraphQLClien
 
     # Then
     kili_api_gateway.graphql_client.execute.assert_called_with(
-        "\nmutation(\n    $id: ID!\n    $name: String\n    $license: String\n) {\n  data:"
-        " updatePropertiesInOrganization(\n    where: {id: $id}\n    data: {\n      name:"
-        " $name\n      license: $license\n    }\n  ) {\n     id\n  }\n}\n",
-        {"id": "fake_organization_id", "name": "new_name"},
+        "\nmutation(\n    $data: OrganizationData!,\n    $where: OrganizationWhere!\n) {\n "
+        " data: updatePropertiesInOrganization(\n    data: $data\n    where: $where,\n  ) {\n  "
+        "   id\n  }\n}\n",
+        {"where": {"id": "fake_organization_id"}, "data": {"name": "new_name"}},
     )
     assert organization["name"] == "new_name"

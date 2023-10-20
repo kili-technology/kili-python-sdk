@@ -30,7 +30,7 @@ from .operations import (
     GET_ORGANIZATION_METRICS_QUERY,
     get_create_organization_mutation,
     get_list_organizations_query,
-    get_update_properties_in_organization,
+    get_update_properties_in_organization_mutation,
 )
 
 
@@ -89,6 +89,6 @@ class OrganizationOperationMixin(BaseOperationMixin):
         payload = {"where": where, "data": data}
         fragment = fragment_builder(["id"])
         result = self.graphql_client.execute(
-            get_update_properties_in_organization(fragment), payload
+            get_update_properties_in_organization_mutation(fragment), payload
         )
         return result["data"]

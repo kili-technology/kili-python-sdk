@@ -1,6 +1,5 @@
 """Collection of Organization's related GraphQL queries and mutations."""
 
-
 def get_create_organization_mutation(fragment: str) -> str:
     """Return the GraphQL createOrganization mutation."""
     return f"""
@@ -45,25 +44,18 @@ GET_ORGANIZATION_METRICS_QUERY = """
     """
 
 
-def get_update_properties_in_organization(fragment: str) -> str:
+def get_update_properties_in_organization_mutation(fragment: str) -> str:
     """Return the GraphQL updatePropertiesInOrganization mutation."""
     return f"""
 mutation(
-    $id: ID!
-    $name: String
-    $license: String
+    $data: OrganizationData!,
+    $where: OrganizationWhere!
 ) {{
   data: updatePropertiesInOrganization(
-    where: $where,
     data: $data
+    where: $where,
   ) {{
     {fragment}
   }}
 }}
 """
-
-
-# where: {{id: $id}}
-# data: {{
-#   name: $name
-#   license: $license
