@@ -102,6 +102,7 @@ def test_given_existing_organization_when_I_call_organization_metrics_the_it_ret
             start_datetime=datetime.now(tz=pytz.UTC),
             end_datetime=datetime.now(tz=pytz.UTC),
         ),
+        fields=["nbUsers"],
     )
 
     # Then
