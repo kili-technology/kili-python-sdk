@@ -9,12 +9,12 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.user.operations import get_reset_password_mutation
 from kili.domain.api_key import ApiKeyFilters
 from kili.domain.types import ListOrTuple
-from kili.entrypoints.mutations.organization import MutationsOrganization
 from kili.entrypoints.mutations.project.queries import GQL_DELETE_PROJECT
+from kili.presentation.client.organization import InternalOrganizationClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
 
 
-class InternalClientMethods(MutationsOrganization):
+class InternalClientMethods(InternalOrganizationClientMethods):
     """Kili client methods for internal use by Kili Technology only."""
 
     def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:
@@ -25,8 +25,6 @@ class InternalClientMethods(MutationsOrganization):
         """
         super().__init__()
         self.kili_api_gateway = kili_api_gateway
-        self.http_client = kili_api_gateway.http_client
-        self.graphql_client = kili_api_gateway.graphql_client
 
     @typechecked
     def reset_password(self, email: str):

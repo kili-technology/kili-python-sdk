@@ -4,17 +4,16 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
-from kili.core.graphql.operations.organization.queries import OrganizationQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
 from tests.unit.services.asset_import.base import ImportTestCase
 from tests.unit.services.asset_import.mocks import (
-    mocked_organization_with_upload_from_local,
     mocked_project_input_type,
     mocked_request_signed_urls,
     mocked_unique_id,
     mocked_upload_data_via_rest,
+    organization_generator,
 )
 
 
@@ -23,11 +22,6 @@ from tests.unit.services.asset_import.mocks import (
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
 @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("VIDEO"))
 @patch.object(AssetOperationMixin, "list_assets", MagicMock(return_value=[]))
-@patch.object(
-    OrganizationQuery,
-    "__call__",
-    side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
-)
 @patch.object(AssetOperationMixin, "count_assets", return_value=1)
 class VideoTestCase(ImportTestCase):
     def test_upload_from_one_local_video_file_to_native(self, *_):
@@ -79,8 +73,8 @@ class VideoTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_from_one_hosted_video_authorized_while_local_forbidden(self, *_):
-        OrganizationQuery.__call__.side_effect = mocked_organization_with_upload_from_local(
-            upload_local_data=False
+        self.kili.kili_api_gateway.list_organizations = MagicMock(
+            return_value=organization_generator(upload_local_data=False)
         )
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}

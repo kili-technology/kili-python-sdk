@@ -10,7 +10,7 @@ from kili.core.graphql.operations.asset.mutations import (
 )
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.constants import IMPORT_BATCH_SIZE
-from tests.unit.services.asset_import.mocks import mocked_auth
+from tests.unit.services.asset_import.mocks import mocked_auth, organization_generator
 
 from .helpers import LocalDownloader
 
@@ -27,6 +27,10 @@ class ImportTestCase(TestCase):
         )
         self.kili = mocked_auth
         self.kili.kili_api_gateway.count_assets = MagicMock(return_value=1)
+        self.kili.kili_api_gateway.list_assets = MagicMock(return_value=[])
+        self.kili.kili_api_gateway.list_organizations = MagicMock(
+            return_value=organization_generator(upload_local_data=True)
+        )
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)

@@ -80,7 +80,7 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Unit and integration tests
-        run: pytest -n auto -ra -sv --color yes --code-highlight yes --durations=15 -vv --ignore tests/e2e/ --cov=src/kili --cov-report=term-missing --cov-config=.coveragerc --cov-fail-under=82
+        run: pytest -n auto -ra -sv --color yes --code-highlight yes --durations=15 -vv --ignore tests/e2e/ --cov=src/kili --cov-report=term-missing --cov-config=.coveragerc --cov-fail-under=83
 
   markdown-link-check:
     timeout-minutes: 10

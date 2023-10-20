@@ -5,22 +5,26 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Union
 
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
 from kili.adapters.http_client import HttpClient
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
+from kili.use_cases.asset.exceptions import (
+    DownloadNotAllowedError,
+    MissingPropertyError,
+)
 
-from .exceptions import DownloadNotAllowedError, MissingPropertyError
+if TYPE_CHECKING:
+    from kili.adapters.kili_api_gateway import KiliAPIGateway
 
 
 def get_download_assets_function(
-    kili_api_gateway: KiliAPIGateway,
+    kili_api_gateway: "KiliAPIGateway",
     download_media: bool,
     fields: ListOrTuple[str],
     project_id: ProjectId,

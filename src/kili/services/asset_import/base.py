@@ -9,7 +9,16 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from json import dumps
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, List, NamedTuple, Optional, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    List,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+)
 from uuid import uuid4
 
 from tenacity import Retrying
@@ -21,13 +30,10 @@ from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
 )
-from kili.core.graphql.operations.organization.queries import (
-    OrganizationQuery,
-    OrganizationWhere,
-)
 from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
 from kili.core.utils import pagination
 from kili.domain.asset import AssetFilters
+from kili.domain.organization import OrganizationFilters
 from kili.domain.types import ListOrTuple
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
@@ -367,7 +373,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         raise NotImplementedError
 
     @staticmethod
-    def is_hosted_content(assets: List[AssetLike]):
+    def is_hosted_content(assets: List[AssetLike]) -> bool:
         """Determine if the assets to upload are from local files or hosted data.
 
         Raise an error if a mix of both.
@@ -382,20 +388,21 @@ class BaseAbstractAssetImporter(abc.ABC):
             )
         return False
 
-    def _can_upload_from_local_data(self):
+    def _can_upload_from_local_data(self) -> bool:
         user_me = self.kili.kili_api_gateway.get_current_user(fields=("email",))
-        where = OrganizationWhere(
-            email=user_me["email"],
-        )
-        options = QueryOptions(disable_tqdm=True)
-        organization = next(
-            iter(
-                OrganizationQuery(self.kili.graphql_client, self.kili.http_client)(
-                    where, ["license.uploadLocalData"], options
-                )
+        options = QueryOptions(first=1, disable_tqdm=True)
+        organization = self._get_organization(user_me["email"], options)
+        return organization["license"]["uploadLocalData"]
+
+    def _get_organization(self, email: str, options: QueryOptions) -> Dict:
+        return next(
+            self.kili.kili_api_gateway.list_organizations(
+                filters=OrganizationFilters(email=email),
+                fields=["license.uploadLocalData"],
+                description="",
+                options=options,
             )
         )
-        return organization["license"]["uploadLocalData"]
 
     def _check_upload_is_allowed(self, assets: List[AssetLike]) -> None:
         if not self.is_hosted_content(assets) and not self._can_upload_from_local_data():

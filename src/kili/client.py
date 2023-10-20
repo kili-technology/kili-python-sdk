@@ -20,7 +20,6 @@ from kili.entrypoints.mutations.project import MutationsProject
 from kili.entrypoints.mutations.project_version import MutationsProjectVersion
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.entrypoints.queries.notification import QueriesNotification
-from kili.entrypoints.queries.organization import QueriesOrganization
 from kili.entrypoints.queries.plugins import QueriesPlugins
 from kili.entrypoints.queries.project_user import QueriesProjectUser
 from kili.entrypoints.queries.project_version import QueriesProjectVersion
@@ -30,6 +29,7 @@ from kili.presentation.client.asset import AssetClientMethods
 from kili.presentation.client.cloud_storage import CloudStorageClientMethods
 from kili.presentation.client.internal import InternalClientMethods
 from kili.presentation.client.issue import IssueClientMethods
+from kili.presentation.client.organization import OrganizationClientMethods
 from kili.presentation.client.project import ProjectClientMethods
 from kili.presentation.client.tag import TagClientMethods
 from kili.presentation.client.user import UserClientMethods
@@ -59,16 +59,16 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsProjectVersion,
     QueriesLabel,
     QueriesNotification,
-    QueriesOrganization,
     QueriesPlugins,
     QueriesProjectUser,
     QueriesProjectVersion,
     SubscriptionsLabel,
-    IssueClientMethods,
     AssetClientMethods,
-    TagClientMethods,
-    ProjectClientMethods,
     CloudStorageClientMethods,
+    IssueClientMethods,
+    OrganizationClientMethods,
+    ProjectClientMethods,
+    TagClientMethods,
     UserClientMethods,
 ):
     """Kili Client."""

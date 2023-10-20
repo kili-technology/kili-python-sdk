@@ -4,13 +4,11 @@ from uuid import UUID
 import pytest
 
 from kili.core.graphql.operations.asset.mutations import GQL_APPEND_MANY_ASSETS
-from kili.core.graphql.operations.organization.queries import OrganizationQuery
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import MimeTypeError
 from tests.unit.services.asset_import.base import ImportTestCase
 from tests.unit.services.asset_import.mocks import (
-    mocked_organization_with_upload_from_local,
     mocked_project_input_type,
     mocked_request_signed_urls,
     mocked_unique_id,
@@ -21,11 +19,6 @@ from tests.unit.services.asset_import.mocks import (
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
-@patch.object(
-    OrganizationQuery,
-    "__call__",
-    side_effect=mocked_organization_with_upload_from_local(upload_local_data=True),
-)
 class TestContentType(ImportTestCase):
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("VIDEO_LEGACY"))
     def test_cannot_upload_an_image_to_video_project(self, *_):
