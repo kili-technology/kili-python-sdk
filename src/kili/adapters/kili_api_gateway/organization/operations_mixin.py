@@ -9,10 +9,11 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     fragment_builder,
 )
 from kili.adapters.kili_api_gateway.organization.mappers import (
-    map_organization_data,
+    map_create_organization_data,
+    map_list_organizations_where,
     map_organization_metrics_where,
-    map_organization_update_data,
-    map_organization_where,
+    map_update_organization_data,
+    map_update_organization_where,
 )
 from kili.domain.organization import (
     Organization,
@@ -41,7 +42,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
         organization: OrganizationToCreateInput,
     ) -> Organization:
         """Send a GraphQL request calling createOrganization resolver."""
-        payload = map_organization_data(organization)
+        payload = {"data": map_create_organization_data(organization)}
         fragment = fragment_builder(["id"])
         result = self.graphql_client.execute(get_create_organization_mutation(fragment), payload)
 
@@ -57,14 +58,14 @@ class OrganizationOperationMixin(BaseOperationMixin):
         """Send a series of GraphQL request calling organizations resolver."""
         fragment = fragment_builder(fields)
         query = get_list_organizations_query(fragment)
-        where = map_organization_where(filters=filters)
+        where = map_list_organizations_where(filters=filters)
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, description, COUNT_ORGANIZATIONS_QUERY
         )
 
     def count_organizations(self, filters: OrganizationFilters) -> int:
         """Send a GraphQL request calling countOrganizations resolver."""
-        where = map_organization_where(filters=filters)
+        where = map_list_organizations_where(filters=filters)
         payload = {"where": where}
         count_result = self.graphql_client.execute(COUNT_ORGANIZATIONS_QUERY, payload)
         count: int = count_result["data"]
@@ -83,9 +84,11 @@ class OrganizationOperationMixin(BaseOperationMixin):
         organization_data: OrganizationToUpdateInput,
     ) -> Organization:
         """Send a GraphQL request calling updateOrganization resolver."""
-        variables = map_organization_update_data(organization_id, organization_data)
+        data = map_update_organization_data(organization_data)
+        where = map_update_organization_where(organization_id)
+        payload = {"where": where, "data": data}
         fragment = fragment_builder(["id"])
         result = self.graphql_client.execute(
-            get_update_properties_in_organization(fragment), variables
+            get_update_properties_in_organization(fragment), payload
         )
         return result["data"]

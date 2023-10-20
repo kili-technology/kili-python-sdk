@@ -12,20 +12,20 @@ from kili.domain.organization import (
 )
 
 
-def map_organization_data(data: OrganizationToCreateInput) -> Dict:
+def map_create_organization_data(data: OrganizationToCreateInput) -> Dict:
     """Build the GraphQL OrganizationData variable to be sent in an operation."""
     return {
-        "data": {
-            "name": data.name,
-            "address": data.address,
-            "city": data.city,
-            "country": data.country,
-            "zipCode": data.zip_code,
-        }
+        # "data": {
+        "name": data.name,
+        "address": data.address,
+        "city": data.city,
+        "country": data.country,
+        "zipCode": data.zip_code,
+        # }
     }
 
 
-def map_organization_where(filters: OrganizationFilters) -> Dict:
+def map_list_organizations_where(filters: OrganizationFilters) -> Dict:
     """Build the GraphQL OrganizationWhere variable to be sent in an operation."""
     return {
         "id": filters.organization_id,
@@ -33,6 +33,22 @@ def map_organization_where(filters: OrganizationFilters) -> Dict:
             "email": filters.email,
         },
     }
+
+
+def map_update_organization_where(organization_id: OrganizationId) -> Dict:
+    """Build the GraphQL OrganizationData variable to be sent in an operation."""
+    return {"id": organization_id}
+
+
+def map_update_organization_data(organization_data: OrganizationToUpdateInput) -> Dict:
+    """Build the GraphQL OrganizationData variable to be sent in an operation."""
+    license_str = None if not organization_data.license else json.dumps(organization_data.license)
+    data = {}
+    if organization_data.name is not None:
+        data["name"] = organization_data.name
+    if license_str is not None:
+        data["license"] = license_str
+    return data
 
 
 def map_organization_metrics_where(filters: OrganizationMetricsFilters) -> Dict:
@@ -43,18 +59,3 @@ def map_organization_metrics_where(filters: OrganizationMetricsFilters) -> Dict:
         "startDate": filters.start_datetime.strftime(date_string_fmt),
         "endDate": filters.end_datetime.strftime(date_string_fmt),
     }
-
-
-def map_organization_update_data(
-    organization_id: OrganizationId, organization_data: OrganizationToUpdateInput
-) -> Dict:
-    """Build the GraphQL OrganizationData variable to be sent in an operation."""
-    license_str = None if not organization_data.license else json.dumps(organization_data.license)
-    variables = {"where": {"id": str(organization_id)}}
-    variables["data"] = {}
-    if organization_data.name is not None:
-        variables["data"]["name"] = organization_data.name
-    if license_str is not None:
-        variables["data"]["license"] = license_str
-
-    return variables
