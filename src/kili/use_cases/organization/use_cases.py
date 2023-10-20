@@ -50,6 +50,8 @@ class OrganizationUseCases(BaseUseCases):
         """Count organizations."""
         return self._kili_api_gateway.count_organizations(filters=where)
 
-    def get_organization_metrics(self, where: OrganizationMetricsFilters) -> Dict:
+    def get_organization_metrics(
+        self, where: OrganizationMetricsFilters, fields: ListOrTuple[str]
+    ) -> Dict:
         """Get organization metrics."""
-        return self._kili_api_gateway.get_organization_metrics(filters=where)
+        return self._kili_api_gateway.get_organization_metrics(filters=where, fields=fields)

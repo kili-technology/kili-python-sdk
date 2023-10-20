@@ -15,13 +15,11 @@ from kili.domain.organization import (
 def map_create_organization_data(data: OrganizationToCreateInput) -> Dict:
     """Build the GraphQL OrganizationData variable to be sent in an operation."""
     return {
-        # "data": {
         "name": data.name,
         "address": data.address,
         "city": data.city,
         "country": data.country,
         "zipCode": data.zip_code,
-        # }
     }
 
 

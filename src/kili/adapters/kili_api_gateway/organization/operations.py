@@ -33,14 +33,14 @@ COUNT_ORGANIZATIONS_QUERY = """
     """
 
 
-GET_ORGANIZATION_METRICS_QUERY = """
-    query organizationMetrics($where: OrganizationMetricsWhere!) {
-        data: organizationMetrics(where: $where) {
-            numberOfAnnotations
-            numberOfHours
-            numberOfLabeledAssets
-        }
-    }
+def get_get_organization_metrics_query(fragment: str) -> str:
+    """Return the GraphQL organizationMetrics query."""
+    return f"""
+    query organizationMetrics($where: OrganizationMetricsWhere!) {{
+        data: organizationMetrics(where: $where) {{
+            {fragment}
+        }}
+    }}
     """
 
 

@@ -189,6 +189,11 @@ class OrganizationClientMethods(BaseClientMethods):
         organization_id: str,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
+        fields: ListOrTuple[str] = (
+            "numberOfAnnotations",
+            "numberOfHours",
+            "numberOfLabeledAssets",
+        ),
     ) -> Dict:
         """Get organization metrics.
 
@@ -196,6 +201,7 @@ class OrganizationClientMethods(BaseClientMethods):
             organization_id: Identifier of the organization
             start_date: Start date of the metrics computation
             end_date: End date of the metrics computation
+            fields: Fields to request for the organization metrics.
 
         Returns:
             A dictionary containing the metrics of the organization.
@@ -208,4 +214,4 @@ class OrganizationClientMethods(BaseClientMethods):
             id=OrganizationId(organization_id), start_datetime=start_date, end_datetime=end_date
         )
 
-        return OrganizationUseCases(self.kili_api_gateway).get_organization_metrics(filters)
+        return OrganizationUseCases(self.kili_api_gateway).get_organization_metrics(filters, fields)

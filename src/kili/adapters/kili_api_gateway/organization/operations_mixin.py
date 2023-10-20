@@ -27,8 +27,8 @@ from kili.domain.types import ListOrTuple
 
 from .operations import (
     COUNT_ORGANIZATIONS_QUERY,
-    GET_ORGANIZATION_METRICS_QUERY,
     get_create_organization_mutation,
+    get_get_organization_metrics_query,
     get_list_organizations_query,
     get_update_properties_in_organization_mutation,
 )
@@ -71,11 +71,14 @@ class OrganizationOperationMixin(BaseOperationMixin):
         count: int = count_result["data"]
         return count
 
-    def get_organization_metrics(self, filters: OrganizationMetricsFilters) -> Dict:
+    def get_organization_metrics(
+        self, filters: OrganizationMetricsFilters, fields: ListOrTuple[str]
+    ) -> Dict:
         """Send a GraphQL request calling organizationMetrics resolver."""
         where = map_organization_metrics_where(filters=filters)
         payload = {"where": where}
-        result = self.graphql_client.execute(GET_ORGANIZATION_METRICS_QUERY, payload)
+        fragment = fragment_builder(fields)
+        result = self.graphql_client.execute(get_get_organization_metrics_query(fragment), payload)
         return result["data"]
 
     def update_organization(

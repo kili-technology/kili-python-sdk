@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pytz
-from pytest_mock import MockerFixture
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.organization.operations_mixin import (
@@ -17,7 +16,7 @@ from kili.domain.organization import (
 )
 
 
-def test_create_organization(mocker, graphql_client):
+def test_create_organization(graphql_client):
     # Given
     kili_api_gateway = OrganizationOperationMixin()
     kili_api_gateway.graphql_client = graphql_client
@@ -58,7 +57,7 @@ def test_create_organization(mocker, graphql_client):
     )
 
 
-def test_list_organization(mocker, graphql_client):
+def test_list_organization(graphql_client):
     # Given
     kili_api_gateway = OrganizationOperationMixin()
     kili_api_gateway.graphql_client = graphql_client
@@ -93,7 +92,7 @@ def test_list_organization(mocker, graphql_client):
     )
 
 
-def test_count_organization(mocker, graphql_client):
+def test_count_organization(graphql_client):
     # Given
     kili_api_gateway = OrganizationOperationMixin()
     kili_api_gateway.graphql_client = graphql_client
@@ -113,7 +112,7 @@ def test_count_organization(mocker, graphql_client):
     )
 
 
-def test_get_organization_metrics(mocker: MockerFixture, graphql_client: GraphQLClient):
+def test_get_organization_metrics(graphql_client: GraphQLClient):
     # Given
     kili_api_gateway = OrganizationOperationMixin()
     kili_api_gateway.graphql_client = graphql_client
@@ -128,14 +127,15 @@ def test_get_organization_metrics(mocker: MockerFixture, graphql_client: GraphQL
             start_datetime=datetime(2022, 1, 1, tzinfo=pytz.UTC),
             end_datetime=datetime(2022, 1, 5, tzinfo=pytz.UTC),
         ),
+        fields=["numberOfAnnotations", "numberOfHours", "numberOfLabeledAssets"],
     )
 
     # Then
     assert metrics == {"numberOfAnnotations": 18, "numberOfHours": 5, "numberOfLabeledAssets": 3}
     kili_api_gateway.graphql_client.execute.assert_called_with(
         "\n    query organizationMetrics($where: OrganizationMetricsWhere!) {\n        data:"
-        " organizationMetrics(where: $where) {\n            numberOfAnnotations\n           "
-        " numberOfHours\n            numberOfLabeledAssets\n        }\n    }\n    ",
+        " organizationMetrics(where: $where) {\n             numberOfAnnotations numberOfHours"
+        " numberOfLabeledAssets\n        }\n    }\n    ",
         {
             "where": {
                 "organizationId": "fake_organization_id",
@@ -146,7 +146,7 @@ def test_get_organization_metrics(mocker: MockerFixture, graphql_client: GraphQL
     )
 
 
-def test_update_organization(mocker: MockerFixture, graphql_client: GraphQLClient):
+def test_update_organization(graphql_client: GraphQLClient):
     # Given
     kili_api_gateway = OrganizationOperationMixin()
     kili_api_gateway.graphql_client = graphql_client
