@@ -67,7 +67,7 @@ class InternalOrganizationClientMethods(BaseClientMethods):
         organization_id: str,
         name: Optional[str] = None,
         license: Optional[dict] = None,  # noqa: A002
-    ) -> Dict:  # pylint: disable=redefined-builtin
+    ) -> Dict:
         """Modify an organization.
 
         WARNING: This method is for internal use only.
