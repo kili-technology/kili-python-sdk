@@ -60,16 +60,24 @@ job_object_detection_with_classification = {
     },
 }
 
-asset_image_1 = {
-    "latestLabel": {
-        "jsonResponse": job_object_detection,
-        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-    },
-    "externalId": "car_1",
-    "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
-    "jsonContent": "",
-    "resolution": {"height": 1000, "width": 1000},
-}
+
+class FrozenDict(Dict):
+    def __set__(self, key, value):
+        raise TypeError("FrozenDict does not support item assignment")
+
+
+asset_image_1 = FrozenDict(
+    {
+        "latestLabel": {
+            "jsonResponse": job_object_detection,
+            "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        },
+        "externalId": "car_1",
+        "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
+        "jsonContent": "",
+        "resolution": {"height": 1000, "width": 1000},
+    }
+)
 
 asset_image_1_with_classification = {
     "latestLabel": {
