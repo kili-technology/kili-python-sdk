@@ -5,7 +5,6 @@ import os
 from pathlib import Path
 from typing import Callable, Dict, List
 
-from kili.orm import Asset
 from kili.services.export.exceptions import NotCompatibleInputType, NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.media.video import cut_video
@@ -28,7 +27,7 @@ class KiliExporter(AbstractExporter):
         _ = job
         return True  # kili format is compatible with all jobs
 
-    def _save_assets_export(self, assets: List[Asset], output_filename: Path) -> None:
+    def _save_assets_export(self, assets: List[Dict], output_filename: Path) -> None:
         """Save the assets to a file and return the link to that file."""
         self.logger.info("Exporting to kili format...")
 
@@ -58,7 +57,7 @@ class KiliExporter(AbstractExporter):
 
         self.logger.warning(output_filename)
 
-    def _clean_filepaths(self, assets: List[Asset]) -> List[Asset]:
+    def _clean_filepaths(self, assets: List[Dict]) -> List[Dict]:
         # pylint: disable=line-too-long
         """Remove TemporaryDirectory() prefix from filepaths in "jsonContent" and "content" fields."""
         for asset in assets:
@@ -75,7 +74,7 @@ class KiliExporter(AbstractExporter):
                 asset["jsonContent"] = json_content_list
         return assets
 
-    def _cut_video_assets(self, assets: List[Asset]) -> List[Asset]:
+    def _cut_video_assets(self, assets: List[Dict]) -> List[Dict]:
         """Cut video assets into frames."""
         for asset in assets:
             if asset["jsonContent"] == "" and os.path.isfile(asset["content"]):
@@ -91,9 +90,9 @@ class KiliExporter(AbstractExporter):
                 )
         return assets
 
-    def process_and_save(self, assets: List[Asset], output_filename: Path) -> None:
+    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """Extract formatted annotations from labels and save the json in the buckets."""
-        clean_assets = self.preprocess_assets(assets, self.label_format)
+        clean_assets = self.preprocess_assets(assets)
 
         if self.normalized_coordinates is False:
             clean_assets = [self.convert_to_pixel_coords(asset) for asset in clean_assets]
@@ -108,7 +107,7 @@ class KiliExporter(AbstractExporter):
         """Export images folder."""
         return self.base_folder / self.ASSETS_DIR_NAME
 
-    def convert_to_pixel_coords(self, asset: Asset) -> Asset:
+    def convert_to_pixel_coords(self, asset: Dict) -> Dict:
         """Convert asset JSON response normalized vertices to pixel coordinates."""
         if asset.get("latestLabel", {}):
             self._scale_label_vertices(asset["latestLabel"], asset)

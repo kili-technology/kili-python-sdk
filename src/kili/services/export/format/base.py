@@ -12,7 +12,6 @@ from typing import Dict, List, NamedTuple, Optional, Tuple, cast
 
 from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
-from kili.orm import Asset, Label
 from kili.services.export.exceptions import (
     NotCompatibleOptions,
     NotExportableAssetError,
@@ -105,7 +104,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         )
 
     @abstractmethod
-    def process_and_save(self, assets: List[Asset], output_filename: Path) -> None:
+    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """Converts the asset and save them into an archive file."""
 
     def make_archive(self, root_folder: Path, output_filename: Path) -> Path:
@@ -204,7 +203,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         project = get_project(self.kili, self.project_id, ["dataConnections.id"])
         return bool(project["dataConnections"])
 
-    def _check_geotiff_export_compatibility(self, assets: List[Asset]) -> None:
+    def _check_geotiff_export_compatibility(self, assets: List[Dict]) -> None:
         # pylint: disable=line-too-long
         """Check if one of the assets is a geotiff asset, and if the export params are compatible.
 
@@ -247,7 +246,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return self.base_folder / "images"
 
     @staticmethod
-    def _filter_out_autosave_labels(assets: List[Asset]) -> List[Asset]:
+    def _filter_out_autosave_labels(assets: List[Dict]) -> List[Dict]:
         """Removes AUTOSAVE labels from exports."""
         clean_assets = []
         for asset in assets:
@@ -259,9 +258,9 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return clean_assets
 
     @staticmethod
-    def _format_json_response(label: Label, label_format: LabelFormat) -> Label:
+    def _format_json_response(label: Dict) -> Dict:
         """Format the label JSON response in the requested format."""
-        formatted_json_response = label.json_response(format_=label_format)
+        formatted_json_response = label["jsonResponse"]
         json_response = {}
         for key, value in cast(Dict, formatted_json_response).items():
             if key.isdigit():
@@ -271,20 +270,20 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         label["jsonResponse"] = json_response
         return label
 
-    def preprocess_assets(self, assets: List[Asset], label_format: LabelFormat) -> List[Asset]:
+    def preprocess_assets(self, assets: List[Dict]) -> List[Dict]:
         """Format labels in the requested format, and filter out autosave labels."""
         assets_in_format = []
         for asset in assets:
             if "labels" in asset:
                 labels_of_asset = []
                 for label in asset["labels"]:
-                    clean_label = AbstractExporter._format_json_response(label, label_format)
+                    clean_label = AbstractExporter._format_json_response(label)
                     labels_of_asset.append(clean_label)
                 asset["labels"] = labels_of_asset
             if "latestLabel" in asset:
                 label = asset["latestLabel"]
                 if label is not None:
-                    clean_label = AbstractExporter._format_json_response(label, label_format)
+                    clean_label = AbstractExporter._format_json_response(label)
                     asset["latestLabel"] = clean_label
             assets_in_format.append(asset)
 

@@ -25,7 +25,6 @@ from kili.entrypoints.mutations.asset.queries import (
 )
 from kili.entrypoints.mutations.exceptions import MutationError
 from kili.exceptions import MissingArgumentError
-from kili.orm import Asset
 from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv
 from kili.utils.assets import PageResolution
@@ -313,7 +312,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             generate_variables,
             GQL_UPDATE_PROPERTIES_IN_ASSETS,
         )
-        formated_results = [self.format_result("data", result, Asset) for result in results]
+        formated_results = [self.format_result("data", result, None) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 
     @typechecked
@@ -367,7 +366,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             generate_variables,
             GQL_UPDATE_PROPERTIES_IN_ASSETS,
         )
-        formated_results = [self.format_result("data", result, Asset) for result in results]
+        formated_results = [self.format_result("data", result, None) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 
     @typechecked
