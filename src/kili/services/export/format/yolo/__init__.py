@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
-from kili.orm import JobMLTask, JobTool
+from kili.domain.ontology import JobMLTask, JobTool
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,

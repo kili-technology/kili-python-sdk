@@ -20,7 +20,6 @@ from kili.entrypoints.mutations.label.queries import (
     GQL_DELETE_LABELS,
     GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
-from kili.orm import Label
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
 )
@@ -189,7 +188,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             "where": {"id": label_asset_id},
         }
         result = self.graphql_client.execute(GQL_APPEND_TO_LABELS, variables)
-        return self.format_result("data", result, Label)
+        return self.format_result("data", result, Dict)
 
     @typechecked
     def append_labels(
@@ -315,7 +314,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         asset_external_id: Optional[str] = None,
         asset_id: Optional[str] = None,
         project_id: Optional[str] = None,
-    ) -> Label:
+    ) -> Dict:
         """Create honeypot for an asset.
 
         !!! info
@@ -350,7 +349,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             "where": {"id": asset_id},
         }
         result = self.graphql_client.execute(GQL_CREATE_HONEYPOT, variables)
-        return self.format_result("data", result, Label)
+        return self.format_result("data", result, Dict)
 
     @typechecked
     def delete_labels(self, ids: List[str]) -> List[str]:

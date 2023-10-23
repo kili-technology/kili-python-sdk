@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Dict, List
 
-from kili.orm import JobMLTask, JobTool
+from kili.domain.ontology import JobMLTask, JobTool
 from kili.services.export.exceptions import NotCompatibleInputType, NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.tools import is_geotiff_asset_with_lat_lon_coords

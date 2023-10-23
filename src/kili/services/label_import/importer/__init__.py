@@ -14,7 +14,6 @@ from kili.core.helpers import get_file_paths_to_upload
 from kili.core.utils import pagination
 from kili.domain.label import LabelType
 from kili.domain.project import ProjectId
-from kili.orm import Label
 from kili.services.helpers import get_external_id_from_file_path
 from kili.services.label_import.exceptions import (
     LabelParsingError,
@@ -124,7 +123,7 @@ class AbstractLabelImporter(ABC):
                 batch_result = self.kili.graphql_client.execute(
                     GQL_APPEND_MANY_LABELS, variables, timeout=60
                 )
-                result.extend(self.kili.format_result("data", batch_result, Label))
+                result.extend(self.kili.format_result("data", batch_result, None))
                 pbar.update(len(batch_labels))
         return result
 
