@@ -1,5 +1,6 @@
 """Fake Kili object."""
 
+from copy import deepcopy
 from unittest.mock import MagicMock
 
 from kili.adapters.http_client import HttpClient
@@ -217,35 +218,29 @@ def mocked_AssetQuery(where, _fields, _options, post_call_function=None):
     """Fake assets."""
     project_id = where.project_id
 
-    def _assets():
-        if project_id == "object_detection":
-            return [asset_image_1]
-        elif project_id == "object_detection_with_empty_annotation":
-            return [asset_image_1_without_annotation]
-        elif project_id == "object_detection_with_classification":
-            return [asset_image_1_with_classification]
-        elif project_id == "text_classification":
-            return []
-        elif project_id == "semantic_segmentation":
-            return [asset_image_1, asset_image_2]
-        elif project_id == "object_detection_cloud_storage":
-            return [
-                asset_image_no_content,
-                asset_image_1,
-            ]
-        elif project_id == "object_detection_video_project":
-            return [
-                asset_video_content_no_json_content,
-                asset_video_no_content_and_json_content,
-            ]
-        elif project_id == "object_detection_2500_assets":
-            return [{**asset_image_1, "id": f"{i}", "externalId": f"ext-{i}"} for i in range(2500)]
-        else:
-            return []
+    if project_id == "object_detection":
+        ret = [asset_image_1]
+    elif project_id == "object_detection_with_empty_annotation":
+        ret = [asset_image_1_without_annotation]
+    elif project_id == "object_detection_with_classification":
+        ret = [asset_image_1_with_classification]
+    elif project_id == "text_classification":
+        ret = []
+    elif project_id == "semantic_segmentation":
+        ret = [asset_image_1, asset_image_2]
+    elif project_id == "object_detection_cloud_storage":
+        ret = [asset_image_no_content, asset_image_1]
+    elif project_id == "object_detection_video_project":
+        ret = [asset_video_content_no_json_content, asset_video_no_content_and_json_content]
+    elif project_id == "object_detection_2500_assets":
+        ret = [{**asset_image_1, "id": f"{i}", "externalId": f"ext-{i}"} for i in range(2500)]
+    else:
+        ret = []
 
     if post_call_function:
-        return post_call_function(_assets())
-    return _assets()
+        return post_call_function(ret)
+
+    return deepcopy(ret)
 
 
 def mocked_AssetQuery_count(where) -> int:
