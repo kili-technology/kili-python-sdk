@@ -1,17 +1,19 @@
 """Helpers for the issue mutations."""
 
-from typing import Dict, List
+from typing import Dict
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
+from kili.domain.label import LabelFilters, LabelId
+from kili.domain.project import ProjectFilters, ProjectId
+from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
 
 def get_labels_asset_ids_map(
     kili_api_gateway: KiliAPIGateway,
-    project_id: str,
-    label_id_array: List[str],
+    project_id: ProjectId,
+    label_id_array: ListOrTuple[LabelId],
 ) -> Dict:
     """Return a dictionary that gives for every label id, its associated asset id.
 
@@ -27,15 +29,17 @@ def get_labels_asset_ids_map(
         NotFound error if at least one label was not found with its given id
     """
     options = QueryOptions(disable_tqdm=True)
-    where = LabelWhere(
-        project_id=project_id,
-        id_contains=label_id_array,
-    )
     labels = list(
-        LabelQuery(kili_api_gateway.graphql_client, kili_api_gateway.http_client)(
-            where=where, fields=["labelOf.id", "id"], options=options
+        kili_api_gateway.list_labels(
+            filters=LabelFilters(
+                project=ProjectFilters(project_id),
+                id_in=label_id_array,
+            ),
+            fields=("labelOf.id", "id"),
+            options=options,
         )
     )
+
     labels_not_found = [
         label_id for label_id in label_id_array if label_id not in [label["id"] for label in labels]
     ]

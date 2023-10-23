@@ -10,6 +10,7 @@ from kili.core.helpers import deprecate, is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
 from kili.domain.asset import AssetExternalId, AssetId
 from kili.domain.asset.helpers import check_asset_identifier_arguments
+from kili.domain.label import LabelType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
@@ -24,7 +25,6 @@ from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
 )
 from kili.services.label_import import import_labels_from_dict
-from kili.services.types import LabelType
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.logcontext import for_all_methods, log_call
 

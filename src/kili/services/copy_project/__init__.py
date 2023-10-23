@@ -4,19 +4,22 @@ import itertools
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.constants import QUERY_BATCH_SIZE
-from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters
-from kili.domain.project import ProjectId
+from kili.domain.label import LabelFilters
+from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.services.project import get_project
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
+
+if TYPE_CHECKING:
+    from kili.client import Kili
 
 
 class ProjectCopier:  # pylint: disable=too-few-public-methods
@@ -37,7 +40,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         "reviewCoverage",
     )
 
-    def __init__(self, kili) -> None:
+    def __init__(self, kili: "Kili") -> None:
         self.disable_tqdm = False
         self.kili = kili
 
@@ -165,7 +168,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
         Fetches assets by batch since `content` urls expire.
         """
-        filters = AssetFilters(project_id=from_project_id)
+        filters = AssetFilters(project_id=ProjectId(from_project_id))
         options = QueryOptions(disable_tqdm=False)
         fields = (
             "content",
@@ -245,7 +248,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-locals
     def _copy_labels(self, from_project_id: str, new_project_id: str) -> None:
         assets_new_project = self.kili.kili_api_gateway.list_assets(
-            AssetFilters(project_id=new_project_id),
+            AssetFilters(project_id=ProjectId(new_project_id)),
             ["id", "externalId"],
             QueryOptions(disable_tqdm=True),
         )
@@ -258,8 +261,8 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             member["user"]["email"]: member["user"]["id"] for member in members_new_project
         }
 
-        nb_labels_to_copy = LabelQuery(self.kili.graphql_client, self.kili.http_client).count(
-            LabelWhere(project_id=from_project_id)
+        nb_labels_to_copy = self.kili.kili_api_gateway.count_labels(
+            LabelFilters(project=ProjectFilters(id=ProjectId(from_project_id)))
         )
         if nb_labels_to_copy == 0:
             return

@@ -1,12 +1,14 @@
 """Asset domain."""
 
 from dataclasses import dataclass
-from typing import Literal, NewType, Optional
+from typing import TYPE_CHECKING, Literal, NewType, Optional
 
-from kili.domain.issue import IssueStatus, IssueType
-from kili.domain.label import LabelType
-from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
+
+if TYPE_CHECKING:
+    from kili.domain.issue import IssueStatus, IssueType
+    from kili.domain.label import LabelType
+    from kili.domain.project import ProjectId
 
 AssetId = NewType("AssetId", str)
 AssetExternalId = NewType("AssetExternalId", str)
@@ -20,7 +22,7 @@ class AssetFilters:
     """Asset filters for running an asset search."""
 
     # pylint: disable=too-many-instance-attributes
-    project_id: ProjectId
+    project_id: "ProjectId"
     asset_id: Optional[AssetId] = None
     asset_id_in: Optional[ListOrTuple[AssetId]] = None
     asset_id_not_in: Optional[ListOrTuple[AssetId]] = None
@@ -38,7 +40,7 @@ class AssetFilters:
     label_created_at_lte: Optional[str] = None
     label_honeypot_mark_gte: Optional[float] = None
     label_honeypot_mark_lte: Optional[float] = None
-    label_type_in: Optional[ListOrTuple[LabelType]] = None
+    label_type_in: Optional[ListOrTuple["LabelType"]] = None
     label_reviewer_in: Optional[ListOrTuple[str]] = None
     metadata_where: Optional[dict] = None
     skipped: Optional[bool] = None
@@ -50,5 +52,5 @@ class AssetFilters:
     created_at_lte: Optional[str] = None
     inference_mark_gte: Optional[float] = None
     inference_mark_lte: Optional[float] = None
-    issue_type: Optional[IssueType] = None
-    issue_status: Optional[IssueStatus] = None
+    issue_type: Optional["IssueType"] = None
+    issue_status: Optional["IssueStatus"] = None
