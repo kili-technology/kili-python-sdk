@@ -1,7 +1,7 @@
 import json
 import time
 import warnings
-from typing import Dict, List
+from typing import Dict
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
@@ -63,7 +63,7 @@ def test_format_result_formatted_json_is_list():
             }
         ]
     }
-    ret = format_result("data", result, object_=List[Dict], http_client=MagicMock())
+    ret = format_result("data", result, object_=None, http_client=MagicMock())
     assert isinstance(ret, list)
     assert isinstance(ret[0], Dict)
 
