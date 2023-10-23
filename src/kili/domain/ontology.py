@@ -1,10 +1,9 @@
 """Ontology domain."""
 
-from dataclasses import dataclass
+from enum import Enum
 
 
-@dataclass
-class JobMLTask:
+class JobMLTask(str, Enum):
     """List of ML Tasks."""
 
     ASSET_ANNOTATION = "ASSET_ANNOTATION"
@@ -21,8 +20,7 @@ class JobMLTask:
     TRANSCRIPTION = "TRANSCRIPTION"
 
 
-@dataclass
-class JobTool:
+class JobTool(str, Enum):
     """List of tools."""
 
     MARKER = ("marker",)
