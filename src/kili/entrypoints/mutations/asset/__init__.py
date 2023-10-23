@@ -12,6 +12,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
 from kili.domain.asset import AssetFilters
+from kili.domain.project import ProjectId
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
     process_update_properties_in_assets_parameters,
@@ -165,7 +166,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
         created_asset_ids = import_assets(
             self,
-            project_id=project_id,
+            project_id=ProjectId(project_id),
             assets=assets,
             disable_tqdm=disable_tqdm,
             verify=wait_until_availability,
@@ -419,7 +420,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
             nb_assets_in_kili = self.kili_api_gateway.count_assets(
                 AssetFilters(
-                    project_id=project_id_,
+                    project_id=ProjectId(project_id_),
                     asset_id_in=asset_ids,
                 )
             )
@@ -497,7 +498,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
             nb_assets_in_review = self.kili_api_gateway.count_assets(
                 AssetFilters(
-                    project_id=project_id_,
+                    project_id=ProjectId(project_id_),
                     asset_id_in=asset_ids,
                     status_in=["TO_REVIEW"],
                 )
@@ -519,7 +520,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             assets_in_review = self.kili_api_gateway.list_assets(
                 AssetFilters(
                     project_id=result["id"],
-                    asset_id_in=cast(Optional[List[str]], resolved_asset_ids),
+                    asset_id_in=resolved_asset_ids,
                     status_in=["TO_REVIEW"],
                 ),
                 ["id"],
@@ -586,7 +587,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             asset_ids = last_batch["asset_ids"][-1:]  # check lastest asset of the batch only
             nb_assets_in_queue = self.kili_api_gateway.count_assets(
                 AssetFilters(
-                    project_id=project_id_,
+                    project_id=ProjectId(project_id_),
                     asset_id_in=asset_ids,
                     status_in=["ONGOING"],
                 )
@@ -606,7 +607,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             assets_in_queue = self.kili_api_gateway.list_assets(
                 AssetFilters(
                     project_id=result["id"],
-                    asset_id_in=cast(List[str], resolved_asset_ids),
+                    asset_id_in=resolved_asset_ids,
                     status_in=["ONGOING"],
                 ),
                 ["id"],

@@ -2,6 +2,7 @@
 
 from typing import Dict, List, Optional, Type, cast
 
+from kili.domain.project import ProjectId
 from kili.services.project import get_project_field
 
 from .base import (
@@ -27,7 +28,7 @@ importer_by_type: Dict[str, Type[BaseAbstractAssetImporter]] = {
 
 def import_assets(  # pylint: disable=too-many-arguments
     kili,
-    project_id: str,
+    project_id: ProjectId,
     assets: List[Dict],
     raise_error: bool = True,
     disable_tqdm: Optional[bool] = False,

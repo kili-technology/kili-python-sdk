@@ -34,6 +34,7 @@ from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
 from kili.core.utils import pagination
 from kili.domain.asset import AssetFilters
 from kili.domain.organization import OrganizationFilters
+from kili.domain.project import InputType, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.orm import Asset
 from kili.services.asset_import.constants import (
@@ -71,8 +72,8 @@ class ProcessingParams(NamedTuple):
 class ProjectParams(NamedTuple):
     """Contains all parameters related to the batch to import."""
 
-    project_id: str
-    input_type: str
+    project_id: ProjectId
+    input_type: InputType
 
 
 class LoggerParams(NamedTuple):

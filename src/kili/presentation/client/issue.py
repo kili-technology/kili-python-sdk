@@ -8,6 +8,7 @@ from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.issue import IssueFilters, IssueStatus, IssueType
+from kili.domain.label import LabelId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.presentation.client.helpers.common_validators import (
@@ -46,7 +47,7 @@ class IssueClientMethods(BaseClientMethods):
         """
         assert_all_arrays_have_same_size([label_id_array, object_mid_array, text_array])
         issues = [
-            IssueToCreateUseCaseInput(label_id=label_id, object_mid=object_mid, text=text)
+            IssueToCreateUseCaseInput(label_id=LabelId(label_id), object_mid=object_mid, text=text)
             for (label_id, object_mid, text) in zip(
                 label_id_array,
                 object_mid_array or repeat(None),
@@ -54,7 +55,7 @@ class IssueClientMethods(BaseClientMethods):
             )
         ]
         issue_service = IssueUseCases(self.kili_api_gateway)
-        issue_ids = issue_service.create_issues(project_id=project_id, issues=issues)
+        issue_ids = issue_service.create_issues(project_id=ProjectId(project_id), issues=issues)
         return [{"id": issue_id} for issue_id in issue_ids]
 
     @typechecked

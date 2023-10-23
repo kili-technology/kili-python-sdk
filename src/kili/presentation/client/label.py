@@ -18,7 +18,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import validate_category_search_query
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetStatus
 from kili.domain.asset.asset import AssetId
-from kili.domain.label import LabelFilters, LabelId
+from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.domain.user import UserFilter, UserId
@@ -51,7 +51,7 @@ class LabelClientMethods(BaseClientMethods):
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
         label_id: Optional[str] = None,
-        type_in: Optional[List[str]] = None,
+        type_in: Optional[List[LabelType]] = None,
         user_id: Optional[str] = None,
         category_search: Optional[str] = None,
         id_contains: Optional[List[str]] = None,
@@ -152,7 +152,7 @@ class LabelClientMethods(BaseClientMethods):
         id_contains: Optional[List[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
-        type_in: Optional[List[str]] = None,
+        type_in: Optional[List[LabelType]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
@@ -189,7 +189,7 @@ class LabelClientMethods(BaseClientMethods):
         id_contains: Optional[List[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
-        type_in: Optional[List[str]] = None,
+        type_in: Optional[List[LabelType]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
@@ -226,7 +226,7 @@ class LabelClientMethods(BaseClientMethods):
         id_contains: Optional[List[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
-        type_in: Optional[List[str]] = None,
+        type_in: Optional[List[LabelType]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
@@ -263,7 +263,7 @@ class LabelClientMethods(BaseClientMethods):
         id_contains: Optional[List[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
-        type_in: Optional[List[str]] = None,
+        type_in: Optional[List[LabelType]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
@@ -300,7 +300,7 @@ class LabelClientMethods(BaseClientMethods):
         id_contains: Optional[List[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
-        type_in: Optional[List[str]] = None,
+        type_in: Optional[List[LabelType]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
