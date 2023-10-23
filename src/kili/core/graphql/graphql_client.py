@@ -231,10 +231,10 @@ class GraphQLClient:
     @classmethod
     def _remove_nullable_inputs(cls, variables: Dict) -> Dict:
         """Remove nullable inputs from the variables."""
-        if "data" in variables and isinstance(variables["data"], dict):
-            variables["data"] = cls._remove_nullable_inputs(variables["data"])
-        if "where" in variables and isinstance(variables["where"], dict):
-            variables["where"] = cls._remove_nullable_inputs(variables["where"])
+        for key in ("data", "where", "project", "asset", "label", "issue"):
+            if key in variables and isinstance(variables[key], dict):
+                variables[key] = cls._remove_nullable_inputs(variables[key])
+
         return {k: v for k, v in variables.items() if v is not None}
 
     def execute(

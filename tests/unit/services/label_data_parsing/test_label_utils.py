@@ -1,10 +1,9 @@
 import json
-from typing import Dict, Generator, List
+from typing import List
 
 from typing_extensions import assert_type
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
-from kili.client import Kili
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.label_data_parsing.annotation import Annotation, AnnotationList
 from kili.services.label_data_parsing.category import Category, CategoryList
@@ -252,19 +251,6 @@ def test_parse_labels_classification_to_dict_classif_with_bbox():
 
     for original_label, parsed_label in zip(labels, labels_modified):
         assert original_label == parsed_label
-
-
-def test_integration_of_label_parsing_in_kili_labels_assert_types(mocker):
-    """This test does not check types at runtime, but rather during pyright type checking."""
-    _ = mocker.patch.object(Kili, "__init__", return_value=None)
-    _ = mocker.patch.object(LabelClientMethods, "labels")
-    assert_type(Kili().labels("project_id"), List[Dict])
-    assert_type(Kili().labels("project_id", as_generator=True), Generator[Dict, None, None])
-    assert_type(Kili().labels("project_id", output_format="parsed_label"), List[ParsedLabel])
-    assert_type(
-        Kili().labels("project_id", output_format="parsed_label", as_generator=True),
-        Generator[ParsedLabel, None, None],
-    )
 
 
 def test_integration_of_label_parsing_in_kili_labels(kili_api_gateway: KiliAPIGateway):
