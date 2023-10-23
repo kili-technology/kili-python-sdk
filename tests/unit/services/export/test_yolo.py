@@ -8,7 +8,6 @@ import pytest_mock
 
 from kili.adapters.http_client import HttpClient
 from kili.entrypoints.queries.label import QueriesLabel
-from kili.orm import Asset
 from kili.services.export import YoloExporter
 from kili.services.export.format.yolo import (
     YoloExporter,
@@ -283,7 +282,7 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
     )
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
-        return_value=[Asset(asset) for asset in assets],
+        return_value=assets,
     )
     mocker.patch.object(YoloExporter, "_has_data_connection", return_value=False)
 
@@ -335,7 +334,7 @@ def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
     )
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
-        return_value=[Asset(asset) for asset in assets],
+        return_value=assets,
     )
     mocker.patch.object(YoloExporter, "_has_data_connection", return_value=False)
 

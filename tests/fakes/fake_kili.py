@@ -5,7 +5,6 @@ from unittest.mock import MagicMock
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectWhere
-from kili.orm import Asset
 from tests.fakes.fake_data import (
     asset_image_1,
     asset_image_1_with_classification,
@@ -220,33 +219,27 @@ def mocked_AssetQuery(where, _fields, _options, post_call_function=None):
 
     def _assets():
         if project_id == "object_detection":
-            return [Asset(asset_image_1)]
+            return [asset_image_1]
         elif project_id == "object_detection_with_empty_annotation":
-            return [Asset(asset_image_1_without_annotation)]
+            return [asset_image_1_without_annotation]
         elif project_id == "object_detection_with_classification":
-            return [Asset(asset_image_1_with_classification)]
+            return [asset_image_1_with_classification]
         elif project_id == "text_classification":
             return []
         elif project_id == "semantic_segmentation":
-            return [
-                Asset(asset_image_1),
-                Asset(asset_image_2),
-            ]
+            return [asset_image_1, asset_image_2]
         elif project_id == "object_detection_cloud_storage":
             return [
-                Asset(asset_image_no_content),
-                Asset(asset_image_1),
+                asset_image_no_content,
+                asset_image_1,
             ]
         elif project_id == "object_detection_video_project":
             return [
-                Asset(asset_video_content_no_json_content),
-                Asset(asset_video_no_content_and_json_content),
+                asset_video_content_no_json_content,
+                asset_video_no_content_and_json_content,
             ]
         elif project_id == "object_detection_2500_assets":
-            return [
-                Asset({**asset_image_1, "id": f"{i}", "externalId": f"ext-{i}"})
-                for i in range(2500)
-            ]
+            return [{**asset_image_1, "id": f"{i}", "externalId": f"ext-{i}"} for i in range(2500)]
         else:
             return []
 

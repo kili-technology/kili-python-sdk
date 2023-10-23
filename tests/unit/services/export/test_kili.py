@@ -6,7 +6,6 @@ from zipfile import ZipFile
 import pytest_mock
 
 from kili.entrypoints.queries.label import QueriesLabel
-from kili.orm import Asset
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.format.kili import KiliExporter
 from tests.fakes.fake_data import (
@@ -22,7 +21,7 @@ from .expected.video_project_assets_unnormalized import video_project_asset_unno
 def test_preprocess_assets(mocker: pytest_mock.MockFixture):
     mocker_exporter = mocker.MagicMock()
     clean_assets = AbstractExporter.preprocess_assets(
-        mocker_exporter, [Asset(**kili_format_frame_asset)], "raw"
+        mocker_exporter, [kili_format_frame_asset], "raw"
     )
     assert len(clean_assets) == 1
     assert clean_assets[0] == kili_format_expected_frame_asset_output
@@ -233,7 +232,7 @@ def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[
-            Asset(asset)
+            asset
             for asset in json.load(
                 open("./tests/unit/services/export/fakes/pdf_project_assets.json")
             )
@@ -382,7 +381,7 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[
-            Asset(asset)
+            asset
             for asset in json.load(
                 open("./tests/unit/services/export/fakes/image_project_assets.json")
             )
@@ -459,7 +458,7 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[
-            Asset(asset)
+            asset
             for asset in json.load(
                 open("./tests/unit/services/export/fakes/video_project_assets.json")
             )

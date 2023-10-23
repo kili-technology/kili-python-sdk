@@ -1,7 +1,7 @@
 import json
 import time
 import warnings
-from typing import List
+from typing import Dict, List
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
@@ -20,7 +20,6 @@ from kili.domain.project import ProjectId
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.exceptions import MissingArgumentError
-from kili.orm import Asset
 
 
 def test_format_result_no_type_conversion_1(mocker):
@@ -64,18 +63,18 @@ def test_format_result_formatted_json_is_list():
             }
         ]
     }
-    ret = format_result("data", result, object_=List[Asset], http_client=MagicMock())
+    ret = format_result("data", result, object_=List[Dict], http_client=MagicMock())
     assert isinstance(ret, list)
-    assert isinstance(ret[0], Asset)
+    assert isinstance(ret[0], Dict)
 
 
 def test_format_result_legacy_orm_objects():
     result = r'{"data":[{"id": "clbp1ozzb12345678cl9l85ci"}]}'
     result = json.loads(result)
-    ret = format_result("data", result, Asset, http_client=MagicMock())
+    ret = format_result("data", result, None, http_client=MagicMock())
     assert len(ret) == 1
     assert isinstance(ret, list)
-    assert isinstance(ret[0], Asset)
+    assert isinstance(ret[0], Dict)
 
 
 def test_format_result_with_type_conversion_int():

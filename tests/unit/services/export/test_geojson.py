@@ -6,7 +6,6 @@ from zipfile import ZipFile
 import pytest_mock
 
 from kili.entrypoints.queries.label import QueriesLabel
-from kili.orm import Asset
 from kili.services.export.format.geojson import GeoJsonExporter
 
 
@@ -27,7 +26,7 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[
-            Asset(asset)
+            asset
             for asset in json.load(
                 open("./tests/unit/services/export/fakes/geotiff_image_project_assets.json")
             )

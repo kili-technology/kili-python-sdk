@@ -8,7 +8,6 @@ import requests
 from PIL import Image
 
 from kili.entrypoints.queries.label import QueriesLabel
-from kili.orm import Asset
 from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
 from kili.services.export.format.coco import (
     CocoExporter,
@@ -379,7 +378,7 @@ def test_coco_video_jsoncontent():
         with TemporaryDirectory() as tmp_dir:
             labels_json, _ = _convert_kili_semantic_to_coco(
                 jobs={JobName("JOB_0"): Job(**json_interface["jobs"]["JOB_0"])},
-                assets=[Asset(asset_video_no_content_and_json_content)],
+                assets=[asset_video_no_content_and_json_content],
                 output_dir=Path(tmp_dir),
                 title="test",
                 project_input_type="VIDEO",
@@ -512,13 +511,13 @@ def test_coco_export_with_multi_jobs():
         image_height = 1080
         Image.new("RGB", (image_width, image_height)).save(local_file_path)
         assets = [
-            Asset(
+            dict(
                 latestLabel={"jsonResponse": json_response_dessert},
                 externalId="car_1",
                 jsonContent="",
                 content=str(output_dir / Path("image1.jpg")),
             ),
-            Asset(
+            dict(
                 latestLabel={"jsonResponse": json_response_main},
                 externalId="car_2",
                 jsonContent="",

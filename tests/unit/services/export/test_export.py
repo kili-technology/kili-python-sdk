@@ -15,7 +15,6 @@ from kili.domain.asset import AssetFilters
 from kili.domain.asset.asset import AssetExternalId
 from kili.domain.project import ProjectId
 from kili.entrypoints.queries.label import QueriesLabel
-from kili.orm import Asset
 from kili.services.export import AbstractExporter, export_labels
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
@@ -964,7 +963,7 @@ def test_when_exporting_geotiff_asset_with_incompatible_options_then_it_crashes(
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[
-            Asset(asset)
+            asset
             for asset in [
                 {
                     "latestLabel": {

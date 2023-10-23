@@ -1,6 +1,5 @@
 from typing import Dict
 
-from kili.orm import Label
 from kili.services.export.types import JobCategory
 
 job_category_a: JobCategory = JobCategory(category_name="OBJECT_A", id=0, job_id="JOB_0")
@@ -163,8 +162,8 @@ job_0 = {
 
 frame_json_response = {"0": job_0, "1": job_0, "2": job_0}
 
-frame_default_label = Label({"jsonResponse": frame_json_response, "labelType": "DEFAULT"})
-frame_autosave_label = Label({"jsonResponse": frame_json_response, "labelType": "AUTOSAVE"})
+frame_default_label = {"jsonResponse": frame_json_response, "labelType": "DEFAULT"}
+frame_autosave_label = {"jsonResponse": frame_json_response, "labelType": "AUTOSAVE"}
 
 kili_format_frame_asset = {
     "labels": [
