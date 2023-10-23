@@ -20,9 +20,7 @@ from .expected.video_project_assets_unnormalized import video_project_asset_unno
 
 def test_preprocess_assets(mocker: pytest_mock.MockFixture):
     mocker_exporter = mocker.MagicMock()
-    clean_assets = AbstractExporter.preprocess_assets(
-        mocker_exporter, [kili_format_frame_asset], "raw"
-    )
+    clean_assets = AbstractExporter.preprocess_assets(mocker_exporter, [kili_format_frame_asset])
     assert len(clean_assets) == 1
     assert clean_assets[0] == kili_format_expected_frame_asset_output
 

@@ -51,7 +51,7 @@ class CocoExporter(AbstractExporter):
 
         if len(self.compatible_jobs) == 0:
             raise NoCompatibleJobError(
-                f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes"
+                f"Project needs at least one {JobMLTask.OBJECT_DETECTION} task with bounding boxes"
                 " or segmentations."
             )
 
@@ -111,9 +111,9 @@ class CocoExporter(AbstractExporter):
     def _is_job_compatible(self, job: Job) -> bool:
         if "tools" not in job:
             return False
-        return (JobTool.Semantic in job["tools"] or JobTool.Rectangle in job["tools"]) and job[
+        return (JobTool.SEMANTIC in job["tools"] or JobTool.RECTANGLE in job["tools"]) and job[
             "mlTask"
-        ] == JobMLTask.ObjectDetection
+        ] == JobMLTask.OBJECT_DETECTION
 
 
 # pylint: disable=too-many-arguments
@@ -126,7 +126,8 @@ def _convert_kili_semantic_to_coco(
     annotation_modifier: Optional[CocoAnnotationModifier],
     merged: bool,
 ) -> Tuple[CocoFormat, List[Path]]:
-    """Creates the following structure on the disk:
+    """Creates the following structure on the disk.
+
     <dataset_dir>/
         data/
             <filename0>.<ext>

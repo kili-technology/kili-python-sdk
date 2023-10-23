@@ -47,15 +47,15 @@ class GeoJsonExporter(AbstractExporter):
         if "tools" not in job:
             return False
 
-        if job["mlTask"] != JobMLTask.ObjectDetection:
+        if job["mlTask"] != JobMLTask.OBJECT_DETECTION:
             return False
 
         compatible_tools = {
-            JobTool.Rectangle,
-            JobTool.Polygon,
-            JobTool.Semantic,
-            JobTool.Marker,
-            JobTool.Polyline,
+            JobTool.RECTANGLE,
+            JobTool.POLYGON,
+            JobTool.SEMANTIC,
+            JobTool.MARKER,
+            JobTool.POLYLINE,
         }
 
         return all(tool in compatible_tools for tool in job["tools"])
