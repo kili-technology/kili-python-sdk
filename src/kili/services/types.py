@@ -17,8 +17,6 @@ class JobCategory(NamedTuple):
     job_id: str
 
 
-LabelType = Literal["AUTOSAVE", "DEFAULT", "PREDICTION", "REVIEW", "INFERENCE"]
-
 MLTask = Literal["CLASSIFICATION", "NAMED_ENTITIES_RECOGNITION", "OBJECT_DETECTION"]
 Tool = Literal["rectangle", "semantic", "polygon"]
 JobName = NewType("JobName", str)

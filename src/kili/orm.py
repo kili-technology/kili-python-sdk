@@ -28,17 +28,6 @@ AnnotationFormat = Literal[
 
 
 @dataclass
-class AssetStatus:
-    """List of asset status."""
-
-    Labeled = "LABELED"
-    Ongoing = "ONGOING"
-    Reviewed = "REVIEWED"
-    ToReview = "TO_REVIEW"
-    Todo = "TODO"
-
-
-@dataclass
 class JobMLTask:
     """List of ML Tasks."""
 

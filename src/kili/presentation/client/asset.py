@@ -10,14 +10,18 @@ from typing import (
     Literal,
     Optional,
     Union,
+    cast,
     overload,
 )
 
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetFilters, AssetId, AssetStatus
+from kili.domain.asset.asset import AssetExternalId
 from kili.domain.issue import IssueStatus, IssueType
+from kili.domain.label import LabelType
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
@@ -75,10 +79,10 @@ class AssetClientMethods(BaseClientMethods):
         label_created_at_lt: Optional[str] = None,
         label_honeypot_mark_gt: Optional[float] = None,
         label_honeypot_mark_lt: Optional[float] = None,
-        label_type_in: Optional[List[str]] = None,
+        label_type_in: Optional[List[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         skipped: Optional[bool] = None,
-        status_in: Optional[List[str]] = None,
+        status_in: Optional[List[AssetStatus]] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         label_category_search: Optional[str] = None,
@@ -99,8 +103,8 @@ class AssetClientMethods(BaseClientMethods):
         label_created_at_lte: Optional[str] = None,
         label_honeypot_mark_gte: Optional[float] = None,
         label_honeypot_mark_lte: Optional[float] = None,
-        issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
-        issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
+        issue_type: Optional[IssueType] = None,
+        issue_status: Optional[IssueStatus] = None,
         external_id_strictly_in: Optional[List[str]] = None,
         external_id_in: Optional[List[str]] = None,
         label_output_format: Literal["dict", "parsed_label"] = "dict",
@@ -147,10 +151,10 @@ class AssetClientMethods(BaseClientMethods):
         label_created_at_lt: Optional[str] = None,
         label_honeypot_mark_gt: Optional[float] = None,
         label_honeypot_mark_lt: Optional[float] = None,
-        label_type_in: Optional[List[str]] = None,
+        label_type_in: Optional[List[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         skipped: Optional[bool] = None,
-        status_in: Optional[List[str]] = None,
+        status_in: Optional[List[AssetStatus]] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         label_category_search: Optional[str] = None,
@@ -219,10 +223,10 @@ class AssetClientMethods(BaseClientMethods):
         label_created_at_lt: Optional[str] = None,
         label_honeypot_mark_gt: Optional[float] = None,
         label_honeypot_mark_lt: Optional[float] = None,
-        label_type_in: Optional[List[str]] = None,
+        label_type_in: Optional[List[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         skipped: Optional[bool] = None,
-        status_in: Optional[List[str]] = None,
+        status_in: Optional[List[AssetStatus]] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         label_category_search: Optional[str] = None,
@@ -408,14 +412,18 @@ class AssetClientMethods(BaseClientMethods):
 
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
         filters = AssetFilters(
-            project_id=project_id,
-            asset_id=asset_id,
-            asset_id_in=asset_id_in,
-            asset_id_not_in=asset_id_not_in,
+            project_id=ProjectId(project_id),
+            asset_id=AssetId(asset_id) if asset_id else None,
+            asset_id_in=cast(List[AssetId], asset_id_in) if asset_id_in else None,
+            asset_id_not_in=cast(List[AssetId], asset_id_not_in) if asset_id_not_in else None,
             consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
             consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
-            external_id_strictly_in=external_id_strictly_in or external_id_contains,
-            external_id_in=external_id_in,
+            external_id_strictly_in=(
+                cast(List[AssetExternalId], external_id_strictly_in or external_id_contains)
+                if external_id_strictly_in or external_id_contains
+                else None
+            ),
+            external_id_in=cast(List[AssetExternalId], external_id_in) if external_id_in else None,
             honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
             honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
             inference_mark_gte=inference_mark_gte,
@@ -454,6 +462,7 @@ class AssetClientMethods(BaseClientMethods):
             import pandas as pd  # pylint: disable=import-outside-toplevel
 
             return pd.DataFrame(list(assets_gen))
+
         if as_generator:
             return assets_gen
         return list(assets_gen)
@@ -468,12 +477,12 @@ class AssetClientMethods(BaseClientMethods):
         asset_id_not_in: Optional[List[str]] = None,
         external_id_contains: Optional[List[str]] = None,
         metadata_where: Optional[dict] = None,
-        status_in: Optional[List[str]] = None,
+        status_in: Optional[List[AssetStatus]] = None,
         consensus_mark_gt: Optional[float] = None,
         consensus_mark_lt: Optional[float] = None,
         honeypot_mark_gt: Optional[float] = None,
         honeypot_mark_lt: Optional[float] = None,
-        label_type_in: Optional[List[str]] = None,
+        label_type_in: Optional[List[LabelType]] = None,
         label_author_in: Optional[List[str]] = None,
         label_consensus_mark_gt: Optional[float] = None,
         label_consensus_mark_lt: Optional[float] = None,
@@ -619,14 +628,18 @@ class AssetClientMethods(BaseClientMethods):
                 )
 
         filters = AssetFilters(
-            project_id=project_id,
-            asset_id=asset_id,
-            asset_id_in=asset_id_in,
-            asset_id_not_in=asset_id_not_in,
+            project_id=ProjectId(project_id),
+            asset_id=AssetId(asset_id) if asset_id else None,
+            asset_id_in=cast(List[AssetId], asset_id_in) if asset_id_in else None,
+            asset_id_not_in=cast(List[AssetId], asset_id_not_in) if asset_id_not_in else None,
             consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
             consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
-            external_id_strictly_in=external_id_strictly_in or external_id_contains,
-            external_id_in=external_id_in,
+            external_id_strictly_in=(
+                cast(List[AssetExternalId], external_id_strictly_in or external_id_contains)
+                if external_id_strictly_in or external_id_contains
+                else None
+            ),
+            external_id_in=cast(List[AssetExternalId], external_id_in) if external_id_in else None,
             honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
             honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
             inference_mark_gte=inference_mark_gte,

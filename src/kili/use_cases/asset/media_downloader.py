@@ -12,6 +12,7 @@ from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
 from kili.adapters.http_client import HttpClient
+from kili.domain.asset import AssetExternalId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.use_cases.asset.exceptions import (
@@ -192,7 +193,7 @@ def get_file_extension_from_headers(url: str, http_client: HttpClient) -> Option
 
 
 def get_download_path(
-    url: str, external_id: str, local_dir_path: Path, http_client: HttpClient
+    url: str, external_id: AssetExternalId, local_dir_path: Path, http_client: HttpClient
 ) -> Path:
     """Build the path to download a file the file in local."""
     extension = get_file_extension_from_headers(url, http_client)
@@ -204,7 +205,9 @@ def get_download_path(
 
 
 @retry(stop=stop_after_attempt(2), wait=wait_random(min=1, max=2), reraise=True)
-def download_file(url: str, external_id: str, local_dir_path: Path, http_client: HttpClient) -> str:
+def download_file(
+    url: str, external_id: AssetExternalId, local_dir_path: Path, http_client: HttpClient
+) -> str:
     """Download a file by streming chunks of 1Mb.
 
     If the file already exists in local, it does not download it.

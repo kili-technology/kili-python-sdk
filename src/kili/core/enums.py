@@ -5,15 +5,6 @@ From https://docs.kili-technology.com/reference/graphql-api#enums.
 
 from typing import Literal
 
-LabelType = Literal[
-    "AUTOSAVE",
-    "DEFAULT",
-    "INFERENCE",
-    "PREDICTION",
-    "REVIEW",
-]
-
-
 LicenseType = Literal[
     "DISCOVERY",
     "FREEMIUM",
@@ -89,13 +80,4 @@ Right = Literal[
     "UPLOAD_CLOUD_DATA",
     "USE_API",
     "USE_API_PRIORITY",
-]
-
-
-Status = Literal[
-    "TODO",
-    "ONGOING",
-    "LABELED",
-    "REVIEWED",
-    "TO_REVIEW",
 ]
