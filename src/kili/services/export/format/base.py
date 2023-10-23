@@ -8,7 +8,7 @@ import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, Tuple, cast
+from typing import Dict, List, NamedTuple, Optional, Tuple
 
 from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
@@ -262,7 +262,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """Format the label JSON response in the requested format."""
         formatted_json_response = label["jsonResponse"]
         json_response = {}
-        for key, value in cast(Dict, formatted_json_response).items():
+        for key, value in formatted_json_response.items():
             if key.isdigit():
                 json_response[int(key)] = value
                 continue

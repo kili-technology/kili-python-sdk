@@ -37,7 +37,39 @@ def test_process_asset_for_job_image_not_served_by_kili():
             ),
         )
         asset_remote_content, video_filenames = _process_asset(
-            asset_image_1,
+            {
+                "latestLabel": {
+                    "jsonResponse": {
+                        "JOB_0": {
+                            "annotations": [
+                                {
+                                    "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                                    "jobName": "JOB_0",
+                                    "mid": "2022040515434712-7532",
+                                    "mlTask": "OBJECT_DETECTION",
+                                    "boundingPoly": [
+                                        {
+                                            "normalizedVertices": [
+                                                {"x": 0.16504140348233334, "y": 0.7986938935103378},
+                                                {"x": 0.16504140348233334, "y": 0.2605618833516984},
+                                                {"x": 0.8377886490672706, "y": 0.2605618833516984},
+                                                {"x": 0.8377886490672706, "y": 0.7986938935103378},
+                                            ]
+                                        }
+                                    ],
+                                    "type": "rectangle",
+                                    "children": {},
+                                }
+                            ]
+                        }
+                    },
+                    "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+                },
+                "externalId": "car_1",
+                "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
+                "jsonContent": "",
+                "resolution": {"height": 1000, "width": 1000},
+            },
             images_folder,
             labels_folder,
             category_ids,
