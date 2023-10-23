@@ -108,7 +108,7 @@ def test_retry_long_wait_warner():
 
 
 def test_get_labels_asset_ids_map(kili_api_gateway: KiliAPIGateway):
-    kili_api_gateway.list_assets.return_value = (
+    kili_api_gateway.list_labels.return_value = (
         label
         for label in [
             {"id": "label_id_1", "labelOf": {"id": "asset_id_1"}},
@@ -116,9 +116,10 @@ def test_get_labels_asset_ids_map(kili_api_gateway: KiliAPIGateway):
         ]
     )
 
-    assert get_labels_asset_ids_map(
+    labels = get_labels_asset_ids_map(
         kili_api_gateway, ProjectId("project_id"), [LabelId("label_id_1"), LabelId("label_id_2")]
-    ) == {"label_id_1": "asset_id_1", "label_id_2": "asset_id_1"}
+    )
+    assert labels == {"label_id_1": "asset_id_1", "label_id_2": "asset_id_1"}
 
 
 @patch("kili.entrypoints.mutations.asset.mutate_from_paginated_call", return_value=[{"data": None}])
