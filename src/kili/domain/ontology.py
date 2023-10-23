@@ -23,11 +23,11 @@ class JobMLTask(str, Enum):
 class JobTool(str, Enum):
     """List of tools."""
 
-    MARKER = ("marker",)
-    POLYGON = ("polygon",)
-    POLYLINE = ("polyline",)
-    POSE = ("pose",)
-    RANGE = ("range",)
-    RECTANGLE = ("rectangle",)
-    SEMANTIC = ("semantic",)
-    VECTOR = ("vector",)
+    MARKER = "marker"
+    POLYGON = "polygon"
+    POLYLINE = "polyline"
+    POSE = "pose"
+    RANGE = "range"
+    RECTANGLE = "rectangle"
+    SEMANTIC = "semantic"
+    VECTOR = "vector"
