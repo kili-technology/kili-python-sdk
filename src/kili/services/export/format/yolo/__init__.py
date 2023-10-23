@@ -73,7 +73,8 @@ class YoloExporter(AbstractExporter):
         compatible_tools = {JobTool.RECTANGLE, JobTool.POLYGON, JobTool.SEMANTIC}
 
         return job["mlTask"] == JobMLTask.OBJECT_DETECTION and all(
-            tool in compatible_tools for tool in job["tools"]
+            tool in compatible_tools
+            for tool in job["tools"]  # pyright: ignore[reportGeneralTypeIssues]
         )
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:

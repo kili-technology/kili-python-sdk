@@ -58,7 +58,10 @@ class GeoJsonExporter(AbstractExporter):
             JobTool.POLYLINE,
         }
 
-        return all(tool in compatible_tools for tool in job["tools"])
+        return all(
+            tool in compatible_tools
+            for tool in job["tools"]  # pyright: ignore[reportGeneralTypeIssues]
+        )
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         self.logger.info("Exporting to GeoJson format")
