@@ -11,8 +11,7 @@ import pytest_mock
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery
-from kili.domain.asset import AssetFilters
-from kili.domain.asset.asset import AssetExternalId
+from kili.domain.asset import AssetExternalId, AssetFilters
 from kili.domain.project import ProjectId
 from kili.entrypoints.queries.label import QueriesLabel
 from kili.services.export import AbstractExporter, export_labels
