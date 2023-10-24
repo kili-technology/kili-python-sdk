@@ -1,10 +1,11 @@
 """Label use cases."""
 
 from functools import partial
-from typing import Generator, Literal
+from typing import Dict, Generator, List, Literal, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.domain.label import LabelFilters
+from kili.adapters.kili_api_gateway.label.types import UpdateLabelData
+from kili.domain.label import LabelFilters, LabelId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.use_cases.base import BaseUseCases
@@ -54,3 +55,29 @@ class LabelUseCases(BaseUseCases):
             labels_gen = post_call_function(labels=labels_gen)
 
         return labels_gen
+
+    def update_properties_in_label(
+        self,
+        label_id: LabelId,
+        seconds_to_label: Optional[int],
+        model_name: Optional[str],
+        json_response: Optional[Dict],
+        fields: ListOrTuple[str],
+    ) -> Dict:
+        """Update properties in label."""
+        return self._kili_api_gateway.update_properties_in_label(
+            label_id=label_id,
+            data=UpdateLabelData(
+                json_response=json_response,
+                model_name=model_name,
+                seconds_to_label=seconds_to_label,
+                is_sent_back_to_queue=None,
+            ),
+            fields=fields,
+        )
+
+    def delete_labels(
+        self, ids: ListOrTuple[LabelId], disable_tqdm: Optional[bool]
+    ) -> List[LabelId]:
+        """Delete labels."""
+        return self._kili_api_gateway.delete_labels(ids=ids, disable_tqdm=disable_tqdm)

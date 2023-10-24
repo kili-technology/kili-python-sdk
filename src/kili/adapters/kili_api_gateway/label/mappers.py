@@ -1,11 +1,14 @@
 """GraphQL payload data mappers for label operations."""
 
+import json
 from typing import Dict
 
 from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
 from kili.adapters.kili_api_gateway.project.mappers import project_where_mapper
 from kili.adapters.kili_api_gateway.user.mappers import user_where_mapper
 from kili.domain.label import LabelFilters
+
+from .types import UpdateLabelData
 
 
 def label_where_mapper(filters: LabelFilters) -> Dict[str, object]:
@@ -28,4 +31,14 @@ def label_where_mapper(filters: LabelFilters) -> Dict[str, object]:
         "search": filters.search,
         "typeIn": filters.type_in,
         "user": user_where_mapper(filters.user) if filters.user else None,
+    }
+
+
+def update_label_data_mapper(data: UpdateLabelData) -> Dict:
+    """Map UpdateLabelData to GraphQL LabelData."""
+    return {
+        "isSentBackToQueue": data.is_sent_back_to_queue,
+        "jsonResponse": json.dumps(data.json_response) if data.json_response else None,
+        "modelName": data.model_name,
+        "secondsToLabel": data.seconds_to_label,
     }

@@ -16,3 +16,27 @@ query countLabels($where: LabelWhere!) {
     data: countLabels(where: $where)
 }
 """
+
+
+def get_update_properties_in_label_query(fragment: str) -> str:
+    """Get the gql update properties in label query."""
+    return f"""
+    mutation(
+        $where: LabelWhere!
+        $data: LabelData!
+    ) {{
+    data: updatePropertiesInLabel(
+        where: $where
+        data:  $data
+    ) {{
+        {fragment}
+    }}
+    }}
+    """
+
+
+GQL_DELETE_LABELS = """
+mutation($ids: [ID!]!) {
+  data: deleteLabels(ids: $ids)
+}
+"""

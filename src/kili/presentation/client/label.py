@@ -15,7 +15,7 @@ from typing import (
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.helpers import validate_category_search_query
+from kili.core.helpers import is_empty_list_with_warning, validate_category_search_query
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetStatus
 from kili.domain.asset.asset import AssetId
 from kili.domain.label import LabelFilters, LabelId, LabelType
@@ -723,4 +723,59 @@ class LabelClientMethods(BaseClientMethods):
             disable_tqdm=disable_tqdm,
             category_search=category_search,
             as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
+        )
+
+    @typechecked
+    def update_properties_in_label(
+        self,
+        label_id: str,
+        seconds_to_label: Optional[int] = None,
+        model_name: Optional[str] = None,
+        json_response: Optional[dict] = None,
+    ) -> Dict[Literal["id"], str]:
+        """Update properties of a label.
+
+        Args:
+            label_id: Identifier of the label
+            seconds_to_label: Time to create the label
+            model_name: Name of the model
+            json_response: The label is given here
+
+        Returns:
+            A dictionary with the label `id`.
+
+        Examples:
+            >>> kili.update_properties_in_label(label_id=label_id, json_response={...})
+        """
+        return LabelUseCases(self.kili_api_gateway).update_properties_in_label(
+            label_id=LabelId(label_id),
+            seconds_to_label=seconds_to_label,
+            model_name=model_name,
+            json_response=json_response,
+            fields=("id",),
+        )
+
+    @typechecked
+    def delete_labels(
+        self,
+        ids: ListOrTuple[str],
+        disable_tqdm: Optional[bool] = None,
+    ) -> List[str]:
+        """Delete labels.
+
+        Currently, only `PREDICTION` and `INFERENCE` labels can be deleted.
+
+        Args:
+            ids: List of label ids to delete.
+            disable_tqdm: If `True`, the progress bar will be disabled.
+
+        Returns:
+            The deleted label ids.
+        """
+        if is_empty_list_with_warning("delete_labels", "ids", ids):
+            return []
+
+        return LabelUseCases(self.kili_api_gateway).delete_labels(
+            ids=cast(ListOrTuple[LabelId], ids),
+            disable_tqdm=disable_tqdm,
         )
