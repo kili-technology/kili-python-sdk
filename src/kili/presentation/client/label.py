@@ -775,7 +775,8 @@ class LabelClientMethods(BaseClientMethods):
         if is_empty_list_with_warning("delete_labels", "ids", ids):
             return []
 
-        return LabelUseCases(self.kili_api_gateway).delete_labels(
+        deleted_label_ids = LabelUseCases(self.kili_api_gateway).delete_labels(
             ids=cast(ListOrTuple[LabelId], ids),
             disable_tqdm=disable_tqdm,
         )
+        return cast(List[str], deleted_label_ids)
