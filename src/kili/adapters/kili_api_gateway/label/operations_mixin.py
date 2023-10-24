@@ -13,6 +13,7 @@ from kili.domain.label import LabelFilters, LabelId
 from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
+from .formatters import load_label_json_fields
 from .mappers import label_where_mapper, update_label_data_mapper
 from .operations import (
     GQL_COUNT_LABELS,
@@ -42,9 +43,10 @@ class LabelOperationMixin(BaseOperationMixin):
         fragment = fragment_builder(fields)
         query = get_labels_query(fragment)
         where = label_where_mapper(filters)
-        return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
+        labels_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving labels", GQL_COUNT_LABELS
         )
+        return (load_label_json_fields(label, fields) for label in labels_gen)
 
     def update_properties_in_label(
         self, label_id: LabelId, data: UpdateLabelData, fields: ListOrTuple[str]
@@ -54,7 +56,8 @@ class LabelOperationMixin(BaseOperationMixin):
         query = get_update_properties_in_label_query(fragment)
         variables = {"where": {"id": label_id}, "data": update_label_data_mapper(data)}
         result = self.graphql_client.execute(query, variables)
-        return result["data"]
+        modified_label = result["data"]
+        return load_label_json_fields(modified_label, fields=fields)
 
     def delete_labels(
         self, ids: ListOrTuple[LabelId], disable_tqdm: Optional[bool]
