@@ -1,5 +1,7 @@
 """Client presentation methods for labels."""
 
+import warnings
+from itertools import repeat
 from typing import (
     Dict,
     Generator,
@@ -847,6 +849,7 @@ class LabelClientMethods(BaseClientMethods):
                 asset_id_array,
             ]
         )
+        nb_labels_to_add = len(json_response_array)
 
         labels = [
             LabelToCreateUseCaseInput(
@@ -858,14 +861,12 @@ class LabelClientMethods(BaseClientMethods):
                 label_type=label_type,
                 model_name=model_name,
             )
-            for (asset_id, asset_external_id, json_response, seconds_to_label, author_id) in list(
-                zip(
-                    asset_id_array or [None] * len(json_response_array),
-                    asset_external_id_array or [None] * len(json_response_array),
-                    json_response_array,
-                    seconds_to_label_array or [None] * len(json_response_array),
-                    author_id_array or [None] * len(json_response_array),
-                )
+            for (asset_id, asset_external_id, json_response, seconds_to_label, author_id) in zip(
+                asset_id_array or repeat(None, nb_labels_to_add),
+                asset_external_id_array or repeat(None, nb_labels_to_add),
+                json_response_array,
+                seconds_to_label_array or repeat(None, nb_labels_to_add),
+                author_id_array or repeat(None, nb_labels_to_add),
             )
         ]
 
@@ -877,3 +878,97 @@ class LabelClientMethods(BaseClientMethods):
             overwrite=overwrite,
             project_id=ProjectId(project_id) if project_id else None,
         )
+
+    @typechecked
+    def create_predictions(
+        self,
+        project_id: str,
+        external_id_array: Optional[List[str]] = None,
+        model_name_array: Optional[List[str]] = None,
+        json_response_array: Optional[List[dict]] = None,
+        model_name: Optional[str] = None,
+        asset_id_array: Optional[List[str]] = None,
+        disable_tqdm: Optional[bool] = None,
+        overwrite: bool = False,
+    ) -> Dict[Literal["id"], str]:
+        # pylint: disable=line-too-long
+        """Create predictions for specific assets.
+
+        Args:
+            project_id: Identifier of the project.
+            external_id_array: The external IDs of the assets for which we want to add predictions.
+            model_name_array: Deprecated, use `model_name` instead.
+            json_response_array: The predictions are given here. For examples,
+                see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
+            model_name: The name of the model that generated the predictions
+            asset_id_array: The internal IDs of the assets for which we want to add predictions.
+            disable_tqdm: Disable tqdm progress bar.
+            overwrite: if True, it will overwrite existing predictions of
+                the same model name on the targeted assets.
+
+        Returns:
+            A dictionary with the project `id`.
+
+        !!! example "Recipe"
+            For more detailed examples on how to create predictions, see [the recipe](https://docs.kili-technology.com/recipes/importing-labels-and-predictions).
+
+        !!! warning "model name"
+            The use of `model_name_array` is deprecated. Creating predictions from different
+            models is not supported anymore. Please use `model_name` argument instead to
+            provide the predictions model name.
+        """
+        if json_response_array is None or len(json_response_array) == 0:
+            raise ValueError(
+                "json_response_array is empty, you must provide at least one prediction to upload"
+            )
+
+        assert_all_arrays_have_same_size(
+            [external_id_array, json_response_array, model_name_array, asset_id_array]
+        )
+        nb_labels_to_add = len(json_response_array)
+
+        if model_name is None:
+            if model_name_array is None:
+                raise ValueError("You must provide a model name with the `model_name` argument.")
+
+            if len(set(model_name_array)) > 1:
+                raise ValueError(
+                    "Creating predictions from different models is not supported anymore. Separate"
+                    " your calls by models."
+                )
+
+            warnings.warn(
+                "The use of `model_name_array` is deprecated. Creating predictions from"
+                " different models is not supported anymore. Please use `model_name` argument"
+                " instead to provide the predictions model name.",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+            model_name = model_name_array[0]
+
+        labels = [
+            LabelToCreateUseCaseInput(
+                asset_id=AssetId(asset_id) if asset_id else None,
+                asset_external_id=AssetExternalId(asset_external_id) if asset_external_id else None,
+                json_response=json_response,
+                label_type="PREDICTION",
+                model_name=model_name,
+                seconds_to_label=None,
+                author_id=None,
+            )
+            for (asset_id, asset_external_id, json_response) in zip(
+                asset_id_array or repeat(None, nb_labels_to_add),
+                external_id_array or repeat(None, nb_labels_to_add),
+                json_response_array,
+            )
+        ]
+
+        LabelUseCases(self.kili_api_gateway).append_labels(
+            fields=("id",),
+            disable_tqdm=disable_tqdm,
+            label_type="PREDICTION",
+            labels=labels,
+            overwrite=overwrite,
+            project_id=ProjectId(project_id) if project_id else None,
+        )
+        return {"id": project_id}
