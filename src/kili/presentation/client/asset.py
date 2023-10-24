@@ -17,8 +17,7 @@ from typing import (
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.domain.asset import AssetFilters, AssetId, AssetStatus
-from kili.domain.asset.asset import AssetExternalId
+from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
 from kili.domain.issue import IssueStatus, IssueType
 from kili.domain.label import LabelType
 from kili.domain.project import ProjectId

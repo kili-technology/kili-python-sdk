@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import List, Optional, cast
 
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
-from kili.domain.asset.asset import AssetExternalId, AssetId
+from kili.domain.asset import AssetExternalId, AssetId
 from kili.domain.project import ProjectId
 from kili.domain.question import QuestionId
 from kili.use_cases.asset.utils import AssetUseCasesUtils

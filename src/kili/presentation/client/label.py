@@ -17,7 +17,6 @@ from typeguard import typechecked
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import is_empty_list_with_warning, validate_category_search_query
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
-from kili.domain.asset.asset import AssetId
 from kili.domain.asset.helpers import check_asset_identifier_arguments
 from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectFilters, ProjectId

@@ -13,7 +13,7 @@ def project(kili: Kili):
                 "content": {"categories": {"A": {"children": [], "name": "A"}}, "input": "radio"},
                 "instruction": "classif",
                 "mlTask": "CLASSIFICATION",
-                "required": 1,
+                "required": 0,
                 "isChild": False,
             }
         }
@@ -22,8 +22,7 @@ def project(kili: Kili):
     project = kili.create_project(
         input_type="TEXT",
         json_interface=interface,
-        title="test_e2e_delete_labels",
-        description="test_e2e_delete_labels",
+        title="test_e2e_mutations_labels",
     )
 
     kili.append_many_to_dataset(
@@ -45,6 +44,30 @@ def project(kili: Kili):
     yield project
 
     kili.delete_project(project["id"])
+
+
+def test_e2e_update_labels(kili: Kili, project: Dict):
+    # Given
+    label_to_modify = kili.labels(project_id=project["id"], fields=("id",), first=1)[0]
+
+    # When
+    kili.update_properties_in_label(
+        label_to_modify["id"],
+        seconds_to_label=999,
+        model_name="fake_model_name",
+        json_response={"CLASSIFICATION_JOB": {}},
+    )
+
+    # Then
+    modified_label = kili.labels(
+        project_id=project["id"],
+        fields=("id", "secondsToLabel", "modelName", "jsonResponse"),
+        first=1,
+    )[0]
+    assert modified_label["id"] == label_to_modify["id"]
+    assert modified_label["secondsToLabel"] == 999
+    assert modified_label["modelName"] == "fake_model_name"
+    assert modified_label["jsonResponse"] == {"CLASSIFICATION_JOB": {}}
 
 
 def test_e2e_delete_labels(kili: Kili, project: Dict):

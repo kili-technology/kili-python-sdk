@@ -1,3 +1,4 @@
+import os
 from typing import Dict
 
 import pytest
@@ -53,6 +54,7 @@ def project_id(kili: Kili):
         ({"asset_external_id_strictly_in": ["asset_"]}, 0),
     ],
 )
+@pytest.mark.skipif(condition="lts" in os.getenv("KILI_API_ENDPOINT", ""), reason="need lts update")
 def test_given_project_with_labels_when_i_query_with_filters_then_it_works(
     project_id: str, kili: Kili, labels_query_params: Dict, nb_expected_labels: int
 ):

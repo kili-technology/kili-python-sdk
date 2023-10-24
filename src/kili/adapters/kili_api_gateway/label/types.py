@@ -10,7 +10,7 @@ from kili.domain.user import UserId
 
 @dataclass
 class UpdateLabelData:
-    """LabelData data."""
+    """Data to update a label."""
 
     is_sent_back_to_queue: Optional[bool]
     json_response: Optional[Dict]
