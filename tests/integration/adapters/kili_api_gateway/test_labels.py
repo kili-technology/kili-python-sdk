@@ -6,7 +6,10 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
 )
-from kili.adapters.kili_api_gateway.label.operations import get_labels_query
+from kili.adapters.kili_api_gateway.label.operations import (
+    GQL_DELETE_LABELS,
+    get_labels_query,
+)
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.asset import AssetExternalId, AssetFilters
 from kili.domain.label import LabelFilters, LabelId
@@ -58,3 +61,32 @@ def test_given_kili_gateway_when_querying_labels__it_calls_proper_resolver(
         "first": 1,
         "skip": 0,
     }
+
+
+def test_given_kili_gateway_when_i_delete_labels_then_it_calls_proper_resolver(
+    graphql_client: GraphQLClient, http_client: HttpClient, mocker: pytest_mock.MockerFixture
+):
+    # Given
+    kili_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
+
+    # When
+    kili_gateway.delete_labels(ids=[LabelId("id1"), LabelId("id2")], disable_tqdm=True)
+
+    # Then
+    graphql_client.execute.assert_called_once_with(
+        GQL_DELETE_LABELS,
+        {"ids": ["id1", "id2"]},
+    )
+
+
+def test_given_kili_gateway_when_i_delete_labels_then_it_does_by_batch(
+    graphql_client: GraphQLClient, http_client: HttpClient, mocker: pytest_mock.MockerFixture
+):
+    # Given
+    kili_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
+
+    # When
+    kili_gateway.delete_labels(ids=[LabelId("id1")] * 101, disable_tqdm=True)
+
+    # Then
+    assert graphql_client.execute.call_count == 2
