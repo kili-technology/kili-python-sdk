@@ -185,7 +185,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             "where": {"id": label_asset_id},
         }
         result = self.graphql_client.execute(GQL_APPEND_TO_LABELS, variables)
-        return self.format_result("data", result, Dict)
+        return self.format_result("data", result, None)
 
     @typechecked
     def append_labels(
@@ -314,4 +314,4 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             "where": {"id": asset_id},
         }
         result = self.graphql_client.execute(GQL_CREATE_HONEYPOT, variables)
-        return self.format_result("data", result, Dict)
+        return self.format_result("data", result, None)
