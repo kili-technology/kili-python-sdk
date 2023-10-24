@@ -1,5 +1,6 @@
 """Mixin extending Kili API Gateway class with label related operations."""
 
+import json
 from typing import Dict, Generator, List, Optional
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
@@ -10,6 +11,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 )
 from kili.core.constants import MUTATION_BATCH_SIZE
 from kili.core.utils.pagination import batcher
+from kili.domain.asset import AssetId
 from kili.domain.label import LabelFilters, LabelId
 from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
@@ -24,6 +26,7 @@ from .operations import (
     GQL_COUNT_LABELS,
     GQL_DELETE_LABELS,
     get_append_many_labels_mutation,
+    get_create_honeypot_mutation,
     get_labels_query,
     get_update_properties_in_label_mutation,
 )
@@ -110,3 +113,16 @@ class LabelOperationMixin(BaseOperationMixin):
                 pbar.update(len(batch_of_label_data))
 
         return added_labels
+
+    def create_honeypot_label(
+        self, json_response: Dict, asset_id: AssetId, fields: ListOrTuple[str]
+    ) -> Dict:
+        """Create honeypot label."""
+        fragment = fragment_builder(fields)
+        query = get_create_honeypot_mutation(fragment)
+        variables = {
+            "data": {"jsonResponse": json.dumps(json_response)},
+            "where": {"id": asset_id},
+        }
+        result = self.graphql_client.execute(query, variables)
+        return result["data"]

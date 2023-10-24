@@ -9,6 +9,7 @@ from kili.adapters.kili_api_gateway.label.types import (
     AppendManyLabelsData,
     UpdateLabelData,
 )
+from kili.domain.asset.asset import AssetExternalId, AssetId
 from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
@@ -133,4 +134,28 @@ class LabelUseCases(BaseUseCases):
         )
         return self._kili_api_gateway.append_many_labels(
             fields=fields, disable_tqdm=disable_tqdm, data=data
+        )
+
+    def create_honeypot_label(
+        self,
+        json_response: Dict,
+        asset_id: Optional[AssetId],
+        asset_external_id: Optional[AssetExternalId],
+        project_id: Optional[ProjectId],
+        fields: ListOrTuple[str],
+    ) -> Dict:
+        """Create honeypot label."""
+        if asset_id is None:
+            if asset_external_id is None or project_id is None:
+                raise ValueError(
+                    "Either provide `asset_id` or `asset_external_id` and `project_id`."
+                )
+
+            asset_id = AssetUseCasesUtils(self._kili_api_gateway).infer_ids_from_external_ids(
+                asset_external_ids=[asset_external_id],
+                project_id=project_id,
+            )[asset_external_id]
+
+        return self._kili_api_gateway.create_honeypot_label(
+            json_response=json_response, asset_id=asset_id, fields=fields
         )

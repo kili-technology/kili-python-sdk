@@ -972,3 +972,38 @@ class LabelClientMethods(BaseClientMethods):
             project_id=ProjectId(project_id) if project_id else None,
         )
         return {"id": project_id}
+
+    @typechecked
+    def create_honeypot(
+        self,
+        json_response: dict,
+        asset_external_id: Optional[str] = None,
+        asset_id: Optional[str] = None,
+        project_id: Optional[str] = None,
+    ) -> Dict:
+        """Create honeypot for an asset.
+
+        !!! info
+            Uses the given `json_response` to create a `REVIEW` label.
+            This enables Kili to compute a`honeypotMark`,
+            which measures the similarity between this label and other labels.
+
+        Args:
+            json_response: The JSON response of the honeypot label of the asset.
+            asset_id: Identifier of the asset.
+                Either provide `asset_id` or `asset_external_id` and `project_id`.
+            asset_external_id: External identifier of the asset.
+                Either provide `asset_id` or `asset_external_id` and `project_id`.
+            project_id: Identifier of the project.
+                Either provide `asset_id` or `asset_external_id` and `project_id`.
+
+        Returns:
+            A dictionary-like object representing the created label.
+        """
+        return LabelUseCases(self.kili_api_gateway).create_honeypot_label(
+            json_response=json_response,
+            asset_id=AssetId(asset_id) if asset_id else None,
+            asset_external_id=AssetExternalId(asset_external_id) if asset_external_id else None,
+            project_id=ProjectId(project_id) if project_id else None,
+            fields=("id",),
+        )

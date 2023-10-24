@@ -1,5 +1,6 @@
 from typing import Dict, Generator, List
 
+import pytest
 import pytest_mock
 from typing_extensions import assert_type
 
@@ -53,3 +54,42 @@ def test_given_kili_client_when_fetching_inference_labels_then_it_calls_proper_u
 
     # Then
     assert mocked_use_cases.call_count == 1
+
+
+def test_given_kili_client_when_adding_labels_with_mixed_ids_then_it_crashes(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    kili = LabelClientMethods()
+    kili.kili_api_gateway = kili_api_gateway
+
+    # When Then
+    with pytest.raises(
+        ValueError,
+        match="Either provide asset IDs or asset external IDs. Not both at the same time.",
+    ):
+        _ = kili.append_labels(
+            asset_id_array=["asset_id_1", "asset_id_2"],
+            asset_external_id_array=["asset_external_id_1", "asset_external_id_2"],
+            json_response_array=[{}, {}],
+        )
+
+
+def test_given_kili_client_when_adding_predictions_without_model_name_then_it_crashes(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    kili = LabelClientMethods()
+    kili.kili_api_gateway = kili_api_gateway
+
+    # When Then
+    with pytest.raises(
+        ValueError,
+        match="You must provide `model_name` when uploading `PREDICTION` labels.",
+    ):
+        _ = kili.append_labels(
+            asset_id_array=["asset_id_1", "asset_id_2"],
+            asset_external_id_array=None,
+            label_type="PREDICTION",
+            json_response_array=[{}, {}],
+        )

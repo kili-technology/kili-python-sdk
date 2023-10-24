@@ -12,10 +12,7 @@ from kili.domain.label import LabelType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
-from kili.entrypoints.mutations.label.queries import (
-    GQL_APPEND_TO_LABELS,
-    GQL_CREATE_HONEYPOT,
-)
+from kili.entrypoints.mutations.label.queries import GQL_APPEND_TO_LABELS
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -98,48 +95,4 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             "where": {"id": label_asset_id},
         }
         result = self.graphql_client.execute(GQL_APPEND_TO_LABELS, variables)
-        return self.format_result("data", result, None)
-
-    @typechecked
-    def create_honeypot(
-        self,
-        json_response: dict,
-        asset_external_id: Optional[str] = None,
-        asset_id: Optional[str] = None,
-        project_id: Optional[str] = None,
-    ) -> Dict:
-        """Create honeypot for an asset.
-
-        !!! info
-            Uses the given `json_response` to create a `REVIEW` label.
-            This enables Kili to compute a`honeypotMark`,
-            which measures the similarity between this label and other labels.
-
-        Args:
-            json_response: The JSON response of the honeypot label of the asset.
-            asset_id: Identifier of the asset.
-                Either provide `asset_id` or `asset_external_id` and `project_id`.
-            asset_external_id: External identifier of the asset.
-                Either provide `asset_id` or `asset_external_id` and `project_id`.
-            project_id: Identifier of the project.
-                Either provide `asset_id` or `asset_external_id` and `project_id`.
-
-        Returns:
-            A dictionary-like object representing the created label.
-        """
-        if asset_id is None:
-            if asset_external_id is None or project_id is None:
-                raise ValueError(
-                    "Either provide `asset_id` or `asset_external_id` and `project_id`."
-                )
-            asset_id = AssetUseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
-                cast(ListOrTuple[AssetExternalId], [asset_external_id]),
-                ProjectId(project_id),
-            )[AssetExternalId(asset_external_id)]
-
-        variables = {
-            "data": {"jsonResponse": dumps(json_response)},
-            "where": {"id": asset_id},
-        }
-        result = self.graphql_client.execute(GQL_CREATE_HONEYPOT, variables)
         return self.format_result("data", result, None)
