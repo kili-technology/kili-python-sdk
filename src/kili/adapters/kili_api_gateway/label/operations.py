@@ -18,7 +18,7 @@ query countLabels($where: LabelWhere!) {
 """
 
 
-def get_update_properties_in_label_query(fragment: str) -> str:
+def get_update_properties_in_label_mutation(fragment: str) -> str:
     """Get the gql update properties in label query."""
     return f"""
     mutation(

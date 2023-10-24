@@ -25,7 +25,7 @@ from .operations import (
     GQL_DELETE_LABELS,
     get_append_many_labels_mutation,
     get_labels_query,
-    get_update_properties_in_label_query,
+    get_update_properties_in_label_mutation,
 )
 from .types import AppendManyLabelsData, UpdateLabelData
 
@@ -59,7 +59,7 @@ class LabelOperationMixin(BaseOperationMixin):
     ) -> Dict:
         """Update properties in label."""
         fragment = fragment_builder(fields)
-        query = get_update_properties_in_label_query(fragment)
+        query = get_update_properties_in_label_mutation(fragment)
         variables = {"where": {"id": label_id}, "data": update_label_data_mapper(data)}
         result = self.graphql_client.execute(query, variables)
         modified_label = result["data"]

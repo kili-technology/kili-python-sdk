@@ -3,8 +3,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
-from kili.services.label_import import import_labels_from_dict
+from kili.adapters.kili_api_gateway.label.operations import (
+    get_append_many_labels_mutation,
+)
 
 
 def mocked_AssetQuery(*_):
@@ -62,7 +63,7 @@ class TestImportLabelsFromDict:
 
         import_labels_from_dict(self.kili, project_id, labels, label_type, overwrite, model_name)
         self.kili.graphql_client.execute.assert_called_with(
-            GQL_APPEND_MANY_LABELS, call, timeout=60
+            get_append_many_labels_mutation(" id"), call, timeout=60
         )
 
     def test_import_default_labels_with_external_id(self):
@@ -101,7 +102,7 @@ class TestImportLabelsFromDict:
 
         import_labels_from_dict(self.kili, project_id, labels, label_type, overwrite, model_name)
         self.kili.graphql_client.execute.assert_called_with(
-            GQL_APPEND_MANY_LABELS, call, timeout=60
+            get_append_many_labels_mutation(" id"), call, timeout=60
         )
 
     def test_import_labels_with_optional_params(self):
@@ -139,7 +140,7 @@ class TestImportLabelsFromDict:
 
         import_labels_from_dict(self.kili, project_id, labels, label_type, overwrite, model_name)
         self.kili.graphql_client.execute.assert_called_with(
-            GQL_APPEND_MANY_LABELS, call, timeout=60
+            get_append_many_labels_mutation(" id"), call, timeout=60
         )
 
     def test_return_error_when_give_unexisting_label_field(self):
@@ -208,7 +209,7 @@ class TestImportLabelsFromDict:
 
         import_labels_from_dict(self.kili, project_id, labels, label_type, overwrite, model_name)
         self.kili.graphql_client.execute.assert_called_with(
-            GQL_APPEND_MANY_LABELS, call, timeout=60
+            get_append_many_labels_mutation(" id"), call, timeout=60
         )
 
     def test_import_predictions_with_overwritting(self):
@@ -239,7 +240,7 @@ class TestImportLabelsFromDict:
 
         import_labels_from_dict(self.kili, project_id, labels, label_type, overwrite, model_name)
         self.kili.graphql_client.execute.assert_called_with(
-            GQL_APPEND_MANY_LABELS, call, timeout=60
+            get_append_many_labels_mutation(" id"), call, timeout=60
         )
 
     def test_import_predictions_without_giving_model_name(self):
