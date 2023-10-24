@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
-from kili.orm import JobMLTask, JobTool
+from kili.domain.ontology import JobMLTask, JobTool
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
@@ -70,10 +70,11 @@ class YoloExporter(AbstractExporter):
         if "tools" not in job:
             return False
 
-        compatible_tools = {JobTool.Rectangle, JobTool.Polygon, JobTool.Semantic}
+        compatible_tools = {JobTool.RECTANGLE, JobTool.POLYGON, JobTool.SEMANTIC}
 
-        return job["mlTask"] == JobMLTask.ObjectDetection and all(
-            tool in compatible_tools for tool in job["tools"]
+        return job["mlTask"] == JobMLTask.OBJECT_DETECTION and all(
+            tool in compatible_tools
+            for tool in job["tools"]  # pyright: ignore[reportGeneralTypeIssues]
         )
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
@@ -275,7 +276,7 @@ def _convert_from_kili_to_yolo_format(
         x_s: List[float] = [vertice["x"] for vertice in normalized_vertices]
         y_s: List[float] = [vertice["y"] for vertice in normalized_vertices]
 
-        if annotation["type"] == JobTool.Rectangle:
+        if annotation["type"] == JobTool.RECTANGLE:
             x_min, y_min = min(x_s), min(y_s)
             x_max, y_max = max(x_s), max(y_s)
             bbox_center_x, bbox_center_y = (x_min + x_max) / 2, (y_min + y_max) / 2  # type: ignore
@@ -284,7 +285,7 @@ def _convert_from_kili_to_yolo_format(
                 (category_idx.id, bbox_center_x, bbox_center_y, bbox_width, bbox_height)
             )
 
-        elif annotation["type"] in {JobTool.Polygon, JobTool.Semantic}:
+        elif annotation["type"] in {JobTool.POLYGON, JobTool.SEMANTIC}:
             # <class-index> <x1> <y1> <x2> <y2> ... <xn> <yn>
             # Each segmentation label must have a minimum of 3 xy points (polygon)
             points = [val for pair in zip(x_s, y_s) for val in pair]

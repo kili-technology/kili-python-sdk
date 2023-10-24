@@ -1,14 +1,17 @@
 """Issue mutations."""
 
-from typing import Dict, Literal, Optional
+from typing import Dict, Optional
 
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.issue.operations import GQL_CREATE_ISSUES
-from kili.core.graphql.operations.label.queries import LabelQuery, LabelWhere
 from kili.core.helpers import deprecate
+from kili.domain.issue import IssueType
+from kili.domain.label import LabelFilters, LabelId
+from kili.domain.project import ProjectId
 from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.use_cases.label import LabelUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -31,7 +34,7 @@ class MutationsIssue(BaseOperationEntrypointMixin):
         project_id: str,
         object_mid: Optional[str] = None,
         text: Optional[str] = None,
-        type_: Literal["ISSUE", "QUESTION"] = "ISSUE",
+        type_: IssueType = "ISSUE",
     ) -> Dict:
         """Create an issue.
 
@@ -52,24 +55,21 @@ class MutationsIssue(BaseOperationEntrypointMixin):
             A result object which indicates if the mutation was successful,
                 or an error message.
         """
-        try:
-            options = QueryOptions(disable_tqdm=True)
-            where = LabelWhere(
-                project_id=project_id,
-                label_id=label_id,
+        labels = list(
+            LabelUseCases(self.kili_api_gateway).list_labels(
+                filters=LabelFilters(id=LabelId(label_id)),
+                project_id=ProjectId(project_id),
+                fields=("assetId",),
+                output_format="dict",
+                options=QueryOptions(disable_tqdm=True, first=1),
             )
-            asset_id: str = next(
-                iter(
-                    LabelQuery(self.graphql_client, self.http_client)(
-                        where=where, fields=["labelOf.id"], options=options
-                    )
-                )
-            )["labelOf"]["id"]
-        except:
-            # pylint: disable=raise-missing-from
+        )
+        if not labels:
             raise ValueError(
                 f"Label ID {label_id} does not exist in the project of ID {project_id}"
             )
+
+        asset_id = labels[0]["assetId"]
         variables = {
             "issues": [
                 {

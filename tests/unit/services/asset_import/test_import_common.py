@@ -5,6 +5,7 @@ import pytest
 
 from kili.core.graphql.operations.asset.mutations import GQL_APPEND_MANY_ASSETS
 from kili.core.graphql.operations.project.queries import ProjectQuery
+from kili.domain.project import ProjectId
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import MimeTypeError
 from tests.unit.services.asset_import.base import ImportTestCase
@@ -26,21 +27,21 @@ class TestContentType(ImportTestCase):
         path_image = self.downloader(url)
         assets = [{"content": path_image, "external_id": "image"}]
         with pytest.raises(MimeTypeError):
-            import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+            import_assets(self.kili, ProjectId(self.project_id), assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("IMAGE"))
     def test_cannot_import_files_not_found_to_an_image_project(self, *_):
         path = "./doesnotexist.png"
         assets = [{"content": path, "external_id": "image"}]
         with pytest.raises(FileNotFoundError):
-            import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+            import_assets(self.kili, ProjectId(self.project_id), assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("PDF"))
     def test_cannot_upload_raw_text_to_pdf_project(self, *_):
         path = "Hello world"
         assets = [{"content": path, "external_id": "image"}]
         with pytest.raises(FileNotFoundError):
-            import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+            import_assets(self.kili, ProjectId(self.project_id), assets, disable_tqdm=True)
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))
     def test_return_the_ids_of_created_assets(self, *_):
@@ -53,14 +54,16 @@ class TestContentType(ImportTestCase):
                 return MagicMock()
 
         self.kili.graphql_client.execute = MagicMock(side_effect=graphql_execute_side_effect)
-        created_assets = import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+        created_assets = import_assets(
+            self.kili, ProjectId(self.project_id), assets, disable_tqdm=True
+        )
         assert set(created_assets) == {"id1", "id2", "id3"}
 
     @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("TEXT"))
     def test_generate_different_uuid4_external_ids_if_not_given(self, *_):
         assets = [{"content": "One"}, {"content": "Two"}, {"content": "Three"}]
         self.kili.graphql_client.execute.reset_mock()
-        import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+        import_assets(self.kili, ProjectId(self.project_id), assets, disable_tqdm=True)
         self.kili.graphql_client.execute.assert_called_once()
         call_args = self.kili.graphql_client.execute.call_args[0]
         external_id_array_call = call_args[1]["data"]["externalIDArray"]
@@ -79,7 +82,7 @@ class TestContentType(ImportTestCase):
     def test_import_assets_verify(self, mocked_verify_batch_imported, *_):
         assets = [{"content": "https://hosted-data", "external_id": "externalid"}]
 
-        import_assets(self.kili, "project_id", assets, verify=False)
+        import_assets(self.kili, ProjectId("project_id"), assets, verify=False)
         mocked_verify_batch_imported.assert_not_called()
-        import_assets(self.kili, "project_id", assets, verify=True)
+        import_assets(self.kili, ProjectId("project_id"), assets, verify=True)
         mocked_verify_batch_imported.assert_called_once()

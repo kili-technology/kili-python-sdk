@@ -6,25 +6,21 @@ from typing import Dict, List, Literal, Optional, cast
 
 from typeguard import typechecked
 
-from kili.core.helpers import deprecate, is_empty_list_with_warning
-from kili.core.utils.pagination import mutate_from_paginated_call
+from kili.core.helpers import deprecate
 from kili.domain.asset import AssetExternalId, AssetId
 from kili.domain.asset.helpers import check_asset_identifier_arguments
+from kili.domain.label import LabelType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.label.queries import (
     GQL_APPEND_TO_LABELS,
     GQL_CREATE_HONEYPOT,
-    GQL_DELETE_LABELS,
-    GQL_UPDATE_PROPERTIES_IN_LABEL,
 )
-from kili.orm import Label
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
 )
 from kili.services.label_import import import_labels_from_dict
-from kili.services.types import LabelType
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -189,7 +185,7 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             "where": {"id": label_asset_id},
         }
         result = self.graphql_client.execute(GQL_APPEND_TO_LABELS, variables)
-        return self.format_result("data", result, Label)
+        return self.format_result("data", result, None)
 
     @typechecked
     def append_labels(
@@ -277,45 +273,13 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         )
 
     @typechecked
-    def update_properties_in_label(
-        self,
-        label_id: str,
-        seconds_to_label: Optional[int] = None,
-        model_name: Optional[str] = None,
-        json_response: Optional[dict] = None,
-    ) -> Dict[Literal["id"], str]:
-        """Update properties of a label.
-
-        Args:
-            label_id: Identifier of the label
-            seconds_to_label: Time to create the label
-            model_name: Name of the model
-            json_response: The label is given here
-
-        Returns:
-            A dictionary with the label `id`.
-
-        Examples:
-            >>> kili.update_properties_in_label(label_id=label_id, json_response={...})
-        """
-        formatted_json_response = None if json_response is None else dumps(json_response)
-        variables = {
-            "labelID": label_id,
-            "secondsToLabel": seconds_to_label,
-            "modelName": model_name,
-            "jsonResponse": formatted_json_response,
-        }
-        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_LABEL, variables)
-        return self.format_result("data", result)
-
-    @typechecked
     def create_honeypot(
         self,
         json_response: dict,
         asset_external_id: Optional[str] = None,
         asset_id: Optional[str] = None,
         project_id: Optional[str] = None,
-    ) -> Label:
+    ) -> Dict:
         """Create honeypot for an asset.
 
         !!! info
@@ -350,32 +314,4 @@ class MutationsLabel(BaseOperationEntrypointMixin):
             "where": {"id": asset_id},
         }
         result = self.graphql_client.execute(GQL_CREATE_HONEYPOT, variables)
-        return self.format_result("data", result, Label)
-
-    @typechecked
-    def delete_labels(self, ids: List[str]) -> List[str]:
-        """Delete labels.
-
-        Currently, only `PREDICTION` and `INFERENCE` labels can be deleted.
-
-        Args:
-            ids: List of label ids to delete.
-
-        Returns:
-            The deleted label ids.
-        """
-        if is_empty_list_with_warning("delete_labels", "ids", ids):
-            return []
-
-        def generate_variables(batch):
-            return {"ids": batch["ids"]}
-
-        properties_to_batch = {"ids": ids}
-
-        result = mutate_from_paginated_call(
-            self,
-            properties_to_batch,  # type: ignore
-            generate_variables,
-            GQL_DELETE_LABELS,
-        )
-        return self.format_result("data", result[0])
+        return self.format_result("data", result, None)

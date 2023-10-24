@@ -17,26 +17,6 @@ mutation(
 """
 
 
-GQL_UPDATE_PROPERTIES_IN_LABEL = f"""
-mutation(
-    $labelID: ID!
-    $secondsToLabel: Float
-    $modelName: String
-    $jsonResponse: String
-) {{
-  data: updatePropertiesInLabel(
-    where: {{id: $labelID}}
-    data: {{
-      secondsToLabel: $secondsToLabel
-      modelName: $modelName
-      jsonResponse: $jsonResponse
-    }}
-  ) {{
-    {LABEL_FRAGMENT_ID}
-  }}
-}}
-"""
-
 GQL_CREATE_HONEYPOT = f"""
 mutation(
     $data: CreateHoneypotData!
@@ -49,10 +29,4 @@ mutation(
       {LABEL_FRAGMENT}
   }}
 }}
-"""
-
-GQL_DELETE_LABELS = """
-mutation($ids: [ID!]!) {
-  data: deleteLabels(ids: $ids)
-}
 """

@@ -1,10 +1,12 @@
 """Project domain."""
 
 from dataclasses import dataclass
-from typing import Literal, NewType, Optional
+from typing import TYPE_CHECKING, Literal, NewType, Optional
 
-from .tag import TagId
 from .types import ListOrTuple
+
+if TYPE_CHECKING:
+    from .tag import TagId
 
 ProjectId = NewType("ProjectId", str)
 InputType = Literal["IMAGE", "PDF", "TEXT", "VIDEO"]
@@ -26,4 +28,4 @@ class ProjectFilters:
     updated_at_lte: Optional[str] = None
     created_at_gte: Optional[str] = None
     created_at_lte: Optional[str] = None
-    tag_ids: Optional[ListOrTuple[TagId]] = None
+    tag_ids: Optional[ListOrTuple["TagId"]] = None

@@ -196,7 +196,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
         Examples:
             >>> kili.copy_project(from_project_id="clbqn56b331234567890l41c0")
         """
-        return ProjectCopier(self).copy_project(
+        return ProjectCopier(self).copy_project(  # pyright: ignore[reportGeneralTypeIssues]
             from_project_id,
             title,
             description,

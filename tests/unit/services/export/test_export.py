@@ -11,9 +11,9 @@ import pytest_mock
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetExternalId, AssetFilters
+from kili.domain.project import ProjectId
 from kili.entrypoints.queries.label import QueriesLabel
-from kili.orm import Asset
 from kili.services.export import AbstractExporter, export_labels
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
@@ -829,8 +829,8 @@ def test_export_with_asset_filter_kwargs(mocker):
         },
     )
     expected_where = AssetFilters(
-        project_id="fake_proj_id",
-        external_id_strictly_in=["truc"],
+        project_id=ProjectId("fake_proj_id"),
+        external_id_strictly_in=[AssetExternalId("truc")],
         consensus_mark_gte=0.1,
         consensus_mark_lte=0.2,
         honeypot_mark_gte=0.3,
@@ -962,7 +962,7 @@ def test_when_exporting_geotiff_asset_with_incompatible_options_then_it_crashes(
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=[
-            Asset(asset)
+            asset
             for asset in [
                 {
                     "latestLabel": {

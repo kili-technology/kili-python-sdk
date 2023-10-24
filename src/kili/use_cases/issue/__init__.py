@@ -5,6 +5,7 @@ from typing import Dict, Generator, List
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.domain.issue import IssueFilters, IssueId
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.use_cases.base import BaseUseCases
@@ -15,7 +16,7 @@ class IssueUseCases(BaseUseCases):
     """Issue use cases."""
 
     def create_issues(
-        self, project_id: str, issues: List[IssueToCreateUseCaseInput]
+        self, project_id: ProjectId, issues: List[IssueToCreateUseCaseInput]
     ) -> List[IssueId]:
         """Create issues with issue type."""
         label_id_array = [issue.label_id for issue in issues]

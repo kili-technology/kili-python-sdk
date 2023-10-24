@@ -34,8 +34,8 @@ from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
 from kili.core.utils import pagination
 from kili.domain.asset import AssetFilters
 from kili.domain.organization import OrganizationFilters
+from kili.domain.project import InputType, ProjectId
 from kili.domain.types import ListOrTuple
-from kili.orm import Asset
 from kili.services.asset_import.constants import (
     IMPORT_BATCH_SIZE,
     project_compatible_mimetypes,
@@ -71,8 +71,8 @@ class ProcessingParams(NamedTuple):
 class ProjectParams(NamedTuple):
     """Contains all parameters related to the batch to import."""
 
-    project_id: str
-    input_type: str
+    project_id: ProjectId
+    input_type: InputType
 
 
 class LoggerParams(NamedTuple):
@@ -219,7 +219,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             "where": {"id": self.project_id},
         }
         result = self.kili.graphql_client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
-        format_result("data", result, Asset, self.kili.http_client)
+        format_result("data", result, None, self.kili.http_client)
         return []
 
     def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
@@ -236,7 +236,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             "where": {"id": self.project_id},
         }
         result = self.kili.graphql_client.execute(GQL_APPEND_MANY_ASSETS, payload)
-        created_assets = format_result("data", result, Asset, self.kili.http_client)
+        created_assets = format_result("data", result, None, self.kili.http_client)
         return [asset["id"] for asset in created_assets]
 
     def import_to_kili(self, assets: List[KiliResolverAsset]):

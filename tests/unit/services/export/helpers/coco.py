@@ -2,14 +2,13 @@ import math
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from kili.orm import Asset
 from kili.services.types import Job
 
 
 def get_asset(
     content_path: Path,
     with_annotation: Optional[List[Dict]],
-) -> Asset:
+) -> Dict:
     # without annotation means that: there is a label for the asset
     # but there is no labeling data for the job.
     # `annotations=[]` should not exist.
@@ -32,14 +31,12 @@ def get_asset(
             },
         }
 
-    return Asset(
-        {
-            "latestLabel": {"jsonResponse": json_response},
-            "externalId": "car_1",
-            "jsonContent": "",
-            "content": str(content_path),
-        }
-    )
+    return {
+        "latestLabel": {"jsonResponse": json_response},
+        "externalId": "car_1",
+        "jsonContent": "",
+        "content": str(content_path),
+    }
 
 
 def estimate_rotated_bb_from_kili_poly(

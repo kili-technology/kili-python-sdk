@@ -1,10 +1,10 @@
 import json
-from typing import Dict, Generator, List
+from typing import List
 
 from typing_extensions import assert_type
 
-from kili.client import Kili
-from kili.entrypoints.queries.label import QueriesLabel
+from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.presentation.client.label import LabelClientMethods
 from kili.services.label_data_parsing.annotation import Annotation, AnnotationList
 from kili.services.label_data_parsing.category import Category, CategoryList
 from kili.utils.labels.parsing import ParsedLabel, parse_labels
@@ -253,49 +253,19 @@ def test_parse_labels_classification_to_dict_classif_with_bbox():
         assert original_label == parsed_label
 
 
-def test_integration_of_label_parsing_in_kili_labels_assert_types(mocker):
-    """This test does not check types at runtime, but rather during pyright type checking."""
-    _ = mocker.patch.object(Kili, "__init__", return_value=None)
-    _ = mocker.patch.object(QueriesLabel, "labels")
-    assert_type(Kili().labels("project_id"), List[Dict])
-    assert_type(Kili().labels("project_id", as_generator=True), Generator[Dict, None, None])
-    assert_type(Kili().labels("project_id", output_format="parsed_label"), List[ParsedLabel])
-    assert_type(
-        Kili().labels("project_id", output_format="parsed_label", as_generator=True),
-        Generator[ParsedLabel, None, None],
+def test_integration_of_label_parsing_in_kili_labels(kili_api_gateway: KiliAPIGateway):
+    kili_api_gateway.get_project.return_value = {
+        "jsonInterface": {
+            "jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}}
+        },
+        "inputType": "TEXT",
+    }
+    kili_api_gateway.list_labels.return_value = (
+        label for label in [{"jsonResponse": {"JOB_0": {"text": "some text abc"}}}]
     )
 
-
-def test_integration_of_label_parsing_in_kili_labels(mocker):
-    mocker.patch(
-        "kili.core.graphql.operations.project.queries.ProjectQuery.__call__",
-        side_effect=lambda *args, **kwargs: (
-            x
-            for x in [
-                {
-                    "jsonInterface": {
-                        "jobs": {
-                            "JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}
-                        }
-                    },
-                    "inputType": "TEXT",
-                }
-            ]
-        ),
-    )
-
-    mocker.patch(
-        "kili.core.graphql.operations.label.queries.LabelQuery.get_number_of_elements_to_query",
-        return_value=1,
-    )
-
-    mocked_execute = mocker.MagicMock(
-        return_value={"data": [{"jsonResponse": {"JOB_0": {"text": "some text abc"}}}]}
-    )
-    kili = QueriesLabel()
-    kili.graphql_client = mocker.MagicMock()
-    kili.graphql_client.execute = mocked_execute
-    kili.http_client = mocker.MagicMock()
+    kili = LabelClientMethods()
+    kili.kili_api_gateway = kili_api_gateway
 
     labels = kili.labels(project_id="project_id", output_format="parsed_label")
 

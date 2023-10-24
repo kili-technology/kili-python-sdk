@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Dict, List
 
-from kili.orm import JobMLTask, JobTool
+from kili.domain.ontology import JobMLTask, JobTool
 from kili.services.export.exceptions import NotCompatibleInputType, NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.tools import is_geotiff_asset_with_lat_lon_coords
@@ -47,18 +47,21 @@ class GeoJsonExporter(AbstractExporter):
         if "tools" not in job:
             return False
 
-        if job["mlTask"] != JobMLTask.ObjectDetection:
+        if job["mlTask"] != JobMLTask.OBJECT_DETECTION:
             return False
 
         compatible_tools = {
-            JobTool.Rectangle,
-            JobTool.Polygon,
-            JobTool.Semantic,
-            JobTool.Marker,
-            JobTool.Polyline,
+            JobTool.RECTANGLE,
+            JobTool.POLYGON,
+            JobTool.SEMANTIC,
+            JobTool.MARKER,
+            JobTool.POLYLINE,
         }
 
-        return all(tool in compatible_tools for tool in job["tools"])
+        return all(
+            tool in compatible_tools
+            for tool in job["tools"]  # pyright: ignore[reportGeneralTypeIssues]
+        )
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         self.logger.info("Exporting to GeoJson format")

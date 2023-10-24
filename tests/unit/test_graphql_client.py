@@ -373,7 +373,7 @@ def test_given_gql_client_when_the_server_returns_flagsmith_error_then_it_retrie
             },
             {
                 "project": {"id": "project_id"},
-                "asset": {"id": None},
+                "asset": {},
                 "assetIn": ["123456"],
                 "status": "some_status",
             },

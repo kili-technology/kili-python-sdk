@@ -5,7 +5,7 @@ from typing import Dict, List, Literal, Optional
 
 from typeguard import typechecked
 
-from kili.domain.asset.asset import AssetExternalId, AssetId
+from kili.domain.asset import AssetExternalId, AssetId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.use_cases.question import QuestionToCreateUseCaseInput, QuestionUseCases

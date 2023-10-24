@@ -10,7 +10,6 @@ from kili.core.helpers import validate_category_search_query
 from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters, AssetId
 from kili.domain.project import ProjectId
-from kili.orm import Asset
 from kili.services.export.types import ExportType
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 
@@ -84,7 +83,7 @@ def fetch_assets(
     download_media: bool,
     local_media_dir: Optional[str],
     asset_filter_kwargs: Optional[Dict[str, object]],
-) -> List[Asset]:
+) -> List[Dict]:
     """Fetches assets.
 
     Fetches assets where ID are in asset_ids if the list has more than one element,
@@ -166,7 +165,7 @@ def fetch_assets(
     else:
         assets = list(assets_gen)
     attach_name_to_assets_labels_author(assets, export_type)
-    return [Asset(asset) for asset in assets]
+    return assets
 
 
 def get_fields_to_fetch(export_type: ExportType):

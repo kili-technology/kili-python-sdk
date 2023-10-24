@@ -5,17 +5,17 @@ from typing import Dict, List
 from typing_extensions import TypedDict
 
 from kili.core.enums import (
-    LabelType,
     LicenseType,
     LockType,
     NotificationStatus,
     OrganizationRole,
     ProjectRole,
     Right,
-    Status,
 )
 from kili.core.helpers import deprecate
+from kili.domain.asset import AssetStatus
 from kili.domain.issue import IssueStatus
+from kili.domain.label import LabelType
 from kili.domain.project import InputType
 
 
@@ -348,8 +348,8 @@ class Asset(TypedDict):
     projectIdCompute: str
     readPermissionsFromLabels: str
     skipped: bool
-    status: Status
-    statusCompute: Status
+    status: AssetStatus
+    statusCompute: AssetStatus
     thumbnail: str
     thumbnailCompute: str
     toBeLabeledBy: ProjectUser

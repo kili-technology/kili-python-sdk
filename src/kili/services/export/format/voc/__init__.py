@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict, List, Sequence
 from xml.dom import minidom
 
-from kili.orm import JobMLTask, JobTool
+from kili.domain.ontology import JobMLTask, JobTool
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
@@ -48,14 +48,14 @@ class VocExporter(AbstractExporter):
 
         if len(self.compatible_jobs) == 0:
             raise NoCompatibleJobError(
-                f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes."
+                f"Project needs at least one {JobMLTask.OBJECT_DETECTION} task with bounding boxes."
             )
 
     def _is_job_compatible(self, job: Job) -> bool:
         """Check job compatibility with the Pascal VOC format."""
         if "tools" not in job:
             return False
-        return JobTool.Rectangle in job["tools"] and job["mlTask"] == JobMLTask.ObjectDetection
+        return JobTool.RECTANGLE in job["tools"] and job["mlTask"] == JobMLTask.OBJECT_DETECTION
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """Save the assets and annotations to a zip file in the Pascal VOC format."""

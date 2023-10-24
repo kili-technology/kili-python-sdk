@@ -1,7 +1,7 @@
 import json
 import time
 import warnings
-from typing import List
+from typing import Dict
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
@@ -10,17 +10,16 @@ from tenacity import TryAgain, retry
 from tenacity.wait import wait_fixed
 
 from kili.adapters.kili_api_gateway import KiliAPIGateway
-from kili.core.graphql.operations.label.queries import LabelQuery
 from kili.core.helpers import (
     RetryLongWaitWarner,
     format_result,
     validate_category_search_query,
 )
+from kili.domain.label import LabelId
+from kili.domain.project import ProjectId
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
 from kili.exceptions import MissingArgumentError
-from kili.orm import Asset
-from tests.fakes.fake_kili import FakeKili
 
 
 def test_format_result_no_type_conversion_1(mocker):
@@ -64,18 +63,18 @@ def test_format_result_formatted_json_is_list():
             }
         ]
     }
-    ret = format_result("data", result, object_=List[Asset], http_client=MagicMock())
+    ret = format_result("data", result, object_=None, http_client=MagicMock())
     assert isinstance(ret, list)
-    assert isinstance(ret[0], Asset)
+    assert isinstance(ret[0], Dict)
 
 
 def test_format_result_legacy_orm_objects():
     result = r'{"data":[{"id": "clbp1ozzb12345678cl9l85ci"}]}'
     result = json.loads(result)
-    ret = format_result("data", result, Asset, http_client=MagicMock())
+    ret = format_result("data", result, None, http_client=MagicMock())
     assert len(ret) == 1
     assert isinstance(ret, list)
-    assert isinstance(ret[0], Asset)
+    assert isinstance(ret[0], Dict)
 
 
 def test_format_result_with_type_conversion_int():
@@ -107,25 +106,19 @@ def test_retry_long_wait_warner():
         MyTestClass().my_method_takes_some_time()
 
 
-def test_get_labels_asset_ids_map():
-    with patch.object(
-        LabelQuery,
-        "__call__",
-        return_value=iter(
-            [
-                {"id": "label_id_1", "labelOf": {"id": "asset_id_1"}},
-                {"id": "label_id_2", "labelOf": {"id": "asset_id_1"}},
-            ]
-        ),
-    ):
-        assert get_labels_asset_ids_map(
-            KiliAPIGateway(FakeKili.graphql_client, FakeKili.http_client),
-            "project_id",
-            ["label_id_1", "label_id_2"],
-        ) == {
-            "label_id_1": "asset_id_1",
-            "label_id_2": "asset_id_1",
-        }
+def test_get_labels_asset_ids_map(kili_api_gateway: KiliAPIGateway):
+    kili_api_gateway.list_labels.return_value = (
+        label
+        for label in [
+            {"id": "label_id_1", "labelOf": {"id": "asset_id_1"}},
+            {"id": "label_id_2", "labelOf": {"id": "asset_id_1"}},
+        ]
+    )
+
+    labels = get_labels_asset_ids_map(
+        kili_api_gateway, ProjectId("project_id"), [LabelId("label_id_1"), LabelId("label_id_2")]
+    )
+    assert labels == {"label_id_1": "asset_id_1", "label_id_2": "asset_id_1"}
 
 
 @patch("kili.entrypoints.mutations.asset.mutate_from_paginated_call", return_value=[{"data": None}])

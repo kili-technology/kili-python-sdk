@@ -8,6 +8,7 @@ from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
 )
+from kili.domain.project import ProjectId
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.constants import IMPORT_BATCH_SIZE
 from tests.unit.services.asset_import.mocks import mocked_auth, organization_generator
@@ -17,7 +18,7 @@ from .helpers import LocalDownloader
 
 class ImportTestCase(TestCase):
     def setUp(self):
-        self.project_id = "project_id"
+        self.project_id = ProjectId("project_id")
         self.test_dir = tempfile.mkdtemp()
         self.downloader = LocalDownloader(
             self.test_dir,
@@ -92,7 +93,7 @@ class ImportTestCase(TestCase):
                 return MagicMock()
 
         self.kili.graphql_client.execute = MagicMock(side_effect=graphql_execute_side_effect)
-        created_assets = import_assets(self.kili, self.project_id, assets)
+        created_assets = import_assets(self.kili, ProjectId(self.project_id), assets)
         expected_parameters_1 = self.get_expected_sync_call(
             ["https://hosted-data"] * IMPORT_BATCH_SIZE,
             [external_id_array[i] for i in range(IMPORT_BATCH_SIZE)],

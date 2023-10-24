@@ -1,6 +1,7 @@
 from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.asset import AssetFilters
+from kili.domain.project import ProjectId
 
 
 def test_given_a_query_returning_serialized_json_it_parses_json_fields(graphql_client, http_client):
@@ -26,7 +27,7 @@ def test_given_a_query_returning_serialized_json_it_parses_json_fields(graphql_c
     asset_operations = AssetOperationMixin()
     asset_operations.graphql_client = graphql_client
     asset_operations.http_client = http_client
-    filters = AssetFilters(project_id="project_id")
+    filters = AssetFilters(project_id=ProjectId("project_id"))
     fields = [
         "jsonMetadata",
         "labels.jsonResponse",

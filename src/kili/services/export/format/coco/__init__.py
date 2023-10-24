@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from kili.orm import Asset, JobMLTask, JobTool
+from kili.domain.ontology import JobMLTask, JobTool
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
@@ -51,7 +51,7 @@ class CocoExporter(AbstractExporter):
 
         if len(self.compatible_jobs) == 0:
             raise NoCompatibleJobError(
-                f"Project needs at least one {JobMLTask.ObjectDetection} task with bounding boxes"
+                f"Project needs at least one {JobMLTask.OBJECT_DETECTION} task with bounding boxes"
                 " or segmentations."
             )
 
@@ -60,9 +60,9 @@ class CocoExporter(AbstractExporter):
         """Export images folder."""
         return self.base_folder / DATA_SUBDIR
 
-    def process_and_save(self, assets: List[Asset], output_filename: Path):
+    def process_and_save(self, assets: List[Dict], output_filename: Path):
         """Extract formatted annotations from labels."""
-        clean_assets = self.preprocess_assets(assets, self.label_format)
+        clean_assets = self.preprocess_assets(assets)
 
         self._save_assets_export(
             clean_assets, self.export_root_folder, annotation_modifier=self.annotation_modifier
@@ -74,7 +74,7 @@ class CocoExporter(AbstractExporter):
 
     def _save_assets_export(
         self,
-        assets: List[Asset],
+        assets: List[Dict],
         output_directory: Path,
         annotation_modifier: Optional[CocoAnnotationModifier],
     ):
@@ -111,22 +111,23 @@ class CocoExporter(AbstractExporter):
     def _is_job_compatible(self, job: Job) -> bool:
         if "tools" not in job:
             return False
-        return (JobTool.Semantic in job["tools"] or JobTool.Rectangle in job["tools"]) and job[
+        return (JobTool.SEMANTIC in job["tools"] or JobTool.RECTANGLE in job["tools"]) and job[
             "mlTask"
-        ] == JobMLTask.ObjectDetection
+        ] == JobMLTask.OBJECT_DETECTION
 
 
 # pylint: disable=too-many-arguments
 def _convert_kili_semantic_to_coco(
     jobs: Dict[JobName, Job],
-    assets: List[Asset],
+    assets: List[Dict],
     output_dir: Path,
     title: str,
     project_input_type: str,
     annotation_modifier: Optional[CocoAnnotationModifier],
     merged: bool,
 ) -> Tuple[CocoFormat, List[Path]]:
-    """Creates the following structure on the disk:
+    """Creates the following structure on the disk.
+
     <dataset_dir>/
         data/
             <filename0>.<ext>
@@ -238,7 +239,7 @@ def _get_coco_categories_with_mapping(
 # pylint: disable=too-many-locals
 def _get_coco_images_and_annotations(
     jobs: Dict[JobName, Job],
-    assets: List[Asset],
+    assets: List[Dict],
     cat_kili_id_to_coco_id: Dict[JobName, Dict[str, int]],
     project_input_type: str,
     annotation_modifier: Optional[CocoAnnotationModifier],
@@ -259,7 +260,7 @@ def _get_coco_images_and_annotations(
 
 def _get_images_and_annotation_for_images(
     jobs: Dict[JobName, Job],
-    assets: List[Asset],
+    assets: List[Dict],
     cat_kili_id_to_coco_id: Dict[JobName, Dict[str, int]],
     annotation_modifier: Optional[CocoAnnotationModifier],
     is_single_job: bool,
@@ -319,7 +320,7 @@ def _get_images_and_annotation_for_images(
 
 def _get_images_and_annotation_for_videos(
     jobs: Dict[JobName, Job],
-    assets: List[Asset],
+    assets: List[Dict],
     cat_kili_id_to_coco_id: Dict[JobName, Dict[str, int]],
     annotation_modifier: Optional[CocoAnnotationModifier],
     is_single_job: bool,

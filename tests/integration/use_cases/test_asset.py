@@ -1,6 +1,7 @@
 from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.asset import AssetFilters
+from kili.domain.project import ProjectId
 from kili.use_cases.asset import AssetUseCases
 from kili.use_cases.asset.media_downloader import MediaDownloader
 from kili.utils.labels.parsing import ParsedLabel
@@ -14,7 +15,7 @@ def test_given_query_parameters_I_can_query_assets(kili_api_gateway: KiliAPIGate
 
     # given parameters to query assets
     asset_use_cases = AssetUseCases(kili_api_gateway)
-    filters = AssetFilters(project_id="project_id")
+    filters = AssetFilters(project_id=ProjectId("project_id"))
     fields = ["id"]
 
     # when creating query assets
@@ -67,7 +68,7 @@ def test_given_query_parameters_I_can_query_assets_and_get_their_labels_parsed(
 
     # given parameters to query assets
     asset_use_cases = AssetUseCases(kili_api_gateway)
-    filters = AssetFilters(project_id="project_id")
+    filters = AssetFilters(project_id=ProjectId("project_id"))
     fields = [
         "content",
         "createdAt",
@@ -111,11 +112,11 @@ def test_given_query_parameters_I_can_query_assets_and_download_their_media(
 ):
     # mocking
     kili_api_gateway.get_project.return_value = {"inputType": "IMAGE", "dataConnections": None}
-    media_downlaoder_mock = mocker.patch.object(MediaDownloader, "__init__", return_value=None)
+    media_downloader_mock = mocker.patch.object(MediaDownloader, "__init__", return_value=None)
 
     # given parameters to query assets
     asset_use_cases = AssetUseCases(kili_api_gateway)
-    filters = AssetFilters(project_id="project_id")
+    filters = AssetFilters(project_id=ProjectId("project_id"))
     fields = ["id", "content"]
 
     # when creating query assets
@@ -129,7 +130,7 @@ def test_given_query_parameters_I_can_query_assets_and_download_their_media(
     )
 
     # then
-    media_downlaoder_mock.assert_called_once_with(
+    media_downloader_mock.assert_called_once_with(
         "temp_dir",
         "project_id",
         False,

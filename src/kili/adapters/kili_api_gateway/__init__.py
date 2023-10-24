@@ -5,6 +5,7 @@ from kili.adapters.kili_api_gateway.api_key.operations_mixin import ApiKeyOperat
 from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
 from kili.adapters.kili_api_gateway.cloud_storage import CloudStorageOperationMixin
 from kili.adapters.kili_api_gateway.issue import IssueOperationMixin
+from kili.adapters.kili_api_gateway.label.operations_mixin import LabelOperationMixin
 from kili.adapters.kili_api_gateway.organization.operations_mixin import (
     OrganizationOperationMixin,
 )
@@ -19,6 +20,7 @@ class KiliAPIGateway(
     AssetOperationMixin,
     CloudStorageOperationMixin,
     IssueOperationMixin,
+    LabelOperationMixin,
     OrganizationOperationMixin,
     ProjectOperationMixin,
     TagOperationMixin,
