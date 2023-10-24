@@ -8,20 +8,26 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     QueryOptions,
     fragment_builder,
 )
-from kili.core.utils.pagination import BatchIteratorBuilder
+from kili.core.constants import MUTATION_BATCH_SIZE
+from kili.core.utils.pagination import batcher
 from kili.domain.label import LabelFilters, LabelId
 from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
 from .formatters import load_label_json_fields
-from .mappers import label_where_mapper, update_label_data_mapper
+from .mappers import (
+    append_label_data_mapper,
+    label_where_mapper,
+    update_label_data_mapper,
+)
 from .operations import (
     GQL_COUNT_LABELS,
     GQL_DELETE_LABELS,
+    get_append_many_labels_mutation,
     get_labels_query,
     get_update_properties_in_label_query,
 )
-from .types import UpdateLabelData
+from .types import AppendManyLabelsData, UpdateLabelData
 
 
 class LabelOperationMixin(BaseOperationMixin):
@@ -66,7 +72,7 @@ class LabelOperationMixin(BaseOperationMixin):
         delete_label_ids: List[LabelId] = []
 
         with tqdm(total=len(ids), desc="Deleting labels", disable=disable_tqdm) as pbar:
-            for batch_of_label_ids in BatchIteratorBuilder(ids):
+            for batch_of_label_ids in batcher(ids, batch_size=MUTATION_BATCH_SIZE):
                 variables = {"ids": batch_of_label_ids}
                 result = self.graphql_client.execute(GQL_DELETE_LABELS, variables)
                 batch_deleted_label_ids = result["data"]
@@ -74,3 +80,33 @@ class LabelOperationMixin(BaseOperationMixin):
                 pbar.update(len(batch_of_label_ids))
 
         return delete_label_ids
+
+    def append_many_labels(
+        self, data: AppendManyLabelsData, fields: ListOrTuple[str], disable_tqdm: Optional[bool]
+    ) -> List[Dict]:
+        """Append many labels."""
+        nb_labels_to_add = len(data.labels_data)
+
+        fragment = fragment_builder(fields)
+        query = get_append_many_labels_mutation(fragment=fragment)
+
+        added_labels: List[Dict] = []
+        with tqdm(total=nb_labels_to_add, desc="Adding labels", disable=disable_tqdm) as pbar:
+            for batch_of_label_data in batcher(data.labels_data, batch_size=MUTATION_BATCH_SIZE):
+                variables = {
+                    "data": {
+                        "labelType": data.label_type,
+                        "overwrite": data.overwrite,
+                        "labelsData": [
+                            append_label_data_mapper(label) for label in batch_of_label_data
+                        ],
+                    },
+                    "where": {"idIn": [label.asset_id for label in batch_of_label_data]},
+                }
+
+                # we increase the timeout because the import can take a long time
+                batch_result = self.graphql_client.execute(query, variables, timeout=60)
+                added_labels.extend(batch_result["data"])
+                pbar.update(len(batch_of_label_data))
+
+        return added_labels

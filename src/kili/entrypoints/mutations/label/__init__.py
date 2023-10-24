@@ -20,7 +20,6 @@ from kili.entrypoints.mutations.label.queries import (
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
 )
-from kili.services.label_import import import_labels_from_dict
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -186,91 +185,6 @@ class MutationsLabel(BaseOperationEntrypointMixin):
         }
         result = self.graphql_client.execute(GQL_APPEND_TO_LABELS, variables)
         return self.format_result("data", result, None)
-
-    @typechecked
-    def append_labels(
-        self,
-        asset_id_array: Optional[List[str]] = None,
-        json_response_array: ListOrTuple[Dict] = (),
-        author_id_array: Optional[List[str]] = None,
-        seconds_to_label_array: Optional[List[int]] = None,
-        model_name: Optional[str] = None,
-        label_type: LabelType = "DEFAULT",
-        project_id: Optional[str] = None,
-        asset_external_id_array: Optional[List[str]] = None,
-        disable_tqdm: Optional[bool] = None,
-        overwrite: bool = False,
-    ) -> List[Dict[Literal["id"], str]]:
-        """Append labels to assets.
-
-        Args:
-            asset_id_array: list of asset internal ids to append labels on.
-            json_response_array: list of labels to append.
-            author_id_array: list of the author id of the labels.
-            seconds_to_label_array: list of times taken to produce the label, in seconds.
-            model_name: Name of the model that generated the labels.
-                Only useful when uploading PREDICTION or INFERENCE labels.
-            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
-            project_id: Identifier of the project.
-            asset_external_id_array: list of asset external ids to append labels on.
-            disable_tqdm: Disable tqdm progress bar.
-            overwrite: when uploading prediction or inference labels, if True,
-                it will overwrite existing labels with the same model name
-                and of the same label type, on the targeted assets.
-
-        Returns:
-            A list of dictionaries with the label ids.
-
-        Examples:
-            >>> kili.append_labels(
-                    asset_id_array=['cl9wmlkuc00050qsz6ut39g8h', 'cl9wmlkuw00080qsz2kqh8aiy'],
-                    json_response_array=[{...}, {...}]
-                )
-        """
-        if len(json_response_array) == 0:
-            raise ValueError(
-                "json_response_array is empty, you must provide at least one label to upload"
-            )
-        check_asset_identifier_arguments(
-            ProjectId(project_id) if project_id else None,
-            cast(ListOrTuple[AssetId], asset_id_array) if asset_id_array else None,
-            (
-                cast(ListOrTuple[AssetExternalId], asset_external_id_array)
-                if asset_external_id_array
-                else None
-            ),
-        )
-        assert_all_arrays_have_same_size(
-            [
-                seconds_to_label_array,
-                author_id_array,
-                json_response_array,
-                asset_external_id_array,
-                asset_id_array,
-            ]
-        )
-
-        labels = [
-            {
-                "asset_id": asset_id,
-                "asset_external_id": asset_external_id,
-                "json_response": json_response,
-                "seconds_to_label": seconds_to_label,
-                "author_id": author_id,
-            }
-            for (asset_id, asset_external_id, json_response, seconds_to_label, author_id) in list(
-                zip(
-                    asset_id_array or [None] * len(json_response_array),
-                    asset_external_id_array or [None] * len(json_response_array),
-                    json_response_array,
-                    seconds_to_label_array or [None] * len(json_response_array),
-                    author_id_array or [None] * len(json_response_array),
-                )
-            )
-        ]
-        return import_labels_from_dict(
-            self, project_id, labels, label_type, overwrite, model_name, disable_tqdm
-        )
 
     @typechecked
     def create_honeypot(

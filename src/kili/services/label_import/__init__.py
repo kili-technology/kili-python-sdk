@@ -1,9 +1,8 @@
 """Label import service."""
 
 from pathlib import Path
-from typing import Dict, List, Optional, Type, cast
+from typing import List, Optional, Type, cast
 
-from kili.domain.label import LabelType
 from kili.domain.project import ProjectId
 from kili.exceptions import NotFound
 from kili.services.helpers import is_target_job_in_json_interface
@@ -13,7 +12,7 @@ from kili.services.label_import.importer import (
     LoggerParams,
     YoloLabelImporter,
 )
-from kili.services.label_import.types import LabelFormat, check_input_labels
+from kili.services.label_import.types import LabelFormat
 from kili.services.project import get_project
 from kili.services.types import LogLevel
 
@@ -63,28 +62,4 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
         model_name,
         is_prediction,
         overwrite,
-    )
-
-
-def import_labels_from_dict(  # pylint: disable=too-many-arguments
-    kili,
-    project_id: Optional[str],
-    labels: List[Dict],
-    label_type: LabelType,
-    overwrite: bool,
-    model_name: Optional[str] = None,
-    disable_tqdm: Optional[bool] = None,
-) -> List:
-    """Imports labels from a list of dictionaries."""
-    check_input_labels(labels)
-    if label_type == "PREDICTION" and not model_name:
-        raise ValueError("You must provide model_name when uploading predictions")
-    logger_params = LoggerParams(disable_tqdm=disable_tqdm, level=cast(LogLevel, "WARNING"))
-    label_importer = KiliRawLabelImporter(kili, logger_params, cast(LabelFormat, "kili"))
-    return label_importer.process_from_dict(
-        labels=labels,
-        project_id=project_id,
-        label_type=label_type,
-        overwrite=overwrite,
-        model_name=model_name,
     )

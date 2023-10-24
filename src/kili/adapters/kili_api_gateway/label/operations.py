@@ -40,3 +40,14 @@ mutation($ids: [ID!]!) {
   data: deleteLabels(ids: $ids)
 }
 """
+
+
+def get_append_many_labels_mutation(fragment: str) -> str:
+    """Get the gql append many labels mutation."""
+    return f"""
+    mutation appendManyLabels($data: AppendManyLabelsData!, $where: AssetWhere!) {{
+        data: appendManyLabels(data: $data, where: $where ) {{
+            {fragment}
+        }}
+    }}
+    """

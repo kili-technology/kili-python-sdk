@@ -9,7 +9,10 @@ from typing import Dict, List, NamedTuple, Optional, Type
 
 import yaml
 
-from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
+from kili.adapters.kili_api_gateway.label.operations import (
+    get_append_many_labels_mutation,
+)
+from kili.core.constants import MUTATION_BATCH_SIZE
 from kili.core.helpers import get_file_paths_to_upload
 from kili.core.utils import pagination
 from kili.domain.label import LabelType
@@ -107,7 +110,7 @@ class AbstractLabelImporter(ABC):
             }
             for label in labels
         ]
-        batch_generator = pagination.BatchIteratorBuilder(labels_data)
+        batch_generator = pagination.batcher(labels_data, MUTATION_BATCH_SIZE)
         result = []
         with tqdm.tqdm(total=len(labels_data), disable=self.logger_params.disable_tqdm) as pbar:
             for batch_labels in batch_generator:
@@ -121,7 +124,7 @@ class AbstractLabelImporter(ABC):
                 }
                 # we increase the timeout because the import can take a long time
                 batch_result = self.kili.graphql_client.execute(
-                    GQL_APPEND_MANY_LABELS, variables, timeout=60
+                    get_append_many_labels_mutation(" id"), variables, timeout=60
                 )
                 result.extend(self.kili.format_result("data", batch_result, None))
                 pbar.update(len(batch_labels))

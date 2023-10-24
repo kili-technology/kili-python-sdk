@@ -31,7 +31,7 @@ from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
 )
 from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
-from kili.core.utils import pagination
+from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters
 from kili.domain.organization import OrganizationFilters
 from kili.domain.project import InputType, ProjectId
@@ -486,13 +486,14 @@ class BaseAbstractAssetImporter(abc.ABC):
         batch_size=IMPORT_BATCH_SIZE,
     ):
         """Split assets by batch and import them with a given batch importer."""
-        batch_generator = pagination.BatchIteratorBuilder(assets, batch_size)
+        batch_generator = batcher(assets, batch_size)
+        nb_batch = (len(assets) - 1) // batch_size + 1
         self.pbar.total = len(assets)
         self.pbar.refresh()
 
         created_asset_ids: List[str] = []
         for i, batch_assets in enumerate(batch_generator):
             # check last batch only
-            verify = i == (len(batch_generator) - 1) and self.verify
+            verify = i == (nb_batch - 1) and self.verify
             created_asset_ids += batch_importer.import_batch(batch_assets, verify)
         return created_asset_ids

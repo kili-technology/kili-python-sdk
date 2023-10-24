@@ -16,16 +16,19 @@ from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import is_empty_list_with_warning, validate_category_search_query
-from kili.domain.asset import AssetExternalId, AssetFilters, AssetStatus
+from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
 from kili.domain.asset.asset import AssetId
+from kili.domain.asset.helpers import check_asset_identifier_arguments
 from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.domain.user import UserFilter, UserId
 from kili.presentation.client.helpers.common_validators import (
+    assert_all_arrays_have_same_size,
     disable_tqdm_if_as_generator,
 )
 from kili.use_cases.label import LabelUseCases
+from kili.use_cases.label.types import LabelToCreateUseCaseInput
 from kili.utils.labels.parsing import ParsedLabel
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -780,3 +783,98 @@ class LabelClientMethods(BaseClientMethods):
             disable_tqdm=disable_tqdm,
         )
         return cast(List[str], deleted_label_ids)
+
+    @typechecked
+    def append_labels(
+        self,
+        asset_id_array: Optional[List[str]] = None,
+        json_response_array: ListOrTuple[Dict] = (),
+        author_id_array: Optional[List[str]] = None,
+        seconds_to_label_array: Optional[List[int]] = None,
+        model_name: Optional[str] = None,
+        label_type: LabelType = "DEFAULT",
+        project_id: Optional[str] = None,
+        asset_external_id_array: Optional[List[str]] = None,
+        disable_tqdm: Optional[bool] = None,
+        overwrite: bool = False,
+    ) -> List[Dict[Literal["id"], str]]:
+        """Append labels to assets.
+
+        Args:
+            asset_id_array: list of asset internal ids to append labels on.
+            json_response_array: list of labels to append.
+            author_id_array: list of the author id of the labels.
+            seconds_to_label_array: list of times taken to produce the label, in seconds.
+            model_name: Name of the model that generated the labels.
+                Only useful when uploading PREDICTION or INFERENCE labels.
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
+            project_id: Identifier of the project.
+            asset_external_id_array: list of asset external ids to append labels on.
+            disable_tqdm: Disable tqdm progress bar.
+            overwrite: when uploading prediction or inference labels, if True,
+                it will overwrite existing labels with the same model name
+                and of the same label type, on the targeted assets.
+
+        Returns:
+            A list of dictionaries with the label ids.
+
+        Examples:
+            >>> kili.append_labels(
+                    asset_id_array=['cl9wmlkuc00050qsz6ut39g8h', 'cl9wmlkuw00080qsz2kqh8aiy'],
+                    json_response_array=[{...}, {...}]
+                )
+        """
+        if len(json_response_array) == 0:
+            raise ValueError(
+                "json_response_array is empty, you must provide at least one label to upload"
+            )
+
+        check_asset_identifier_arguments(
+            ProjectId(project_id) if project_id else None,
+            cast(ListOrTuple[AssetId], asset_id_array) if asset_id_array else None,
+            (
+                cast(ListOrTuple[AssetExternalId], asset_external_id_array)
+                if asset_external_id_array
+                else None
+            ),
+        )
+
+        assert_all_arrays_have_same_size(
+            [
+                seconds_to_label_array,
+                author_id_array,
+                json_response_array,
+                asset_external_id_array,
+                asset_id_array,
+            ]
+        )
+
+        labels = [
+            LabelToCreateUseCaseInput(
+                asset_id=AssetId(asset_id) if asset_id else None,
+                asset_external_id=AssetExternalId(asset_external_id) if asset_external_id else None,
+                json_response=json_response,
+                seconds_to_label=seconds_to_label,
+                author_id=UserId(author_id) if author_id else None,
+                label_type=label_type,
+                model_name=model_name,
+            )
+            for (asset_id, asset_external_id, json_response, seconds_to_label, author_id) in list(
+                zip(
+                    asset_id_array or [None] * len(json_response_array),
+                    asset_external_id_array or [None] * len(json_response_array),
+                    json_response_array,
+                    seconds_to_label_array or [None] * len(json_response_array),
+                    author_id_array or [None] * len(json_response_array),
+                )
+            )
+        ]
+
+        return LabelUseCases(self.kili_api_gateway).append_labels(
+            fields=("id",),
+            disable_tqdm=disable_tqdm,
+            label_type=label_type,
+            labels=labels,
+            overwrite=overwrite,
+            project_id=ProjectId(project_id) if project_id else None,
+        )
