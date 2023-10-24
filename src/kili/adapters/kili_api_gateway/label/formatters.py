@@ -5,8 +5,6 @@ from typing import Dict
 
 from kili.domain.types import ListOrTuple
 
-LABEL_JSON_FIELDS = ("jsonResponse",)
-
 
 def load_label_json_fields(label: Dict, fields: ListOrTuple[str]) -> Dict:
     """Load json fields of a label."""
