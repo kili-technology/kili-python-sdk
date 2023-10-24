@@ -44,5 +44,4 @@ class AppendManyLabelsData:
 
     labels_data: List[AppendLabelData]
     label_type: LabelType
-    refuse_invalid_json_response: Optional[bool]
     overwrite: Optional[bool]

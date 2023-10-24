@@ -127,7 +127,6 @@ class LabelUseCases(BaseUseCases):
         ]
 
         data = AppendManyLabelsData(
-            refuse_invalid_json_response=None,
             label_type=label_type,
             overwrite=overwrite,
             labels_data=labels_to_add,
