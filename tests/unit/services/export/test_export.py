@@ -13,7 +13,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.domain.asset import AssetExternalId, AssetFilters
 from kili.domain.project import ProjectId
-from kili.entrypoints.queries.label import QueriesLabel
+from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import AbstractExporter, export_labels
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
@@ -797,7 +797,7 @@ def test_export_with_asset_filter_kwargs(mocker):
     )
     mocker.patch.object(KiliExporter, "process_and_save", return_value=None)
     mocker.patch.object(KiliExporter, "_has_data_connection", return_value=False)
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
@@ -879,7 +879,7 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
     mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
     mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
     mocker.patch.object(KiliExporter, "_has_data_connection", return_value=False)
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
@@ -923,7 +923,7 @@ def mock_kili(mocker, with_data_connection):
     )
     mocker.patch.object(AbstractExporter, "_has_data_connection", return_value=with_data_connection)
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = get_project_return_val
     return kili
@@ -1092,7 +1092,7 @@ def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
     mocker.patch.object(ProjectQuery, "__call__", return_value=[project_return_val])
     mocker.patch("kili.services.export.format.base.fetch_assets", return_value=[])
     process_and_save_mock = mocker.patch.object(VocExporter, "process_and_save", return_value=None)
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()

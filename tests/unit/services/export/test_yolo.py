@@ -6,7 +6,7 @@ from zipfile import ZipFile
 import pytest_mock
 
 from kili.adapters.http_client import HttpClient
-from kili.entrypoints.queries.label import QueriesLabel
+from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import YoloExporter
 from kili.services.export.format.yolo import (
     YoloExporter,
@@ -322,7 +322,7 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
     )
     mocker.patch.object(YoloExporter, "_has_data_connection", return_value=False)
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
@@ -374,7 +374,7 @@ def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
     )
     mocker.patch.object(YoloExporter, "_has_data_connection", return_value=False)
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()

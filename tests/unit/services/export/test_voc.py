@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from kili.entrypoints.queries.label import QueriesLabel
+from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import VocExporter
 from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.format.voc import (
@@ -56,7 +56,7 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
     )
     mocker.patch.object(VocExporter, "_has_data_connection", return_value=True)
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()

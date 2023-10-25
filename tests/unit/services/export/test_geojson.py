@@ -5,7 +5,7 @@ from zipfile import ZipFile
 
 import pytest_mock
 
-from kili.entrypoints.queries.label import QueriesLabel
+from kili.presentation.client.label import LabelClientMethods
 from kili.services.export.format.geojson import GeoJsonExporter
 
 
@@ -33,7 +33,7 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
         ],
     )
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()

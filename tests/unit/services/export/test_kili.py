@@ -5,7 +5,7 @@ from zipfile import ZipFile
 
 import pytest_mock
 
-from kili.entrypoints.queries.label import QueriesLabel
+from kili.presentation.client.label import LabelClientMethods
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.format.kili import KiliExporter
 from tests.fakes.fake_data import (
@@ -238,7 +238,7 @@ def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture
     )
     mocker.patch.object(AbstractExporter, "_check_and_ensure_asset_access", return_value=None)
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
@@ -387,7 +387,7 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
     )
     mocker.patch.object(AbstractExporter, "_check_and_ensure_asset_access", return_value=None)
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
@@ -464,7 +464,7 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
     )
     mocker.patch.object(AbstractExporter, "_check_and_ensure_asset_access", return_value=None)
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()
