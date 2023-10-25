@@ -292,7 +292,7 @@ def test_import_predictions(kili_api_gateway: KiliAPIGateway):
     )
 
 
-def test_import_predictions_with_overwritting(kili_api_gateway: KiliAPIGateway):
+def test_import_predictions_with_overwriting(kili_api_gateway: KiliAPIGateway):
     kili_api_gateway.list_assets.return_value = (
         asset
         for asset in [
