@@ -96,7 +96,7 @@ def test_given_kili_client_when_adding_predictions_without_model_name_then_it_cr
         )
 
 
-def test_given_kili_client_when_creating_honeypot_then_works(
+def test_given_kili_client_when_creating_honeypot_then_it_works(
     kili_api_gateway: KiliAPIGateway, mocker: pytest_mock.MockerFixture
 ):
     mocker.patch.object(
