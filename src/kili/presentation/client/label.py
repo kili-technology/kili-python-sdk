@@ -863,7 +863,6 @@ class LabelClientMethods(BaseClientMethods):
                 asset_id_array,
             ]
         )
-        nb_labels_to_add = len(json_response_array)
 
         labels = [
             LabelToCreateUseCaseInput(
@@ -876,11 +875,11 @@ class LabelClientMethods(BaseClientMethods):
                 model_name=model_name,
             )
             for (asset_id, asset_external_id, json_response, seconds_to_label, author_id) in zip(
-                asset_id_array or repeat(None, nb_labels_to_add),
-                asset_external_id_array or repeat(None, nb_labels_to_add),
+                asset_id_array or repeat(None),
+                asset_external_id_array or repeat(None),
                 json_response_array,
-                seconds_to_label_array or repeat(None, nb_labels_to_add),
-                author_id_array or repeat(None, nb_labels_to_add),
+                seconds_to_label_array or repeat(None),
+                author_id_array or repeat(None),
             )
         ]
 
