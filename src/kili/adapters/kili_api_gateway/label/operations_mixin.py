@@ -19,6 +19,7 @@ from kili.utils.tqdm import tqdm
 from .formatters import load_label_json_fields
 from .mappers import (
     append_label_data_mapper,
+    append_to_labels_data_mapper,
     label_where_mapper,
     update_label_data_mapper,
 )
@@ -26,11 +27,12 @@ from .operations import (
     GQL_COUNT_LABELS,
     GQL_DELETE_LABELS,
     get_append_many_labels_mutation,
+    get_append_to_labels_mutation,
     get_create_honeypot_mutation,
     get_labels_query,
     get_update_properties_in_label_mutation,
 )
-from .types import AppendManyLabelsData, UpdateLabelData
+from .types import AppendManyLabelsData, AppendToLabelsData, UpdateLabelData
 
 
 class LabelOperationMixin(BaseOperationMixin):
@@ -113,6 +115,16 @@ class LabelOperationMixin(BaseOperationMixin):
                 pbar.update(len(batch_of_label_data))
 
         return added_labels
+
+    def append_to_labels(
+        self, data: AppendToLabelsData, asset_id: AssetId, fields: ListOrTuple[str]
+    ) -> Dict:
+        """Append to labels."""
+        fragment = fragment_builder(fields)
+        query = get_append_to_labels_mutation(fragment)
+        variables = {"where": {"id": asset_id}, "data": append_to_labels_data_mapper(data)}
+        result = self.graphql_client.execute(query, variables)
+        return result["data"]
 
     def create_honeypot_label(
         self, json_response: Dict, asset_id: AssetId, fields: ListOrTuple[str]

@@ -13,7 +13,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.domain.asset import AssetExternalId, AssetFilters
 from kili.domain.project import ProjectId
-from kili.entrypoints.queries.label import QueriesLabel
+from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import AbstractExporter, export_labels
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
@@ -797,11 +797,11 @@ def test_export_with_asset_filter_kwargs(mocker):
     )
     mocker.patch.object(KiliExporter, "process_and_save", return_value=None)
     mocker.patch.object(KiliExporter, "_has_data_connection", return_value=False)
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.kili_api_gateway = mocker.MagicMock()
     kili.export_labels(
         project_id="fake_proj_id",
@@ -879,11 +879,11 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
     mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
     mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
     mocker.patch.object(KiliExporter, "_has_data_connection", return_value=False)
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
 
     with pytest.raises(NameError, match="Unknown asset filter arguments"):
         kili.export_labels(
@@ -923,7 +923,7 @@ def mock_kili(mocker, with_data_connection):
     )
     mocker.patch.object(AbstractExporter, "_has_data_connection", return_value=with_data_connection)
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = get_project_return_val
     return kili
@@ -935,8 +935,8 @@ def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it
     kili = mock_kili(mocker, with_data_connection=True)
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     mocker.patch.object(AbstractExporter, "_has_data_connection", return_value=True)
 
     with pytest.raises(
@@ -1027,8 +1027,8 @@ def test_when_exporting_geotiff_asset_with_incompatible_options_then_it_crashes(
     kili = mock_kili(mocker, with_data_connection=False)
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
 
     with pytest.raises(
         NotCompatibleOptions,
@@ -1092,11 +1092,11 @@ def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
     mocker.patch.object(ProjectQuery, "__call__", return_value=[project_return_val])
     mocker.patch("kili.services.export.format.base.fetch_assets", return_value=[])
     process_and_save_mock = mocker.patch.object(VocExporter, "process_and_save", return_value=None)
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.kili_api_gateway = mocker.MagicMock()
 
     # When
@@ -1106,4 +1106,4 @@ def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
 
     # Then
     process_and_save_mock.assert_called_once()
-    kili.graphql_client.execute.assert_not_called()
+    kili.graphql_client.execute.assert_not_called()  # pyright: ignore[reportGeneralTypeIssues]

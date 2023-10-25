@@ -7,7 +7,7 @@ import pytest
 import requests
 from PIL import Image
 
-from kili.entrypoints.queries.label import QueriesLabel
+from kili.presentation.client.label import LabelClientMethods
 from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
 from kili.services.export.format.coco import (
     CocoExporter,
@@ -577,11 +577,11 @@ def test_when_exporting_to_coco_given_a_project_with_data_connection_then_it_sho
     mocker.patch.object(CocoExporter, "_check_project_compatibility", return_value=None)
     mocker.patch.object(CocoExporter, "_has_data_connection", return_value=True)
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_key = ""  # type: ignore
     kili.api_endpoint = "https://"  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = get_project_return_val
 

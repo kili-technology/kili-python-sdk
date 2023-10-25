@@ -118,7 +118,6 @@ def test_given_kili_gateway_when_adding_labels_then_it_calls_proper_resolver(
                     client_version=None,
                     seconds_to_label=42,
                     model_name="fake_model_name",
-                    reviewed_label=None,
                 )
             ],
         ),
@@ -169,7 +168,6 @@ def test_given_kili_gateway_when_adding_labels_by_batch_then_it_calls_proper_res
                     client_version=None,
                     seconds_to_label=42,
                     model_name="fake_model_name",
-                    reviewed_label=None,
                 )
                 for i in range(101)
             ],

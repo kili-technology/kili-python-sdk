@@ -1,24 +1,29 @@
 """Label use cases."""
 
 from functools import partial
-from typing import Dict, Generator, List, Literal, Optional
+from typing import TYPE_CHECKING, Dict, Generator, List, Literal, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.label.types import (
     AppendLabelData,
     AppendManyLabelsData,
+    AppendToLabelsData,
     UpdateLabelData,
 )
-from kili.domain.asset.asset import AssetExternalId, AssetId
+from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
+from kili.domain.user import UserId
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.base import BaseUseCases
 from kili.utils.labels.parsing import parse_labels
 
 from .types import LabelToCreateUseCaseInput
 from .validator import check_input_labels
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 class LabelUseCases(BaseUseCases):
@@ -122,9 +127,8 @@ class LabelUseCases(BaseUseCases):
                 json_response=label.json_response,
                 model_name=label.model_name,
                 client_version=None,
-                reviewed_label=None,
             )
-            for label, asset_id, in zip(labels, asset_id_array)
+            for label, asset_id in zip(labels, asset_id_array)
         ]
 
         data = AppendManyLabelsData(
@@ -135,6 +139,30 @@ class LabelUseCases(BaseUseCases):
         return self._kili_api_gateway.append_many_labels(
             fields=fields, disable_tqdm=disable_tqdm, data=data
         )
+
+    def append_to_labels(
+        self,
+        author_id: Optional[UserId],
+        json_response: Dict,
+        label_type: LabelType,
+        seconds_to_label: Optional[float],
+        asset_id: AssetId,
+        fields: ListOrTuple[str],
+    ) -> Dict:
+        """Append to labels."""
+        data = AppendToLabelsData(
+            author_id=(
+                author_id
+                if author_id is not None
+                else self._kili_api_gateway.get_current_user(fields=("id",))["id"]
+            ),
+            json_response=json_response,
+            label_type=label_type,
+            seconds_to_label=seconds_to_label,
+            client_version=None,
+            skipped=None,
+        )
+        return self._kili_api_gateway.append_to_labels(data=data, asset_id=asset_id, fields=fields)
 
     def create_honeypot_label(
         self,
@@ -159,3 +187,30 @@ class LabelUseCases(BaseUseCases):
         return self._kili_api_gateway.create_honeypot_label(
             json_response=json_response, asset_id=asset_id, fields=fields
         )
+
+    def export_labels_as_df(
+        self,
+        *,
+        project_id: ProjectId,
+        label_fields: ListOrTuple[str],
+        asset_fields: ListOrTuple[str],
+    ) -> "pd.DataFrame":
+        """Export labels as a pandas DataFrame."""
+        assets_gen = self._kili_api_gateway.list_assets(
+            AssetFilters(project_id=ProjectId(project_id)),
+            tuple(asset_fields) + tuple("labels." + field for field in label_fields),
+            QueryOptions(disable_tqdm=False),
+        )
+
+        labels = [
+            dict(
+                label,
+                **{f"asset_{key}": asset[key] for key in asset if key != "labels"},
+            )
+            for asset in assets_gen
+            for label in asset["labels"]
+        ]
+
+        import pandas as pd  # pylint: disable=import-outside-toplevel
+
+        return pd.DataFrame(labels)

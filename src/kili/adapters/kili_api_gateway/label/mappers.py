@@ -8,7 +8,7 @@ from kili.adapters.kili_api_gateway.project.mappers import project_where_mapper
 from kili.adapters.kili_api_gateway.user.mappers import user_where_mapper
 from kili.domain.label import LabelFilters
 
-from .types import AppendLabelData, ReviewedLabelData, UpdateLabelData
+from .types import AppendLabelData, AppendToLabelsData, UpdateLabelData
 
 
 def label_where_mapper(filters: LabelFilters) -> Dict[str, object]:
@@ -44,11 +44,6 @@ def update_label_data_mapper(data: UpdateLabelData) -> Dict:
     }
 
 
-def review_label_data_mapper(data: ReviewedLabelData) -> Dict:
-    """Map ReviewedLabelData to GraphQL ReviewedLabel input."""
-    return {"id": data.id}
-
-
 def append_label_data_mapper(data: AppendLabelData) -> Dict:
     """Map AppendLabelData to GraphQL AppendLabelData input."""
     return {
@@ -58,7 +53,16 @@ def append_label_data_mapper(data: AppendLabelData) -> Dict:
         "jsonResponse": json.dumps(data.json_response),
         "secondsToLabel": data.seconds_to_label,
         "modelName": data.model_name,
-        "reviewedLabel": (
-            review_label_data_mapper(data.reviewed_label) if data.reviewed_label else None
-        ),
+    }
+
+
+def append_to_labels_data_mapper(data: AppendToLabelsData) -> Dict:
+    """Map AppendToLabelsData to GraphQL AppendToLabelsData input."""
+    return {
+        "authorID": data.author_id,
+        "clientVersion": data.client_version,
+        "jsonResponse": json.dumps(data.json_response),
+        "labelType": data.label_type,
+        "secondsToLabel": data.seconds_to_label,
+        "skipped": data.skipped,
     }
