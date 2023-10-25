@@ -75,7 +75,6 @@ dev = [
   "mike",
   "pymdown-extensions",
   # linting
-  "black",
   "pre-commit >= 3.3.0, < 4.0.0",
   "pylint ==3.0.2",
   "pyright ==1.1.332",
@@ -94,23 +93,6 @@ dev = [
 ]
 image-utils = ["opencv-python >= 4.0.0, < 5.0.0"]
 azure = ["azure-storage-blob >= 12.0.0, < 13.0.0"]
-
-[tool.black]
-line-length = 100
-preview = true
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-)/
-'''
-
-[tool.isort]
-profile = "black"
-py_version = 38
-known_first_party = ['kili']
 
 [tool.pyright]
 exclude = ["**/__pycache__", ".github/scripts/upload_test_stats_datadog.py"]
@@ -131,7 +113,6 @@ ignore = [
   "FA100",   # Missing `from __future__ import annotations`, but uses `typing`
   "FBT001",  # boolean-type-hint-positional-argument
   "FBT002",  # boolean-type-hint-keyword-argument
-  "I001",    # isort already takes care of imports
   "PLR0913", # Too many arguments to function call
   "TRY003",  # Avoid specifying long messages outside the exception class
 ]
