@@ -28,11 +28,6 @@ repos:
           - tags
           - --
 
-  - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.7.0
-    hooks:
-      - id: nbqa-isort
-
   - repo: local
     hooks:
       - id: clean-notebook-metadata

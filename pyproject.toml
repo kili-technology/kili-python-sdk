@@ -101,6 +101,7 @@ typeCheckingMode = "basic"
 
 [tool.ruff]
 select = ["ALL"]
+src = ["src"]
 line-length = 100
 target-version = "py38"
 ignore = [
@@ -146,6 +147,9 @@ convention = "google"
 
 [tool.ruff.format]
 line-ending = "lf"
+
+[tool.ruff.isort]
+known-first-party = ["src", "tests"]
 
 [tool.pytest]
 ini_options = { pythonpath = ["src", "."] }
