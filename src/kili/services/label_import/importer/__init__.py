@@ -3,15 +3,12 @@
 import csv
 import logging
 from abc import ABC, abstractmethod
-from json import dumps
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, Type
+from typing import TYPE_CHECKING, Dict, List, NamedTuple, Optional, Type
 
 import yaml
 
-from kili.core.graphql.operations.label.mutations import GQL_APPEND_MANY_LABELS
 from kili.core.helpers import get_file_paths_to_upload
-from kili.core.utils import pagination
 from kili.domain.label import LabelType
 from kili.domain.project import ProjectId
 from kili.services.helpers import get_external_id_from_file_path
@@ -28,7 +25,11 @@ from kili.services.label_import.parser import (
 from kili.services.label_import.types import Classes, LabelFormat
 from kili.services.types import LogLevel
 from kili.use_cases.asset.utils import AssetUseCasesUtils
-from kili.utils import tqdm
+from kili.use_cases.label import LabelUseCases
+from kili.use_cases.label.types import LabelToCreateUseCaseInput
+
+if TYPE_CHECKING:
+    from kili.client import Kili
 
 
 class LoggerParams(NamedTuple):
@@ -41,7 +42,9 @@ class LoggerParams(NamedTuple):
 class AbstractLabelImporter(ABC):
     """Abstract Label Importer."""
 
-    def __init__(self, kili, logger_params: LoggerParams, input_format: LabelFormat) -> None:
+    def __init__(
+        self, kili: "Kili", logger_params: LoggerParams, input_format: LabelFormat
+    ) -> None:
         self.kili = kili
         self.logger_params = logger_params
         self.input_format: LabelFormat = input_format
@@ -97,35 +100,28 @@ class AbstractLabelImporter(ABC):
             labels = [
                 {**label, "asset_id": asset_id_map[label["asset_external_id"]]} for label in labels
             ]
+
         labels_data = [
-            {
-                "jsonResponse": dumps(label.get("json_response")),
-                "assetID": label.get("asset_id"),
-                "secondsToLabel": label.get("seconds_to_label"),
-                "modelName": model_name,
-                "authorID": label.get("author_id"),
-            }
+            LabelToCreateUseCaseInput(
+                json_response=label["json_response"],
+                asset_id=label.get("asset_id"),
+                seconds_to_label=label.get("seconds_to_label"),
+                model_name=model_name,
+                author_id=label.get("author_id"),
+                asset_external_id=None,
+                label_type=label_type,
+            )
             for label in labels
         ]
-        batch_generator = pagination.BatchIteratorBuilder(labels_data)
-        result = []
-        with tqdm.tqdm(total=len(labels_data), disable=self.logger_params.disable_tqdm) as pbar:
-            for batch_labels in batch_generator:
-                variables = {
-                    "data": {
-                        "labelType": label_type,
-                        "labelsData": batch_labels,
-                        "overwrite": overwrite,
-                    },
-                    "where": {"idIn": [label["assetID"] for label in batch_labels]},
-                }
-                # we increase the timeout because the import can take a long time
-                batch_result = self.kili.graphql_client.execute(
-                    GQL_APPEND_MANY_LABELS, variables, timeout=60
-                )
-                result.extend(self.kili.format_result("data", batch_result, None))
-                pbar.update(len(batch_labels))
-        return result
+
+        return LabelUseCases(self.kili.kili_api_gateway).append_labels(
+            disable_tqdm=self.logger_params.disable_tqdm,
+            overwrite=overwrite,
+            label_type=label_type,
+            project_id=ProjectId(project_id) if project_id else None,
+            fields=("id",),
+            labels=labels_data,
+        )
 
     @staticmethod
     @abstractmethod

@@ -4,12 +4,21 @@ from functools import partial
 from typing import Dict, Generator, List, Literal, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.adapters.kili_api_gateway.label.types import UpdateLabelData
-from kili.domain.label import LabelFilters, LabelId
+from kili.adapters.kili_api_gateway.label.types import (
+    AppendLabelData,
+    AppendManyLabelsData,
+    UpdateLabelData,
+)
+from kili.domain.asset.asset import AssetExternalId, AssetId
+from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
+from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.base import BaseUseCases
 from kili.utils.labels.parsing import parse_labels
+
+from .types import LabelToCreateUseCaseInput
+from .validator import check_input_labels
 
 
 class LabelUseCases(BaseUseCases):
@@ -81,3 +90,72 @@ class LabelUseCases(BaseUseCases):
     ) -> List[LabelId]:
         """Delete labels."""
         return self._kili_api_gateway.delete_labels(ids=ids, disable_tqdm=disable_tqdm)
+
+    def append_labels(
+        self,
+        labels: List[LabelToCreateUseCaseInput],
+        label_type: LabelType,
+        overwrite: Optional[bool],
+        project_id: Optional[ProjectId],
+        fields: ListOrTuple[str],
+        disable_tqdm: Optional[bool],
+    ) -> List[Dict]:
+        """Append labels."""
+        check_input_labels(labels)
+
+        asset_id_array = [label.asset_id for label in labels]
+        if any(asset_id is None for asset_id in asset_id_array):
+            external_id_array = [label.asset_external_id for label in labels]
+            asset_id_array = AssetUseCasesUtils(
+                self._kili_api_gateway
+            ).get_asset_ids_or_throw_error(
+                asset_ids=None,
+                external_ids=external_id_array,  # pyright: ignore[reportGeneralTypeIssues]
+                project_id=project_id,
+            )
+
+        labels_to_add = [
+            AppendLabelData(
+                author_id=label.author_id,
+                asset_id=asset_id,  # pyright: ignore[reportGeneralTypeIssues]
+                seconds_to_label=label.seconds_to_label,
+                json_response=label.json_response,
+                model_name=label.model_name,
+                client_version=None,
+                reviewed_label=None,
+            )
+            for label, asset_id, in zip(labels, asset_id_array)
+        ]
+
+        data = AppendManyLabelsData(
+            label_type=label_type,
+            overwrite=overwrite,
+            labels_data=labels_to_add,
+        )
+        return self._kili_api_gateway.append_many_labels(
+            fields=fields, disable_tqdm=disable_tqdm, data=data
+        )
+
+    def create_honeypot_label(
+        self,
+        json_response: Dict,
+        asset_id: Optional[AssetId],
+        asset_external_id: Optional[AssetExternalId],
+        project_id: Optional[ProjectId],
+        fields: ListOrTuple[str],
+    ) -> Dict:
+        """Create honeypot label."""
+        if asset_id is None:
+            if asset_external_id is None or project_id is None:
+                raise ValueError(
+                    "Either provide `asset_id` or `asset_external_id` and `project_id`."
+                )
+
+            asset_id = AssetUseCasesUtils(self._kili_api_gateway).infer_ids_from_external_ids(
+                asset_external_ids=[asset_external_id],
+                project_id=project_id,
+            )[asset_external_id]
+
+        return self._kili_api_gateway.create_honeypot_label(
+            json_response=json_response, asset_id=asset_id, fields=fields
+        )

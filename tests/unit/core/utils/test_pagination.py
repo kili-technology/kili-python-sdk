@@ -2,7 +2,7 @@
 
 import pytest
 
-from kili.core.utils.pagination import BatchIteratorBuilder, batch_object_builder
+from kili.core.utils.pagination import batch_object_builder, batcher
 
 
 @pytest.mark.parametrize(
@@ -21,7 +21,7 @@ from kili.core.utils.pagination import BatchIteratorBuilder, batch_object_builde
 def test_batch_iterator_builder(name, test_case):
     """Test batch iterator builder."""
     _ = name
-    actual = BatchIteratorBuilder(test_case["iterable"], batch_size=test_case["batch_size"])
+    actual = batcher(test_case["iterable"], batch_size=test_case["batch_size"])
     expected = test_case["expected_result"]
     assert all(a == b for a, b in zip(actual, expected))
 
