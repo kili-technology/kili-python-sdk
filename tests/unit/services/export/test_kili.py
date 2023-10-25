@@ -223,7 +223,6 @@ def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture
         },
     }
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch("kili.entrypoints.queries.label.get_project", return_value=get_project_return_val)
     mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
@@ -241,8 +240,6 @@ def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture
     kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "PDF"}
 
@@ -372,7 +369,6 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
     }
 
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch("kili.entrypoints.queries.label.get_project", return_value=get_project_return_val)
     mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
@@ -390,8 +386,6 @@ def test_kili_export_labels_non_normalized_image(mocker: pytest_mock.MockerFixtu
     kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
 
@@ -449,7 +443,6 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
     }
 
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch("kili.entrypoints.queries.label.get_project", return_value=get_project_return_val)
     mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
@@ -467,8 +460,6 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
     kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
 
