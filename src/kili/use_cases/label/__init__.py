@@ -127,7 +127,6 @@ class LabelUseCases(BaseUseCases):
                 json_response=label.json_response,
                 model_name=label.model_name,
                 client_version=None,
-                reviewed_label=None,
             )
             for label, asset_id in zip(labels, asset_id_array)
         ]
@@ -162,7 +161,6 @@ class LabelUseCases(BaseUseCases):
             seconds_to_label=seconds_to_label,
             client_version=None,
             skipped=None,
-            reviewed_label=None,
         )
         return self._kili_api_gateway.append_to_labels(data=data, asset_id=asset_id, fields=fields)
 

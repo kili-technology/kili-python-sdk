@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 from kili.domain.asset import AssetId
-from kili.domain.label import LabelId, LabelType
+from kili.domain.label import LabelType
 from kili.domain.user import UserId
 
 
@@ -19,13 +19,6 @@ class UpdateLabelData:
 
 
 @dataclass
-class ReviewedLabelData:
-    """ReviewedLabelData data."""
-
-    id: LabelId  # noqa: A003
-
-
-@dataclass
 class AppendLabelData:
     """AppendLabelData data."""
 
@@ -35,7 +28,6 @@ class AppendLabelData:
     json_response: Dict
     seconds_to_label: Optional[float]
     model_name: Optional[str]
-    reviewed_label: Optional[ReviewedLabelData]
 
 
 @dataclass
@@ -57,4 +49,3 @@ class AppendToLabelsData:
     label_type: LabelType
     seconds_to_label: Optional[float]
     skipped: Optional[bool]
-    reviewed_label: Optional[ReviewedLabelData]
