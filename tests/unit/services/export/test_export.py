@@ -800,8 +800,8 @@ def test_export_with_asset_filter_kwargs(mocker):
     kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.kili_api_gateway = mocker.MagicMock()
     kili.export_labels(
         project_id="fake_proj_id",
@@ -882,8 +882,8 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
     kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
 
     with pytest.raises(NameError, match="Unknown asset filter arguments"):
         kili.export_labels(
@@ -935,8 +935,8 @@ def test_when_exporting_with_assets_given_a_project_with_data_connection_then_it
     kili = mock_kili(mocker, with_data_connection=True)
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     mocker.patch.object(AbstractExporter, "_has_data_connection", return_value=True)
 
     with pytest.raises(
@@ -1027,8 +1027,8 @@ def test_when_exporting_geotiff_asset_with_incompatible_options_then_it_crashes(
     kili = mock_kili(mocker, with_data_connection=False)
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
 
     with pytest.raises(
         NotCompatibleOptions,
@@ -1095,8 +1095,8 @@ def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
     kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.kili_api_gateway = mocker.MagicMock()
 
     # When
@@ -1106,4 +1106,4 @@ def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
 
     # Then
     process_and_save_mock.assert_called_once()
-    kili.graphql_client.execute.assert_not_called()
+    kili.graphql_client.execute.assert_not_called()  # pyright: ignore[reportGeneralTypeIssues]

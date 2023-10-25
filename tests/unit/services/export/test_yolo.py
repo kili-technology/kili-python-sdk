@@ -326,8 +326,8 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
     kili.api_key = ""  # type: ignore
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
 
     with TemporaryDirectory() as export_folder:
         export_filename = str(Path(export_folder) / "export_yolo_v8.zip")
@@ -377,8 +377,8 @@ def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
     kili.api_key = ""  # type: ignore
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
 
     with TemporaryDirectory() as extract_folder:
         export_filename = str(Path(extract_folder) / "export_yolo_v8.zip")
