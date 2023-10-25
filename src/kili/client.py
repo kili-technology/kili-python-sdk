@@ -17,7 +17,6 @@ from kili.entrypoints.mutations.notification import MutationsNotification
 from kili.entrypoints.mutations.plugins import MutationsPlugins
 from kili.entrypoints.mutations.project import MutationsProject
 from kili.entrypoints.mutations.project_version import MutationsProjectVersion
-from kili.entrypoints.queries.label import QueriesLabel
 from kili.entrypoints.queries.notification import QueriesNotification
 from kili.entrypoints.queries.plugins import QueriesPlugins
 from kili.entrypoints.queries.project_user import QueriesProjectUser

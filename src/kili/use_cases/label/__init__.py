@@ -1,7 +1,7 @@
 """Label use cases."""
 
 from functools import partial
-from typing import Dict, Generator, List, Literal, Optional
+from typing import TYPE_CHECKING, Dict, Generator, List, Literal, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.label.types import (
@@ -10,7 +10,7 @@ from kili.adapters.kili_api_gateway.label.types import (
     AppendToLabelsData,
     UpdateLabelData,
 )
-from kili.domain.asset.asset import AssetExternalId, AssetId
+from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
@@ -21,6 +21,9 @@ from kili.utils.labels.parsing import parse_labels
 
 from .types import LabelToCreateUseCaseInput
 from .validator import check_input_labels
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 class LabelUseCases(BaseUseCases):
@@ -186,3 +189,30 @@ class LabelUseCases(BaseUseCases):
         return self._kili_api_gateway.create_honeypot_label(
             json_response=json_response, asset_id=asset_id, fields=fields
         )
+
+    def export_labels_as_df(
+        self,
+        *,
+        project_id: ProjectId,
+        label_fields: ListOrTuple[str],
+        asset_fields: ListOrTuple[str],
+    ) -> "pd.DataFrame":
+        """Export labels as a pandas DataFrame."""
+        assets_gen = self._kili_api_gateway.list_assets(
+            AssetFilters(project_id=ProjectId(project_id)),
+            tuple(asset_fields) + tuple("labels." + field for field in label_fields),
+            QueryOptions(disable_tqdm=False),
+        )
+
+        labels = [
+            dict(
+                label,
+                **{f"asset_{key}": asset[key] for key in asset if key != "labels"},
+            )
+            for asset in assets_gen
+            for label in asset["labels"]
+        ]
+
+        import pandas as pd  # pylint: disable=import-outside-toplevel
+
+        return pd.DataFrame(labels)
