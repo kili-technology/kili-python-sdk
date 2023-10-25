@@ -18,7 +18,11 @@ from typing import (
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.helpers import is_empty_list_with_warning, validate_category_search_query
+from kili.core.helpers import (
+    deprecate,
+    is_empty_list_with_warning,
+    validate_category_search_query,
+)
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
 from kili.domain.asset.helpers import check_asset_identifier_arguments
 from kili.domain.label import LabelFilters, LabelId, LabelType
@@ -29,6 +33,7 @@ from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
     disable_tqdm_if_as_generator,
 )
+from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.label import LabelUseCases
 from kili.use_cases.label.types import LabelToCreateUseCaseInput
 from kili.utils.labels.parsing import ParsedLabel
@@ -1006,5 +1011,76 @@ class LabelClientMethods(BaseClientMethods):
             asset_id=AssetId(asset_id) if asset_id else None,
             asset_external_id=AssetExternalId(asset_external_id) if asset_external_id else None,
             project_id=ProjectId(project_id) if project_id else None,
+            fields=("id",),
+        )
+
+    @deprecate(
+        msg=(
+            "append_to_labels method is deprecated. Please use append_labels instead. This new"
+            " function allows to import several labels 10 times faster."
+        )
+    )
+    @typechecked
+    def append_to_labels(
+        self,
+        json_response: dict,
+        author_id: Optional[str] = None,
+        label_asset_external_id: Optional[str] = None,
+        label_asset_id: Optional[str] = None,
+        label_type: LabelType = "DEFAULT",
+        project_id: Optional[str] = None,
+        seconds_to_label: Optional[int] = 0,
+    ) -> Dict[Literal["id"], str]:
+        """!!! danger "[DEPRECATED]".
+
+        append_to_labels method is deprecated. Please use append_labels instead.
+            This new function allows to import several labels 10 times faster.
+
+        Append a label to an asset.
+
+        Args:
+            json_response: Label is given here.
+            author_id: ID of the author of the label.
+            label_asset_external_id: External identifier of the asset.
+            label_asset_id: Identifier of the asset.
+            project_id: Identifier of the project.
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
+            seconds_to_label: Time to create the label.
+
+        !!! warning
+            Either provide `label_asset_id` or `label_asset_external_id` and `project_id`
+
+        Returns:
+            A result object which indicates if the mutation was successful,
+                or an error message.
+
+        Examples:
+            >>> kili.append_to_labels(label_asset_id=asset_id, json_response={...})
+        """
+        check_asset_identifier_arguments(
+            ProjectId(project_id) if project_id else None,
+            cast(ListOrTuple[AssetId], [label_asset_id]) if label_asset_id else None,
+            (
+                cast(ListOrTuple[AssetExternalId], [label_asset_external_id])
+                if label_asset_external_id
+                else None
+            ),
+        )
+
+        if (
+            label_asset_id is None
+            and label_asset_external_id is not None
+            and project_id is not None
+        ):
+            label_asset_id = AssetUseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
+                cast(List[AssetExternalId], [label_asset_external_id]), ProjectId(project_id)
+            )[AssetExternalId(label_asset_external_id)]
+
+        return LabelUseCases(self.kili_api_gateway).append_to_labels(
+            author_id=UserId(author_id) if author_id else None,
+            json_response=json_response,
+            label_type=label_type,
+            asset_id=AssetId(label_asset_id),  # pyright: ignore[reportGeneralTypeIssues]
+            seconds_to_label=seconds_to_label,
             fields=("id",),
         )

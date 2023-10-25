@@ -7,12 +7,14 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.label.types import (
     AppendLabelData,
     AppendManyLabelsData,
+    AppendToLabelsData,
     UpdateLabelData,
 )
 from kili.domain.asset.asset import AssetExternalId, AssetId
 from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
+from kili.domain.user import UserId
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.base import BaseUseCases
 from kili.utils.labels.parsing import parse_labels
@@ -124,7 +126,7 @@ class LabelUseCases(BaseUseCases):
                 client_version=None,
                 reviewed_label=None,
             )
-            for label, asset_id, in zip(labels, asset_id_array)
+            for label, asset_id in zip(labels, asset_id_array)
         ]
 
         data = AppendManyLabelsData(
@@ -135,6 +137,31 @@ class LabelUseCases(BaseUseCases):
         return self._kili_api_gateway.append_many_labels(
             fields=fields, disable_tqdm=disable_tqdm, data=data
         )
+
+    def append_to_labels(
+        self,
+        author_id: Optional[UserId],
+        json_response: Dict,
+        label_type: LabelType,
+        seconds_to_label: Optional[float],
+        asset_id: AssetId,
+        fields: ListOrTuple[str],
+    ) -> Dict:
+        """Append to labels."""
+        data = AppendToLabelsData(
+            author_id=(
+                author_id
+                if author_id is not None
+                else self._kili_api_gateway.get_current_user(fields=("id",))["id"]
+            ),
+            json_response=json_response,
+            label_type=label_type,
+            seconds_to_label=seconds_to_label,
+            client_version=None,
+            skipped=None,
+            reviewed_label=None,
+        )
+        return self._kili_api_gateway.append_to_labels(data=data, asset_id=asset_id, fields=fields)
 
     def create_honeypot_label(
         self,

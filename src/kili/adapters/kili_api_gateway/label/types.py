@@ -45,3 +45,16 @@ class AppendManyLabelsData:
     labels_data: List[AppendLabelData]
     label_type: LabelType
     overwrite: Optional[bool]
+
+
+@dataclass
+class AppendToLabelsData:
+    """AppendToLabelsData graphql input."""
+
+    author_id: UserId
+    client_version: Optional[int]
+    json_response: Dict
+    label_type: LabelType
+    seconds_to_label: Optional[float]
+    skipped: Optional[bool]
+    reviewed_label: Optional[ReviewedLabelData]

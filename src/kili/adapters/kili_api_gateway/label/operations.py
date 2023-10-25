@@ -68,3 +68,20 @@ def get_create_honeypot_mutation(fragment: str) -> str:
     }}
     }}
     """
+
+
+def get_append_to_labels_mutation(fragment: str) -> str:
+    """Get the gql append to labels mutation."""
+    return f"""
+mutation(
+    $data: AppendToLabelsData!
+    $where: AssetWhere!
+) {{
+  data: appendToLabels(
+    data: $data
+    where: $where
+  ) {{
+      {fragment}
+  }}
+}}
+"""
