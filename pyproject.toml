@@ -104,6 +104,7 @@ select = ["ALL"]
 src = ["src"]
 line-length = 100
 target-version = "py38"
+extend-include = ["*.ipynb"]
 ignore = [
   "ANN101",  # missing type for `self`
   "COM812",  # missing trailing comma
