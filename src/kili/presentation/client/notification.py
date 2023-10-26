@@ -1,27 +1,25 @@
-"""Notification queries."""
+"""Client presentation methods for notifications."""
 
 from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.graphql.operations.notification.queries import (
-    NotificationQuery,
-    NotificationWhere,
-)
+from kili.domain.notification import NotificationFilter, NotificationId
 from kili.domain.types import ListOrTuple
-from kili.entrypoints.base import BaseOperationEntrypointMixin
+from kili.domain.user import UserFilter, UserId
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )
+from kili.use_cases.notification import NotificationUseCases
 from kili.utils.logcontext import for_all_methods, log_call
+
+from .base import BaseClientMethods
 
 
 @for_all_methods(log_call, exclude=["__init__"])
-class QueriesNotification(BaseOperationEntrypointMixin):
-    """Set of Notification queries."""
-
-    # pylint: disable=too-many-arguments
+class NotificationClientMethods(BaseClientMethods):
+    """Methods attached to the Kili client, to run actions on notifications."""
 
     @overload
     def notifications(
@@ -103,17 +101,16 @@ class QueriesNotification(BaseOperationEntrypointMixin):
         Returns:
             An iterable of notifications.
         """
-        where = NotificationWhere(
-            has_been_seen=has_been_seen,
-            notification_id=notification_id,
-            user_id=user_id,
-        )
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
-        notifications_gen = NotificationQuery(self.graphql_client, self.http_client)(
-            where, fields, options
+        filters = NotificationFilter(
+            has_been_seen=has_been_seen,
+            id=NotificationId(notification_id) if notification_id else None,
+            user=UserFilter(id=UserId(user_id)) if user_id else None,
         )
-
+        notifications_gen = NotificationUseCases(self.kili_api_gateway).list_notifications(
+            options=options, fields=fields, filters=filters
+        )
         if as_generator:
             return notifications_gen
         return list(notifications_gen)
@@ -135,9 +132,9 @@ class QueriesNotification(BaseOperationEntrypointMixin):
         Returns:
             The number of notifications with the parameters provided
         """
-        where = NotificationWhere(
+        filters = NotificationFilter(
             has_been_seen=has_been_seen,
-            notification_id=notification_id,
-            user_id=user_id,
+            id=NotificationId(notification_id) if notification_id else None,
+            user=UserFilter(id=UserId(user_id)) if user_id else None,
         )
-        return NotificationQuery(self.graphql_client, self.http_client).count(where)
+        return NotificationUseCases(self.kili_api_gateway).count_notifications(filters=filters)

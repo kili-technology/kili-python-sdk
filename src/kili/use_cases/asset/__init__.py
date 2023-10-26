@@ -1,7 +1,7 @@
 """Asset use cases."""
 
 import itertools
-from typing import Dict, Generator, List, Literal, Optional
+from typing import Generator, Literal, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.constants import QUERY_BATCH_SIZE
@@ -44,9 +44,10 @@ class AssetUseCases(BaseUseCases):
 
         if download_media_function is not None:
             # TODO: modify download_media function so it can take a generator of assets
-            assets_lists: List[List[Dict]] = []
-            for assets_batch in batcher(assets_gen, QUERY_BATCH_SIZE):
-                assets_lists.append(download_media_function(assets_batch))
+            assets_lists = [
+                download_media_function(assets_batch)
+                for assets_batch in batcher(assets_gen, QUERY_BATCH_SIZE)
+            ]
             assets_gen = (asset for asset in itertools.chain(*assets_lists))
 
         if label_output_format == "parsed_label":
