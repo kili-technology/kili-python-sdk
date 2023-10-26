@@ -1,4 +1,4 @@
-"""Mixin extending Kili API Gateway class with notification related operations."""
+"""Mixin extending Kili API Gateway class with notification-related operations."""
 
 from typing import Dict, Generator
 
@@ -16,7 +16,7 @@ from .operations import GQL_COUNT_NOTIFICATIONS, get_notifications_query
 
 
 class NotificationOperationMixin(BaseOperationMixin):
-    """GraphQL Mixin extending GraphQL Gateway class with Notification related operations."""
+    """GraphQL Mixin extending GraphQL Gateway class with notification-related operations."""
 
     def list_notifications(
         self, filters: NotificationFilter, fields: ListOrTuple[str], options: QueryOptions
