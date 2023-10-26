@@ -15,7 +15,7 @@ class NotificationUseCases(BaseUseCases):
         self, filters: NotificationFilter, fields: ListOrTuple[str], options: QueryOptions
     ) -> Generator[Dict, None, None]:
         """List notifications."""
-        return self._kili_api_gateway.list_notification(
+        return self._kili_api_gateway.list_notifications(
             filters=filters, fields=fields, options=options
         )
 
