@@ -341,17 +341,17 @@ def test_import(
         _ = case_name
         os.mkdir("test_tree")
         # pylint: disable=unspecified-encoding
-        open("test_tree/image1.png", "w")
-        open("test_tree/image2.jpg", "w")
-        open("test_tree/texte1.txt", "w")
-        open("test_tree/video1.mp4", "w")
-        open("test_tree/video2.mp4", "w")
+        Path("test_tree/image1.png").open("w")
+        Path("test_tree/image2.jpg").open("w")
+        Path("test_tree/texte1.txt").open("w")
+        Path("test_tree/video1.mp4").open("w")
+        Path("test_tree/video2.mp4").open("w")
         os.mkdir("test_tree/leaf")
-        open("test_tree/leaf/image3.png", "w")
-        open("test_tree/leaf/image4.jpg", "w")
-        open("test_tree/leaf/texte2.txt", "w")
+        Path("test_tree/leaf/image3.png").open("w")
+        Path("test_tree/leaf/image4.jpg").open("w")
+        Path("test_tree/leaf/texte2.txt").open("w")
         # newline="" to disable universal newlines translation (bug fix for windows)
-        with open("assets_to_import.csv", "w", newline="") as f:
+        with Path("assets_to_import.csv").open("w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["external_id", "content"])
             writer.writerow(["image3", str(Path("test_tree") / "leaf" / "image3.png")])

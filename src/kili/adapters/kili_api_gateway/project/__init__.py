@@ -47,10 +47,6 @@ class ProjectOperationMixin(BaseOperationMixin):
             )
         return load_project_json_fields(projects[0], fields)
 
-    def get_project_field(self, project_id: ProjectId, field: str) -> object:
-        """Get a project field."""
-        return self.get_project(project_id, [field])[field]
-
     # pylint: disable=too-many-arguments
     def create_project(
         self,

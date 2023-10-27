@@ -16,6 +16,7 @@ from kili.services.label_import.exceptions import LabelParsingError
 from kili.services.label_import.importer import YoloLabelImporter
 from kili.services.label_import.parser import YoloLabelParser
 from kili.services.label_import.types import Classes
+from tests.unit.services.import_labels import fakes
 from tests.unit.services.import_labels.test_cases_from_files import TEST_CASES
 
 
@@ -49,9 +50,11 @@ def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
         for test_case in TEST_CASES
     ],
 )
-def test_import_labels_from_files(mocker, description, inputs, outputs):
-    auth = MagicMock()
-
+def test_import_labels_from_files(description, inputs, outputs, kili_api_gateway, mocker):
+    kili = mocker.MagicMock()
+    kili.kili_api_gateway = kili_api_gateway
+    kili_api_gateway.list_projects.side_effect = fakes.projects
+    kili_api_gateway.get_project.side_effect = fakes.project
     with TemporaryDirectory() as label_folders:
         label_paths = []
         for label in inputs["labels"]:
@@ -69,7 +72,7 @@ def test_import_labels_from_files(mocker, description, inputs, outputs):
             "kili.services.label_import.importer.AbstractLabelImporter.process_from_dict"
         ) as process_from_dict_mock:
             import_labels_from_files(
-                auth,
+                kili,
                 label_paths,
                 str(yolo_meta_path),
                 ProjectId(inputs["project_id"]),

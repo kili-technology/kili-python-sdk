@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING, Dict, List, Optional, Type, cast
 
-from kili.domain.project import InputType, ProjectId
+from kili.domain.project import ProjectId
 
 from .base import (
     BaseAbstractAssetImporter,
@@ -37,7 +37,7 @@ def import_assets(  # pylint: disable=too-many-arguments
     verify: bool = True,
 ):
     """Import the selected assets into the specified project."""
-    input_type = cast(InputType, kili.kili_api_gateway.get_project_field(project_id, "inputType"))
+    input_type = kili.kili_api_gateway.get_project(project_id, ("inputType",))["inputType"]
 
     project_params = ProjectParams(project_id=project_id, input_type=input_type)
     processing_params = ProcessingParams(raise_error=raise_error, verify=verify)

@@ -139,6 +139,7 @@ ignore = [
   "PGH003",  # use specific rule codes when ignoring type issues
   "PLR2004", # magic value used in comparison
   "S101",    # use of assert detected
+  "SIM115",  # Use context handler for opening files
   "SLF001",  # private member accessed
   "T201",    # print found
 ]

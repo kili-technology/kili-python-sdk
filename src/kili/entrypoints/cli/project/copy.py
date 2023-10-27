@@ -1,6 +1,6 @@
 """CLI's project copy subcommand."""
 
-from typing import Optional, cast
+from typing import Optional
 
 import click
 
@@ -83,5 +83,5 @@ def copy_project(
         copy_assets=with_assets,
         copy_labels=with_labels,
     )
-    title = cast(str, kili.kili_api_gateway.get_project_field(ProjectId(new_proj_id), "title"))
+    title = kili.kili_api_gateway.get_project(ProjectId(new_proj_id), ("title",))["title"]
     print(f'Project copied successfully. New project id: "{new_proj_id}", with title: "{title}"')

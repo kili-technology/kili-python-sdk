@@ -1,7 +1,7 @@
 """CLI's project create subcommand."""
 
 import json
-from typing import Dict, Optional, cast
+from typing import Optional
 
 import click
 from tabulate import tabulate
@@ -75,10 +75,9 @@ def create_project(
             json_interface = json.load(interface_file)
 
     elif project_id_src is not None:
-        json_interface = cast(
-            Dict,
-            kili.kili_api_gateway.get_project_field(ProjectId(project_id_src), "jsonInterface"),
-        )
+        json_interface = kili.kili_api_gateway.get_project(
+            ProjectId(project_id_src), ("jsonInterface",)
+        )["jsonInterface"]
 
     result = kili.create_project(
         input_type=input_type,
