@@ -80,9 +80,7 @@ class AssetUseCasesUtils:
                 ["id", "externalId"],
                 QueryOptions(disable_tqdm=True),
             )
-            for external_ids_batch in pagination.BatchIteratorBuilder(
-                list(asset_external_ids), 1000
-            )
+            for external_ids_batch in pagination.batcher(list(asset_external_ids), 1000)
         )
         assets = chain(*assets_generators)
         id_map: Dict[AssetExternalId, AssetId] = {}

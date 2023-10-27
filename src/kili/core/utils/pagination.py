@@ -2,46 +2,17 @@
 
 from itertools import islice
 from time import sleep
-from typing import Any, Callable, Dict, Iterator, List, Optional
+from typing import Any, Callable, Dict, Generator, Iterable, List, Optional, TypeVar
 
 from kili.core.constants import MUTATION_BATCH_SIZE
 from kili.domain.types import ListOrTuple
 from kili.exceptions import GraphQLError
 
-# pylint: disable=too-many-arguments
-
-
-class BatchIteratorBuilder:
-    """Generate an paginated iterator from a list.
-
-    Args:
-        iterable: a list to paginate.
-        batch_size: the size of the batches to produce
-    """
-
-    def __init__(self, iterable: ListOrTuple, batch_size: int = MUTATION_BATCH_SIZE) -> None:
-        self.iterable = iterable
-        self.batch_size = batch_size
-        self.nb_batches = (len(iterable) - 1) // batch_size + 1
-
-    def __len__(self) -> int:
-        return self.nb_batches
-
-    def __next__(self):
-        next_batch = self.iterable[: self.batch_size]
-        self.iterable = self.iterable[self.batch_size :]
-        if len(next_batch) > 0:
-            return next_batch
-        raise StopIteration
-
-    def __iter__(self):
-        return self
-
 
 def batch_object_builder(
     properties_to_batch: Dict[str, Optional[ListOrTuple[Any]]],
     batch_size: int = MUTATION_BATCH_SIZE,
-) -> Iterator[Dict[str, Optional[ListOrTuple[Any]]]]:
+) -> Generator[Dict[str, Any], None, None]:
     """Generate a paginated iterator for several variables.
 
     Args:
@@ -56,7 +27,7 @@ def batch_object_builder(
     number_of_batches = len(range(0, number_of_objects, batch_size))
     batched_properties = {
         k: (
-            BatchIteratorBuilder(iterable=v, batch_size=batch_size)
+            batcher(iterable=v, batch_size=batch_size)
             if v is not None
             else (item for item in [v] * number_of_batches)
         )
@@ -121,7 +92,10 @@ def mutate_from_paginated_call(
     return results
 
 
-def batcher(iterable: Iterator, batch_size: int):
+T = TypeVar("T")
+
+
+def batcher(iterable: Iterable[T], batch_size: int) -> Generator[List[T], None, None]:
     """Break iterable into sub-iterables with batch_size elements each.
 
     The last yielded list will have fewer than n elements if the

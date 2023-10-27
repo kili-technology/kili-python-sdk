@@ -18,7 +18,7 @@ query countLabels($where: LabelWhere!) {
 """
 
 
-def get_update_properties_in_label_query(fragment: str) -> str:
+def get_update_properties_in_label_mutation(fragment: str) -> str:
     """Get the gql update properties in label query."""
     return f"""
     mutation(
@@ -39,4 +39,49 @@ GQL_DELETE_LABELS = """
 mutation($ids: [ID!]!) {
   data: deleteLabels(ids: $ids)
 }
+"""
+
+
+def get_append_many_labels_mutation(fragment: str) -> str:
+    """Get the gql append many labels mutation."""
+    return f"""
+    mutation appendManyLabels($data: AppendManyLabelsData!, $where: AssetWhere!) {{
+        data: appendManyLabels(data: $data, where: $where ) {{
+            {fragment}
+        }}
+    }}
+    """
+
+
+def get_create_honeypot_mutation(fragment: str) -> str:
+    """Get the gql create honeypot mutation."""
+    return f"""
+    mutation(
+        $data: CreateHoneypotData!
+        $where: AssetWhere!
+    ) {{
+    data: createHoneypot(
+        data: $data
+        where: $where
+    ) {{
+        {fragment}
+    }}
+    }}
+    """
+
+
+def get_append_to_labels_mutation(fragment: str) -> str:
+    """Get the gql append to labels mutation."""
+    return f"""
+mutation(
+    $data: AppendToLabelsData!
+    $where: AssetWhere!
+) {{
+  data: appendToLabels(
+    data: $data
+    where: $where
+  ) {{
+      {fragment}
+  }}
+}}
 """

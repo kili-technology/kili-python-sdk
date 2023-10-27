@@ -6,7 +6,7 @@ from zipfile import ZipFile
 import pytest_mock
 
 from kili.adapters.http_client import HttpClient
-from kili.entrypoints.queries.label import QueriesLabel
+from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import YoloExporter
 from kili.services.export.format.yolo import (
     YoloExporter,
@@ -312,7 +312,6 @@ assets = [
 
 def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch("kili.entrypoints.queries.label.get_project", return_value=get_project_return_val)
     mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
@@ -322,13 +321,13 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
     )
     mocker.patch.object(YoloExporter, "_has_data_connection", return_value=False)
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
 
     with TemporaryDirectory() as export_folder:
         export_filename = str(Path(export_folder) / "export_yolo_v8.zip")
@@ -364,7 +363,6 @@ names: ['OBJECT_DETECTION_JOB/A', 'OBJECT_DETECTION_JOB/B', 'POLYGON_JOB/F', 'PO
 
 def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
     mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch("kili.entrypoints.queries.label.get_project", return_value=get_project_return_val)
     mocker.patch(
         "kili.services.export.format.base.get_project", return_value=get_project_return_val
     )
@@ -374,13 +372,13 @@ def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
     )
     mocker.patch.object(YoloExporter, "_has_data_connection", return_value=False)
 
-    kili = QueriesLabel()
+    kili = LabelClientMethods()
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
-    kili.graphql_client = mocker.MagicMock()
-    kili.http_client = mocker.MagicMock()
     kili.kili_api_gateway = mocker.MagicMock()
     kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
 
     with TemporaryDirectory() as extract_folder:
         export_filename = str(Path(extract_folder) / "export_yolo_v8.zip")

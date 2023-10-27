@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 LabelId = NewType("LabelId", str)
 
+
 LabelType = Literal["AUTOSAVE", "DEFAULT", "INFERENCE", "PREDICTION", "REVIEW"]
 
 
