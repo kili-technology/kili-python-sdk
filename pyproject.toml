@@ -134,8 +134,10 @@ ignore = [
   "D103",    # Missing docstring in public function
   "ERA001",  # found commented out code
   "INP001",  # __init__.py missing
+  "ISC003",  # Explicitly concatenated string should be implicitly concatenated"
   "N802",    # function name should be lowercase
   "N806",    # variable should be lowercase
+  "PERF401", # Use a list comprehension to create a transformed list"
   "PGH003",  # use specific rule codes when ignoring type issues
   "PLR2004", # magic value used in comparison
   "S101",    # use of assert detected

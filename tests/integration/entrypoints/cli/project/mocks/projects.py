@@ -1,7 +1,11 @@
 from kili.domain.project import ProjectFilters
 
 
-def mocked__ProjectQuery(project_filters: ProjectFilters, *args, **kwargs):
+def mocked_get_project(project_id, *args, **kwargs):
+    return mocked_list_projects(ProjectFilters(id=project_id))[0]
+
+
+def mocked_list_projects(project_filters: ProjectFilters, *args, **kwargs):
     project_id = project_filters.id
     if project_id == "text_project":
         return [{"id": "text_project", "inputType": "TEXT"}]

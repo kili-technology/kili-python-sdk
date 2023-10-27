@@ -1,5 +1,5 @@
-import os
 import urllib.request
+from pathlib import Path
 
 import cv2  # type: ignore
 import numpy as np
@@ -31,4 +31,4 @@ def test_mask_to_normalized_vertices():
     total_pixels = mask.shape[0] * mask.shape[1]
     assert same_pixels / total_pixels >= 0.99
 
-    os.remove("mask.png")
+    Path("mask.png").unlink()

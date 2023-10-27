@@ -20,12 +20,12 @@ from kili.entrypoints.cli.project.list_ import list_projects
 from tests.integration.entrypoints.cli.helpers import debug_subprocess_pytest
 
 from .mocks.assets import mocked__project_assets
-from .mocks.projects import mocked__ProjectQuery
+from .mocks.projects import mocked_get_project, mocked_list_projects
 
 
 def test_list(mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(KiliAPIGateway, "list_projects", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "list_projects", side_effect=mocked_list_projects)
 
     runner = CliRunner()
     result = runner.invoke(list_projects)
@@ -54,7 +54,7 @@ def test_create_project(*_):
 
 def test_describe_project(mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked_get_project)
 
     runner = CliRunner()
     result = runner.invoke(describe_project, ["project_id"])
@@ -334,7 +334,8 @@ def test_import(
     mocker: pytest_mock.MockerFixture,
 ):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked_get_project)
+    mocker.patch.object(KiliAPIGateway, "list_projects", side_effect=mocked_list_projects)
 
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -419,7 +420,8 @@ def test_import(
 )
 def test_export(name: str, test_case: List[str], mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked_get_project)
+    mocker.patch.object(KiliAPIGateway, "list_projects", side_effect=mocked_list_projects)
     mocker.patch.object(AssetOperationMixin, "list_assets", side_effect=mocked__project_assets)
     mocker.patch(
         "kili.services.export.format.base.AbstractExporter._has_data_connection", return_value=False
