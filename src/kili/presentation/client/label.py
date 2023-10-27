@@ -1,7 +1,6 @@
 """Client presentation methods for labels."""
 
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 import warnings
 from itertools import repeat
 from typing import (
