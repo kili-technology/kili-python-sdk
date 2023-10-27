@@ -32,7 +32,7 @@ class ProjectOperationMixin(BaseOperationMixin):
     """Mixin extending Kili API Gateway class with Projects related operations."""
 
     def get_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> Dict:
-        """Get project fields."""
+        """Get project."""
         fragment = fragment_builder(fields)
         query = get_projects_query(fragment)
         result = self.graphql_client.execute(
