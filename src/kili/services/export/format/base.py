@@ -8,7 +8,7 @@ import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, NamedTuple, Optional, Tuple
 
 from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
@@ -27,9 +27,11 @@ from kili.services.export.types import (
     LabelFormat,
     SplitOption,
 )
-from kili.services.project import get_project
 from kili.services.types import Job
 from kili.utils.tempfile import TemporaryDirectory
+
+if TYPE_CHECKING:
+    from kili.client import Kili
 
 
 class ExportParams(NamedTuple):
@@ -55,7 +57,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         export_params: ExportParams,
-        kili,
+        kili: "Kili",
         logger: logging.Logger,
         disable_tqdm: Optional[bool],
         content_repository: AbstractContentRepository,
@@ -78,8 +80,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.asset_filter_kwargs = export_params.asset_filter_kwargs
         self.normalized_coordinates = export_params.normalized_coordinates
 
-        self.project = get_project(
-            self.kili, self.project_id, ["jsonInterface", "inputType", "title", "description", "id"]
+        self.project = kili.kili_api_gateway.get_project(
+            self.project_id, ["jsonInterface", "inputType", "title", "description", "id"]
         )
 
     @abstractmethod
@@ -200,7 +202,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             )
 
     def _has_data_connection(self) -> bool:
-        project = get_project(self.kili, self.project_id, ["dataConnections.id"])
+        project = self.kili.kili_api_gateway.get_project(self.project_id, ["dataConnections.id"])
         return bool(project["dataConnections"])
 
     def _check_geotiff_export_compatibility(self, assets: List[Dict]) -> None:

@@ -162,7 +162,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             if value is not None:
                 assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
         created_asset_ids = import_assets(
-            self,
+            self,  # pyright: ignore[reportGeneralTypeIssues]
             project_id=ProjectId(project_id),
             assets=assets,
             disable_tqdm=disable_tqdm,

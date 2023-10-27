@@ -1,16 +1,16 @@
 """CLI's project create subcommand."""
 
 import json
-from typing import Optional
+from typing import Dict, Optional, cast
 
 import click
 from tabulate import tabulate
 
 from kili.core.constants import INPUT_TYPE
+from kili.domain.project import ProjectId
 from kili.entrypoints.cli.common_args import Options
 from kili.entrypoints.cli.helpers import get_kili_client
 from kili.entrypoints.queries.project.helpers import get_project_url
-from kili.services.project import get_project_field
 
 
 @click.command(name="create")
@@ -38,7 +38,7 @@ def create_project(
     description: str,
     tablefmt: str,
 ):
-    """Create a Kili project.
+    r"""Create a Kili project.
 
     interface must be a path pointing to your json interface file
 
@@ -75,7 +75,10 @@ def create_project(
             json_interface = json.load(interface_file)
 
     elif project_id_src is not None:
-        json_interface = get_project_field(kili, project_id_src, "jsonInterface")
+        json_interface = cast(
+            Dict,
+            kili.kili_api_gateway.get_project_field(ProjectId(project_id_src), "jsonInterface"),
+        )
 
     result = kili.create_project(
         input_type=input_type,

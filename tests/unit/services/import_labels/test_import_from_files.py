@@ -9,7 +9,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 
-from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.domain.project import ProjectId
 from kili.exceptions import NotFound
 from kili.services.label_import import import_labels_from_files
@@ -17,7 +16,6 @@ from kili.services.label_import.exceptions import LabelParsingError
 from kili.services.label_import.importer import YoloLabelImporter
 from kili.services.label_import.parser import YoloLabelParser
 from kili.services.label_import.types import Classes
-from tests.unit.services.import_labels import fakes
 from tests.unit.services.import_labels.test_cases_from_files import TEST_CASES
 
 
@@ -51,7 +49,6 @@ def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
         for test_case in TEST_CASES
     ],
 )
-@patch.object(ProjectQuery, "__call__", side_effect=fakes.projects)
 def test_import_labels_from_files(mocker, description, inputs, outputs):
     auth = MagicMock()
 
@@ -88,7 +85,6 @@ def test_import_labels_from_files(mocker, description, inputs, outputs):
             process_from_dict_mock.assert_called_with(**outputs["call"])
 
 
-@patch.object(ProjectQuery, "__call__", side_effect=fakes.projects)
 def test_import_labels_from_files_malformed_annotation(mocker):
     auth = MagicMock()
 
@@ -138,7 +134,6 @@ def test_import_labels_from_files_malformed_annotation(mocker):
             )
 
 
-@patch.object(ProjectQuery, "__call__", side_effect=fakes.projects)
 def test_import_labels_wrong_target_job(mocker):
     auth = MagicMock()
 

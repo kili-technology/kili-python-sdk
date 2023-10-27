@@ -1226,7 +1226,7 @@ class LabelClientMethods(BaseClientMethods):
 
         try:
             export_labels(
-                self,
+                self,  # pyright: ignore[reportGeneralTypeIssues]
                 asset_ids=resolved_asset_ids,
                 project_id=ProjectId(project_id),
                 export_type="latest",

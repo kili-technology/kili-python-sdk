@@ -2,7 +2,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
 from tests.unit.services.asset_import.base import ImportTestCase
@@ -17,7 +16,7 @@ from tests.unit.services.asset_import.mocks import (
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
-@patch.object(ProjectQuery, "__call__", side_effect=lambda *args: [{"inputType": "TEXT"}])
+# @patch.object(ProjectQuery, "__call__", side_effect=lambda *args: [{"inputType": "TEXT"}])
 class TextTestCase(ImportTestCase):
     def test_upload_from_one_local_text_file(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/texts/test_text_file.txt"

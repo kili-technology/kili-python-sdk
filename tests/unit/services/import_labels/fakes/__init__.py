@@ -1,11 +1,15 @@
 from typing import Dict, List
 
+from kili.domain.project import ProjectFilters
 
-def projects(where, _fields, _options) -> List[Dict]:
-    project_id = where.project_id
+
+def projects(filters: ProjectFilters, _fields, _options) -> List[Dict]:
+    project_id = filters.id
+
     if project_id == "yolo!":
         return [{"jsonInterface": {"jobs": {"JOB_0": {}}}}]
-    elif project_id == "pid1":
+
+    if project_id == "pid1":
         return [{"jsonInterface": {"jobs": {"Job1": {}}}}]
-    else:
-        return []
+
+    return []

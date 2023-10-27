@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.graphql.operations.project.queries import ProjectWhere
+from kili.domain.project import ProjectFilters
 from tests.fakes.fake_data import (
     asset_image_1,
     asset_image_1_with_classification,
@@ -28,9 +28,9 @@ class FakeKili:
     kili_api_gateway.http_client = http_client
 
 
-def mocked_ProjectQuery(where, _fields, _options):
+def mocked_ProjectQuery(where: ProjectFilters, _fields, _options):
     """Fake projects."""
-    project_id = where.project_id
+    project_id = where.id
     if project_id in [
         "object_detection",
         "object_detection_with_empty_annotation",
@@ -210,7 +210,7 @@ def mocked_ProjectQuery(where, _fields, _options):
 
 def mocked_kili_api_gateway_get_project(project_id, fields):
     return mocked_ProjectQuery(
-        ProjectWhere(project_id=project_id), fields, QueryOptions(disable_tqdm=False)
+        ProjectFilters(id=project_id), fields, QueryOptions(disable_tqdm=False)
     )[0]
 
 

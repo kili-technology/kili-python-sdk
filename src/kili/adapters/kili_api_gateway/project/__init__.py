@@ -39,12 +39,17 @@ class ProjectOperationMixin(BaseOperationMixin):
             query=query, variables={"where": {"id": project_id}, "first": 1, "skip": 0}
         )
         projects = result["data"]
+
         if len(projects) == 0:
             raise NotFound(
                 f"project ID: {project_id}. The project does not exist or you do not have access"
                 " to it."
             )
         return load_project_json_fields(projects[0], fields)
+
+    def get_project_field(self, project_id: ProjectId, field: str) -> object:
+        """Get a project field."""
+        return self.get_project(project_id, [field])[field]
 
     # pylint: disable=too-many-arguments
     def create_project(

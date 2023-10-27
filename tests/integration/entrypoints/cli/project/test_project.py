@@ -10,8 +10,8 @@ import pytest
 import pytest_mock
 from click.testing import CliRunner
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
-from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.entrypoints.cli.project.create import create_project
 from kili.entrypoints.cli.project.describe import describe_project
 from kili.entrypoints.cli.project.export import export_labels
@@ -25,7 +25,7 @@ from .mocks.projects import mocked__ProjectQuery
 
 def test_list(mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked__ProjectQuery)
 
     runner = CliRunner()
     result = runner.invoke(list_projects)

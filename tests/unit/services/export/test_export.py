@@ -3,14 +3,12 @@ import glob
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
 from zipfile import ZipFile
 
 import pytest
 import pytest_mock
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.domain.asset import AssetExternalId, AssetFilters
 from kili.domain.project import ProjectId
 from kili.presentation.client.label import LabelClientMethods
@@ -27,7 +25,6 @@ from tests.fakes.fake_kili import (
     mocked_AssetQuery,
     mocked_AssetQuery_count,
     mocked_kili_api_gateway_get_project,
-    mocked_ProjectQuery,
 )
 from tests.unit.services.export.fakes.fake_ffmpeg import mock_ffmpeg
 
@@ -623,7 +620,7 @@ def get_file_tree(folder: str):
     ],
 )
 def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_case):
-    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
+    # mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
     mocker_ffmpeg = mocker.patch("kili.services.export.media.video.ffmpeg")
     mocker.patch(
         "kili.services.export.format.geojson.is_geotiff_asset_with_lat_lon_coords",
@@ -757,7 +754,7 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
         ),
     ],
 )
-@patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
+# @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
 def test_export_service_errors(mocker_project, name, test_case, error):
     with TemporaryDirectory() as export_folder:
         path_zipfile = Path(export_folder) / "export.zip"
@@ -1089,7 +1086,6 @@ def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
         "title": "",
         "dataConnections": None,
     }
-    mocker.patch.object(ProjectQuery, "__call__", return_value=[project_return_val])
     mocker.patch("kili.services.export.format.base.fetch_assets", return_value=[])
     process_and_save_mock = mocker.patch.object(VocExporter, "process_and_save", return_value=None)
     kili = LabelClientMethods()

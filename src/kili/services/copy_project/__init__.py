@@ -13,7 +13,6 @@ from kili.domain.asset import AssetFilters
 from kili.domain.label import LabelFilters
 from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
-from kili.services.project import get_project
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
 from kili.utils.tqdm import tqdm
@@ -89,7 +88,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         if copy_quality_settings:
             fields += self.FIELDS_QUALITY_SETTINGS
 
-        src_project = get_project(self.kili, from_project_id, fields)
+        src_project = self.kili.kili_api_gateway.get_project(ProjectId(from_project_id), fields)
 
         if src_project["dataConnections"] and copy_assets:
             raise NotImplementedError("Copying projects with cloud storage is not supported.")
