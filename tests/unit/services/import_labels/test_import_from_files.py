@@ -88,8 +88,11 @@ def test_import_labels_from_files(description, inputs, outputs, kili_api_gateway
             process_from_dict_mock.assert_called_with(**outputs["call"])
 
 
-def test_import_labels_from_files_malformed_annotation(mocker):
+def test_import_labels_from_files_malformed_annotation(kili_api_gateway):
+    kili_api_gateway.get_project.side_effect = fakes.project
+    kili_api_gateway.list_projects.side_effect = fakes.projects
     auth = MagicMock()
+    auth.kili_api_gateway = kili_api_gateway
 
     inputs = {
         "labels": [

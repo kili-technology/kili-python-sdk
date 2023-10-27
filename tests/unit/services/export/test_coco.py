@@ -569,10 +569,6 @@ def test_when_exporting_to_coco_given_a_project_with_data_connection_then_it_sho
         "inputType": "IMAGE",
         "title": "",
     }
-    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch(
-        "kili.services.export.format.base.get_project", return_value=get_project_return_val
-    )
     mocker.patch.object(CocoExporter, "_check_arguments_compatibility", return_value=None)
     mocker.patch.object(CocoExporter, "_check_project_compatibility", return_value=None)
     mocker.patch.object(CocoExporter, "_has_data_connection", return_value=True)

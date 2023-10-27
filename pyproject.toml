@@ -145,6 +145,9 @@ ignore = [
   "SLF001",  # private member accessed
   "T201",    # print found
 ]
+"*.ipynb" = [
+  "E402", # Module level import not at top of file"
+]
 
 [tool.ruff.pydocstyle]
 convention = "google"
