@@ -36,8 +36,10 @@ def format_result(
     if isinstance(formatted_json, list):
         if get_origin(object_) is list:
             obj = get_args(object_)[0]
+            # pylint: disable=line-too-long
             return [obj(element) for element in formatted_json]  # pyright: ignore[reportGeneralTypeIssues]
         # the legacy "orm" objects fall into this category.
+        # pylint: disable=line-too-long
         return [object_(element) for element in formatted_json]  # pyright: ignore[reportGeneralTypeIssues]
 
     return object_(formatted_json)

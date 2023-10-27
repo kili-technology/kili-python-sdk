@@ -59,7 +59,6 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
     )
 
     # Add '%' to PROGRESS if PROGRESS is not nan
-    # pylint: disable=line-too-long
     projects["PROGRESS"] = [
         (str(progress) + "%") if progress >= 0 else progress
         for progress in projects["progress"]  # type: ignore
@@ -69,7 +68,6 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
         (description[:47] + "...").replace("\n", "") if len(description) > 50 else description
         for description in projects["description"]  # type: ignore
     ]
-    # pylint: disable=line-too-long
     projects["TITLE"] = [
         (title[:47] + "...") if len(title) > 50 else title
         for title in projects["title"]  # type: ignore

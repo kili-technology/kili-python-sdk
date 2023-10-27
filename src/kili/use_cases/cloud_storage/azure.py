@@ -51,6 +51,7 @@ class AzureBucket:
         """Split the connection url into storage account and container name."""
         split_value = ".blob.core.windows.net"
         url_connection = urlparse(connection_url)
+        # pylint: disable=line-too-long
         storage_account = url_connection.hostname.split(  # pyright: ignore[reportOptionalMemberAccess]
             split_value
         )[0]
