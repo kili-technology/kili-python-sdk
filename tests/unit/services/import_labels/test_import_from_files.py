@@ -227,10 +227,8 @@ def test__read_classes_from_meta_file(name, filename, lines, label_format, expec
         with open(class_file, "w", encoding="utf-8") as f:
             f.write("\n".join(lines))
 
-        classes_by_id = (
-            YoloLabelImporter._read_classes_from_meta_file(  # pylint: disable=protected-access
-                class_file, label_format
-            )
+        classes_by_id = YoloLabelImporter._read_classes_from_meta_file(  # pylint: disable=protected-access
+            class_file, label_format
         )
         assert classes_by_id == expected
 

@@ -14,8 +14,6 @@ We will learn how to push model-generated labels to Kili and how to visualize th
 
 
 ```python
-import os
-
 from kili.client import Kili
 ```
 

@@ -1,5 +1,6 @@
 """GraphQL Cloud Storage operations."""
 
+
 def get_list_data_integrations_query(fragment: str) -> str:
     """Return the GraphQL query to list data integrations."""
     return f"""

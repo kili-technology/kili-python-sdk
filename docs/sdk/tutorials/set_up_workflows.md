@@ -25,8 +25,6 @@ To work with this notebook, you will have to install and instantiate Kili.
 
 
 ```python
-import os
-
 from kili.client import Kili
 ```
 

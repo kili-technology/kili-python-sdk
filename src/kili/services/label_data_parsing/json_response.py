@@ -40,7 +40,8 @@ class _ParsedVideoJobs:
         for current_job_name in job_names_to_parse:
             frames_list_for_job = []
             for _, frame_json_response in sorted(
-                json_response.items(), key=lambda item: int(item[0])  # sort by frame number
+                json_response.items(),
+                key=lambda item: int(item[0]),  # sort by frame number
             ):
                 job_response = frame_json_response.get(current_job_name, {})
                 job_payload = job_response_module.JobPayload(

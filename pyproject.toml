@@ -75,7 +75,6 @@ dev = [
   "mike",
   "pymdown-extensions",
   # linting
-  "black",
   "pre-commit >= 3.3.0, < 4.0.0",
   "pylint ==3.0.2",
   "pyright ==1.1.333",
@@ -95,23 +94,6 @@ dev = [
 image-utils = ["opencv-python >= 4.0.0, < 5.0.0"]
 azure = ["azure-storage-blob >= 12.0.0, < 13.0.0"]
 
-[tool.black]
-line-length = 100
-preview = true
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-)/
-'''
-
-[tool.isort]
-profile = "black"
-py_version = 38
-known_first_party = ['kili']
-
 [tool.pyright]
 exclude = ["**/__pycache__", ".github/scripts/upload_test_stats_datadog.py"]
 pythonVersion = "3.8"
@@ -119,8 +101,10 @@ typeCheckingMode = "basic"
 
 [tool.ruff]
 select = ["ALL"]
+src = ["src"]
 line-length = 100
 target-version = "py38"
+extend-include = ["*.ipynb"]
 ignore = [
   "ANN101",  # missing type for `self`
   "COM812",  # missing trailing comma
@@ -131,7 +115,6 @@ ignore = [
   "FA100",   # Missing `from __future__ import annotations`, but uses `typing`
   "FBT001",  # boolean-type-hint-positional-argument
   "FBT002",  # boolean-type-hint-keyword-argument
-  "I001",    # isort already takes care of imports
   "PLR0913", # Too many arguments to function call
   "TRY003",  # Avoid specifying long messages outside the exception class
 ]
@@ -159,8 +142,15 @@ ignore = [
   "SLF001",  # private member accessed
   "T201",    # print found
 ]
+
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[tool.ruff.isort]
+known-first-party = ["src", "tests"]
 
 [tool.pytest]
 ini_options = { pythonpath = ["src", "."] }

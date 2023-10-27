@@ -50,10 +50,12 @@ class TextDataImporter(BaseAbstractAssetImporter):
                 )
             return TextDataType.RICH_TEXT
         if has_local_file and has_hosted_file:
-            raise ImportValidationError("""
+            raise ImportValidationError(
+                """
                 Cannot upload hosted data and local files at the same time.
                 Please separate the assets into 2 calls
-                """)
+                """
+            )
         if has_local_file:
             return TextDataType.LOCAL_FILE
         if has_hosted_file:

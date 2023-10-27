@@ -1,7 +1,4 @@
 {
-  "black-formatter.args": [
-    "--preview"
-  ],
   "editor.showUnused": true,
   "pylint.args": [
     "--rcfile",

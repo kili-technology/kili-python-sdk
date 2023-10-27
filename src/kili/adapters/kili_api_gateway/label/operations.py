@@ -1,5 +1,6 @@
 """GraphQL label operations."""
 
+
 def get_labels_query(fragment: str) -> str:
     """Get the gql labels query."""
     return f"""

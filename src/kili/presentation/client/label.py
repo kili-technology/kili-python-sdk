@@ -176,7 +176,8 @@ class LabelClientMethods(BaseClientMethods):
         output_format: Literal["dict"] = "dict",
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]: ...
+    ) -> Generator[Dict, None, None]:
+        ...
 
     @overload
     def labels(
@@ -213,7 +214,8 @@ class LabelClientMethods(BaseClientMethods):
         output_format: Literal["dict"] = "dict",
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]: ...
+    ) -> List[Dict]:
+        ...
 
     @overload
     def labels(
@@ -250,7 +252,8 @@ class LabelClientMethods(BaseClientMethods):
         output_format: Literal["parsed_label"] = "parsed_label",
         *,
         as_generator: Literal[False] = False,
-    ) -> List[ParsedLabel]: ...
+    ) -> List[ParsedLabel]:
+        ...
 
     @overload
     def labels(
@@ -287,7 +290,8 @@ class LabelClientMethods(BaseClientMethods):
         output_format: Literal["parsed_label"] = "parsed_label",
         *,
         as_generator: Literal[True] = True,
-    ) -> Generator[ParsedLabel, None, None]: ...
+    ) -> Generator[ParsedLabel, None, None]:
+        ...
 
     @typechecked
     def labels(
@@ -466,7 +470,8 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]: ...
+    ) -> Generator[Dict, None, None]:
+        ...
 
     @overload
     def predictions(
@@ -498,7 +503,8 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]: ...
+    ) -> List[Dict]:
+        ...
 
     @typechecked
     def predictions(
@@ -619,7 +625,8 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]: ...
+    ) -> Generator[Dict, None, None]:
+        ...
 
     @overload
     def inferences(
@@ -651,7 +658,8 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]: ...
+    ) -> List[Dict]:
+        ...
 
     @typechecked
     def inferences(

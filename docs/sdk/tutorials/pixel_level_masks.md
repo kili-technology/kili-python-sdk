@@ -30,18 +30,11 @@ Before starting, we install the requirements:
 ```python
 %matplotlib inline
 
-import functools
-import json
-import os
-import time
 import urllib.request
 from random import randint
 
 import cv2
 import matplotlib.pyplot as plt
-import numpy as np
-import requests
-from PIL import Image
 
 from kili.client import Kili
 ```
@@ -106,7 +99,7 @@ kili.append_many_to_dataset(
     content_array=[content],
     external_id_array=[external_id],
     json_content_array=None,
-);
+)
 ```
 
 
@@ -126,7 +119,7 @@ We can start by downloading the image on disk:
 
 ```python
 mask_url = "https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/HUMAN.mask.png"
-urllib.request.urlretrieve(mask_url, "mask.png");
+urllib.request.urlretrieve(mask_url, "mask.png")
 ```
 
 Kili SDK provides a set of utils to easily create labels. See the [documentation](https://python-sdk-docs.kili-technology.com/latest/sdk/label_utils/) for more information.
@@ -211,7 +204,7 @@ reconstructed_mask = normalized_vertices_to_mask(
     mask.shape[0],
 )
 
-plt.title(f"Mask for HUMAN class")
+plt.title("Mask for HUMAN class")
 plt.imshow(reconstructed_mask, cmap="gray")
 plt.show()
 ```

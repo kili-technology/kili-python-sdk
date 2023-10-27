@@ -20,7 +20,6 @@ First of all, let's import the packages, and install pydicom in case you don't h
 
 
 ```python
-import os
 import pickle
 from functools import reduce
 from pathlib import Path
@@ -49,7 +48,7 @@ wget.download(
     "https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/datasets/0005d3cc-3c3f-40b9-93c3-46231c3eb813.dcm?raw=true"
 )
 
-data_folder = Path(".")
+data_folder = Path()
 files = list(data_folder.glob("*.dcm"))
 assert len(files) == 2, files
 ```

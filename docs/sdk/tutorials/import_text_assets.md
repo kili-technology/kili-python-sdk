@@ -14,7 +14,6 @@ When dealing with textual data, style can convey a lot of meaning. If you annota
 
 
 ```python
-import os
 from random import random
 
 from kili.client import Kili

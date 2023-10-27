@@ -16,7 +16,10 @@ def test_point_conversion_origin_bottom_left():
     assert normalized_point == {"x": 0.1, "y": 0.8}
 
     assert normalized_point_to_point(
-        normalized_point, img_width, img_height, origin_location="bottom_left"  # type: ignore
+        normalized_point,  # pyright: ignore[reportGeneralTypeIssues]
+        img_width,
+        img_height,
+        origin_location="bottom_left",  # type: ignore
     ) == pytest.approx(point)
 
 
@@ -33,7 +36,10 @@ def test_point_conversion_origin_top_left():
     assert normalized_point == {"x": 19 / 20, "y": 1 / 10}
 
     assert normalized_point_to_point(
-        normalized_point, img_width, img_height, origin_location="top_left"  # type: ignore
+        normalized_point,  # pyright: ignore[reportGeneralTypeIssues]
+        img_width,
+        img_height,
+        origin_location="top_left",  # type: ignore
     ) == pytest.approx(point)
 
 

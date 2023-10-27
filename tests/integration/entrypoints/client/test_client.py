@@ -32,7 +32,8 @@ def test_wrong_api_key_is_obfuscated(mocker: pytest_mock.MockerFixture):
     mocker.patch("kili.client.is_api_key_valid", return_value=False)
     """Test obfuscation of api key."""
     with pytest.raises(
-        AuthenticationFailed, match=r"failed with API key: \*{9}_key"  # 9 stars for "wrong_api"
+        AuthenticationFailed,
+        match=r"failed with API key: \*{9}_key",  # 9 stars for "wrong_api"
     ):
         _ = Kili()
 
