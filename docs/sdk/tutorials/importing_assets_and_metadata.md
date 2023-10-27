@@ -24,8 +24,6 @@ First, let's install and import the required modules.
 
 
 ```python
-import os
-
 from kili.client import Kili
 ```
 
@@ -226,7 +224,7 @@ We can remove the project that we created:
 
 
 ```python
-kili.delete_project(project_id);
+kili.delete_project(project_id)
 ```
 
 ## Summary

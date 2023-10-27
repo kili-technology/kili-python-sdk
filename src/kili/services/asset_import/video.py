@@ -177,11 +177,13 @@ class VideoDataImporter(BaseAbstractAssetImporter):
             return False
         if all(not b for b in should_use_native_video_array):
             return True
-        raise ImportValidationError("""
+        raise ImportValidationError(
+            """
             Cannot upload videos to split into frames
             and video to keep as native in the same time.
             Please separate the assets into 2 calls
-            """)
+            """
+        )
 
     def import_assets(self, assets: List[AssetLike]):
         """Import video assets into Kili."""

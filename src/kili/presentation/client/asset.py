@@ -109,7 +109,8 @@ class AssetClientMethods(BaseClientMethods):
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]: ...
+    ) -> Generator[Dict, None, None]:
+        ...
 
     @overload
     def assets(
@@ -181,7 +182,8 @@ class AssetClientMethods(BaseClientMethods):
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]: ...
+    ) -> List[Dict]:
+        ...
 
     @typechecked
     def assets(

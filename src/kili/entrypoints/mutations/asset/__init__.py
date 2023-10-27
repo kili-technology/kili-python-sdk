@@ -146,9 +146,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             raise ValueError("Variables content_array and json_content_array cannot be both None.")
 
         nb_data = (
-            len(content_array)
-            if content_array is not None
-            else len(json_content_array)  # type:ignore
+            len(content_array) if content_array is not None else len(json_content_array)  # type:ignore
         )
 
         field_mapping = {

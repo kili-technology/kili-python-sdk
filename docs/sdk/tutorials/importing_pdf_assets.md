@@ -24,7 +24,6 @@ First, let's install and import the required modules.
 
 
 ```python
-import os
 from pprint import pprint
 
 from kili.client import Kili

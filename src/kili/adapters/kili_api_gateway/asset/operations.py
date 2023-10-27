@@ -1,5 +1,6 @@
 """GraphQL Asset operations."""
 
+
 def get_assets_query(fragment: str) -> str:
     """Return the GraphQL assets query."""
     return f"""

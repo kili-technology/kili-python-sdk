@@ -32,19 +32,16 @@ Let's first install the Kili package and all other packages required for our exp
 ```python
 import os
 import random
-import shutil
 import zipfile
 from copy import deepcopy
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-import sklearn
 import torch
-import torch.nn as nn
-import torch.optim as optim
 from PIL import Image
 from sklearn.metrics import classification_report
+from torch import nn, optim
 from torchvision import datasets, transforms
 from tqdm.notebook import tqdm
 
@@ -100,7 +97,7 @@ We can see that the dataset has two classes of images: `ok_front` and `def_front
 
 
 ```python
-data_dir = Path(".") / "casting_512x512" / "casting_512x512"
+data_dir = Path() / "casting_512x512" / "casting_512x512"
 print(os.listdir(data_dir))
 print(len(os.listdir(data_dir / "def_front")))
 print(len(os.listdir(data_dir / "ok_front")))
@@ -280,7 +277,8 @@ kili.append_labels(
     json_response_array=json_response_array[:nb_manually_labeled_assets],
     label_type="DEFAULT",
     seconds_to_label_array=[
-        random.randint(60, 300) for _ in range(nb_manually_labeled_assets)  # simulate labeling time
+        random.randint(60, 300)
+        for _ in range(nb_manually_labeled_assets)  # simulate labeling time
     ],
 )
 
@@ -715,7 +713,7 @@ kili.append_labels(
     model_name="DINOv2",
     label_type="PREDICTION",
     asset_external_id_array=external_id_array_non_labeled_assets,
-);
+)
 ```
 
 ## Pre-annotations quality analysis
@@ -779,7 +777,7 @@ for asset in tqdm(labeled_assets):
         output_tensor = dinov2_vits14(input_tensor)
     embeddings_labeled_assets.append(output_tensor[0].cpu().numpy())
 
-neigh.fit(embeddings_labeled_assets, y_true_training_knn);
+neigh.fit(embeddings_labeled_assets, y_true_training_knn)
 ```
 
 
@@ -833,7 +831,7 @@ kili.append_labels(
     asset_external_id_array=gt_external_id_array,
     json_response_array=gt_json_response_array,
     label_type="DEFAULT",
-);
+)
 ```
 
 In the Kili interface, we can filter the assets based on the disagreements between human-made labels and DINOv2-generated labels:

@@ -61,7 +61,6 @@ Do not hesitate to reach out to us if you need more.
 %load_ext autoreload
 %autoreload 2
 
-import os
 
 from kili.client import Kili
 
@@ -100,9 +99,7 @@ def custom_function(label: Dict):
 
 
 class PluginHandler(PluginCore):
-    """
-    Custom plugin instance
-    """
+    """Custom plugin instance"""
 
     def custom_method(self, project_id, label_id):
         print(f"custom_method called for label {label_id}")
@@ -117,15 +114,11 @@ class PluginHandler(PluginCore):
             )
 
     def on_review(self, label: Dict, asset_id: str) -> None:
-        """
-        Dedicated handler for Review action
-        """
+        """Dedicated handler for Review action"""
         custom_function(label)
 
     def on_submit(self, label: Dict, asset_id: str) -> None:
-        """
-        Dedicated handler for Submit action
-        """
+        """Dedicated handler for Submit action"""
         print("On submit called")
 
         project_id = self.project_id
@@ -170,7 +163,6 @@ from plugin_folder.main import PluginHandler
 
 
 ```python
-import os
 import sys
 from pathlib import Path
 
@@ -203,9 +195,7 @@ my_plugin_instance = PluginHandler(kili, project_id)
 
 
 def get_label(label_id, project_id):
-    """
-    Function to get the object Label with the same keys as it will be in the plugin
-    """
+    """Function to get the object Label with the same keys as it will be in the plugin"""
     label = list(
         kili.labels(
             project_id=project_id,

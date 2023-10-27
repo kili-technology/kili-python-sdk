@@ -26,7 +26,6 @@ To use the google API, we need to install some packages:
 
 
 ```python
-import io
 import json
 import os
 
@@ -177,8 +176,8 @@ def detect_text(path):
 
     if response.error.message:
         raise Exception(
-            "{}\nFor more info on error messages, check: "
-            "https://cloud.google.com/apis/design/errors".format(response.error.message)
+            f"{response.error.message}\nFor more info on error messages, check: "
+            "https://cloud.google.com/apis/design/errors"
         )
 
     return text_annotations

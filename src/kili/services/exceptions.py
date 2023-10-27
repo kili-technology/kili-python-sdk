@@ -1,5 +1,6 @@
 """Service exceptions."""
 
+
 class NotEnoughArgumentsSpecifiedError(ValueError):
     """Raised when there are not enough arguments specified in a service."""
 

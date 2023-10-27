@@ -36,9 +36,10 @@ class AzureBucket:
         self.sas_token = sas_token
         self.connection_url = connection_url
 
-        self.storage_account, self.container_name = (
-            self._split_connection_url_into_storage_account_and_container_name(connection_url)
-        )
+        (
+            self.storage_account,
+            self.container_name,
+        ) = self._split_connection_url_into_storage_account_and_container_name(connection_url)
         self.blob_sas_url = f"https://{self.storage_account}.blob.core.windows.net?{self.sas_token}"
         self.client = BlobServiceClient(account_url=self.blob_sas_url)
         self.storage_bucket = self.client.get_container_client(self.container_name)
@@ -50,11 +51,9 @@ class AzureBucket:
         """Split the connection url into storage account and container name."""
         split_value = ".blob.core.windows.net"
         url_connection = urlparse(connection_url)
-        storage_account = (
-            url_connection.hostname.split(  # pyright: ignore[reportOptionalMemberAccess]
-                split_value
-            )[0]
-        )
+        storage_account = url_connection.hostname.split(  # pyright: ignore[reportOptionalMemberAccess]
+            split_value
+        )[0]
         container_name = url_connection.path.lstrip("/")
         return storage_account, container_name
 

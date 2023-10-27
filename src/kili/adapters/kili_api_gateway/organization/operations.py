@@ -1,5 +1,6 @@
 """Collection of Organization's related GraphQL queries and mutations."""
 
+
 def get_create_organization_mutation(fragment: str) -> str:
     """Return the GraphQL createOrganization mutation."""
     return f"""

@@ -474,9 +474,7 @@ Since our dataset CoNLL2003 has been annotated, we can easily evaluate the quali
 
 ```python
 def format_sentence_annotations(sentence_annotations):
-    """
-    Maps a token to its NER tag (B-ORGANIZATION, I-ORGANIZATION, etc.) class value.
-    """
+    """Maps a token to its NER tag (B-ORGANIZATION, I-ORGANIZATION, etc.) class value."""
     ret = defaultdict(list)
     for category, _ in ENTITY_TYPES:
         sentence_annotations_cat = sentence_annotations[category]
@@ -544,7 +542,7 @@ We will use the F1 score to report the results.
 
 
 ```python
-table = Table(title=f"Results")
+table = Table(title="Results")
 
 table.add_column("Class")
 table.add_column("F1")
@@ -583,7 +581,7 @@ table.add_row(
     "All",
     f"{f1_score(references, predictions, average='weighted') * 100:6.1f}%",
     f"{len(references):3d}",
-    style=f"bold bright_red",
+    style="bold bright_red",
 )
 ```
 

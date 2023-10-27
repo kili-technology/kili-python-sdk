@@ -17,7 +17,6 @@ Let's start by installing Kili:
 
 ```python
 import json
-import os
 from pprint import pprint
 
 import numpy as np
@@ -551,10 +550,7 @@ Below, we import some useful functions to convert annotations to Kili label form
 ```python
 from typing import Dict, List
 
-from kili.utils.labels.bbox import (
-    bbox_points_to_normalized_vertices,
-    point_to_normalized_point,
-)
+from kili.utils.labels.bbox import bbox_points_to_normalized_vertices, point_to_normalized_point
 from kili.utils.labels.image import mask_to_normalized_vertices
 ```
 

@@ -1,5 +1,6 @@
 """GraphQL Asset operations."""
 
+
 def get_api_keys_query(fragment: str) -> str:
     """Return the GraphQL apiKeys query."""
     return f"""

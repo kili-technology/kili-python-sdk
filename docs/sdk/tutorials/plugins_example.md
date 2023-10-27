@@ -422,7 +422,7 @@ Deactivate the plugin on a certain project (the plugin can still be active for o
 
 
 ```python
-kili.deactivate_plugin_on_project(plugin_name=plugin_name, project_id=project_id);
+kili.deactivate_plugin_on_project(plugin_name=plugin_name, project_id=project_id)
 ```
 
 Delete the plugin completely (deactivates the plugin from all projects):

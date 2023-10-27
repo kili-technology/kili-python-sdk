@@ -18,7 +18,6 @@ import pprint
 from pathlib import Path
 
 from bs4 import BeautifulSoup
-from rich import print_json
 
 from kili.client import Kili
 ```
