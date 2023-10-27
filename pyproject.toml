@@ -116,6 +116,7 @@ ignore = [
   "FBT001",  # boolean-type-hint-positional-argument
   "FBT002",  # boolean-type-hint-keyword-argument
   "PLR0913", # Too many arguments to function call
+  "TD002",   # Missing author in TODO"
   "TRY003",  # Avoid specifying long messages outside the exception class
 ]
 
