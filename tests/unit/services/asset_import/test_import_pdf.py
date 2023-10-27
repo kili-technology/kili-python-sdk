@@ -20,7 +20,6 @@ from tests.unit.services.asset_import.mocks import (
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
-# @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("PDF"))
 @patch.object(AssetOperationMixin, "list_assets", MagicMock(return_value=[]))
 @patch.object(
     OrganizationOperationMixin,
@@ -29,6 +28,7 @@ from tests.unit.services.asset_import.mocks import (
 )
 class PDFTestCase(ImportTestCase):
     def test_upload_from_one_local_pdf(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "PDF"}
         url = (
             "https://storage.googleapis.com/label-public-staging/asset-test-sample/pdfs/sample.pdf"
         )
@@ -46,6 +46,7 @@ class PDFTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_from_one_hosted_pdf(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "PDF"}
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
@@ -56,9 +57,11 @@ class PDFTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_from_several_batches(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "PDF"}
         self.assert_upload_several_batches()
 
     def test_upload_from_one_hosted_pdf_authorized_while_local_forbidden(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "PDF"}
         self.kili.kili_api_gateway.list_organizations = MagicMock(
             return_value=organization_generator(upload_local_data=False)
         )

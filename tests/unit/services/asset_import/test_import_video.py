@@ -18,11 +18,11 @@ from tests.unit.services.asset_import.mocks import (
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
-# @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("VIDEO"))
 @patch.object(AssetOperationMixin, "list_assets", MagicMock(return_value=[]))
 @patch.object(AssetOperationMixin, "count_assets", return_value=1)
 class VideoTestCase(ImportTestCase):
     def test_upload_from_one_local_video_file_to_native(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
         assets = [{"content": path, "external_id": "local video file to native"}]
@@ -47,6 +47,7 @@ class VideoTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_from_one_hosted_video_file_to_native(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
@@ -71,6 +72,7 @@ class VideoTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_from_one_hosted_video_authorized_while_local_forbidden(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
         self.kili.kili_api_gateway.list_organizations = MagicMock(
             return_value=organization_generator(upload_local_data=False)
         )
@@ -104,6 +106,7 @@ class VideoTestCase(ImportTestCase):
             import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     def test_upload_one_local_video_to_frames(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
         assets = [
@@ -138,6 +141,7 @@ class VideoTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_one_hosted_video_to_frames(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
         assets = [
             {
                 "content": "https://hosted-data",
@@ -171,6 +175,7 @@ class VideoTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_one_video_from_local_frames(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
         hosted_frame_folder = (
             "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/frames/"
         )
@@ -205,6 +210,7 @@ class VideoTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_one_video_from_hosted_frames(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
         url_frame1 = "https://frame1"
         url_frame2 = "https://frame2"
         url_frame3 = "https://frame3"
@@ -236,6 +242,7 @@ class VideoTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     def test_upload_frames_call_from_label_import(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
         url_frame1 = "https://frame1"
         url_frame2 = "https://frame2"
         url_frame3 = "https://frame3"
@@ -268,6 +275,7 @@ class VideoTestCase(ImportTestCase):
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
     def test_import_one_video_with_metadata(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
         assets = [
             {
                 "content": "https://hosted-data",
@@ -302,7 +310,6 @@ class VideoTestCase(ImportTestCase):
 @patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
 @patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
 @patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
-# @patch.object(ProjectQuery, "__call__", side_effect=mocked_project_input_type("VIDEO_LEGACY"))
 @patch.object(
     AssetOperationMixin,
     "list_assets",
@@ -311,6 +318,7 @@ class VideoTestCase(ImportTestCase):
 @patch.object(AssetOperationMixin, "count_assets", return_value=1)
 class VideoLegacyTestCase(ImportTestCase):
     def test_upload_from_one_hosted_video_file_to_video_legacy_project(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO_LEGACY"}
         assets = [
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]

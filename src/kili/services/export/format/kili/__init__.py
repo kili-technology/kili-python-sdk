@@ -1,7 +1,6 @@
 """Common code for the Kili exporter."""
 
 import json
-import os
 from pathlib import Path
 from typing import Callable, Dict, List
 
@@ -61,23 +60,24 @@ class KiliExporter(AbstractExporter):
         # pylint: disable=line-too-long
         """Remove TemporaryDirectory() prefix from filepaths in "jsonContent" and "content" fields."""
         for asset in assets:
-            if os.path.isfile(asset["content"]):
+            if Path(asset["content"]).is_file():
                 asset["content"] = str(Path(self.ASSETS_DIR_NAME) / Path(asset["content"]).name)
 
             json_content_list = []
             if isinstance(asset["jsonContent"], list):
-                for filepath in asset["jsonContent"]:
-                    if os.path.isfile(filepath):
-                        json_content_list.append(
-                            str(Path(self.ASSETS_DIR_NAME) / Path(filepath).name)
-                        )
+                json_content_list = [
+                    str(Path(self.ASSETS_DIR_NAME) / Path(filepath).name)
+                    for filepath in asset["jsonContent"]
+                    if Path(filepath).is_file()
+                ]
+
                 asset["jsonContent"] = json_content_list
         return assets
 
     def _cut_video_assets(self, assets: List[Dict]) -> List[Dict]:
         """Cut video assets into frames."""
         for asset in assets:
-            if asset["jsonContent"] == "" and os.path.isfile(asset["content"]):
+            if asset["jsonContent"] == "" and Path(asset["content"]).is_file():
                 nbr_frames = len(asset.get("latestLabel", {}).get("jsonResponse", {}))
                 if nbr_frames == 0:
                     continue
