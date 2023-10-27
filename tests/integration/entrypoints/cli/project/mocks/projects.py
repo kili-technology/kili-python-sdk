@@ -1,5 +1,8 @@
-def mocked__ProjectQuery(where, *_):
-    project_id = where.project_id
+from kili.domain.project import ProjectFilters
+
+
+def mocked__ProjectQuery(project_filters: ProjectFilters, *args, **kwargs):
+    project_id = project_filters.id
     if project_id == "text_project":
         return [{"id": "text_project", "inputType": "TEXT"}]
     if project_id == "image_project":

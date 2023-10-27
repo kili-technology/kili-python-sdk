@@ -3,11 +3,13 @@ import glob
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 from zipfile import ZipFile
 
 import pytest
 import pytest_mock
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.asset import AssetExternalId, AssetFilters
 from kili.domain.project import ProjectId
@@ -25,6 +27,7 @@ from tests.fakes.fake_kili import (
     mocked_AssetQuery,
     mocked_AssetQuery_count,
     mocked_kili_api_gateway_get_project,
+    mocked_ProjectQuery,
 )
 from tests.unit.services.export.fakes.fake_ffmpeg import mock_ffmpeg
 
@@ -754,7 +757,7 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
         ),
     ],
 )
-# @patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
+@patch.object(KiliAPIGateway, "get_project", side_effect=mocked_ProjectQuery)
 def test_export_service_errors(mocker_project, name, test_case, error):
     with TemporaryDirectory() as export_folder:
         path_zipfile = Path(export_folder) / "export.zip"

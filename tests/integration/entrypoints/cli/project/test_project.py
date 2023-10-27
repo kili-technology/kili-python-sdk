@@ -25,7 +25,7 @@ from .mocks.projects import mocked__ProjectQuery
 
 def test_list(mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "list_projects", side_effect=mocked__ProjectQuery)
 
     runner = CliRunner()
     result = runner.invoke(list_projects)
@@ -54,7 +54,7 @@ def test_create_project(*_):
 
 def test_describe_project(mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked__ProjectQuery)
 
     runner = CliRunner()
     result = runner.invoke(describe_project, ["project_id"])
@@ -334,7 +334,7 @@ def test_import(
     mocker: pytest_mock.MockerFixture,
 ):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked__ProjectQuery)
 
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -419,7 +419,7 @@ def test_import(
 )
 def test_export(name: str, test_case: List[str], mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked__ProjectQuery)
     mocker.patch.object(AssetOperationMixin, "list_assets", side_effect=mocked__project_assets)
     mocker.patch(
         "kili.services.export.format.base.AbstractExporter._has_data_connection", return_value=False
