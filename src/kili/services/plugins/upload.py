@@ -80,10 +80,11 @@ def check_file_contains_handler(path: Path) -> Tuple[bool, Optional[List[str]]]:
         module = ast.parse(file.read())
     for node in module.body:
         if isinstance(node, ast.ClassDef) and node.name == "PluginHandler":
-            handlers = []
-            for child in node.body:
-                if isinstance(child, ast.FunctionDef) and child.name in POSSIBLE_HANDLERS:
-                    handlers.append(POSSIBLE_HANDLERS[child.name])
+            handlers = [
+                POSSIBLE_HANDLERS[child.name]
+                for child in node.body
+                if isinstance(child, ast.FunctionDef) and child.name in POSSIBLE_HANDLERS
+            ]
             return True, handlers
     return False, None
 
