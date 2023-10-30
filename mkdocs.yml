@@ -61,6 +61,8 @@ nav:
           - Plugin Example - Programmatic QA: sdk/tutorials/plugins_example.md
           - Plugins Library: sdk/tutorials/plugins_library.md
           - Webhooks: sdk/tutorials/webhooks_example.md
+      - Integrations:
+          - Vertex AI AutoML: sdk/tutorials/vertex_ai_automl_od.md
 
 ## Configuration
 plugins:
