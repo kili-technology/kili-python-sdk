@@ -76,7 +76,7 @@ def check_file_is_txt(path: Path, verbose: bool = True) -> bool:
 
 def check_file_contains_handler(path: Path) -> Tuple[bool, Optional[List[str]]]:
     """Return true if the file contain PluginHandler Class."""
-    with Path(path).open(encoding="utf-8") as file:
+    with path.open(encoding="utf-8") as file:
         module = ast.parse(file.read())
     for node in module.body:
         if isinstance(node, ast.ClassDef) and node.name == "PluginHandler":
