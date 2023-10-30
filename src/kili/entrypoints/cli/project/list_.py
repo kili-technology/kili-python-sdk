@@ -8,7 +8,7 @@ import pandas as pd
 from tabulate import tabulate
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.graphql.operations.project.queries import ProjectQuery, ProjectWhere
+from kili.domain.project import ProjectFilters
 from kili.entrypoints.cli.common_args import Options
 from kili.entrypoints.cli.helpers import get_kili_client
 
@@ -25,7 +25,7 @@ from kili.entrypoints.cli.helpers import get_kili_client
     default=100,
 )
 def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str, first: int):
-    """List your projects.
+    r"""List your projects.
 
     \b
     !!! Examples
@@ -35,9 +35,9 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     projects = list(
-        ProjectQuery(kili.graphql_client, kili.http_client)(
-            ProjectWhere(),
-            [
+        kili.kili_api_gateway.list_projects(
+            project_filters=ProjectFilters(id=None),
+            fields=[
                 "title",
                 "id",
                 "description",
@@ -45,9 +45,10 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
                 "numberOfRemainingAssets",
                 "numberOfReviewedAssets",
             ],
-            QueryOptions(disable_tqdm=True, first=first),
-        ),
+            options=QueryOptions(disable_tqdm=True, first=first),
+        )
     )
+
     projects = pd.DataFrame(projects)
     projects["progress"] = projects.apply(
         lambda x: (

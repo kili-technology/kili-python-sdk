@@ -1,9 +1,8 @@
 """Service for importing objects into kili."""
 
-from typing import Dict, List, Optional, Type, cast
+from typing import TYPE_CHECKING, Dict, List, Optional, Type, cast
 
 from kili.domain.project import ProjectId
-from kili.services.project import get_project_field
 
 from .base import (
     BaseAbstractAssetImporter,
@@ -17,6 +16,9 @@ from .text import TextDataImporter
 from .types import AssetLike
 from .video import VideoDataImporter
 
+if TYPE_CHECKING:
+    from kili.client import Kili
+
 importer_by_type: Dict[str, Type[BaseAbstractAssetImporter]] = {
     "PDF": PdfDataImporter,
     "IMAGE": ImageDataImporter,
@@ -27,7 +29,7 @@ importer_by_type: Dict[str, Type[BaseAbstractAssetImporter]] = {
 
 
 def import_assets(  # pylint: disable=too-many-arguments
-    kili,
+    kili: "Kili",
     project_id: ProjectId,
     assets: List[Dict],
     raise_error: bool = True,
@@ -35,7 +37,7 @@ def import_assets(  # pylint: disable=too-many-arguments
     verify: bool = True,
 ):
     """Import the selected assets into the specified project."""
-    input_type = get_project_field(kili, project_id, "inputType")
+    input_type = kili.kili_api_gateway.get_project(project_id, ("inputType",))["inputType"]
 
     project_params = ProjectParams(project_id=project_id, input_type=input_type)
     processing_params = ProcessingParams(raise_error=raise_error, verify=verify)

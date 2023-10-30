@@ -1,7 +1,7 @@
 """Service for exporting kili objects."""
 
 from pathlib import Path
-from typing import Dict, List, Optional, Type
+from typing import TYPE_CHECKING, Dict, List, Optional, Type
 
 from typing_extensions import get_args
 
@@ -21,12 +21,14 @@ from kili.services.export.types import (
     LabelFormat,
     SplitOption,
 )
-from kili.services.project import get_project
 from kili.services.types import LogLevel
+
+if TYPE_CHECKING:
+    from kili.client import Kili
 
 
 def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
-    kili,
+    kili: "Kili",
     asset_ids: Optional[List[AssetId]],
     project_id: ProjectId,
     export_type: ExportType,
@@ -42,7 +44,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     normalized_coordinates: Optional[bool],
 ) -> None:
     """Export the selected assets into the required format, and save it into a file archive."""
-    get_project(kili, project_id, ["id"])
+    kili.kili_api_gateway.get_project(project_id, ["id"])
 
     export_params = ExportParams(
         assets_ids=asset_ids,

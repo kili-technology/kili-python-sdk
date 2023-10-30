@@ -9,7 +9,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 
-from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.domain.project import ProjectId
 from kili.exceptions import NotFound
 from kili.services.label_import import import_labels_from_files
@@ -51,10 +50,11 @@ def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
         for test_case in TEST_CASES
     ],
 )
-@patch.object(ProjectQuery, "__call__", side_effect=fakes.projects)
-def test_import_labels_from_files(mocker, description, inputs, outputs):
-    auth = MagicMock()
-
+def test_import_labels_from_files(description, inputs, outputs, kili_api_gateway, mocker):
+    kili = mocker.MagicMock()
+    kili.kili_api_gateway = kili_api_gateway
+    kili_api_gateway.list_projects.side_effect = fakes.projects
+    kili_api_gateway.get_project.side_effect = fakes.project
     with TemporaryDirectory() as label_folders:
         label_paths = []
         for label in inputs["labels"]:
@@ -72,7 +72,7 @@ def test_import_labels_from_files(mocker, description, inputs, outputs):
             "kili.services.label_import.importer.AbstractLabelImporter.process_from_dict"
         ) as process_from_dict_mock:
             import_labels_from_files(
-                auth,
+                kili,
                 label_paths,
                 str(yolo_meta_path),
                 ProjectId(inputs["project_id"]),
@@ -88,9 +88,11 @@ def test_import_labels_from_files(mocker, description, inputs, outputs):
             process_from_dict_mock.assert_called_with(**outputs["call"])
 
 
-@patch.object(ProjectQuery, "__call__", side_effect=fakes.projects)
-def test_import_labels_from_files_malformed_annotation(mocker):
+def test_import_labels_from_files_malformed_annotation(kili_api_gateway):
+    kili_api_gateway.get_project.side_effect = fakes.project
+    kili_api_gateway.list_projects.side_effect = fakes.projects
     auth = MagicMock()
+    auth.kili_api_gateway = kili_api_gateway
 
     inputs = {
         "labels": [
@@ -138,7 +140,6 @@ def test_import_labels_from_files_malformed_annotation(mocker):
             )
 
 
-@patch.object(ProjectQuery, "__call__", side_effect=fakes.projects)
 def test_import_labels_wrong_target_job(mocker):
     auth = MagicMock()
 

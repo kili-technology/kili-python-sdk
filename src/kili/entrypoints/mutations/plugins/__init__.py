@@ -55,7 +55,11 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             raise TypeError('"plugin_path is nullish, please provide a value')
 
         return PluginUploader(
-            self, plugin_path, plugin_name, verbose, self.http_client
+            self,  # pyright: ignore[reportGeneralTypeIssues]
+            plugin_path,
+            plugin_name,
+            verbose,
+            self.http_client,
         ).create_plugin()
 
     @typechecked
@@ -97,7 +101,12 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             >>> kili.create_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
         """
         return WebhookUploader(
-            self, webhook_url, plugin_name, header, verbose, handler_types
+            self,  # pyright: ignore[reportGeneralTypeIssues]
+            webhook_url,
+            plugin_name,
+            header,
+            verbose,
+            handler_types,
         ).create_webhook()
 
     @typechecked
@@ -131,7 +140,12 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             >>> kili.update_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
         """
         return WebhookUploader(
-            self, new_webhook_url, plugin_name, new_header, verbose, handler_types
+            self,  # pyright: ignore[reportGeneralTypeIssues]
+            new_webhook_url,
+            plugin_name,
+            new_header,
+            verbose,
+            handler_types,
         ).update_webhook()
 
     @typechecked
@@ -223,5 +237,9 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             raise TypeError('"plugin_name is nullish, please provide a value')
 
         return PluginUploader(
-            self, plugin_path, plugin_name, verbose, self.http_client
+            self,  # pyright: ignore[reportGeneralTypeIssues]
+            plugin_path,
+            plugin_name,
+            verbose,
+            self.http_client,
         ).update_plugin()

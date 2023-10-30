@@ -16,7 +16,6 @@ from kili.services.helpers import (
     check_exclusive_options,
     get_external_id_from_file_path,
 )
-from kili.services.project import get_project_field
 
 
 def check_asset_type(key: str, value: str, http_client: Optional[HttpClient]) -> str:
@@ -83,7 +82,7 @@ def import_assets(
     as_frames: bool,
     verbose: bool,  # pylint: disable=unused-argument
 ):
-    """Add assets into a project.
+    r"""Add assets into a project.
 
     Files can be paths to files or to folders. You can provide several paths separated by spaces.
 
@@ -124,7 +123,9 @@ def import_assets(
         For such imports, please use the `append_many_to_dataset` method in the Kili SDK.
     """
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
-    input_type = get_project_field(kili, project_id, "inputType")
+    input_type = kili.kili_api_gateway.get_project(ProjectId(project_id), ("inputType",))[
+        "inputType"
+    ]
     if input_type not in ("VIDEO_LEGACY", "VIDEO") and (fps is not None or as_frames is True):
         illegal_option = "fps and frames are"
         if not as_frames:

@@ -18,10 +18,6 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
         "id": "fake_proj_id",
         "description": "fake proj description",
     }
-    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch(
-        "kili.services.export.format.base.get_project", return_value=get_project_return_val
-    )
     mocker.patch.object(GeoJsonExporter, "_has_data_connection", return_value=False)
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
@@ -39,7 +35,7 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
     kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.kili_api_gateway = mocker.MagicMock()
-    kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+    kili.kili_api_gateway.get_project.return_value = get_project_return_val
 
     with TemporaryDirectory() as export_folder:
         export_filename = str(Path(export_folder) / "export_geojson.zip")

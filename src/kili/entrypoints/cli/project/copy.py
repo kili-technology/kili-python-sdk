@@ -4,9 +4,9 @@ from typing import Optional
 
 import click
 
+from kili.domain.project import ProjectId
 from kili.entrypoints.cli.common_args import Options
 from kili.entrypoints.cli.helpers import get_kili_client
-from kili.services.project import get_project_field
 
 
 @click.command(name="copy")
@@ -45,7 +45,7 @@ def copy_project(
     with_assets: bool = False,
     with_labels: bool = False,
 ) -> None:
-    """Copy an existing Kili project.
+    r"""Copy an existing Kili project.
 
     The copy can include or not the json interface, quality settings, members, assets and labels of
     the source project.
@@ -83,5 +83,5 @@ def copy_project(
         copy_assets=with_assets,
         copy_labels=with_labels,
     )
-    title = get_project_field(kili, new_proj_id, "title")
+    title = kili.kili_api_gateway.get_project(ProjectId(new_proj_id), ("title",))["title"]
     print(f'Project copied successfully. New project id: "{new_proj_id}", with title: "{title}"')

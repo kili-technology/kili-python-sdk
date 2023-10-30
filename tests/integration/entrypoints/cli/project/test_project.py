@@ -10,8 +10,8 @@ import pytest
 import pytest_mock
 from click.testing import CliRunner
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
-from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.entrypoints.cli.project.create import create_project
 from kili.entrypoints.cli.project.describe import describe_project
 from kili.entrypoints.cli.project.export import export_labels
@@ -20,12 +20,12 @@ from kili.entrypoints.cli.project.list_ import list_projects
 from tests.integration.entrypoints.cli.helpers import debug_subprocess_pytest
 
 from .mocks.assets import mocked__project_assets
-from .mocks.projects import mocked__ProjectQuery
+from .mocks.projects import mocked_get_project, mocked_list_projects
 
 
 def test_list(mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "list_projects", side_effect=mocked_list_projects)
 
     runner = CliRunner()
     result = runner.invoke(list_projects)
@@ -54,7 +54,7 @@ def test_create_project(*_):
 
 def test_describe_project(mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked_get_project)
 
     runner = CliRunner()
     result = runner.invoke(describe_project, ["project_id"])
@@ -334,24 +334,25 @@ def test_import(
     mocker: pytest_mock.MockerFixture,
 ):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked_get_project)
+    mocker.patch.object(KiliAPIGateway, "list_projects", side_effect=mocked_list_projects)
 
     runner = CliRunner()
     with runner.isolated_filesystem():
         _ = case_name
         os.mkdir("test_tree")
         # pylint: disable=unspecified-encoding
-        open("test_tree/image1.png", "w")
-        open("test_tree/image2.jpg", "w")
-        open("test_tree/texte1.txt", "w")
-        open("test_tree/video1.mp4", "w")
-        open("test_tree/video2.mp4", "w")
+        Path("test_tree/image1.png").open("w")
+        Path("test_tree/image2.jpg").open("w")
+        Path("test_tree/texte1.txt").open("w")
+        Path("test_tree/video1.mp4").open("w")
+        Path("test_tree/video2.mp4").open("w")
         os.mkdir("test_tree/leaf")
-        open("test_tree/leaf/image3.png", "w")
-        open("test_tree/leaf/image4.jpg", "w")
-        open("test_tree/leaf/texte2.txt", "w")
+        Path("test_tree/leaf/image3.png").open("w")
+        Path("test_tree/leaf/image4.jpg").open("w")
+        Path("test_tree/leaf/texte2.txt").open("w")
         # newline="" to disable universal newlines translation (bug fix for windows)
-        with open("assets_to_import.csv", "w", newline="") as f:
+        with Path("assets_to_import.csv").open("w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["external_id", "content"])
             writer.writerow(["image3", str(Path("test_tree") / "leaf" / "image3.png")])
@@ -419,7 +420,8 @@ def test_import(
 )
 def test_export(name: str, test_case: List[str], mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
-    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked__ProjectQuery)
+    mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked_get_project)
+    mocker.patch.object(KiliAPIGateway, "list_projects", side_effect=mocked_list_projects)
     mocker.patch.object(AssetOperationMixin, "list_assets", side_effect=mocked__project_assets)
     mocker.patch(
         "kili.services.export.format.base.AbstractExporter._has_data_connection", return_value=False

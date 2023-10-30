@@ -15,7 +15,3 @@ mocked_auth = MagicMock()
 
 def organization_generator(upload_local_data: bool):
     yield from [{"id": "abcdefg", "license": {"uploadLocalData": upload_local_data}}]
-
-
-def mocked_project_input_type(input_type: str):
-    return lambda *_: [{"inputType": input_type}]

@@ -311,10 +311,6 @@ assets = [
 
 
 def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
-    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch(
-        "kili.services.export.format.base.get_project", return_value=get_project_return_val
-    )
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=assets,
@@ -325,7 +321,7 @@ def test_yolo_v8_merged(mocker: pytest_mock.MockerFixture):
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.kili_api_gateway = mocker.MagicMock()
-    kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+    kili.kili_api_gateway.get_project.return_value = get_project_return_val
     kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
 
@@ -365,10 +361,6 @@ names: ['OBJECT_DETECTION_JOB/A', 'OBJECT_DETECTION_JOB/B', 'POLYGON_JOB/F', 'PO
 
 
 def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
-    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch(
-        "kili.services.export.format.base.get_project", return_value=get_project_return_val
-    )
     mocker.patch(
         "kili.services.export.format.base.fetch_assets",
         return_value=assets,
@@ -379,7 +371,7 @@ def test_yolo_v8_split_jobs(mocker: pytest_mock.MockerFixture):
     kili.api_endpoint = "https://"  # type: ignore
     kili.api_key = ""  # type: ignore
     kili.kili_api_gateway = mocker.MagicMock()
-    kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+    kili.kili_api_gateway.get_project.return_value = get_project_return_val
     kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
 

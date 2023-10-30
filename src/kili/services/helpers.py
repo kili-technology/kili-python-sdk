@@ -1,13 +1,16 @@
 """Helpers for the services."""
 
 from pathlib import Path
-from typing import Iterable, Optional, TypeVar
+from typing import TYPE_CHECKING, Iterable, Optional, TypeVar
 
+from kili.domain.project import ProjectId
 from kili.services.exceptions import (
     NotEnoughArgumentsSpecifiedError,
     TooManyArgumentsSpecifiedError,
 )
-from kili.services.project import get_project_field
+
+if TYPE_CHECKING:
+    from kili.client import Kili
 
 PathLike = TypeVar("PathLike", Path, str)
 
@@ -40,7 +43,11 @@ def get_external_id_from_file_path(path: PathLike) -> str:
     return ".".join(file_path.split(".")[:-1])
 
 
-def is_target_job_in_json_interface(kili, project_id: str, target_job_name: str):
+def is_target_job_in_json_interface(
+    kili: "Kili", project_id: ProjectId, target_job_name: str
+) -> bool:
     """Tell if the target job id is defined in the project's JSON interface."""
-    json_interface = get_project_field(kili, project_id, "jsonInterface")
+    json_interface = kili.kili_api_gateway.get_project(project_id, ("jsonInterface",))[
+        "jsonInterface"
+    ]
     return target_job_name in json_interface["jobs"]

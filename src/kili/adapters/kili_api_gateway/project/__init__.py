@@ -32,13 +32,14 @@ class ProjectOperationMixin(BaseOperationMixin):
     """Mixin extending Kili API Gateway class with Projects related operations."""
 
     def get_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> Dict:
-        """Get project fields."""
+        """Get project."""
         fragment = fragment_builder(fields)
         query = get_projects_query(fragment)
         result = self.graphql_client.execute(
             query=query, variables={"where": {"id": project_id}, "first": 1, "skip": 0}
         )
         projects = result["data"]
+
         if len(projects) == 0:
             raise NotFound(
                 f"project ID: {project_id}. The project does not exist or you do not have access"

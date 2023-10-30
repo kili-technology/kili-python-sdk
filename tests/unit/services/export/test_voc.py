@@ -50,10 +50,6 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
         "id": "fake_proj_id",
         "dataConnections": None,
     }
-    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch(
-        "kili.services.export.format.base.get_project", return_value=get_project_return_val
-    )
     mocker.patch.object(VocExporter, "_has_data_connection", return_value=True)
 
     kili = LabelClientMethods()
@@ -62,7 +58,7 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
     kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.kili_api_gateway = mocker.MagicMock()
-    kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+    kili.kili_api_gateway.get_project.return_value = get_project_return_val
 
     with pytest.raises(
         NotCompatibleOptions,

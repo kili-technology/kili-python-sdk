@@ -9,8 +9,8 @@ from zipfile import ZipFile
 import pytest
 import pytest_mock
 
+from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.graphql.operations.project.queries import ProjectQuery
 from kili.domain.asset import AssetExternalId, AssetFilters
 from kili.domain.project import ProjectId
 from kili.presentation.client.label import LabelClientMethods
@@ -623,7 +623,7 @@ def get_file_tree(folder: str):
     ],
 )
 def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_case):
-    mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
+    # mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
     mocker_ffmpeg = mocker.patch("kili.services.export.media.video.ffmpeg")
     mocker.patch(
         "kili.services.export.format.geojson.is_geotiff_asset_with_lat_lon_coords",
@@ -757,7 +757,7 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
         ),
     ],
 )
-@patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
+@patch.object(KiliAPIGateway, "get_project", side_effect=mocked_ProjectQuery)
 def test_export_service_errors(mocker_project, name, test_case, error):
     with TemporaryDirectory() as export_folder:
         path_zipfile = Path(export_folder) / "export.zip"
@@ -791,10 +791,6 @@ def test_export_service_errors(mocker_project, name, test_case, error):
 
 def test_export_with_asset_filter_kwargs(mocker):
     get_project_return_val = {"jsonInterface": {}, "inputType": "", "title": ""}
-    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch(
-        "kili.services.export.format.base.get_project", return_value=get_project_return_val
-    )
     mocker.patch.object(KiliExporter, "process_and_save", return_value=None)
     mocker.patch.object(KiliExporter, "_has_data_connection", return_value=False)
     kili = LabelClientMethods()
@@ -803,6 +799,7 @@ def test_export_with_asset_filter_kwargs(mocker):
     kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = get_project_return_val
     kili.export_labels(
         project_id="fake_proj_id",
         filename="fake_filename",
@@ -870,12 +867,8 @@ def test_export_with_asset_filter_kwargs(mocker):
     )
 
 
-def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
+def test_export_with_asset_filter_kwargs_unknown_arg(mocker, kili_api_gateway):
     get_project_return_val = {"jsonInterface": {}, "inputType": "", "title": ""}
-    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch(
-        "kili.services.export.format.base.get_project", return_value=get_project_return_val
-    )
     mocker.patch.object(KiliExporter, "_check_arguments_compatibility", return_value=None)
     mocker.patch.object(KiliExporter, "_check_project_compatibility", return_value=None)
     mocker.patch.object(KiliExporter, "_has_data_connection", return_value=False)
@@ -884,6 +877,8 @@ def test_export_with_asset_filter_kwargs_unknown_arg(mocker):
     kili.api_key = ""  # type: ignore
     kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili_api_gateway.get_project.return_value = get_project_return_val
+    kili.kili_api_gateway = kili_api_gateway
 
     with pytest.raises(NameError, match="Unknown asset filter arguments"):
         kili.export_labels(
@@ -917,10 +912,7 @@ def mock_kili(mocker, with_data_connection):
         "description": "This is a mocked project",
         "id": "fake_proj_id",
     }
-    mocker.patch("kili.services.export.get_project", return_value=get_project_return_val)
-    mocker.patch(
-        "kili.services.export.format.base.get_project", return_value=get_project_return_val
-    )
+
     mocker.patch.object(AbstractExporter, "_has_data_connection", return_value=with_data_connection)
 
     kili = LabelClientMethods()
@@ -1089,7 +1081,6 @@ def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
         "title": "",
         "dataConnections": None,
     }
-    mocker.patch.object(ProjectQuery, "__call__", return_value=[project_return_val])
     mocker.patch("kili.services.export.format.base.fetch_assets", return_value=[])
     process_and_save_mock = mocker.patch.object(VocExporter, "process_and_save", return_value=None)
     kili = LabelClientMethods()
@@ -1098,6 +1089,7 @@ def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
     kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
     kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = project_return_val
 
     # When
     kili.export_labels(

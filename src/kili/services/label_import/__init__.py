@@ -1,7 +1,7 @@
 """Label import service."""
 
 from pathlib import Path
-from typing import List, Optional, Type, cast
+from typing import TYPE_CHECKING, List, Optional, Type, cast
 
 from kili.domain.project import ProjectId
 from kili.exceptions import NotFound
@@ -13,15 +13,17 @@ from kili.services.label_import.importer import (
     YoloLabelImporter,
 )
 from kili.services.label_import.types import LabelFormat
-from kili.services.project import get_project
 from kili.services.types import LogLevel
+
+if TYPE_CHECKING:
+    from kili.client import Kili
 
 
 def import_labels_from_files(  # pylint: disable=too-many-arguments
-    kili,
+    kili: "Kili",
     labels_files: List[str],
     meta_file_path: Optional[str],
-    project_id: str,
+    project_id: ProjectId,
     input_format: str,
     target_job_name: Optional[str],
     disable_tqdm: Optional[bool],
@@ -31,7 +33,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     overwrite: bool,
 ) -> None:
     """Imports labels from a list of files contained in file path."""
-    get_project(kili, project_id, ["id"])
+    kili.kili_api_gateway.get_project(project_id, ["id"])
 
     if len(labels_files) == 0:
         raise ValueError("You must specify files to upload")

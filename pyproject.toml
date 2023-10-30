@@ -116,6 +116,7 @@ ignore = [
   "FBT001",  # boolean-type-hint-positional-argument
   "FBT002",  # boolean-type-hint-keyword-argument
   "PLR0913", # Too many arguments to function call
+  "TD002",   # Missing author in TODO"
   "TRY003",  # Avoid specifying long messages outside the exception class
 ]
 
@@ -134,13 +135,19 @@ ignore = [
   "D103",    # Missing docstring in public function
   "ERA001",  # found commented out code
   "INP001",  # __init__.py missing
+  "ISC003",  # Explicitly concatenated string should be implicitly concatenated"
   "N802",    # function name should be lowercase
   "N806",    # variable should be lowercase
+  "PERF401", # Use a list comprehension to create a transformed list"
   "PGH003",  # use specific rule codes when ignoring type issues
   "PLR2004", # magic value used in comparison
   "S101",    # use of assert detected
+  "SIM115",  # Use context handler for opening files
   "SLF001",  # private member accessed
   "T201",    # print found
+]
+"*.ipynb" = [
+  "E402", # Module level import not at top of file"
 ]
 
 [tool.ruff.pydocstyle]

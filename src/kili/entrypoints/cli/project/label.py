@@ -6,6 +6,7 @@ from typing import Optional, Tuple
 import click
 from typing_extensions import get_args
 
+from kili.domain.project import ProjectId
 from kili.entrypoints.cli.common_args import Arguments, Options
 from kili.entrypoints.cli.helpers import get_kili_client
 from kili.services import label_import
@@ -83,7 +84,7 @@ def import_labels(
     target_job: Optional[str],
     overwrite: bool,
 ):
-    """Import labels or predictions.
+    r"""Import labels or predictions.
 
     Files can be paths to files or to folders. <br>
     You can provide several paths separated by spaces.
@@ -133,7 +134,7 @@ def import_labels(
         kili,
         list(files or []),
         metadata_file,
-        project_id,
+        ProjectId(project_id),
         input_format,
         target_job,
         not verbose,
