@@ -25,6 +25,7 @@ class PaginatedGraphQLQuery:
     """
 
     def __init__(self, graphql_client: GraphQLClient) -> None:
+        """Initialize the paginator."""
         self._graphql_client = graphql_client
 
     # pylint: disable=too-many-arguments

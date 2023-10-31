@@ -26,6 +26,7 @@ from .mappers import (
 from .operations import (
     GQL_COUNT_LABELS,
     GQL_DELETE_LABELS,
+    get_annotations_query,
     get_append_many_labels_mutation,
     get_append_to_labels_mutation,
     get_create_honeypot_mutation,
@@ -136,5 +137,29 @@ class LabelOperationMixin(BaseOperationMixin):
             "data": {"jsonResponse": json.dumps(json_response)},
             "where": {"id": asset_id},
         }
+        result = self.graphql_client.execute(query, variables)
+        return result["data"]
+
+    def list_annotations(
+        self,
+        label_id: LabelId,
+        *,
+        annotation_fields: ListOrTuple[str],
+        video_annotation_fields: ListOrTuple[str] = (),
+        video_classification_fields: ListOrTuple[str] = (),
+        video_object_detection_fields: ListOrTuple[str] = (),
+        video_transcription_fields: ListOrTuple[str] = (),
+    ) -> List[Dict]:
+        """List annotations."""
+        query = get_annotations_query(
+            annotation_fragment=fragment_builder(annotation_fields),
+            video_annotation_fragment=fragment_builder(video_annotation_fields),
+            video_classification_annotation_fragment=fragment_builder(video_classification_fields),
+            video_object_detection_annotation_fragment=fragment_builder(
+                video_object_detection_fields
+            ),
+            video_transcription_annotation_fragment=fragment_builder(video_transcription_fields),
+        )
+        variables = {"where": {"labelId": label_id}}
         result = self.graphql_client.execute(query, variables)
         return result["data"]
