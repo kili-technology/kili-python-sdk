@@ -9,7 +9,10 @@ API_KEY_PATTERN = re.compile(r"(?<!id\":\s\")\b([a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\
 IGNORE_KEY = [
     "0005d3cc-3c3f-40b9-93c3-46231c3eb813",  # dicom tag id in recipe
 ]
-IGNORE_FILE = ["tests/unit/use_cases/label/test_data/test_case_2.py"]
+IGNORE_FILE = [
+    "tests/unit/use_cases/label/test_data/test_case_2.py",
+    "tests/unit/use_cases/label/test_data/test_case_3.py",
+]
 
 
 def main() -> None:

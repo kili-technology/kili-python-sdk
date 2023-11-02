@@ -50,7 +50,11 @@ def video_label_annotations_to_json_response(
                 parent_ann, child_annotations
             )
             for frame_id, frame_json_resp in ann_json_resp.items():
-                json_resp[frame_id] = {**json_resp[frame_id], **frame_json_resp}
+                for job_name, job_resp in frame_json_resp.items():
+                    if job_name not in json_resp[frame_id]:
+                        json_resp[frame_id][job_name] = job_resp
+                    else:
+                        json_resp[frame_id][job_name]["categories"].extend(job_resp["categories"])
 
         elif trycast(parent_ann, VideoTranscriptionAnnotation):
             ann_json_resp = _video_transcription_annotation_to_json_response(
@@ -98,21 +102,62 @@ def _video_classification_annotation_to_json_response(
     ann: VideoClassificationAnnotation,
     child_anns: List[Union[VideoClassificationAnnotation, VideoTranscriptionAnnotation]],
 ) -> Dict[str, Dict[JobName, Dict]]:
+    job_name = ann["job"]
+
     json_resp = defaultdict(dict)
 
-    job_name = ann["job"]
-    category = ann["keyAnnotations"][0]["annotationValue"]["categories"][0]  # TODO: fix
-    for frame_interval in ann["frames"]:
-        interval_start = frame_interval["start"]
-        interval_end = frame_interval["end"]
-        for frame_id in range(interval_start, interval_end + 1):
-            json_resp[str(frame_id)] = {
-                **json_resp[str(frame_id)],
-                job_name: {
-                    "categories": [{"name": category, "children": {}}],  # TODO: fix
-                    "isKeyFrame": frame_id == interval_start,
-                },
+    frames_json_resp_child_jobs = defaultdict(dict)
+    for child_ann in child_anns:
+        if trycast(child_ann, VideoClassificationAnnotation):
+            sub_job_resp = _video_classification_annotation_to_json_response(child_ann, [])
+        elif trycast(child_ann, VideoTranscriptionAnnotation):
+            sub_job_resp = _video_transcription_annotation_to_json_response(child_ann, [])
+        else:
+            raise NotImplementedError(
+                f"Cannot convert child annotation to json response: {child_ann}"
+            )
+
+        for frame_id, frame_json_resp in sub_job_resp.items():
+            frames_json_resp_child_jobs[frame_id] = {
+                **frames_json_resp_child_jobs[frame_id],
+                **frame_json_resp,
             }
+
+    for frame_interval in ann["frames"]:
+        frame_range = range(frame_interval["start"], frame_interval["end"] + 1)
+        for frame_id in frame_range:
+            # initialize the frame json response
+            json_resp[str(frame_id)][job_name] = {
+                "categories": [],
+                "isKeyFrame": frame_id == frame_interval["start"],
+            }
+
+            # get the frame json response of child jobs
+            child_jobs_frame_json_resp = (
+                frames_json_resp_child_jobs[str(frame_id)]
+                if str(frame_id) in frames_json_resp_child_jobs
+                else {}
+            )
+
+            for key_annotation in ann["keyAnnotations"]:
+                if key_annotation["frame"] not in frame_range:
+                    continue
+
+                # a frame can have one or multiple categories
+                categories = key_annotation["annotationValue"]["categories"]
+                for category in categories:
+                    # search among the child annotations the ones
+                    # that have a path (annotationId, category)
+                    children_json_resp = {}
+                    for child_ann in child_anns:
+                        if [ann["id"], category] in child_ann["path"]:
+                            children_json_resp[child_ann["job"]] = child_jobs_frame_json_resp[
+                                child_ann["job"]
+                            ]
+
+                    json_resp[str(frame_id)][job_name]["categories"].append(
+                        {"name": category, "children": children_json_resp}
+                    )
     return json_resp
 
 
@@ -126,7 +171,7 @@ def _video_object_detection_annotation_to_json_response(
     job_name = ann["job"]
     norm_vertices = ann["keyAnnotations"][0]["annotationValue"]["vertices"][0][0]  # TODO: fix
 
-    frames_json_resp_child_jobs = {}
+    frames_json_resp_child_jobs = defaultdict(dict)
     for child_ann in child_anns:
         if trycast(child_ann, VideoClassificationAnnotation):
             sub_job_resp = _video_classification_annotation_to_json_response(child_ann, [])
@@ -136,7 +181,12 @@ def _video_object_detection_annotation_to_json_response(
             raise NotImplementedError(
                 f"Cannot convert child annotation to json response: {child_ann}"
             )
-        frames_json_resp_child_jobs = {**frames_json_resp_child_jobs, **sub_job_resp}
+
+        for frame_id, frame_json_resp in sub_job_resp.items():
+            frames_json_resp_child_jobs[frame_id] = {
+                **frames_json_resp_child_jobs[frame_id],
+                **frame_json_resp,
+            }
 
     for frame_interval in ann["frames"]:
         interval_start = frame_interval["start"]
