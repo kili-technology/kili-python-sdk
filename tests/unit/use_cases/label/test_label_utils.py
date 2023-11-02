@@ -5,7 +5,7 @@ import pytest
 from kili.domain.annotation import VideoAnnotation
 from kili.use_cases.label.utils import video_label_annotations_to_json_response
 
-from .test_data import test_case_1, test_case_2, test_case_3, test_case_4, test_case_5
+from .test_data import test_case_1, test_case_2, test_case_3, test_case_4, test_case_5, test_case_6
 
 
 @pytest.mark.parametrize(
@@ -16,6 +16,7 @@ from .test_data import test_case_1, test_case_2, test_case_3, test_case_4, test_
         (test_case_3.annotations, test_case_3.expected_json_resp, test_case_3.json_interface),
         (test_case_4.annotations, test_case_4.expected_json_resp, test_case_4.json_interface),
         (test_case_5.annotations, test_case_5.expected_json_resp, test_case_5.json_interface),
+        (test_case_6.annotations, test_case_6.expected_json_resp, test_case_6.json_interface),
     ],
 )
 def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
