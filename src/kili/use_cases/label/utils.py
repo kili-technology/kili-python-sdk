@@ -57,9 +57,7 @@ def video_label_annotations_to_json_response(
                         json_resp[frame_id][job_name]["categories"].extend(job_resp["categories"])
 
         elif trycast(parent_ann, VideoTranscriptionAnnotation):
-            ann_json_resp = _video_transcription_annotation_to_json_response(
-                parent_ann, child_annotations
-            )
+            ann_json_resp = _video_transcription_annotation_to_json_response(parent_ann)
             for frame_id, frame_json_resp in ann_json_resp.items():
                 json_resp[frame_id] = {**json_resp[frame_id], **frame_json_resp}
 
@@ -72,28 +70,39 @@ def video_label_annotations_to_json_response(
 
 def _video_transcription_annotation_to_json_response(
     ann: VideoTranscriptionAnnotation,
-    child_anns: List[Union[VideoClassificationAnnotation, VideoTranscriptionAnnotation]],
 ) -> Dict[str, Dict[JobName, Dict]]:
-    json_resp = defaultdict(dict)
+    """Convert video transcription annotation to json response.
 
-    job_name = ann["job"]
+    Transcription jobs cannot have child jobs.
+    """
+    json_resp: Dict[str, Dict[JobName, Dict]] = defaultdict(dict)
 
     for frame_interval in ann["frames"]:
-        interval_start = frame_interval["start"]
-        interval_end = frame_interval["end"]
-        frame_range = range(interval_start, interval_end + 1)
+        frame_range = range(frame_interval["start"], frame_interval["end"] + 1)
         for frame_id in frame_range:
-            for key_annotation in ann["keyAnnotations"]:
-                text = key_annotation["annotationValue"]["text"]
-                frame = key_annotation["frame"]
-                if frame in frame_range:
-                    json_resp[str(frame_id)] = {
-                        **json_resp[str(frame_id)],
-                        job_name: {
-                            "isKeyFrame": frame_id == interval_start,
-                            "text": text,
-                        },
-                    }
+            for key_ann_index, key_ann in enumerate(ann["keyAnnotations"]):
+                # skip the key annotation if the key annotation start frame
+                # is not in current frame range
+                if key_ann["frame"] not in frame_range:
+                    continue
+
+                # compute the key annotation frame range
+                key_ann_start = key_ann["frame"]
+                key_ann_end = min(
+                    frame_interval["end"] + 1,
+                    ann["keyAnnotations"][key_ann_index + 1]["frame"]
+                    if key_ann_index + 1 < len(ann["keyAnnotations"])
+                    else float("inf"),
+                )
+
+                # if the current frame id is not within the key annotation range, we skip
+                if not key_ann_start <= frame_id < key_ann_end:
+                    continue
+
+                json_resp[str(frame_id)][ann["job"]] = {
+                    "isKeyFrame": frame_id == key_ann_start,
+                    "text": key_ann["annotationValue"]["text"],
+                }
 
     return json_resp
 
@@ -111,7 +120,7 @@ def _video_classification_annotation_to_json_response(
         if trycast(child_ann, VideoClassificationAnnotation):
             sub_job_resp = _video_classification_annotation_to_json_response(child_ann, [])
         elif trycast(child_ann, VideoTranscriptionAnnotation):
-            sub_job_resp = _video_transcription_annotation_to_json_response(child_ann, [])
+            sub_job_resp = _video_transcription_annotation_to_json_response(child_ann)
         else:
             raise NotImplementedError(
                 f"Cannot convert child annotation to json response: {child_ann}"
@@ -197,7 +206,7 @@ def _video_object_detection_annotation_to_json_response(
         if trycast(child_ann, VideoClassificationAnnotation):
             sub_job_resp = _video_classification_annotation_to_json_response(child_ann, [])
         elif trycast(child_ann, VideoTranscriptionAnnotation):
-            sub_job_resp = _video_transcription_annotation_to_json_response(child_ann, [])
+            sub_job_resp = _video_transcription_annotation_to_json_response(child_ann)
         else:
             raise NotImplementedError(
                 f"Cannot convert child annotation to json response: {child_ann}"
