@@ -139,18 +139,34 @@ def _video_classification_annotation_to_json_response(
                 else {}
             )
 
-            for key_annotation in ann["keyAnnotations"]:
-                if key_annotation["frame"] not in frame_range:
+            for key_ann_index, key_ann in enumerate(ann["keyAnnotations"]):
+                if key_ann["frame"] not in frame_range:
                     continue
 
+                key_ann_start = key_ann["frame"]
+                key_ann_end = min(
+                    frame_interval["end"] + 1,
+                    ann["keyAnnotations"][key_ann_index + 1]["frame"]
+                    if key_ann_index + 1 < len(ann["keyAnnotations"])
+                    else float("inf"),
+                )
+
+                if not (key_ann_start <= frame_id < key_ann_end):
+                    continue
+
+                if frame_id == key_ann_start:
+                    json_resp[str(frame_id)][job_name]["isKeyFrame"] = True
+
                 # a frame can have one or multiple categories
-                categories = key_annotation["annotationValue"]["categories"]
+                categories = key_ann["annotationValue"]["categories"]
                 for category in categories:
                     # search among the child annotations the ones
                     # that have a path (annotationId, category)
                     children_json_resp = {}
                     for child_ann in child_anns:
-                        if [ann["id"], category] in child_ann["path"]:
+                        if [ann["id"], category] in child_ann["path"] and child_ann[
+                            "job"
+                        ] in child_jobs_frame_json_resp:
                             children_json_resp[child_ann["job"]] = child_jobs_frame_json_resp[
                                 child_ann["job"]
                             ]
@@ -161,6 +177,7 @@ def _video_classification_annotation_to_json_response(
                         del category_annotation["children"]
 
                     json_resp[str(frame_id)][job_name]["categories"].append(category_annotation)
+
     return json_resp
 
 
