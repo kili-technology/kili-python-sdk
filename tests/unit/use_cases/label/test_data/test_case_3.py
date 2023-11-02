@@ -120,7 +120,7 @@ expected_json_resp = {
                     "name": "CAR",
                     "children": {
                         "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "BLUE", "children": {}}],
+                            "categories": [{"name": "BLUE"}],
                             "isKeyFrame": True,
                         }
                     },
@@ -140,7 +140,7 @@ expected_json_resp = {
                     "name": "CAR",
                     "children": {
                         "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "BLUE", "children": {}}],
+                            "categories": [{"name": "BLUE"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -160,7 +160,7 @@ expected_json_resp = {
                     "name": "CAR",
                     "children": {
                         "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "BLUE", "children": {}}],
+                            "categories": [{"name": "BLUE"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -180,7 +180,7 @@ expected_json_resp = {
                     "name": "CAR",
                     "children": {
                         "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "BLUE", "children": {}}],
+                            "categories": [{"name": "BLUE"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -200,7 +200,7 @@ expected_json_resp = {
                     "name": "CAR",
                     "children": {
                         "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "BLUE", "children": {}}],
+                            "categories": [{"name": "BLUE"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -220,7 +220,7 @@ expected_json_resp = {
                     "name": "CAR",
                     "children": {
                         "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "BLUE", "children": {}}],
+                            "categories": [{"name": "BLUE"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -240,7 +240,7 @@ expected_json_resp = {
                     "name": "CAR",
                     "children": {
                         "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "BLUE", "children": {}}],
+                            "categories": [{"name": "BLUE"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -260,7 +260,7 @@ expected_json_resp = {
                     "name": "CAR",
                     "children": {
                         "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "BLUE", "children": {}}],
+                            "categories": [{"name": "BLUE"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -276,7 +276,7 @@ expected_json_resp = {
                     "name": "CAR",
                     "children": {
                         "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "GREEN", "children": {}}],
+                            "categories": [{"name": "GREEN"}],
                             "isKeyFrame": True,
                         }
                     },
@@ -292,7 +292,7 @@ expected_json_resp = {
                     "name": "CAR",
                     "children": {
                         "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "GREEN", "children": {}}],
+                            "categories": [{"name": "GREEN"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -308,7 +308,7 @@ expected_json_resp = {
                     "name": "CAR",
                     "children": {
                         "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "GREEN", "children": {}}],
+                            "categories": [{"name": "GREEN"}],
                             "isKeyFrame": False,
                         }
                     },

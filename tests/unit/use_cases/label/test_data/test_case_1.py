@@ -196,21 +196,21 @@ expected_json_resp = {
     "5": {"TRANSCRIPTION_JOB": {"isKeyFrame": False, "text": "some text on frame 5"}},
     "6": {
         "CLASSIFICATION_JOB": {
-            "categories": [{"name": "A", "children": {}}],
+            "categories": [{"name": "A"}],
             "isKeyFrame": True,
         },
         "TRANSCRIPTION_JOB": {"isKeyFrame": False, "text": "some text on frame 5"},
     },
     "7": {
         "CLASSIFICATION_JOB": {
-            "categories": [{"name": "A", "children": {}}],
+            "categories": [{"name": "A"}],
             "isKeyFrame": False,
         },
         "TRANSCRIPTION_JOB": {"isKeyFrame": False, "text": "some text on frame 5"},
     },
     "8": {
         "CLASSIFICATION_JOB": {
-            "categories": [{"name": "A", "children": {}}],
+            "categories": [{"name": "A"}],
             "isKeyFrame": False,
         },
         "TRANSCRIPTION_JOB": {"isKeyFrame": False, "text": "some text on frame 5"},

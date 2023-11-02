@@ -12,7 +12,7 @@ from kili.utils.typed_dict import trycast
 
 
 def video_label_annotations_to_json_response(
-    annotations: List[VideoAnnotation]
+    annotations: List[VideoAnnotation], json_interface: Dict
 ) -> Dict[str, Dict[JobName, Dict]]:
     """Convert video label annotations to json response."""
     json_resp = defaultdict(dict)
@@ -36,7 +36,7 @@ def video_label_annotations_to_json_response(
 
         if trycast(parent_ann, VideoObjectDetectionAnnotation):
             ann_json_resp = _video_object_detection_annotation_to_json_response(
-                parent_ann, child_annotations
+                parent_ann, child_annotations, json_interface=json_interface
             )
             for frame_id, frame_json_resp in ann_json_resp.items():
                 for job_name, job_resp in frame_json_resp.items():
@@ -47,7 +47,7 @@ def video_label_annotations_to_json_response(
 
         elif trycast(parent_ann, VideoClassificationAnnotation):
             ann_json_resp = _video_classification_annotation_to_json_response(
-                parent_ann, child_annotations
+                parent_ann, child_annotations, json_interface=json_interface
             )
             for frame_id, frame_json_resp in ann_json_resp.items():
                 for job_name, job_resp in frame_json_resp.items():
@@ -101,6 +101,7 @@ def _video_transcription_annotation_to_json_response(
 def _video_classification_annotation_to_json_response(
     ann: VideoClassificationAnnotation,
     child_anns: List[Union[VideoClassificationAnnotation, VideoTranscriptionAnnotation]],
+    json_interface: Dict,
 ) -> Dict[str, Dict[JobName, Dict]]:
     job_name = ann["job"]
 
@@ -109,7 +110,9 @@ def _video_classification_annotation_to_json_response(
     frames_json_resp_child_jobs = defaultdict(dict)
     for child_ann in child_anns:
         if trycast(child_ann, VideoClassificationAnnotation):
-            sub_job_resp = _video_classification_annotation_to_json_response(child_ann, [])
+            sub_job_resp = _video_classification_annotation_to_json_response(
+                child_ann, [], json_interface=json_interface
+            )
         elif trycast(child_ann, VideoTranscriptionAnnotation):
             sub_job_resp = _video_transcription_annotation_to_json_response(child_ann, [])
         else:
@@ -155,15 +158,21 @@ def _video_classification_annotation_to_json_response(
                                 child_ann["job"]
                             ]
 
-                    json_resp[str(frame_id)][job_name]["categories"].append(
-                        {"name": category, "children": children_json_resp}
-                    )
+                    category_annotation = {"name": category, "children": children_json_resp}
+
+                    if not json_interface["jobs"][job_name]["content"]["categories"][category][
+                        "children"
+                    ]:
+                        del category_annotation["children"]
+
+                    json_resp[str(frame_id)][job_name]["categories"].append(category_annotation)
     return json_resp
 
 
 def _video_object_detection_annotation_to_json_response(
     ann: VideoObjectDetectionAnnotation,
     child_anns: List[Union[VideoClassificationAnnotation, VideoTranscriptionAnnotation]],
+    json_interface: Dict,
 ) -> Dict[str, Dict[JobName, Dict]]:
     json_resp = defaultdict(dict)
 
@@ -174,7 +183,9 @@ def _video_object_detection_annotation_to_json_response(
     frames_json_resp_child_jobs = defaultdict(dict)
     for child_ann in child_anns:
         if trycast(child_ann, VideoClassificationAnnotation):
-            sub_job_resp = _video_classification_annotation_to_json_response(child_ann, [])
+            sub_job_resp = _video_classification_annotation_to_json_response(
+                child_ann, [], json_interface=json_interface
+            )
         elif trycast(child_ann, VideoTranscriptionAnnotation):
             sub_job_resp = _video_transcription_annotation_to_json_response(child_ann, [])
         else:
@@ -189,28 +200,29 @@ def _video_object_detection_annotation_to_json_response(
             }
 
     for frame_interval in ann["frames"]:
-        interval_start = frame_interval["start"]
-        interval_end = frame_interval["end"]
-        for frame_id in range(interval_start, interval_end + 1):
+        frame_range = range(frame_interval["start"], frame_interval["end"] + 1)
+        for frame_id in frame_range:
+            # initialize the frame json response
+            json_resp[str(frame_id)][job_name] = {"annotations": []}
+
             child_jobs_json_resp_value = (
                 frames_json_resp_child_jobs[str(frame_id)]
                 if str(frame_id) in frames_json_resp_child_jobs
                 else {}
             )
-            json_resp[str(frame_id)] = {
-                **json_resp[str(frame_id)],
-                job_name: {
-                    "annotations": [
-                        {
-                            "children": child_jobs_json_resp_value,
-                            "isKeyFrame": frame_id == interval_start,
-                            "boundingPoly": [{"normalizedVertices": norm_vertices}],
-                            "categories": [{"name": category}],
-                            "mid": ann["mid"],
-                            "type": "rectangle",  # TODO: fix
-                        }
-                    ]
-                },
+
+            annotation_dict = {
+                "children": child_jobs_json_resp_value,
+                "isKeyFrame": frame_id == frame_interval["start"],
+                "categories": [{"name": category}],
+                "mid": ann["mid"],
+                "type": json_interface["jobs"][job_name]["tools"][0],
             }
 
+            if json_interface["jobs"][job_name]["tools"] == ["marker"]:  # point job
+                annotation_dict["point"] = norm_vertices[0]
+
+            else:
+                annotation_dict["boundingPoly"] = [{"normalizedVertices": norm_vertices}]
+            json_resp[str(frame_id)][job_name]["annotations"].append(annotation_dict)
     return json_resp

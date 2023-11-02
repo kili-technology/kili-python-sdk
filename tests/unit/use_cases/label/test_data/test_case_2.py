@@ -212,7 +212,7 @@ expected_json_resp = {
                 {
                     "children": {
                         "JOB_1": {
-                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?", "children": {}}],
+                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?"}],
                             "isKeyFrame": True,
                         }
                     },
@@ -231,7 +231,7 @@ expected_json_resp = {
                 {
                     "children": {
                         "JOB_1": {
-                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?", "children": {}}],
+                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -250,7 +250,7 @@ expected_json_resp = {
                 {
                     "children": {
                         "JOB_1": {
-                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?", "children": {}}],
+                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -269,7 +269,7 @@ expected_json_resp = {
                 {
                     "children": {
                         "JOB_1": {
-                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?", "children": {}}],
+                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -288,7 +288,7 @@ expected_json_resp = {
                 {
                     "children": {
                         "JOB_1": {
-                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?", "children": {}}],
+                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -307,7 +307,7 @@ expected_json_resp = {
                 {
                     "children": {
                         "JOB_2": {
-                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?", "children": {}}],
+                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?"}],
                             "isKeyFrame": True,
                         }
                     },
@@ -320,7 +320,7 @@ expected_json_resp = {
                 {
                     "children": {
                         "JOB_1": {
-                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?", "children": {}}],
+                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -339,7 +339,7 @@ expected_json_resp = {
                 {
                     "children": {
                         "JOB_2": {
-                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?", "children": {}}],
+                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?"}],
                             "isKeyFrame": False,
                         }
                     },
@@ -358,7 +358,7 @@ expected_json_resp = {
                 {
                     "children": {
                         "JOB_2": {
-                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?", "children": {}}],
+                            "categories": [{"name": "IS_THE OBJECT OCCLUDED?"}],
                             "isKeyFrame": False,
                         }
                     },
