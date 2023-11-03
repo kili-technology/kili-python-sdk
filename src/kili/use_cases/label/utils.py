@@ -266,7 +266,9 @@ def _video_object_detection_annotation_to_json_response(
             if json_interface["jobs"][job_name]["tools"] == ["marker"]:  # point job
                 annotation_dict["point"] = norm_vertices[0]
 
-            else:
+            else:  # bbox or polygon jobs
                 annotation_dict["boundingPoly"] = [{"normalizedVertices": norm_vertices}]
+
             json_resp[str(frame_id)][job_name]["annotations"].append(annotation_dict)
+
     return json_resp

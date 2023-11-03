@@ -13,6 +13,7 @@ from .test_data import (
     test_case_5,
     test_case_6,
     test_case_7,
+    test_case_8,
 )
 
 
@@ -26,6 +27,7 @@ from .test_data import (
         (test_case_5.annotations, test_case_5.expected_json_resp, test_case_5.json_interface),
         (test_case_6.annotations, test_case_6.expected_json_resp, test_case_6.json_interface),
         (test_case_7.annotations, test_case_7.expected_json_resp, test_case_7.json_interface),
+        (test_case_8.annotations, test_case_8.expected_json_resp, test_case_8.json_interface),
     ],
 )
 def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
