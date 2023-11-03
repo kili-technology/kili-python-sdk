@@ -17,6 +17,8 @@ IGNORE_FILE = [
     "tests/unit/use_cases/label/test_data/test_case_6.py",
     "tests/unit/use_cases/label/test_data/test_case_7.py",
     "tests/unit/use_cases/label/test_data/test_case_8.py",
+    "tests/unit/use_cases/label/test_data/test_case_9.py",
+    "tests/unit/use_cases/label/test_data/test_case_10.py",
 ]
 
 
