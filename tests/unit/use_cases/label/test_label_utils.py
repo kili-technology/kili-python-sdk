@@ -1,4 +1,4 @@
-from typing import Dict, List, cast
+from typing import Dict, List
 
 import pytest
 
@@ -88,15 +88,16 @@ from .test_data import (
     ],
 )
 def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
-    test_case_name: str, annotations: List[Dict], expected_json_resp: Dict, json_interface: Dict
+    test_case_name: str,
+    annotations: List[VideoAnnotation],
+    expected_json_resp: Dict,
+    json_interface: Dict,
 ):
     # Given
     _ = annotations
 
     # When
-    json_resp = video_label_annotations_to_json_response(
-        cast(List[VideoAnnotation], annotations), json_interface=json_interface
-    )
+    json_resp = video_label_annotations_to_json_response(annotations, json_interface=json_interface)
 
     # Then
     assert json_resp == expected_json_resp
