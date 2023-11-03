@@ -49,7 +49,7 @@ from kili.client import Kili
 
 We first initialize the Kili client.
 
-The API Key can be generated/found on your account on the Kili app only. The object detection job name of your project can be found in the interface of your project.
+The API Key can be found in the settings of your project, in the "interface" section.. The object detection job name of your project can be found in the interface of your project.
 
 
 ```python
