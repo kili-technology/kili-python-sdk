@@ -1,3 +1,4 @@
+"""Annotation object to json response converter."""
 from collections import defaultdict
 from typing import Dict, Generator, List, Optional, Tuple, Union, overload
 
@@ -179,6 +180,7 @@ def _compute_children_json_resp(
         if trycast(child_ann, VideoClassificationAnnotation):
             sub_job_resp = _video_classification_annotation_to_json_response(
                 child_ann,
+                # pylint: disable=line-too-long
                 _get_child_annotations(child_ann, other_annotations),  # pyright: ignore[reportGeneralTypeIssues]
             )
 

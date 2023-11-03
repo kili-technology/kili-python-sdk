@@ -199,3 +199,26 @@ def test_given_kili_gateway_when_adding_labels_by_batch_then_it_calls_proper_res
             "where": {"idIn": ["fake_asset_id_101"]},
         },
     )
+
+
+def test_given_kili_gateway_when_querying_annotations_then_it_works(
+    graphql_client: GraphQLClient, http_client: HttpClient
+):
+    # Given
+    kili_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
+
+    # When
+    kili_gateway.list_annotations(
+        LabelId("fake_label_id"),
+        annotation_fields=("id", "job", "path", "labelId"),
+        video_annotation_fields=(
+            "frames.start",
+            "frames.end",
+        ),
+    )
+
+    # Then
+    graphql_client.execute.assert_called_once_with(
+        """\n    query annotations($where: AnnotationWhere!) {\n        data: annotations(where: $where) {\n             id job path labelId\n            \n            ... on VideoAnnotation {\n                     frames{ start end}\n            }\n        \n        }\n    }\n    """,
+        {"where": {"labelId": "fake_label_id"}},
+    )
