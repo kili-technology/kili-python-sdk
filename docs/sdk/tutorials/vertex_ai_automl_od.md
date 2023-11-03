@@ -4,7 +4,7 @@
 # Train an object detection model with Vertex AI AutoML and Kili for faster annotation
 
 ## What is Google Vertex AI?
-Vertex AI is a machine learning (ML) platform that enables you to train and deploy ML models and AI applications, as well as customize large language models (LLMs) for use in your AI-powered applications. Vertex AI combines data engineering, data science, and ML engineering workflows, allowing your teams to collaborate using a common toolset and scale your applications using the benefits of Google Cloud.
+Vertex AI is a comprehensive machine learning platform designed for the training, deployment, and customization of ML models and AI applications, including large language models (LLMs). It seamlessly integrates with Kili to create a sophisticated model-in-the-loop data annotation workflow.
 
 For more information on Google Vertex AI AutoML, you can visit [Introduction to Vertex AI](https://cloud.google.com/vertex-ai/docs/start/introduction-unified-platform) and the [AutoML beginner's guide](https://cloud.google.com/vertex-ai/docs/start/introduction-unified-platform).
 
@@ -84,7 +84,7 @@ aiplatform.init(project=project_name, location=location)
 
 ##  Prepare the Data
 
-To train our AutoML model, we need to prepare the data within our Kili project. This section follows the guidelines provided in the Vertex AI [data preparation documentation](https://cloud.google.com/vertex-ai/docs/image-data/object-detection/prepare-data)
+To train our Vertex AI AutoML model, we need to prepare the data within our Kili project. This section follows the guidelines provided in the Vertex AI [data preparation documentation](https://cloud.google.com/vertex-ai/docs/image-data/object-detection/prepare-data)
 
 This section covers the following steps:
 - Downloading annotated images from Kili to your local machine along with their labels.
@@ -100,9 +100,9 @@ In this particular example, we have annotated 150 assets on the Kili app.
 
 We first call the Kili Python SDK `assets` function in order to retrieve assets.
 
-The `download_media` argument allows to download the media (images here) in the folder given in the `local_media_dir` argument. When doing so, the `content` field query will automatically be replaced by the local path of the downloaded asset.
+The `download_media` argument allows to download the media (images here) in the folder given in the `local_media_dir` argument. When doing so, the `content` field will automatically be replaced by the local path of the downloaded asset.
 
-For each asset, we query its `id`, `externalId`, and the `jsonResponse` of its latest label (the last one submitted on Kili). For more information on the `assets` function or on other fields that you can query, you can have a look at the [function documentation](https://python-sdk-docs.kili-technology.com/2.147/sdk/asset/#kili.presentation.client.asset.AssetClientMethods.assets).
+For each asset, we query its `id`, `externalId`, and the `jsonResponse` fields of its latest label (the last one submitted on Kili). For more information on the `assets` function or on other fields that you can query, you can have a look at the [function documentation](https://python-sdk-docs.kili-technology.com/2.147/sdk/asset/#kili.presentation.client.asset.AssetClientMethods.assets).
 
 
 ```python
@@ -337,10 +337,9 @@ When creating the training model pipeline, we provide the task definition schema
 
 We also provide some task inputs like the model type and a time budget.
 
-We use the default model type `CLOUD_HIGH_ACCURACY_1` which is
-> Expected to have a higher latency, but should also have a higher prediction quality than other models.
+We use the default model type `CLOUD_HIGH_ACCURACY_1` which is expected to have a higher latency, but should also have a higher prediction quality than other models.
 
-The time budget represents the maximum cost budget that we are willing to give the training. If the model converges before having reached this buget, it will stop. We use below the minimum time budget but your are free to increase it as soon as you want to go from experiments to production.
+The time budget signifies the maximum cost budget that we are prepared to allocate for the training. If the model converges before reaching this budget, it will cease operation. We have set the time budget at a minimum level for initial experiments, but you are free to increase it whenever you wish to transition from experimental stages to production.
 For a detailed explanation of autoML costs, you can visit the [Vertex AI Pricing page](https://cloud.google.com/vertex-ai/pricing)
 
 
@@ -435,7 +434,7 @@ Once trained, your model should appear at the following adress: https://console.
 
 You can now evaluate it, deploy it, create predictions etc.
 
-To run further actions, we have to retrieve the model ID (or resource name) in the information section of the model. You can find it on the Google console UI. You should also be able to retrieve it with the Python SDK in order to have a full integration but for the sake of simplicity, we will simply retrieve the ID from the UI in this tutorial
+To proceed with additional operations, it's necessary to obtain the model's unique identifier (ID) or resource name, which can be found in the model's information section. This identifier is readily accessible through the Google Cloud Console interface. While it is possible to fetch the ID programmatically using the Python SDK for a more comprehensive integration, for the purposes of this tutorial, we will streamline the process by directly retrieving the ID from the console's user interface.
 
 
 ```python
