@@ -191,6 +191,7 @@ jobs:
           -e "src/kili/core/graphql/ws_graphql_client" \
           -e "internal" \
           -e "src/kili/domain/ontology.py" \
+          -e "src/kili/domain/annotation.py" \
           > dead_code_filtered.txt || true
 
       - name: Crash if dead code found

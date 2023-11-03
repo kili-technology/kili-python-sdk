@@ -77,13 +77,6 @@ class VideoTranscriptionKeyAnnotation(TypedDict):
     annotationValue: TranscriptionAnnotationValue
 
 
-VideoKeyAnnotation = Union[
-    VideoObjectDetectionKeyAnnotation,
-    VideoClassificationKeyAnnotation,
-    VideoTranscriptionKeyAnnotation,
-]
-
-
 class VideoObjectDetectionAnnotation(TypedDict):
     """Video object detection annotation."""
 
