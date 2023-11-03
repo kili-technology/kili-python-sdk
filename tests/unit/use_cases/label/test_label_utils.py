@@ -3,7 +3,7 @@ from typing import Dict, List
 import pytest
 
 from kili.domain.annotation import Vertice, VideoAnnotation
-from kili.use_cases.label.utils import (
+from kili.use_cases.label.annotation_to_json_response import (
     _interpolate_object_,
     video_label_annotations_to_json_response,
 )

@@ -178,7 +178,8 @@ def _compute_children_json_resp(
     for child_ann in child_annotations:
         if trycast(child_ann, VideoClassificationAnnotation):
             sub_job_resp = _video_classification_annotation_to_json_response(
-                child_ann, _get_child_annotations(child_ann, other_annotations)
+                child_ann,
+                _get_child_annotations(child_ann, other_annotations),  # pyright: ignore[reportGeneralTypeIssues]
             )
 
         elif trycast(child_ann, VideoTranscriptionAnnotation):
@@ -206,7 +207,9 @@ def _video_classification_annotation_to_json_response(
     # and compute the json response of those child jobs
     child_annotations = _get_child_annotations(annotation, other_annotations)
     json_resp_child_jobs = (
-        _compute_children_json_resp(child_annotations, other_annotations)
+        _compute_children_json_resp(
+            child_annotations, [ann for ann in other_annotations if ann not in child_annotations]
+        )
         if child_annotations
         else {}
     )
@@ -255,23 +258,16 @@ def _video_object_detection_annotation_to_json_response(
     other_annotations: List[VideoAnnotation],
     json_interface: Dict,
 ) -> Dict[str, Dict[JobName, Dict]]:
+    # get the child annotations of the current annotation
+    # and compute the json response of those child jobs
     child_annotations = _get_child_annotations(annotation, other_annotations)
-    json_resp_child_jobs = defaultdict(dict)
-    for child_ann in child_annotations:
-        if trycast(child_ann, VideoClassificationAnnotation):
-            sub_job_resp = _video_classification_annotation_to_json_response(child_ann, [])
-        elif trycast(child_ann, VideoTranscriptionAnnotation):
-            sub_job_resp = _video_transcription_annotation_to_json_response(child_ann)
-        else:
-            raise NotImplementedError(
-                f"Cannot convert child annotation to json response: {child_ann}"
-            )
-
-        for frame_id, frame_json_resp in sub_job_resp.items():
-            json_resp_child_jobs[frame_id] = {
-                **json_resp_child_jobs[frame_id],
-                **frame_json_resp,
-            }
+    json_resp_child_jobs = (
+        _compute_children_json_resp(
+            child_annotations, [ann for ann in other_annotations if ann not in child_annotations]
+        )
+        if child_annotations
+        else {}
+    )
 
     json_resp = defaultdict(dict)
 
@@ -288,7 +284,7 @@ def _video_object_detection_annotation_to_json_response(
                 "type": json_interface["jobs"][annotation["job"]]["tools"][0],
             }
 
-            # between two key frame annotations an object (point, bbox, polygon) is
+            # between two key frame annotations, an object (point, bbox, polygon) is
             # interpolated in the UI
             if frame_id == key_ann_start:
                 norm_vertices = key_ann["annotationValue"]["vertices"][0][0]
