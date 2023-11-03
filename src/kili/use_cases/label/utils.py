@@ -1,12 +1,15 @@
 from collections import defaultdict
-from typing import Dict, List, Union
+from typing import Dict, Generator, List, Optional, Tuple, Union, overload
 
 from kili.domain.annotation import (
     Vertice,
     VideoAnnotation,
     VideoClassificationAnnotation,
+    VideoClassificationKeyAnnotation,
     VideoObjectDetectionAnnotation,
+    VideoObjectDetectionKeyAnnotation,
     VideoTranscriptionAnnotation,
+    VideoTranscriptionKeyAnnotation,
 )
 from kili.domain.ontology import JobName
 from kili.utils.typed_dict import trycast
@@ -57,13 +60,50 @@ def video_label_annotations_to_json_response(
     return dict(sorted(json_resp.items(), key=lambda item: int(item[0])))
 
 
-def _key_annotations_iterator(annotation):
+@overload
+def _key_annotations_iterator(
+    annotation: VideoTranscriptionAnnotation
+) -> Generator[
+    Tuple[VideoTranscriptionKeyAnnotation, int, int, Optional[VideoTranscriptionKeyAnnotation]],
+    None,
+    None,
+]:
+    ...
+
+
+@overload
+def _key_annotations_iterator(
+    annotation: VideoClassificationAnnotation
+) -> Generator[
+    Tuple[VideoClassificationKeyAnnotation, int, int, Optional[VideoClassificationKeyAnnotation]],
+    None,
+    None,
+]:
+    ...
+
+
+@overload
+def _key_annotations_iterator(
+    annotation: VideoObjectDetectionAnnotation
+) -> Generator[
+    Tuple[VideoObjectDetectionKeyAnnotation, int, int, Optional[VideoObjectDetectionKeyAnnotation]],
+    None,
+    None,
+]:
+    ...
+
+
+def _key_annotations_iterator(annotation: VideoAnnotation) -> Generator:
+    """Helper to iterate over the key annotations of a video annotation.
+
+    The key annotations are sorted by frame id.
+    """
     sorted_key_annotations = sorted(
         annotation["keyAnnotations"], key=lambda key_ann: int(key_ann["frame"])
     )
 
+    # iterate over the frame ranges of the annotation
     for frame_interval in annotation["frames"]:
-        # range of frames on which the annotation lies
         frame_range = range(frame_interval["start"], frame_interval["end"] + 1)
         for key_ann_index, key_ann in enumerate(sorted_key_annotations):
             # skip the key annotation if the key annotation start frame
@@ -72,6 +112,7 @@ def _key_annotations_iterator(annotation):
                 continue
 
             # compute the key annotation frame range
+            # the start frame of key annotation is given, but not the end frame
             key_ann_start = key_ann["frame"]
             key_ann_end = min(
                 frame_interval["end"] + 1,
@@ -80,6 +121,7 @@ def _key_annotations_iterator(annotation):
                 else frame_interval["end"] + 1,
             )
 
+            # get the next key annotation, if it exists
             next_key_ann = (
                 sorted_key_annotations[key_ann_index + 1]
                 if key_ann_index + 1 < len(sorted_key_annotations)
@@ -111,6 +153,7 @@ def _video_transcription_annotation_to_json_response(
 def _get_child_annotations(
     annotation: VideoAnnotation, other_annotations: List[VideoAnnotation]
 ) -> List[Union[VideoTranscriptionAnnotation, VideoClassificationAnnotation]]:
+    """Get the child annotations (child jobs) of a video annotation."""
     return [
         ann
         for ann in other_annotations
@@ -129,14 +172,18 @@ def _compute_children_json_resp(
     child_annotations: List[Union[VideoTranscriptionAnnotation, VideoClassificationAnnotation]],
     other_annotations: List[VideoAnnotation],
 ) -> Dict[str, Dict[JobName, Dict]]:
+    """Compute the video json response of the child jobs of a video annotation."""
     children_json_resp = defaultdict(dict)
+
     for child_ann in child_annotations:
         if trycast(child_ann, VideoClassificationAnnotation):
             sub_job_resp = _video_classification_annotation_to_json_response(
-                child_ann, other_annotations
+                child_ann, _get_child_annotations(child_ann, other_annotations)
             )
+
         elif trycast(child_ann, VideoTranscriptionAnnotation):
             sub_job_resp = _video_transcription_annotation_to_json_response(child_ann)
+
         else:
             raise NotImplementedError(
                 f"Cannot convert child annotation to json response: {child_ann}"
