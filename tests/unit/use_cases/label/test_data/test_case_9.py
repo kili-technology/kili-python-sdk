@@ -1,3 +1,5 @@
+import pytest
+
 json_interface = {
     "jobs": {
         "JOB_0": {
@@ -33,31 +35,31 @@ json_interface = {
 }
 
 bbox_1 = [
-    {"x": 0.37300837378966817, "y": 0.756392223998645},
-    {"x": 0.37300837378966817, "y": 0.5735538392639435},
-    {"x": 0.4899435385888102, "y": 0.5735538392639435},
-    {"x": 0.4899435385888102, "y": 0.756392223998645},
+    {"x": 0.1, "y": 0.7},
+    {"x": 0.1, "y": 0.5},
+    {"x": 0.3, "y": 0.5},
+    {"x": 0.3, "y": 0.7},
 ]
 
 bbox_2 = [
-    {"x": 0.3582470662812001, "y": 0.7120201400492349},
-    {"x": 0.3958786574252113, "y": 0.5418608506018523},
-    {"x": 0.5047048460972782, "y": 0.6179259232133538},
-    {"x": 0.46707325495326707, "y": 0.7880852126607364},
+    {"x": 0.4, "y": 0.7},
+    {"x": 0.4, "y": 0.5},
+    {"x": 0.6, "y": 0.5},
+    {"x": 0.6, "y": 0.7},
 ]
 
 bbox_3 = [
-    {"x": 0.37336594428323905, "y": 0.7571099568850419},
-    {"x": 0.3726536081515613, "y": 0.5742759577878287},
-    {"x": 0.4895859680952394, "y": 0.5728361063775467},
-    {"x": 0.49029830422691717, "y": 0.7556701054747601},
+    {"x": 0.4, "y": 0.3},
+    {"x": 0.4, "y": 0.1},
+    {"x": 0.6, "y": 0.1},
+    {"x": 0.6, "y": 0.3},
 ]
 
 bbox_4 = [
-    {"x": 0.3053819634769522, "y": 0.5419589505028481},
-    {"x": 0.4038254704845748, "y": 0.4890331805536148},
-    {"x": 0.4376744001834186, "y": 0.6880179239839324},
-    {"x": 0.33923089317579597, "y": 0.740943693933166},
+    {"x": 0.4, "y": 0.3},
+    {"x": 0.4, "y": 0.1},
+    {"x": 0.6, "y": 0.1},
+    {"x": 0.6, "y": 0.3},
 ]
 
 annotations = [
@@ -83,13 +85,13 @@ annotations = [
                 "id": "277417a2-c99d-4ae3-aff1-472094315c56-9",
                 "frame": 9,
                 "isPrediction": False,
-                "annotationValue": {"vertices": [[bbox_3]]},
+                "annotationValue": {"vertices": [[bbox_4]]},
             },
             {
                 "id": "277417a2-c99d-4ae3-aff1-472094315c56-7",
                 "frame": 7,
                 "isPrediction": False,
-                "annotationValue": {"vertices": [[bbox_4]]},
+                "annotationValue": {"vertices": [[bbox_3]]},
             },
         ],
         "frames": [{"start": 0, "end": 9}],
@@ -135,7 +137,16 @@ expected_json_resp = {
                 {
                     "children": {},
                     "isKeyFrame": False,
-                    "boundingPoly": [{"normalizedVertices": []}],
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.2, "y": 0.7},
+                                {"x": 0.2, "y": 0.5},
+                                {"x": pytest.approx(0.4), "y": 0.5},
+                                {"x": pytest.approx(0.4), "y": 0.7},
+                            ]
+                        }
+                    ],
                     "categories": [{"name": "OBJECT_A"}],
                     "mid": "20231103085506560-87322",
                     "type": "rectangle",
@@ -149,7 +160,28 @@ expected_json_resp = {
                 {
                     "children": {},
                     "isKeyFrame": False,
-                    "boundingPoly": [{"normalizedVertices": []}],
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {
+                                    "x": pytest.approx(0.3, abs=1e-5),
+                                    "y": pytest.approx(0.7, abs=1e-5),
+                                },
+                                {
+                                    "x": pytest.approx(0.3, abs=1e-5),
+                                    "y": pytest.approx(0.5, abs=1e-5),
+                                },
+                                {
+                                    "x": pytest.approx(0.5, abs=1e-5),
+                                    "y": pytest.approx(0.5, abs=1e-5),
+                                },
+                                {
+                                    "x": pytest.approx(0.5, abs=1e-5),
+                                    "y": pytest.approx(0.7, abs=1e-5),
+                                },
+                            ]
+                        }
+                    ],
                     "categories": [{"name": "OBJECT_A"}],
                     "mid": "20231103085506560-87322",
                     "type": "rectangle",
@@ -180,7 +212,16 @@ expected_json_resp = {
                     "categories": [{"name": "OBJECT_A"}],
                     "mid": "20231103085506560-87322",
                     "type": "rectangle",
-                    "boundingPoly": [{"normalizedVertices": []}],
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.4, "y": 0.6},
+                                {"x": 0.4, "y": 0.4},
+                                {"x": 0.6, "y": 0.4},
+                                {"x": 0.6, "y": 0.6},
+                            ]
+                        }
+                    ],
                 }
             ]
         }
@@ -194,7 +235,16 @@ expected_json_resp = {
                     "categories": [{"name": "OBJECT_A"}],
                     "mid": "20231103085506560-87322",
                     "type": "rectangle",
-                    "boundingPoly": [{"normalizedVertices": []}],
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.4, "y": 0.5},
+                                {"x": 0.4, "y": 0.3},
+                                {"x": 0.6, "y": 0.3},
+                                {"x": 0.6, "y": 0.5},
+                            ]
+                        }
+                    ],
                 }
             ]
         }
@@ -208,7 +258,16 @@ expected_json_resp = {
                     "categories": [{"name": "OBJECT_A"}],
                     "mid": "20231103085506560-87322",
                     "type": "rectangle",
-                    "boundingPoly": [{"normalizedVertices": []}],
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": pytest.approx(0.4), "y": pytest.approx(0.4)},
+                                {"x": pytest.approx(0.4), "y": pytest.approx(0.2)},
+                                {"x": pytest.approx(0.6), "y": pytest.approx(0.2)},
+                                {"x": pytest.approx(0.6), "y": pytest.approx(0.4)},
+                            ]
+                        }
+                    ],
                 }
             ]
         }
@@ -246,7 +305,16 @@ expected_json_resp = {
                     "categories": [{"name": "OBJECT_A"}],
                     "mid": "20231103085506560-87322",
                     "type": "rectangle",
-                    "boundingPoly": [{"normalizedVertices": []}],
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.4, "y": 0.3},
+                                {"x": 0.4, "y": 0.1},
+                                {"x": 0.6, "y": 0.1},
+                                {"x": 0.6, "y": 0.3},
+                            ]
+                        }
+                    ],
                 }
             ]
         }
@@ -255,7 +323,7 @@ expected_json_resp = {
         "JOB_0": {
             "annotations": [
                 {
-                    "children": {"JOB_1": {"categories": [], "isKeyFrame": True}},
+                    "children": {},
                     "isKeyFrame": True,
                     "categories": [{"name": "OBJECT_A"}],
                     "mid": "20231103085506560-87322",

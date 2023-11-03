@@ -2,6 +2,7 @@ from collections import defaultdict
 from typing import Dict, List, Union
 
 from kili.domain.annotation import (
+    Vertice,
     VideoAnnotation,
     VideoClassificationAnnotation,
     VideoObjectDetectionAnnotation,
@@ -63,31 +64,31 @@ def _video_transcription_annotation_to_json_response(
 
     Transcription jobs cannot have child jobs.
     """
+    annotation["keyAnnotations"] = sorted(
+        annotation["keyAnnotations"], key=lambda key_ann: int(key_ann["frame"])
+    )
+
     json_resp: Dict[str, Dict[JobName, Dict]] = defaultdict(dict)
 
     for frame_interval in annotation["frames"]:
         # range of frames on which the annotation lies
         frame_range = range(frame_interval["start"], frame_interval["end"] + 1)
-        for frame_id in frame_range:
-            for key_ann_index, key_ann in enumerate(annotation["keyAnnotations"]):
-                # skip the key annotation if the key annotation start frame
-                # is not in current frame range
-                if key_ann["frame"] not in frame_range:
-                    continue
+        for key_ann_index, key_ann in enumerate(annotation["keyAnnotations"]):
+            # skip the key annotation if the key annotation start frame
+            # is not in current frame range
+            if key_ann["frame"] not in frame_range:
+                continue
 
-                # compute the key annotation frame range
-                key_ann_start = key_ann["frame"]
-                key_ann_end = min(
-                    frame_interval["end"] + 1,
-                    annotation["keyAnnotations"][key_ann_index + 1]["frame"]
-                    if key_ann_index + 1 < len(annotation["keyAnnotations"])
-                    else float("inf"),
-                )
+            # compute the key annotation frame range
+            key_ann_start = key_ann["frame"]
+            key_ann_end = min(
+                frame_interval["end"] + 1,
+                annotation["keyAnnotations"][key_ann_index + 1]["frame"]
+                if key_ann_index + 1 < len(annotation["keyAnnotations"])
+                else frame_interval["end"] + 1,
+            )
 
-                # if the current frame id is not within the key annotation range, we skip
-                if not key_ann_start <= frame_id < key_ann_end:
-                    continue
-
+            for frame_id in range(key_ann_start, key_ann_end):
                 json_resp[str(frame_id)][annotation["job"]] = {
                     "isKeyFrame": frame_id == key_ann_start,
                     "text": key_ann["annotationValue"]["text"],
@@ -143,6 +144,9 @@ def _video_classification_annotation_to_json_response(
     annotation: VideoClassificationAnnotation,
     other_annotations: List[VideoAnnotation],
 ) -> Dict[str, Dict[JobName, Dict]]:
+    annotation["keyAnnotations"] = sorted(
+        annotation["keyAnnotations"], key=lambda key_ann: int(key_ann["frame"])
+    )
     # get the child annotations of the current annotation
     # and compute the json response of those child jobs
     child_annotations = _get_child_annotations(annotation, other_annotations)
@@ -157,34 +161,30 @@ def _video_classification_annotation_to_json_response(
     for frame_interval in annotation["frames"]:
         # range of frames on which the annotation lies
         frame_range = range(frame_interval["start"], frame_interval["end"] + 1)
-        for frame_id in frame_range:
-            # get the frame json response of child jobs
-            child_jobs_frame_json_resp = json_resp_child_jobs.get(str(frame_id), {})
+        for key_ann_index, key_ann in enumerate(annotation["keyAnnotations"]):
+            # skip the key annotation if the key annotation start frame
+            # is not in current frame range
+            if key_ann["frame"] not in frame_range:
+                continue
 
-            for key_ann_index, key_ann in enumerate(annotation["keyAnnotations"]):
-                # skip the key annotation if the key annotation start frame
-                # is not in current frame range
-                if key_ann["frame"] not in frame_range:
-                    continue
+            # compute the key annotation frame range
+            key_ann_start = key_ann["frame"]
+            key_ann_end = min(
+                frame_interval["end"] + 1,
+                annotation["keyAnnotations"][key_ann_index + 1]["frame"]
+                if key_ann_index + 1 < len(annotation["keyAnnotations"])
+                else frame_interval["end"] + 1,
+            )
 
-                # compute the key annotation frame range
-                key_ann_start = key_ann["frame"]
-                key_ann_end = min(
-                    frame_interval["end"] + 1,
-                    annotation["keyAnnotations"][key_ann_index + 1]["frame"]
-                    if key_ann_index + 1 < len(annotation["keyAnnotations"])
-                    else float("inf"),
-                )
-
-                # if the current frame id is not within the key annotation range, we skip
-                if not key_ann_start <= frame_id < key_ann_end:
-                    continue
-
+            for frame_id in range(key_ann_start, key_ann_end):
                 # initialize the frame json response
                 json_resp[str(frame_id)][annotation["job"]] = {
                     "categories": [],
                     "isKeyFrame": frame_id == key_ann_start,
                 }
+
+                # get the frame json response of child jobs
+                child_jobs_frame_json_resp = json_resp_child_jobs.get(str(frame_id), {})
 
                 # a frame can have one or multiple categories
                 categories = key_ann["annotationValue"]["categories"]
@@ -217,16 +217,12 @@ def _video_object_detection_annotation_to_json_response(
     other_annotations: List[VideoAnnotation],
     json_interface: Dict,
 ) -> Dict[str, Dict[JobName, Dict]]:
+    annotation["keyAnnotations"] = sorted(
+        annotation["keyAnnotations"], key=lambda key_ann: int(key_ann["frame"])
+    )
+
     child_annotations = _get_child_annotations(annotation, other_annotations)
-    json_resp = defaultdict(dict)
-
-    category = annotation["category"]
-    job_name = annotation["job"]
-    norm_vertices = annotation["keyAnnotations"][0]["annotationValue"]["vertices"][0][
-        0
-    ]  # TODO: fix
-
-    frames_json_resp_child_jobs = defaultdict(dict)
+    json_resp_child_jobs = defaultdict(dict)
     for child_ann in child_annotations:
         if trycast(child_ann, VideoClassificationAnnotation):
             sub_job_resp = _video_classification_annotation_to_json_response(child_ann, [])
@@ -238,37 +234,124 @@ def _video_object_detection_annotation_to_json_response(
             )
 
         for frame_id, frame_json_resp in sub_job_resp.items():
-            frames_json_resp_child_jobs[frame_id] = {
-                **frames_json_resp_child_jobs[frame_id],
+            json_resp_child_jobs[frame_id] = {
+                **json_resp_child_jobs[frame_id],
                 **frame_json_resp,
             }
 
-    for frame_interval in annotation["frames"]:
-        frame_range = range(frame_interval["start"], frame_interval["end"] + 1)
-        for frame_id in frame_range:
-            # initialize the frame json response
-            json_resp[str(frame_id)][job_name] = {"annotations": []}
+    json_resp = defaultdict(dict)
 
-            child_jobs_json_resp_value = (
-                frames_json_resp_child_jobs[str(frame_id)]
-                if str(frame_id) in frames_json_resp_child_jobs
-                else {}
+    for frame_interval in annotation["frames"]:
+        # range of frames on which the annotation lies
+        frame_range = range(frame_interval["start"], frame_interval["end"] + 1)
+
+        for key_ann_index, key_ann in enumerate(annotation["keyAnnotations"]):
+            # skip the key annotation if the key annotation start frame
+            # is not in current frame range
+            if key_ann["frame"] not in frame_range:
+                continue
+
+            # compute the key annotation frame range
+            key_ann_start = key_ann["frame"]
+            key_ann_end = min(
+                frame_interval["end"] + 1,
+                annotation["keyAnnotations"][key_ann_index + 1]["frame"]
+                if key_ann_index + 1 < len(annotation["keyAnnotations"])
+                else frame_interval["end"] + 1,
             )
 
-            annotation_dict = {
-                "children": child_jobs_json_resp_value,
-                "isKeyFrame": frame_id == frame_interval["start"],
-                "categories": [{"name": category}],
-                "mid": annotation["mid"],
-                "type": json_interface["jobs"][job_name]["tools"][0],
-            }
+            for frame_id in range(key_ann_start, key_ann_end):
+                # get the frame json response of child jobs
+                child_jobs_frame_json_resp = json_resp_child_jobs.get(str(frame_id), {})
 
-            if json_interface["jobs"][job_name]["tools"] == ["marker"]:  # point job
-                annotation_dict["point"] = norm_vertices[0]
+                annotation_dict = {
+                    "children": child_jobs_frame_json_resp,
+                    "isKeyFrame": frame_id == key_ann_start,
+                    "categories": [{"name": annotation["category"]}],
+                    "mid": annotation["mid"],
+                    "type": json_interface["jobs"][annotation["job"]]["tools"][0],
+                }
 
-            else:  # bbox or polygon jobs
-                annotation_dict["boundingPoly"] = [{"normalizedVertices": norm_vertices}]
+                # between two key frame annotations an object (point, bbox, polygon) is
+                # interpolated in the UI
+                if frame_id == key_ann_start:
+                    norm_vertices = key_ann["annotationValue"]["vertices"][0][0]
 
-            json_resp[str(frame_id)][job_name]["annotations"].append(annotation_dict)
+                else:
+                    object_inital_state = key_ann["annotationValue"]["vertices"][0][0]
+                    object_final_state = (
+                        annotation["keyAnnotations"][key_ann_index + 1]["annotationValue"][
+                            "vertices"
+                        ][0][0]
+                        if key_ann_index + 1 < len(annotation["keyAnnotations"])
+                        else object_inital_state
+                    )
+                    norm_vertices = _interpolate_object_(
+                        object_initial_state=object_inital_state,
+                        initial_state_frame_index=key_ann_start,
+                        object_final_state=object_final_state,
+                        final_state_frame_index=key_ann_end,
+                        at_frame=frame_id,
+                    )
+
+                if json_interface["jobs"][annotation["job"]]["tools"] == ["marker"]:  # point job
+                    annotation_dict["point"] = norm_vertices[0]
+
+                else:  # bbox or polygon jobs
+                    annotation_dict["boundingPoly"] = [{"normalizedVertices": norm_vertices}]
+
+                json_resp[str(frame_id)].setdefault(annotation["job"], {}).setdefault(
+                    "annotations", []
+                ).append(annotation_dict)
 
     return json_resp
+
+
+def _interpolate_vertex(
+    vertex_initial_state: Vertice,
+    vertex_final_state: Vertice,
+    initial_state_frame_index: int,
+    final_state_frame_index: int,
+    at_frame: int,
+) -> Vertice:
+    """Generate vertex at some frame between two vertice states."""
+    nb_frames_in_between = final_state_frame_index - initial_state_frame_index
+
+    return Vertice(
+        x=vertex_initial_state["x"]
+        + (vertex_final_state["x"] - vertex_initial_state["x"])
+        * (at_frame - initial_state_frame_index)
+        / nb_frames_in_between,
+        y=vertex_initial_state["y"]
+        + (vertex_final_state["y"] - vertex_initial_state["y"])
+        * (at_frame - initial_state_frame_index)
+        / nb_frames_in_between,
+    )
+
+
+def _interpolate_object_(
+    *,
+    object_initial_state: List[Vertice],
+    initial_state_frame_index: int,
+    object_final_state: List[Vertice],
+    final_state_frame_index: int,
+    at_frame: int,
+) -> List[Vertice]:
+    """Interpolate the bounding boxes between two frames."""
+    # if the two frames are consecutive, we do not interpolate
+    if at_frame == initial_state_frame_index:
+        return object_initial_state
+
+    if at_frame == final_state_frame_index:
+        return object_final_state
+
+    return [
+        _interpolate_vertex(
+            vertex_initial_state=object_initial_state[vertex_index],
+            vertex_final_state=object_final_state[vertex_index],
+            initial_state_frame_index=initial_state_frame_index,
+            final_state_frame_index=final_state_frame_index,
+            at_frame=at_frame,
+        )
+        for vertex_index in range(len(object_initial_state))
+    ]
