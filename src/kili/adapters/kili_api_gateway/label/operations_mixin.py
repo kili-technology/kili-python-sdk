@@ -14,6 +14,7 @@ from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetId
 from kili.domain.label import LabelFilters, LabelId
 from kili.domain.types import ListOrTuple
+from kili.use_cases.label.annotation_to_json_response import AnnotationsToJsonResponseConverter
 from kili.utils.tqdm import tqdm
 
 from .formatters import load_label_json_fields
@@ -58,7 +59,18 @@ class LabelOperationMixin(BaseOperationMixin):
         labels_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving labels", GQL_COUNT_LABELS
         )
-        return (load_label_json_fields(label, fields) for label in labels_gen)
+        labels_gen = (load_label_json_fields(label, fields) for label in labels_gen)
+
+        if "jsonResponse" in fields:
+            converter = AnnotationsToJsonResponseConverter(
+                kili_api_gateway=self, project_id=filters.project.id
+            )
+            for label in labels_gen:
+                converter.patch_label_json_response(label)
+                yield label
+
+        else:
+            yield from labels_gen
 
     def update_properties_in_label(
         self, label_id: LabelId, data: UpdateLabelData, fields: ListOrTuple[str]

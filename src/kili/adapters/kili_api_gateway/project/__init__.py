@@ -15,6 +15,7 @@ from kili.adapters.kili_api_gateway.project.formatters import (
 )
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
 from kili.core.enums import ProjectType
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
@@ -28,24 +29,30 @@ from .operations import (
 from .types import ProjectDataKiliAPIGatewayInput
 
 
+def _get_project(
+    graphql_client: GraphQLClient, project_id: ProjectId, fields: ListOrTuple[str]
+) -> Dict:
+    fragment = fragment_builder(fields)
+    query = get_projects_query(fragment)
+    result = graphql_client.execute(
+        query=query, variables={"where": {"id": project_id}, "first": 1, "skip": 0}
+    )
+    projects = result["data"]
+
+    if len(projects) == 0:
+        raise NotFound(
+            f"project ID: {project_id}. The project does not exist or you do not have access"
+            " to it."
+        )
+    return load_project_json_fields(projects[0], fields)
+
+
 class ProjectOperationMixin(BaseOperationMixin):
     """Mixin extending Kili API Gateway class with Projects related operations."""
 
     def get_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> Dict:
         """Get project."""
-        fragment = fragment_builder(fields)
-        query = get_projects_query(fragment)
-        result = self.graphql_client.execute(
-            query=query, variables={"where": {"id": project_id}, "first": 1, "skip": 0}
-        )
-        projects = result["data"]
-
-        if len(projects) == 0:
-            raise NotFound(
-                f"project ID: {project_id}. The project does not exist or you do not have access"
-                " to it."
-            )
-        return load_project_json_fields(projects[0], fields)
+        return _get_project(self.graphql_client, project_id, fields)
 
     # pylint: disable=too-many-arguments
     def create_project(

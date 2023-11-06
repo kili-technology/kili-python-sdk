@@ -1,7 +1,8 @@
 """Annotation object to json response converter."""
 from collections import defaultdict
-from typing import Dict, Generator, List, Optional, Tuple, Union, overload
+from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Tuple, Union, cast, overload
 
+from kili.adapters.kili_api_gateway.project import _get_project
 from kili.domain.annotation import (
     Vertice,
     VideoAnnotation,
@@ -13,7 +14,78 @@ from kili.domain.annotation import (
     VideoTranscriptionKeyAnnotation,
 )
 from kili.domain.ontology import JobName
+from kili.domain.project import ProjectId
 from kili.utils.typed_dict import trycast
+
+if TYPE_CHECKING:
+    from kili.adapters.kili_api_gateway.label.operations_mixin import LabelOperationMixin
+
+
+class AnnotationsToJsonResponseConverter:
+    def __init__(self, kili_api_gateway: "LabelOperationMixin", project_id: ProjectId) -> None:
+        self._kili_api_gateway = kili_api_gateway
+        self._project_id = project_id
+
+        project_info = _get_project(
+            kili_api_gateway.graphql_client, project_id, fields=("inputType", "jsonInterface")
+        )
+
+        self._project_input_type = project_info["inputType"]
+        self._project_json_interface = project_info["jsonInterface"]
+
+    def _label_has_json_response_data(self, label: Dict) -> bool:
+        if self._project_input_type == "VIDEO":
+            nb_frames = len(label.keys())
+
+            # the front puts some additional data in the first frame "0"
+            # but it's not actual labeling data
+            if nb_frames > 1:
+                return True
+
+            job_names_in_json_resp = {
+                job_name for frame_resp in label["jsonReponse"].values() for job_name in frame_resp
+            }
+        else:
+            job_names_in_json_resp = set(label["jsonReponse"].keys())
+
+        if any(job_name in job_names_in_json_resp for job_name in self._project_json_interface):
+            return True
+
+        return False
+
+    def patch_label_json_response(self, label: Dict) -> None:
+        if not label.get("jsonResponse"):
+            return
+
+        if self._label_has_json_response_data(label):
+            return
+
+        if self._project_input_type == "VIDEO":
+            annotations = self._kili_api_gateway.list_annotations(
+                label_id=label["id"],
+                annotation_fields=("id", "job", "path", "labelId"),
+                video_annotation_fields=(
+                    "frames.start",
+                    "frames.end",
+                    "keyAnnotations.id",
+                    "keyAnnotations.frame",
+                    "keyAnnotations.isPrediction",
+                ),
+                video_object_detection_fields=(
+                    "keyAnnotations.annotationValue.vertices.x",
+                    "keyAnnotations.annotationValue.vertices.y",
+                    "name",
+                    "mid",
+                    "category",
+                ),
+                video_classification_fields=("keyAnnotations.annotationValue.categories",),
+                video_transcription_fields=("keyAnnotations.annotationValue.text",),
+            )
+            annotations = cast(List[VideoAnnotation], annotations)
+            converted_json_resp = video_label_annotations_to_json_response(
+                annotations=annotations, json_interface=self._project_json_interface
+            )
+            label["jsonResponse"] = converted_json_resp
 
 
 def video_label_annotations_to_json_response(
