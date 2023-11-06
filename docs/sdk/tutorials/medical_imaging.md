@@ -24,7 +24,6 @@ import pickle
 from functools import reduce
 from pathlib import Path
 
-import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
