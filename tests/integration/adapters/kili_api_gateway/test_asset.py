@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from kili.adapters.kili_api_gateway.asset.operations_mixin import AssetOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.asset import AssetFilters
@@ -6,19 +8,26 @@ from kili.domain.project import ProjectId
 
 def test_given_a_query_returning_serialized_json_it_parses_json_fields(graphql_client, http_client):
     # mocking
-    def mock_graphql_execute(query, _):
+    def mock_graphql_execute(query, variables, **kwargs):
         if "query assets" in query:
+            label = {"id": "fake_label_id", "jsonResponse": "{}"}
             return {
                 "data": [
                     {
+                        "id": "fake_asset_id",
                         "jsonMetadata": '{"test": 3}',
-                        "labels": [{"jsonResponse": '{"jobs": {}}'}],
-                        "latestLabel": {"jsonResponse": '{"jobs": {}}'},
+                        "labels": [deepcopy(label)],
+                        "latestLabel": deepcopy(label),
                     },
                 ]
             }
-        elif "query countAssets" in query:
+
+        if "query countAssets" in query:
             return {"data": 1}
+
+        if "projects(" in query:
+            return {"data": [{"id": "project_id", "inputType": "IMAGE", "jsonInterface": "{}"}]}
+
         return None
 
     graphql_client.execute.side_effect = mock_graphql_execute
@@ -32,20 +41,18 @@ def test_given_a_query_returning_serialized_json_it_parses_json_fields(graphql_c
         "jsonMetadata",
         "labels.jsonResponse",
         "latestLabel.jsonResponse",
-        "jsonContent",
         "id",
     ]
 
     # when
-    asset_gen = asset_operations.list_assets(
-        filters,
-        fields,
-        options=QueryOptions(disable_tqdm=None),
+    assets = list(
+        asset_operations.list_assets(filters, fields, options=QueryOptions(disable_tqdm=None))
     )
 
     # then
-    assert next(asset_gen) == {
+    assert assets[0] == {
+        "id": "fake_asset_id",
         "jsonMetadata": {"test": 3},
-        "labels": [{"jsonResponse": {"jobs": {}}}],
-        "latestLabel": {"jsonResponse": {"jobs": {}}},
+        "labels": [{"jsonResponse": {}}],
+        "latestLabel": {"jsonResponse": {}},
     }
