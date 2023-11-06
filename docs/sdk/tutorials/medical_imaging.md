@@ -235,6 +235,8 @@ We assign a color to each class:
 
 
 ```python
+import matplotlib.colors as mcolors
+
 colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 colors = [
     tuple(int(x * 255) for x in mcolors.hex2color(hex_color))
