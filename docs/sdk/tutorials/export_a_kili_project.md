@@ -192,7 +192,7 @@ When working on a project with [consensus](https://docs.kili-technology.com/docs
 from collections import defaultdict
 
 assets = kili.assets(
-    "clb54wfkn01zb0kyadscgaf5j",
+    your_project_id,
     fields=[
         "externalId",
         "labels.author.email",
