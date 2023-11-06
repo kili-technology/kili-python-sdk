@@ -76,8 +76,8 @@ location = "[GCP PROJECT LOCATION]"
 bucket_name = "[GCS BUCKET NAME]"
 dataset_name = "blood_cell"  # name of the dataset you will create in Vertex AI
 bucket_dataset_dir = (
-    f"experiments/{dataset_name}"
-)  # name of the folder in yout bucket where files will be stored.
+    f"experiments/{dataset_name}"  # name of the folder in yout bucket where files will be stored.
+)
 
 aiplatform.init(project=project_name, location=location)
 ```
