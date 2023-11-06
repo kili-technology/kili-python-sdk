@@ -1,7 +1,6 @@
 import pytest_mock
 
 from kili.adapters.http_client import HttpClient
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
@@ -15,12 +14,14 @@ from kili.adapters.kili_api_gateway.label.types import (
     AppendLabelData,
     AppendManyLabelsData,
 )
+from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.asset import AssetExternalId, AssetFilters
 from kili.domain.asset.asset import AssetId
 from kili.domain.label import LabelFilters, LabelId
-from kili.domain.project import ProjectFilters, ProjectId
+from kili.domain.project import ProjectId
 from kili.domain.user import UserId
+from tests.unit.adapters.kili_api_gateway.label.test_data import test_case_1
 
 
 def test_given_kili_gateway_when_querying_labels__it_calls_proper_resolver(
@@ -35,7 +36,7 @@ def test_given_kili_gateway_when_querying_labels__it_calls_proper_resolver(
     labels_gen = kili_gateway.list_labels(
         LabelFilters(
             id=LabelId("fake_label_id"),
-            project=ProjectFilters(id=ProjectId("fake_proj_id")),
+            project_id=ProjectId("fake_proj_id"),
             asset=AssetFilters(
                 external_id_in=[AssetExternalId("fake_asset_id")],
                 project_id=ProjectId("fake_proj_id"),
@@ -222,3 +223,42 @@ def test_given_kili_gateway_when_querying_annotations_then_it_works(
         """\n    query annotations($where: AnnotationWhere!) {\n        data: annotations(where: $where) {\n             id job path labelId\n            \n            ... on VideoAnnotation {\n                     frames{ start end}\n            }\n        \n        }\n    }\n    """,
         {"where": {"labelId": "fake_label_id"}},
     )
+
+
+def test_given_project_with_new_annotations_when_calling_list_labels_it_converts_to_json_response(
+    graphql_client: GraphQLClient, http_client: HttpClient
+):
+    # Given
+    def mocked_graphql_execute(query, variables, **kwargs):
+        if "projects(" in query:
+            return {"data": [{"inputType": "VIDEO", "jsonInterface": test_case_1.json_interface}]}
+
+        if "countProjects(" in query:
+            return {"data": 1}
+
+        if "countLabels(" in query:
+            return {"data": 1}
+
+        if "labels(" in query:
+            return {"data": [{"id": "fake_label_id", "jsonResponse": "{}"}]}
+
+        if "annotations(" in query:
+            return {"data": test_case_1.annotations}
+
+        raise NotImplementedError
+
+    graphql_client.execute.side_effect = mocked_graphql_execute
+
+    kili_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
+
+    # When
+    labels = list(
+        kili_gateway.list_labels(
+            LabelFilters(project_id=ProjectId("fake_proj_id")),
+            fields=("jsonResponse",),
+            options=QueryOptions(disable_tqdm=True),
+        )
+    )
+
+    # Then
+    assert labels[0]["jsonResponse"] == test_case_1.expected_json_resp

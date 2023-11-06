@@ -1,8 +1,9 @@
 """Annotation object to json response converter."""
 from collections import defaultdict
-from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Tuple, Union, cast, overload
+from typing import Dict, Generator, List, Optional, Tuple, Union, cast, overload
 
-from kili.adapters.kili_api_gateway.project import _get_project
+from kili.adapters.kili_api_gateway.project.operations_mixin import get_project
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.annotation import (
     Vertice,
     VideoAnnotation,
@@ -13,56 +14,49 @@ from kili.domain.annotation import (
     VideoTranscriptionAnnotation,
     VideoTranscriptionKeyAnnotation,
 )
+from kili.domain.label import LabelId
 from kili.domain.ontology import JobName
 from kili.domain.project import ProjectId
 from kili.utils.typed_dict import trycast
 
-if TYPE_CHECKING:
-    from kili.adapters.kili_api_gateway.label.operations_mixin import LabelOperationMixin
+from .operations import list_annotations
 
 
 class AnnotationsToJsonResponseConverter:
-    def __init__(self, kili_api_gateway: "LabelOperationMixin", project_id: ProjectId) -> None:
-        self._kili_api_gateway = kili_api_gateway
-        self._project_id = project_id
+    """Convert annotations to JSON response."""
 
-        project_info = _get_project(
-            kili_api_gateway.graphql_client, project_id, fields=("inputType", "jsonInterface")
-        )
+    def __init__(self, graphql_client: GraphQLClient, project_id: ProjectId) -> None:
+        """Initialize the converter."""
+        self._graphql_client = graphql_client
 
+        project_info = get_project(graphql_client, project_id, ("inputType", "jsonInterface"))
         self._project_input_type = project_info["inputType"]
         self._project_json_interface = project_info["jsonInterface"]
 
     def _label_has_json_response_data(self, label: Dict) -> bool:
         if self._project_input_type == "VIDEO":
-            nb_frames = len(label.keys())
-
-            # the front puts some additional data in the first frame "0"
-            # but it's not actual labeling data
-            if nb_frames > 1:
-                return True
-
             job_names_in_json_resp = {
-                job_name for frame_resp in label["jsonReponse"].values() for job_name in frame_resp
+                job_name for frame_resp in label["jsonResponse"].values() for job_name in frame_resp
             }
         else:
-            job_names_in_json_resp = set(label["jsonReponse"].keys())
+            job_names_in_json_resp = set(label["jsonResponse"].keys())
 
-        if any(job_name in job_names_in_json_resp for job_name in self._project_json_interface):
+        if any(
+            job_name in job_names_in_json_resp for job_name in self._project_json_interface["jobs"]
+        ):
             return True
 
         return False
 
-    def patch_label_json_response(self, label: Dict) -> None:
-        if not label.get("jsonResponse"):
-            return
+    def patch_label_json_response(self, label: Dict, label_id: LabelId) -> None:
+        """Patch the label json response using the annotations.
 
-        if self._label_has_json_response_data(label):
-            return
-
+        Modifies the input label.
+        """
         if self._project_input_type == "VIDEO":
-            annotations = self._kili_api_gateway.list_annotations(
-                label_id=label["id"],
+            annotations = list_annotations(
+                graphql_client=self._graphql_client,
+                label_id=label_id,
                 annotation_fields=("id", "job", "path", "labelId"),
                 video_annotation_fields=(
                     "frames.start",
@@ -81,14 +75,18 @@ class AnnotationsToJsonResponseConverter:
                 video_classification_fields=("keyAnnotations.annotationValue.categories",),
                 video_transcription_fields=("keyAnnotations.annotationValue.text",),
             )
+
+            if not annotations and self._label_has_json_response_data(label):
+                return
+
             annotations = cast(List[VideoAnnotation], annotations)
-            converted_json_resp = video_label_annotations_to_json_response(
+            converted_json_resp = _video_label_annotations_to_json_response(
                 annotations=annotations, json_interface=self._project_json_interface
             )
             label["jsonResponse"] = converted_json_resp
 
 
-def video_label_annotations_to_json_response(
+def _video_label_annotations_to_json_response(
     annotations: List[VideoAnnotation], json_interface: Dict
 ) -> Dict[str, Dict[JobName, Dict]]:
     """Convert video label annotations to a video json response."""

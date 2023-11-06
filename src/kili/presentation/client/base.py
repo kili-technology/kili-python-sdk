@@ -2,7 +2,7 @@
 
 from abc import ABC
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
 
 
 class BaseClientMethods(ABC):

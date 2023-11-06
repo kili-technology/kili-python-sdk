@@ -10,15 +10,15 @@ IGNORE_KEY = [
     "0005d3cc-3c3f-40b9-93c3-46231c3eb813",  # dicom tag id in recipe
 ]
 IGNORE_FILE = [
-    "tests/unit/use_cases/label/test_data/test_case_2.py",
-    "tests/unit/use_cases/label/test_data/test_case_3.py",
-    "tests/unit/use_cases/label/test_data/test_case_4.py",
-    "tests/unit/use_cases/label/test_data/test_case_5.py",
-    "tests/unit/use_cases/label/test_data/test_case_6.py",
-    "tests/unit/use_cases/label/test_data/test_case_7.py",
-    "tests/unit/use_cases/label/test_data/test_case_8.py",
-    "tests/unit/use_cases/label/test_data/test_case_9.py",
-    "tests/unit/use_cases/label/test_data/test_case_10.py",
+    "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_2.py",
+    "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_3.py",
+    "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_4.py",
+    "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_5.py",
+    "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_6.py",
+    "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_7.py",
+    "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_8.py",
+    "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_9.py",
+    "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_10.py",
 ]
 
 

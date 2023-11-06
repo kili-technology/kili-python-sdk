@@ -1,4 +1,4 @@
-from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
+from kili.adapters.kili_api_gateway.asset.operations_mixin import AssetOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.asset import AssetFilters
 from kili.domain.project import ProjectId

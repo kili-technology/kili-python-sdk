@@ -1,6 +1,6 @@
 import pytest_mock
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
 from kili.adapters.kili_api_gateway.project.operations import (
     GQL_CREATE_PROJECT,
     get_update_properties_in_project_mutation,

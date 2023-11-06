@@ -11,7 +11,7 @@ from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters
 from kili.domain.label import LabelFilters
-from kili.domain.project import ProjectFilters, ProjectId
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.use_cases.asset.media_downloader import get_download_assets_function
 from kili.utils.tempfile import TemporaryDirectory
@@ -261,7 +261,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         }
 
         nb_labels_to_copy = self.kili.kili_api_gateway.count_labels(
-            LabelFilters(project=ProjectFilters(id=ProjectId(from_project_id)))
+            LabelFilters(project_id=ProjectId(from_project_id))
         )
         if nb_labels_to_copy == 0:
             return

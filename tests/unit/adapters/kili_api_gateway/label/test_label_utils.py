@@ -2,11 +2,11 @@ from typing import Dict, List
 
 import pytest
 
-from kili.domain.annotation import Vertice, VideoAnnotation
-from kili.use_cases.label.annotation_to_json_response import (
+from kili.adapters.kili_api_gateway.label.annotation_to_json_response import (
     _interpolate_object_,
-    video_label_annotations_to_json_response,
+    _video_label_annotations_to_json_response,
 )
+from kili.domain.annotation import Vertice, VideoAnnotation
 
 from .test_data import (
     test_case_1,
@@ -97,7 +97,9 @@ def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
     _ = annotations
 
     # When
-    json_resp = video_label_annotations_to_json_response(annotations, json_interface=json_interface)
+    json_resp = _video_label_annotations_to_json_response(
+        annotations, json_interface=json_interface
+    )
 
     # Then
     assert json_resp == expected_json_resp

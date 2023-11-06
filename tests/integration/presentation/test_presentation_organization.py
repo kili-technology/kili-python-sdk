@@ -4,8 +4,8 @@ import pytest
 import pytz
 from pytest_mock import MockerFixture
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
 from kili.client import Kili
 from kili.domain.organization import (
     OrganizationFilters,

@@ -11,12 +11,12 @@ from tenacity.retry import retry_if_exception_type
 from tenacity.stop import stop_after_delay
 from tenacity.wait import wait_exponential
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.cloud_storage.types import (
     AddDataConnectionKiliAPIGatewayInput,
     DataConnectionComputeDifferencesKiliAPIGatewayInput,
 )
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
 from kili.domain.asset import AssetFilters
 from kili.domain.cloud_storage import (
     DataConnectionFilters,

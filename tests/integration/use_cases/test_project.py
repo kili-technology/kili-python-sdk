@@ -1,7 +1,7 @@
 from types import GeneratorType
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
 from kili.adapters.kili_api_gateway.project.types import ProjectDataKiliAPIGatewayInput
 from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple

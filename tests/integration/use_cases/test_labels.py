@@ -3,11 +3,11 @@ from pathlib import Path
 
 import pytest
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.label.types import (
     AppendLabelData,
     AppendManyLabelsData,
 )
+from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
 from kili.domain.asset import AssetExternalId
 from kili.domain.asset.asset import AssetId
 from kili.domain.project import ProjectId

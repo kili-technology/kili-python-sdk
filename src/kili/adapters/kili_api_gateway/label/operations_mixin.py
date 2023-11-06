@@ -14,9 +14,11 @@ from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetId
 from kili.domain.label import LabelFilters, LabelId
 from kili.domain.types import ListOrTuple
-from kili.use_cases.label.annotation_to_json_response import AnnotationsToJsonResponseConverter
 from kili.utils.tqdm import tqdm
 
+from .annotation_to_json_response import (
+    AnnotationsToJsonResponseConverter,
+)
 from .formatters import load_label_json_fields
 from .mappers import (
     append_label_data_mapper,
@@ -27,12 +29,12 @@ from .mappers import (
 from .operations import (
     GQL_COUNT_LABELS,
     GQL_DELETE_LABELS,
-    get_annotations_query,
     get_append_many_labels_mutation,
     get_append_to_labels_mutation,
     get_create_honeypot_mutation,
     get_labels_query,
     get_update_properties_in_label_mutation,
+    list_annotations,
 )
 from .types import AppendManyLabelsData, AppendToLabelsData, UpdateLabelData
 
@@ -53,6 +55,11 @@ class LabelOperationMixin(BaseOperationMixin):
         options: QueryOptions,
     ) -> Generator[Dict, None, None]:
         """List labels."""
+        added_id_field = False
+        if "jsonResponse" in fields and "id" not in fields:
+            fields = (*fields, "id")
+            added_id_field = True
+
         fragment = fragment_builder(fields)
         query = get_labels_query(fragment)
         where = label_where_mapper(filters)
@@ -63,10 +70,12 @@ class LabelOperationMixin(BaseOperationMixin):
 
         if "jsonResponse" in fields:
             converter = AnnotationsToJsonResponseConverter(
-                kili_api_gateway=self, project_id=filters.project.id
+                graphql_client=self.graphql_client, project_id=filters.project_id
             )
             for label in labels_gen:
-                converter.patch_label_json_response(label)
+                converter.patch_label_json_response(label, label["id"])
+                if added_id_field:
+                    label.pop("id")
                 yield label
 
         else:
@@ -163,15 +172,12 @@ class LabelOperationMixin(BaseOperationMixin):
         video_transcription_fields: ListOrTuple[str] = (),
     ) -> List[Dict]:
         """List annotations."""
-        query = get_annotations_query(
-            annotation_fragment=fragment_builder(annotation_fields),
-            video_annotation_fragment=fragment_builder(video_annotation_fields),
-            video_classification_annotation_fragment=fragment_builder(video_classification_fields),
-            video_object_detection_annotation_fragment=fragment_builder(
-                video_object_detection_fields
-            ),
-            video_transcription_annotation_fragment=fragment_builder(video_transcription_fields),
+        return list_annotations(
+            graphql_client=self.graphql_client,
+            label_id=label_id,
+            annotation_fields=annotation_fields,
+            video_annotation_fields=video_annotation_fields,
+            video_classification_fields=video_classification_fields,
+            video_object_detection_fields=video_object_detection_fields,
+            video_transcription_fields=video_transcription_fields,
         )
-        variables = {"where": {"labelId": label_id}}
-        result = self.graphql_client.execute(query, variables)
-        return result["data"]

@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from kili.adapters.kili_api_gateway.asset import AssetOperationMixin
+from kili.adapters.kili_api_gateway.asset.operations_mixin import AssetOperationMixin
 from kili.adapters.kili_api_gateway.organization.operations_mixin import (
     OrganizationOperationMixin,
 )
