@@ -17,9 +17,9 @@ from kili.domain.annotation import (
 from kili.domain.label import LabelId
 from kili.domain.ontology import JobName
 from kili.domain.project import ProjectId
-from kili.utils.typed_dict import trycast
+from kili.domain.types import trycast
 
-from .operations import list_annotations
+from .common import list_annotations
 
 
 class AnnotationsToJsonResponseConverter:

@@ -3,7 +3,7 @@ from typing import List
 
 from typing_extensions import assert_type
 
-from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.label_data_parsing.annotation import Annotation, AnnotationList
 from kili.services.label_data_parsing.category import Category, CategoryList

@@ -3,7 +3,7 @@ from typing import Dict
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import PaginatedGraphQLQuery
-from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.project import ProjectFilters, ProjectId

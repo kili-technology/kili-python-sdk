@@ -1,6 +1,6 @@
 import pytest
 
-from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 from kili.use_cases.tag import TagUseCases

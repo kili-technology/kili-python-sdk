@@ -12,7 +12,7 @@ from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
 if TYPE_CHECKING:
-    from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
+    from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 
 
 class AssetUseCasesUtils:

@@ -19,6 +19,7 @@ from kili.utils.tqdm import tqdm
 from .annotation_to_json_response import (
     AnnotationsToJsonResponseConverter,
 )
+from .common import list_annotations
 from .formatters import load_label_json_fields
 from .mappers import (
     append_label_data_mapper,
@@ -34,7 +35,6 @@ from .operations import (
     get_create_honeypot_mutation,
     get_labels_query,
     get_update_properties_in_label_mutation,
-    list_annotations,
 )
 from .types import AppendManyLabelsData, AppendToLabelsData, UpdateLabelData
 

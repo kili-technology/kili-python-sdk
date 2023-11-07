@@ -11,7 +11,7 @@ import pytest_mock
 from click.testing import CliRunner
 
 from kili.adapters.kili_api_gateway.asset.operations_mixin import AssetOperationMixin
-from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.entrypoints.cli.project.create import create_project
 from kili.entrypoints.cli.project.describe import describe_project
 from kili.entrypoints.cli.project.export import export_labels

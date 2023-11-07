@@ -3,7 +3,7 @@
 from typing import Dict
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.label import LabelFilters, LabelId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple

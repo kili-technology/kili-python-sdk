@@ -21,7 +21,7 @@ from kili.use_cases.asset.exceptions import (
 )
 
 if TYPE_CHECKING:
-    from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
+    from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 
 
 def get_download_assets_function(

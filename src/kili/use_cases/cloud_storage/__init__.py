@@ -16,7 +16,7 @@ from kili.adapters.kili_api_gateway.cloud_storage.types import (
     DataConnectionComputeDifferencesKiliAPIGatewayInput,
 )
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetFilters
 from kili.domain.cloud_storage import (
     DataConnectionFilters,

@@ -9,7 +9,7 @@ from typing import Dict, Optional, Union
 
 from kili.adapters.authentification import is_api_key_valid
 from kili.adapters.http_client import HttpClient
-from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.issue import MutationsIssue

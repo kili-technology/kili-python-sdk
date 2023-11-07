@@ -4,7 +4,7 @@ import abc
 from typing import List, Optional, Type, TypeVar, cast
 
 from kili.adapters.http_client import HttpClient
-from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import format_result
 from kili.domain.asset import AssetExternalId, AssetId

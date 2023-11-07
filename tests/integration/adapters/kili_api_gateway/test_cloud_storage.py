@@ -7,7 +7,7 @@ from kili.adapters.kili_api_gateway.cloud_storage.operations import (
     GQL_COUNT_DATA_INTEGRATIONS,
     get_compute_data_connection_differences_mutation,
 )
-from kili.adapters.kili_api_gateway.mixin import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.cloud_storage import DataConnectionId, DataIntegrationId
 
