@@ -1,3 +1,4 @@
+"""Label gateway common."""
 from typing import Dict, List
 
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder

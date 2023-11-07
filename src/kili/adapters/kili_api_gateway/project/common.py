@@ -1,3 +1,4 @@
+"""Project gateway common."""
 from typing import Dict
 
 from kili.adapters.kili_api_gateway.helpers.queries import (
