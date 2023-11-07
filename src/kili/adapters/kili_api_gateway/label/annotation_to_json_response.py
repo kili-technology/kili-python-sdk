@@ -87,6 +87,25 @@ class AnnotationsToJsonResponseConverter:
             label["jsonResponse"] = converted_json_resp
 
 
+def _add_annotation_metadata(annotations: List[VideoAnnotation], json_response: Dict) -> None:
+    for ann in annotations:
+        if ann["__typename"] == "VideoObjectDetectionAnnotation":
+            ann = cast(VideoObjectDetectionAnnotation, ann)
+            job_counter = (
+                json_response["0"]
+                .setdefault("ANNOTATION_JOB_COUNTER", {})
+                .setdefault(ann["job"], defaultdict(int))
+            )
+            job_counter[ann["category"]] += 1
+            json_response["0"].setdefault("ANNOTATION_NAMES_JOB", {})[ann["mid"]] = ann["name"]
+
+
+def _fill_empty_frames(json_response: Dict) -> None:
+    max_frame_id = max(int(frame_id) for frame_id in json_response)
+    for frame_id in range(max_frame_id + 1):
+        json_response.setdefault(str(frame_id), {})
+
+
 def _video_label_annotations_to_json_response(
     annotations: List[VideoAnnotation], json_interface: Dict
 ) -> Dict[str, Dict[JobName, Dict]]:
@@ -131,23 +150,10 @@ def _video_label_annotations_to_json_response(
         else:
             raise NotImplementedError(f"Cannot convert annotation to json response: {ann}")
 
-    for ann in annotations:
-        if ann["__typename"] == "VideoObjectDetectionAnnotation":
-            ann = cast(VideoObjectDetectionAnnotation, ann)
-            job_counter = (
-                json_resp["0"]
-                .setdefault("ANNOTATION_JOB_COUNTER", {})
-                .setdefault(ann["job"], defaultdict(int))
-            )
-            job_counter[ann["category"]] += 1
-            json_resp["0"].setdefault("ANNOTATION_NAMES_JOB", {})[ann["mid"]] = ann["name"]
+    _add_annotation_metadata(annotations, json_resp)
+    _fill_empty_frames(json_resp)
 
-    max_frame_id = max(int(frame_id) for frame_id in json_resp)
-    for frame_id in range(max_frame_id + 1):
-        json_resp.setdefault(str(frame_id), {})
-
-    # sort by frame id
-    return dict(sorted(json_resp.items(), key=lambda item: int(item[0])))
+    return dict(sorted(json_resp.items(), key=lambda item: int(item[0])))  # sort by frame id
 
 
 @overload
