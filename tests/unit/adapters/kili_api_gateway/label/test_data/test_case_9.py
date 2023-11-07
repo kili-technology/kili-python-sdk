@@ -64,6 +64,7 @@ bbox_4 = [
 
 annotations = [
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "277417a2-c99d-4ae3-aff1-472094315c56",
         "job": "JOB_0",
         "path": [],
@@ -100,6 +101,7 @@ annotations = [
         "category": "OBJECT_A",
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "946a8b83-cac3-4400-af04-0ec0895a3e75",
         "job": "JOB_1",
         "path": [["277417a2-c99d-4ae3-aff1-472094315c56", "OBJECT_A"]],
@@ -118,6 +120,12 @@ annotations = [
 
 expected_json_resp = {
     "0": {
+        "ANNOTATION_JOB_COUNTER": {
+            "JOB_0": {"OBJECT_A": 1},
+        },
+        "ANNOTATION_NAMES_JOB": {
+            "20231103085506560-87322": "Train 1",
+        },
         "JOB_0": {
             "annotations": [
                 {

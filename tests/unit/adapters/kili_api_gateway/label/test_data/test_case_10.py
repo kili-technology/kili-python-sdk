@@ -47,6 +47,7 @@ bbox_2 = [
 
 annotations = [
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "2209aa92-1c6c-4306-99af-a6e8a0278217",
         "job": "JOB_0",
         "path": [],
@@ -65,6 +66,7 @@ annotations = [
         "category": "OBJECT_A",
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "ea1e2f05-8610-411f-a29e-c5ee0b97548a",
         "job": "JOB_1",
         "path": [["2209aa92-1c6c-4306-99af-a6e8a0278217", "OBJECT_A"]],
@@ -80,6 +82,7 @@ annotations = [
         ],
     },
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "73092b5e-4625-4b4f-a3cd-1c122cd3ce45",
         "job": "JOB_0",
         "path": [],
@@ -100,6 +103,13 @@ annotations = [
 ]
 
 expected_json_resp = {
+    "0": {
+        "ANNOTATION_JOB_COUNTER": {"JOB_0": {"OBJECT_A": 2}},
+        "ANNOTATION_NAMES_JOB": {
+            "20231103090943036-54978": "Train 3",
+            "20231103090918821-66388": "Train 2",
+        },
+    },
     "2": {
         "JOB_0": {
             "annotations": [

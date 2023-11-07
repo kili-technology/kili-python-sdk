@@ -3,10 +3,9 @@ from typing import Dict, List
 import pytest
 
 from kili.adapters.kili_api_gateway.label.annotation_to_json_response import (
-    _interpolate_object_,
     _video_label_annotations_to_json_response,
 )
-from kili.domain.annotation import Vertice, VideoAnnotation
+from kili.domain.annotation import VideoAnnotation
 
 from .test_data import (
     test_case_1,
@@ -19,6 +18,7 @@ from .test_data import (
     test_case_8,
     test_case_9,
     test_case_10,
+    test_case_11,
 )
 
 
@@ -85,6 +85,12 @@ from .test_data import (
             test_case_10.expected_json_resp,
             test_case_10.json_interface,
         ),
+        (
+            "test_case_11",
+            test_case_11.annotations,
+            test_case_11.expected_json_resp,
+            test_case_11.json_interface,
+        ),
     ],
 )
 def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
@@ -103,169 +109,3 @@ def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
 
     # Then
     assert json_resp == expected_json_resp
-
-
-@pytest.mark.parametrize(
-    (
-        "test_case_name",
-        "bbox_start",
-        "frame_start_index",
-        "bbox_end",
-        "frame_end_index",
-        "expected_bboxes",
-    ),
-    [
-        (
-            "same bbox on two consecutive frames",
-            [
-                {"x": 0.012, "y": 0.077},  # bottom left
-                {"x": 0.012, "y": 0.030},  # top left
-                {"x": 0.223, "y": 0.030},  # top right
-                {"x": 0.223, "y": 0.077},  # bottom right
-            ],
-            0,
-            [
-                {"x": 0.012, "y": 0.077},  # bottom left
-                {"x": 0.012, "y": 0.030},  # top left
-                {"x": 0.223, "y": 0.030},  # top right
-                {"x": 0.223, "y": 0.077},  # bottom right
-            ],
-            1,
-            [],
-        ),
-        (
-            "same bbox, one bbox frame to generate in between",
-            [
-                {"x": 0.012, "y": 0.077},  # bottom left
-                {"x": 0.012, "y": 0.030},  # top left
-                {"x": 0.223, "y": 0.030},  # top right
-                {"x": 0.223, "y": 0.077},  # bottom right
-            ],
-            0,
-            [
-                {"x": 0.012, "y": 0.077},  # bottom left
-                {"x": 0.012, "y": 0.030},  # top left
-                {"x": 0.223, "y": 0.030},  # top right
-                {"x": 0.223, "y": 0.077},  # bottom right
-            ],
-            2,
-            [
-                [
-                    {"x": 0.012, "y": 0.077},  # bottom left
-                    {"x": 0.012, "y": 0.030},  # top left
-                    {"x": 0.223, "y": 0.030},  # top right
-                    {"x": 0.223, "y": 0.077},  # bottom right
-                ]
-            ],
-        ),
-        (
-            "bbox shifted right, one bbox frame to generate in between",
-            [
-                {"x": 0.012, "y": 0.077},  # bottom left
-                {"x": 0.012, "y": 0.030},  # top left
-                {"x": 0.223, "y": 0.030},  # top right
-                {"x": 0.223, "y": 0.077},  # bottom right
-            ],
-            0,
-            [
-                {"x": 0.012 + 0.5, "y": 0.077},  # bottom left
-                {"x": 0.012 + 0.5, "y": 0.030},  # top left
-                {"x": 0.223 + 0.5, "y": 0.030},  # top right
-                {"x": 0.223 + 0.5, "y": 0.077},  # bottom right
-            ],
-            2,
-            [
-                [
-                    {"x": 0.012 + 0.25, "y": 0.077},  # bottom left
-                    {"x": 0.012 + 0.25, "y": 0.030},  # top left
-                    {"x": 0.223 + 0.25, "y": 0.030},  # top right
-                    {"x": 0.223 + 0.25, "y": 0.077},  # bottom right
-                ]
-            ],
-        ),
-        (
-            "bbox shifted right, two bbox frames to generate in between",
-            [
-                {"x": 0.012, "y": 0.077},  # bottom left
-                {"x": 0.012, "y": 0.030},  # top left
-                {"x": 0.223, "y": 0.030},  # top right
-                {"x": 0.223, "y": 0.077},  # bottom right
-            ],
-            0,
-            [
-                {"x": 0.012 + 0.3, "y": 0.077},  # bottom left
-                {"x": 0.012 + 0.3, "y": 0.030},  # top left
-                {"x": 0.223 + 0.3, "y": 0.030},  # top right
-                {"x": 0.223 + 0.3, "y": 0.077},  # bottom right
-            ],
-            3,
-            [
-                [
-                    {"x": 0.012 + 0.1, "y": 0.077},  # bottom left
-                    {"x": 0.012 + 0.1, "y": 0.030},  # top left
-                    {"x": 0.223 + 0.1, "y": 0.030},  # top right
-                    {"x": 0.223 + 0.1, "y": 0.077},  # bottom right
-                ],
-                [
-                    {"x": 0.012 + 0.2, "y": 0.077},  # bottom left
-                    {"x": 0.012 + 0.2, "y": 0.030},  # top left
-                    {"x": 0.223 + 0.2, "y": 0.030},  # top right
-                    {"x": 0.223 + 0.2, "y": 0.077},  # bottom right
-                ],
-            ],
-        ),
-        (
-            "bbox vertical top left, ending box horizontal top, one bbox frame to generate",
-            [
-                {"x": 0.0026680473764734273, "y": 0.3115594847386215},
-                {"x": 0.0026680473764734273, "y": 0.003480142312792922},
-                {"x": 0.12273017931777766, "y": 0.003480142312792922},
-                {"x": 0.12273017931777766, "y": 0.3115594847386215},
-            ],
-            0,
-            [
-                {"x": 0.0026680473764734273, "y": 0.502273186857896},
-                {"x": 0.0026680473764734273, "y": 0.003480142312792922},
-                {"x": 0.9951816714245885, "y": 0.003480142312792922},
-                {"x": 0.9951816714245885, "y": 0.502273186857896},
-            ],
-            2,
-            [
-                [
-                    {"x": 0.0026680473764734815, "y": 0.4069163357982587},  # bottom left
-                    {"x": 0.0026680473764734815, "y": 0.0034801423127929},  # top left
-                    {"x": 0.5589559253711831, "y": 0.0034801423127929},  # top right
-                    {"x": 0.5589559253711831, "y": 0.4069163357982587},  # bottom right
-                ],
-            ],
-        ),
-    ],
-)
-def test_given_two_bboxes_on_different_frames_when_generating_intermediate_bboxes_it_works(
-    test_case_name: str,
-    bbox_start: List[Vertice],
-    frame_start_index: int,
-    bbox_end: List[Vertice],
-    frame_end_index: int,
-    expected_bboxes: List[List[Vertice]],
-):
-    # Given
-
-    # When
-    generated_bboxes = []
-    for frame_id in range(frame_start_index + 1, frame_end_index):
-        generated_bboxes.append(
-            _interpolate_object_(
-                object_initial_state=bbox_start,
-                object_final_state=bbox_end,
-                initial_state_frame_index=frame_start_index,
-                final_state_frame_index=frame_end_index,
-                at_frame=frame_id,
-            )
-        )
-
-    # Then
-    for generated_bbox, expected_bbox in zip(generated_bboxes, expected_bboxes):
-        for generated_vertice, expected_vertice in zip(generated_bbox, expected_bbox):
-            assert generated_vertice["x"] == pytest.approx(expected_vertice["x"])
-            assert generated_vertice["y"] == pytest.approx(expected_vertice["y"])

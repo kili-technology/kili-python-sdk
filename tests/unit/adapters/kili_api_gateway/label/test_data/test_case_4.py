@@ -39,6 +39,7 @@ point_2 = {"x": 0.2590335929094918, "y": 0.5051538679962855}
 
 annotations = [
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "341834a0-6b7e-47d2-a290-a56833ed4a65",
         "job": "OBJECT_DETECTION_JOB",
         "path": [],
@@ -57,6 +58,7 @@ annotations = [
         "category": "TRUCK",
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "b1e7863d-f9f4-4804-8ede-5b34b3e38add",
         "job": "CLASSIFICATION_JOB",
         "path": [["341834a0-6b7e-47d2-a290-a56833ed4a65", "TRUCK"]],
@@ -72,6 +74,7 @@ annotations = [
         ],
     },
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "5e963bda-2ab0-48e4-890b-6116b6610651",
         "job": "OBJECT_DETECTION_JOB",
         "path": [],
@@ -90,6 +93,7 @@ annotations = [
         "category": "TRUCK",
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "c0d1161c-6b97-4c28-873a-df1c7d4923e7",
         "job": "CLASSIFICATION_JOB",
         "path": [["5e963bda-2ab0-48e4-890b-6116b6610651", "TRUCK"]],
@@ -108,6 +112,11 @@ annotations = [
 
 expected_json_resp = {
     "0": {
+        "ANNOTATION_JOB_COUNTER": {"OBJECT_DETECTION_JOB": {"TRUCK": 2}},
+        "ANNOTATION_NAMES_JOB": {
+            "20231102130336664-88203": "Truck 1",
+            "20231102130351045-28203": "Truck 2",
+        },
         "OBJECT_DETECTION_JOB": {
             "annotations": [
                 {
@@ -124,7 +133,7 @@ expected_json_resp = {
                     "type": "marker",
                 }
             ]
-        }
+        },
     },
     "1": {
         "OBJECT_DETECTION_JOB": {

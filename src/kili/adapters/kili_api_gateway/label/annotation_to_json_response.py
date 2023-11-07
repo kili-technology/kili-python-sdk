@@ -131,6 +131,17 @@ def _video_label_annotations_to_json_response(
         else:
             raise NotImplementedError(f"Cannot convert annotation to json response: {ann}")
 
+    for ann in annotations:
+        if ann["__typename"] == "VideoObjectDetectionAnnotation":
+            ann = cast(VideoObjectDetectionAnnotation, ann)
+            job_counter = (
+                json_resp["0"]
+                .setdefault("ANNOTATION_JOB_COUNTER", {})
+                .setdefault(ann["job"], defaultdict(int))
+            )
+            job_counter[ann["category"]] += 1
+            json_resp["0"].setdefault("ANNOTATION_NAMES_JOB", {})[ann["mid"]] = ann["name"]
+
     # sort by frame id
     return dict(sorted(json_resp.items(), key=lambda item: int(item[0])))
 

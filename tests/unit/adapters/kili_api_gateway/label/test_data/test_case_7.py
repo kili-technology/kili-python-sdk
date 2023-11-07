@@ -25,6 +25,7 @@ json_interface = {
 
 annotations = [
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "89fae1e5-c33f-4280-8cb7-73c488e2ece1",
         "job": "CLASSIFICATION_JOB_0_",
         "path": [["69144fde-557c-402e-9c57-c515dd1a6c96", "A"]],
@@ -40,6 +41,7 @@ annotations = [
         ],
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "69144fde-557c-402e-9c57-c515dd1a6c96",
         "job": "CLASSIFICATION_JOB_",
         "path": [],

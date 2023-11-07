@@ -127,6 +127,11 @@ annotations = [
 
 expected_json_resp = {
     "0": {
+        "ANNOTATION_JOB_COUNTER": {"BBOX_JOB": {"TRAIN": 1, "CAR": 1}},
+        "ANNOTATION_NAMES_JOB": {
+            "20231031123948352-1": "TRAIN 1",
+            "20231031124001125-3": "CAR 1",
+        },
         "BBOX_JOB": {
             "annotations": [
                 {

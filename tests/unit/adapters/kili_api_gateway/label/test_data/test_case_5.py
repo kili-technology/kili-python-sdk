@@ -38,6 +38,7 @@ polygon_vertices = [
 
 annotations = [
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "db3f1827-cde6-4936-9e11-e71b02b849c6",
         "job": "OBJECT_DETECTION_JOB",
         "path": [],
@@ -56,6 +57,7 @@ annotations = [
         "category": "CAR",
     },
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "709f7b2a-6772-4c6d-ad95-02d7402ed47f",
         "job": "OBJECT_DETECTION_JOB",
         "path": [],
@@ -74,6 +76,7 @@ annotations = [
         "category": "CAR",
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "cb8347d3-3d07-4fbe-8eac-440f0c96b50b",
         "job": "CLASSIFICATION_JOB_0",
         "path": [["709f7b2a-6772-4c6d-ad95-02d7402ed47f", "CAR"]],
@@ -91,6 +94,13 @@ annotations = [
 ]
 
 expected_json_resp = {
+    "0": {
+        "ANNOTATION_JOB_COUNTER": {"OBJECT_DETECTION_JOB": {"CAR": 2}},
+        "ANNOTATION_NAMES_JOB": {
+            "20231102135530134-87099": "Car 1",
+            "20231102135542586-10862": "Car 2",
+        },
+    },
     "2": {
         "OBJECT_DETECTION_JOB": {
             "annotations": [

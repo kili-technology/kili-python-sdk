@@ -51,6 +51,7 @@ bbox_2 = [
 
 annotations = [
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "0292f264-ab07-4fcc-bf3e-a9d23d9b3623",
         "job": "OBJECT_DETECTION_JOB",
         "path": [],
@@ -69,6 +70,7 @@ annotations = [
         "category": "K",
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "d4fd90d6-e34b-4c1e-a541-672aaf9d2588",
         "job": "CLASSIFICATION_JOB",
         "path": [["0292f264-ab07-4fcc-bf3e-a9d23d9b3623", "K"]],
@@ -84,6 +86,7 @@ annotations = [
         "frames": [{"start": 3, "end": 5}],
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "b8202479-0e21-4415-bb2f-b90c582b97f9",
         "job": "CLASSIFICATION_JOB_0",
         "path": [
@@ -102,6 +105,7 @@ annotations = [
         "frames": [{"start": 3, "end": 5}],
     },
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "769f23b1-530e-45f6-a4a2-b4e8d2c5d29a",
         "job": "OBJECT_DETECTION_JOB",
         "path": [],
@@ -120,6 +124,7 @@ annotations = [
         "category": "K",
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "94663f70-0833-4cf4-a0e2-c42cf60e4e9d",
         "job": "CLASSIFICATION_JOB",
         "path": [["769f23b1-530e-45f6-a4a2-b4e8d2c5d29a", "K"]],
@@ -137,6 +142,13 @@ annotations = [
 ]
 
 expected_json_resp = {
+    "0": {
+        "ANNOTATION_JOB_COUNTER": {"OBJECT_DETECTION_JOB": {"K": 2}},
+        "ANNOTATION_NAMES_JOB": {
+            "20231102143201332-74497": "K 1",
+            "20231102143221654-37429": "K 3",
+        },
+    },
     "3": {
         "OBJECT_DETECTION_JOB": {
             "annotations": [

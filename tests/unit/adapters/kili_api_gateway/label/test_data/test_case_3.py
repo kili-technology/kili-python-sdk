@@ -38,6 +38,7 @@ json_interface = {
 
 annotations = [
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "f98a628f-4ef0-41bc-ab03-d5c7ca6d2e15",
         "job": "CLASSIFICATION_JOB",
         "path": [],
@@ -65,6 +66,7 @@ annotations = [
         ],
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "0c2b0724-9fb1-42c1-a0b4-3cc9af0d4fb9",
         "job": "CLASSIFICATION_JOB_0",
         "path": [["f98a628f-4ef0-41bc-ab03-d5c7ca6d2e15", "CAR"]],
@@ -86,6 +88,7 @@ annotations = [
         ],
     },
     {
+        "__typename": "VideoTranscriptionAnnotation",
         "id": "3de07f87-3f52-4a7a-829a-e262d7fdb749",
         "job": "TRANSCRIPTION_JOB",
         "path": [["f98a628f-4ef0-41bc-ab03-d5c7ca6d2e15", "TRUCK"]],

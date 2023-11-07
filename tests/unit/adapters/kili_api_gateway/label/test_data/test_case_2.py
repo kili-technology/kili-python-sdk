@@ -70,6 +70,7 @@ fake_bbox_vertices_3 = [
 
 annotations = [
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "5c9efa8d-ded3-42df-9362-fdc55ea7e4ff",
         "job": "JOB_1",
         "path": [["33c26101-5b1f-48d3-b2b2-ffb04daec1d8", "OBJECT_A"]],
@@ -85,6 +86,7 @@ annotations = [
         "frames": [{"start": 4, "end": 9}],
     },
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "7d8b1b46-73fc-434b-a8d1-a7734fce1d26",
         "job": "JOB_0",
         "path": [],
@@ -103,6 +105,7 @@ annotations = [
         "category": "OBJECT_B",
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "id": "c94137a2-19ec-4872-8884-673d78e7b4c6",
         "job": "JOB_2",
         "path": [["7d8b1b46-73fc-434b-a8d1-a7734fce1d26", "OBJECT_B"]],
@@ -118,6 +121,7 @@ annotations = [
         "frames": [{"start": 9, "end": 11}],
     },
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "af8e4bca-9442-49df-9321-17ffb008e659",
         "job": "JOB_0",
         "path": [],
@@ -136,6 +140,7 @@ annotations = [
         "category": "OBJECT_B",
     },
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "id": "33c26101-5b1f-48d3-b2b2-ffb04daec1d8",
         "job": "JOB_0",
         "path": [],
@@ -156,6 +161,14 @@ annotations = [
 ]
 
 expected_json_resp = {
+    "0": {
+        "ANNOTATION_JOB_COUNTER": {"JOB_0": {"OBJECT_A": 1, "OBJECT_B": 2}},
+        "ANNOTATION_NAMES_JOB": {
+            "20231102084526462-11": "Car 2",
+            "20231102084443159-7": "Car 1",
+            "20231102084459755-9": "Train 1",
+        },
+    },
     "1": {
         "JOB_0": {
             "annotations": [
