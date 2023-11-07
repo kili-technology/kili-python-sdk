@@ -2,7 +2,7 @@
 from collections import defaultdict
 from typing import Dict, Generator, List, Optional, Tuple, Union, cast, overload
 
-from kili.adapters.kili_api_gateway.project.operations_mixin import get_project
+from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.annotation import (
     Vertice,

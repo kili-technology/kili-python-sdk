@@ -15,11 +15,10 @@ from kili.adapters.kili_api_gateway.project.formatters import (
 )
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
 from kili.core.enums import ProjectType
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
-from kili.exceptions import NotFound
 
+from .common import get_project
 from .mappers import project_data_mapper, project_where_mapper
 from .operations import (
     GQL_COUNT_PROJECTS,
@@ -27,25 +26,6 @@ from .operations import (
     get_update_properties_in_project_mutation,
 )
 from .types import ProjectDataKiliAPIGatewayInput
-
-
-def get_project(
-    graphql_client: GraphQLClient, project_id: ProjectId, fields: ListOrTuple[str]
-) -> Dict:
-    """Get project."""
-    fragment = fragment_builder(fields)
-    query = get_projects_query(fragment)
-    result = graphql_client.execute(
-        query=query, variables={"where": {"id": project_id}, "first": 1, "skip": 0}
-    )
-    projects = result["data"]
-
-    if len(projects) == 0:
-        raise NotFound(
-            f"project ID: {project_id}. The project does not exist or you do not have access"
-            " to it."
-        )
-    return load_project_json_fields(projects[0], fields)
 
 
 class ProjectOperationMixin(BaseOperationMixin):
