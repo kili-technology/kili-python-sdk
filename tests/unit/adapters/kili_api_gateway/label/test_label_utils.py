@@ -115,9 +115,4 @@ def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
     )
 
     # Then
-    import json
-    from pathlib import Path
-
-    with (Path() / "truc.json").open("w") as f:
-        json.dump(json_resp, f, indent=2)
     assert json_resp == expected_json_resp
