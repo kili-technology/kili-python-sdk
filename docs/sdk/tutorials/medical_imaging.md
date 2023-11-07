@@ -24,7 +24,6 @@ import pickle
 from functools import reduce
 from pathlib import Path
 
-import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
@@ -236,6 +235,8 @@ We assign a color to each class:
 
 
 ```python
+import matplotlib.colors as mcolors
+
 colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 colors = [
     tuple(int(x * 255) for x in mcolors.hex2color(hex_color))

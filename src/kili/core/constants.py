@@ -1,14 +1,5 @@
 """This script lists package constants."""
 
-INPUT_TYPE = [
-    "AUDIO",
-    "IMAGE",
-    "PDF",
-    "TEXT",
-    "TIME_SERIES",
-    "VIDEO",
-    "VIDEO_LEGACY",
-]
 
 mime_extensions = {
     "Audio": "audio/x-flac,audio/mpeg,video/mp4",
@@ -35,7 +26,7 @@ mime_extensions_for_IV2 = {
     "TIME_SERIES": mime_extensions["Csv"],
     "URL": "",
     "VIDEO": mime_extensions["Video"],
-    "VIDEO_LEGACY": mime_extensions["Csv"],
+    "VIDEO_LEGACY": "",
 }
 
 mime_extensions_for_py_scripts = ["text/x-python"]

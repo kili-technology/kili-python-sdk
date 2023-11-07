@@ -70,6 +70,10 @@ For a more specific use case, follow [this tutorial](https://python-sdk-docs.kil
 
 Webhooks are really similar to plugins, except they are self-hosted, and require a web service deployed at your end, callable by Kili. To learn how to use webhooks, follow [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/webhooks_example/).
 
+## Integrations
+
+[This tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/vertex_ai_automl_od/) will show you how train an object detection model with Vertex AI AutoML and Kili for faster annotation
+
 ## More
 
 For more tutorials and recipes, see our [Github repository](https://github.com/kili-technology/kili-python-sdk/tree/main/recipes).

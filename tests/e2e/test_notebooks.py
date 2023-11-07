@@ -59,6 +59,7 @@ def process_notebook(notebook_filename: str) -> None:
         "recipes/set_up_workflows.ipynb",
         # "recipes/tagtog_to_kili.ipynb",  # not testable because data is private
         "recipes/webhooks_example.ipynb",
+        # "recipes/vertex_ai_automl_od.ipynb", # not testable because too long and cost money on Vertex AI
     ],
 )
 def test_all_recipes(notebook_file: str):

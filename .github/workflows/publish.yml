@@ -58,6 +58,10 @@ jobs:
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
+      - name: Get release body
+        id: get_release
+        run: echo ::set-output name=changelog::$(echo "${{ github.event.release.body }}" | sed -n '/# Changelog/,$p')
+
       - name: Slack notification
         id: slack
         if: success()
@@ -65,13 +69,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "Kili SDK ${{ github.ref_name }} released!\nGitHub: https://github.com/kili-technology/kili-python-sdk/releases\nPyPI: https://pypi.org/project/kili/",
+              "text": "Kili SDK ${{ github.ref_name }} released!\nGitHub: https://github.com/kili-technology/kili-python-sdk/releases\nPyPI: https://pypi.org/project/kili/\nChangelog: ${{ steps.get_release.outputs.changelog }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Kili SDK ${{ github.ref_name }} released!\nGitHub: https://github.com/kili-technology/kili-python-sdk/releases\nPyPI: https://pypi.org/project/kili/"
+                    "text": "Kili SDK ${{ github.ref_name }} released!\nGitHub: https://github.com/kili-technology/kili-python-sdk/releases\nPyPI: https://pypi.org/project/kili/\nChangelog: ${{ steps.get_release.outputs.changelog }}""
                   }
                 }
               ]
