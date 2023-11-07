@@ -1,6 +1,8 @@
 """Annotation object to json response converter."""
+import math
 from collections import defaultdict
-from typing import Dict, Generator, List, Optional, Tuple, Union, cast, overload
+from dataclasses import dataclass
+from typing import Dict, Generator, List, Optional, Tuple, cast, overload
 
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.graphql.graphql_client import GraphQLClient
@@ -15,9 +17,8 @@ from kili.domain.annotation import (
     VideoTranscriptionKeyAnnotation,
 )
 from kili.domain.label import LabelId
-from kili.domain.ontology import JobName
+from kili.domain.ontology import JobName, JobTool
 from kili.domain.project import ProjectId
-from kili.domain.types import trycast
 
 from .common import list_annotations
 
@@ -57,7 +58,7 @@ class AnnotationsToJsonResponseConverter:
             annotations = list_annotations(
                 graphql_client=self._graphql_client,
                 label_id=label_id,
-                annotation_fields=("id", "job", "path", "labelId"),
+                annotation_fields=("__typename", "id", "job", "path", "labelId"),
                 video_annotation_fields=(
                     "frames.start",
                     "frames.end",
@@ -98,7 +99,8 @@ def _video_label_annotations_to_json_response(
 
         other_annotations = annotations[:i] + annotations[i + 1 :]
 
-        if trycast(ann, VideoObjectDetectionAnnotation):
+        if ann["__typename"] == " VideoObjectDetectionAnnotation":
+            ann = cast(VideoObjectDetectionAnnotation, ann)
             ann_json_resp = _video_object_detection_annotation_to_json_response(
                 ann, other_annotations, json_interface=json_interface
             )
@@ -108,7 +110,8 @@ def _video_label_annotations_to_json_response(
                         "annotations", []
                     ).extend(job_resp["annotations"])
 
-        elif trycast(ann, VideoClassificationAnnotation):
+        elif ann["__typename"] == "VideoClassificationAnnotation":
+            ann = cast(VideoClassificationAnnotation, ann)
             ann_json_resp = _video_classification_annotation_to_json_response(
                 ann, other_annotations
             )
@@ -119,7 +122,8 @@ def _video_label_annotations_to_json_response(
                     ).extend(job_resp["categories"])
                     json_resp[frame_id][job_name]["isKeyFrame"] = job_resp["isKeyFrame"]
 
-        elif trycast(ann, VideoTranscriptionAnnotation):
+        elif ann["__typename"] == "VideoTranscriptionAnnotation":
+            ann = cast(VideoTranscriptionAnnotation, ann)
             ann_json_resp = _video_transcription_annotation_to_json_response(ann)
             for frame_id, frame_json_resp in ann_json_resp.items():
                 json_resp[frame_id] = {**json_resp[frame_id], **frame_json_resp}
@@ -223,38 +227,32 @@ def _video_transcription_annotation_to_json_response(
 
 def _get_child_annotations(
     annotation: VideoAnnotation, other_annotations: List[VideoAnnotation]
-) -> List[Union[VideoTranscriptionAnnotation, VideoClassificationAnnotation]]:
+) -> List[VideoAnnotation]:
     """Get the child annotations (child jobs) of a video annotation."""
     return [
         ann
         for ann in other_annotations
         # ann["path"] is a list of couples (annotationId, category)
-        if ann["path"]
-        and any(path[0] == annotation["id"] for path in ann["path"])
-        # a subjob can only be a transcription or classification job
-        and (
-            trycast(ann, VideoTranscriptionAnnotation)
-            or trycast(ann, VideoClassificationAnnotation)
-        )
+        if ann["path"] and any(path[0] == annotation["id"] for path in ann["path"])
     ]
 
 
 def _compute_children_json_resp(
-    child_annotations: List[Union[VideoTranscriptionAnnotation, VideoClassificationAnnotation]],
+    child_annotations: List[VideoAnnotation],
     other_annotations: List[VideoAnnotation],
 ) -> Dict[str, Dict[JobName, Dict]]:
     """Compute the video json response of the child jobs of a video annotation."""
     children_json_resp = defaultdict(dict)
 
     for child_ann in child_annotations:
-        if trycast(child_ann, VideoClassificationAnnotation):
+        if child_ann["__typename"] == "VideoClassificationAnnotation":
+            child_ann = cast(VideoClassificationAnnotation, child_ann)
             sub_job_resp = _video_classification_annotation_to_json_response(
-                child_ann,
-                # pylint: disable=line-too-long
-                _get_child_annotations(child_ann, other_annotations),  # pyright: ignore[reportGeneralTypeIssues]
+                child_ann, _get_child_annotations(child_ann, other_annotations)
             )
 
-        elif trycast(child_ann, VideoTranscriptionAnnotation):
+        elif child_ann["__typename"] == "VideoTranscriptionAnnotation":
+            child_ann = cast(VideoTranscriptionAnnotation, child_ann)
             sub_job_resp = _video_transcription_annotation_to_json_response(child_ann)
 
         else:
@@ -263,10 +261,7 @@ def _compute_children_json_resp(
             )
 
         for frame_id, frame_json_resp in sub_job_resp.items():
-            children_json_resp[frame_id] = {
-                **children_json_resp[frame_id],
-                **frame_json_resp,
-            }
+            children_json_resp[frame_id] = {**children_json_resp[frame_id], **frame_json_resp}
 
     return children_json_resp
 
@@ -359,16 +354,17 @@ def _video_object_detection_annotation_to_json_response(
             # between two key frame annotations, an object (point, bbox, polygon) is
             # interpolated in the UI
             if frame_id == key_ann_start:
-                norm_vertices = key_ann["annotationValue"]["vertices"][0][0]
+                norm_vertices = key_ann["annotationValue"]["vertices"]
 
             else:
-                object_inital_state = key_ann["annotationValue"]["vertices"][0][0]
+                object_inital_state = key_ann["annotationValue"]["vertices"]
                 object_final_state = (
-                    next_key_ann["annotationValue"]["vertices"][0][0]
+                    next_key_ann["annotationValue"]["vertices"]
                     if next_key_ann is not None
-                    else object_inital_state
+                    else object_inital_state  # if no next key annotation, we do not interpolate
                 )
                 norm_vertices = _interpolate_object_(
+                    object_type=json_interface["jobs"][annotation["job"]]["tools"][0],
                     object_initial_state=object_inital_state,
                     initial_state_frame_index=key_ann_start,
                     object_final_state=object_final_state,
@@ -377,7 +373,7 @@ def _video_object_detection_annotation_to_json_response(
                 )
 
             if json_interface["jobs"][annotation["job"]]["tools"] == ["marker"]:  # point job
-                annotation_dict["point"] = norm_vertices[0]
+                annotation_dict["point"] = norm_vertices[0][0][0]
 
             else:  # bbox or polygon jobs
                 annotation_dict["boundingPoly"] = [{"normalizedVertices": norm_vertices}]
@@ -389,36 +385,15 @@ def _video_object_detection_annotation_to_json_response(
     return json_resp
 
 
-def _interpolate_vertex(
-    vertex_initial_state: Vertice,
-    vertex_final_state: Vertice,
-    initial_state_frame_index: int,
-    final_state_frame_index: int,
-    at_frame: int,
-) -> Vertice:
-    """Generate vertex at some frame between two vertice states."""
-    nb_frames_in_between = final_state_frame_index - initial_state_frame_index
-
-    return Vertice(
-        x=vertex_initial_state["x"]
-        + (vertex_final_state["x"] - vertex_initial_state["x"])
-        * (at_frame - initial_state_frame_index)
-        / nb_frames_in_between,
-        y=vertex_initial_state["y"]
-        + (vertex_final_state["y"] - vertex_initial_state["y"])
-        * (at_frame - initial_state_frame_index)
-        / nb_frames_in_between,
-    )
-
-
 def _interpolate_object_(
     *,
-    object_initial_state: List[Vertice],
+    object_type: str,
+    object_initial_state: List[List[List[Vertice]]],
     initial_state_frame_index: int,
-    object_final_state: List[Vertice],
+    object_final_state: List[List[List[Vertice]]],
     final_state_frame_index: int,
     at_frame: int,
-) -> List[Vertice]:
+) -> List[List[List[Vertice]]]:
     """Interpolate the bounding boxes between two frames."""
     # if the two frames are consecutive, we do not interpolate
     if at_frame == initial_state_frame_index:
@@ -427,13 +402,266 @@ def _interpolate_object_(
     if at_frame == final_state_frame_index:
         return object_final_state
 
-    return [
-        _interpolate_vertex(
-            vertex_initial_state=object_initial_state[vertex_index],
-            vertex_final_state=object_final_state[vertex_index],
-            initial_state_frame_index=initial_state_frame_index,
-            final_state_frame_index=final_state_frame_index,
-            at_frame=at_frame,
-        )
-        for vertex_index in range(len(object_initial_state))
+    if object_type == JobTool.MARKER:
+        # for point jobs, we interpolate for each frame
+        return [
+            [
+                [
+                    interpolate_point(
+                        previous_point=object_initial_state[0][0][0],
+                        next_point=object_final_state[0][0][0],
+                        weight=(at_frame - initial_state_frame_index)
+                        / (final_state_frame_index - initial_state_frame_index),
+                    )
+                ]
+            ]
+        ]
+
+    if object_type == JobTool.RECTANGLE:
+        return [
+            [
+                interpolate_rectangle(
+                    previous_vertices=object_initial_state[0][0],
+                    next_vertices=object_final_state[0][0],
+                    width=1,
+                    height=1,
+                    weight=(at_frame - initial_state_frame_index)
+                    / (final_state_frame_index - initial_state_frame_index),
+                )
+            ]
+        ]
+
+    if object_type == JobTool.POLYGON:
+        return object_initial_state  # for polygon jobs, we keep the initial state
+
+    if object_type == JobTool.SEMANTIC:
+        return object_initial_state  # for semantic jobs, we keep the initial state
+
+    raise NotImplementedError(f"Cannot interpolate object of type {object_type}")
+
+
+def convert_from_normalized_to_absolute(v: Vertice, *, height: int, width: int) -> Vertice:
+    """Convert a vertice from normalized to absolute coordinates."""
+    return Vertice(x=v["x"] * width, y=v["y"] * height)
+
+
+def convert_from_absolute_to_normalized(v: Vertice, height: int, width: int) -> Vertice:
+    """Convert a vertice from absolute to normalized coordinates."""
+    return Vertice(x=v["x"] / width, y=v["y"] / height)
+
+
+def bijection_cost(permuted_rectangle: List[Vertice], rectangle: List[Vertice]) -> float:
+    """Compute the cost of a bijection between two rectangles."""
+    cost = 0
+    for i in range(2):
+        ab_x = rectangle[i + 1]["x"] - rectangle[i]["x"]
+        apermbperm_x = permuted_rectangle[i + 1]["x"] - permuted_rectangle[i]["x"]
+
+        ab_y = rectangle[i + 1]["y"] - rectangle[i]["y"]
+        apermbperm_y = permuted_rectangle[i + 1]["y"] - permuted_rectangle[i]["y"]
+
+        ab_norm = math.sqrt(ab_x**2 + ab_y**2)
+        apermbnorm = math.sqrt(apermbperm_x**2 + apermbperm_y**2)
+
+        cos = (ab_x * apermbperm_x + ab_y * apermbperm_y) / (ab_norm * apermbnorm)
+
+        cost -= cos
+
+    return cost
+
+
+def find_rectangle_vertices_bijection(
+    rectangle1: List[Vertice], rectangle2: List[Vertice]
+) -> List[Vertice]:
+    """Find the bijection between two rectangles that minimizes the cost."""
+    permutation_array = [
+        [rectangle2[0], rectangle2[1], rectangle2[2], rectangle2[3]],
+        [rectangle2[1], rectangle2[2], rectangle2[3], rectangle2[0]],
+        [rectangle2[2], rectangle2[3], rectangle2[0], rectangle2[1]],
+        [rectangle2[3], rectangle2[0], rectangle2[1], rectangle2[2]],
+        [rectangle2[3], rectangle2[2], rectangle2[1], rectangle2[0]],
+        [rectangle2[2], rectangle2[1], rectangle2[0], rectangle2[3]],
+        [rectangle2[1], rectangle2[0], rectangle2[3], rectangle2[2]],
+        [rectangle2[0], rectangle2[3], rectangle2[2], rectangle2[1]],
     ]
+    bijection_cost_array = [
+        bijection_cost(permuted_rectangle, rectangle1) for permuted_rectangle in permutation_array
+    ]
+
+    optimal_permutation_index = bijection_cost_array.index(min(bijection_cost_array))
+    return permutation_array[optimal_permutation_index]
+
+
+@dataclass
+class RectangleProperties:
+    """Rectangle properties."""
+
+    angle: float
+    center: Vertice
+    length: float
+    width: float
+
+
+def find_rectangle_angle(rectangle: List[Vertice]) -> float:
+    """Find the angle of a rectangle."""
+    vector_ab = Vertice(
+        x=rectangle[2]["x"] - rectangle[1]["x"], y=rectangle[2]["y"] - rectangle[1]["y"]
+    )
+    return math.atan2(vector_ab["y"], vector_ab["x"])
+
+
+def find_rectangle_center(rectangle: List[Vertice]) -> Vertice:
+    """Find the center of a rectangle."""
+    point_a = rectangle[0]
+    point_c = rectangle[2]
+    return Vertice(x=(point_a["x"] + point_c["x"]) / 2, y=(point_a["y"] + point_c["y"]) / 2)
+
+
+def distance_between_points(point1: Vertice, point2: Vertice) -> float:
+    """Compute the distance between two points."""
+    return math.sqrt((point1["x"] - point2["x"]) ** 2 + (point1["y"] - point2["y"]) ** 2)
+
+
+def find_rectangle_length(rectangle: List[Vertice]) -> float:
+    """Find the length of a rectangle."""
+    return distance_between_points(rectangle[1], rectangle[2])
+
+
+def find_rectangle_width(rectangle: List[Vertice]) -> float:
+    """Find the width of a rectangle."""
+    return distance_between_points(rectangle[0], rectangle[1])
+
+
+def find_rectangle_properties(rectangle: List[Vertice]) -> RectangleProperties:
+    """Find the properties of a rectangle."""
+    if len(rectangle) != 4:  # noqa: PLR2004
+        raise RuntimeError("Invalid rectangle format")
+
+    angle = find_rectangle_angle(rectangle)
+    center = find_rectangle_center(rectangle)
+    length = find_rectangle_length(rectangle)
+    width = find_rectangle_width(rectangle)
+
+    return RectangleProperties(angle=angle, center=center, length=length, width=width)
+
+
+def interpolate_angle(previous_angle: float, angle: float, weight: float) -> float:
+    """Interpolate an angle."""
+    difference = min(
+        abs(angle - previous_angle),
+        2 * math.pi - abs(angle - previous_angle),
+    )
+    sign = (
+        math.copysign(1, angle - previous_angle)
+        if abs(angle - previous_angle) < 2 * math.pi - abs(angle - previous_angle)
+        else math.copysign(1, 2 * math.pi - abs(angle - previous_angle))
+    )
+    interpolated_angle = previous_angle + sign * difference * weight
+    return interpolated_angle if math.isfinite(interpolated_angle) else 0
+
+
+def interpolate_number(previous_number: float, number: float, weight: float) -> float:
+    """Interpolate a number."""
+    interpolated_number = number * weight + (1 - weight) * previous_number
+    return interpolated_number if math.isfinite(interpolated_number) else 0
+
+
+def interpolate_point(previous_point: Vertice, next_point: Vertice, weight: float) -> Vertice:
+    """Interpolate a point."""
+    return Vertice(
+        x=interpolate_number(previous_point["x"], next_point["x"], weight),
+        y=interpolate_number(previous_point["y"], next_point["y"], weight),
+    )
+
+
+def rotate_vector(vector: Vertice, angle: float) -> Vertice:
+    """Rotate a vector."""
+    return Vertice(
+        x=vector["x"] * math.cos(angle) - vector["y"] * math.sin(angle),
+        y=vector["x"] * math.sin(angle) + vector["y"] * math.cos(angle),
+    )
+
+
+def reconstruct_rectangle_from_properties(properties: RectangleProperties) -> List[Vertice]:
+    """Reconstruct a rectangle from its properties."""
+    u = Vertice(x=0, y=properties.width)
+    v = Vertice(x=properties.length, y=0)
+
+    rotated_u = rotate_vector(u, properties.angle)
+    rotated_v = rotate_vector(v, properties.angle)
+
+    point_a = Vertice(
+        x=properties.center["x"] + (rotated_u["x"] + rotated_v["x"]) / 2,
+        y=properties.center["y"] + (rotated_u["y"] + rotated_v["y"]) / 2,
+    )
+    point_b = Vertice(
+        x=properties.center["x"] + (-rotated_u["x"] + rotated_v["x"]) / 2,
+        y=properties.center["y"] + (-rotated_u["y"] + rotated_v["y"]) / 2,
+    )
+    point_c = Vertice(
+        x=properties.center["x"] - (rotated_u["x"] + rotated_v["x"]) / 2,
+        y=properties.center["y"] - (rotated_u["y"] + rotated_v["y"]) / 2,
+    )
+    point_d = Vertice(
+        x=properties.center["x"] - (-rotated_u["x"] + rotated_v["x"]) / 2,
+        y=properties.center["y"] - (-rotated_u["y"] + rotated_v["y"]) / 2,
+    )
+
+    return [point_a, point_b, point_c, point_d]
+
+
+def interpolate_rectangle(
+    *,
+    previous_vertices: List[Vertice],
+    next_vertices: List[Vertice],
+    width: int,
+    height: int,
+    weight: float,
+) -> List[Vertice]:
+    """Interpolate a rectangle."""
+    previous_absolute_vertices = [
+        convert_from_normalized_to_absolute(v, height=height, width=width)
+        for v in previous_vertices
+    ]
+
+    next_absolute_vertices = [
+        convert_from_normalized_to_absolute(v, height=height, width=width) for v in next_vertices
+    ]
+
+    permuted_new_vertices = find_rectangle_vertices_bijection(
+        previous_absolute_vertices, next_absolute_vertices
+    )
+
+    previous_rectangle_properties = find_rectangle_properties(previous_absolute_vertices)
+    next_rectangle_properties = find_rectangle_properties(permuted_new_vertices)
+
+    interpolated_angle = interpolate_angle(
+        previous_rectangle_properties.angle, next_rectangle_properties.angle, weight
+    )
+    interpolated_center = interpolate_point(
+        previous_rectangle_properties.center, next_rectangle_properties.center, weight
+    )
+    interpolated_length = interpolate_number(
+        previous_rectangle_properties.length, next_rectangle_properties.length, weight
+    )
+    interpolated_width = interpolate_number(
+        previous_rectangle_properties.width, next_rectangle_properties.width, weight
+    )
+
+    interpolated_rectangle_properties = RectangleProperties(
+        angle=interpolated_angle,
+        center=interpolated_center,
+        length=interpolated_length,
+        width=interpolated_width,
+    )
+
+    interpolated_rectangle = reconstruct_rectangle_from_properties(
+        interpolated_rectangle_properties
+    )
+
+    interpolated_vertices = [
+        convert_from_absolute_to_normalized(v, height=height, width=width)
+        for v in interpolated_rectangle
+    ]
+
+    return interpolated_vertices
