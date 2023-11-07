@@ -48,6 +48,7 @@ fake_bbox_norm_vertices = [
 
 annotations = [
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "labelId": "fake_label_id",
         "category": "TRAIN",
         "frames": [{"end": 4, "start": 0}],
@@ -66,6 +67,7 @@ annotations = [
         "path": [],
     },
     {
+        "__typename": "VideoObjectDetectionAnnotation",
         "category": "CAR",
         "labelId": "fake_label_id",
         "frames": [{"end": 16, "start": 14}],
@@ -84,6 +86,7 @@ annotations = [
         "path": [],
     },
     {
+        "__typename": "VideoClassificationAnnotation",
         "labelId": "fake_label_id",
         "frames": [{"end": 8, "start": 6}],
         "id": "9cb16f2a-0907-4601-88cb-adcb4e7aec5c",
@@ -99,6 +102,7 @@ annotations = [
         "path": [],
     },
     {
+        "__typename": "VideoTranscriptionAnnotation",
         "labelId": "fake_label_id",
         "frames": [{"end": 9, "start": 4}, {"end": 14, "start": 12}],
         "id": "5a790a50-8d95-44fb-8941-93366c61d999",

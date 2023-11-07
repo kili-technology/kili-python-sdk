@@ -99,7 +99,7 @@ def _video_label_annotations_to_json_response(
 
         other_annotations = annotations[:i] + annotations[i + 1 :]
 
-        if ann["__typename"] == " VideoObjectDetectionAnnotation":
+        if ann["__typename"] == "VideoObjectDetectionAnnotation":
             ann = cast(VideoObjectDetectionAnnotation, ann)
             ann_json_resp = _video_object_detection_annotation_to_json_response(
                 ann, other_annotations, json_interface=json_interface
@@ -351,18 +351,14 @@ def _video_object_detection_annotation_to_json_response(
                 "type": json_interface["jobs"][annotation["job"]]["tools"][0],
             }
 
-            # between two key frame annotations, an object (point, bbox, polygon) is
-            # interpolated in the UI
-            if frame_id == key_ann_start:
+            if frame_id == key_ann_start or next_key_ann is None:
                 norm_vertices = key_ann["annotationValue"]["vertices"]
 
+            # between two key frame annotations, an object (point, bbox, polygon) is
+            # interpolated in the UI
             else:
                 object_inital_state = key_ann["annotationValue"]["vertices"]
-                object_final_state = (
-                    next_key_ann["annotationValue"]["vertices"]
-                    if next_key_ann is not None
-                    else object_inital_state  # if no next key annotation, we do not interpolate
-                )
+                object_final_state = next_key_ann["annotationValue"]["vertices"]
                 norm_vertices = _interpolate_object_(
                     object_type=json_interface["jobs"][annotation["job"]]["tools"][0],
                     object_initial_state=object_inital_state,
@@ -372,11 +368,16 @@ def _video_object_detection_annotation_to_json_response(
                     at_frame=frame_id,
                 )
 
-            if json_interface["jobs"][annotation["job"]]["tools"] == ["marker"]:  # point job
+            if json_interface["jobs"][annotation["job"]]["tools"][0] == "marker":
                 annotation_dict["point"] = norm_vertices[0][0][0]
 
-            else:  # bbox or polygon jobs
-                annotation_dict["boundingPoly"] = [{"normalizedVertices": norm_vertices}]
+            elif json_interface["jobs"][annotation["job"]]["tools"][0] in {"polygon", "rectangle"}:
+                annotation_dict["boundingPoly"] = [{"normalizedVertices": norm_vertices[0][0]}]
+
+            elif json_interface["jobs"][annotation["job"]]["tools"][0] == "semantic":
+                annotation_dict["boundingPoly"] = [
+                    {"normalizedVertices": norm_vert} for norm_vert in norm_vertices[0]
+                ]
 
             json_resp[str(frame_id)].setdefault(annotation["job"], {}).setdefault(
                 "annotations", []
