@@ -189,6 +189,7 @@ When working on a project with [consensus](https://docs.kili-technology.com/docs
 
 
 ```python
+import tempfile
 from collections import defaultdict
 
 assets = kili.assets(
@@ -212,7 +213,9 @@ for asset in assets:
             email: max(labels, key=lambda x: x["createdAt"])
             for email, labels in latest_label_by_user.items()
         }
-        with (Path("/tmp") / (asset["externalId"] + ".json")).open("w", encoding="utf-8") as f:
+        with (Path(tempfile.gettempdir()) / (asset["externalId"] + ".json")).open(
+            "w", encoding="utf-8"
+        ) as f:
             f.write(json.dumps(latest_label_per_user))
 ```
 
