@@ -1,6 +1,7 @@
 """Project domain."""
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import TYPE_CHECKING, Literal, NewType, Optional
 
 from .types import ListOrTuple
@@ -10,6 +11,16 @@ if TYPE_CHECKING:
 
 ProjectId = NewType("ProjectId", str)
 InputType = Literal["IMAGE", "PDF", "TEXT", "VIDEO"]
+
+
+class InputTypeEnum(str, Enum):
+    """Input type enum."""
+
+    IMAGE = "IMAGE"
+    PDF = "PDF"
+    TEXT = "TEXT"
+    VIDEO = "VIDEO"
+
 
 ComplianceTag = Literal["PHI", "PII"]
 
