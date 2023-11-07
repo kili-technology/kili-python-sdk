@@ -1,5 +1,3 @@
-import pytest
-
 json_interface = {
     "jobs": {
         "JOB_0": {
@@ -150,8 +148,8 @@ expected_json_resp = {
                             "normalizedVertices": [
                                 {"x": 0.2, "y": 0.7},
                                 {"x": 0.2, "y": 0.5},
-                                {"x": pytest.approx(0.4), "y": 0.5},
-                                {"x": pytest.approx(0.4), "y": 0.7},
+                                {"x": 0.4, "y": 0.5},
+                                {"x": 0.4, "y": 0.7},
                             ]
                         }
                     ],
@@ -171,22 +169,10 @@ expected_json_resp = {
                     "boundingPoly": [
                         {
                             "normalizedVertices": [
-                                {
-                                    "x": pytest.approx(0.3, abs=1e-5),
-                                    "y": pytest.approx(0.7, abs=1e-5),
-                                },
-                                {
-                                    "x": pytest.approx(0.3, abs=1e-5),
-                                    "y": pytest.approx(0.5, abs=1e-5),
-                                },
-                                {
-                                    "x": pytest.approx(0.5, abs=1e-5),
-                                    "y": pytest.approx(0.5, abs=1e-5),
-                                },
-                                {
-                                    "x": pytest.approx(0.5, abs=1e-5),
-                                    "y": pytest.approx(0.7, abs=1e-5),
-                                },
+                                {"x": 0.3, "y": 0.7},
+                                {"x": 0.3, "y": 0.5},
+                                {"x": 0.5, "y": 0.5},
+                                {"x": 0.5, "y": 0.7},
                             ]
                         }
                     ],
@@ -269,10 +255,10 @@ expected_json_resp = {
                     "boundingPoly": [
                         {
                             "normalizedVertices": [
-                                {"x": pytest.approx(0.4), "y": pytest.approx(0.4)},
-                                {"x": pytest.approx(0.4), "y": pytest.approx(0.2)},
-                                {"x": pytest.approx(0.6), "y": pytest.approx(0.2)},
-                                {"x": pytest.approx(0.6), "y": pytest.approx(0.4)},
+                                {"x": 0.4, "y": 0.4},
+                                {"x": 0.4, "y": 0.2},
+                                {"x": 0.6, "y": 0.2},
+                                {"x": 0.6, "y": 0.4},
                             ]
                         }
                     ],

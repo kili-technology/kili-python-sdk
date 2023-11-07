@@ -112,6 +112,10 @@ annotations = [
 ]
 
 expected_json_resp = {
+    "0": {},
+    "1": {},
+    "2": {},
+    "3": {},
     "4": {
         "CLASSIFICATION_JOB": {
             "categories": [
@@ -272,6 +276,8 @@ expected_json_resp = {
             "isKeyFrame": False,
         }
     },
+    "12": {},
+    "13": {},
     "14": {
         "CLASSIFICATION_JOB": {
             "categories": [
@@ -320,6 +326,7 @@ expected_json_resp = {
             "isKeyFrame": False,
         }
     },
+    "17": {},
     "18": {
         "CLASSIFICATION_JOB": {
             "categories": [

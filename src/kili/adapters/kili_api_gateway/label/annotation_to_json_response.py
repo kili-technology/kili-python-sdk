@@ -142,6 +142,10 @@ def _video_label_annotations_to_json_response(
             job_counter[ann["category"]] += 1
             json_resp["0"].setdefault("ANNOTATION_NAMES_JOB", {})[ann["mid"]] = ann["name"]
 
+    max_frame_id = max(int(frame_id) for frame_id in json_resp)
+    for frame_id in range(max_frame_id + 1):
+        json_resp.setdefault(str(frame_id), {})
+
     # sort by frame id
     return dict(sorted(json_resp.items(), key=lambda item: int(item[0])))
 

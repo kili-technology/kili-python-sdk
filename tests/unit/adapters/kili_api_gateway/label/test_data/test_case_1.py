@@ -225,6 +225,8 @@ expected_json_resp = {
         "TRANSCRIPTION_JOB": {"isKeyFrame": False, "text": "some text on frame 5"},
     },
     "9": {"TRANSCRIPTION_JOB": {"isKeyFrame": False, "text": "some text on frame 5"}},
+    "10": {},
+    "11": {},
     "12": {"TRANSCRIPTION_JOB": {"isKeyFrame": True, "text": "some text on frame 13"}},
     "13": {"TRANSCRIPTION_JOB": {"isKeyFrame": False, "text": "some text on frame 13"}},
     "14": {

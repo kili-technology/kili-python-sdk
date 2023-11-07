@@ -19,6 +19,8 @@ IGNORE_FILE = [
     "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_8.py",
     "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_9.py",
     "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_10.py",
+    "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_11.py",
+    "tests/unit/adapters/kili_api_gateway/label/test_data/test_case_12.py",
 ]
 
 

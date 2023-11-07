@@ -149,6 +149,8 @@ expected_json_resp = {
             "20231102143221654-37429": "K 3",
         },
     },
+    "1": {},
+    "2": {},
     "3": {
         "OBJECT_DETECTION_JOB": {
             "annotations": [

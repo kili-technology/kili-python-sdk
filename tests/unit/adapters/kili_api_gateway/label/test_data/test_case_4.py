@@ -192,6 +192,7 @@ expected_json_resp = {
             ]
         }
     },
+    "4": {},
     "5": {
         "OBJECT_DETECTION_JOB": {
             "annotations": [

@@ -110,6 +110,7 @@ expected_json_resp = {
             "20231103090918821-66388": "Train 2",
         },
     },
+    "1": {},
     "2": {
         "JOB_0": {
             "annotations": [

@@ -65,6 +65,11 @@ annotations = [
 ]
 
 expected_json_resp = {
+    "0": {},
+    "1": {},
+    "2": {},
+    "3": {},
+    "4": {},
     "5": {
         "CLASSIFICATION_JOB_": {
             "categories": [

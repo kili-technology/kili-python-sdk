@@ -101,6 +101,7 @@ expected_json_resp = {
             "20231102135542586-10862": "Car 2",
         },
     },
+    "1": {},
     "2": {
         "OBJECT_DETECTION_JOB": {
             "annotations": [

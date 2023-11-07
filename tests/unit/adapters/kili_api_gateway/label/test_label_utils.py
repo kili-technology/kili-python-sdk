@@ -19,6 +19,7 @@ from .test_data import (
     test_case_9,
     test_case_10,
     test_case_11,
+    test_case_12,
 )
 
 
@@ -91,6 +92,12 @@ from .test_data import (
             test_case_11.expected_json_resp,
             test_case_11.json_interface,
         ),
+        (
+            "test_case_12",
+            test_case_12.annotations,
+            test_case_12.expected_json_resp,
+            test_case_12.json_interface,
+        ),
     ],
 )
 def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
@@ -108,4 +115,9 @@ def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
     )
 
     # Then
+    import json
+    from pathlib import Path
+
+    with (Path() / "truc.json").open("w") as f:
+        json.dump(json_resp, f, indent=2)
     assert json_resp == expected_json_resp
