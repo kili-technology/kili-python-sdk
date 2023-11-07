@@ -77,29 +77,10 @@ class VideoTranscriptionKeyAnnotation(TypedDict):
     annotationValue: TranscriptionAnnotationValue
 
 
-class VideoAnnotation(TypedDict):
-    """Video object detection annotation."""
-
-    __typename: Literal[
-        "VideoObjectDetectionAnnotation",
-        "VideoClassificationAnnotation",
-        "VideoTranscriptionAnnotation",
-    ]
-    id: AnnotationId
-    labelId: LabelId
-    job: JobName
-    path: List[List[str]]
-    frames: List[FrameInterval]
-    keyAnnotations: Union[
-        List[VideoObjectDetectionKeyAnnotation],
-        List[VideoClassificationKeyAnnotation],
-        List[VideoTranscriptionKeyAnnotation],
-    ]
-
-
 class VideoObjectDetectionAnnotation(TypedDict):
     """Video object detection annotation."""
 
+    # pylint: disable=unused-private-member
     __typename: Literal["VideoObjectDetectionAnnotation"]
     id: AnnotationId
     labelId: LabelId
@@ -115,6 +96,7 @@ class VideoObjectDetectionAnnotation(TypedDict):
 class VideoClassificationAnnotation(TypedDict):
     """Video classification annotation."""
 
+    # pylint: disable=unused-private-member
     __typename: Literal["VideoClassificationAnnotation"]
     id: AnnotationId
     labelId: LabelId
@@ -127,6 +109,7 @@ class VideoClassificationAnnotation(TypedDict):
 class VideoTranscriptionAnnotation(TypedDict):
     """Video transcription annotation."""
 
+    # pylint: disable=unused-private-member
     __typename: Literal["VideoTranscriptionAnnotation"]
     id: AnnotationId
     labelId: LabelId
@@ -134,3 +117,10 @@ class VideoTranscriptionAnnotation(TypedDict):
     path: List[List[str]]
     frames: List[FrameInterval]
     keyAnnotations: List[VideoTranscriptionKeyAnnotation]
+
+
+VideoAnnotation = Union[
+    VideoObjectDetectionAnnotation,
+    VideoClassificationAnnotation,
+    VideoTranscriptionAnnotation,
+]
