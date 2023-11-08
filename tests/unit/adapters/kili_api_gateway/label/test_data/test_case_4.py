@@ -49,7 +49,6 @@ annotations = [
             {
                 "id": "341834a0-6b7e-47d2-a290-a56833ed4a65-0",
                 "frame": 0,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[[point_1]]]},
             }
         ],
@@ -68,7 +67,6 @@ annotations = [
             {
                 "id": "b1e7863d-f9f4-4804-8ede-5b34b3e38add-0",
                 "frame": 0,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["A"]},
             }
         ],
@@ -84,7 +82,6 @@ annotations = [
             {
                 "id": "5e963bda-2ab0-48e4-890b-6116b6610651-5",
                 "frame": 5,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[[point_2]]]},
             }
         ],
@@ -103,7 +100,6 @@ annotations = [
             {
                 "id": "c0d1161c-6b97-4c28-873a-df1c7d4923e7-5",
                 "frame": 5,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["C", "B"]},
             }
         ],

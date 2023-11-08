@@ -64,7 +64,6 @@ class AnnotationsToJsonResponseConverter:
                     "frames.end",
                     "keyAnnotations.id",
                     "keyAnnotations.frame",
-                    "keyAnnotations.isPrediction",
                 ),
                 video_object_detection_fields=(
                     "keyAnnotations.annotationValue.vertices.x",

@@ -79,7 +79,6 @@ annotations = [
             {
                 "id": "5c9efa8d-ded3-42df-9362-fdc55ea7e4ff-4",
                 "frame": 4,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["IS_THE OBJECT OCCLUDED?"]},
             }
         ],
@@ -95,7 +94,6 @@ annotations = [
             {
                 "id": "7d8b1b46-73fc-434b-a8d1-a7734fce1d26-9",
                 "frame": 9,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[fake_bbox_vertices_3]]},
             }
         ],
@@ -114,7 +112,6 @@ annotations = [
             {
                 "id": "c94137a2-19ec-4872-8884-673d78e7b4c6-9",
                 "frame": 9,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["IS_THE OBJECT OCCLUDED?"]},
             }
         ],
@@ -130,7 +127,6 @@ annotations = [
             {
                 "id": "af8e4bca-9442-49df-9321-17ffb008e659-1",
                 "frame": 1,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[fake_bbox_vertices_2]]},
             }
         ],
@@ -149,7 +145,6 @@ annotations = [
             {
                 "id": "33c26101-5b1f-48d3-b2b2-ffb04daec1d8-4",
                 "frame": 4,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[fake_bbox_vertices_1]]},
             }
         ],

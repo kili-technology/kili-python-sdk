@@ -59,7 +59,6 @@ annotations = [
                 "annotationValue": {"vertices": [[fake_bbox_norm_vertices]]},
                 "frame": 0,
                 "id": "c28e7c80-35af-459a-97a7-ed7a0d11988d-0",
-                "isPrediction": False,
             }
         ],
         "mid": "20231031123948352-1",
@@ -78,7 +77,6 @@ annotations = [
                 "annotationValue": {"vertices": [[fake_bbox_norm_vertices]]},
                 "frame": 14,
                 "id": "0a6042f9-2312-43b9-bf01-0ce62653f148-14",
-                "isPrediction": False,
             }
         ],
         "mid": "20231031124001125-3",
@@ -96,7 +94,6 @@ annotations = [
                 "annotationValue": {"categories": ["A"]},
                 "frame": 6,
                 "id": "9cb16f2a-0907-4601-88cb-adcb4e7aec5c-6",
-                "isPrediction": False,
             }
         ],
         "path": [],
@@ -112,13 +109,11 @@ annotations = [
                 "annotationValue": {"text": "some text on frame 5"},
                 "frame": 4,
                 "id": "5a790a50-8d95-44fb-8941-93366c61d999-4",
-                "isPrediction": False,
             },
             {
                 "annotationValue": {"text": "some text on frame 13"},
                 "frame": 12,
                 "id": "5a790a50-8d95-44fb-8941-93366c61d999-12",
-                "isPrediction": False,
             },
         ],
         "path": [],

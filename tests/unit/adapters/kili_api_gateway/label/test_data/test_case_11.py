@@ -49,7 +49,6 @@ annotations = [
             {
                 "id": "4e411541-0cc6-41a4-b2f2-b08004c6ffe8-4",
                 "frame": 4,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[bbox_train_2]]},
             }
         ],
@@ -68,7 +67,6 @@ annotations = [
             {
                 "id": "7bda6ed2-0174-4baf-9b25-8190546889b2-1",
                 "frame": 1,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[bbox_car]]},
             }
         ],
@@ -87,7 +85,6 @@ annotations = [
             {
                 "id": "f81dbfaa-82d0-49c9-9a0e-1e620aad1b21-3",
                 "frame": 3,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[bbox_train_1]]},
             }
         ],

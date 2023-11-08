@@ -54,7 +54,6 @@ class VideoObjectDetectionKeyAnnotation(TypedDict):
     """Video object detection key annotation."""
 
     id: KeyAnnotationId
-    isPrediction: bool
     frame: int
     annotationValue: ObjectDetectionAnnotationValue
 
@@ -63,7 +62,6 @@ class VideoClassificationKeyAnnotation(TypedDict):
     """Video classification key annotation."""
 
     id: KeyAnnotationId
-    isPrediction: bool
     frame: int
     annotationValue: ClassificationAnnotationValue
 
@@ -72,7 +70,6 @@ class VideoTranscriptionKeyAnnotation(TypedDict):
     """Video transcription key annotation."""
 
     id: KeyAnnotationId
-    isPrediction: bool
     frame: int
     annotationValue: TranscriptionAnnotationValue
 

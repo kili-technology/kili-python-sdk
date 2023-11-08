@@ -73,13 +73,11 @@ annotations = [
             {
                 "id": "0549e9c5-8642-448a-8245-47a8e79d9fe0-0",
                 "frame": 0,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[bbox_1]]},
             },
             {
                 "id": "0549e9c5-8642-448a-8245-47a8e79d9fe0-1",
                 "frame": 1,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[bbox_2]]},
             },
         ],
@@ -98,13 +96,11 @@ annotations = [
             {
                 "id": "dc518c4d-a1e9-4672-b763-cea144f2797b-0",
                 "frame": 0,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["BLUE"]},
             },
             {
                 "id": "dc518c4d-a1e9-4672-b763-cea144f2797b-1",
                 "frame": 1,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["RED"]},
             },
         ],
@@ -123,7 +119,6 @@ annotations = [
             {
                 "id": "c6bc5b7e-ec44-4536-917e-bb20479d7819-1",
                 "frame": 1,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["PURPLE_RED"]},
             }
         ],
@@ -142,7 +137,6 @@ annotations = [
             {
                 "id": "389d3431-93e7-4566-a249-1c08ffc2d2be-0",
                 "frame": 0,
-                "isPrediction": False,
                 "annotationValue": {"text": "Bmw"},
             }
         ],

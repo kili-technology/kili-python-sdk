@@ -48,19 +48,16 @@ annotations = [
             {
                 "id": "f98a628f-4ef0-41bc-ab03-d5c7ca6d2e15-4",
                 "frame": 4,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["TRUCK", "CAR"]},
             },
             {
                 "id": "f98a628f-4ef0-41bc-ab03-d5c7ca6d2e15-14",
                 "frame": 14,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["CAR"]},
             },
             {
                 "id": "f98a628f-4ef0-41bc-ab03-d5c7ca6d2e15-18",
                 "frame": 18,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["TRUCK"]},
             },
         ],
@@ -76,13 +73,11 @@ annotations = [
             {
                 "id": "0c2b0724-9fb1-42c1-a0b4-3cc9af0d4fb9-4",
                 "frame": 4,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["BLUE"]},
             },
             {
                 "id": "0c2b0724-9fb1-42c1-a0b4-3cc9af0d4fb9-14",
                 "frame": 14,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["GREEN"]},
             },
         ],
@@ -98,13 +93,11 @@ annotations = [
             {
                 "id": "3de07f87-3f52-4a7a-829a-e262d7fdb749-4",
                 "frame": 4,
-                "isPrediction": False,
                 "annotationValue": {"text": "Benz"},
             },
             {
                 "id": "3de07f87-3f52-4a7a-829a-e262d7fdb749-18",
                 "frame": 18,
-                "isPrediction": False,
                 "annotationValue": {"text": "Mercedes"},
             },
         ],

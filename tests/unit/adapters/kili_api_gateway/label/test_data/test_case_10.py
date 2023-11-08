@@ -57,7 +57,6 @@ annotations = [
             {
                 "id": "2209aa92-1c6c-4306-99af-a6e8a0278217-3",
                 "frame": 3,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[bbox_1]]},
             }
         ],
@@ -76,7 +75,6 @@ annotations = [
             {
                 "id": "ea1e2f05-8610-411f-a29e-c5ee0b97548a-3",
                 "frame": 3,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["IS_THE OBJECT OCCLUDED?"]},
             }
         ],
@@ -92,7 +90,6 @@ annotations = [
             {
                 "id": "73092b5e-4625-4b4f-a3cd-1c122cd3ce45-2",
                 "frame": 2,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[bbox_2]]},
             }
         ],

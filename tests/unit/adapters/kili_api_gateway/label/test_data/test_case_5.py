@@ -47,7 +47,6 @@ annotations = [
             {
                 "id": "db3f1827-cde6-4936-9e11-e71b02b849c6-2",
                 "frame": 2,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[bbox_vertices]]},
             }
         ],
@@ -66,7 +65,6 @@ annotations = [
             {
                 "id": "709f7b2a-6772-4c6d-ad95-02d7402ed47f-3",
                 "frame": 3,
-                "isPrediction": False,
                 "annotationValue": {"vertices": [[polygon_vertices]]},
             }
         ],
@@ -85,7 +83,6 @@ annotations = [
             {
                 "id": "cb8347d3-3d07-4fbe-8eac-440f0c96b50b-3",
                 "frame": 3,
-                "isPrediction": False,
                 "annotationValue": {"categories": ["A"]},
             }
         ],
