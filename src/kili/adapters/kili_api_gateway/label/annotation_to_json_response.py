@@ -444,8 +444,6 @@ def _interpolate_object(
                 _interpolate_rectangle(
                     previous_vertices=object_initial_state[0][0],
                     next_vertices=object_final_state[0][0],
-                    width=1,
-                    height=1,
                     weight=(at_frame - initial_state_frame_index)
                     / (final_state_frame_index - initial_state_frame_index),
                 )
@@ -473,8 +471,6 @@ def _interpolate_rectangle(
     *,
     previous_vertices: List[Vertice],
     next_vertices: List[Vertice],
-    width: int,
-    height: int,
     weight: float,
 ) -> List[Vertice]:
     """Interpolate a rectangle.
@@ -485,20 +481,9 @@ def _interpolate_rectangle(
     The interpolated properties are used to reconstruct the vertices of the interpolated rectangle,
     which are then converted back to normalized coordinates.
     """
-    previous_absolute_vertices = [
-        _convert_from_normalized_to_absolute(v, height=height, width=width)
-        for v in previous_vertices
-    ]
+    permuted_new_vertices = _find_rectangle_vertices_bijection(previous_vertices, next_vertices)
 
-    next_absolute_vertices = [
-        _convert_from_normalized_to_absolute(v, height=height, width=width) for v in next_vertices
-    ]
-
-    permuted_new_vertices = _find_rectangle_vertices_bijection(
-        previous_absolute_vertices, next_absolute_vertices
-    )
-
-    previous_rectangle_properties = _find_rectangle_properties(previous_absolute_vertices)
+    previous_rectangle_properties = _find_rectangle_properties(previous_vertices)
     next_rectangle_properties = _find_rectangle_properties(permuted_new_vertices)
 
     interpolated_angle = _interpolate_angle(
@@ -525,17 +510,7 @@ def _interpolate_rectangle(
         interpolated_rectangle_properties
     )
 
-    interpolated_vertices = [
-        _convert_from_absolute_to_normalized(v, height=height, width=width)
-        for v in interpolated_rectangle
-    ]
-
-    return interpolated_vertices
-
-
-def _convert_from_normalized_to_absolute(v: Vertice, *, height: int, width: int) -> Vertice:
-    """Convert a vertice from normalized to absolute coordinates."""
-    return Vertice(x=v["x"] * width, y=v["y"] * height)
+    return interpolated_rectangle
 
 
 def _find_rectangle_vertices_bijection(
@@ -688,8 +663,3 @@ def _reconstruct_rectangle_from_properties(properties: _RectangleProperties) -> 
     )
 
     return [point_a, point_b, point_c, point_d]
-
-
-def _convert_from_absolute_to_normalized(v: Vertice, height: int, width: int) -> Vertice:
-    """Convert a vertice from absolute to normalized coordinates."""
-    return Vertice(x=v["x"] / width, y=v["y"] / height)
