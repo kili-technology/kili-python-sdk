@@ -380,7 +380,7 @@ def _video_object_detection_annotation_to_json_response(
             else:
                 object_inital_state = key_ann["annotationValue"]["vertices"]
                 object_final_state = next_key_ann["annotationValue"]["vertices"]
-                norm_vertices = _interpolate_object_(
+                norm_vertices = _interpolate_object(
                     object_type=json_interface["jobs"][annotation["job"]]["tools"][0],
                     object_initial_state=object_inital_state,
                     initial_state_frame_index=key_ann_start,
@@ -407,7 +407,7 @@ def _video_object_detection_annotation_to_json_response(
     return json_resp
 
 
-def _interpolate_object_(
+def _interpolate_object(
     *,
     object_type: str,
     object_initial_state: List[List[List[Vertice]]],
