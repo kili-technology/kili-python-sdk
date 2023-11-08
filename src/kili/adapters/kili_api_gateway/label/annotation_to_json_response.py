@@ -100,7 +100,7 @@ def _add_annotation_metadata(annotations: List[VideoAnnotation], json_response: 
 
 
 def _fill_empty_frames(json_response: Dict) -> None:
-    max_frame_id = max(int(frame_id) for frame_id in json_response)
+    max_frame_id = max((int(frame_id) for frame_id in json_response), default=-1)
     for frame_id in range(max_frame_id + 1):
         json_response.setdefault(str(frame_id), {})
 
