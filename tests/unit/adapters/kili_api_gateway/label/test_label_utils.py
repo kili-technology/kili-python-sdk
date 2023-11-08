@@ -249,7 +249,7 @@ def test_given_two_bboxes_on_different_frames_when_generating_intermediate_bboxe
 
     # When
     interpolated_bbox = _interpolate_rectangle(
-        previous_vertices=bbox_start, next_vertices=bbox_end, width=1, height=1, weight=weight
+        previous_vertices=bbox_start, next_vertices=bbox_end, weight=weight
     )
 
     # Then
