@@ -416,7 +416,7 @@ def _interpolate_object_(
     final_state_frame_index: int,
     at_frame: int,
 ) -> List[List[List[Vertice]]]:
-    """Interpolate the bounding boxes between two frames."""
+    """Interpolate an object between two key frames."""
     # if the two frames are consecutive, we do not interpolate
     if at_frame == initial_state_frame_index:
         return object_initial_state
@@ -429,7 +429,7 @@ def _interpolate_object_(
         return [
             [
                 [
-                    interpolate_point(
+                    _interpolate_point(
                         previous_point=object_initial_state[0][0][0],
                         next_point=object_final_state[0][0][0],
                         weight=(at_frame - initial_state_frame_index)
@@ -442,7 +442,7 @@ def _interpolate_object_(
     if object_type == JobTool.RECTANGLE:
         return [
             [
-                interpolate_rectangle(
+                _interpolate_rectangle(
                     previous_vertices=object_initial_state[0][0],
                     next_vertices=object_final_state[0][0],
                     width=1,
@@ -462,17 +462,106 @@ def _interpolate_object_(
     raise NotImplementedError(f"Cannot interpolate object of type {object_type}")
 
 
-def convert_from_normalized_to_absolute(v: Vertice, *, height: int, width: int) -> Vertice:
+def _interpolate_point(previous_point: Vertice, next_point: Vertice, weight: float) -> Vertice:
+    """Interpolate a point."""
+    return Vertice(
+        x=_interpolate_number(previous_point["x"], next_point["x"], weight),
+        y=_interpolate_number(previous_point["y"], next_point["y"], weight),
+    )
+
+
+def _interpolate_rectangle(
+    *,
+    previous_vertices: List[Vertice],
+    next_vertices: List[Vertice],
+    width: int,
+    height: int,
+    weight: float,
+) -> List[Vertice]:
+    """Interpolate a rectangle.
+
+    It finds a bijection between the rectangles, calculates their properties, and then smoothly
+    interpolates the angle, center, length, and width between
+    the two rectangles based on the specified weight.
+    The interpolated properties are used to reconstruct the vertices of the interpolated rectangle,
+    which are then converted back to normalized coordinates.
+    """
+    previous_absolute_vertices = [
+        _convert_from_normalized_to_absolute(v, height=height, width=width)
+        for v in previous_vertices
+    ]
+
+    next_absolute_vertices = [
+        _convert_from_normalized_to_absolute(v, height=height, width=width) for v in next_vertices
+    ]
+
+    permuted_new_vertices = _find_rectangle_vertices_bijection(
+        previous_absolute_vertices, next_absolute_vertices
+    )
+
+    previous_rectangle_properties = _find_rectangle_properties(previous_absolute_vertices)
+    next_rectangle_properties = _find_rectangle_properties(permuted_new_vertices)
+
+    interpolated_angle = _interpolate_angle(
+        previous_rectangle_properties.angle, next_rectangle_properties.angle, weight
+    )
+    interpolated_center = _interpolate_point(
+        previous_rectangle_properties.center, next_rectangle_properties.center, weight
+    )
+    interpolated_length = _interpolate_number(
+        previous_rectangle_properties.length, next_rectangle_properties.length, weight
+    )
+    interpolated_width = _interpolate_number(
+        previous_rectangle_properties.width, next_rectangle_properties.width, weight
+    )
+
+    interpolated_rectangle_properties = _RectangleProperties(
+        angle=interpolated_angle,
+        center=interpolated_center,
+        length=interpolated_length,
+        width=interpolated_width,
+    )
+
+    interpolated_rectangle = _reconstruct_rectangle_from_properties(
+        interpolated_rectangle_properties
+    )
+
+    interpolated_vertices = [
+        _convert_from_absolute_to_normalized(v, height=height, width=width)
+        for v in interpolated_rectangle
+    ]
+
+    return interpolated_vertices
+
+
+def _convert_from_normalized_to_absolute(v: Vertice, *, height: int, width: int) -> Vertice:
     """Convert a vertice from normalized to absolute coordinates."""
     return Vertice(x=v["x"] * width, y=v["y"] * height)
 
 
-def convert_from_absolute_to_normalized(v: Vertice, height: int, width: int) -> Vertice:
-    """Convert a vertice from absolute to normalized coordinates."""
-    return Vertice(x=v["x"] / width, y=v["y"] / height)
+def _find_rectangle_vertices_bijection(
+    rectangle1: List[Vertice], rectangle2: List[Vertice]
+) -> List[Vertice]:
+    """Find the bijection between two rectangles that minimizes the cost."""
+    permutation_array = [
+        [rectangle2[0], rectangle2[1], rectangle2[2], rectangle2[3]],
+        [rectangle2[1], rectangle2[2], rectangle2[3], rectangle2[0]],
+        [rectangle2[2], rectangle2[3], rectangle2[0], rectangle2[1]],
+        [rectangle2[3], rectangle2[0], rectangle2[1], rectangle2[2]],
+        [rectangle2[3], rectangle2[2], rectangle2[1], rectangle2[0]],
+        [rectangle2[2], rectangle2[1], rectangle2[0], rectangle2[3]],
+        [rectangle2[1], rectangle2[0], rectangle2[3], rectangle2[2]],
+        [rectangle2[0], rectangle2[3], rectangle2[2], rectangle2[1]],
+    ]
+    bijection_cost_array = [
+        _bijection_cost(permuted_rectangle, rectangle1) for permuted_rectangle in permutation_array
+    ]
+
+    optimal_permutation_index = bijection_cost_array.index(min(bijection_cost_array))
+    return permutation_array[optimal_permutation_index]
 
 
-def bijection_cost(permuted_rectangle: List[Vertice], rectangle: List[Vertice]) -> float:
+def _bijection_cost(permuted_rectangle: List[Vertice], rectangle: List[Vertice]) -> float:
     """Compute the cost of a bijection between two rectangles."""
     cost = 0
     for i in range(2):
@@ -492,30 +581,8 @@ def bijection_cost(permuted_rectangle: List[Vertice], rectangle: List[Vertice]) 
     return cost
 
 
-def find_rectangle_vertices_bijection(
-    rectangle1: List[Vertice], rectangle2: List[Vertice]
-) -> List[Vertice]:
-    """Find the bijection between two rectangles that minimizes the cost."""
-    permutation_array = [
-        [rectangle2[0], rectangle2[1], rectangle2[2], rectangle2[3]],
-        [rectangle2[1], rectangle2[2], rectangle2[3], rectangle2[0]],
-        [rectangle2[2], rectangle2[3], rectangle2[0], rectangle2[1]],
-        [rectangle2[3], rectangle2[0], rectangle2[1], rectangle2[2]],
-        [rectangle2[3], rectangle2[2], rectangle2[1], rectangle2[0]],
-        [rectangle2[2], rectangle2[1], rectangle2[0], rectangle2[3]],
-        [rectangle2[1], rectangle2[0], rectangle2[3], rectangle2[2]],
-        [rectangle2[0], rectangle2[3], rectangle2[2], rectangle2[1]],
-    ]
-    bijection_cost_array = [
-        bijection_cost(permuted_rectangle, rectangle1) for permuted_rectangle in permutation_array
-    ]
-
-    optimal_permutation_index = bijection_cost_array.index(min(bijection_cost_array))
-    return permutation_array[optimal_permutation_index]
-
-
 @dataclass
-class RectangleProperties:
+class _RectangleProperties:
     """Rectangle properties."""
 
     angle: float
@@ -524,7 +591,20 @@ class RectangleProperties:
     width: float
 
 
-def find_rectangle_angle(rectangle: List[Vertice]) -> float:
+def _find_rectangle_properties(rectangle: List[Vertice]) -> _RectangleProperties:
+    """Find the properties of a rectangle."""
+    if len(rectangle) != 4:  # noqa: PLR2004
+        raise RuntimeError("Invalid rectangle format")
+
+    angle = _find_rectangle_angle(rectangle)
+    center = _find_rectangle_center(rectangle)
+    length = _find_rectangle_length(rectangle)
+    width = _find_rectangle_width(rectangle)
+
+    return _RectangleProperties(angle=angle, center=center, length=length, width=width)
+
+
+def _find_rectangle_angle(rectangle: List[Vertice]) -> float:
     """Find the angle of a rectangle."""
     vector_ab = Vertice(
         x=rectangle[2]["x"] - rectangle[1]["x"], y=rectangle[2]["y"] - rectangle[1]["y"]
@@ -532,42 +612,29 @@ def find_rectangle_angle(rectangle: List[Vertice]) -> float:
     return math.atan2(vector_ab["y"], vector_ab["x"])
 
 
-def find_rectangle_center(rectangle: List[Vertice]) -> Vertice:
+def _find_rectangle_center(rectangle: List[Vertice]) -> Vertice:
     """Find the center of a rectangle."""
     point_a = rectangle[0]
     point_c = rectangle[2]
     return Vertice(x=(point_a["x"] + point_c["x"]) / 2, y=(point_a["y"] + point_c["y"]) / 2)
 
 
-def distance_between_points(point1: Vertice, point2: Vertice) -> float:
+def _find_rectangle_length(rectangle: List[Vertice]) -> float:
+    """Find the length of a rectangle."""
+    return _distance_between_points(rectangle[1], rectangle[2])
+
+
+def _find_rectangle_width(rectangle: List[Vertice]) -> float:
+    """Find the width of a rectangle."""
+    return _distance_between_points(rectangle[0], rectangle[1])
+
+
+def _distance_between_points(point1: Vertice, point2: Vertice) -> float:
     """Compute the distance between two points."""
     return math.sqrt((point1["x"] - point2["x"]) ** 2 + (point1["y"] - point2["y"]) ** 2)
 
 
-def find_rectangle_length(rectangle: List[Vertice]) -> float:
-    """Find the length of a rectangle."""
-    return distance_between_points(rectangle[1], rectangle[2])
-
-
-def find_rectangle_width(rectangle: List[Vertice]) -> float:
-    """Find the width of a rectangle."""
-    return distance_between_points(rectangle[0], rectangle[1])
-
-
-def find_rectangle_properties(rectangle: List[Vertice]) -> RectangleProperties:
-    """Find the properties of a rectangle."""
-    if len(rectangle) != 4:  # noqa: PLR2004
-        raise RuntimeError("Invalid rectangle format")
-
-    angle = find_rectangle_angle(rectangle)
-    center = find_rectangle_center(rectangle)
-    length = find_rectangle_length(rectangle)
-    width = find_rectangle_width(rectangle)
-
-    return RectangleProperties(angle=angle, center=center, length=length, width=width)
-
-
-def interpolate_angle(previous_angle: float, angle: float, weight: float) -> float:
+def _interpolate_angle(previous_angle: float, angle: float, weight: float) -> float:
     """Interpolate an angle."""
     difference = min(
         abs(angle - previous_angle),
@@ -582,21 +649,13 @@ def interpolate_angle(previous_angle: float, angle: float, weight: float) -> flo
     return interpolated_angle if math.isfinite(interpolated_angle) else 0
 
 
-def interpolate_number(previous_number: float, number: float, weight: float) -> float:
+def _interpolate_number(previous_number: float, number: float, weight: float) -> float:
     """Interpolate a number."""
     interpolated_number = number * weight + (1 - weight) * previous_number
     return interpolated_number if math.isfinite(interpolated_number) else 0
 
 
-def interpolate_point(previous_point: Vertice, next_point: Vertice, weight: float) -> Vertice:
-    """Interpolate a point."""
-    return Vertice(
-        x=interpolate_number(previous_point["x"], next_point["x"], weight),
-        y=interpolate_number(previous_point["y"], next_point["y"], weight),
-    )
-
-
-def rotate_vector(vector: Vertice, angle: float) -> Vertice:
+def _rotate_vector(vector: Vertice, angle: float) -> Vertice:
     """Rotate a vector."""
     return Vertice(
         x=vector["x"] * math.cos(angle) - vector["y"] * math.sin(angle),
@@ -604,13 +663,13 @@ def rotate_vector(vector: Vertice, angle: float) -> Vertice:
     )
 
 
-def reconstruct_rectangle_from_properties(properties: RectangleProperties) -> List[Vertice]:
+def _reconstruct_rectangle_from_properties(properties: _RectangleProperties) -> List[Vertice]:
     """Reconstruct a rectangle from its properties."""
     u = Vertice(x=0, y=properties.width)
     v = Vertice(x=properties.length, y=0)
 
-    rotated_u = rotate_vector(u, properties.angle)
-    rotated_v = rotate_vector(v, properties.angle)
+    rotated_u = _rotate_vector(u, properties.angle)
+    rotated_v = _rotate_vector(v, properties.angle)
 
     point_a = Vertice(
         x=properties.center["x"] + (rotated_u["x"] + rotated_v["x"]) / 2,
@@ -632,58 +691,6 @@ def reconstruct_rectangle_from_properties(properties: RectangleProperties) -> Li
     return [point_a, point_b, point_c, point_d]
 
 
-def interpolate_rectangle(
-    *,
-    previous_vertices: List[Vertice],
-    next_vertices: List[Vertice],
-    width: int,
-    height: int,
-    weight: float,
-) -> List[Vertice]:
-    """Interpolate a rectangle."""
-    previous_absolute_vertices = [
-        convert_from_normalized_to_absolute(v, height=height, width=width)
-        for v in previous_vertices
-    ]
-
-    next_absolute_vertices = [
-        convert_from_normalized_to_absolute(v, height=height, width=width) for v in next_vertices
-    ]
-
-    permuted_new_vertices = find_rectangle_vertices_bijection(
-        previous_absolute_vertices, next_absolute_vertices
-    )
-
-    previous_rectangle_properties = find_rectangle_properties(previous_absolute_vertices)
-    next_rectangle_properties = find_rectangle_properties(permuted_new_vertices)
-
-    interpolated_angle = interpolate_angle(
-        previous_rectangle_properties.angle, next_rectangle_properties.angle, weight
-    )
-    interpolated_center = interpolate_point(
-        previous_rectangle_properties.center, next_rectangle_properties.center, weight
-    )
-    interpolated_length = interpolate_number(
-        previous_rectangle_properties.length, next_rectangle_properties.length, weight
-    )
-    interpolated_width = interpolate_number(
-        previous_rectangle_properties.width, next_rectangle_properties.width, weight
-    )
-
-    interpolated_rectangle_properties = RectangleProperties(
-        angle=interpolated_angle,
-        center=interpolated_center,
-        length=interpolated_length,
-        width=interpolated_width,
-    )
-
-    interpolated_rectangle = reconstruct_rectangle_from_properties(
-        interpolated_rectangle_properties
-    )
-
-    interpolated_vertices = [
-        convert_from_absolute_to_normalized(v, height=height, width=width)
-        for v in interpolated_rectangle
-    ]
-
-    return interpolated_vertices
+def _convert_from_absolute_to_normalized(v: Vertice, height: int, width: int) -> Vertice:
+    """Convert a vertice from absolute to normalized coordinates."""
+    return Vertice(x=v["x"] / width, y=v["y"] / height)
