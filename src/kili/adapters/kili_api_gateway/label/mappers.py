@@ -4,7 +4,6 @@ import json
 from typing import Dict
 
 from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
-from kili.adapters.kili_api_gateway.project.mappers import project_where_mapper
 from kili.adapters.kili_api_gateway.user.mappers import user_where_mapper
 from kili.domain.label import LabelFilters
 
@@ -26,7 +25,7 @@ def label_where_mapper(filters: LabelFilters) -> Dict[str, object]:
         "id": filters.id,
         "idIn": filters.id_in,
         "labelerIn": filters.labeler_in,
-        "project": project_where_mapper(filters.project) if filters.project else None,
+        "project": {"id": filters.project_id},
         "reviewerIn": filters.reviewer_in,
         "search": filters.search,
         "typeIn": filters.type_in,

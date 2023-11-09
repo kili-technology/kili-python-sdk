@@ -57,7 +57,7 @@ class MutationsIssue(BaseOperationEntrypointMixin):
         """
         labels = list(
             LabelUseCases(self.kili_api_gateway).list_labels(
-                filters=LabelFilters(id=LabelId(label_id)),
+                filters=LabelFilters(id=LabelId(label_id), project_id=ProjectId(project_id)),
                 project_id=ProjectId(project_id),
                 fields=("assetId",),
                 output_format="dict",

@@ -1,6 +1,9 @@
 """Ontology domain."""
 
 from enum import Enum
+from typing import NewType
+
+JobName = NewType("JobName", str)
 
 
 class JobMLTask(str, Enum):

@@ -1,9 +1,8 @@
 """Utils for use cases."""
 
 from itertools import chain
-from typing import Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.utils import pagination
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
@@ -12,11 +11,14 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
+if TYPE_CHECKING:
+    from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
+
 
 class AssetUseCasesUtils:
     """Utils for use cases."""
 
-    def __init__(self, kili_api_gateway: KiliAPIGateway) -> None:
+    def __init__(self, kili_api_gateway: "KiliAPIGateway") -> None:
         """Init."""
         self.kili_api_gateway = kili_api_gateway
 

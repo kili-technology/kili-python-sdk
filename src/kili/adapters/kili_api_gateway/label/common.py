@@ -1,0 +1,32 @@
+"""Label gateway common."""
+from typing import Dict, List
+
+from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
+from kili.core.graphql.graphql_client import GraphQLClient
+from kili.domain.label import LabelId
+from kili.domain.types import ListOrTuple
+
+from .operations import get_annotations_query
+
+
+def list_annotations(
+    graphql_client: GraphQLClient,
+    label_id: LabelId,
+    *,
+    annotation_fields: ListOrTuple[str],
+    video_annotation_fields: ListOrTuple[str] = (),
+    video_classification_fields: ListOrTuple[str] = (),
+    video_object_detection_fields: ListOrTuple[str] = (),
+    video_transcription_fields: ListOrTuple[str] = (),
+) -> List[Dict]:
+    """List annotations for a label."""
+    query = get_annotations_query(
+        annotation_fragment=fragment_builder(annotation_fields),
+        video_annotation_fragment=fragment_builder(video_annotation_fields),
+        video_classification_annotation_fragment=fragment_builder(video_classification_fields),
+        video_object_detection_annotation_fragment=fragment_builder(video_object_detection_fields),
+        video_transcription_annotation_fragment=fragment_builder(video_transcription_fields),
+    )
+    variables = {"where": {"labelId": label_id}}
+    result = graphql_client.execute(query, variables)
+    return result["data"]

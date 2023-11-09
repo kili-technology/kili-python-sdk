@@ -7,7 +7,7 @@ from kili.domain.types import ListOrTuple
 
 if TYPE_CHECKING:
     from .asset import AssetFilters
-    from .project import ProjectFilters
+    from .project import ProjectId
     from .user import UserFilter
 
 LabelId = NewType("LabelId", str)
@@ -20,6 +20,7 @@ LabelType = Literal["AUTOSAVE", "DEFAULT", "INFERENCE", "PREDICTION", "REVIEW"]
 class LabelFilters:
     """Label filters for running a label search."""
 
+    project_id: "ProjectId"
     asset: Optional["AssetFilters"] = None
     author_in: Optional[ListOrTuple[str]] = None
     consensus_mark_gte: Optional[float] = None
@@ -32,7 +33,6 @@ class LabelFilters:
     id: Optional[LabelId] = None  # noqa: A003
     id_in: Optional[ListOrTuple[LabelId]] = None
     labeler_in: Optional[ListOrTuple[str]] = None
-    project: Optional["ProjectFilters"] = None
     reviewer_in: Optional[ListOrTuple[str]] = None
     search: Optional[str] = None
     type_in: Optional[ListOrTuple[LabelType]] = None

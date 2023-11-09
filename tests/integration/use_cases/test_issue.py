@@ -4,8 +4,8 @@ from typing import Generator
 
 import pytest_mock
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.issue import IssueFilters, IssueId
 from kili.domain.label import LabelId
 from kili.domain.project import ProjectId

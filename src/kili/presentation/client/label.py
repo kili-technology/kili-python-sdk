@@ -27,7 +27,7 @@ from kili.core.helpers import (
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
 from kili.domain.asset.helpers import check_asset_identifier_arguments
 from kili.domain.label import LabelFilters, LabelId, LabelType
-from kili.domain.project import ProjectFilters, ProjectId
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.domain.user import UserFilter, UserId
 from kili.presentation.client.helpers.common_validators import (
@@ -106,7 +106,7 @@ class LabelClientMethods(BaseClientMethods):
             validate_category_search_query(category_search)
 
         filters = LabelFilters(
-            project=ProjectFilters(id=ProjectId(project_id)),
+            project_id=ProjectId(project_id),
             asset=AssetFilters(
                 project_id=ProjectId(project_id),
                 asset_id=AssetId(asset_id) if asset_id else None,
@@ -395,7 +395,7 @@ class LabelClientMethods(BaseClientMethods):
         options = QueryOptions(disable_tqdm, first, skip)
 
         filters = LabelFilters(
-            project=ProjectFilters(id=ProjectId(project_id)),
+            project_id=ProjectId(project_id),
             asset=AssetFilters(
                 project_id=ProjectId(project_id),
                 asset_id=AssetId(asset_id) if asset_id else None,

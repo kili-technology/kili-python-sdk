@@ -1,5 +1,5 @@
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetFilters
 from kili.domain.project import ProjectId
 from kili.use_cases.asset import AssetUseCases

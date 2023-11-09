@@ -42,8 +42,7 @@ class LabelUseCases(BaseUseCases):
         output_format: Literal["dict", "parsed_label"],
     ) -> Generator:
         """List labels."""
-        post_call_function = None
-
+        label_parser_post_function = None
         if output_format == "parsed_label":
             if "jsonResponse" not in fields:
                 raise ValueError(
@@ -55,7 +54,7 @@ class LabelUseCases(BaseUseCases):
                 project_id, fields=("jsonInterface", "inputType")
             )
 
-            post_call_function = partial(
+            label_parser_post_function = partial(
                 parse_labels,
                 json_interface=project["jsonInterface"],
                 input_type=project["inputType"],
@@ -65,8 +64,8 @@ class LabelUseCases(BaseUseCases):
             fields=fields, filters=filters, options=options
         )
 
-        if post_call_function is not None:
-            labels_gen = post_call_function(labels=labels_gen)
+        if label_parser_post_function is not None:
+            labels_gen = label_parser_post_function(labels=labels_gen)
 
         return labels_gen
 
