@@ -4,8 +4,8 @@ from typing import Dict, Iterable, Optional
 
 from typeguard import typechecked
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.user.operations import get_reset_password_mutation
 from kili.domain.api_key import ApiKeyFilters
 from kili.domain.types import ListOrTuple

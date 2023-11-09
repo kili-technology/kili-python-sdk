@@ -86,3 +86,52 @@ mutation(
   }}
 }}
 """
+
+
+def get_annotations_query(
+    *,
+    annotation_fragment: str,
+    video_annotation_fragment: str,
+    video_object_detection_annotation_fragment: str,
+    video_classification_annotation_fragment: str,
+    video_transcription_annotation_fragment: str,
+) -> str:
+    """Get the gql annotations query."""
+    inline_fragments = ""
+
+    if video_annotation_fragment.strip():
+        inline_fragments += f"""
+            ... on VideoAnnotation {{
+                    {video_annotation_fragment}
+            }}
+        """
+
+    if video_object_detection_annotation_fragment.strip():
+        inline_fragments += f"""
+            ... on VideoObjectDetectionAnnotation {{
+                {video_object_detection_annotation_fragment}
+            }}
+        """
+
+    if video_classification_annotation_fragment.strip():
+        inline_fragments += f"""
+            ... on VideoClassificationAnnotation {{
+                {video_classification_annotation_fragment}
+            }}
+        """
+
+    if video_transcription_annotation_fragment.strip():
+        inline_fragments += f"""
+            ... on VideoTranscriptionAnnotation {{
+                {video_transcription_annotation_fragment}
+            }}
+        """
+
+    return f"""
+    query annotations($where: AnnotationWhere!) {{
+        data: annotations(where: $where) {{
+            {annotation_fragment}
+            {inline_fragments}
+        }}
+    }}
+    """

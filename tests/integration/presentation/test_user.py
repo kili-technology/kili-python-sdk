@@ -3,7 +3,7 @@ from typing import Dict, Generator, List
 import pytest
 from typeguard import check_type
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.presentation.client.user import UserClientMethods
 from kili.use_cases.user import UserUseCases
 

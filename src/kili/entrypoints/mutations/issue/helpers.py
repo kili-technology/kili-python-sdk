@@ -2,10 +2,10 @@
 
 from typing import Dict
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.label import LabelFilters, LabelId
-from kili.domain.project import ProjectFilters, ProjectId
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
@@ -31,10 +31,7 @@ def get_labels_asset_ids_map(
     options = QueryOptions(disable_tqdm=True)
     labels = list(
         kili_api_gateway.list_labels(
-            filters=LabelFilters(
-                project=ProjectFilters(project_id),
-                id_in=label_id_array,
-            ),
+            filters=LabelFilters(project_id=project_id, id_in=label_id_array),
             fields=("labelOf.id", "id"),
             options=options,
         )

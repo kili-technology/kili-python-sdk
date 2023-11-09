@@ -2,7 +2,7 @@ from typing import List, Optional, cast
 
 import pytest_mock
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset.asset import AssetId
 from kili.domain.project import ProjectId
 from kili.domain.question import QuestionId

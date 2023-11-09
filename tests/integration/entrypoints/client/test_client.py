@@ -8,7 +8,7 @@ import pytest
 import pytest_mock
 from filelock import FileLock
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.client import Kili
 from kili.core.graphql.graphql_client import (
     DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR,

@@ -1,6 +1,6 @@
 import pytest_mock
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.presentation.client.cloud_storage import CloudStorageClientMethods
 from kili.use_cases.cloud_storage import CloudStorageUseCases
 

@@ -1,6 +1,6 @@
 import pytest_mock
 
-from kili.adapters.kili_api_gateway import KiliAPIGateway
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.tag.operations import (
     GQL_CHECK_TAG,
     GQL_DELETE_TAG,

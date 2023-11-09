@@ -1,11 +1,11 @@
 import pytest_mock
 
 from kili.adapters.http_client import HttpClient
-from kili.adapters.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
 )
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.user.operations import (
     GQL_COUNT_USERS,
     get_create_user_mutation,
