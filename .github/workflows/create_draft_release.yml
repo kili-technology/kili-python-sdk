@@ -15,8 +15,7 @@ on:
       checkAgainstLatestRelease:
         description: >
           "Check that the release version is greater than the latest release on github.
-          If not, the workflow will fail.
-          Enter 'true' to check against the latest release on github, 'false' otherwise:"
+          You should set uncheck this if you are creating a release for a previous version.
         required: true
         type: boolean
         default: true
