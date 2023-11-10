@@ -5,6 +5,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.label import LabelId
 from kili.domain.types import ListOrTuple
+from kili.exceptions import GraphQLError
 
 from .operations import get_annotations_query
 
@@ -28,5 +29,12 @@ def list_annotations(
         video_transcription_annotation_fragment=fragment_builder(video_transcription_fields),
     )
     variables = {"where": {"labelId": label_id}}
-    result = graphql_client.execute(query, variables)
+
+    try:
+        result = graphql_client.execute(query, variables)
+    except GraphQLError as err:
+        if "Cannot query field" in str(err):  # not available on LTS
+            return []
+        raise
+
     return result["data"]
