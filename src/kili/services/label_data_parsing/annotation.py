@@ -119,7 +119,7 @@ class _BaseAnnotation:
         return self._json_data["categories"][0]
 
     @typechecked
-    def add_category(self, name: str, confidence: Optional[int] = None) -> None:
+    def add_category(self, name: str, confidence: Optional[float] = None) -> None:
         """Add a category to an annotation job with categories."""
         if "categories" not in self._json_data:
             category_list = category_module.CategoryList(
