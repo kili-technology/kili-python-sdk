@@ -145,13 +145,13 @@ class Category:
             ) from err
 
     @property
-    def confidence(self) -> int:
+    def confidence(self) -> float:
         """Returns the confidence of the category label."""
         return self._json_data["confidence"]
 
     @confidence.setter
     @typechecked
-    def confidence(self, confidence: int) -> None:
+    def confidence(self, confidence: float) -> None:
         """Set the confidence of the category label."""
         if not 0 <= confidence <= 100:
             raise ValueError(f"Confidence must be between 0 and 100, got {confidence}")
@@ -226,7 +226,10 @@ class CategoryList:
 
     @typechecked
     def add_category(
-        self, name: str, confidence: Optional[int] = None, children: Optional[Dict] = None
+        self,
+        name: str,
+        confidence: Optional[float] = None,
+        children: Optional[Dict] = None,
     ) -> None:
         """Add a category object to the CategoryList object."""
         category_dict: Dict[str, object] = {"name": name}

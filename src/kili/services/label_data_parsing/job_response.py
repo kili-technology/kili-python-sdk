@@ -141,7 +141,7 @@ class JobPayload:
         self._json_data["children"] = parsed_children_job
 
     @typechecked
-    def add_category(self, name: str, confidence: Optional[int] = None) -> None:
+    def add_category(self, name: str, confidence: Optional[float] = None) -> None:
         """Adds a category to a job with categories."""
         if self._job_interface["mlTask"] != "CLASSIFICATION":
             raise AttributeNotCompatibleWithJobError("add_category")

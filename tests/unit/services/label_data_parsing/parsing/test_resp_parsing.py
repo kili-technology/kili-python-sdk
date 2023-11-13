@@ -76,8 +76,8 @@ def test_attribute_categories_multiclass():
     json_response_dict = {
         "JOB_0": {
             "categories": [
-                {"name": "CATEGORY_A", "confidence": 42},
-                {"name": "CATEGORY_B", "confidence": 100},
+                {"name": "CATEGORY_A", "confidence": 42.289},
+                {"name": "CATEGORY_B", "confidence": 88.75},
             ]
         }
     }
@@ -86,10 +86,10 @@ def test_attribute_categories_multiclass():
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
     categories = parsed_jobs["JOB_0"].categories
 
-    assert categories[0].confidence == 42
+    assert categories[0].confidence == 42.289
     assert categories[0].display_name == "Category A"
     assert categories[0].name == "CATEGORY_A"
-    assert categories[1].confidence == 100
+    assert categories[1].confidence == 88.75
     assert categories[1].display_name == "Category B"
     assert categories[1].name == "CATEGORY_B"
 
