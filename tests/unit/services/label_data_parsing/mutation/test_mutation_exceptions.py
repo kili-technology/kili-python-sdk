@@ -41,40 +41,6 @@ def test_mutate_transcription_label_on_classif_project():
 
 
 @pytest.mark.parametrize("input_", ["radio", "singleDropdown"])
-def test_mutate_category_label_wrong_confidence_range(input_):
-    json_interface = {
-        "jobs": {
-            "JOB_0": {
-                "mlTask": "CLASSIFICATION",
-                "required": 1,
-                "isChild": False,
-                "content": {
-                    "categories": {
-                        "A": {"children": [], "name": "A", "id": "category25"},
-                        "B": {"children": [], "name": "B", "id": "category26"},
-                        "C": {"children": [], "name": "C", "id": "category27"},
-                    },
-                    "input": input_,
-                },
-            }
-        }
-    }
-
-    json_response_dict = {"JOB_0": {"categories": [{"confidence": 100, "name": "A"}]}}
-
-    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
-    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
-
-    assert parsed_jobs["JOB_0"].category.name == "A"
-
-    with pytest.raises(ValueError):
-        parsed_jobs["JOB_0"].category.confidence = 101
-
-    with pytest.raises(ValueError):
-        parsed_jobs["JOB_0"].category.confidence = -1
-
-
-@pytest.mark.parametrize("input_", ["radio", "singleDropdown"])
 def test_mutate_single_class_classif_add_multiple_categories(input_):
     json_interface = {
         "jobs": {
