@@ -192,6 +192,7 @@ jobs:
           -e "internal" \
           -e "src/kili/domain/ontology.py" \
           -e "src/kili/domain/annotation.py" \
+          -e "src/kili/domain/project.py" \
           > dead_code_filtered.txt || true
 
       - name: Crash if dead code found

@@ -6,8 +6,7 @@ from typing import Optional
 import click
 from tabulate import tabulate
 
-from kili.core.constants import INPUT_TYPE
-from kili.domain.project import ProjectId
+from kili.domain.project import InputTypeEnum, ProjectId
 from kili.entrypoints.cli.common_args import Options
 from kili.entrypoints.cli.helpers import get_kili_client
 from kili.entrypoints.queries.project.helpers import get_project_url
@@ -21,7 +20,7 @@ from kili.entrypoints.queries.project.helpers import get_project_url
 @click.option("--title", type=str, required=True, help="Project Title.")
 @click.option(
     "--input-type",
-    type=click.Choice(INPUT_TYPE),
+    type=click.Choice([input_type.value for input_type in InputTypeEnum]),
     required=True,
     help="Project input data type. Please check your license to see which ones you have access to.",
 )
