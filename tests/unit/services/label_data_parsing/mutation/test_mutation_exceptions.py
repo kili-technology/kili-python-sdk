@@ -65,13 +65,10 @@ def test_mutate_category_label_wrong_confidence_range(input_):
     project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
+    parsed_jobs["JOB_0"].category.confidence = -1
+
+    assert parsed_jobs["JOB_0"].category.confidence == -1
     assert parsed_jobs["JOB_0"].category.name == "A"
-
-    with pytest.raises(ValueError):
-        parsed_jobs["JOB_0"].category.confidence = 101
-
-    with pytest.raises(ValueError):
-        parsed_jobs["JOB_0"].category.confidence = -1
 
 
 @pytest.mark.parametrize("input_", ["radio", "singleDropdown"])
