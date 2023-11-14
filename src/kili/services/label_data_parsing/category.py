@@ -153,8 +153,6 @@ class Category:
     @typechecked
     def confidence(self, confidence: float) -> None:
         """Set the confidence of the category label."""
-        if not 0 <= confidence <= 100:
-            raise ValueError(f"Confidence must be between 0 and 100, got {confidence}")
         self._json_data["confidence"] = confidence
 
     @property
