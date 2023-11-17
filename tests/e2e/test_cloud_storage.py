@@ -71,8 +71,8 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         "expected_nb_assets_after_sync",
     ),
     [
-        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", None, 4),
-        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", ["chickens"], 4),
+        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", None, 26),
+        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", ["chickens"], 26),
         ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", [], 0),
         ("STAGING", "Azure", "5512237816bd1dde391368ed93332b75", None, 10),
         ("STAGING", "Azure", "3e7e98e2ab4af2d614d97acb7b970c2b", None, 10),
