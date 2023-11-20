@@ -25,125 +25,30 @@ json_response_a = {
     "11": {},
     "12": {},
     "13": {},
-    "14": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-            "isKeyFrame": True,
-        }
-    },
-    "15": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-            "isKeyFrame": False,
-        }
-    },
-    "16": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-            "isKeyFrame": False,
-        }
-    },
-    "17": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-            "isKeyFrame": False,
-        }
-    },
-    "18": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-            "isKeyFrame": False,
-        }
-    },
-    "19": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-            "isKeyFrame": False,
-        }
-    },
-    "20": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-            "isKeyFrame": False,
-        }
-    },
-    "21": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_A"}],
-            "isKeyFrame": False,
-        }
-    },
-    "22": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_B"}],
-            "isKeyFrame": True,
-        }
-    },
-    "23": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_B"}],
-            "isKeyFrame": False,
-        }
-    },
-    "24": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_B"}],
-            "isKeyFrame": False,
-        }
-    },
-    "25": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_B"}],
-            "isKeyFrame": False,
-        }
-    },
-    "26": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_B"}],
-            "isKeyFrame": False,
-        }
-    },
-    "27": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_B"}],
-            "isKeyFrame": False,
-        }
-    },
-    "28": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_B"}],
-            "isKeyFrame": False,
-        }
-    },
-    "29": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_B"}],
-            "isKeyFrame": False,
-        }
-    },
+    "14": {"JOB_0": {"categories": [{"name": "OBJECT_A"}], "isKeyFrame": True}},
+    "15": {"JOB_0": {"categories": [{"name": "OBJECT_A"}], "isKeyFrame": False}},
+    "16": {"JOB_0": {"categories": [{"name": "OBJECT_A"}], "isKeyFrame": False}},
+    "17": {"JOB_0": {"categories": [{"name": "OBJECT_A"}], "isKeyFrame": False}},
+    "18": {"JOB_0": {"categories": [{"name": "OBJECT_A"}], "isKeyFrame": False}},
+    "19": {"JOB_0": {"categories": [{"name": "OBJECT_A"}], "isKeyFrame": False}},
+    "20": {"JOB_0": {"categories": [{"name": "OBJECT_A"}], "isKeyFrame": False}},
+    "21": {"JOB_0": {"categories": [{"name": "OBJECT_A"}], "isKeyFrame": False}},
+    "22": {"JOB_0": {"categories": [{"name": "OBJECT_B"}], "isKeyFrame": True}},
+    "23": {"JOB_0": {"categories": [{"name": "OBJECT_B"}], "isKeyFrame": False}},
+    "24": {"JOB_0": {"categories": [{"name": "OBJECT_B"}], "isKeyFrame": False}},
+    "25": {"JOB_0": {"categories": [{"name": "OBJECT_B"}], "isKeyFrame": False}},
+    "26": {"JOB_0": {"categories": [{"name": "OBJECT_B"}], "isKeyFrame": False}},
+    "27": {"JOB_0": {"categories": [{"name": "OBJECT_B"}], "isKeyFrame": False}},
+    "28": {"JOB_0": {"categories": [{"name": "OBJECT_B"}], "isKeyFrame": False}},
+    "29": {"JOB_0": {"categories": [{"name": "OBJECT_B"}], "isKeyFrame": False}},
 }
 
 json_response_b = {
     "0": {},
     "1": {},
-    "2": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_B"}],
-            "isKeyFrame": True,
-        }
-    },
-    "3": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_B"}],
-            "isKeyFrame": False,
-        }
-    },
-    "4": {
-        "JOB_0": {
-            "categories": [{"confidence": 100, "name": "OBJECT_B"}],
-            "isKeyFrame": False,
-        }
-    },
+    "2": {"JOB_0": {"categories": [{"name": "OBJECT_B"}], "isKeyFrame": True}},
+    "3": {"JOB_0": {"categories": [{"name": "OBJECT_B"}], "isKeyFrame": False}},
+    "4": {"JOB_0": {"categories": [{"name": "OBJECT_B"}], "isKeyFrame": False}},
 }
 
 
