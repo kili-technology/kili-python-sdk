@@ -276,7 +276,9 @@ class GraphQLClient:
     @retry(
         reraise=True,  # re-raise the last exception
         retry=retry_all(
-            retry_if_exception_type(exceptions.TransportQueryError),  # error received from server
+            retry_if_exception_type(  # error received from server
+                (exceptions.TransportQueryError, exceptions.TransportServerError)
+            ),
             retry_if_not_exception_message(
                 match=r'.*Variable "(\$\w+)" of required type "(\w+!)" was not provided.*'
             ),
@@ -287,6 +289,7 @@ class GraphQLClient:
             retry_any(
                 retry_if_exception_message(match=r".*Invalid request made to Flagsmith API.*"),
                 retry_if_exception_message(match=r".*Failed to fetch data connection.*"),
+                retry_if_exception_message(match=r".*Unauthorized for url.*"),
             ),
         ),
         stop=stop_after_delay(3 * 60),
