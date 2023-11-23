@@ -22,7 +22,6 @@ json_response = json.load(
 
 def test_import_default_labels_with_asset_id(kili_api_gateway: KiliAPIGateway):
     # Given
-    project_id = "project_id"
     label_type = "DEFAULT"
     overwrite = False
     model_name = None
@@ -53,7 +52,7 @@ def test_import_default_labels_with_asset_id(kili_api_gateway: KiliAPIGateway):
         disable_tqdm=True,
         overwrite=overwrite,
         label_type=label_type,
-        project_id=ProjectId(project_id),
+        project_id=None,
         fields=("id",),
     )
 
@@ -83,6 +82,7 @@ def test_import_default_labels_with_asset_id(kili_api_gateway: KiliAPIGateway):
             ],
         ),
         fields=("id",),
+        project_id=None,
     )
 
 
@@ -157,6 +157,7 @@ def test_import_default_labels_with_external_id(kili_api_gateway: KiliAPIGateway
             ],
         ),
         fields=("id",),
+        project_id=ProjectId(project_id),
     )
 
 
@@ -208,6 +209,7 @@ def test_import_labels_with_optional_params(kili_api_gateway: KiliAPIGateway):
             ],
         ),
         fields=("id",),
+        project_id=ProjectId(project_id),
     )
 
 
@@ -282,6 +284,7 @@ def test_import_predictions(kili_api_gateway: KiliAPIGateway):
             ],
         ),
         fields=("id",),
+        project_id=ProjectId(project_id),
     )
 
 
@@ -339,6 +342,7 @@ def test_import_predictions_with_overwriting(kili_api_gateway: KiliAPIGateway):
             ],
         ),
         fields=("id",),
+        project_id=ProjectId(project_id),
     )
 
 
@@ -362,7 +366,8 @@ def test_import_predictions_without_giving_model_name(kili_api_gateway: KiliAPIG
 
     # When Then
     with pytest.raises(
-        ValueError, match="You must provide `model_name` when uploading `PREDICTION` labels."
+        ValueError,
+        match="You must provide `model_name` when uploading `PREDICTION` labels.",
     ):
         LabelUseCases(kili_api_gateway).append_labels(
             labels=labels,
