@@ -13,6 +13,7 @@ from kili.core.constants import MUTATION_BATCH_SIZE
 from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetId
 from kili.domain.label import LabelFilters, LabelId
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
@@ -109,7 +110,11 @@ class LabelOperationMixin(BaseOperationMixin):
         return delete_label_ids
 
     def append_many_labels(
-        self, data: AppendManyLabelsData, fields: ListOrTuple[str], disable_tqdm: Optional[bool]
+        self,
+        data: AppendManyLabelsData,
+        fields: ListOrTuple[str],
+        disable_tqdm: Optional[bool],
+        project_id: Optional[ProjectId],
     ) -> List[Dict]:
         """Append many labels."""
         nb_labels_to_add = len(data.labels_data)
@@ -128,7 +133,10 @@ class LabelOperationMixin(BaseOperationMixin):
                             append_label_data_mapper(label) for label in batch_of_label_data
                         ],
                     },
-                    "where": {"idIn": [label.asset_id for label in batch_of_label_data]},
+                    "where": {
+                        "idIn": [label.asset_id for label in batch_of_label_data],
+                        "project": {"id": project_id},
+                    },
                 }
 
                 # we increase the timeout because the import can take a long time
@@ -144,7 +152,10 @@ class LabelOperationMixin(BaseOperationMixin):
         """Append to labels."""
         fragment = fragment_builder(fields)
         query = get_append_to_labels_mutation(fragment)
-        variables = {"where": {"id": asset_id}, "data": append_to_labels_data_mapper(data)}
+        variables = {
+            "where": {"id": asset_id},
+            "data": append_to_labels_data_mapper(data),
+        }
         result = self.graphql_client.execute(query, variables)
         return result["data"]
 

@@ -136,7 +136,10 @@ class LabelUseCases(BaseUseCases):
             labels_data=labels_to_add,
         )
         return self._kili_api_gateway.append_many_labels(
-            fields=fields, disable_tqdm=disable_tqdm, data=data
+            fields=fields,
+            disable_tqdm=disable_tqdm,
+            data=data,
+            project_id=project_id,
         )
 
     def append_to_labels(

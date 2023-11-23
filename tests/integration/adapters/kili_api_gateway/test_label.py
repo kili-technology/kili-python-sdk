@@ -25,7 +25,9 @@ from tests.unit.adapters.kili_api_gateway.label.test_data import test_case_1
 
 
 def test_given_kili_gateway_when_querying_labels__it_calls_proper_resolver(
-    graphql_client: GraphQLClient, http_client: HttpClient, mocker: pytest_mock.MockerFixture
+    graphql_client: GraphQLClient,
+    http_client: HttpClient,
+    mocker: pytest_mock.MockerFixture,
 ):
     # Given
     mocker.patch.object(PaginatedGraphQLQuery, "get_number_of_elements_to_query", return_value=1)
@@ -124,6 +126,7 @@ def test_given_kili_gateway_when_adding_labels_then_it_calls_proper_resolver(
         ),
         fields=("id",),
         disable_tqdm=True,
+        project_id=None,
     )
 
     # Then
@@ -145,7 +148,7 @@ def test_given_kili_gateway_when_adding_labels_then_it_calls_proper_resolver(
                     }
                 ],
             },
-            "where": {"idIn": ["fake_asset_id"]},
+            "where": {"idIn": ["fake_asset_id"], "project": {"id": None}},
         },
     )
 
@@ -175,6 +178,7 @@ def test_given_kili_gateway_when_adding_labels_by_batch_then_it_calls_proper_res
         ),
         fields=("id",),
         disable_tqdm=True,
+        project_id=ProjectId("project_id"),
     )
 
     # Then
@@ -197,7 +201,7 @@ def test_given_kili_gateway_when_adding_labels_by_batch_then_it_calls_proper_res
                     }
                 ],
             },
-            "where": {"idIn": ["fake_asset_id_101"]},
+            "where": {"idIn": ["fake_asset_id_101"], "project": {"id": "project_id"}},
         },
     )
 
