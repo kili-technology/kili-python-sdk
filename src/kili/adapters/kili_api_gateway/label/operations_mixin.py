@@ -135,9 +135,10 @@ class LabelOperationMixin(BaseOperationMixin):
                     },
                     "where": {
                         "idIn": [label.asset_id for label in batch_of_label_data],
-                        "project": {"id": project_id},
                     },
                 }
+                if project_id is not None:
+                    variables["where"]["project"] = {"id": project_id}
 
                 # we increase the timeout because the import can take a long time
                 batch_result = self.graphql_client.execute(query, variables, timeout=60)
