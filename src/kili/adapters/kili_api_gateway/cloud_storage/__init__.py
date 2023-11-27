@@ -20,7 +20,7 @@ from .mappers import (
     add_data_connection_data_mapper,
     compute_data_connection_difference_data_mapper,
     data_connection_where_mapper,
-    data_integration_where_mapper,
+    data_integrations_where_mapper,
 )
 from .operations import (
     GQL_COUNT_DATA_INTEGRATIONS,
@@ -49,14 +49,14 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         """List data integrations."""
         fragment = fragment_builder(fields)
         query = get_list_data_integrations_query(fragment)
-        where = data_integration_where_mapper(filters=data_integration_filters)
+        where = data_integrations_where_mapper(filters=data_integration_filters)
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving data integrations", GQL_COUNT_DATA_INTEGRATIONS
         )
 
     def count_data_integrations(self, data_integration_filters: DataIntegrationFilters) -> int:
         """Count data integrations."""
-        where = data_integration_where_mapper(filters=data_integration_filters)
+        where = data_integrations_where_mapper(filters=data_integration_filters)
         variables = {"where": where}
         result = self.graphql_client.execute(GQL_COUNT_DATA_INTEGRATIONS, variables)
         return result["data"]

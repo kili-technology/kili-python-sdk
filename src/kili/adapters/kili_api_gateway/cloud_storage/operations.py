@@ -4,7 +4,7 @@
 def get_list_data_integrations_query(fragment: str) -> str:
     """Return the GraphQL query to list data integrations."""
     return f"""
-        query dataIntegrations($where: DataIntegrationWhere!, $first: PageSize!, $skip: Int!) {{
+        query dataIntegrations($where: DataIntegrationsWhere!, $first: PageSize!, $skip: Int!) {{
           data: dataIntegrations(where: $where, skip: $skip, first: $first) {{
             {fragment}
           }}
@@ -76,7 +76,7 @@ def get_validate_data_connection_differences_mutation(fragment: str) -> str:
 
 
 GQL_COUNT_DATA_INTEGRATIONS = """
-    query countDataIntegrations($where: DataIntegrationWhere!) {
+    query countDataIntegrations($where: DataIntegrationsWhere!) {
       data: countDataIntegrations(where: $where)
     }
     """

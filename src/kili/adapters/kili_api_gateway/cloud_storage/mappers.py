@@ -10,13 +10,12 @@ from .types import (
 )
 
 
-def data_integration_where_mapper(filters: DataIntegrationFilters) -> Dict:
-    """Build the GraphQL DataIntegrationWhere variable to be sent in an operation."""
+def data_integrations_where_mapper(filters: DataIntegrationFilters) -> Dict:
+    """Build the GraphQL DataIntegrationsWhere variable to be sent in an operation."""
     return {
         "status": filters.status,
         "id": filters.id,
         "name": filters.name,
-        "organizationId": filters.organization_id,
         "platform": filters.platform,
     }
 
