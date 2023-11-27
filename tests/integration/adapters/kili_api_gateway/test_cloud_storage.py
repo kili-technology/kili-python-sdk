@@ -67,13 +67,5 @@ def test_given_gateway_when_calling_count_data_integrations_then_it_works(
     # Then
     gateway.graphql_client.execute.assert_called_once_with(
         GQL_COUNT_DATA_INTEGRATIONS,
-        {
-            "where": {
-                "status": None,
-                "id": "fake_id",
-                "name": None,
-                "organizationId": None,
-                "platform": None,
-            }
-        },
+        {"where": {"status": None, "id": "fake_id", "name": None, "platform": None}},
     )
