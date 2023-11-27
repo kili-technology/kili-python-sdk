@@ -13,7 +13,6 @@ from kili.domain.cloud_storage import (
     DataIntegrationId,
     DataIntegrationPlatform,
     DataIntegrationStatus,
-    OrganizationId,
     ProjectId,
 )
 from kili.domain.types import ListOrTuple
@@ -214,7 +213,7 @@ class CloudStorageClientMethods(BaseClientMethods):
             name: Name of the cloud storage integration.
             platform: Platform of the cloud storage integration.
             status: Status of the cloud storage integration.
-            organization_id: ID of the organization.
+            organization_id: Deprecated argument.
             fields: All the fields to request among the possible fields for the cloud storage integrations.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataintegration) for all possible fields.
             first: Maximum number of cloud storage integrations to return.
@@ -229,6 +228,7 @@ class CloudStorageClientMethods(BaseClientMethods):
             >>> kili.cloud_storage_integrations()
             [{'name': 'My bucket', 'id': '123456789', 'platform': 'AWS', 'status': 'CONNECTED'}]
         """
+        _ = organization_id
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         data_integrations_gen = CloudStorageUseCases(self.kili_api_gateway).list_data_integrations(
@@ -241,9 +241,6 @@ class CloudStorageClientMethods(BaseClientMethods):
                 ),
                 name=name,
                 platform=platform,
-                organization_id=(
-                    OrganizationId(organization_id) if organization_id is not None else None
-                ),
             ),
             fields=fields,
             options=options,
@@ -269,11 +266,12 @@ class CloudStorageClientMethods(BaseClientMethods):
             name: Name of the cloud storage integration.
             platform: Platform of the cloud storage integration.
             status: Status of the cloud storage integration.
-            organization_id: ID of the organization.
+            organization_id: Deprecated argument.
 
         Returns:
             The number of cloud storage integrations that match the criteria.
         """
+        _ = organization_id
         return CloudStorageUseCases(self.kili_api_gateway).count_data_integrations(
             DataIntegrationFilters(
                 status=status,
@@ -284,9 +282,6 @@ class CloudStorageClientMethods(BaseClientMethods):
                 ),
                 name=name,
                 platform=platform,
-                organization_id=(
-                    OrganizationId(organization_id) if organization_id is not None else None
-                ),
             )
         )
 
