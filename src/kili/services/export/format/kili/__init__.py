@@ -47,7 +47,9 @@ class KiliExporter(AbstractExporter):
             for asset in assets:
                 external_id = asset["externalId"].replace(" ", "_")
                 asset_json = json.dumps(asset, sort_keys=True, indent=4)
-                with (labels_folder / f"{external_id}.json").open("wb") as output_file:
+                file_path = labels_folder / f"{external_id}.json"
+                file_path.parent.mkdir(parents=True, exist_ok=True)
+                with file_path.open("wb") as output_file:
                     output_file.write(asset_json.encode("utf-8"))
 
         self.create_readme_kili_file(self.export_root_folder)

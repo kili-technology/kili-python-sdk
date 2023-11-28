@@ -432,7 +432,9 @@ def _write_content_frame_to_file(
 
 
 def _write_labels_to_file(labels_folder: Path, filename: str, annotations: List[Tuple]) -> None:
-    with (labels_folder / f"{filename}.txt").open("wb") as fout:
+    file_path = labels_folder / f"{filename}.txt"
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    with file_path.open("wb") as fout:
         for category_idx, *points in annotations:
             points_str = " ".join([str(point) for point in points])
             fout.write(f"{category_idx} {points_str}\n".encode())

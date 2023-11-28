@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from tempfile import TemporaryDirectory
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from zipfile import ZipFile
 
 import pytest_mock
@@ -479,3 +479,50 @@ def test_kili_export_labels_non_normalized_video(mocker: pytest_mock.MockerFixtu
                 output = json.load(f)
 
     assert output == video_project_asset_unnormalized
+
+
+def test_save_assets_export_with_external_id_containing_slash(mocker: pytest_mock.MockerFixture):
+    with TemporaryDirectory() as export_root_folder:
+        mocker.patch.object(KiliExporter, "__init__", return_value=None)
+        exporter = KiliExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
+        exporter.normalized_coordinates = False
+        exporter.logger = mocker.MagicMock()
+        exporter.with_assets = True
+        exporter.single_file = False
+        exporter.export_root_folder = Path(export_root_folder)
+        exporter.label_format = "kili"
+        exporter.project_id = "fake_proj_id"
+        exporter.export_type = "latest"
+        exporter.project = {
+            "id": "fake_proj_id",
+            "title": "fake_proj_title",
+            "inputType": "IMAGE",
+            "jsonInterface": {
+                "jobs": {
+                    "OBJECT_DETECTION_JOB": {
+                        "content": {
+                            "categories": {"A": {"children": [], "color": "#472CED", "name": "A"}},
+                            "input": "radio",
+                        },
+                        "instruction": "BBOX",
+                        "mlTask": "OBJECT_DETECTION",
+                        "required": 1,
+                        "tools": ["rectangle"],
+                        "isChild": False,
+                        "models": {"tracking": {}},
+                    }
+                }
+            },
+        }
+        with NamedTemporaryFile() as f:
+            f.write(b"")
+            assets = [
+                {
+                    "externalId": "a/b.png",
+                    "content": f.name,
+                    "jsonContent": f.name,
+                }
+            ]
+            with TemporaryDirectory() as export_folder:
+                exporter._save_assets_export(assets, Path(export_folder))  # pylint: disable=protected-access
+                assert Path(exporter.base_folder / "labels/a/b.png.json").is_file()

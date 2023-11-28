@@ -33,7 +33,7 @@ def get_asset(
 
     return {
         "latestLabel": {"jsonResponse": json_response},
-        "externalId": "car_1",
+        "externalId": "ca/r_1",
         "jsonContent": "",
         "content": str(content_path),
     }

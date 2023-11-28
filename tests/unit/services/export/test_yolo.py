@@ -13,6 +13,7 @@ from kili.services.export.format.yolo import (
     _convert_from_kili_to_yolo_format,
     _process_asset,
     _write_class_file,
+    _write_labels_to_file,
 )
 from kili.utils.tempfile import TemporaryDirectory
 from tests.fakes.fake_data import (
@@ -413,3 +414,14 @@ names: ['F', 'G']
                 Path(f"{extract_folder}/POLYGON_JOB/labels/trees.txt").read_text()
                 == "0 0.75 0.23 0.35 0.22 0.07 0.35\n"
             )
+
+
+def test_write_labels_to_file_with_external_id_containing_slash():
+    with TemporaryDirectory() as directory:
+        _write_labels_to_file(
+            directory,
+            "image/1.jpg",
+            [(0, 0.501415026274802, 0.5296278884310182, 0.6727472455849373, 0.5381320101586394)],
+        )
+
+        assert (directory / "image" / "1.jpg.txt").is_file()

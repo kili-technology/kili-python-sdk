@@ -1,14 +1,12 @@
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import pytest
 
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import VocExporter
 from kili.services.export.exceptions import NotCompatibleOptions
-from kili.services.export.format.voc import (
-    VocExporter,
-    _convert_from_kili_to_voc_format,
-)
+from kili.services.export.format.voc import _convert_from_kili_to_voc_format, _process_asset
 from tests.fakes.fake_data import asset_image_1, asset_image_1_without_annotation
 
 
@@ -71,3 +69,40 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
             layout="merged",
             with_assets=True,
         )
+
+
+def test_process_asset_image_with_external_id():
+    asset = {
+        "latestLabel": {
+            "jsonResponse": {
+                "JOB_0": {
+                    "annotations": [
+                        {
+                            "categories": [{"name": "OBJECT_A"}],
+                            "mid": "20230111125258113-44528",
+                            "type": "rectangle",
+                            "boundingPoly": [
+                                {
+                                    "normalizedVertices": [
+                                        {"x": 0.6101435505380516, "y": 0.7689773770786136},
+                                        {"x": 0.6101435505380516, "y": 0.39426226491370664},
+                                        {"x": 0.8962087421313937, "y": 0.39426226491370664},
+                                        {"x": 0.8962087421313937, "y": 0.7689773770786136},
+                                    ]
+                                }
+                            ],
+                            "polyline": [],
+                            "children": {},
+                        }
+                    ]
+                }
+            }
+        },
+        "externalId": "a/b.png",
+        "resolution": {"width": 1920, "height": 1080},
+        "content": "fakecontent",
+    }
+    with TemporaryDirectory() as f:
+        label_path = Path(f) / "labels"
+        _process_asset(asset, label_path, "IMAGE", ["JOB_0"])
+        assert Path(label_path / "a/b.png.xml").is_file()
