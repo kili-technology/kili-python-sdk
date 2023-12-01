@@ -416,12 +416,11 @@ names: ['F', 'G']
             )
 
 
-def test_write_labels_to_file_with_external_id_containing_slash():
-    with TemporaryDirectory() as directory:
-        _write_labels_to_file(
-            directory,
-            "image/1.jpg",
-            [(0, 0.501415026274802, 0.5296278884310182, 0.6727472455849373, 0.5381320101586394)],
-        )
+def test_write_labels_to_file_with_external_id_containing_slash(tmp_path: Path):
+    _write_labels_to_file(
+        tmp_path,
+        "image/1.jpg",
+        [(0, 0.501415026274802, 0.5296278884310182, 0.6727472455849373, 0.5381320101586394)],
+    )
 
-        assert (directory / "image" / "1.jpg.txt").is_file()
+    assert (tmp_path / "image" / "1.jpg.txt").is_file()

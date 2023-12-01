@@ -1,5 +1,4 @@
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 import pytest
 
@@ -71,7 +70,7 @@ def test_when_exporting_to_voc_given_a_project_with_data_connection_then_it_shou
         )
 
 
-def test_process_asset_image_with_external_id():
+def test_process_asset_image_with_external_id(tmp_path: Path):
     asset = {
         "latestLabel": {
             "jsonResponse": {
@@ -102,7 +101,6 @@ def test_process_asset_image_with_external_id():
         "resolution": {"width": 1920, "height": 1080},
         "content": "fakecontent",
     }
-    with TemporaryDirectory() as f:
-        label_path = Path(f) / "labels"
-        _process_asset(asset, label_path, "IMAGE", ["JOB_0"])
-        assert Path(label_path / "a/b.png.xml").is_file()
+    label_path = Path(tmp_path) / "labels"
+    _process_asset(asset, label_path, "IMAGE", ["JOB_0"])
+    assert Path(label_path / "a/b.png.xml").is_file()

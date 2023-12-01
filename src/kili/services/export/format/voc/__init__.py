@@ -123,7 +123,6 @@ def _process_asset(
         )
         xml_filename = f'{asset["externalId"]}.xml'
         filepath = labels_folder / xml_filename
-        print(filepath)
         filepath.parent.mkdir(parents=True, exist_ok=True)
         with open(filepath, "wb") as fout:
             fout.write(f"{annotations}\n".encode())
