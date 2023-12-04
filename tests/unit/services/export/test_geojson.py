@@ -6,7 +6,7 @@ from zipfile import ZipFile
 import pytest_mock
 
 from kili.presentation.client.label import LabelClientMethods
-from kili.services.export.format.geojson import GeoJsonExporter
+from kili.services.export.format.geojson import GeoJsonExporter, _process_asset
 
 
 def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
@@ -64,3 +64,38 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
 
     assert output["type"] == "FeatureCollection"
     assert len(output["features"]) == 5  # 5 annotations in geotiff_image_project_assets.json
+
+
+def test_process_asset_with_external_id_containing_slash(tmp_path: Path):
+    asset = {
+        "latestLabel": {
+            "jsonResponse": {
+                "JOB_0": {
+                    "annotations": [
+                        {
+                            "categories": [{"name": "OBJECT_A"}],
+                            "mid": "20230111125258113-44528",
+                            "type": "rectangle",
+                            "boundingPoly": [
+                                {
+                                    "normalizedVertices": [
+                                        {"x": 0.6101435505380516, "y": 0.7689773770786136},
+                                        {"x": 0.6101435505380516, "y": 0.39426226491370664},
+                                        {"x": 0.8962087421313937, "y": 0.39426226491370664},
+                                        {"x": 0.8962087421313937, "y": 0.7689773770786136},
+                                    ]
+                                }
+                            ],
+                            "polyline": [],
+                            "children": {},
+                        }
+                    ]
+                }
+            }
+        },
+        "externalId": "a/b.png",
+    }
+    label_path = Path(tmp_path) / "labels"
+    _process_asset(asset, label_path)
+
+    assert Path(label_path / "a/b.png.geojson").is_file()

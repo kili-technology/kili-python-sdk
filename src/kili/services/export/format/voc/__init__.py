@@ -106,8 +106,9 @@ def _process_asset(
             annotations = _convert_from_kili_to_voc_format(
                 json_response, width, height, parameters, valid_jobs
             )
-            xml_filename = f"{frame_name}.xml"
-            with open(labels_folder / xml_filename, "wb") as fout:
+            filepath = labels_folder / f"{frame_name}.xml"
+            filepath.parent.mkdir(parents=True, exist_ok=True)
+            with open(filepath, "wb") as fout:
                 fout.write(f"{annotations}\n".encode())
 
     elif project_input_type == "IMAGE":
@@ -121,7 +122,9 @@ def _process_asset(
             json_response, width, height, parameters, valid_jobs
         )
         xml_filename = f'{asset["externalId"]}.xml'
-        with open(labels_folder / xml_filename, "wb") as fout:
+        filepath = labels_folder / xml_filename
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        with open(filepath, "wb") as fout:
             fout.write(f"{annotations}\n".encode())
 
 

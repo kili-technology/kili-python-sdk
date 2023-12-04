@@ -3,7 +3,6 @@
 import csv
 import json
 import logging
-import os
 import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
@@ -14,7 +13,6 @@ from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
 from kili.services.export.exceptions import (
     NotCompatibleOptions,
-    NotExportableAssetError,
 )
 from kili.services.export.repository import AbstractContentRepository
 from kili.services.export.tools import (
@@ -174,14 +172,6 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 local_media_dir=str(self.images_folder),
                 asset_filter_kwargs=self.asset_filter_kwargs,
             )
-            # if the asset["externalId"] has slashes in it, the export will not work
-            # since the slashes will be interpreted as folders
-            if any(asset["externalId"].find(os.sep) != -1 for asset in assets):
-                raise NotExportableAssetError(
-                    "The export is not supported for assets with externalIds that contain slashes."
-                    " Please remove the slashes from the externalIds using"
-                    " `kili.change_asset_external_ids()` and try again."
-                )
 
             self._check_geotiff_export_compatibility(assets)
 

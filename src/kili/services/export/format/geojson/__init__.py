@@ -93,7 +93,7 @@ def _process_asset(asset: Dict, labels_folder: Path) -> None:
     geojson_feature_collection = kili_json_response_to_feature_collection(
         asset["latestLabel"]["jsonResponse"]
     )
-
-    filename = f'{asset["externalId"]}.geojson'
-    with open(labels_folder / filename, "w", encoding="utf-8") as file:
+    filepath = labels_folder / f'{asset["externalId"]}.geojson'
+    filepath.parent.mkdir(parents=True, exist_ok=True)
+    with open(filepath, "w", encoding="utf-8") as file:
         json.dump(geojson_feature_collection, file)
