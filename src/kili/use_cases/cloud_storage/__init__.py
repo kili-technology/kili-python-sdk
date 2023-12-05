@@ -369,3 +369,58 @@ def _validate_data_differences(
                     f" {nb_assets_before} assets, after: {nb_assets_after} assets,"
                     f" dataDifferencesSummary: {asset_diff}"
                 )
+
+
+def create_data_integration(
+    self,
+    author_id: Optional[str],
+    allowed_paths: Optional[List[str]],
+    aws_access_point_arn: Optional[str],
+    aws_role_arn: Optional[str],
+    aws_role_external_id: Optional[str],
+    azure_connection_url: Optional[str],
+    azure_is_using_service_credentials: Optional[bool],
+    azure_sas_token: Optional[str],
+    azure_tenant_id: Optional[str],
+    gcp_bucket_name: Optional[str],
+    include_root_files: Optional[str],
+    internal_processing_authorized: Optional[str],
+    name: str,
+    organization_id: OrganizationId,
+    platform: DataIntegrationPlatform,
+    status: DataIntegrationStatus,
+    s3_access_key: Optional[str],
+    s3_bucket_name: Optional[str],
+    s3_endpoint: Optional[str],
+    s3_region: Optional[str],
+    s3_secret_key: Optional[str],
+    s3_session_token: Optional[str],
+    fields: ListOrTuple[str],
+) -> Dict:
+    """Create a data integration."""
+    data = DataIntegrationData(
+        author_id=author_id,
+        allowed_paths=allowed_paths,
+        aws_access_point_arn=aws_access_point_arn,
+        aws_role_arn=aws_role_arn,
+        aws_role_external_id=aws_role_external_id,
+        azure_connection_url=azure_connection_url,
+        azure_is_using_service_credentials=azure_is_using_service_credentials,
+        azure_sas_token=azure_sas_token,
+        azure_tenant_id=azure_tenant_id,
+        gcp_bucket_name=gcp_bucket_name,
+        include_root_files=include_root_files,
+        internal_processing_authorized=internal_processing_authorized,
+        name=name,
+        organization_id=organization_id,
+        platform=platform,
+        status=status,
+        s3_access_key=s3_access_key,
+        s3_bucket_name=s3_bucket_name,
+        s3_endpoint=s3_endpoint,
+        s3_region=s3_region,
+        s3_secret_key=s3_secret_key,
+        s3_session_token=s3_session_token,
+    )
+
+    return self.kili_api_gateway.create_data_integration(fields=fields, data=data)
