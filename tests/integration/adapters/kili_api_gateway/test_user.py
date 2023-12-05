@@ -119,11 +119,13 @@ def test_given_kili_gateway_when_creating_user_it_calls_proper_resolver(
     graphql_client.execute.assert_called_once_with(
         get_create_user_mutation(" id"),
         {
-            "email": "fake@email.com",
-            "firstname": "john",
-            "lastname": "doe",
-            "password": "fake_pass",
-            "organizationRole": "USER",
+            "data": {
+                "email": "fake@email.com",
+                "firstname": "john",
+                "lastname": "doe",
+                "password": "fake_pass",
+                "organizationRole": "USER",
+            }
         },
     )
 

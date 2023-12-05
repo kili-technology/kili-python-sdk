@@ -159,7 +159,7 @@ class UserClientMethods(BaseClientMethods):
             A dictionary with the id of the new user.
         """
         return UserUseCases(self.kili_api_gateway).create_user(
-            email=email,
+            email=email.lower(),
             password=password,
             organization_role=organization_role,
             firstname=firstname,
@@ -189,7 +189,12 @@ class UserClientMethods(BaseClientMethods):
             new_password_1=new_password_1,
             new_password_2=new_password_2,
             user_filter=UserFilter(
-                email=email, activated=None, api_key=None, id=None, id_in=None, organization_id=None
+                email=email,
+                activated=None,
+                api_key=None,
+                id=None,
+                id_in=None,
+                organization_id=None,
             ),
             fields=("id",),
         )
@@ -220,7 +225,12 @@ class UserClientMethods(BaseClientMethods):
         """
         return UserUseCases(self.kili_api_gateway).update_user(
             user_filter=UserFilter(
-                email=email, activated=None, api_key=None, id=None, id_in=None, organization_id=None
+                email=email,
+                activated=None,
+                api_key=None,
+                id=None,
+                id_in=None,
+                organization_id=None,
             ),
             firstname=firstname,
             lastname=lastname,
