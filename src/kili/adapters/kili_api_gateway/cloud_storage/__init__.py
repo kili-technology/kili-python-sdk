@@ -28,6 +28,7 @@ from .mappers import (
 )
 from .operations import (
     GQL_COUNT_DATA_INTEGRATIONS,
+    GQL_DELETE_DATA_INTEGRATION,
     get_add_data_connection_mutation,
     get_compute_data_connection_differences_mutation,
     get_create_integration_mutation,
@@ -130,7 +131,6 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(query, variables)
         return result["data"]
 
-
     def create_data_integration(self, data: DataIntegrationData, fields: ListOrTuple[str]) -> Dict:
         """Create a data integration."""
         fragment = fragment_builder(fields)
@@ -153,4 +153,10 @@ class CloudStorageOperationMixin(BaseOperationMixin):
             "where": {"id": data_integration_id},
         }
         result = self.graphql_client.execute(query, variables)
+        return result["data"]
+
+    def delete_data_integration(self, data_integration_id: DataIntegrationId) -> str:
+        """Delete a data integration."""
+        variables = {"where": {"id": data_integration_id}}
+        result = self.graphql_client.execute(GQL_DELETE_DATA_INTEGRATION, variables)
         return result["data"]

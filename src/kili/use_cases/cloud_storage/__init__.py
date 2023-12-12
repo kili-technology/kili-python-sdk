@@ -27,7 +27,6 @@ from kili.domain.cloud_storage import (
     DataIntegrationFilters,
     DataIntegrationId,
     DataIntegrationPlatform,
-    DataIntegrationStatus,
     ProjectId,
 )
 from kili.domain.organization import OrganizationId
@@ -373,7 +372,6 @@ def _validate_data_differences(
 
 def create_data_integration(
     self,
-    author_id: Optional[str],
     allowed_paths: Optional[List[str]],
     aws_access_point_arn: Optional[str],
     aws_role_arn: Optional[str],
@@ -386,9 +384,7 @@ def create_data_integration(
     include_root_files: Optional[str],
     internal_processing_authorized: Optional[str],
     name: str,
-    organization_id: OrganizationId,
     platform: DataIntegrationPlatform,
-    status: DataIntegrationStatus,
     s3_access_key: Optional[str],
     s3_bucket_name: Optional[str],
     s3_endpoint: Optional[str],
@@ -399,7 +395,7 @@ def create_data_integration(
 ) -> Dict:
     """Create a data integration."""
     data = DataIntegrationData(
-        author_id=author_id,
+        author_id=None,
         allowed_paths=allowed_paths,
         aws_access_point_arn=aws_access_point_arn,
         aws_role_arn=aws_role_arn,
@@ -412,9 +408,9 @@ def create_data_integration(
         include_root_files=include_root_files,
         internal_processing_authorized=internal_processing_authorized,
         name=name,
-        organization_id=organization_id,
+        organization_id=OrganizationId(""),
         platform=platform,
-        status=status,
+        status="CHECKING",
         s3_access_key=s3_access_key,
         s3_bucket_name=s3_bucket_name,
         s3_endpoint=s3_endpoint,
@@ -424,3 +420,8 @@ def create_data_integration(
     )
 
     return self.kili_api_gateway.create_data_integration(fields=fields, data=data)
+
+
+def delete_data_integration(self, data_integration_id: DataIntegrationId) -> Dict:
+    """Delete a data integration."""
+    return self.kili_api_gateway.delete_data_integration(data_integration_id=data_integration_id)

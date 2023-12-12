@@ -99,8 +99,15 @@ def get_create_integration_mutation(fragment: str) -> str:
     """Return the GraphQL mutation to create a data integration."""
     return f"""
         mutation CreateDataIntegration($data: DataIntegrationData!) {{
-          createDataIntegration(data: $data) {{
+          data: createDataIntegration(data: $data) {{
             {fragment}
           }}
         }}
         """
+
+
+GQL_DELETE_DATA_INTEGRATION = """
+    mutation DeleteDataIntegration($where: DataIntegrationWhere!) {
+            data: deleteDataIntegration(where: $where)
+        }
+    """
