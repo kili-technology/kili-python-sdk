@@ -54,6 +54,7 @@ def compute_data_connection_difference_data_mapper(
 def integration_data_mapper(data: DataIntegrationData) -> Dict:
     """."""
     return {
+        "authorId": data.author_id,
         "allowedPaths": data.allowed_paths,
         "allowedProjects": data.allowed_project,
         "awsAccessPointARN": data.aws_access_point_arn,

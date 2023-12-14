@@ -21,7 +21,6 @@ from kili.domain.types import ListOrTuple
 from .mappers import (
     add_data_connection_data_mapper,
     compute_data_connection_difference_data_mapper,
-    create_integration_data_mapper,
     data_connection_where_mapper,
     data_integration_where_mapper,
     integration_data_mapper,
@@ -135,7 +134,7 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         """Create a data integration."""
         fragment = fragment_builder(fields)
         query = get_create_integration_mutation(fragment)
-        variables = create_integration_data_mapper(data)
+        variables = integration_data_mapper(data)
         result = self.graphql_client.execute(query, variables)
         return result["data"]
 
