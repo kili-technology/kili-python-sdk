@@ -3,6 +3,7 @@
 from typing import Dict, Generator, Optional
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
+from kili.adapters.kili_api_gateway.cloud_storage.types import DataIntegrationData
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
@@ -13,6 +14,7 @@ from kili.domain.cloud_storage import (
     DataConnectionId,
     DataDifferenceType,
     DataIntegrationFilters,
+    DataIntegrationId,
 )
 from kili.domain.types import ListOrTuple
 
@@ -21,6 +23,7 @@ from .mappers import (
     compute_data_connection_difference_data_mapper,
     data_connection_where_mapper,
     data_integration_where_mapper,
+    integration_data_mapper,
 )
 from .operations import (
     GQL_COUNT_DATA_INTEGRATIONS,
@@ -29,6 +32,7 @@ from .operations import (
     get_data_connection_query,
     get_list_data_connections_query,
     get_list_data_integrations_query,
+    get_update_integration_mutation,
     get_validate_data_connection_differences_mutation,
 )
 from .types import (
@@ -121,5 +125,21 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         fragment = fragment_builder(fields)
         query = get_validate_data_connection_differences_mutation(fragment)
         variables = {"where": {"connectionId": data_connection_id, "type": data_difference_type}}
+        result = self.graphql_client.execute(query, variables)
+        return result["data"]
+
+    def update_data_integration(
+        self,
+        data_integration_id: DataIntegrationId,
+        data_integration_data: DataIntegrationData,
+        fields: ListOrTuple[str],
+    ) -> Dict:
+        """Update a data integration."""
+        fragment = fragment_builder(fields)
+        query = get_update_integration_mutation(fragment)
+        variables = {
+            "data": integration_data_mapper(data=data_integration_data),
+            "where": {"id": data_integration_id},
+        }
         result = self.graphql_client.execute(query, variables)
         return result["data"]

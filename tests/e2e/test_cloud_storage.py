@@ -8,6 +8,7 @@ from typing import Dict, List, Optional
 import pytest
 
 from kili.client import Kili
+from kili.domain.organization import OrganizationId
 
 
 @pytest.fixture()
@@ -121,6 +122,17 @@ def test_e2e_synchronize_cloud_storage_connection(
     )
     if not len(data_integrations) == count_data_integrations == 1:
         raise ValueError(f"Data integration {data_integration_id} not found. Cannot run test.")
+
+    # Update data integration
+    data_integration_updated = kili.update_data_integration(
+        data_integration_id=data_integration_id,
+        name="updated_name",
+        platform="AWS",
+        status="CONNECTED",
+        organization_id=OrganizationId("feat1-organization"),
+    )
+
+    assert data_integration_updated["name"] == "updated_name"
 
     # Create a data connection
     data_connection_id = kili.add_cloud_storage_connection(
