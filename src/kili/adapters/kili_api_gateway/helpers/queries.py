@@ -132,7 +132,7 @@ def fragment_builder(fields: ListOrTuple[str]) -> str:
     fragment = ""
 
     # split a field and its subfields (e.g. "roles.user.id" -> ["roles", "user.id"])
-    subfields = [field.split(".", 1) for field in fields if "." in field]
+    subfields = [field.split(".", 1) for field in fields if "." in field and "..." not in field]
 
     if subfields:
         # get the root fields (e.g. "roles" in "roles.user.id")
