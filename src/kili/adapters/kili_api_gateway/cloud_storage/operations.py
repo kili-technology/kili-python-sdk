@@ -85,7 +85,9 @@ GQL_COUNT_DATA_INTEGRATIONS = """
 def get_update_integration_mutation(fragment: str) -> str:
     """Return the GraphQL mutation to update a data integrations."""
     return f"""
-    mutation UpdatePropertiesInDataIntegration($data: DataIntegrationData!, $where: DataIntegrationWhere!) {{
+    mutation UpdatePropertiesInDataIntegration(
+      $data: DataIntegrationData!,
+      $where: DataIntegrationWhere!) {{
       data: updatePropertiesInDataIntegration(data: $data, where: $where) {{
         {fragment}
       }}
