@@ -10,8 +10,7 @@ from .project import ProjectId
 DataIntegrationId = NewType("DataIntegrationId", str)
 DataConnectionId = NewType("DataConnectionId", str)
 
-DataIntegrationPlatform = Literal["AWS", "Azure", "GCP"]
-
+DataIntegrationPlatform = Literal["AWS", "Azure", "GCP", "CustomS3"]
 
 DataIntegrationStatus = Literal["CONNECTED", "DISCONNECTED", "CHECKING"]
 
