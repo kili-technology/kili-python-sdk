@@ -9,8 +9,8 @@ mime_extensions = {
         "video/x-m4v,video/quicktime,video/webm"
     ),
     "Image": (
-        "image/jpeg,image/png,image/bmp,image/gif,image/webp,image/x-icon,"
-        "image/tiff,image/vnd.microsoft.icon,image/svg+xml,image/avif,image/apng"
+        "application/vnd.nitf, image/jp2,image/jpeg,image/png,image/bmp,image/gif,image/webp,"
+        "image/x-icon,image/tiff,image/vnd.microsoft.icon,image/svg+xml,image/avif,image/apng"
     ),
     "Pdf": "application/pdf",
     "Text": "text/plain",
