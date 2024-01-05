@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 
 def kili_segmentation_to_geojson_polygon(
-    bounding_poly: List[Dict[str, List[Dict[str, Any]]]]
+    bounding_poly: List[Dict[str, List[Dict[str, Any]]]],
 ) -> Dict[str, Any]:
     """Convert a Kili segmentation to a geojson polygon.
 

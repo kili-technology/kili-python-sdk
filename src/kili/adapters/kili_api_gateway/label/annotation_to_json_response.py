@@ -157,7 +157,7 @@ def _video_label_annotations_to_json_response(
 
 @overload
 def _key_annotations_iterator(
-    annotation: VideoTranscriptionAnnotation
+    annotation: VideoTranscriptionAnnotation,
 ) -> Generator[
     Tuple[VideoTranscriptionKeyAnnotation, int, int, Optional[VideoTranscriptionKeyAnnotation]],
     None,
@@ -168,7 +168,7 @@ def _key_annotations_iterator(
 
 @overload
 def _key_annotations_iterator(
-    annotation: VideoClassificationAnnotation
+    annotation: VideoClassificationAnnotation,
 ) -> Generator[
     Tuple[VideoClassificationKeyAnnotation, int, int, Optional[VideoClassificationKeyAnnotation]],
     None,
@@ -179,7 +179,7 @@ def _key_annotations_iterator(
 
 @overload
 def _key_annotations_iterator(
-    annotation: VideoObjectDetectionAnnotation
+    annotation: VideoObjectDetectionAnnotation,
 ) -> Generator[
     Tuple[VideoObjectDetectionKeyAnnotation, int, int, Optional[VideoObjectDetectionKeyAnnotation]],
     None,

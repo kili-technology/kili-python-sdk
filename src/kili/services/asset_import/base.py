@@ -191,7 +191,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def loop_on_batch(
-        func: Callable[[AssetLike], T]
+        func: Callable[[AssetLike], T],
     ) -> Callable[[ListOrTuple[AssetLike]], List[T]]:
         """Apply a function, that takes a single asset as input, on the whole batch."""
 
