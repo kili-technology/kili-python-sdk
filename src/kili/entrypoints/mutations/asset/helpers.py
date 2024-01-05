@@ -64,7 +64,7 @@ def process_update_properties_in_assets_parameters(
 
 
 def _handle_page_resolutions_array(
-    page_resolutions_array: Union[List[List[PageResolution]], List[List[Dict]]]
+    page_resolutions_array: Union[List[List[PageResolution]], List[List[Dict]]],
 ) -> List[List[Dict]]:
     page_resolutions_array_batch = []
     for page_resolution_array in page_resolutions_array:
