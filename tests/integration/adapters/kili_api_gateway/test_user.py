@@ -107,7 +107,7 @@ def test_given_kili_gateway_when_creating_user_it_calls_proper_resolver(
     _ = kili_gateway.create_user(
         fields=("id",),
         data=CreateUserDataKiliGatewayInput(
-            email="fake@email.com",
+            email="FAKE@email.com",
             firstname="john",
             lastname="doe",
             password="fake_pass",

@@ -53,7 +53,7 @@ class UserOperationMixin(BaseOperationMixin):
         """Create a user."""
         fragment = fragment_builder(fields)
         query = get_create_user_mutation(fragment)
-        variables = create_user_data_mapper(data)
+        variables = {"data": create_user_data_mapper(data)}
         result = self.graphql_client.execute(query, variables)
         return result["data"]
 
