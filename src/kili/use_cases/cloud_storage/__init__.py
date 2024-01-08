@@ -202,7 +202,6 @@ class CloudStorageUseCases(BaseUseCases):
     ) -> Dict:
         """Create a data integration."""
         data = DataIntegrationData(
-            author_id=None,
             allowed_project=allowed_project,
             allowed_paths=allowed_paths,
             aws_access_point_arn=aws_access_point_arn,
@@ -257,7 +256,6 @@ class CloudStorageUseCases(BaseUseCases):
     ) -> Dict:
         """Update data integration."""
         data = DataIntegrationData(
-            author_id=None,
             allowed_paths=allowed_paths,
             allowed_project=allowed_project,
             aws_access_point_arn=aws_access_point_arn,

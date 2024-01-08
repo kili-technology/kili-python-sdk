@@ -134,7 +134,7 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         """Create a data integration."""
         fragment = fragment_builder(fields)
         query = get_create_integration_mutation(fragment)
-        variables = integration_data_mapper(data)
+        variables = {"data": integration_data_mapper(data)}
         result = self.graphql_client.execute(query, variables)
         return result["data"]
 

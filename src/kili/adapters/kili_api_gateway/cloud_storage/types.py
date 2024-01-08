@@ -38,7 +38,6 @@ class DataIntegrationData:
 
     allowed_paths: Optional[List[str]]
     allowed_project: Optional[List[str]]
-    author_id: Optional[str]
     aws_access_point_arn: Optional[str]
     aws_role_arn: Optional[str]
     aws_role_external_id: Optional[str]
