@@ -32,6 +32,10 @@ mime_extensions_for_IV2 = {
 mime_extensions_for_py_scripts = ["text/x-python"]
 mime_extensions_for_txt_files = ["text/plain"]
 
+# These extensions require post-processing either because they can contain geospatial metadata,
+# or because they are not directly supported by the browser.
+mime_extensions_that_need_post_processing = ["application/vnd.nitf", "image/jp2", "image/tiff"]
+
 QUERY_BATCH_SIZE = 100
 MUTATION_BATCH_SIZE = 100
 MAX_CALLS_PER_MINUTE = 500

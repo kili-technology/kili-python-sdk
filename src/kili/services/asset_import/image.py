@@ -4,6 +4,8 @@ import mimetypes
 import os
 from typing import List
 
+from kili.core.constants import mime_extensions_that_need_post_processing
+
 from .base import BaseAbstractAssetImporter, BatchParams, ContentBatchImporter
 from .constants import LARGE_IMAGE_THRESHOLD_SIZE
 from .types import AssetLike
@@ -47,8 +49,7 @@ class ImageDataImporter(BaseAbstractAssetImporter):
             assert isinstance(path, str)
             mime_type, _ = mimetypes.guess_type(path.lower())
             is_large_image = os.path.getsize(path) >= LARGE_IMAGE_THRESHOLD_SIZE
-            is_tiff = mime_type == "image/tiff"
-            if is_large_image or is_tiff:
+            if is_large_image or mime_type in mime_extensions_that_need_post_processing:
                 async_assets.append(asset)
             else:
                 sync_assets.append(asset)
