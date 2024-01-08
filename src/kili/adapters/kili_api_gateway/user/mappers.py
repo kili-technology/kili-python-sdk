@@ -22,7 +22,7 @@ def user_where_mapper(filters: UserFilter) -> Dict:
 def create_user_data_mapper(data: CreateUserDataKiliGatewayInput) -> Dict:
     """Build the CreateUserDataKiliGatewayInput data variable to be sent in an operation."""
     return {
-        "email": data.email,
+        "email": data.email.lower(),
         "firstname": data.firstname,
         "lastname": data.lastname,
         "password": data.password,
