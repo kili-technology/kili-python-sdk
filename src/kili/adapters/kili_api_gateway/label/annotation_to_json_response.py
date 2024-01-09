@@ -7,6 +7,10 @@ from typing import Dict, Generator, List, Optional, Tuple, cast, overload
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.annotation import (
+    ClassicAnnotation,
+    ClassificationAnnotation,
+    RankingAnnotation,
+    TranscriptionAnnotation,
     Vertice,
     VideoAnnotation,
     VideoClassificationAnnotation,
@@ -54,11 +58,17 @@ class AnnotationsToJsonResponseConverter:
 
         Modifies the input label.
         """
-        if self._project_input_type == "VIDEO":
+        if self._project_input_type in {"VIDEO", "LLM_RLHF"}:
             annotations = list_annotations(
                 graphql_client=self._graphql_client,
                 label_id=label_id,
                 annotation_fields=("__typename", "id", "job", "path", "labelId"),
+                classification_annotation_fields=("annotationValue.categories",),
+                ranking_annotation_fields=(
+                    "annotationValue.orders.elements",
+                    "annotationValue.orders.rank",
+                ),
+                transcription_annotation_fields=("annotationValue.text",),
                 video_annotation_fields=(
                     "frames.start",
                     "frames.end",
@@ -79,10 +89,15 @@ class AnnotationsToJsonResponseConverter:
             if not annotations and self._label_has_json_response_data(label):
                 return
 
-            annotations = cast(List[VideoAnnotation], annotations)
-            converted_json_resp = _video_label_annotations_to_json_response(
-                annotations=annotations, json_interface=self._project_json_interface
-            )
+            if self._project_input_type == "VIDEO":
+                annotations = cast(List[VideoAnnotation], annotations)
+                converted_json_resp = _video_annotations_to_json_response(
+                    annotations=annotations, json_interface=self._project_json_interface
+                )
+            else:
+                annotations = cast(List[ClassicAnnotation], annotations)
+                converted_json_resp = _classic_annotations_to_json_response(annotations=annotations)
+
             label["jsonResponse"] = converted_json_resp
 
 
@@ -105,7 +120,7 @@ def _fill_empty_frames(json_response: Dict) -> None:
         json_response.setdefault(str(frame_id), {})
 
 
-def _video_label_annotations_to_json_response(
+def _video_annotations_to_json_response(
     annotations: List[VideoAnnotation], json_interface: Dict
 ) -> Dict[str, Dict[JobName, Dict]]:
     """Convert video label annotations to a video json response."""
@@ -147,12 +162,47 @@ def _video_label_annotations_to_json_response(
                 json_resp[frame_id] = {**json_resp[frame_id], **frame_json_resp}
 
         else:
-            raise NotImplementedError(f"Cannot convert annotation to json response: {ann}")
+            raise NotImplementedError(f"Cannot convert video annotation to json response: {ann}")
 
     _add_annotation_metadata(annotations, json_resp)
     _fill_empty_frames(json_resp)
 
     return dict(sorted(json_resp.items(), key=lambda item: int(item[0])))  # sort by frame id
+
+
+def _classic_annotations_to_json_response(
+    annotations: List[ClassicAnnotation],
+) -> Dict[str, Dict[JobName, Dict]]:
+    """Convert label annotations to a json response."""
+    json_resp = defaultdict(dict)
+
+    for ann in annotations:
+        if ann["__typename"] == "ClassificationAnnotation":
+            ann = cast(ClassificationAnnotation, ann)
+            ann_json_resp = _classification_annotation_to_json_response(ann)
+            for job_name, job_resp in ann_json_resp.items():
+                json_resp.setdefault(job_name, {}).setdefault("categories", []).extend(
+                    job_resp["categories"]
+                )
+
+        elif ann["__typename"] == "RankingAnnotation":
+            ann = cast(RankingAnnotation, ann)
+            ann_json_resp = _ranking_annotation_to_json_response(ann)
+            for job_name, job_resp in ann_json_resp.items():
+                json_resp.setdefault(job_name, {}).setdefault("orders", []).extend(
+                    job_resp["orders"]
+                )
+
+        elif ann["__typename"] == "TranscriptionAnnotation":
+            ann = cast(TranscriptionAnnotation, ann)
+            ann_json_resp = _transcription_annotation_to_json_response(ann)
+            for job_name, job_resp in ann_json_resp.items():
+                json_resp.setdefault(job_name, {}).setdefault("text", job_resp["text"])
+
+        else:
+            raise NotImplementedError(f"Cannot convert classic annotation to json response: {ann}")
+
+    return dict(json_resp)
 
 
 @overload
@@ -226,6 +276,40 @@ def _key_annotations_iterator(annotation: VideoAnnotation) -> Generator:
             yield key_ann, key_ann_start, key_ann_end, next_key_ann
 
 
+def _ranking_annotation_to_json_response(
+    annotation: RankingAnnotation,
+) -> Dict[JobName, Dict]:
+    """Convert ranking annotation to a json response.
+
+    Ranking jobs cannot have child jobs.
+    """
+    json_resp = {
+        annotation["job"]: {
+            "orders": sorted(
+                annotation["annotationValue"]["orders"], key=lambda item: int(item["rank"])
+            ),
+        }
+    }
+
+    return json_resp
+
+
+def _transcription_annotation_to_json_response(
+    annotation: TranscriptionAnnotation,
+) -> Dict[JobName, Dict]:
+    """Convert transcription annotation to a json response.
+
+    Transcription jobs cannot have child jobs.
+    """
+    json_resp = {
+        annotation["job"]: {
+            "text": annotation["annotationValue"]["text"],
+        }
+    }
+
+    return json_resp
+
+
 def _video_transcription_annotation_to_json_response(
     annotation: VideoTranscriptionAnnotation,
 ) -> Dict[str, Dict[JobName, Dict]]:
@@ -284,6 +368,25 @@ def _compute_children_json_resp(
             children_json_resp[frame_id] = {**children_json_resp[frame_id], **frame_json_resp}
 
     return children_json_resp
+
+
+def _classification_annotation_to_json_response(
+    annotation: ClassificationAnnotation,
+) -> Dict[JobName, Dict]:
+    # initialize the json response
+    json_resp = {
+        annotation["job"]: {
+            "categories": [],
+        }
+    }
+
+    # a frame can have one or multiple categories
+    categories = annotation["annotationValue"]["categories"]
+    for category in categories:
+        category_annotation: Dict = {"name": category}
+        json_resp[annotation["job"]]["categories"].append(category_annotation)
+
+    return json_resp
 
 
 def _video_classification_annotation_to_json_response(
