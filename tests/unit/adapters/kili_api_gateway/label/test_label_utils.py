@@ -3,11 +3,12 @@ from typing import Dict, List
 import pytest
 
 from kili.adapters.kili_api_gateway.label.annotation_to_json_response import (
+    _classic_annotations_to_json_response,
     _interpolate_point,
     _interpolate_rectangle,
-    _video_label_annotations_to_json_response,
+    _video_annotations_to_json_response,
 )
-from kili.domain.annotation import Vertice, VideoAnnotation
+from kili.domain.annotation import ClassicAnnotation, Vertice, VideoAnnotation
 
 from .test_data import (
     test_case_1,
@@ -22,6 +23,7 @@ from .test_data import (
     test_case_10,
     test_case_11,
     test_case_12,
+    test_case_14,
 )
 
 
@@ -112,9 +114,32 @@ def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
     _ = annotations
 
     # When
-    json_resp = _video_label_annotations_to_json_response(
-        annotations, json_interface=json_interface
-    )
+    json_resp = _video_annotations_to_json_response(annotations, json_interface=json_interface)
+
+    # Then
+    assert json_resp == expected_json_resp
+
+
+@pytest.mark.parametrize(
+    ("test_case_name", "annotations", "expected_json_resp"),
+    [
+        (
+            "test_case_14",
+            test_case_14.annotations,
+            test_case_14.expected_json_resp,
+        ),
+    ],
+)
+def test_given_classic_label_annotations_when_converting_to_json_resp_it_works(
+    test_case_name: str,
+    annotations: List[ClassicAnnotation],
+    expected_json_resp: Dict,
+):
+    # Given
+    _ = annotations
+
+    # When
+    json_resp = _classic_annotations_to_json_response(annotations)
 
     # Then
     assert json_resp == expected_json_resp
