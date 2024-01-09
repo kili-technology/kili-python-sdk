@@ -1,13 +1,12 @@
 """Functions to import assets into a VIDEO_LEGACY project."""
 
-import mimetypes
 import os
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from itertools import repeat
 from typing import List
 
-from kili.core.helpers import is_url
+from kili.core.helpers import get_mime_type, is_url
 from kili.services.asset_import.base import (
     BaseAbstractAssetImporter,
     BaseBatchImporter,
@@ -117,7 +116,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         for frame_path in frames:
             with open(frame_path, "rb") as file:
                 data_array.append(file.read())
-            content_type, _ = mimetypes.guess_type(frame_path)
+            content_type = get_mime_type(frame_path)
             content_type_array.append(content_type)
         with ThreadPoolExecutor() as threads:
             url_gen = threads.map(

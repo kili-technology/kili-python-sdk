@@ -44,6 +44,36 @@ class ImageTestCase(ImportTestCase):
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
+    def test_upload_from_one_local_jp2_image(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+        url = "https://storage.googleapis.com/label-public-staging/import-testing/test.jp2"
+        path_image = self.downloader(url)
+        assets = [{"content": path_image, "external_id": "local jp2 image"}]
+        import_assets(self.kili, self.project_id, assets)
+        expected_parameters = self.get_expected_async_call(
+            ["https://signed_url?id=id"],
+            ["local jp2 image"],
+            ["unique_id"],
+            ["{}"],
+            "GEO_SATELLITE",
+        )
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+
+    def test_upload_from_one_local_ntf_image(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+        url = "https://storage.googleapis.com/label-public-staging/import-testing/test.ntf"
+        path_image = self.downloader(url)
+        assets = [{"content": path_image, "external_id": "local ntf image"}]
+        import_assets(self.kili, self.project_id, assets)
+        expected_parameters = self.get_expected_async_call(
+            ["https://signed_url?id=id"],
+            ["local ntf image"],
+            ["unique_id"],
+            ["{}"],
+            "GEO_SATELLITE",
+        )
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+
     def test_upload_from_one_local_tiff_image(self, *_):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
         url = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"

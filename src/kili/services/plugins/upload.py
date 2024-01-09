@@ -22,7 +22,7 @@ from kili.core.graphql.operations.plugin.mutations import (
     GQL_UPDATE_WEBHOOK,
 )
 from kili.core.graphql.operations.plugin.queries import GQL_GET_PLUGIN_RUNNER_STATUS
-from kili.core.helpers import get_data_type
+from kili.core.helpers import get_mime_type
 from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
 from kili.utils.tempfile import TemporaryDirectory
@@ -48,9 +48,9 @@ def check_file_mime_type(
 ) -> bool:
     # pylint: disable=line-too-long
     """Returns true if the mime type of the file corresponds to one of compatible_mime_extensions."""
-    mime_type = get_data_type(path.as_posix())
+    mime_type = get_mime_type(path.as_posix())
 
-    if not (compatible_mime_extensions and mime_type):
+    if not compatible_mime_extensions or mime_type is None:
         return False
 
     correct_mime_type = mime_type in compatible_mime_extensions
