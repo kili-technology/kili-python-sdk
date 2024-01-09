@@ -30,7 +30,7 @@ from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
 )
-from kili.core.helpers import RetryLongWaitWarner, T, format_result, is_url
+from kili.core.helpers import RetryLongWaitWarner, T, format_result, get_mime_type, is_url
 from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters
 from kili.domain.organization import OrganizationFilters
@@ -440,7 +440,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         """
         if not os.path.isfile(path):
             raise FileNotFoundError(f"file {path} does not exist")
-        mime_type, _ = mimetypes.guess_type(path)
+        mime_type = get_mime_type(path)
         if mime_type is None:
             raise MimeTypeError(f"The mime type of the asset {path} has not been found")
 

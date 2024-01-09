@@ -1,10 +1,10 @@
 """Functions to import assets into an IMAGE project."""
 
-import mimetypes
 import os
 from typing import List
 
 from kili.core.constants import mime_extensions_that_need_post_processing
+from kili.core.helpers import get_mime_type
 
 from .base import BaseAbstractAssetImporter, BatchParams, ContentBatchImporter
 from .constants import LARGE_IMAGE_THRESHOLD_SIZE
@@ -47,7 +47,7 @@ class ImageDataImporter(BaseAbstractAssetImporter):
             path = asset.get("content")
             assert path
             assert isinstance(path, str)
-            mime_type, _ = mimetypes.guess_type(path.lower())
+            mime_type = get_mime_type(path)
             is_large_image = os.path.getsize(path) >= LARGE_IMAGE_THRESHOLD_SIZE
             if is_large_image or mime_type in mime_extensions_that_need_post_processing:
                 async_assets.append(asset)

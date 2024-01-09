@@ -45,14 +45,22 @@ def format_result(
     return object_(formatted_json)
 
 
-def get_data_type(path: str):
-    """Get the data type, either image/png or application/pdf.
+def get_mime_type(path: str):
+    """Provide the mime type of a file (e.g. image/png).
 
     Args:
         path: path of the file
     """
-    mime_type, _ = mimetypes.guess_type(path.lower())
-    return mime_type if mime_type else ""
+    path = path.lower()
+    mime_type, _ = mimetypes.guess_type(path)
+
+    # guess_type does not recognize JP2 files on Windows
+    if mime_type is None and path.endswith(".jp2"):
+        return "image/jp2"
+    # guess_type provides a wrong mime type for NITF files on Ubuntu
+    if path.endswith(".ntf") and mime_type != "application/vnd.nitf":
+        return "application/vnd.nitf"
+    return mime_type
 
 
 def is_url(path: object):
@@ -278,7 +286,7 @@ def get_file_paths_to_upload(
 def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
     # pylint: disable=line-too-long
     """Returns true if the mime type of the file corresponds to the allowed mime types of the project."""
-    mime_type = get_data_type(path.lower())
+    mime_type = get_mime_type(path.lower())
 
     if not (mime_extensions_for_IV2[input_type] and mime_type):
         return False
