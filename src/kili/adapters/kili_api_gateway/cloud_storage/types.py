@@ -48,10 +48,10 @@ class DataIntegrationData:
     gcp_bucket_name: Optional[str]
     include_root_files: Optional[str]
     internal_processing_authorized: Optional[str]
-    name: str
+    name: Optional[str]
     organization_id: OrganizationId
-    platform: DataIntegrationPlatform
-    status: DataIntegrationStatus
+    platform: Optional[DataIntegrationPlatform]
+    status: Optional[DataIntegrationStatus]
     s3_access_key: Optional[str]
     s3_bucket_name: Optional[str]
     s3_endpoint: Optional[str]

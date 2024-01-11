@@ -170,7 +170,7 @@ def test_e2e_synchronize_cloud_storage_connection(
 def test_e2e_update_data_integration(kili: Kili) -> None:
     """E2e test for data integration update method."""
     data_integration_id = "clhizyvxq00040j2ucmpuecw4"
-    # Create data integration
+    # Get the data integration
     data_integration = kili.cloud_storage_integrations(
         status="CONNECTED", cloud_storage_integration_id=data_integration_id
     )[0]
@@ -179,8 +179,6 @@ def test_e2e_update_data_integration(kili: Kili) -> None:
     data_integration_updated = kili.update_data_integration(
         data_integration_id=data_integration_id,
         name=f"{data_integration_name}_updated_name",
-        platform=data_integration["platform"],
-        status=data_integration["status"],
         organization_id=OrganizationId("feat1-organization"),
     )
 
@@ -189,8 +187,6 @@ def test_e2e_update_data_integration(kili: Kili) -> None:
     kili.update_data_integration(
         data_integration_id=data_integration_id,
         name=data_integration_name,
-        platform=data_integration["platform"],
-        status=data_integration["status"],
         organization_id=OrganizationId("feat1-organization"),
     )
 

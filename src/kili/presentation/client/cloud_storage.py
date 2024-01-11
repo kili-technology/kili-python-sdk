@@ -446,11 +446,8 @@ class CloudStorageClientMethods(BaseClientMethods):
     @typechecked
     def update_data_integration(
         self,
-        platform: DataIntegrationPlatform,
-        name: str,
-        status: DataIntegrationStatus,
-        organization_id: OrganizationId,
         data_integration_id: str,
+        organization_id: str,
         allowed_paths: Optional[List[str]] = None,
         allowed_project: Optional[List[str]] = None,
         aws_access_point_arn: Optional[str] = None,
@@ -463,6 +460,9 @@ class CloudStorageClientMethods(BaseClientMethods):
         gcp_bucket_name: Optional[str] = None,
         include_root_files: Optional[str] = None,
         internal_processing_authorized: Optional[str] = None,
+        name: Optional[str] = None,
+        platform: Optional[DataIntegrationPlatform] = None,
+        status: Optional[DataIntegrationStatus] = None,
         s3_access_key: Optional[str] = None,
         s3_bucket_name: Optional[str] = None,
         s3_endpoint: Optional[str] = None,
