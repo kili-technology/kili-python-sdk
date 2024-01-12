@@ -14,5 +14,5 @@ class NotificationFilter:
     """Notification filter."""
 
     has_been_seen: Optional[bool]
-    id: Optional[NotificationId]  # noqa: A003
+    id: Optional[NotificationId]
     user: Optional["UserFilter"]

@@ -19,7 +19,7 @@ class OrganizationFilters:
 class OrganizationMetricsFilters:
     """Dataclass to the OrganizationQuery to filter the results."""
 
-    id: OrganizationId  # noqa: A003
+    id: OrganizationId
     start_datetime: datetime
     end_datetime: datetime
 
@@ -40,4 +40,4 @@ class OrganizationToUpdateInput:
     """Organization to update use case input."""
 
     name: Optional[str] = None
-    license: Optional[dict] = None  # noqa: A003
+    license: Optional[dict] = None
