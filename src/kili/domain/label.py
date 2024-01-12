@@ -30,7 +30,7 @@ class LabelFilters:
     created_at_lte: Optional[str] = None
     honeypot_mark_gte: Optional[float] = None
     honeypot_mark_lte: Optional[float] = None
-    id: Optional[LabelId] = None  # noqa: A003
+    id: Optional[LabelId] = None
     id_in: Optional[ListOrTuple[LabelId]] = None
     labeler_in: Optional[ListOrTuple[str]] = None
     reviewer_in: Optional[ListOrTuple[str]] = None
