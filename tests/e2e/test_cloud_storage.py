@@ -72,9 +72,9 @@ def is_same_endpoint(endpoint_short_name: str, endpoint_url: str) -> bool:
         "expected_nb_assets_after_sync",
     ),
     [
-        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", None, 26),
-        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", ["chickens"], 26),
-        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", [], 0),
+        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", None, 41),
+        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", ["chickens"], 41),
+        ("STAGING", "AWS", "e39a035e575dd2f41b9e722caf4e18c5", [], 41),
         ("STAGING", "Azure", "5512237816bd1dde391368ed93332b75", None, 10),
         ("STAGING", "Azure", "3e7e98e2ab4af2d614d97acb7b970c2b", None, 10),
         ("STAGING", "Azure", "3e7e98e2ab4af2d614d97acb7b970c2b", ["bears"], 10),
@@ -123,17 +123,6 @@ def test_e2e_synchronize_cloud_storage_connection(
     if not len(data_integrations) == count_data_integrations == 1:
         raise ValueError(f"Data integration {data_integration_id} not found. Cannot run test.")
 
-    # Update data integration
-    data_integration_updated = kili.update_data_integration(
-        data_integration_id=data_integration_id,
-        name="updated_name",
-        platform="AWS",
-        status="CONNECTED",
-        organization_id=OrganizationId("feat1-organization"),
-    )
-
-    assert data_integration_updated["name"] == "updated_name"
-
     # Create a data connection
     data_connection_id = kili.add_cloud_storage_connection(
         project_id=project_id,
@@ -176,3 +165,56 @@ def test_e2e_synchronize_cloud_storage_connection(
     assert (
         nb_assets == expected_nb_assets_after_sync
     ), f"Expected {expected_nb_assets_after_sync} assets after sync. Got {nb_assets} assets."
+
+
+def test_e2e_update_data_integration(kili: Kili) -> None:
+    """E2e test for data integration update method."""
+    data_integration_id = "clhizyvxq00040j2ucmpuecw4"
+    # Get the data integration
+    data_integration = kili.cloud_storage_integrations(
+        status="CONNECTED", cloud_storage_integration_id=data_integration_id
+    )[0]
+    data_integration_name = data_integration["name"]
+    # Update data integration
+    data_integration_updated = kili.update_data_integration(
+        data_integration_id=data_integration_id,
+        name=f"{data_integration_name}_updated_name",
+        organization_id=OrganizationId("feat1-organization"),
+    )
+
+    assert data_integration_updated["name"] == f"{data_integration_name}_updated_name"
+
+    kili.update_data_integration(
+        data_integration_id=data_integration_id,
+        name=data_integration_name,
+        organization_id=OrganizationId("feat1-organization"),
+    )
+
+
+def test_e2e_create_and_delete_data_integration(kili: Kili) -> None:
+    """E2e test for data integration create and delete methods."""
+    # Create data integration
+    created_data_integration = kili.create_cloud_storage_integration(
+        aws_access_point_arn=os.getenv("KILI_TEST_AWS_ACCESS_POINT_ARN", ""),
+        aws_role_arn=os.getenv("KILI_TEST_AWS_ROLE_ARN", ""),
+        aws_role_external_id=os.getenv("KILI_TEST_AWS_ROLE_EXTERNAL_ID", ""),
+        name="E2E create data integration",
+        platform="AWS",
+    )
+    assert created_data_integration["name"] == "E2E create data integration"
+
+    count_data_integrations_before = kili.count_cloud_storage_integrations(
+        cloud_storage_integration_id=created_data_integration["id"]
+    )
+    # Delete data integration
+    deleted_data_integration = kili.delete_cloud_storage_integration(
+        cloud_storage_integration_id=created_data_integration["id"]
+    )
+
+    assert deleted_data_integration == created_data_integration["id"]
+
+    count_data_integrations_after = kili.count_cloud_storage_integrations(
+        cloud_storage_integration_id=created_data_integration["id"]
+    )
+
+    assert count_data_integrations_after == count_data_integrations_before - 1

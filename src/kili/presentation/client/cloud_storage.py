@@ -358,13 +358,17 @@ class CloudStorageClientMethods(BaseClientMethods):
         )
 
     @typechecked
-    def update_data_integration(
+    def create_cloud_storage_integration(
         self,
         platform: DataIntegrationPlatform,
         name: str,
-        status: DataIntegrationStatus,
-        organization_id: OrganizationId,
-        data_integration_id: str,
+        fields: ListOrTuple[str] = (
+            "id",
+            "name",
+            "status",
+            "platform",
+            "allowedPaths",
+        ),
         allowed_paths: Optional[List[str]] = None,
         allowed_project: Optional[List[str]] = None,
         aws_access_point_arn: Optional[str] = None,
@@ -377,6 +381,88 @@ class CloudStorageClientMethods(BaseClientMethods):
         gcp_bucket_name: Optional[str] = None,
         include_root_files: Optional[str] = None,
         internal_processing_authorized: Optional[str] = None,
+        s3_access_key: Optional[str] = None,
+        s3_bucket_name: Optional[str] = None,
+        s3_endpoint: Optional[str] = None,
+        s3_region: Optional[str] = None,
+        s3_secret_key: Optional[str] = None,
+        s3_session_token: Optional[str] = None,
+    ) -> Dict:
+        """Create a cloud storage integration.
+
+        Args:
+            fields: All the fields to request among the possible fields for the
+            cloud storage integrations.
+                See [the documentation]
+                (https://docs.kili-technology.com/reference/graphql-api#dataintegration)
+                for all possible fields.
+            allowed_paths: List of allowed paths.
+            allowed_project: List of allowed projects.
+            aws_access_point_arn: AWS access point ARN.
+            aws_role_arn: AWS role ARN.
+            aws_role_external_id: AWS role external ID.
+            azure_connection_url: Azure connection URL.
+            azure_is_using_service_credentials: Whether Azure is using service credentials.
+            azure_sas_token: Azure SAS token.
+            azure_tenant_id: Azure tenant ID.
+            gcp_bucket_name: GCP bucket name.
+            include_root_files: Whether to include root files.
+            internal_processing_authorized: Whether internal processing is authorized.
+            name: Name of the cloud storage integration.
+            platform: Platform of the cloud storage integration.
+            s3_access_key: S3 access key.
+            s3_bucket_name: S3 bucket name.
+            s3_endpoint: S3 endpoint.
+            s3_region: S3 region.
+            s3_secret_key: S3 secret key.
+            s3_session_token: S3 session token.
+        """
+        cloud_storage_use_cases = CloudStorageUseCases(self.kili_api_gateway)
+
+        return cloud_storage_use_cases.create_data_integration(
+            platform=platform,
+            name=name,
+            fields=fields,
+            allowed_paths=allowed_paths,
+            allowed_project=allowed_project,
+            aws_access_point_arn=aws_access_point_arn,
+            aws_role_arn=aws_role_arn,
+            aws_role_external_id=aws_role_external_id,
+            azure_connection_url=azure_connection_url,
+            azure_is_using_service_credentials=azure_is_using_service_credentials,
+            azure_sas_token=azure_sas_token,
+            azure_tenant_id=azure_tenant_id,
+            gcp_bucket_name=gcp_bucket_name,
+            include_root_files=include_root_files,
+            internal_processing_authorized=internal_processing_authorized,
+            s3_access_key=s3_access_key,
+            s3_bucket_name=s3_bucket_name,
+            s3_endpoint=s3_endpoint,
+            s3_region=s3_region,
+            s3_secret_key=s3_secret_key,
+            s3_session_token=s3_session_token,
+        )
+
+    @typechecked
+    def update_data_integration(
+        self,
+        data_integration_id: str,
+        organization_id: str,
+        allowed_paths: Optional[List[str]] = None,
+        allowed_project: Optional[List[str]] = None,
+        aws_access_point_arn: Optional[str] = None,
+        aws_role_arn: Optional[str] = None,
+        aws_role_external_id: Optional[str] = None,
+        azure_connection_url: Optional[str] = None,
+        azure_is_using_service_credentials: Optional[bool] = None,
+        azure_sas_token: Optional[str] = None,
+        azure_tenant_id: Optional[str] = None,
+        gcp_bucket_name: Optional[str] = None,
+        include_root_files: Optional[str] = None,
+        internal_processing_authorized: Optional[str] = None,
+        name: Optional[str] = None,
+        platform: Optional[DataIntegrationPlatform] = None,
+        status: Optional[DataIntegrationStatus] = None,
         s3_access_key: Optional[str] = None,
         s3_bucket_name: Optional[str] = None,
         s3_endpoint: Optional[str] = None,
@@ -435,4 +521,19 @@ class CloudStorageClientMethods(BaseClientMethods):
             s3_secret_key=s3_secret_key,
             s3_session_token=s3_session_token,
             status=status,
+        )
+
+    @typechecked
+    def delete_cloud_storage_integration(self, cloud_storage_integration_id: str) -> str:
+        """Delete a cloud storage integration.
+
+        Args:
+            cloud_storage_integration_id: Id of the cloud storage integration.
+        """
+        data_integration_id = DataIntegrationId(cloud_storage_integration_id)
+
+        cloud_storage_use_cases = CloudStorageUseCases(self.kili_api_gateway)
+
+        return cloud_storage_use_cases.delete_data_integration(
+            data_integration_id=data_integration_id
         )

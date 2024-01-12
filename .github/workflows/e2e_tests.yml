@@ -264,6 +264,9 @@ jobs:
           KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
           KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
           KILI_TEST_ORGANIZATION_ID: ${{ secrets[format('KILI_TEST_ORGANIZATION_ID_{0}', env.TEST_AGAINST)] }}
+          KILI_TEST_AWS_ACCESS_POINT_ARN: ${{ secrets.KILI_TEST_AWS_ACCESS_POINT_ARN }}
+          KILI_TEST_AWS_ROLE_ARN: ${{ secrets.KILI_TEST_AWS_ROLE_ARN }}
+          KILI_TEST_AWS_ROLE_EXTERNAL_ID: ${{ secrets.KILI_TEST_AWS_ROLE_EXTERNAL_ID }}
 
       - name: Notebook tests
         # we don't run notebook tests on push to main
