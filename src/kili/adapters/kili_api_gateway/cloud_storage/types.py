@@ -37,7 +37,7 @@ class DataIntegrationData:
     """Data integration input data."""
 
     allowed_paths: Optional[List[str]]
-    allowed_project: Optional[List[str]]
+    allowed_projects: Optional[List[str]]
     aws_access_point_arn: Optional[str]
     aws_role_arn: Optional[str]
     aws_role_external_id: Optional[str]
@@ -49,7 +49,7 @@ class DataIntegrationData:
     include_root_files: Optional[str]
     internal_processing_authorized: Optional[str]
     name: Optional[str]
-    organization_id: OrganizationId
+    organization_id: Optional[OrganizationId]
     platform: Optional[DataIntegrationPlatform]
     status: Optional[DataIntegrationStatus]
     s3_access_key: Optional[str]

@@ -370,7 +370,7 @@ class CloudStorageClientMethods(BaseClientMethods):
             "allowedPaths",
         ),
         allowed_paths: Optional[List[str]] = None,
-        allowed_project: Optional[List[str]] = None,
+        allowed_projects: Optional[List[str]] = None,
         aws_access_point_arn: Optional[str] = None,
         aws_role_arn: Optional[str] = None,
         aws_role_external_id: Optional[str] = None,
@@ -388,16 +388,14 @@ class CloudStorageClientMethods(BaseClientMethods):
         s3_secret_key: Optional[str] = None,
         s3_session_token: Optional[str] = None,
     ) -> Dict:
+        # pylint: disable=line-too-long
         """Create a cloud storage integration.
 
         Args:
-            fields: All the fields to request among the possible fields for the
-            cloud storage integrations.
-                See [the documentation]
-                (https://docs.kili-technology.com/reference/graphql-api#dataintegration)
-                for all possible fields.
+            fields: All the fields to request among the possible fields for the cloud storage integration.
+                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataintegration) for all possible fields.
             allowed_paths: List of allowed paths.
-            allowed_project: List of allowed projects.
+            allowed_projects: List of allowed projects.
             aws_access_point_arn: AWS access point ARN.
             aws_role_arn: AWS role ARN.
             aws_role_external_id: AWS role external ID.
@@ -424,7 +422,7 @@ class CloudStorageClientMethods(BaseClientMethods):
             name=name,
             fields=fields,
             allowed_paths=allowed_paths,
-            allowed_project=allowed_project,
+            allowed_projects=allowed_projects,
             aws_access_point_arn=aws_access_point_arn,
             aws_role_arn=aws_role_arn,
             aws_role_external_id=aws_role_external_id,
@@ -444,12 +442,11 @@ class CloudStorageClientMethods(BaseClientMethods):
         )
 
     @typechecked
-    def update_data_integration(
+    def update_cloud_storage_integration(
         self,
-        data_integration_id: str,
-        organization_id: str,
+        cloud_storage_integration_id: str,
         allowed_paths: Optional[List[str]] = None,
-        allowed_project: Optional[List[str]] = None,
+        allowed_projects: Optional[List[str]] = None,
         aws_access_point_arn: Optional[str] = None,
         aws_role_arn: Optional[str] = None,
         aws_role_external_id: Optional[str] = None,
@@ -461,6 +458,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         include_root_files: Optional[str] = None,
         internal_processing_authorized: Optional[str] = None,
         name: Optional[str] = None,
+        organization_id: Optional[str] = None,
         platform: Optional[DataIntegrationPlatform] = None,
         status: Optional[DataIntegrationStatus] = None,
         s3_access_key: Optional[str] = None,
@@ -470,11 +468,11 @@ class CloudStorageClientMethods(BaseClientMethods):
         s3_secret_key: Optional[str] = None,
         s3_session_token: Optional[str] = None,
     ) -> Dict:
-        """Update a data integration.
+        """Update cloud storage data integration.
 
         Args:
             allowed_paths: List of allowed paths.
-            allowed_project: List of allowed projects.
+            allowed_projects: List of allowed projects.
             aws_access_point_arn: AWS access point ARN.
             aws_role_arn: AWS role ARN.
             aws_role_external_id: AWS role external ID.
@@ -482,7 +480,7 @@ class CloudStorageClientMethods(BaseClientMethods):
             azure_is_using_service_credentials: Whether Azure is using service credentials.
             azure_sas_token: Azure SAS token.
             azure_tenant_id: Azure tenant ID.
-            data_integration_id: Data integration ID.
+            cloud_storage_integration_id: Data integration ID.
             gcp_bucket_name: GCP bucket name.
             include_root_files: Whether to include root files.
             internal_processing_authorized: Whether internal processing is authorized.
@@ -498,11 +496,11 @@ class CloudStorageClientMethods(BaseClientMethods):
             s3_session_token: S3 session token.
         """
         return CloudStorageUseCases(self.kili_api_gateway).update_data_integration(
+            data_integration_id=DataIntegrationId(cloud_storage_integration_id),
             name=name,
-            data_integration_id=DataIntegrationId(data_integration_id),
             platform=platform,
             allowed_paths=allowed_paths,
-            allowed_project=allowed_project,
+            allowed_projects=allowed_projects,
             aws_access_point_arn=aws_access_point_arn,
             aws_role_arn=aws_role_arn,
             aws_role_external_id=aws_role_external_id,
@@ -530,10 +528,10 @@ class CloudStorageClientMethods(BaseClientMethods):
         Args:
             cloud_storage_integration_id: Id of the cloud storage integration.
         """
-        data_integration_id = DataIntegrationId(cloud_storage_integration_id)
+        cloud_storage_integration_id = DataIntegrationId(cloud_storage_integration_id)
 
         cloud_storage_use_cases = CloudStorageUseCases(self.kili_api_gateway)
 
         return cloud_storage_use_cases.delete_data_integration(
-            data_integration_id=data_integration_id
+            data_integration_id=cloud_storage_integration_id
         )

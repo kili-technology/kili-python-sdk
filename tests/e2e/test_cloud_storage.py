@@ -8,7 +8,6 @@ from typing import Dict, List, Optional
 import pytest
 
 from kili.client import Kili
-from kili.domain.organization import OrganizationId
 
 
 @pytest.fixture()
@@ -167,8 +166,8 @@ def test_e2e_synchronize_cloud_storage_connection(
     ), f"Expected {expected_nb_assets_after_sync} assets after sync. Got {nb_assets} assets."
 
 
-def test_e2e_update_data_integration(kili: Kili) -> None:
-    """E2e test for data integration update method."""
+def test_e2e_update_cloud_storage_integration(kili: Kili) -> None:
+    """E2e test for cloud storage data integration update method."""
     data_integration_id = "clhizyvxq00040j2ucmpuecw4"
     # Get the data integration
     data_integration = kili.cloud_storage_integrations(
@@ -176,23 +175,21 @@ def test_e2e_update_data_integration(kili: Kili) -> None:
     )[0]
     data_integration_name = data_integration["name"]
     # Update data integration
-    data_integration_updated = kili.update_data_integration(
-        data_integration_id=data_integration_id,
+    data_integration_updated = kili.update_cloud_storage_integration(
+        cloud_storage_integration_id=data_integration_id,
         name=f"{data_integration_name}_updated_name",
-        organization_id=OrganizationId("feat1-organization"),
     )
 
     assert data_integration_updated["name"] == f"{data_integration_name}_updated_name"
 
-    kili.update_data_integration(
-        data_integration_id=data_integration_id,
+    kili.update_cloud_storage_integration(
+        cloud_storage_integration_id=data_integration_id,
         name=data_integration_name,
-        organization_id=OrganizationId("feat1-organization"),
     )
 
 
-def test_e2e_create_and_delete_data_integration(kili: Kili) -> None:
-    """E2e test for data integration create and delete methods."""
+def test_e2e_create_and_delete_cloud_storage_integration(kili: Kili) -> None:
+    """E2e test for cloud storage data integration create and delete methods."""
     # Create data integration
     created_data_integration = kili.create_cloud_storage_integration(
         aws_access_point_arn=os.getenv("KILI_TEST_AWS_ACCESS_POINT_ARN", ""),
