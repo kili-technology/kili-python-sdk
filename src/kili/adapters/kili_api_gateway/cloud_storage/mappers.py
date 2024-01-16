@@ -55,7 +55,7 @@ def integration_data_mapper(data: DataIntegrationData) -> Dict:
     """."""
     return {
         "allowedPaths": data.allowed_paths,
-        "allowedProjects": data.allowed_project,
+        "allowedProjects": data.allowed_projects,
         "awsAccessPointARN": data.aws_access_point_arn,
         "awsRoleARN": data.aws_role_arn,
         "awsRoleExternalId": data.aws_role_external_id,

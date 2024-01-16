@@ -179,7 +179,7 @@ class CloudStorageUseCases(BaseUseCases):
     def create_data_integration(
         self,
         allowed_paths: Optional[List[str]],
-        allowed_project: Optional[List[str]],
+        allowed_projects: Optional[List[str]],
         aws_access_point_arn: Optional[str],
         aws_role_arn: Optional[str],
         aws_role_external_id: Optional[str],
@@ -202,8 +202,8 @@ class CloudStorageUseCases(BaseUseCases):
     ) -> Dict:
         """Create a data integration."""
         data = DataIntegrationData(
-            allowed_project=allowed_project,
             allowed_paths=allowed_paths,
+            allowed_projects=allowed_projects,
             aws_access_point_arn=aws_access_point_arn,
             aws_role_arn=aws_role_arn,
             aws_role_external_id=aws_role_external_id,
@@ -230,8 +230,9 @@ class CloudStorageUseCases(BaseUseCases):
 
     def update_data_integration(
         self,
+        data_integration_id: DataIntegrationId,
         allowed_paths: Optional[List[str]],
-        allowed_project: Optional[List[str]],
+        allowed_projects: Optional[List[str]],
         aws_access_point_arn: Optional[str],
         aws_role_arn: Optional[str],
         aws_role_external_id: Optional[str],
@@ -239,13 +240,12 @@ class CloudStorageUseCases(BaseUseCases):
         azure_is_using_service_credentials: Optional[bool],
         azure_sas_token: Optional[str],
         azure_tenant_id: Optional[str],
-        data_integration_id: DataIntegrationId,
         gcp_bucket_name: Optional[str],
         include_root_files: Optional[str],
         internal_processing_authorized: Optional[str],
         name: Optional[str],
         platform: Optional[DataIntegrationPlatform],
-        organization_id: str,
+        organization_id: Optional[str],
         s3_access_key: Optional[str],
         s3_bucket_name: Optional[str],
         s3_endpoint: Optional[str],
@@ -255,9 +255,10 @@ class CloudStorageUseCases(BaseUseCases):
         status: Optional[DataIntegrationStatus],
     ) -> Dict:
         """Update data integration."""
+        organization_id = OrganizationId(organization_id) if organization_id else None
         data = DataIntegrationData(
             allowed_paths=allowed_paths,
-            allowed_project=allowed_project,
+            allowed_projects=allowed_projects,
             aws_access_point_arn=aws_access_point_arn,
             aws_role_arn=aws_role_arn,
             aws_role_external_id=aws_role_external_id,
@@ -269,7 +270,7 @@ class CloudStorageUseCases(BaseUseCases):
             include_root_files=include_root_files,
             internal_processing_authorized=internal_processing_authorized,
             name=name,
-            organization_id=OrganizationId(organization_id),
+            organization_id=organization_id,
             platform=platform,
             status=status,
             s3_access_key=s3_access_key,
@@ -286,14 +287,14 @@ class CloudStorageUseCases(BaseUseCases):
             fields += ("id",)
 
         return self._kili_api_gateway.update_data_integration(
-            data_integration_id, data_integration_data=data, fields=fields
+            data_integration_id,
+            data_integration_data=data,
+            fields=fields,
         )
 
     def delete_data_integration(self, data_integration_id: DataIntegrationId) -> str:
         """Delete a data integration."""
-        return self._kili_api_gateway.delete_data_integration(
-            data_integration_id=data_integration_id
-        )
+        return self._kili_api_gateway.delete_data_integration(data_integration_id)
 
 
 def _compute_differences(
