@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 
 [project]
 name = "kili"
-version = "2.149.0"
+version = "2.150.0"
 description = "Python client for Kili Technology labeling tool"
 readme = "README.md"
 authors = [{ name = "Kili Technology", email = "contact@kili-technology.com" }]
