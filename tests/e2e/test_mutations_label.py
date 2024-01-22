@@ -1,3 +1,4 @@
+import time
 from typing import Dict
 
 import pytest
@@ -41,9 +42,9 @@ def project(kili: Kili):
 
     assert kili.count_labels(project_id=project["id"]) == 4
 
-    yield project
+    return project
 
-    kili.delete_project(project["id"])
+    # kili.delete_project(project["id"])
 
 
 def test_e2e_update_labels(kili: Kili, project: Dict):
@@ -162,4 +163,6 @@ def test_append_many_labels(kili: Kili, project_and_asset_id):
         label_type="DEFAULT",
     )
 
+    # we wait for 2 seconds here to prevent database sync replica problems
+    time.sleep(2)
     assert kili.count_labels(project_id=project_id) == N_LABELS
