@@ -85,7 +85,7 @@ dev = [
   # profiling
   "pyinstrument",
   # dead code detection
-  "vulture==2.10",
+  "vulture==2.11",
   "dead==1.5.2",
   # other optional dependencies
   "opencv-python >= 4.0.0, < 5.0.0",
