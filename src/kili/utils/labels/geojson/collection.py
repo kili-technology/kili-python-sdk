@@ -7,6 +7,9 @@ from .bbox import (
     geojson_polygon_feature_to_kili_bbox_annotation,
     kili_bbox_annotation_to_geojson_polygon_feature,
 )
+from .exceptions import (
+    ConversionError,
+)
 from .line import (
     geojson_linestring_feature_to_kili_line_annotation,
     kili_line_annotation_to_geojson_linestring_feature,
@@ -146,8 +149,16 @@ def kili_json_response_to_feature_collection(json_response: Dict[str, Any]) -> D
                 continue
 
             converter = annotation_tool_to_converter[annotation_tool]
-            feature = converter(ann, job_name=job_name)
-            features.append(feature)
+
+            try:
+                feature = converter(ann, job_name=job_name)
+                features.append(feature)
+            except ConversionError as error:
+                warnings.warn(
+                    error.args[0],
+                    stacklevel=2,
+                )
+                continue
 
     if jobs_skipped:
         warnings.warn(f"Jobs {jobs_skipped} cannot be exported to GeoJson format.", stacklevel=2)
