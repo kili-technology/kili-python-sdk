@@ -1,5 +1,8 @@
 import json
 from pathlib import Path
+from typing import Any, Dict, List
+
+import pytest
 
 from kili.utils.labels.geojson import (
     features_to_feature_collection,
@@ -20,6 +23,16 @@ from kili.utils.labels.geojson import (
     kili_polygon_to_geojson_polygon,
     kili_segmentation_annotation_to_geojson_polygon_feature,
     kili_segmentation_to_geojson_polygon,
+)
+from kili.utils.labels.geojson.polygon import (
+    has_intersection,
+)
+
+from .test_data import (
+    has_intersection_test_cases,
+    kili_polygon_annotation_to_geojson_polygon_feature_test_cases,
+    kili_polygon_to_geojson_polygon_test_cases,
+    kili_polygon_to_geojson_polygon_test_error_cases,
 )
 
 
@@ -136,114 +149,65 @@ def test_kili_bbox_annotation_to_geojson_polygon_feature():
     assert output == kili_bbox_ann
 
 
-def test_kili_polygon_to_geojson_polygon():
-    normalized_vertices = [
-        {"x": 4.4310542897769665, "y": 52.19847958268726},
-        {"x": 4.424421731366076, "y": 52.202545578240006},
-        {"x": 4.416462661273006, "y": 52.20569646893471},
-        {"x": 4.407840335338849, "y": 52.20864387409585},
-        {"x": 4.40352917237179, "y": 52.21108295809601},
-        {"x": 4.399052195444408, "y": 52.2142332434119},
-        {"x": 4.393911962675979, "y": 52.213217046751694},
-        {"x": 4.395404288318439, "y": 52.21037157242832},
-        {"x": 4.406513823656671, "y": 52.20610301920179},
-        {"x": 4.414970335630547, "y": 52.20376530436754},
-        {"x": 4.421602894041437, "y": 52.201020873500795},
-        {"x": 4.423095219683898, "y": 52.19898785247491},
-        {"x": 4.427572196611239, "y": 52.19695473844905},
-    ]
-
+@pytest.mark.parametrize(
+    ("test_case_name", "normalized_vertices", "expected_output"),
+    kili_polygon_to_geojson_polygon_test_cases.test_cases,
+)
+def test_kili_polygon_to_geojson_polygon(
+    test_case_name: str,
+    normalized_vertices: List,
+    expected_output: Dict,
+):
     output = kili_polygon_to_geojson_polygon(normalized_vertices)
 
-    assert output == {
-        "coordinates": [
-            [
-                [4.4310542897769665, 52.19847958268726],
-                [4.424421731366076, 52.202545578240006],
-                [4.416462661273006, 52.20569646893471],
-                [4.407840335338849, 52.20864387409585],
-                [4.40352917237179, 52.21108295809601],
-                [4.399052195444408, 52.2142332434119],
-                [4.393911962675979, 52.213217046751694],
-                [4.395404288318439, 52.21037157242832],
-                [4.406513823656671, 52.20610301920179],
-                [4.414970335630547, 52.20376530436754],
-                [4.421602894041437, 52.201020873500795],
-                [4.423095219683898, 52.19898785247491],
-                [4.427572196611239, 52.19695473844905],
-                [4.4310542897769665, 52.19847958268726],
-            ]
-        ],
-        "type": "Polygon",
-    }
+    assert output == expected_output
 
 
-def test_kili_polygon_annotation_to_geojson_polygon_feature():
-    polygon_ann = {
-        "children": {},
-        "boundingPoly": [
-            {
-                "normalizedVertices": [
-                    {"x": 4.4310542897769665, "y": 52.19847958268726},
-                    {"x": 4.424421731366076, "y": 52.202545578240006},
-                    {"x": 4.416462661273006, "y": 52.20569646893471},
-                    {"x": 4.407840335338849, "y": 52.20864387409585},
-                    {"x": 4.40352917237179, "y": 52.21108295809601},
-                    {"x": 4.399052195444408, "y": 52.2142332434119},
-                    {"x": 4.393911962675979, "y": 52.213217046751694},
-                    {"x": 4.395404288318439, "y": 52.21037157242832},
-                    {"x": 4.406513823656671, "y": 52.20610301920179},
-                    {"x": 4.414970335630547, "y": 52.20376530436754},
-                    {"x": 4.421602894041437, "y": 52.201020873500795},
-                    {"x": 4.423095219683898, "y": 52.19898785247491},
-                    {"x": 4.427572196611239, "y": 52.19695473844905},
-                ]
-            }
-        ],
-        "categories": [{"name": "A"}],
-        "mid": "20230712154012841-65343",
-        "type": "polygon",
-    }
+@pytest.mark.parametrize(
+    ("test_case_name", "polygon_annotation", "job_name", "expected_output"),
+    kili_polygon_annotation_to_geojson_polygon_feature_test_cases.test_cases,
+)
+def test_kili_polygon_annotation_to_geojson_polygon_feature(
+    test_case_name: str,
+    polygon_annotation: Dict,
+    job_name: str,
+    expected_output: Dict,
+):
+    # Convert kili annotation to geojson
+    output = kili_polygon_annotation_to_geojson_polygon_feature(
+        polygon_annotation, job_name=job_name
+    )
+    assert output == expected_output
 
-    # kili to geojson
-    output = kili_polygon_annotation_to_geojson_polygon_feature(polygon_ann, job_name="POLYGON_JOB")
-    assert output == {
-        "geometry": {
-            "coordinates": [
-                [
-                    [4.4310542897769665, 52.19847958268726],
-                    [4.424421731366076, 52.202545578240006],
-                    [4.416462661273006, 52.20569646893471],
-                    [4.407840335338849, 52.20864387409585],
-                    [4.40352917237179, 52.21108295809601],
-                    [4.399052195444408, 52.2142332434119],
-                    [4.393911962675979, 52.213217046751694],
-                    [4.395404288318439, 52.21037157242832],
-                    [4.406513823656671, 52.20610301920179],
-                    [4.414970335630547, 52.20376530436754],
-                    [4.421602894041437, 52.201020873500795],
-                    [4.423095219683898, 52.19898785247491],
-                    [4.427572196611239, 52.19695473844905],
-                    [4.4310542897769665, 52.19847958268726],
-                ]
-            ],
-            "type": "Polygon",
-        },
-        "properties": {
-            "kili": {
-                "categories": [{"name": "A"}],
-                "type": "polygon",
-                "children": {},
-                "job": "POLYGON_JOB",
-            }
-        },
-        "type": "Feature",
-        "id": "20230712154012841-65343",
-    }
-
-    # geojson to kili
+    # Convert Geojson format to kili annotation
     output = geojson_polygon_feature_to_kili_polygon_annotation(output)
-    assert output == polygon_ann
+    assert output == polygon_annotation
+
+
+@pytest.mark.parametrize(
+    ("test_case_name", "normalized_vertices", "expected_error"),
+    kili_polygon_to_geojson_polygon_test_error_cases.test_cases,
+)
+def test_kili_polygon_to_geojson_errors(
+    test_case_name: str,
+    normalized_vertices: List,
+    expected_error: Any,
+):
+    with pytest.raises(expected_error):
+        kili_polygon_to_geojson_polygon(normalized_vertices)
+
+
+@pytest.mark.parametrize(
+    ("test_case_name", "vertices", "expected_output"), has_intersection_test_cases.test_cases
+)
+def test_has_intersection(
+    test_case_name: str,
+    vertices: Dict,
+    expected_output: Dict,
+):
+    # Test if vertices has intersection
+    output = has_intersection(vertices)
+    assert output == expected_output
 
 
 def test_kili_line_to_geojson_linestring():

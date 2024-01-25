@@ -19,3 +19,7 @@ class NotCompatibleInputType(ValueError):
 
 class NotExportableAssetError(ValueError):
     """Exception thrown when the assets can't be exported."""
+
+
+class GeoJsonConversionError(Exception):
+    """Exception thrown when the an annotation cannot be converted to GeoJson."""
