@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.4">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.5">
     
     
       
@@ -789,9 +789,36 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.do_edges_intersect" class="md-nav__link">
+    <span class="md-ellipsis">
+      do_edges_intersect()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kili.utils.labels.geojson.polygon.geojson_polygon_feature_to_kili_polygon_annotation" class="md-nav__link">
     <span class="md-ellipsis">
       geojson_polygon_feature_to_kili_polygon_annotation()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.has_intersection" class="md-nav__link">
+    <span class="md-ellipsis">
+      has_intersection()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.is_clockwise" class="md-nav__link">
+    <span class="md-ellipsis">
+      is_clockwise()
     </span>
   </a>
   
@@ -810,6 +837,33 @@
   <a href="#kili.utils.labels.geojson.polygon.kili_polygon_to_geojson_polygon" class="md-nav__link">
     <span class="md-ellipsis">
       kili_polygon_to_geojson_polygon()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.on_segment" class="md-nav__link">
+    <span class="md-ellipsis">
+      on_segment()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.order_counter_clockwise" class="md-nav__link">
+    <span class="md-ellipsis">
+      order_counter_clockwise()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.orientation" class="md-nav__link">
+    <span class="md-ellipsis">
+      orientation()
     </span>
   </a>
   
@@ -2289,9 +2343,36 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.do_edges_intersect" class="md-nav__link">
+    <span class="md-ellipsis">
+      do_edges_intersect()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kili.utils.labels.geojson.polygon.geojson_polygon_feature_to_kili_polygon_annotation" class="md-nav__link">
     <span class="md-ellipsis">
       geojson_polygon_feature_to_kili_polygon_annotation()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.has_intersection" class="md-nav__link">
+    <span class="md-ellipsis">
+      has_intersection()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.is_clockwise" class="md-nav__link">
+    <span class="md-ellipsis">
+      is_clockwise()
     </span>
   </a>
   
@@ -2310,6 +2391,33 @@
   <a href="#kili.utils.labels.geojson.polygon.kili_polygon_to_geojson_polygon" class="md-nav__link">
     <span class="md-ellipsis">
       kili_polygon_to_geojson_polygon()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.on_segment" class="md-nav__link">
+    <span class="md-ellipsis">
+      on_segment()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.order_counter_clockwise" class="md-nav__link">
+    <span class="md-ellipsis">
+      order_counter_clockwise()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili.utils.labels.geojson.polygon.orientation" class="md-nav__link">
+    <span class="md-ellipsis">
+      orientation()
     </span>
   </a>
   
@@ -4990,6 +5098,52 @@ If not provided, the mid is taken from the <code>id</code> key of the geojson fe
 
 
 
+<h3 id="kili.utils.labels.geojson.polygon.do_edges_intersect" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">do_edges_intersect</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">,</span> <span class="n">x4</span><span class="p">,</span> <span class="n">y4</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns a boolean to indicate if the vertices identified 1 and 2 intersect with 3 and 4.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/geojson/polygon.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">do_edges_intersect</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">,</span> <span class="n">x4</span><span class="p">,</span> <span class="n">y4</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a boolean to indicate if the vertices identified 1 and 2 intersect with 3 and 4.&quot;&quot;&quot;</span>
+    <span class="n">o1</span> <span class="o">=</span> <span class="n">orientation</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">)</span>
+    <span class="n">o2</span> <span class="o">=</span> <span class="n">orientation</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">x4</span><span class="p">,</span> <span class="n">y4</span><span class="p">)</span>
+    <span class="n">o3</span> <span class="o">=</span> <span class="n">orientation</span><span class="p">(</span><span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">,</span> <span class="n">x4</span><span class="p">,</span> <span class="n">y4</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+    <span class="n">o4</span> <span class="o">=</span> <span class="n">orientation</span><span class="p">(</span><span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">,</span> <span class="n">x4</span><span class="p">,</span> <span class="n">y4</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span>
+
+    <span class="c1"># General case</span>
+    <span class="k">if</span> <span class="n">o1</span> <span class="o">!=</span> <span class="n">o2</span> <span class="ow">and</span> <span class="n">o3</span> <span class="o">!=</span> <span class="n">o4</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="c1"># Special cases</span>
+    <span class="k">if</span> <span class="n">o1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">on_segment</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">o2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">on_segment</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x4</span><span class="p">,</span> <span class="n">y4</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">o3</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">on_segment</span><span class="p">(</span><span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x4</span><span class="p">,</span> <span class="n">y4</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">o4</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">on_segment</span><span class="p">(</span><span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">x4</span><span class="p">,</span> <span class="n">y4</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
 <h3 id="kili.utils.labels.geojson.polygon.geojson_polygon_feature_to_kili_polygon_annotation" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">geojson_polygon_feature_to_kili_polygon_annotation</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mid</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
@@ -5160,6 +5314,90 @@ If not provided, the mid is taken from the <code>id</code> key of the geojson fe
         <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;mid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">polygon</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="n">ret</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="kili.utils.labels.geojson.polygon.has_intersection" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">has_intersection</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns a boolean to indicate if the vertices intersect each other.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/geojson/polygon.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">has_intersection</span><span class="p">(</span><span class="n">vertices</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a boolean to indicate if the vertices intersect each other.&quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">vertices</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">vertices</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">]</span>
+        <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">vertices</span><span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">vertices</span><span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span> <span class="o">=</span> <span class="n">vertices</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">vertices</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">]</span>
+            <span class="n">x4</span><span class="p">,</span> <span class="n">y4</span> <span class="o">=</span> <span class="n">vertices</span><span class="p">[(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">vertices</span><span class="p">[(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">x1</span> <span class="o">==</span> <span class="n">x4</span> <span class="ow">and</span> <span class="n">y1</span> <span class="o">==</span> <span class="n">y4</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">do_edges_intersect</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">,</span> <span class="n">x4</span><span class="p">,</span> <span class="n">y4</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="kili.utils.labels.geojson.polygon.is_clockwise" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_clockwise</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns a boolean to indicate if the vertices are stored clockwise in the array.</p>
+<p>This function uses the Shoelace formula :
+see also : https://en.wikipedia.org/wiki/Shoelace_formula</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/geojson/polygon.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_clockwise</span><span class="p">(</span><span class="n">vertices</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a boolean to indicate if the vertices are stored clockwise in the array.</span>
+
+<span class="sd">    This function uses the Shoelace formula :</span>
+<span class="sd">    see also : https://en.wikipedia.org/wiki/Shoelace_formula</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+    <span class="n">sum_product</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">vertices</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">vertices</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">]</span>
+        <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">vertices</span><span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">vertices</span><span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">]</span>
+        <span class="n">sum_product</span> <span class="o">+=</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y2</span> <span class="o">+</span> <span class="n">y1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sum_product</span> <span class="o">&gt;</span> <span class="mi">0</span>
 </code></pre></div>
         </details>
     </div>
@@ -5424,9 +5662,119 @@ If not provided, the mid is taken from the <code>id</code> key of the geojson fe
 <span class="sd">        }</span>
 <span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">polygon</span> <span class="o">=</span> <span class="p">[[</span><span class="n">vertex</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">vertex</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]]</span> <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">vertices</span><span class="p">]</span>
+    <span class="n">reordered_polygon_vertices</span> <span class="o">=</span> <span class="n">order_counter_clockwise</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+    <span class="n">polygon</span> <span class="o">=</span> <span class="p">[[</span><span class="n">vertex</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">vertex</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]]</span> <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">reordered_polygon_vertices</span><span class="p">]</span>
+
     <span class="n">polygon</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">polygon</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># the first and last positions must be the same</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Polygon&quot;</span><span class="p">,</span> <span class="s2">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">polygon</span><span class="p">]}</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="kili.utils.labels.geojson.polygon.on_segment" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">on_segment</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns a boolean to indicate if the first vertex (q) is on the segment (pr).</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/geojson/polygon.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">on_segment</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a boolean to indicate if the first vertex (q) is on the segment (pr).&quot;&quot;&quot;</span>
+    <span class="n">qy_not_on_segment</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">py</span><span class="p">,</span> <span class="n">ry</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">qy</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">py</span><span class="p">,</span> <span class="n">ry</span><span class="p">)</span>
+    <span class="n">qx_not_on_segment</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">rx</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">qx</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">rx</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">qy_not_on_segment</span> <span class="ow">and</span> <span class="n">qx_not_on_segment</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="kili.utils.labels.geojson.polygon.order_counter_clockwise" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">order_counter_clockwise</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns the vertices, in the correct order :</p>
+<p>If the vertices are set clockwise, we reverse them to have them in the anti-clockwise order.
+For more information on the order expected for GeoJson :
+https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/geojson/polygon.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">order_counter_clockwise</span><span class="p">(</span><span class="n">vertices</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the vertices, in the correct order :</span>
+
+<span class="sd">    If the vertices are set clockwise, we reverse them to have them in the anti-clockwise order.</span>
+<span class="sd">    For more information on the order expected for GeoJson :</span>
+<span class="sd">    https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">has_intersection</span><span class="p">(</span><span class="n">vertices</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">ConversionError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Polygon has edges intersection when looking at </span><span class="si">{</span><span class="n">vertices</span><span class="si">}</span><span class="s2"> and cannot be exported to </span><span class="se">\</span>
+<span class="s2">            GeoJson format.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_clockwise</span><span class="p">(</span><span class="n">vertices</span><span class="p">):</span>
+        <span class="n">vertices</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">vertices</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="kili.utils.labels.geojson.polygon.orientation" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">orientation</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Returns a number to identify the orientation of the pair of edges.</p>
+<p>0 is colinear, 1 is clockwise, -1 is counterclock.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/utils/labels/geojson/polygon.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">orientation</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a number to identify the orientation of the pair of edges.</span>
+
+<span class="sd">    0 is colinear, 1 is clockwise, -1 is counterclock.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="n">qy</span> <span class="o">-</span> <span class="n">py</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">rx</span> <span class="o">-</span> <span class="n">qx</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">qx</span> <span class="o">-</span> <span class="n">px</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ry</span> <span class="o">-</span> <span class="n">qy</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
 </code></pre></div>
         </details>
     </div>
@@ -6479,8 +6827,16 @@ It must also contain the <code>job</code> name.</p>
                 <span class="k">continue</span>
 
             <span class="n">converter</span> <span class="o">=</span> <span class="n">annotation_tool_to_converter</span><span class="p">[</span><span class="n">annotation_tool</span><span class="p">]</span>
-            <span class="n">feature</span> <span class="o">=</span> <span class="n">converter</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="n">job_name</span><span class="p">)</span>
-            <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">feature</span> <span class="o">=</span> <span class="n">converter</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">job_name</span><span class="o">=</span><span class="n">job_name</span><span class="p">)</span>
+                <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">ConversionError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="n">error</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
 
     <span class="k">if</span> <span class="n">jobs_skipped</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Jobs </span><span class="si">{</span><span class="n">jobs_skipped</span><span class="si">}</span><span class="s2"> cannot be exported to GeoJson format.&quot;</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -6554,10 +6910,10 @@ It must also contain the <code>job</code> name.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c18c5fb9.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
       
