@@ -141,7 +141,7 @@ class LabelOperationMixin(BaseOperationMixin):
                     variables["where"]["project"] = {"id": project_id}
 
                 # we increase the timeout because the import can take a long time
-                batch_result = self.graphql_client.execute(query, variables, timeout=60)
+                batch_result = self.graphql_client.execute(query, variables, timeout=120)
                 added_labels.extend(batch_result["data"])
                 pbar.update(len(batch_of_label_data))
 
