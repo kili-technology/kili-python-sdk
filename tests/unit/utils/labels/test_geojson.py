@@ -24,12 +24,8 @@ from kili.utils.labels.geojson import (
     kili_segmentation_annotation_to_geojson_polygon_feature,
     kili_segmentation_to_geojson_polygon,
 )
-from kili.utils.labels.geojson.polygon import (
-    has_intersection,
-)
 
 from .test_data import (
-    has_intersection_test_cases,
     kili_polygon_annotation_to_geojson_polygon_feature_test_cases,
     kili_polygon_to_geojson_polygon_test_cases,
     kili_polygon_to_geojson_polygon_test_error_cases,
@@ -195,19 +191,6 @@ def test_kili_polygon_to_geojson_errors(
 ):
     with pytest.raises(expected_error):
         kili_polygon_to_geojson_polygon(normalized_vertices)
-
-
-@pytest.mark.parametrize(
-    ("test_case_name", "vertices", "expected_output"), has_intersection_test_cases.test_cases
-)
-def test_has_intersection(
-    test_case_name: str,
-    vertices: Dict,
-    expected_output: Dict,
-):
-    # Test if vertices has intersection
-    output = has_intersection(vertices)
-    assert output == expected_output
 
 
 def test_kili_line_to_geojson_linestring():
