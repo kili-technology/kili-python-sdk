@@ -7,72 +7,9 @@ from .exceptions import (
 )
 
 
-def has_intersection(vertices):
-    """Returns a boolean to indicate if the vertices intersect each other."""
-    n = len(vertices)
-
-    for i in range(n):
-        x1, y1 = vertices[i]["x"], vertices[i]["y"]
-        x2, y2 = vertices[(i + 1) % n]["x"], vertices[(i + 1) % n]["y"]
-
-        for j in range(i + 2, n):
-            x3, y3 = vertices[j]["x"], vertices[j]["y"]
-            x4, y4 = vertices[(j + 1) % n]["x"], vertices[(j + 1) % n]["y"]
-
-            if x1 == x4 and y1 == y4:
-                continue
-
-            if do_edges_intersect(x1, y1, x2, y2, x3, y3, x4, y4):
-                return True
-
-    return False
-
-
-def orientation(px, py, qx, qy, rx, ry):
-    """Returns a number to identify the orientation of the pair of edges.
-
-    0 is colinear, 1 is clockwise, -1 is counterclock.
-    """
-    val = (qy - py) * (rx - qx) - (qx - px) * (ry - qy)
-    if val == 0:
-        return 0
-    return 1 if val > 0 else -1
-
-
-def do_edges_intersect(x1, y1, x2, y2, x3, y3, x4, y4):
-    """Returns a boolean to indicate if the vertices identified 1 and 2 intersect with 3 and 4."""
-    o1 = orientation(x1, y1, x2, y2, x3, y3)
-    o2 = orientation(x1, y1, x2, y2, x4, y4)
-    o3 = orientation(x3, y3, x4, y4, x1, y1)
-    o4 = orientation(x3, y3, x4, y4, x2, y2)
-
-    # General case
-    if o1 != o2 and o3 != o4:
-        return True
-
-    # Special cases
-    if o1 == 0 and on_segment(x1, y1, x3, y3, x2, y2):
-        return True
-    if o2 == 0 and on_segment(x1, y1, x4, y4, x2, y2):
-        return True
-    if o3 == 0 and on_segment(x3, y3, x1, y1, x4, y4):
-        return True
-    if o4 == 0 and on_segment(x3, y3, x2, y2, x4, y4):
-        return True
-
-    return False
-
-
-def on_segment(px, py, qx, qy, rx, ry):
-    """Returns a boolean to indicate if the first vertex (q) is on the segment (pr)."""
-    qy_not_on_segment = min(py, ry) <= qy <= max(py, ry)
-    qx_not_on_segment = min(px, rx) <= qx <= max(px, rx)
-
-    return qy_not_on_segment and qx_not_on_segment
-
-
-def is_clockwise(vertices):
-    """Returns a boolean to indicate if the vertices are stored clockwise in the array.
+def get_oriented_area(vertices):
+    """Returns the area value which gives an indication on the vertices order.
+    Positive if counter-clockwise, negative if clockwise.
 
     This function uses the Shoelace formula :
     see also : https://en.wikipedia.org/wiki/Shoelace_formula
@@ -83,9 +20,9 @@ def is_clockwise(vertices):
     for i in range(n):
         x1, y1 = vertices[i]["x"], vertices[i]["y"]
         x2, y2 = vertices[(i + 1) % n]["x"], vertices[(i + 1) % n]["y"]
-        sum_product += (x2 - x1) * (y2 + y1)
+        sum_product += (x1 - x2) * (y2 + y1)
 
-    return sum_product > 0
+    return sum_product
 
 
 def order_counter_clockwise(vertices):
@@ -95,14 +32,14 @@ def order_counter_clockwise(vertices):
     For more information on the order expected for GeoJson :
     https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6
     """
-    if has_intersection(vertices):
-        raise ConversionError(
-            f"Polygon has edges intersection when looking at {vertices} and cannot be exported to \
-            GeoJson format."
-        )
-
-    if is_clockwise(vertices):
+    order = get_oriented_area(vertices)
+    if order < 0:
         vertices.reverse()
+    elif order == 0:
+        raise ConversionError(
+            f"Polygon order could not be identified as clockwise nor counter-clockwise because of \
+                edges intersection in {vertices} and thus cannot be exported to GeoJson format."
+        )
 
     return vertices
 
