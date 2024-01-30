@@ -298,7 +298,7 @@ jobs:
       - name: Slack notification if failure
         if: failure() && (github.event_name != 'workflow_dispatch') # doesn't notify for manual runs
         id: slack
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@v1.25.0
         with:
           payload: |
             {
