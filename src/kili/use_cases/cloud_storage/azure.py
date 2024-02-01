@@ -11,7 +11,7 @@ from kili.domain.project import InputType
 
 def get_blob_paths_azure_data_connection_with_service_credentials(
     data_connection: Dict, data_integration: Dict, input_type: InputType
-) -> Tuple[List[str], List[str]]:
+) -> Tuple[List[str], List[str], List[str]]:
     """Get the blob paths for an Azure data connection using service credentials."""
     if not (data_integration["azureSASToken"] and data_integration["azureConnectionURL"]):
         raise ValueError(
@@ -81,9 +81,10 @@ class AzureBucket:
 
     def get_blob_paths_azure_data_connection_with_service_credentials(
         self, selected_folders: Optional[List[str]], input_type: InputType
-    ) -> Tuple[List[str], List[str]]:
+    ) -> Tuple[List[str], List[str], List[str]]:
         """Get the blob paths for an Azure data connection using service credentials."""
         blob_paths = []
+        content_types = []
         warnings = set()
         for blob in self.storage_bucket.list_blobs():
             if not hasattr(blob, "name") or not isinstance(blob.name, str):
@@ -114,8 +115,9 @@ class AzureBucket:
 
             else:
                 blob_paths.append(blob.name)
+                content_types.append(blob.content_settings.content_type)
 
-        return blob_paths, list(warnings)
+        return blob_paths, list(warnings), content_types
 
     @staticmethod
     def _is_content_type_compatible_with_input_type(

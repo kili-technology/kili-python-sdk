@@ -30,6 +30,7 @@ class DataConnectionComputeDifferencesKiliAPIGatewayInput:
 
     blob_paths: List[str]
     warnings: List[str]
+    content_types: List[str]
 
 
 @dataclass

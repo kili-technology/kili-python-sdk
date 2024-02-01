@@ -325,7 +325,7 @@ def _compute_differences(
             " Data connection is already currently checking."
         )
 
-    blob_paths = warnings = None
+    blob_paths = warnings = content_types = None
 
     # for azure using credentials, it is required to provide the blob paths to compute the diffs
     if (
@@ -346,7 +346,11 @@ def _compute_differences(
         project_input_type = kili_api_gateway.get_project(
             project_id=data_connection["projectId"], fields=("inputType",)
         )["inputType"]
-        blob_paths, warnings = get_blob_paths_azure_data_connection_with_service_credentials(
+        (
+            blob_paths,
+            warnings,
+            content_types,
+        ) = get_blob_paths_azure_data_connection_with_service_credentials(
             input_type=project_input_type,
             data_connection=data_connection,
             data_integration=data_integration,
@@ -357,9 +361,9 @@ def _compute_differences(
         fields=("id",),
         data=(
             DataConnectionComputeDifferencesKiliAPIGatewayInput(
-                blob_paths=blob_paths, warnings=warnings
+                blob_paths=blob_paths, warnings=warnings, content_types=content_types
             )
-            if blob_paths is not None and warnings is not None
+            if blob_paths is not None and warnings is not None and content_types is not None
             else None
         ),
     )

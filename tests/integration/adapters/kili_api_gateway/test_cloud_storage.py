@@ -40,7 +40,9 @@ def test_given_gateway_when_calling_compute_diff_with_data_then_it_works(
     gateway.compute_data_connection_differences(
         data_connection_id=DataConnectionId("fake_data_con_id"),
         data=DataConnectionComputeDifferencesKiliAPIGatewayInput(
-            blob_paths=["1.jpg", "2.jpg"], warnings=["warning1", "warning2"]
+            blob_paths=["1.jpg", "2.jpg"],
+            warnings=["warning1", "warning2"],
+            content_types=["image/jpeg", "image/jpeg"],
         ),
         fields=("id",),
     )
@@ -50,7 +52,11 @@ def test_given_gateway_when_calling_compute_diff_with_data_then_it_works(
         get_compute_data_connection_differences_mutation(" id"),
         {
             "where": {"id": "fake_data_con_id"},
-            "data": {"blobPaths": ["1.jpg", "2.jpg"], "warnings": ["warning1", "warning2"]},
+            "data": {
+                "blobPaths": ["1.jpg", "2.jpg"],
+                "warnings": ["warning1", "warning2"],
+                "contentTypes": ["image/jpeg", "image/jpeg"],
+            },
         },
     )
 
