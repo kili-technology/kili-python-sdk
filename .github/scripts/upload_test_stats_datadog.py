@@ -34,6 +34,7 @@ TESTS_TO_PLOT_ON_DATADOG_MAP = {
     "tests/e2e/test_projects.py::test_create_project": "create_project",
     "tests/e2e/test_mutations_label.py::test_append_many_labels": "append_many_labels",
     "tests/e2e/test_mutations_asset.py::test_append_many_assets": "append_many_assets",
+    "tests/e2e/test_mutations_asset.py::test_append_many_assets_with_json_content_but_no_content": "append_many_assets_with_json_content_but_no_content",
     "tests/e2e/test_mutations_asset.py::test_send_back_to_queue": "send_back_to_queue",
     "tests/e2e/test_mutations_asset.py::test_delete_many_from_dataset": "delete_many_from_dataset",
     "tests/e2e/test_mutations_asset.py::test_change_asset_external_ids": (
