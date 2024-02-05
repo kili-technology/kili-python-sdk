@@ -91,6 +91,9 @@ mutation(
 def get_annotations_query(
     *,
     annotation_fragment: str,
+    classification_annotation_fragment: str,
+    ranking_annotation_fragment: str,
+    transcription_annotation_fragment: str,
     video_annotation_fragment: str,
     video_object_detection_annotation_fragment: str,
     video_classification_annotation_fragment: str,
@@ -98,6 +101,27 @@ def get_annotations_query(
 ) -> str:
     """Get the gql annotations query."""
     inline_fragments = ""
+
+    if classification_annotation_fragment.strip():
+        inline_fragments += f"""
+            ... on ClassificationAnnotation {{
+                {classification_annotation_fragment}
+            }}
+        """
+
+    if ranking_annotation_fragment.strip():
+        inline_fragments += f"""
+            ... on RankingAnnotation {{
+                {ranking_annotation_fragment}
+            }}
+        """
+
+    if transcription_annotation_fragment.strip():
+        inline_fragments += f"""
+            ... on TranscriptionAnnotation {{
+                {transcription_annotation_fragment}
+            }}
+        """
 
     if video_annotation_fragment.strip():
         inline_fragments += f"""

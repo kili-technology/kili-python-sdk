@@ -13,10 +13,11 @@ from tests.fakes.fake_data import (
     kili_format_expected_frame_asset_output,
     kili_format_frame_asset,
 )
-from tests.unit.adapters.kili_api_gateway.label.test_data import test_case_13
+from tests.unit.adapters.kili_api_gateway.label.test_data import test_case_13, test_case_14
 
 from .expected.geojson_project_assets_export import geojson_project_asset
 from .expected.image_project_assets_unnormalized import image_project_asset_unnormalized
+from .expected.llm_project_assets import llm_project_asset
 from .expected.pdf_project_assets_unnormalized import pdf_project_asset_unnormalized
 from .expected.video_project_assets_unnormalized import video_project_asset_unnormalized
 
@@ -596,3 +597,69 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
                 output = json.load(f)
 
     assert output == geojson_project_asset
+
+
+def test_kili_export_labels_llm(mocker: pytest_mock.MockerFixture):
+    def mocked_graphql_execute(query, variables, **kwargs):
+        if "projects(" in query:
+            return {
+                "data": [
+                    {
+                        "inputType": "LLM_RLHF",
+                        "title": "",
+                        "id": "fake_llm_project_id",
+                        "jsonInterface": test_case_14.json_interface,
+                    }
+                ]
+            }
+
+        if "countProjects(" in query:
+            return {"data": 1}
+
+        if "countLabels(" in query:
+            return {"data": 1}
+
+        if "countAssets(" in query:
+            return {"data": 1}
+
+        if "assets(" in query:
+            return {"data": test_case_14.assets}
+
+        if "labels(" in query:
+            return {"data": [{"id": "fake_llm_label_id", "jsonResponse": "{}"}]}
+
+        if "annotations(" in query:
+            return {"data": test_case_14.annotations}
+
+        raise NotImplementedError
+
+    mocker.patch.object(AbstractExporter, "_check_and_ensure_asset_access", return_value=None)
+    graphql_client = mocker.MagicMock()
+    graphql_client.execute.side_effect = mocked_graphql_execute
+    http_client = mocker.MagicMock()
+
+    kili = LabelClientMethods()
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.kili_api_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
+    kili.graphql_client = graphql_client  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = http_client  # pyright: ignore[reportGeneralTypeIssues]
+
+    with TemporaryDirectory() as export_folder:
+        export_filename = str(Path(export_folder) / "export_kili_llm.zip")
+
+        kili.export_labels("fake_llm_label_id", export_filename, fmt="kili", with_assets=False)
+
+        with TemporaryDirectory() as extract_folder:
+            with ZipFile(export_filename, "r") as z_f:
+                # extract in a temp dir
+                z_f.extractall(extract_folder)
+
+            assert Path(f"{extract_folder}/README.kili.txt").is_file()
+            assert Path(f"{extract_folder}/labels").is_dir()
+            assert Path(f"{extract_folder}/labels/Click_here_to_start.json").is_file()
+
+            with Path(f"{extract_folder}/labels/Click_here_to_start.json").open() as f:
+                output = json.load(f)
+
+    assert output == llm_project_asset

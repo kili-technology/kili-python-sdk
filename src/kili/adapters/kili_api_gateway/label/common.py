@@ -15,6 +15,9 @@ def list_annotations(
     label_id: LabelId,
     *,
     annotation_fields: ListOrTuple[str],
+    classification_annotation_fields: ListOrTuple[str] = (),
+    ranking_annotation_fields: ListOrTuple[str] = (),
+    transcription_annotation_fields: ListOrTuple[str] = (),
     video_annotation_fields: ListOrTuple[str] = (),
     video_classification_fields: ListOrTuple[str] = (),
     video_object_detection_fields: ListOrTuple[str] = (),
@@ -23,6 +26,9 @@ def list_annotations(
     """List annotations for a label."""
     query = get_annotations_query(
         annotation_fragment=fragment_builder(annotation_fields),
+        classification_annotation_fragment=fragment_builder(classification_annotation_fields),
+        ranking_annotation_fragment=fragment_builder(ranking_annotation_fields),
+        transcription_annotation_fragment=fragment_builder(transcription_annotation_fields),
         video_annotation_fragment=fragment_builder(video_annotation_fields),
         video_classification_annotation_fragment=fragment_builder(video_classification_fields),
         video_object_detection_annotation_fragment=fragment_builder(video_object_detection_fields),
