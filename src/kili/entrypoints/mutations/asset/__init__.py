@@ -48,7 +48,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         id_array: Optional[List[str]] = None,
         is_honeypot_array: Optional[List[bool]] = None,
         status_array: Optional[List[str]] = None,
-        json_content_array: Optional[List[List[Union[dict, str]]]] = None,
+        json_content_array: Optional[List[Union[List[Union[dict, str]], None]]] = None,
         json_metadata_array: Optional[List[dict]] = None,
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
@@ -75,13 +75,17 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             id_array: Disabled parameter. Do not use.
             is_honeypot_array:  Whether to use the asset for honeypot
             status_array: DEPRECATED and does not have any effect.
-            json_content_array: Useful for `VIDEO` or `TEXT` projects only.
+            json_content_array: Useful for `VIDEO` or `TEXT` or `IMAGE` projects only.
 
                 - For `VIDEO` projects, each element is a sequence of frames, i.e. a
                     list of URLs to images or a list of paths to images.
                 - For `TEXT` projects, each element is a json_content dict,
                     formatted according to documentation [on how to import
                 rich-text assets](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/import_text_assets/).
+                - For `IMAGES` projects, it is used for satellite imagery each element is a list of json_content dicts
+                    formatted according to documentation [on how to add multi-layer images]
+                    (https://docs.kili-technology.com/docs/adding-assets-to-project#adding-multi-layer-images)
+
             json_metadata_array: The metadata given to each asset should be stored in a json like dict with keys.
 
                 - Add metadata visible on the asset with the following keys: `imageUrl`, `text`, `url`.

@@ -257,7 +257,10 @@ class ContentBatchImporter(BaseBatchImporter):
         """Method to import a batch of asset with content."""
         assets = self.add_ids(assets)
         if not self.is_hosted:
-            assets = self.upload_local_content_to_bucket(assets)
+            assets_with_content = [asset for asset in assets if asset.get("content")]
+            assets = [asset for asset in assets if not asset.get("content")]
+            if len(assets_with_content) > 0:
+                assets += self.upload_local_content_to_bucket(assets_with_content)
         return super().import_batch(assets, verify)
 
     def get_content_type_and_data_from_content(
@@ -378,7 +381,7 @@ class BaseAbstractAssetImporter(abc.ABC):
 
         Raise an error if a mix of both.
         """
-        contents = [asset.get("content") for asset in assets]
+        contents = [asset.get("content") for asset in assets if asset.get("content")]
         if all(is_url(content) for content in contents):
             return True
         if any(is_url(content) for content in contents):
@@ -387,6 +390,19 @@ class BaseAbstractAssetImporter(abc.ABC):
                 " assets into 2 calls."
             )
         return False
+
+    @staticmethod
+    def check_asset_contents(assets: List[AssetLike]) -> None:
+        """Determine if the assets have at least one content or json_content.
+
+        Raise an error if not
+        """
+        # Raise an error if there is an asset with no content and no json_content
+        for asset in assets:
+            if not asset.get("content") and not asset.get("json_content"):
+                raise ImportValidationError(
+                    "Cannot import asset with empty content and empty json_content"
+                )
 
     def _can_upload_from_local_data(self) -> bool:
         user_me = self.kili.kili_api_gateway.get_current_user(fields=("email",))
@@ -415,7 +431,11 @@ class BaseAbstractAssetImporter(abc.ABC):
         """
         filtered_assets = []
         for asset in assets:
+            json_content = asset.get("json_content")
             path = asset.get("content")
+            if json_content and not path:
+                filtered_assets.append(asset)
+                continue
             assert path
             assert isinstance(path, str)
             try:

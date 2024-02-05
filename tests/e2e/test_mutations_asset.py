@@ -1,3 +1,5 @@
+from typing import List, Union
+
 import pytest
 
 from kili.client import Kili
@@ -192,3 +194,30 @@ def test_append_many_assets(kili: Kili, src_project_no_assets: str):
     )
 
     assert kili.count_assets(src_project_no_assets) == NB_ASSETS
+
+
+def test_append_many_assets_with_json_content_but_no_content(
+    kili: Kili, src_project_no_assets: str
+):
+    json_content: List[Union[dict, str]] = [
+        {
+            "bounds": [[100.78454549662813, 13.660975292601123], [100.721440891, 13.719807693]],
+            "epsg": "EPSG4326",
+            "tileLayerUrl": "http://localhost:5005/map1/{z}/{x}/{y}.png",
+            "effective_zoom_levels": [14, 15, 16, 17],
+            "minZoom": 14,
+            "maxZoom": 17,
+            "initEpsg": 4326,
+            "useClassicCoordinates": False,
+        }
+    ]
+    img_url = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
+
+    kili.append_many_to_dataset(
+        project_id=src_project_no_assets,
+        content_array=["", img_url],
+        json_content_array=[json_content, None],
+        external_id_array=["asset_1", "asset_2"],
+    )
+
+    assert kili.count_assets(src_project_no_assets) == 2
