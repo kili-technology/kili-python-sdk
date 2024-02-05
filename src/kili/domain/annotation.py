@@ -6,6 +6,7 @@ from .label import LabelId
 from .ontology import JobName
 
 AnnotationId = NewType("AnnotationId", str)
+AnnotationValueId = NewType("AnnotationValueId", str)
 KeyAnnotationId = NewType("KeyAnnotationId", str)
 
 
@@ -28,10 +29,59 @@ class ClassificationAnnotationValue(TypedDict):
     categories: List[str]
 
 
+class ClassificationAnnotation(TypedDict):
+    """Classification annotation."""
+
+    # pylint: disable=unused-private-member
+    __typename: Literal["ClassificationAnnotation"]
+    id: AnnotationId
+    labelId: LabelId
+    job: JobName
+    path: List[List[str]]
+    annotationValue: ClassificationAnnotationValue
+
+
+class RankingOrderValue(TypedDict):
+    """Ranking order value."""
+
+    rank: int
+    elements: List[str]
+
+
+class RankingAnnotationValue(TypedDict):
+    """Ranking annotation value."""
+
+    orders: List[RankingOrderValue]
+
+
+class RankingAnnotation(TypedDict):
+    """Ranking annotation."""
+
+    # pylint: disable=unused-private-member
+    __typename: Literal["RankingAnnotation"]
+    id: AnnotationId
+    labelId: LabelId
+    job: JobName
+    path: List[List[str]]
+    annotationValue: RankingAnnotationValue
+
+
 class TranscriptionAnnotationValue(TypedDict):
     """Transcription annotation value."""
 
     text: str
+
+
+class TranscriptionAnnotation(TypedDict):
+    """Transcription annotation."""
+
+    # pylint: disable=unused-private-member
+    __typename: Literal["TranscriptionAnnotation"]
+    id: AnnotationId
+    labelId: LabelId
+    job: JobName
+    path: List[List[str]]
+    annotationValue: TranscriptionAnnotationValue
 
 
 class Annotation(TypedDict):
@@ -120,4 +170,17 @@ VideoAnnotation = Union[
     VideoObjectDetectionAnnotation,
     VideoClassificationAnnotation,
     VideoTranscriptionAnnotation,
+]
+
+ClassicAnnotation = Union[
+    ClassificationAnnotation,
+    RankingAnnotation,
+    TranscriptionAnnotation,
+]
+
+Annotation = Union[
+    ClassificationAnnotation,
+    RankingAnnotation,
+    TranscriptionAnnotation,
+    VideoAnnotation,
 ]

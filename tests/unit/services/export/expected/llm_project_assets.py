@@ -1,0 +1,47 @@
+llm_project_asset = {
+    "__typename": "Asset",
+    "content": "./fake_path_to_asset.csv",
+    "externalId": "Click here to start",
+    "id": "clr4rvcyt00023b6zme74rmxd",
+    "isHoneypot": False,
+    "isProcessingAuthorized": True,
+    "jsonContent": "",
+    "jsonMetadata": {},
+    "latestLabel": {
+        "__typename": "Label",
+        "author": {
+            "__typename": "User",
+            "email": "test+admin@kili-technology.com",
+            "firstname": "Test",
+            "id": "user-1",
+            "lastname": "Admin",
+            "name": "Test Admin",
+        },
+        "createdAt": "2024-01-08T10:21:00.624Z",
+        "honeypotMark": None,
+        "isHoneypot": False,
+        "isLatestLabelForUser": True,
+        "isSentBackToQueue": False,
+        "jsonResponse": {
+            "CLASSIFICATION_JOB": {"categories": [{"name": "Choice 1"}]},
+            "RANKING_JOB": {
+                "orders": [
+                    {"__typename": "RankingOrderValue", "elements": ["Response 5"], "rank": 1},
+                    {"__typename": "RankingOrderValue", "elements": ["Response 2"], "rank": 2},
+                    {"__typename": "RankingOrderValue", "elements": ["Response 3"], "rank": 3},
+                ]
+            },
+            "TRANSCRIPTION_JOB": {"text": "Test Transcription"},
+        },
+        "labelType": "DEFAULT",
+        "modelName": None,
+        "numberOfAnnotations": 0,
+        "reviewScore": None,
+        "totalSecondsToLabel": 10,
+    },
+    "ocrMetadata": None,
+    "projectId": "clr4ru09f01mnkjbadmvzb6vt",
+    "skipped": False,
+    "status": "LABELED",
+    "toBeLabeledBy": [],
+}
