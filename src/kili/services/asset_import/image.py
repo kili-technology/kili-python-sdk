@@ -44,7 +44,11 @@ class ImageDataImporter(BaseAbstractAssetImporter):
             return assets, []
         sync_assets, async_assets = [], []
         for asset in assets:
+            json_content = asset.get("json_content")
             path = asset.get("content")
+            if json_content and not path:
+                sync_assets.append(asset)
+                continue
             assert path
             assert isinstance(path, str)
             mime_type = get_mime_type(path)
