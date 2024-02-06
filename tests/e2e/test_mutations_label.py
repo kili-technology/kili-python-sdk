@@ -1,3 +1,4 @@
+import time
 from typing import Dict
 
 import pytest
@@ -131,10 +132,18 @@ def project_and_asset_id(kili: Kili):
         }
     }
 
+    project_name = "test_e2e_mutations_labels"
+
+    project_ids = kili.projects(search_query=f"%{project_name}%", fields=["id"])
+
+    if len(project_ids) > 0:
+        for project_id in project_ids:
+            kili.delete_project(project_id["id"])
+
     project = kili.create_project(
         input_type="TEXT",
         json_interface=interface,
-        title="test_append_many_labels",
+        title=project_name,
     )
 
     kili.append_many_to_dataset(
@@ -145,9 +154,7 @@ def project_and_asset_id(kili: Kili):
 
     asset_id = kili.assets(project_id=project["id"], fields=("id",))[0]
 
-    yield project["id"], asset_id["id"]
-
-    kili.delete_project(project["id"])
+    return project["id"], asset_id["id"]
 
 
 def test_append_many_labels(kili: Kili, project_and_asset_id):
@@ -162,4 +169,6 @@ def test_append_many_labels(kili: Kili, project_and_asset_id):
         label_type="DEFAULT",
     )
 
+    # we wait for 2 seconds here to prevent database sync replica problems
+    time.sleep(2)
     assert kili.count_labels(project_id=project_id) == N_LABELS
