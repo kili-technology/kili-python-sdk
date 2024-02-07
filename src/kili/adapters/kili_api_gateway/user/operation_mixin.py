@@ -39,7 +39,8 @@ class UserOperationMixin(BaseOperationMixin):
 
     def count_users(self, user_filters: UserFilter) -> int:
         """Return the number of users that match the filter."""
-        result = self.graphql_client.execute(GQL_COUNT_USERS, user_where_mapper(user_filters))
+        variables = {"where": user_where_mapper(user_filters)}
+        result = self.graphql_client.execute(GQL_COUNT_USERS, variables)
         return result["data"]
 
     def get_current_user(self, fields: ListOrTuple[str]) -> Dict:

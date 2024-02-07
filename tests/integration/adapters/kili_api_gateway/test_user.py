@@ -70,12 +70,14 @@ def test_given_kili_gateway_when_querying_count_users_it_calls_proper_resolver(
     graphql_client.execute.assert_called_once_with(
         GQL_COUNT_USERS,
         {
-            "activated": None,
-            "apiKey": None,
-            "email": None,
-            "id": "fake_user_id",
-            "idIn": None,
-            "organization": {"id": None},
+            "where": {
+                "activated": None,
+                "apiKey": None,
+                "email": None,
+                "id": "fake_user_id",
+                "idIn": None,
+                "organization": {"id": None},
+            }
         },
     )
 
