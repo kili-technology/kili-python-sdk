@@ -10,7 +10,7 @@ jobs:
         with:
           python-version: 3.8
           cache: "pip"
-      - uses: pre-commit/action@v3.0.0
+      - uses: pre-commit/action@v3.0.1
 
   pylint:
     runs-on: ubuntu-latest
