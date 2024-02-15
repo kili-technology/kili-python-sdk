@@ -48,6 +48,7 @@ def compute_data_connection_difference_data_mapper(
     return {
         "blobPaths": data.blob_paths,
         "warnings": data.warnings,
+        "contentTypes": data.content_types,
     }
 
 
