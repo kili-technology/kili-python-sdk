@@ -49,19 +49,20 @@ class AssetOperationMixin(BaseOperationMixin):
             query, where, options, "Retrieving assets", GQL_COUNT_ASSETS
         )
         assets_gen = (load_asset_json_fields(asset, fields) for asset in assets_gen)
-
         if any("jsonResponse" in field for field in fields):
             converter = AnnotationsToJsonResponseConverter(
                 graphql_client=self.graphql_client, project_id=filters.project_id
             )
             for asset in assets_gen:
                 if "latestLabel.jsonResponse" in fields and asset.get("latestLabel"):
+                    print('"latestLabel.jsonResponse" in fields and asset.get("latestLabel")')
                     converter.patch_label_json_response(
                         asset["latestLabel"], asset["latestLabel"]["id"]
                     )
                     if added_latest_label_id_field:
                         asset["latestLabel"].pop("id")
                 if "labels.jsonResponse" in fields:
+                    print('if "labels.jsonResponse" in fields')
                     for label in asset.get("labels", []):
                         converter.patch_label_json_response(label, label["id"])
                         if added_label_id_field:
@@ -70,6 +71,7 @@ class AssetOperationMixin(BaseOperationMixin):
                 yield asset
 
         else:
+            print('yeld from assets_gen')
             yield from assets_gen
 
     def count_assets(self, filters: AssetFilters) -> int:
