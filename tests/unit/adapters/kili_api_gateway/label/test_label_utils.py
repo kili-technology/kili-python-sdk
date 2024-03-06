@@ -24,6 +24,9 @@ from .test_data import (
     test_case_11,
     test_case_12,
     test_case_14,
+    test_case_15,
+    test_case_16,
+    test_case_17,
 )
 
 
@@ -101,6 +104,24 @@ from .test_data import (
             test_case_12.annotations,
             test_case_12.expected_json_resp,
             test_case_12.json_interface,
+        ),
+        (
+            "test_case_15",
+            test_case_15.annotations,
+            test_case_15.expected_json_resp,
+            test_case_15.json_interface,
+        ),
+        (
+            "test_case_16",
+            test_case_16.annotations,
+            test_case_16.expected_json_resp,
+            test_case_16.json_interface,
+        ),
+        (
+            "test_case_17",
+            test_case_17.annotations,
+            test_case_17.expected_json_resp,
+            test_case_17.json_interface,
         ),
     ],
 )
