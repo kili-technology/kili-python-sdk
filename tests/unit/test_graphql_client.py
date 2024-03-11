@@ -10,7 +10,7 @@ import pytest
 import pytest_mock
 from gql import Client
 from gql.transport import exceptions
-from pyrate_limiter import Duration, RequestRate
+from pyrate_limiter import Duration, Rate
 from pyrate_limiter.limiter import Limiter
 
 from kili.adapters.http_client import HttpClient
