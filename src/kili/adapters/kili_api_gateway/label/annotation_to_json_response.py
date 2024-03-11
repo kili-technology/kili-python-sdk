@@ -209,7 +209,13 @@ def _classic_annotations_to_json_response(
 def _key_annotations_iterator(
     annotation: VideoTranscriptionAnnotation,
 ) -> Generator[
-    Tuple[VideoTranscriptionKeyAnnotation, int, int, Optional[VideoTranscriptionKeyAnnotation]],
+    Tuple[
+        VideoTranscriptionKeyAnnotation,
+        int,
+        int,
+        Optional[VideoTranscriptionKeyAnnotation],
+        Optional[int],
+    ],
     None,
     None,
 ]:
@@ -220,7 +226,13 @@ def _key_annotations_iterator(
 def _key_annotations_iterator(
     annotation: VideoClassificationAnnotation,
 ) -> Generator[
-    Tuple[VideoClassificationKeyAnnotation, int, int, Optional[VideoClassificationKeyAnnotation]],
+    Tuple[
+        VideoClassificationKeyAnnotation,
+        int,
+        int,
+        Optional[VideoClassificationKeyAnnotation],
+        Optional[int],
+    ],
     None,
     None,
 ]:
@@ -231,7 +243,13 @@ def _key_annotations_iterator(
 def _key_annotations_iterator(
     annotation: VideoObjectDetectionAnnotation,
 ) -> Generator[
-    Tuple[VideoObjectDetectionKeyAnnotation, int, int, Optional[VideoObjectDetectionKeyAnnotation]],
+    Tuple[
+        VideoObjectDetectionKeyAnnotation,
+        int,
+        int,
+        Optional[VideoObjectDetectionKeyAnnotation],
+        Optional[int],
+    ],
     None,
     None,
 ]:
@@ -246,19 +264,38 @@ def _key_annotations_iterator(annotation: VideoAnnotation) -> Generator:
     sorted_key_annotations = sorted(
         annotation["keyAnnotations"], key=lambda key_ann: int(key_ann["frame"])
     )
-
+    # previous_key_ann is used to keep track of the previous key annotation
+    # in case where keyframe is not present in the current frame range
+    previous_key_ann = {}
+    previous_key_ann_index = 0
     # iterate over the frame ranges of the annotation
     for frame_interval in annotation["frames"]:
         frame_range = range(frame_interval["start"], frame_interval["end"] + 1)
+        # has_key_annotation is used to keep track of whether the current frame range
+        # has a key annotation or not. It could be that the current frame range does not
+        # have a key annotation, or that the first keyframe is after the start of the frame range
+        has_key_annotation = False
         for key_ann_index, key_ann in enumerate(sorted_key_annotations):
             # skip the key annotation if the key annotation start frame
             # is not in current frame range
             if key_ann["frame"] not in frame_range:
                 continue
 
+            if key_ann["frame"] > frame_interval["start"] and not has_key_annotation:
+                # if the key annotation start frame is after the start of the frame range,
+                # then we need to yield the previous key annotation
+                key_ann_frame = previous_key_ann["frame"]
+                yield (
+                    previous_key_ann,
+                    frame_interval["start"],
+                    key_ann["frame"],
+                    key_ann,
+                    key_ann_frame,
+                )
             # compute the key annotation frame range
             # the start frame of key annotation is given, but not the end frame
             key_ann_start = key_ann["frame"]
+            key_ann_frame = key_ann["frame"]
             key_ann_end = min(
                 frame_interval["end"] + 1,
                 sorted_key_annotations[key_ann_index + 1]["frame"]
@@ -273,7 +310,26 @@ def _key_annotations_iterator(annotation: VideoAnnotation) -> Generator:
                 else None
             )
 
-            yield key_ann, key_ann_start, key_ann_end, next_key_ann
+            has_key_annotation = True
+            previous_key_ann = key_ann
+            previous_key_ann_index = key_ann_index
+
+            yield key_ann, key_ann_start, key_ann_end, next_key_ann, key_ann_frame
+
+        if not has_key_annotation:
+            key_ann_frame = previous_key_ann["frame"]
+            next_key_ann = (
+                sorted_key_annotations[previous_key_ann_index + 1]
+                if previous_key_ann_index + 1 < len(sorted_key_annotations)
+                else None
+            )
+            yield (
+                previous_key_ann,
+                frame_interval["start"],
+                frame_interval["end"] + 1,
+                next_key_ann,
+                key_ann_frame,
+            )
 
 
 def _ranking_annotation_to_json_response(
@@ -319,10 +375,12 @@ def _video_transcription_annotation_to_json_response(
     """
     json_resp: Dict[str, Dict[JobName, Dict]] = defaultdict(dict)
 
-    for key_ann, key_ann_start, key_ann_end, _ in _key_annotations_iterator(annotation):
+    for key_ann, key_ann_start, key_ann_end, _, key_ann_frame in _key_annotations_iterator(
+        annotation
+    ):
         for frame_id in range(key_ann_start, key_ann_end):
             json_resp[str(frame_id)][annotation["job"]] = {
-                "isKeyFrame": frame_id == key_ann_start,
+                "isKeyFrame": frame_id == key_ann_frame,
                 "text": key_ann["annotationValue"]["text"],
             }
 
@@ -406,12 +464,14 @@ def _video_classification_annotation_to_json_response(
 
     json_resp: Dict[str, Dict[JobName, Dict]] = defaultdict(dict)
 
-    for key_ann, key_ann_start, key_ann_end, _ in _key_annotations_iterator(annotation):
+    for key_ann, key_ann_start, key_ann_end, _, key_ann_frame in _key_annotations_iterator(
+        annotation
+    ):
         for frame_id in range(key_ann_start, key_ann_end):
             # initialize the frame json response
             json_resp[str(frame_id)][annotation["job"]] = {
                 "categories": [],
-                "isKeyFrame": frame_id == key_ann_start,
+                "isKeyFrame": frame_id == key_ann_frame,
             }
 
             # get the frame json response of child jobs
@@ -461,22 +521,27 @@ def _video_object_detection_annotation_to_json_response(
 
     json_resp = defaultdict(dict)
 
-    for key_ann, key_ann_start, key_ann_end, next_key_ann in _key_annotations_iterator(annotation):
+    for (
+        key_ann,
+        key_ann_start,
+        key_ann_end,
+        next_key_ann,
+        key_ann_frame,
+    ) in _key_annotations_iterator(annotation):
         for frame_id in range(key_ann_start, key_ann_end):
             # get the frame json response of child jobs
             child_jobs_frame_json_resp = json_resp_child_jobs.get(str(frame_id), {})
 
             annotation_dict = {
                 "children": child_jobs_frame_json_resp,
-                "isKeyFrame": frame_id == key_ann_start,
+                "isKeyFrame": frame_id == key_ann_frame,
                 "categories": [{"name": annotation["category"]}],
                 "mid": annotation["mid"],
                 "type": json_interface["jobs"][annotation["job"]]["tools"][0],
             }
 
-            if frame_id == key_ann_start or next_key_ann is None:
+            if frame_id == key_ann_frame or next_key_ann is None:
                 norm_vertices = key_ann["annotationValue"]["vertices"]
-
             # between two key frame annotations, an object (point, bbox, polygon) is
             # interpolated in the UI
             else:
@@ -485,9 +550,9 @@ def _video_object_detection_annotation_to_json_response(
                 norm_vertices = _interpolate_object(
                     object_type=json_interface["jobs"][annotation["job"]]["tools"][0],
                     object_initial_state=object_inital_state,
-                    initial_state_frame_index=key_ann_start,
+                    initial_state_frame_index=key_ann["frame"],
                     object_final_state=object_final_state,
-                    final_state_frame_index=key_ann_end,
+                    final_state_frame_index=next_key_ann["frame"],
                     at_frame=frame_id,
                 )
 
