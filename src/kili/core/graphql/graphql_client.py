@@ -40,7 +40,7 @@ gql_requests_logger.setLevel(logging.WARNING)
 # they need to be shared between all instances of Kili client within the same process
 
 # rate limiter to avoid sending too many queries to the backend
-_limiter = Limiter(RequestRate(MAX_CALLS_PER_MINUTE, Duration.MINUTE))
+_limiter = Limiter(Rate(MAX_CALLS_PER_MINUTE, Duration.MINUTE), max_delay=120 * 1000)
 
 # mutex to avoid multiple threads sending queries to the backend at the same time
 _execute_lock = threading.Lock()
@@ -304,7 +304,8 @@ class GraphQLClient:
     def _raw_execute(
         self, document: DocumentNode, variables: Optional[Dict], **kwargs
     ) -> Dict[str, Any]:
-        with _limiter.ratelimit("GraphQLClient.execute", delay=True), _execute_lock:
+        _limiter.try_acquire("GraphQLClient.execute")
+        with _execute_lock:
             return self._gql_client.execute(
                 document=document,
                 variable_values=variables,
