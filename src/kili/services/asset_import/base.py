@@ -11,6 +11,7 @@ from json import dumps
 from pathlib import Path
 from typing import (
     TYPE_CHECKING,
+    Any,
     Callable,
     Dict,
     List,
@@ -208,16 +209,14 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
     def _async_import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets with asynchronous resolver."""
         upload_type = "GEO_SATELLITE" if self.input_type == "IMAGE" else "VIDEO"
+        content = (
+            {"multiLayerContentArray": [asset["content"] for asset in assets]}
+            if all(isinstance(asset["content"], list) for asset in assets)
+            else {"contentArray": [asset["content"] for asset in assets]}
+        )
         payload = {
             "data": {
-                "contentArray": [
-                    asset["content"] if isinstance(asset["content"], str) else ""
-                    for asset in assets
-                ],
-                "multiLayerContentArray": [
-                    asset["content"] if isinstance(asset["content"], list) else None
-                    for asset in assets
-                ],
+                **content,
                 "externalIDArray": [asset["external_id"] for asset in assets],
                 "idArray": [asset["id"] for asset in assets],
                 "jsonMetadataArray": [asset["json_metadata"] for asset in assets],
@@ -292,7 +291,7 @@ class ContentBatchImporter(BaseBatchImporter):
         """Upload local content to a bucket."""
         project_bucket_path = self.generate_project_bucket_path()
         # tuple containeing (bucket_path, file_path, asset_index, content_index)
-        to_upload: List[Tuple[str, str, int, Union[int, None]]] = []
+        to_upload: List[Tuple[str, Any, int, Union[int, None]]] = []
         for i, asset in enumerate(assets):
             content = asset.get("content")
             asset_id = asset.get("id", bucket.generate_unique_id())
@@ -303,7 +302,7 @@ class ContentBatchImporter(BaseBatchImporter):
                             project_bucket_path, asset_id, "content", str(j)
                         )
                         to_upload.append((bucket_path, item, i, j))
-            elif isinstance(content, str) and not is_url(content):
+            else:
                 bucket_path = BaseBatchImporter.build_url_from_parts(
                     project_bucket_path, asset_id, "content"
                 )
@@ -312,7 +311,7 @@ class ContentBatchImporter(BaseBatchImporter):
             self.kili, [bucket_path for bucket_path, *_ in to_upload]
         )
         data_and_content_type_array = self.get_type_and_data_from_content_array(
-            [file_path for _, file_path, *_ in to_upload]
+            [content for _, content, *_ in to_upload]
         )
         data_array, content_type_array = zip(*data_and_content_type_array)
         with ThreadPoolExecutor() as threads:
