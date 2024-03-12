@@ -1,6 +1,6 @@
 """Import service types."""
 
-from typing import Union
+from typing import List, Union
 
 from typing_extensions import TypedDict
 
@@ -8,7 +8,7 @@ from typing_extensions import TypedDict
 class AssetLike(TypedDict, total=False):
     """General type of an asset object through the import functions."""
 
-    content: Union[str, bytes]
+    content: Union[str, bytes, List[str]]
     json_content: Union[dict, str, list]
     external_id: str
     json_metadata: Union[str, dict]
@@ -19,7 +19,7 @@ class AssetLike(TypedDict, total=False):
 class KiliResolverAsset(AssetLike, TypedDict, total=True):
     """Type of an asset object to be sent in Kili resolvers."""
 
-    content: Union[str, bytes]
+    content: Union[str, bytes, List[str]]
     json_content: Union[dict, str, list]
     external_id: str
     json_metadata: Union[str, dict]

@@ -50,6 +50,9 @@ class ImageDataImporter(BaseAbstractAssetImporter):
                 sync_assets.append(asset)
                 continue
             assert path
+            if isinstance(path, list):
+                async_assets.append(asset)
+                continue
             assert isinstance(path, str)
             mime_type = get_mime_type(path)
             is_large_image = os.path.getsize(path) >= LARGE_IMAGE_THRESHOLD_SIZE

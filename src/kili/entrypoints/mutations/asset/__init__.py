@@ -43,7 +43,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     def append_many_to_dataset(
         self,
         project_id: str,
-        content_array: Optional[List[str]] = None,
+        content_array: Optional[Union[List[str], List[List[str]]]] = None,
         external_id_array: Optional[List[str]] = None,
         id_array: Optional[List[str]] = None,
         is_honeypot_array: Optional[List[bool]] = None,

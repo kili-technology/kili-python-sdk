@@ -210,7 +210,14 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         upload_type = "GEO_SATELLITE" if self.input_type == "IMAGE" else "VIDEO"
         payload = {
             "data": {
-                "contentArray": [asset["content"] for asset in assets],
+                "contentArray": [
+                    asset["content"] if isinstance(asset["content"], str) else ""
+                    for asset in assets
+                ],
+                "multiLayerContentArray": [
+                    asset["content"] if isinstance(asset["content"], list) else None
+                    for asset in assets
+                ],
                 "externalIDArray": [asset["external_id"] for asset in assets],
                 "idArray": [asset["id"] for asset in assets],
                 "jsonMetadataArray": [asset["json_metadata"] for asset in assets],
@@ -284,15 +291,28 @@ class ContentBatchImporter(BaseBatchImporter):
     def upload_local_content_to_bucket(self, assets: List[AssetLike]):
         """Upload local content to a bucket."""
         project_bucket_path = self.generate_project_bucket_path()
-        asset_content_paths = [
-            BaseBatchImporter.build_url_from_parts(
-                project_bucket_path, asset.get("id", bucket.generate_unique_id()), "content"
-            )
-            for asset in assets
-        ]
-        signed_urls = bucket.request_signed_urls(self.kili, asset_content_paths)
+        # tuple containeing (bucket_path, file_path, asset_index, content_index)
+        to_upload: List[Tuple[str, str, int, Union[int, None]]] = []
+        for i, asset in enumerate(assets):
+            content = asset.get("content")
+            asset_id = asset.get("id", bucket.generate_unique_id())
+            if isinstance(content, list):
+                for j, item in enumerate(content):
+                    if not is_url(item):
+                        bucket_path = BaseBatchImporter.build_url_from_parts(
+                            project_bucket_path, asset_id, "content", str(j)
+                        )
+                        to_upload.append((bucket_path, item, i, j))
+            elif isinstance(content, str) and not is_url(content):
+                bucket_path = BaseBatchImporter.build_url_from_parts(
+                    project_bucket_path, asset_id, "content"
+                )
+                to_upload.append((bucket_path, content, i, None))
+        signed_urls = bucket.request_signed_urls(
+            self.kili, [bucket_path for bucket_path, *_ in to_upload]
+        )
         data_and_content_type_array = self.get_type_and_data_from_content_array(
-            [asset.get("content") for asset in assets]
+            [file_path for _, file_path, *_ in to_upload]
         )
         data_array, content_type_array = zip(*data_and_content_type_array)
         with ThreadPoolExecutor() as threads:
@@ -303,8 +323,19 @@ class ContentBatchImporter(BaseBatchImporter):
                 content_type_array,
                 repeat(self.http_client),
             )
-        # pylint: disable=line-too-long
-        return [AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
+        assets_with_content = []
+        for asset in assets:
+            asset_copy = asset.copy()
+            content = asset.get("content")
+            if isinstance(content, list):
+                asset_copy["content"] = content.copy()
+            assets_with_content.append(asset_copy)
+        for (_, _, asset_index, content_index), url in zip(to_upload, url_gen):
+            if content_index is not None:
+                assets_with_content[asset_index]["content"][content_index] = url
+            else:
+                assets_with_content[asset_index]["content"] = url
+        return assets_with_content
 
 
 class JsonContentBatchImporter(BaseBatchImporter):
@@ -382,6 +413,8 @@ class BaseAbstractAssetImporter(abc.ABC):
         Raise an error if a mix of both.
         """
         contents = [asset.get("content") for asset in assets if asset.get("content")]
+        if all(isinstance(content, list) for content in contents):
+            return False
         if all(is_url(content) for content in contents):
             return True
         if any(is_url(content) for content in contents):
@@ -437,13 +470,20 @@ class BaseAbstractAssetImporter(abc.ABC):
                 filtered_assets.append(asset)
                 continue
             assert path
-            assert isinstance(path, str)
-            try:
-                self.check_mime_type_compatibility(path)
+            paths = (
+                [item for item in path if not is_url(item)] if isinstance(path, list) else [path]
+            )
+            should_append_asset = True
+            for path in paths:
+                assert isinstance(path, str)
+                try:
+                    self.check_mime_type_compatibility(path)
+                except (FileNotFoundError, MimeTypeError):
+                    should_append_asset = False
+                    if raise_error:
+                        raise
+            if should_append_asset:
                 filtered_assets.append(asset)
-            except (FileNotFoundError, MimeTypeError):
-                if raise_error:
-                    raise
         if len(filtered_assets) == 0:
             # pylint: disable=line-too-long
             raise ImportValidationError(
