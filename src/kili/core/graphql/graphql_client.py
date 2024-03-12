@@ -14,8 +14,7 @@ from gql.transport import exceptions
 from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
-from pyrate_limiter import Duration, RequestRate
-from pyrate_limiter.limiter import Limiter
+from pyrate_limiter import Duration, Limiter, RequestRate
 from tenacity import (
     retry,
     retry_all,
