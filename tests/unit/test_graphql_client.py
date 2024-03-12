@@ -10,7 +10,7 @@ import pytest
 import pytest_mock
 from gql import Client
 from gql.transport import exceptions
-from pyrate_limiter import Duration, RequestRate
+from pyrate_limiter import Duration, Rate
 from pyrate_limiter.limiter import Limiter
 
 from kili.adapters.http_client import HttpClient
@@ -156,7 +156,7 @@ def test_rate_limiting(mocker: pytest_mock.MockerFixture):
     mocker.patch("kili.core.graphql.graphql_client.gql", side_effect=lambda x: x)
     mocker.patch(
         "kili.core.graphql.graphql_client._limiter",
-        new=Limiter(RequestRate(MAX_CALLS_PER_MINUTE, Duration.SECOND * 5)),
+        new=Limiter(Rate(MAX_CALLS_PER_MINUTE, Duration.SECOND * 5), max_delay=120 * 1000),
     )
     client = GraphQLClient(
         endpoint="",
