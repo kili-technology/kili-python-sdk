@@ -3,6 +3,9 @@
 from typing import TYPE_CHECKING, Dict, List, Optional, Type, cast
 
 from kili.domain.project import ProjectId
+from kili.services.asset_import.exceptions import (
+    ImportValidationError,
+)
 
 from .base import (
     BaseAbstractAssetImporter,
@@ -46,6 +49,10 @@ def import_assets(  # pylint: disable=too-many-arguments
 
     if input_type not in importer_by_type:
         raise NotImplementedError(f"There is no imported for the input type: {input_type}")
+    if input_type != "IMAGE" and any(isinstance(asset.get("content"), list) for asset in assets):
+        raise ImportValidationError(
+            f"Import of asset with multiple contents is not supported for input type: {input_type}"
+        )
     asset_importer = importer_by_type[input_type](*importer_params)
     casted_assets = cast(List[AssetLike], assets)
     asset_importer.check_asset_contents(casted_assets)
