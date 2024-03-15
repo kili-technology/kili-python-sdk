@@ -49,9 +49,9 @@ def import_assets(  # pylint: disable=too-many-arguments
 
     if input_type not in importer_by_type:
         raise NotImplementedError(f"There is no imported for the input type: {input_type}")
-    if input_type != "IMAGE" and any(isinstance(asset.get("content"), list) for asset in assets):
+    if input_type != "IMAGE" and any(asset.get("multi_layer_content") for asset in assets):
         raise ImportValidationError(
-            f"Import of asset with multiple contents is not supported for input type: {input_type}"
+            f"Import of multi-layer assets is not supported for input type: {input_type}"
         )
     asset_importer = importer_by_type[input_type](*importer_params)
     casted_assets = cast(List[AssetLike], assets)

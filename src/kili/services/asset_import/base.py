@@ -179,6 +179,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         """Fill empty fields with their default value."""
         asset_fields_default_value = AssetLike(
             content="",
+            multi_layer_content=None,
             json_content="",
             external_id=uuid4().hex,
             json_metadata="{}",
@@ -211,10 +212,10 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         upload_type = "GEO_SATELLITE" if self.input_type == "IMAGE" else "VIDEO"
         content = (
             {
-                "multiLayerContentArray": [asset["content"] for asset in assets],
+                "multiLayerContentArray": [asset["multi_layer_content"] for asset in assets],
                 "jsonContentArray": [asset["json_content"] for asset in assets],
             }
-            if all(isinstance(asset["content"], list) for asset in assets)
+            if all(asset.get("multi_layer_content") is not None for asset in assets)
             else {"contentArray": [asset["content"] for asset in assets]}
         )
         payload = {
@@ -266,8 +267,16 @@ class ContentBatchImporter(BaseBatchImporter):
         """Method to import a batch of asset with content."""
         assets = self.add_ids(assets)
         if not self.is_hosted:
-            assets_with_content = [asset for asset in assets if asset.get("content")]
-            assets = [asset for asset in assets if not asset.get("content")]
+            assets_with_content = [
+                asset
+                for asset in assets
+                if asset.get("content") or asset.get("multi_layer_content")
+            ]
+            assets = [
+                asset
+                for asset in assets
+                if not asset.get("content") and not asset.get("multi_layer_content")
+            ]
             if len(assets_with_content) > 0:
                 assets += self.upload_local_content_to_bucket(assets_with_content)
         return super().import_batch(assets, verify)
@@ -293,22 +302,22 @@ class ContentBatchImporter(BaseBatchImporter):
     def upload_local_content_to_bucket(self, assets: List[AssetLike]):
         """Upload local content to a bucket."""
         project_bucket_path = self.generate_project_bucket_path()
-        # tuple containeing (bucket_path, file_path, asset_index, content_index)
+        # tuple containing (bucket_path, file_path, asset_index, content_index)
         to_upload: List[Tuple[str, Any, int, Union[int, None]]] = []
         for i, asset in enumerate(assets):
-            file_path = asset.get("content")
             asset_id = asset.get("id", bucket.generate_unique_id())
-            if isinstance(file_path, list):
-                for j, item in enumerate(file_path):
+            multi_layer_content = asset.get("multi_layer_content")
+            if multi_layer_content:
+                for j, item in enumerate(multi_layer_content):
                     bucket_path = BaseBatchImporter.build_url_from_parts(
                         project_bucket_path, asset_id, "content", str(j)
                     )
-                    to_upload.append((bucket_path, item, i, j))
+                    to_upload.append((bucket_path, item.get("path"), i, j))
             else:
                 bucket_path = BaseBatchImporter.build_url_from_parts(
                     project_bucket_path, asset_id, "content"
                 )
-                to_upload.append((bucket_path, file_path, i, None))
+                to_upload.append((bucket_path, asset.get("content"), i, None))
         signed_urls = bucket.request_signed_urls(
             self.kili, [bucket_path for bucket_path, *_ in to_upload]
         )
@@ -327,13 +336,16 @@ class ContentBatchImporter(BaseBatchImporter):
         assets_with_content = []
         for asset in assets:
             asset_copy = asset.copy()
-            file_path = asset.get("content")
-            if isinstance(file_path, list):
-                asset_copy["content"] = file_path.copy()
+            multi_layer_content = asset.get("multi_layer_content")
+            if multi_layer_content:
+                asset_copy["multi_layer_content"] = [
+                    {key: value for key, value in content.items() if key != "path"}
+                    for content in multi_layer_content
+                ]
             assets_with_content.append(asset_copy)
         for (_, _, asset_index, content_index), url in zip(to_upload, url_gen):
             if content_index is not None:
-                assets_with_content[asset_index]["content"][content_index] = url
+                assets_with_content[asset_index]["multi_layer_content"][content_index]["url"] = url
             else:
                 assets_with_content[asset_index]["content"] = url
         return assets_with_content
@@ -413,19 +425,22 @@ class BaseAbstractAssetImporter(abc.ABC):
 
         Raise an error if a mix of both.
         """
-        contents = [asset.get("content") for asset in assets if asset.get("content")]
-        if all(isinstance(content, list) for content in contents):
-            if any(any(is_url(path) for path in content) for content in contents):  # type: ignore
+        multi_layer_contents = [
+            asset.get("multi_layer_content") for asset in assets if asset.get("multi_layer_content")
+        ]
+        if len(multi_layer_contents) > 0:
+            if any(
+                not isinstance(content.get("path"), str)
+                for multi_layer_content in multi_layer_contents
+                for content in multi_layer_content  # type: ignore
+                if content
+            ):
                 raise ImportValidationError(
-                    "Hosted layers should be specified in json_content_array and not content_array"
-                    " for assets with multiple contents."
+                    "Cannot import multi_layer_content with empty path. Please provide a path for"
+                    " each multi_layer_content"
                 )
             return False
-        if any(isinstance(content, list) for content in contents):
-            raise ImportValidationError(
-                "Cannot upload multiple contents and single content assets at the same time."
-                " Please separate the assets into 2 calls."
-            )
+        contents = [asset.get("content") for asset in assets if asset.get("content")]
         if all(is_url(content) for content in contents):
             return True
         if any(is_url(content) for content in contents):
@@ -441,11 +456,17 @@ class BaseAbstractAssetImporter(abc.ABC):
 
         Raise an error if not
         """
-        # Raise an error if there is an asset with no content and no json_content
+        # Raise an error if there is an asset with no content,
+        # no multi_layer_content and no json_content
         for asset in assets:
-            if not asset.get("content") and not asset.get("json_content"):
+            if (
+                not asset.get("content")
+                and not asset.get("multi_layer_content")
+                and not asset.get("json_content")
+            ):
                 raise ImportValidationError(
-                    "Cannot import asset with empty content and empty json_content"
+                    "Cannot import asset with empty content, empty"
+                    " multi_layer_content and empty json_content"
                 )
 
     def _can_upload_from_local_data(self) -> bool:
@@ -476,23 +497,19 @@ class BaseAbstractAssetImporter(abc.ABC):
         filtered_assets = []
         for asset in assets:
             json_content = asset.get("json_content")
+            multi_layer_content = asset.get("multi_layer_content")
             path = asset.get("content")
-            if json_content and not path:
+            if multi_layer_content or (json_content and not path):
                 filtered_assets.append(asset)
                 continue
             assert path
-            paths = path if isinstance(path, list) else [path]
-            should_append_asset = True
-            for path in paths:
-                assert isinstance(path, str)
-                try:
-                    self.check_mime_type_compatibility(path)
-                except (FileNotFoundError, MimeTypeError):
-                    should_append_asset = False
-                    if raise_error:
-                        raise
-            if should_append_asset:
+            assert isinstance(path, str)
+            try:
+                self.check_mime_type_compatibility(path)
                 filtered_assets.append(asset)
+            except (FileNotFoundError, MimeTypeError):
+                if raise_error:
+                    raise
         if len(filtered_assets) == 0:
             # pylint: disable=line-too-long
             raise ImportValidationError(

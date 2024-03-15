@@ -43,7 +43,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     def append_many_to_dataset(
         self,
         project_id: str,
-        content_array: Optional[Union[List[str], List[List[str]]]] = None,
+        content_array: Optional[List[str]] = None,
+        multi_layer_content_array: Optional[List[List[dict]]] = None,
         external_id_array: Optional[List[str]] = None,
         id_array: Optional[List[str]] = None,
         is_honeypot_array: Optional[List[bool]] = None,
@@ -61,7 +62,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         Args:
             project_id: Identifier of the project
             content_array: List of elements added to the assets of the project
-                Must not be None except if you provide json_content_array.
+                Must not be None except if you provide multi_layer_content_array or json_content_array.
 
                 - For a `TEXT` project, the content can be either raw text, or URLs to TEXT assets.
                 - For an `IMAGE` / `PDF` project, the content can be either URLs or paths to existing
@@ -70,6 +71,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 existing video files on your computer. If you want to import video from frames, look at the json_content
                 section below.
                 - For an `VIDEO_LEGACY` project, the content can be only be URLs
+            multi_layer_content_array: List containing multiple lists of paths.
+                Each path correspond to a layer of a geosat asset. Should be used only for `IMAGE` projects.
             external_id_array: List of external ids given to identify the assets.
                 If None, random identifiers are created.
             id_array: Disabled parameter. Do not use.
@@ -131,10 +134,14 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 from_csv=from_csv, csv_separator=csv_separator
             )
 
-        if is_empty_list_with_warning(
-            "append_many_to_dataset", "content_array", content_array
-        ) or is_empty_list_with_warning(
-            "append_many_to_dataset", "json_content_array", json_content_array
+        if (
+            is_empty_list_with_warning("append_many_to_dataset", "content_array", content_array)
+            or is_empty_list_with_warning(
+                "append_many_to_dataset", "json_content_array", json_content_array
+            )
+            or is_empty_list_with_warning(
+                "append_many_to_dataset", "multi_layer_content_array", multi_layer_content_array
+            )
         ):
             return {"id": project_id, "asset_ids": []}
 
@@ -146,15 +153,33 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 stacklevel=1,
             )
 
-        if content_array is None and json_content_array is None:
-            raise ValueError("Variables content_array and json_content_array cannot be both None.")
+        if (
+            content_array is None
+            and multi_layer_content_array is None
+            and json_content_array is None
+        ):
+            raise ValueError(
+                "Variables content_array, multi_layer_content_array and json_content_array cannot be both None."
+            )
+
+        if content_array is not None and multi_layer_content_array is not None:
+            raise ValueError(
+                "Variables content_array and multi_layer_content_array cannot be both provided."
+            )
 
         nb_data = (
-            len(content_array) if content_array is not None else len(json_content_array)  # type:ignore
+            len(content_array)
+            if content_array is not None
+            else (
+                len(multi_layer_content_array)
+                if multi_layer_content_array is not None
+                else len(json_content_array)  # type:ignore
+            )
         )
 
         field_mapping = {
             "content": content_array,
+            "multi_layer_content": multi_layer_content_array,
             "json_content": json_content_array,
             "external_id": external_id_array,
             "id": id_array,
