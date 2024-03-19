@@ -89,6 +89,38 @@ class ImageTestCase(ImportTestCase):
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
+    def test_upload_from_local_tiff_images_for_multi_layer(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+        url = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
+        path_image = self.downloader(url)
+        assets = [
+            {
+                "multi_layer_content": [
+                    {"path": path_image, "name": "layer1"},
+                    {"path": path_image, "name": "layer2", "isBaseLayer": False},
+                ],
+                "external_id": "local tiff image",
+            }
+        ]
+        import_assets(self.kili, self.project_id, assets)
+        expected_parameters = self.get_expected_async_call_multi_later(
+            [
+                [
+                    {
+                        "url": "https://signed_url?id=id",
+                        "name": "layer1",
+                    },
+                    {"url": "https://signed_url?id=id", "name": "layer2", "isBaseLayer": False},
+                ]
+            ],
+            [""],
+            ["local tiff image"],
+            ["unique_id"],
+            ["{}"],
+            "GEO_SATELLITE",
+        )
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+
     def test_upload_with_one_tiff_and_one_basic_image(self, *_):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
         url_tiff = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"

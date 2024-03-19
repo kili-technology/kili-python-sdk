@@ -77,6 +77,30 @@ class ImportTestCase(TestCase):
             },
         )
 
+    def get_expected_async_call_multi_later(
+        self,
+        multi_layer_content_array,
+        json_content_array,
+        external_id_array,
+        id_array,
+        json_metadata_array,
+        upload_type,
+    ):
+        return (
+            GQL_APPEND_MANY_FRAMES_TO_DATASET,
+            {
+                "data": {
+                    "multiLayerContentArray": multi_layer_content_array,
+                    "jsonContentArray": json_content_array,
+                    "idArray": id_array,
+                    "externalIDArray": external_id_array,
+                    "jsonMetadataArray": json_metadata_array,
+                    "uploadType": upload_type,
+                },
+                "where": {"id": self.project_id},
+            },
+        )
+
     def assert_upload_several_batches(self):
         nb_asset_test = IMPORT_BATCH_SIZE + 5
         external_id_array = [f"hosted file {i}" for i in range(nb_asset_test)]
