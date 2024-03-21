@@ -1,5 +1,6 @@
 """Code specific to Azure blob storage."""
 
+import re
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from urllib.parse import urlparse
@@ -24,7 +25,10 @@ def get_blob_paths_azure_data_connection_with_service_credentials(
         sas_token=data_integration["azureSASToken"],
         connection_url=data_integration["azureConnectionURL"],
     ).get_blob_paths_azure_data_connection_with_service_credentials(
-        data_connection["selectedFolders"], input_type=input_type
+        input_type=input_type,
+        prefix=data_connection.get("prefix"),
+        include=data_connection.get("include"),
+        exclude=data_connection.get("exclude"),
     )
 
 
@@ -79,22 +83,39 @@ class AzureBucket:
 
         return filetree
 
+    @staticmethod
+    def _generate_regex_pattern(pattern: str) -> str:
+        pattern = re.escape(pattern)
+
+        if "*" in pattern:
+            pattern = pattern.replace(r"\*", ".+")
+            pattern = f"^{pattern}$"
+        else:
+            pattern = f"^{pattern}"
+
+        return pattern
+
     def get_blob_paths_azure_data_connection_with_service_credentials(
-        self, selected_folders: Optional[List[str]], input_type: InputType
+        self,
+        input_type: InputType,
+        prefix: Optional[str] = "",
+        include: Optional[List[str]] = None,
+        exclude: Optional[List[str]] = None,
     ) -> Tuple[List[str], List[str], List[str]]:
         """Get the blob paths for an Azure data connection using service credentials."""
         blob_paths = []
         content_types = []
         warnings = set()
-        for blob in self.storage_bucket.list_blobs():
+        include = [self._generate_regex_pattern(pattern) for pattern in include] if include else []
+        exclude = [self._generate_regex_pattern(pattern) for pattern in exclude] if exclude else []
+        for blob in self.storage_bucket.list_blobs(name_starts_with=prefix):
             if not hasattr(blob, "name") or not isinstance(blob.name, str):
                 continue
 
-            # blob_paths_in_bucket contains all blob paths in the bucket, we need to filter them
-            # to keep only the ones in the data connection selected folders
-            if isinstance(selected_folders, List) and not any(
-                blob.name.startswith(selected_folder) for selected_folder in selected_folders
-            ):
+            if len(include) > 0 and not any(re.match(pattern, blob.name) for pattern in include):
+                continue
+
+            if len(exclude) > 0 and any(re.match(pattern, blob.name) for pattern in exclude):
                 continue
 
             has_content_type_field = (

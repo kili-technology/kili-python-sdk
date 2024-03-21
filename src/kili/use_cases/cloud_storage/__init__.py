@@ -316,6 +316,9 @@ def _compute_differences(
             "selectedFolders",
             "projectId",
             "isChecking",
+            "exclude",
+            "include",
+            "prefix",
         ),
     )
     data_integration = data_connection["dataIntegration"]
