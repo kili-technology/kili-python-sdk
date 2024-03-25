@@ -26,6 +26,7 @@ def get_blob_paths_azure_data_connection_with_service_credentials(
         connection_url=data_integration["azureConnectionURL"],
     ).get_blob_paths_azure_data_connection_with_service_credentials(
         input_type=input_type,
+        selected_folders=data_connection.get("selectedFolders"),
         prefix=data_connection.get("prefix"),
         include=data_connection.get("include"),
         exclude=data_connection.get("exclude"),
@@ -98,7 +99,8 @@ class AzureBucket:
     def get_blob_paths_azure_data_connection_with_service_credentials(
         self,
         input_type: InputType,
-        prefix: Optional[str] = "",
+        selected_folders: Optional[List[str]] = None,
+        prefix: Optional[str] = None,
         include: Optional[List[str]] = None,
         exclude: Optional[List[str]] = None,
     ) -> Tuple[List[str], List[str], List[str]]:
@@ -110,6 +112,15 @@ class AzureBucket:
         exclude = [self._generate_regex_pattern(pattern) for pattern in exclude] if exclude else []
         for blob in self.storage_bucket.list_blobs(name_starts_with=prefix):
             if not hasattr(blob, "name") or not isinstance(blob.name, str):
+                continue
+
+            if (
+                prefix is None
+                and isinstance(selected_folders, List)
+                and not any(
+                    blob.name.startswith(selected_folder) for selected_folder in selected_folders
+                )
+            ):
                 continue
 
             if len(include) > 0 and not any(re.match(pattern, blob.name) for pattern in include):
