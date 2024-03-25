@@ -10,7 +10,7 @@ from kili.exceptions import GraphQLError
 
 
 def batch_object_builder(
-    properties_to_batch: Dict[str, Optional[ListOrTuple[Any]]],
+    properties_to_batch: Dict[str, ListOrTuple[Any]],
     batch_size: int = MUTATION_BATCH_SIZE,
 ) -> Generator[Dict[str, Any], None, None]:
     """Generate a paginated iterator for several variables.
@@ -42,7 +42,7 @@ def batch_object_builder(
 # pylint: disable=missing-type-doc
 def mutate_from_paginated_call(
     kili,
-    properties_to_batch: Dict[str, Optional[ListOrTuple[Any]]],
+    properties_to_batch: Dict[str, ListOrTuple[Any]],
     generate_variables: Callable,
     request: str,
     batch_size: int = MUTATION_BATCH_SIZE,

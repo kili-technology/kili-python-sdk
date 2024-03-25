@@ -1,7 +1,7 @@
 """Asset mutations."""
 
 import warnings
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Union, cast
+from typing import Any, Dict, List, Literal, Optional, Union, cast
 
 from tenacity import retry
 from tenacity.retry import retry_if_exception_type
@@ -29,9 +29,6 @@ from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv
 from kili.utils.assets import PageResolution
 from kili.utils.logcontext import for_all_methods, log_call
-
-if TYPE_CHECKING:
-    from kili.domain.types import ListOrTuple
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -395,9 +392,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
-        properties_to_batch: Dict[str, Optional[ListOrTuple[Any]]] = {
-            "asset_ids": resolved_asset_ids
-        }
+        properties_to_batch = {"asset_ids": resolved_asset_ids}
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
@@ -474,9 +469,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
-        properties_to_batch: Dict[str, Optional[ListOrTuple[Any]]] = {
-            "asset_ids": resolved_asset_ids
-        }
+        properties_to_batch = {"asset_ids": resolved_asset_ids}
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
@@ -563,9 +556,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
-        properties_to_batch: Dict[str, Optional[ListOrTuple[Any]]] = {
-            "asset_ids": resolved_asset_ids
-        }
+        properties_to_batch = {"asset_ids": resolved_asset_ids}
 
         def generate_variables(batch):
             return {"where": {"idIn": batch["asset_ids"]}}
