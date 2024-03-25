@@ -2,6 +2,8 @@
 
 from typing import List, Tuple, TypeVar, Union
 
+from typing_extensions import TypeAlias
+
 T = TypeVar("T")
 
-ListOrTuple = Union[List[T], Tuple[T, ...]]
+ListOrTuple: TypeAlias = Union[List[T], Tuple[T, ...]]
