@@ -44,6 +44,10 @@ class ImageDataImporter(BaseAbstractAssetImporter):
             return assets, []
         sync_assets, async_assets = [], []
         for asset in assets:
+            multi_layer_content = asset.get("multi_layer_content")
+            if multi_layer_content is not None:
+                async_assets.append(asset)
+                continue
             json_content = asset.get("json_content")
             path = asset.get("content")
             if json_content and not path:

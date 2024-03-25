@@ -11,6 +11,7 @@ from json import dumps
 from pathlib import Path
 from typing import (
     TYPE_CHECKING,
+    Any,
     Callable,
     Dict,
     List,
@@ -178,6 +179,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         """Fill empty fields with their default value."""
         asset_fields_default_value = AssetLike(
             content="",
+            multi_layer_content=None,
             json_content="",
             external_id=uuid4().hex,
             json_metadata="{}",
@@ -208,9 +210,17 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
     def _async_import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets with asynchronous resolver."""
         upload_type = "GEO_SATELLITE" if self.input_type == "IMAGE" else "VIDEO"
+        content = (
+            {
+                "multiLayerContentArray": [asset["multi_layer_content"] for asset in assets],
+                "jsonContentArray": [asset["json_content"] for asset in assets],
+            }
+            if all(asset.get("multi_layer_content") is not None for asset in assets)
+            else {"contentArray": [asset["content"] for asset in assets]}
+        )
         payload = {
             "data": {
-                "contentArray": [asset["content"] for asset in assets],
+                **content,
                 "externalIDArray": [asset["external_id"] for asset in assets],
                 "idArray": [asset["id"] for asset in assets],
                 "jsonMetadataArray": [asset["json_metadata"] for asset in assets],
@@ -257,8 +267,16 @@ class ContentBatchImporter(BaseBatchImporter):
         """Method to import a batch of asset with content."""
         assets = self.add_ids(assets)
         if not self.is_hosted:
-            assets_with_content = [asset for asset in assets if asset.get("content")]
-            assets = [asset for asset in assets if not asset.get("content")]
+            assets_with_content = [
+                asset
+                for asset in assets
+                if asset.get("content") or asset.get("multi_layer_content")
+            ]
+            assets = [
+                asset
+                for asset in assets
+                if not asset.get("content") and not asset.get("multi_layer_content")
+            ]
             if len(assets_with_content) > 0:
                 assets += self.upload_local_content_to_bucket(assets_with_content)
         return super().import_batch(assets, verify)
@@ -284,15 +302,27 @@ class ContentBatchImporter(BaseBatchImporter):
     def upload_local_content_to_bucket(self, assets: List[AssetLike]):
         """Upload local content to a bucket."""
         project_bucket_path = self.generate_project_bucket_path()
-        asset_content_paths = [
-            BaseBatchImporter.build_url_from_parts(
-                project_bucket_path, asset.get("id", bucket.generate_unique_id()), "content"
-            )
-            for asset in assets
-        ]
-        signed_urls = bucket.request_signed_urls(self.kili, asset_content_paths)
+        # tuple containing (bucket_path, file_path, asset_index, content_index)
+        to_upload: List[Tuple[str, Any, int, Union[int, None]]] = []
+        for i, asset in enumerate(assets):
+            asset_id = asset.get("id", bucket.generate_unique_id())
+            multi_layer_content = asset.get("multi_layer_content")
+            if multi_layer_content:
+                for j, item in enumerate(multi_layer_content):
+                    bucket_path = BaseBatchImporter.build_url_from_parts(
+                        project_bucket_path, asset_id, "content", str(j)
+                    )
+                    to_upload.append((bucket_path, item.get("path"), i, j))
+            else:
+                bucket_path = BaseBatchImporter.build_url_from_parts(
+                    project_bucket_path, asset_id, "content"
+                )
+                to_upload.append((bucket_path, asset.get("content"), i, None))
+        signed_urls = bucket.request_signed_urls(
+            self.kili, [bucket_path for bucket_path, *_ in to_upload]
+        )
         data_and_content_type_array = self.get_type_and_data_from_content_array(
-            [asset.get("content") for asset in assets]
+            [file_path for _, file_path, *_ in to_upload]
         )
         data_array, content_type_array = zip(*data_and_content_type_array)
         with ThreadPoolExecutor() as threads:
@@ -303,8 +333,22 @@ class ContentBatchImporter(BaseBatchImporter):
                 content_type_array,
                 repeat(self.http_client),
             )
-        # pylint: disable=line-too-long
-        return [AssetLike(**{**asset, "content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
+        assets_with_content = []
+        for asset in assets:
+            asset_copy = asset.copy()
+            multi_layer_content = asset.get("multi_layer_content")
+            if multi_layer_content:
+                asset_copy["multi_layer_content"] = [
+                    {key: value for key, value in content.items() if key != "path"}
+                    for content in multi_layer_content
+                ]
+            assets_with_content.append(asset_copy)
+        for (_, _, asset_index, content_index), url in zip(to_upload, url_gen):
+            if content_index is not None:
+                assets_with_content[asset_index]["multi_layer_content"][content_index]["url"] = url
+            else:
+                assets_with_content[asset_index]["content"] = url
+        return assets_with_content
 
 
 class JsonContentBatchImporter(BaseBatchImporter):
@@ -381,6 +425,21 @@ class BaseAbstractAssetImporter(abc.ABC):
 
         Raise an error if a mix of both.
         """
+        multi_layer_contents = [
+            asset.get("multi_layer_content") for asset in assets if asset.get("multi_layer_content")
+        ]
+        if len(multi_layer_contents) > 0:
+            if any(
+                not isinstance(content.get("path"), str)
+                for multi_layer_content in multi_layer_contents
+                for content in multi_layer_content  # type: ignore
+                if content
+            ):
+                raise ImportValidationError(
+                    "Cannot import multi_layer_content with empty path. Please provide a path for"
+                    " each multi_layer_content"
+                )
+            return False
         contents = [asset.get("content") for asset in assets if asset.get("content")]
         if all(is_url(content) for content in contents):
             return True
@@ -397,11 +456,17 @@ class BaseAbstractAssetImporter(abc.ABC):
 
         Raise an error if not
         """
-        # Raise an error if there is an asset with no content and no json_content
+        # Raise an error if there is an asset with no content,
+        # no multi_layer_content and no json_content
         for asset in assets:
-            if not asset.get("content") and not asset.get("json_content"):
+            if (
+                not asset.get("content")
+                and not asset.get("multi_layer_content")
+                and not asset.get("json_content")
+            ):
                 raise ImportValidationError(
-                    "Cannot import asset with empty content and empty json_content"
+                    "Cannot import asset with empty content, empty"
+                    " multi_layer_content and empty json_content"
                 )
 
     def _can_upload_from_local_data(self) -> bool:
@@ -432,8 +497,9 @@ class BaseAbstractAssetImporter(abc.ABC):
         filtered_assets = []
         for asset in assets:
             json_content = asset.get("json_content")
+            multi_layer_content = asset.get("multi_layer_content")
             path = asset.get("content")
-            if json_content and not path:
+            if multi_layer_content or (json_content and not path):
                 filtered_assets.append(asset)
                 continue
             assert path

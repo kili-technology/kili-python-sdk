@@ -40,7 +40,7 @@ class TextDataImporter(BaseAbstractAssetImporter):
     def get_data_type(assets: List[AssetLike]) -> TextDataType:
         """Determine the type of data to upload from the service payload."""
         content_array = [asset.get("content", "") for asset in assets]
-        has_local_file = any(os.path.exists(content) for content in content_array)
+        has_local_file = any(os.path.exists(content) for content in content_array)  # type: ignore
         has_hosted_file = any(is_url(content) for content in content_array)
         has_json_content = any(asset.get("json_content") for asset in assets)
         if has_json_content:
