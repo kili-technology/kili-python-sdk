@@ -199,6 +199,8 @@ kili.append_labels(
 )
 ```
 
+Note: that the inference metric could appear as None at the beginning (as those calculs can be complex we choose to do it in a separate way and so the return could be delayed). Just wait a bit before trigger the fetch of the labels.
+
 You can now fetch the agreement between the human and the model, for human labels:
 
 
