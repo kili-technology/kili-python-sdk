@@ -39,6 +39,7 @@ nav:
           - Video Assets: sdk/tutorials/importing_video_assets.md
           - PDF Assets: sdk/tutorials/importing_pdf_assets.md
           - Rich Text Assets: sdk/tutorials/import_text_assets.md
+          - Multi-Layer Geosatellite Assets: sdk/tutorials/importing_multilayer_geosat_assets.md
       - Importing Labels:
           - Importing Labels: sdk/tutorials/importing_labels.md
           - OpenAI NER Pre-annotations: sdk/tutorials/ner_pre_annotations_openai.md
