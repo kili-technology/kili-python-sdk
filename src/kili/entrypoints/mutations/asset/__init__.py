@@ -92,10 +92,15 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': ''}]`.
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
-                - In Image projects with geoTIFF assets, you can specify the `minZoom` and `maxZoom` values for the `processingParameters` key.
-                    The `minZoom` parameter defines the zoom level that users are not allowed to zoom out from.
-                    The `maxZoom` value affects asset generation: the higher the value, the greater the level of details and the size of the asset.
-                    Example for one asset: `json_metadata_array = [{'processingParameters': {'minZoom': 17, 'maxZoom': 19}}]`.
+                - In Image projects with geoTIFF assets, you can specify the epsg, the `minZoom` and `maxZoom` values for the `processingParameters` key.
+                    - The epsg is a number that defines the projection that will be used for the asset. Values that can be used are either 4326 or 3857, the 2
+                    projections that we support. If this number is not set, by default we keep the initial projection of the asset if it is 4326 or 3857, either
+                    we reproject the asset to EPSG:3857 by default.
+                    - The `minZoom` parameter defines the zoom level that users are not allowed to zoom out from. It also affects the zoom levels for which we
+                    generate the tiles when tiling the asset (for asset with size > 30MB).
+                    - The `maxZoom` value affects asset generation: the higher the value, the greater the level of details and the size of the asset. It also affects
+                    the zoom levels for which we generate the tiles when tiling the asset (for asset with size > 30MB).
+                    - Example for one asset: `json_metadata_array = [{'processingParameters': {'epsg': 3758, 'minZoom': 17, 'maxZoom': 19}}]`.
             disable_tqdm: If `True`, the progress bar will be disabled
             wait_until_availability: If `True`, the function will return once the assets are fully imported in Kili.
                 If `False`, the function will return faster but the assets might not be fully processed by the server.
