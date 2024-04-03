@@ -48,7 +48,9 @@ class AssetOperationMixin(BaseOperationMixin):
         assets_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving assets", GQL_COUNT_ASSETS
         )
-        assets_gen = (load_asset_json_fields(asset, fields) for asset in assets_gen)
+        assets_gen = (
+            load_asset_json_fields(asset, fields, self.http_client) for asset in assets_gen
+        )
 
         if any("jsonResponse" in field for field in fields):
             converter = AnnotationsToJsonResponseConverter(
