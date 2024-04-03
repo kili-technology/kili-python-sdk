@@ -205,7 +205,10 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         # ocrMetadata field of assets need to be merged with jsonMetadata field
         for asset in assets:
             if isinstance(asset["jsonMetadata"], str):
-                asset["jsonMetadata"] = json.loads(asset["jsonMetadata"])
+                try:
+                    asset["jsonMetadata"] = json.loads(asset["jsonMetadata"])
+                except json.JSONDecodeError:
+                    asset["jsonMetadata"] = {}
             if asset["ocrMetadata"]:
                 asset["jsonMetadata"] = {**asset["jsonMetadata"], **asset["ocrMetadata"]}
 
