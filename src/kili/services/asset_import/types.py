@@ -8,7 +8,7 @@ from typing_extensions import TypedDict
 class AssetLike(TypedDict, total=False):
     """General type of an asset object through the import functions."""
 
-    content: Union[str, bytes]
+    content: Union[str, bytes, dict]
     multi_layer_content: Union[List[dict], None]
     json_content: Union[dict, str, list]
     external_id: str

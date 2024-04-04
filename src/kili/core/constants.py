@@ -15,6 +15,7 @@ mime_extensions = {
     "Pdf": "application/pdf",
     "Text": "text/plain",
     "TimeSeries": "text/csv",
+    "LLM": "application/json",
 }
 
 mime_extensions_for_IV2 = {
@@ -27,6 +28,7 @@ mime_extensions_for_IV2 = {
     "URL": "",
     "VIDEO": mime_extensions["Video"],
     "VIDEO_LEGACY": "",
+    "LLM_RLHF": mime_extensions["LLM"],
 }
 
 mime_extensions_for_py_scripts = ["text/x-python"]
