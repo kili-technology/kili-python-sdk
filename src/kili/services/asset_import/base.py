@@ -486,6 +486,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         )
 
     def _check_upload_is_allowed(self, assets: List[AssetLike]) -> None:
+        # TODO: avoid querying API for each asset to upload when doing this check
         if not self.is_hosted_content(assets) and not self._can_upload_from_local_data():
             raise UploadFromLocalDataForbiddenError("Cannot upload content from local data")
 
