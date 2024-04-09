@@ -89,7 +89,7 @@ class GraphQLClient:
         self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
             headers=self._get_headers(),
-            timeout=30,
+            timeout=60,
             verify=verify,
             retries=10,
             retry_backoff_factor=0.1,  # last retry will take 0.1*2**10 = 100s
