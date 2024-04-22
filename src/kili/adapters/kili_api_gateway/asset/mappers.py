@@ -1,10 +1,25 @@
 """GraphQL payload data mappers for asset operations."""
 
+import warnings
+
 from kili.domain.asset import AssetFilters
+
+MAX_PARTIAL_EXTERNAL_IDS_FILTER = 10
 
 
 def asset_where_mapper(filters: AssetFilters):
     """Build the GraphQL AssetWhere variable to be sent in an operation."""
+    if (
+        filters.external_id_in is not None
+        and len(filters.external_id_in) > MAX_PARTIAL_EXTERNAL_IDS_FILTER
+    ):
+        warnings.warn(
+            f"Requesting more than {MAX_PARTIAL_EXTERNAL_IDS_FILTER} partial external IDs"
+            "in a single query is deprecated. You can use the `external_id_strictly_in`"
+            f"field to filter by more than {MAX_PARTIAL_EXTERNAL_IDS_FILTER} external IDs. "
+            "This limit will be enforced in next versions.",
+            stacklevel=5,
+        )
     return {
         "id": filters.asset_id,
         "project": {
