@@ -7,6 +7,8 @@ from kili.services.label_data_parsing import job_response as job_response_module
 from .exceptions import FrameIndexError, JobNotExistingError
 from .types import Project
 
+IGNORED_JOBS = ["ANNOTATION_JOB_COUNTER", "ANNOTATION_NAMES_JOB", "ROTATION_JOB"]
+
 
 # pylint: disable=too-few-public-methods
 class _ParsedVideoJobs:
@@ -25,7 +27,7 @@ class _ParsedVideoJobs:
         # all job names in the json response should be in the json interface too
         for frame_response in json_response.values():
             for job_name in frame_response:
-                if job_name not in json_interface:
+                if job_name not in json_interface and job_name not in IGNORED_JOBS:
                     raise JobNotExistingError(job_name)
 
         # define the list of job names to parse
@@ -121,7 +123,11 @@ def _is_video_response(project_info: Project, json_response: Dict) -> bool:
             continue
 
         for job_name in frame_response:
-            if not (isinstance(job_name, str) and job_name in project_info["jsonInterface"]):
+            if (
+                isinstance(job_name, str)
+                and job_name not in IGNORED_JOBS
+                and job_name not in project_info["jsonInterface"]
+            ):
                 return False
 
     return True
