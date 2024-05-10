@@ -14,6 +14,7 @@ from .base import (
     ProjectParams,
 )
 from .image import ImageDataImporter
+from .llm import LLMDataImporter
 from .pdf import PdfDataImporter
 from .text import TextDataImporter
 from .types import AssetLike
@@ -28,6 +29,7 @@ importer_by_type: Dict[str, Type[BaseAbstractAssetImporter]] = {
     "TEXT": TextDataImporter,
     "VIDEO": VideoDataImporter,
     "VIDEO_LEGACY": VideoDataImporter,
+    "LLM_RLHF": LLMDataImporter,
 }
 
 

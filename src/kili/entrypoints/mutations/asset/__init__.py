@@ -40,7 +40,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     def append_many_to_dataset(
         self,
         project_id: str,
-        content_array: Optional[List[str]] = None,
+        content_array: Optional[Union[List[str], List[dict]]] = None,
         multi_layer_content_array: Optional[List[List[dict]]] = None,
         external_id_array: Optional[List[str]] = None,
         id_array: Optional[List[str]] = None,
@@ -67,7 +67,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 - For a VIDEO project, the content can be either URLs pointing to videos hosted on a web server or paths to
                 existing video files on your computer. If you want to import video from frames, look at the json_content
                 section below.
-                - For an `VIDEO_LEGACY` project, the content can be only be URLs
+                - For an `VIDEO_LEGACY` project, the content can be only be URLs.
+                - For an `LLM_RLHF` project, the content can be dicts with the keys `prompt` and `completions`,
+                paths to local json files or URLs to json files.
             multi_layer_content_array: List containing multiple lists of paths.
                 Each path correspond to a layer of a geosat asset. Should be used only for `IMAGE` projects.
             external_id_array: List of external ids given to identify the assets.
