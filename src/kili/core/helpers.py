@@ -58,7 +58,7 @@ def get_mime_type(path: str):
     if mime_type is None and path.endswith(".jp2"):
         return "image/jp2"
     # guess_type provides a wrong mime type for NITF files on Ubuntu
-    if path.endswith(".ntf") and mime_type != "application/vnd.nitf":
+    if path.endswith((".ntf", ".nitf")) and mime_type != "application/vnd.nitf":
         return "application/vnd.nitf"
     return mime_type
 
