@@ -152,10 +152,16 @@ expected_json_resp = {
                 {
                     "children": {
                         "CLASSIFICATION_JOB": {
-                            "categories": [{"name": "BLUE"}],
+                            "categories": [
+                                {
+                                    "children": {
+                                        "TRANSCRIPTION_JOB": {"isKeyFrame": True, "text": "Bmw"}
+                                    },
+                                    "name": "BLUE",
+                                }
+                            ],
                             "isKeyFrame": True,
                         },
-                        "TRANSCRIPTION_JOB": {"isKeyFrame": True, "text": "Bmw"},
                     },
                     "isKeyFrame": True,
                     "boundingPoly": [{"normalizedVertices": bbox_1}],
@@ -172,11 +178,17 @@ expected_json_resp = {
                 {
                     "children": {
                         "CLASSIFICATION_JOB": {
-                            "categories": [{"name": "RED"}],
-                            "isKeyFrame": True,
-                        },
-                        "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "PURPLE_RED"}],
+                            "categories": [
+                                {
+                                    "children": {
+                                        "CLASSIFICATION_JOB_0": {
+                                            "categories": [{"name": "PURPLE_RED"}],
+                                            "isKeyFrame": True,
+                                        }
+                                    },
+                                    "name": "RED",
+                                }
+                            ],
                             "isKeyFrame": True,
                         },
                     },
