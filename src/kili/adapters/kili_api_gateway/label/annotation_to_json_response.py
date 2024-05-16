@@ -401,7 +401,9 @@ def _get_child_annotations(annotation: T, other_annotations: List[T]) -> List[T]
         ann
         for ann in other_annotations
         # ann["path"] is a list of couples (annotationId, category)
-        if ann["path"] and any(path[0] == annotation["id"] for path in ann["path"])
+        if len(ann["path"]) > 0
+        and ann["path"][-1][0] == annotation["id"]
+        and annotation["path"] == ann["path"][:-1]
     ]
 
 
@@ -465,9 +467,7 @@ def _classification_annotation_to_json_response(
     # and compute the json response of those child jobs
     child_annotations = _get_child_annotations(annotation, other_annotations)
     json_resp_child_jobs = (
-        _compute_children_json_resp(
-            child_annotations, [ann for ann in other_annotations if ann not in child_annotations]
-        )
+        _compute_children_json_resp(child_annotations, other_annotations)
         if child_annotations
         else {}
     )
@@ -503,9 +503,7 @@ def _video_classification_annotation_to_json_response(
     # and compute the json response of those child jobs
     child_annotations = _get_child_annotations(annotation, other_annotations)
     json_resp_child_jobs = (
-        _compute_children_json_resp(
-            child_annotations, [ann for ann in other_annotations if ann not in child_annotations]
-        )
+        _compute_children_json_resp(child_annotations, other_annotations)
         if child_annotations
         else {}
     )
@@ -560,9 +558,7 @@ def _video_object_detection_annotation_to_json_response(
     # and compute the json response of those child jobs
     child_annotations = _get_child_annotations(annotation, other_annotations)
     json_resp_child_jobs = (
-        _compute_children_json_resp(
-            child_annotations, [ann for ann in other_annotations if ann not in child_annotations]
-        )
+        _compute_children_json_resp(child_annotations, other_annotations)
         if child_annotations
         else {}
     )
