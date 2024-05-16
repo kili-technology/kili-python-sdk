@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 json_interface = {
     "jobs": {
         "OBJECT_DETECTION_JOB": {
@@ -138,7 +140,9 @@ annotations = [
 
 expected_json_resp = {
     "0": {
-        "ANNOTATION_JOB_COUNTER": {"OBJECT_DETECTION_JOB": {"K": 2}},
+        "ANNOTATION_JOB_COUNTER": {
+            "OBJECT_DETECTION_JOB": defaultdict(int, {"K": 2}),
+        },
         "ANNOTATION_NAMES_JOB": {
             "20231102143201332-74497": "K 1",
             "20231102143221654-37429": "K 3",
@@ -152,11 +156,17 @@ expected_json_resp = {
                 {
                     "children": {
                         "CLASSIFICATION_JOB": {
-                            "categories": [{"name": "B"}],
-                            "isKeyFrame": True,
-                        },
-                        "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "D"}],
+                            "categories": [
+                                {
+                                    "children": {
+                                        "CLASSIFICATION_JOB_0": {
+                                            "categories": [{"name": "D"}],
+                                            "isKeyFrame": True,
+                                        }
+                                    },
+                                    "name": "B",
+                                }
+                            ],
                             "isKeyFrame": True,
                         },
                     },
@@ -175,11 +185,17 @@ expected_json_resp = {
                 {
                     "children": {
                         "CLASSIFICATION_JOB": {
-                            "categories": [{"name": "B"}],
-                            "isKeyFrame": False,
-                        },
-                        "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "D"}],
+                            "categories": [
+                                {
+                                    "children": {
+                                        "CLASSIFICATION_JOB_0": {
+                                            "categories": [{"name": "D"}],
+                                            "isKeyFrame": False,
+                                        }
+                                    },
+                                    "name": "B",
+                                }
+                            ],
                             "isKeyFrame": False,
                         },
                     },
@@ -198,11 +214,17 @@ expected_json_resp = {
                 {
                     "children": {
                         "CLASSIFICATION_JOB": {
-                            "categories": [{"name": "B"}],
-                            "isKeyFrame": False,
-                        },
-                        "CLASSIFICATION_JOB_0": {
-                            "categories": [{"name": "D"}],
+                            "categories": [
+                                {
+                                    "children": {
+                                        "CLASSIFICATION_JOB_0": {
+                                            "categories": [{"name": "D"}],
+                                            "isKeyFrame": False,
+                                        }
+                                    },
+                                    "name": "B",
+                                }
+                            ],
                             "isKeyFrame": False,
                         },
                     },
