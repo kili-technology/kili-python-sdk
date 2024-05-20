@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from .tag import TagId
 
 ProjectId = NewType("ProjectId", str)
-InputType = Literal["IMAGE", "PDF", "TEXT", "VIDEO"]
+InputType = Literal["IMAGE", "PDF", "TEXT", "VIDEO", "LLM_RLHF"]
 
 
 class InputTypeEnum(str, Enum):
@@ -20,6 +20,7 @@ class InputTypeEnum(str, Enum):
     PDF = "PDF"
     TEXT = "TEXT"
     VIDEO = "VIDEO"
+    LLM_RLHF = "LLM_RLHF"
 
 
 ComplianceTag = Literal["PHI", "PII"]

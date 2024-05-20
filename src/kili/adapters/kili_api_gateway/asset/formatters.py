@@ -3,16 +3,32 @@
 import json
 from typing import Dict
 
+from kili.adapters.http_client import HttpClient
+from kili.core.helpers import is_url
 from kili.domain.types import ListOrTuple
 
 
-def load_asset_json_fields(asset: Dict, fields: ListOrTuple[str]) -> Dict:
+def load_json_from_link(link: str, http_client: HttpClient) -> Dict:
+    """Load json from link."""
+    if link == "" or not is_url(link):
+        return {}
+
+    try:
+        return http_client.get(link, timeout=30).json()
+    except json.JSONDecodeError:
+        return {}
+
+
+def load_asset_json_fields(asset: Dict, fields: ListOrTuple[str], http_client: HttpClient) -> Dict:
     """Load json fields of an asset."""
     if "jsonMetadata" in fields:
         try:
             asset["jsonMetadata"] = json.loads(asset.get("jsonMetadata", "{}"))
         except json.JSONDecodeError:
             asset["jsonMetadata"] = {}
+
+    if "ocrMetadata" in fields and asset.get("ocrMetadata") is not None:
+        asset["ocrMetadata"] = load_json_from_link(asset.get("ocrMetadata", ""), http_client)
 
     if "labels.jsonResponse" in fields:
         asset_labels = asset.get("labels", [])
