@@ -2,7 +2,7 @@
 import math
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, Generator, List, Optional, Tuple, cast, overload
+from typing import Dict, Generator, List, Optional, Tuple, TypeVar, Union, cast, overload
 
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.graphql.graphql_client import GraphQLClient
@@ -176,10 +176,15 @@ def _classic_annotations_to_json_response(
     """Convert label annotations to a json response."""
     json_resp = defaultdict(dict)
 
-    for ann in annotations:
+    for i, ann in enumerate(annotations):
+        if ann["path"]:  # skip child annotations
+            continue
+
+        other_annotations = annotations[:i] + annotations[i + 1 :]
+
         if ann["__typename"] == "ClassificationAnnotation":
             ann = cast(ClassificationAnnotation, ann)
-            ann_json_resp = _classification_annotation_to_json_response(ann)
+            ann_json_resp = _classification_annotation_to_json_response(ann, other_annotations)
             for job_name, job_resp in ann_json_resp.items():
                 json_resp.setdefault(job_name, {}).setdefault("categories", []).extend(
                     job_resp["categories"]
@@ -387,28 +392,47 @@ def _video_transcription_annotation_to_json_response(
     return json_resp
 
 
-def _get_child_annotations(
-    annotation: VideoAnnotation, other_annotations: List[VideoAnnotation]
-) -> List[VideoAnnotation]:
+T = TypeVar("T", VideoAnnotation, ClassicAnnotation)
+
+
+def _get_child_annotations(annotation: T, other_annotations: List[T]) -> List[T]:
     """Get the child annotations (child jobs) of a video annotation."""
     return [
         ann
         for ann in other_annotations
         # ann["path"] is a list of couples (annotationId, category)
-        if ann["path"] and any(path[0] == annotation["id"] for path in ann["path"])
+        if len(ann["path"]) > 0
+        and ann["path"][-1][0] == annotation["id"]
+        and annotation["path"] == ann["path"][:-1]
     ]
 
 
 def _compute_children_json_resp(
-    child_annotations: List[VideoAnnotation],
-    other_annotations: List[VideoAnnotation],
+    child_annotations: Union[List[ClassicAnnotation], List[VideoAnnotation]],
+    other_annotations: Union[List[ClassicAnnotation], List[VideoAnnotation]],
 ) -> Dict[str, Dict[JobName, Dict]]:
     """Compute the video json response of the child jobs of a video annotation."""
     children_json_resp = defaultdict(dict)
 
     for child_ann in child_annotations:
-        if child_ann["__typename"] == "VideoClassificationAnnotation":
+        if child_ann["__typename"] == "ClassificationAnnotation":
+            child_ann = cast(ClassificationAnnotation, child_ann)
+            other_annotations = cast(List[ClassicAnnotation], other_annotations)
+            sub_job_resp = _classification_annotation_to_json_response(
+                child_ann, _get_child_annotations(child_ann, other_annotations)
+            )
+
+        elif child_ann["__typename"] == "RankingAnnotation":
+            child_ann = cast(RankingAnnotation, child_ann)
+            sub_job_resp = _ranking_annotation_to_json_response(child_ann)
+
+        elif child_ann["__typename"] == "TranscriptionAnnotation":
+            child_ann = cast(TranscriptionAnnotation, child_ann)
+            sub_job_resp = _transcription_annotation_to_json_response(child_ann)
+
+        elif child_ann["__typename"] == "VideoClassificationAnnotation":
             child_ann = cast(VideoClassificationAnnotation, child_ann)
+            other_annotations = cast(List[VideoAnnotation], other_annotations)
             sub_job_resp = _video_classification_annotation_to_json_response(
                 child_ann, _get_child_annotations(child_ann, other_annotations)
             )
@@ -430,6 +454,7 @@ def _compute_children_json_resp(
 
 def _classification_annotation_to_json_response(
     annotation: ClassificationAnnotation,
+    other_annotations: List[ClassicAnnotation],
 ) -> Dict[JobName, Dict]:
     # initialize the json response
     json_resp = {
@@ -438,10 +463,33 @@ def _classification_annotation_to_json_response(
         }
     }
 
+    # get the child annotations of the current annotation
+    # and compute the json response of those child jobs
+    child_annotations = _get_child_annotations(annotation, other_annotations)
+    json_resp_child_jobs = (
+        _compute_children_json_resp(child_annotations, other_annotations)
+        if child_annotations
+        else {}
+    )
+
     # a frame can have one or multiple categories
     categories = annotation["annotationValue"]["categories"]
+
     for category in categories:
         category_annotation: Dict = {"name": category}
+
+        # search among the child annotations the ones
+        # that have a path (annotationId, category)
+        children_json_resp = {}
+        for child_ann in child_annotations:
+            if [annotation["id"], category] in child_ann["path"] and child_ann[
+                "job"
+            ] in json_resp_child_jobs:
+                children_json_resp[child_ann["job"]] = json_resp_child_jobs[child_ann["job"]]
+
+        if children_json_resp:
+            category_annotation["children"] = children_json_resp
+
         json_resp[annotation["job"]]["categories"].append(category_annotation)
 
     return json_resp
@@ -455,9 +503,7 @@ def _video_classification_annotation_to_json_response(
     # and compute the json response of those child jobs
     child_annotations = _get_child_annotations(annotation, other_annotations)
     json_resp_child_jobs = (
-        _compute_children_json_resp(
-            child_annotations, [ann for ann in other_annotations if ann not in child_annotations]
-        )
+        _compute_children_json_resp(child_annotations, other_annotations)
         if child_annotations
         else {}
     )
@@ -512,9 +558,7 @@ def _video_object_detection_annotation_to_json_response(
     # and compute the json response of those child jobs
     child_annotations = _get_child_annotations(annotation, other_annotations)
     json_resp_child_jobs = (
-        _compute_children_json_resp(
-            child_annotations, [ann for ann in other_annotations if ann not in child_annotations]
-        )
+        _compute_children_json_resp(child_annotations, other_annotations)
         if child_annotations
         else {}
     )
