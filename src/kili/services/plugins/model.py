@@ -18,7 +18,9 @@ class PluginCore:
 
         on_submit(self, label: Dict, asset_id: str)
         on_review(self, label: Dict, asset_id: str)
-        on_custom_interface_click(self, label: Dict, asset_id: str):
+        on_custom_interface_click(self, label: Dict, asset_id: str)
+        on_project_updated(self, settings_updated: List[Dict])
+        on_send_back_to_queue(self, asset_id: str)
 
     !!! warning
         if using a custom init, be sure to call super().__init__()
@@ -66,7 +68,7 @@ class PluginCore:
         """
         # pylint: disable=unused-argument
         self.logger.warning("Method not implemented. Define a custom on_submit on your plugin")
-        ...  # pylint: disable=unnecessary-ellipsis
+        # pylint: disable=unnecessary-ellipsis
 
     def on_review(
         self,
@@ -97,7 +99,7 @@ class PluginCore:
         """
         # pylint: disable=unused-argument
         self.logger.warning("Method not implemented. Define a custom on_review on your plugin")
-        ...  # pylint: disable=unnecessary-ellipsis
+        # pylint: disable=unnecessary-ellipsis
 
     def on_custom_interface_click(
         self,
@@ -164,6 +166,30 @@ class PluginCore:
                     self.logger.info(setting)
                     # this will print:
                     # {'key': 'description', 'newValue': 'new desc', 'oldValue': 'old desc'}
+            ```
+        """
+        # pylint: disable=unused-argument
+        self.logger.warning("Handler is in active development.")
+
+    def on_send_back_to_queue(
+        self,
+        asset_id: str,
+    ) -> None:
+        """Handler for send back to queue.
+
+        Triggered when an asset is sent back to queue
+
+        !!! warning
+            This handler is in beta and is still in active development,
+            it should be used with caution.
+
+        Args:
+            asset_id: Id of the asset on which was sent back to queue
+
+        !!! example
+            ```python
+            def on_send_back_to_queue(self, asset_id: str):
+                self.logger.info(f"Asset {asset_id} was sent back to queue")
             ```
         """
         # pylint: disable=unused-argument
