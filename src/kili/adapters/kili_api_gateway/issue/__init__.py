@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Issue related operations."""
 
-from typing import Dict, Generator, List
+from typing import Any, Dict, Generator, List
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -15,12 +15,12 @@ from kili.adapters.kili_api_gateway.issue.operations import (
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.core.constants import MUTATION_BATCH_SIZE
 from kili.core.utils.pagination import batcher
-from kili.domain.issue import IssueFilters, IssueId, IssueType
+from kili.domain.issue import IssueFilters, IssueId, IssueStatus, IssueType
 from kili.domain.types import ListOrTuple
 from kili.utils import tqdm
 
 from .mappers import issue_where_mapper
-from .operations import get_issues_query
+from .operations import GQL_UPDATE_ISSUE, get_issues_query
 
 
 class IssueOperationMixin(BaseOperationMixin):
@@ -73,3 +73,10 @@ class IssueOperationMixin(BaseOperationMixin):
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving issues", GQL_COUNT_ISSUES
         )
+
+    def update_issue_status(self, issue_id: IssueId, status: IssueStatus) -> Dict[str, Any]:
+        """Update the status of an issue."""
+        data = {"status": status}
+        where = {"id": issue_id}
+        payload = {"data": data, "where": where}
+        return self.graphql_client.execute(GQL_UPDATE_ISSUE, payload)
