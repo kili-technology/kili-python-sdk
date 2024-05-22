@@ -1,10 +1,10 @@
 """Issue use cases."""
 
-from typing import Dict, Generator, List
+from typing import Any, Dict, Generator, List
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
-from kili.domain.issue import IssueFilters, IssueId
+from kili.domain.issue import IssueFilters, IssueId, IssueStatus
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.mutations.issue.helpers import get_labels_asset_ids_map
@@ -45,3 +45,7 @@ class IssueUseCases(BaseUseCases):
     ) -> Generator[Dict, None, None]:
         """List issues."""
         return self._kili_api_gateway.list_issues(filters=filters, fields=fields, options=options)
+
+    def update_issue_status(self, issue_id: IssueId, status: IssueStatus) -> Dict[str, Any]:
+        """Update issue status."""
+        return self._kili_api_gateway.update_issue_status(issue_id=issue_id, status=status)

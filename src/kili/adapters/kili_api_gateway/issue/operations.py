@@ -20,6 +20,14 @@ query countIssues($where: IssueWhere!) {
 }
 """
 
+GQL_UPDATE_ISSUE = """
+mutation UpdatePropertiesInIssue($data: IssueData!, $where: IssueWhere!) {
+  updatePropertiesInIssue(data: $data, where: $where) {
+    id
+  }
+}
+"""
+
 
 def get_issues_query(fragment: str) -> str:
     """Return the GraphQL issues query."""
