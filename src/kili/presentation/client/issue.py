@@ -210,7 +210,7 @@ class IssueClientMethods(BaseClientMethods):
             return issues_gen
         return list(issues_gen)
 
-    def update_issue_status(self, issue_id: IssueId, status: IssueStatus) -> Dict[str, Any]:
+    def update_issue_status(self, issue_id: str, status: IssueStatus) -> Dict[str, Any]:
         """Update the status of an issue.
 
         Args:
@@ -221,4 +221,4 @@ class IssueClientMethods(BaseClientMethods):
             A dict with the changed properties which indicates if the mutation was successful,
                 else an error message.
         """
-        return IssueUseCases(self.kili_api_gateway).update_issue_status(issue_id, status)
+        return IssueUseCases(self.kili_api_gateway).update_issue_status(IssueId(issue_id), status)
