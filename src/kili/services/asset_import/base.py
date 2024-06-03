@@ -22,7 +22,7 @@ from typing import (
 )
 from uuid import uuid4
 
-from tenacity import Retrying
+from tenacity import Retrying, stop_after_attempt, stop_never
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 
@@ -130,6 +130,8 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
                 " number of assets to be processed by the server."
             )
         for attempt in Retrying(
+            # adds at least a limit for asynch imports to the number of time to wait = ~ 5 minutes
+            stop=stop_after_attempt(40) if self.is_asynchronous else stop_never,
             retry=retry_if_exception_type(BatchImportError),
             wait=wait_exponential(multiplier=1, min=1, max=8),
             before_sleep=RetryLongWaitWarner(logger_func=logger_func, warn_message=log_message),
