@@ -36,13 +36,12 @@ class VideoTestCase(ImportTestCase):
                 }
             }
         )
-        expected_parameters = self.get_expected_sync_call(
+        expected_parameters = self.get_expected_async_call(
             ["https://signed_url?id=id"],
             ["local video file to native"],
             ["unique_id"],
-            [False],
-            [""],
             [expected_json_metadata],
+            "NATIVE_VIDEO",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -61,13 +60,12 @@ class VideoTestCase(ImportTestCase):
                 }
             }
         )
-        expected_parameters = self.get_expected_sync_call(
+        expected_parameters = self.get_expected_async_call(
             ["https://hosted-data"],
             ["hosted file"],
             ["unique_id"],
-            [False],
-            [""],
             [expected_json_metadata],
+            "NATIVE_VIDEO",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -89,13 +87,12 @@ class VideoTestCase(ImportTestCase):
                 }
             }
         )
-        expected_parameters = self.get_expected_sync_call(
+        expected_parameters = self.get_expected_async_call(
             ["https://hosted-data"],
             ["hosted file"],
             ["unique_id"],
-            [False],
-            [""],
             [expected_json_metadata],
+            "NATIVE_VIDEO",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -136,7 +133,7 @@ class VideoTestCase(ImportTestCase):
             ["local video to frames"],
             ["unique_id"],
             [expected_json_metadata],
-            "VIDEO",
+            "FRAME_VIDEO",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -170,7 +167,7 @@ class VideoTestCase(ImportTestCase):
             ["changing fps"],
             ["unique_id"],
             [expected_json_metadata],
-            "VIDEO",
+            "FRAME_VIDEO",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -296,13 +293,12 @@ class VideoTestCase(ImportTestCase):
                 },
             }
         )
-        expected_parameters = self.get_expected_sync_call(
+        expected_parameters = self.get_expected_async_call(
             ["https://hosted-data"],
             ["with metadata"],
             ["unique_id"],
-            [False],
-            [""],
             [expected_json_metadata],
+            "NATIVE_VIDEO",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -332,12 +328,11 @@ class VideoLegacyTestCase(ImportTestCase):
                 }
             }
         )
-        expected_parameters = self.get_expected_sync_call(
+        expected_parameters = self.get_expected_async_call(
             ["https://hosted-data"],
             ["hosted file"],
             ["unique_id"],
-            [False],
-            [""],
             [expected_json_metadata],
+            "NATIVE_VIDEO",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
