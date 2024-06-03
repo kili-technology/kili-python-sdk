@@ -162,28 +162,6 @@ class VideoDataImporter(BaseAbstractAssetImporter):
             return VideoDataType.HOSTED_FILE
         return VideoDataType.LOCAL_FILE
 
-    @staticmethod
-    def should_cut_into_frames(assets) -> bool:
-        """Determine if assets should be imported asynchronously and cut into frames."""
-        should_use_native_video_array = []
-        for asset in assets:
-            json_metadata = asset.get("json_metadata", {})
-            processing_parameters = json_metadata.get("processingParameters", {})
-            should_use_native_video_array.append(
-                processing_parameters.get("shouldUseNativeVideo", True)
-            )
-        if all(should_use_native_video_array):
-            return False
-        if all(not b for b in should_use_native_video_array):
-            return True
-        raise ImportValidationError(
-            """
-            Cannot upload videos to split into frames
-            and video to keep as native in the same time.
-            Please separate the assets into 2 calls
-            """
-        )
-
     def import_assets(self, assets: List[AssetLike]):
         """Import video assets into Kili."""
         self._check_upload_is_allowed(assets)
@@ -191,15 +169,13 @@ class VideoDataImporter(BaseAbstractAssetImporter):
         assets = self.filter_duplicate_external_ids(assets)
         if data_type == VideoDataType.LOCAL_FILE:
             assets = self.filter_local_assets(assets, self.raise_error)
-            as_frames = self.should_cut_into_frames(assets)
-            batch_params = BatchParams(is_hosted=False, is_asynchronous=as_frames)
+            batch_params = BatchParams(is_hosted=False, is_asynchronous=True)
             batch_importer = VideoContentBatchImporter(
                 self.kili, self.project_params, batch_params, self.pbar
             )
             batch_size = IMPORT_BATCH_SIZE
         elif data_type == VideoDataType.HOSTED_FILE:
-            as_frames = self.should_cut_into_frames(assets)
-            batch_params = BatchParams(is_hosted=True, is_asynchronous=as_frames)
+            batch_params = BatchParams(is_hosted=True, is_asynchronous=True)
             batch_importer = VideoContentBatchImporter(
                 self.kili, self.project_params, batch_params, self.pbar
             )
