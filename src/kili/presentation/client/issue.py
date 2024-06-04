@@ -2,12 +2,12 @@
 """Client presentation methods for issues."""
 
 from itertools import repeat
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from typing import Any, Dict, Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.domain.issue import IssueFilters, IssueStatus, IssueType
+from kili.domain.issue import IssueFilters, IssueId, IssueStatus, IssueType
 from kili.domain.label import LabelId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
@@ -209,3 +209,16 @@ class IssueClientMethods(BaseClientMethods):
         if as_generator:
             return issues_gen
         return list(issues_gen)
+
+    def update_issue_status(self, issue_id: str, status: IssueStatus) -> Dict[str, Any]:
+        """Update the status of an issue.
+
+        Args:
+            issue_id: Identifier of the issue.
+            status: New status of the issue. "OPEN" or "SOLVED"
+
+        Returns:
+            A dict with the changed properties which indicates if the mutation was successful,
+                else an error message.
+        """
+        return IssueUseCases(self.kili_api_gateway).update_issue_status(IssueId(issue_id), status)
