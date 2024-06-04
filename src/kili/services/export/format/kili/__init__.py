@@ -124,21 +124,36 @@ class KiliExporter(AbstractExporter):
         if not label.get("jsonResponse", {}):
             return
 
+        is_label_rotated = (
+            label["jsonResponse"]["ROTATION_JOB"]["rotation"] in [90, 270]
+            if "ROTATION_JOB" in label["jsonResponse"]
+            else False
+        )
+
         if self.project["inputType"] == "PDF":
             self._scale_json_response_vertices(
-                label["jsonResponse"], asset, _scale_normalized_vertices_pdf_annotation
+                label["jsonResponse"],
+                asset,
+                is_label_rotated,
+                _scale_normalized_vertices_pdf_annotation,
             )
 
         elif self.project["inputType"] == "IMAGE":
             self._scale_json_response_vertices(
-                label["jsonResponse"], asset, _scale_normalized_vertices_image_video_annotation
+                label["jsonResponse"],
+                asset,
+                is_label_rotated,
+                _scale_normalized_vertices_image_video_annotation,
             )
 
         elif self.project["inputType"] == "VIDEO":
             for frame_resp in label["jsonResponse"].values():
                 if frame_resp:
                     self._scale_json_response_vertices(
-                        frame_resp, asset, _scale_normalized_vertices_image_video_annotation
+                        frame_resp,
+                        asset,
+                        is_label_rotated,
+                        _scale_normalized_vertices_image_video_annotation,
                     )
 
         else:
@@ -148,14 +163,18 @@ class KiliExporter(AbstractExporter):
             )
 
     def _scale_json_response_vertices(
-        self, json_resp: Dict, asset: Dict, annotation_scaler: Callable[[Dict, Dict], None]
+        self,
+        json_resp: Dict,
+        asset: Dict,
+        is_label_rotated: bool,
+        annotation_scaler: Callable[[Dict, Dict, bool], None],
     ) -> None:
         for job_name in json_resp:
             if self._can_scale_vertices_for_job_name(job_name) and json_resp.get(job_name, {}).get(
                 "annotations"
             ):
                 for ann in json_resp[job_name]["annotations"]:
-                    annotation_scaler(ann, asset)
+                    annotation_scaler(ann, asset, is_label_rotated)
 
     def _can_scale_vertices_for_job_name(self, job_name: str) -> bool:
         return (
@@ -191,13 +210,18 @@ def _scale_all_vertices(object_, width: int, height: int):
     return object_
 
 
-def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> None:
+def _scale_normalized_vertices_pdf_annotation(
+    annotation: Dict, asset: Dict, is_label_rotated: bool = False
+) -> None:
     """Scale normalized vertices of a PDF annotation.
 
     PDF annotations are different from image annotations because the asset width/height can vary.
 
     PDF only have BBox detection, so we only scale the boundingPoly and polys keys.
     """
+    if is_label_rotated:
+        raise NotCompatibleOptions("PDF labels cannot be rotated")
+
     if "annotations" in annotation:
         # pdf annotations have two layers of "annotations"
         # https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs
@@ -239,7 +263,9 @@ def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict) -> 
             ]
 
 
-def _scale_normalized_vertices_image_video_annotation(annotation: Dict, asset: Dict) -> None:
+def _scale_normalized_vertices_image_video_annotation(
+    annotation: Dict, asset: Dict, is_label_rotated: bool
+) -> None:
     """Scale normalized vertices of an image/video object detection annotation."""
     if "resolution" not in asset or asset["resolution"] is None:
         raise NotCompatibleOptions(
@@ -248,8 +274,8 @@ def _scale_normalized_vertices_image_video_annotation(annotation: Dict, asset: D
             " the resolution of your asset.`"
         )
 
-    width = asset["resolution"]["width"]
-    height = asset["resolution"]["height"]
+    width = asset["resolution"]["width"] if not is_label_rotated else asset["resolution"]["height"]
+    height = asset["resolution"]["height"] if not is_label_rotated else asset["resolution"]["width"]
 
     # bbox, segmentation, polygons
     if "boundingPoly" in annotation:
