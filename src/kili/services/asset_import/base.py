@@ -7,7 +7,7 @@ import os
 import warnings
 from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
-from json import dumps
+from json import dumps, loads
 from pathlib import Path
 from typing import (
     TYPE_CHECKING,
@@ -22,7 +22,7 @@ from typing import (
 )
 from uuid import uuid4
 
-from tenacity import Retrying
+from tenacity import Retrying, stop_after_attempt, stop_never
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 
@@ -130,6 +130,8 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
                 " number of assets to be processed by the server."
             )
         for attempt in Retrying(
+            # adds at least a limit for asynch imports to the number of time to wait = ~ 5 minutes
+            stop=stop_after_attempt(40) if self.is_asynchronous else stop_never,
             retry=retry_if_exception_type(BatchImportError),
             wait=wait_exponential(multiplier=1, min=1, max=8),
             before_sleep=RetryLongWaitWarner(logger_func=logger_func, warn_message=log_message),
@@ -207,9 +209,40 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         """Builds an url from the parts."""
         return "/".join(parts)
 
+    @staticmethod
+    def are_native_videos(assets) -> bool:
+        """Determine if assets should be imported asynchronously and cut into frames."""
+        should_use_native_video_array = []
+        for asset in assets:
+            json_metadata = asset.get("json_metadata", "{}")
+            json_metadata_ = loads(json_metadata)
+            processing_parameters = json_metadata_.get("processingParameters", {})
+            should_use_native_video_array.append(
+                processing_parameters.get("shouldUseNativeVideo", True)
+            )
+        if all(should_use_native_video_array):
+            return True
+        if all(not b for b in should_use_native_video_array):
+            return False
+        raise ImportValidationError(
+            """
+            Cannot upload videos to split into frames
+            and video to keep as native in the same time.
+            Please separate the assets into 2 calls
+            """
+        )
+
     def _async_import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets with asynchronous resolver."""
-        upload_type = "GEO_SATELLITE" if self.input_type == "IMAGE" else "VIDEO"
+        if self.input_type == "IMAGE":
+            upload_type = "GEO_SATELLITE"
+        elif self.input_type in ("VIDEO", "VIDEO_LEGACY"):
+            upload_type = "NATIVE_VIDEO" if self.are_native_videos(assets) else "FRAME_VIDEO"
+        else:
+            raise NotImplementedError(
+                f"Import of {self.input_type} assets is not supported in async calls"
+            )
+
         content = (
             {
                 "multiLayerContentArray": [asset["multi_layer_content"] for asset in assets],
