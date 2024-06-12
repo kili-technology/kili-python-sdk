@@ -2,12 +2,51 @@
 from typing import Dict, List
 
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
+from kili.adapters.kili_api_gateway.label.operations import (
+    get_annotations_partial_query,
+    get_annotations_query,
+)
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.label import LabelId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import GraphQLError
 
-from .operations import get_annotations_query
+
+def get_annotation_fragment():
+    return get_annotations_partial_query(
+        annotation_fragment=fragment_builder(("__typename", "id", "job", "path", "labelId")),
+        classification_annotation_fragment=fragment_builder(("annotationValue.categories",)),
+        ranking_annotation_fragment=fragment_builder(
+            (
+                "annotationValue.orders.elements",
+                "annotationValue.orders.rank",
+            )
+        ),
+        transcription_annotation_fragment=fragment_builder(("annotationValue.text",)),
+        video_annotation_fragment=fragment_builder(
+            (
+                "frames.start",
+                "frames.end",
+                "keyAnnotations.id",
+                "keyAnnotations.frame",
+            )
+        ),
+        video_classification_annotation_fragment=fragment_builder(
+            ("keyAnnotations.annotationValue.categories",)
+        ),
+        video_object_detection_annotation_fragment=fragment_builder(
+            (
+                "keyAnnotations.annotationValue.vertices.x",
+                "keyAnnotations.annotationValue.vertices.y",
+                "name",
+                "mid",
+                "category",
+            )
+        ),
+        video_transcription_annotation_fragment=fragment_builder(
+            ("keyAnnotations.annotationValue.text",)
+        ),
+    )
 
 
 def list_annotations(

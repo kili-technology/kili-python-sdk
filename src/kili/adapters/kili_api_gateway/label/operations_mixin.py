@@ -9,6 +9,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     QueryOptions,
     fragment_builder,
 )
+from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.constants import MUTATION_BATCH_SIZE
 from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetId
@@ -20,7 +21,7 @@ from kili.utils.tqdm import tqdm
 from .annotation_to_json_response import (
     AnnotationsToJsonResponseConverter,
 )
-from .common import list_annotations
+from .common import get_annotation_fragment, list_annotations
 from .formatters import load_label_json_fields
 from .mappers import (
     append_label_data_mapper,
@@ -56,10 +57,13 @@ class LabelOperationMixin(BaseOperationMixin):
         options: QueryOptions,
     ) -> Generator[Dict, None, None]:
         """List labels."""
-        added_id_field = False
-        if "jsonResponse" in fields and "id" not in fields:
-            fields = (*fields, "id")
-            added_id_field = True
+        if "jsonResponse" in fields:
+            project_info = get_project(
+                self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
+            )
+            if project_info["inputType"] in {"VIDEO", "LLM_RLHF"}:
+                yield from self.list_labels_split(filters, fields, options, project_info)
+                return
 
         fragment = fragment_builder(fields)
         query = get_labels_query(fragment)
@@ -68,15 +72,36 @@ class LabelOperationMixin(BaseOperationMixin):
             query, where, options, "Retrieving labels", GQL_COUNT_LABELS
         )
         labels_gen = (load_label_json_fields(label, fields) for label in labels_gen)
+        yield from labels_gen
+
+    def list_labels_split(
+        self, filters: LabelFilters, fields: ListOrTuple[str], options: QueryOptions, project_info
+    ) -> Generator[Dict, None, None]:
+        """List labels."""
+        fragment = fragment_builder(fields)
+        inner_annotation_fragment = get_annotation_fragment()
+        full_fragment = f"""
+            {fragment}
+            annotations {{
+                {inner_annotation_fragment}
+            }}
+        """
+        query = get_labels_query(full_fragment)
+        where = label_where_mapper(filters)
+        labels_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
+            query, where, options, "Retrieving labels", GQL_COUNT_LABELS
+        )
+        labels_gen = (load_label_json_fields(label, fields) for label in labels_gen)
 
         if "jsonResponse" in fields:
             converter = AnnotationsToJsonResponseConverter(
-                graphql_client=self.graphql_client, project_id=filters.project_id
+                jsonInterface=project_info["jsonInterface"],
+                project_input_type=project_info["inputType"],
             )
             for label in labels_gen:
-                converter.patch_label_json_response(label, label["id"])
-                if added_id_field:
-                    label.pop("id")
+                converter.patch_label_json_response(label, label["annotations"])
+                if "annotations" not in fields:
+                    label.pop("annotations")
                 yield label
 
         else:

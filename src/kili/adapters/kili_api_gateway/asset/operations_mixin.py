@@ -20,6 +20,8 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 from kili.adapters.kili_api_gateway.label.annotation_to_json_response import (
     AnnotationsToJsonResponseConverter,
 )
+from kili.adapters.kili_api_gateway.label.common import get_annotation_fragment
+from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.domain.asset import AssetFilters
 from kili.domain.types import ListOrTuple
 
@@ -34,13 +36,14 @@ class AssetOperationMixin(BaseOperationMixin):
         options: QueryOptions,
     ) -> Generator[Dict, None, None]:
         """List assets with given options."""
-        added_label_id_field = added_latest_label_id_field = False
-        if "labels.jsonResponse" in fields and "labels.id" not in fields:
-            fields = (*fields, "labels.id")
-            added_label_id_field = True
-        if "latestLabel.jsonResponse" in fields and "latestLabel.id" not in fields:
-            fields = (*fields, "latestLabel.id")
-            added_latest_label_id_field = True
+        if "labels.jsonResponse" in fields or "latestLabel.jsonResponse" in fields:
+            """Check if we can get the jsonResponse of if we need to rebuild it."""
+            project_info = get_project(
+                self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
+            )
+            if project_info["inputType"] in {"VIDEO", "LLM_RLHF"}:
+                yield from self.list_assets_split(filters, fields, options, project_info)
+                return
 
         fragment = fragment_builder(fields)
         query = get_assets_query(fragment)
@@ -52,27 +55,52 @@ class AssetOperationMixin(BaseOperationMixin):
             load_asset_json_fields(asset, fields, self.http_client) for asset in assets_gen
         )
 
-        if any("jsonResponse" in field for field in fields):
-            converter = AnnotationsToJsonResponseConverter(
-                graphql_client=self.graphql_client, project_id=filters.project_id
-            )
-            for asset in assets_gen:
-                if "latestLabel.jsonResponse" in fields and asset.get("latestLabel"):
-                    converter.patch_label_json_response(
-                        asset["latestLabel"], asset["latestLabel"]["id"]
-                    )
-                    if added_latest_label_id_field:
-                        asset["latestLabel"].pop("id")
-                if "labels.jsonResponse" in fields:
-                    for label in asset.get("labels", []):
-                        converter.patch_label_json_response(label, label["id"])
-                        if added_label_id_field:
-                            label.pop("id")
+        yield from assets_gen
 
-                yield asset
+    def list_assets_split(
+        self, filters: AssetFilters, fields: ListOrTuple[str], options: QueryOptions, project_info
+    ) -> Generator[Dict, None, None]:
+        """List assets with given options."""
+        options = QueryOptions(
+            options.disable_tqdm, options.first, options.skip, min(options.batch_size, 10)
+        )
 
-        else:
-            yield from assets_gen
+        inner_annotation_fragment = get_annotation_fragment()
+        annotation_fragment = f"""
+            annotations {{
+                {inner_annotation_fragment}
+            }}
+        """
+        fragment = fragment_builder(
+            fields, {"labels": annotation_fragment, "latestLabel": annotation_fragment}
+        )
+        query = get_assets_query(fragment)
+        where = asset_where_mapper(filters)
+        assets_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
+            query, where, options, "Retrieving assets", GQL_COUNT_ASSETS
+        )
+        assets_gen = (
+            load_asset_json_fields(asset, fields, self.http_client) for asset in assets_gen
+        )
+
+        converter = AnnotationsToJsonResponseConverter(
+            jsonInterface=project_info["jsonInterface"],
+            project_input_type=project_info["inputType"],
+        )
+        for asset in assets_gen:
+            if "latestLabel.jsonResponse" in fields and asset.get("latestLabel"):
+                converter.patch_label_json_response(
+                    asset["latestLabel"], asset["latestLabel"]["annotations"]
+                )
+                if "latestLabel.annotations" not in fields:
+                    asset["latestLabel"].pop("annotations")
+
+            if "labels.jsonResponse" in fields:
+                for label in asset.get("labels", []):
+                    converter.patch_label_json_response(label, label["annotations"])
+                    if "labels.annotations" not in fields:
+                        label.pop("annotations")
+            yield asset
 
     def count_assets(self, filters: AssetFilters) -> int:
         """Send a GraphQL request calling countIssues resolver."""
