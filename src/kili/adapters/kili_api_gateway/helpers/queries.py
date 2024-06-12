@@ -2,6 +2,7 @@
 
 from typing import Any, Dict, Generator, NamedTuple, Optional
 
+from pyparsing import Union
 from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
@@ -124,12 +125,17 @@ class PaginatedGraphQLQuery:
 
 
 @typechecked
-def fragment_builder(fields: ListOrTuple[str], static_fragments: Dict[str, str] = {}) -> str:
+def fragment_builder(
+    fields: ListOrTuple[str], static_fragments: Union[Dict[str, str], None] = None
+) -> str:
     """Build a GraphQL fragment for a list of fields to query.
 
     Args:
         fields: The list of fields to query
+        static_fragments: Already computed fragments to add to the query at a specific level
     """
+    if static_fragments is None:
+        static_fragments = {}
     fragment = ""
 
     # split a field and its subfields (e.g. "roles.user.id" -> ["roles", "user.id"])

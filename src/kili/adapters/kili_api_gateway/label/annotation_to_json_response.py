@@ -24,10 +24,10 @@ from kili.domain.ontology import JobName, JobTool
 class AnnotationsToJsonResponseConverter:
     """Convert annotations to JSON response."""
 
-    def __init__(self, project_input_type: str, jsonInterface) -> None:
+    def __init__(self, project_input_type: str, json_interface) -> None:
         """Initialize the converter."""
         self._project_input_type = project_input_type
-        self._project_json_interface = jsonInterface
+        self._project_json_interface = json_interface
 
     def _label_has_json_response_data(self, label: Dict) -> bool:
         if self._project_input_type == "VIDEO":

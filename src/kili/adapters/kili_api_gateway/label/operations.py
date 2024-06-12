@@ -154,32 +154,3 @@ def get_annotations_partial_query(
             {annotation_fragment}
             {inline_fragments}
     """
-
-
-def get_annotations_query(
-    *,
-    annotation_fragment: str,
-    classification_annotation_fragment: str,
-    ranking_annotation_fragment: str,
-    transcription_annotation_fragment: str,
-    video_annotation_fragment: str,
-    video_object_detection_annotation_fragment: str,
-    video_classification_annotation_fragment: str,
-    video_transcription_annotation_fragment: str,
-) -> str:
-    """Get the gql annotations query."""
-    return f"""
-    query annotations($where: AnnotationWhere!) {{
-        data: annotations(where: $where) {{
-            {get_annotations_partial_query(
-                annotation_fragment,
-                classification_annotation_fragment,
-                ranking_annotation_fragment,
-                transcription_annotation_fragment,
-                video_annotation_fragment,
-                video_object_detection_annotation_fragment,
-                video_classification_annotation_fragment,
-                video_transcription_annotation_fragment)}
-        }}
-    }}
-    """

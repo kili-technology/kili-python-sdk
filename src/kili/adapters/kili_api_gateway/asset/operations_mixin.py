@@ -37,7 +37,7 @@ class AssetOperationMixin(BaseOperationMixin):
     ) -> Generator[Dict, None, None]:
         """List assets with given options."""
         if "labels.jsonResponse" in fields or "latestLabel.jsonResponse" in fields:
-            """Check if we can get the jsonResponse of if we need to rebuild it."""
+            # Check if we can get the jsonResponse of if we need to rebuild it.
             project_info = get_project(
                 self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
             )
@@ -61,9 +61,10 @@ class AssetOperationMixin(BaseOperationMixin):
         self, filters: AssetFilters, fields: ListOrTuple[str], options: QueryOptions, project_info
     ) -> Generator[Dict, None, None]:
         """List assets with given options."""
-        options = QueryOptions(
-            options.disable_tqdm, options.first, options.skip, min(options.batch_size, 10)
-        )
+        if project_info["inputType"] == "VIDEO":
+            options = QueryOptions(
+                options.disable_tqdm, options.first, options.skip, min(options.batch_size, 10)
+            )
 
         inner_annotation_fragment = get_annotation_fragment()
         annotation_fragment = f"""
@@ -84,7 +85,7 @@ class AssetOperationMixin(BaseOperationMixin):
         )
 
         converter = AnnotationsToJsonResponseConverter(
-            jsonInterface=project_info["jsonInterface"],
+            json_interface=project_info["jsonInterface"],
             project_input_type=project_info["inputType"],
         )
         for asset in assets_gen:

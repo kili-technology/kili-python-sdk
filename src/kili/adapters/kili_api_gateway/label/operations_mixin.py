@@ -21,7 +21,7 @@ from kili.utils.tqdm import tqdm
 from .annotation_to_json_response import (
     AnnotationsToJsonResponseConverter,
 )
-from .common import get_annotation_fragment, list_annotations
+from .common import get_annotation_fragment
 from .formatters import load_label_json_fields
 from .mappers import (
     append_label_data_mapper,
@@ -78,6 +78,11 @@ class LabelOperationMixin(BaseOperationMixin):
         self, filters: LabelFilters, fields: ListOrTuple[str], options: QueryOptions, project_info
     ) -> Generator[Dict, None, None]:
         """List labels."""
+        if project_info["inputType"] == "VIDEO":
+            options = QueryOptions(
+                options.disable_tqdm, options.first, options.skip, min(options.batch_size, 20)
+            )
+
         fragment = fragment_builder(fields)
         inner_annotation_fragment = get_annotation_fragment()
         full_fragment = f"""
@@ -95,7 +100,7 @@ class LabelOperationMixin(BaseOperationMixin):
 
         if "jsonResponse" in fields:
             converter = AnnotationsToJsonResponseConverter(
-                jsonInterface=project_info["jsonInterface"],
+                json_interface=project_info["jsonInterface"],
                 project_input_type=project_info["inputType"],
             )
             for label in labels_gen:
@@ -197,30 +202,3 @@ class LabelOperationMixin(BaseOperationMixin):
         }
         result = self.graphql_client.execute(query, variables)
         return result["data"]
-
-    def list_annotations(
-        self,
-        label_id: LabelId,
-        *,
-        annotation_fields: ListOrTuple[str],
-        classification_annotation_fields: ListOrTuple[str] = (),
-        ranking_annotation_fields: ListOrTuple[str] = (),
-        transcription_annotation_fields: ListOrTuple[str] = (),
-        video_annotation_fields: ListOrTuple[str] = (),
-        video_classification_fields: ListOrTuple[str] = (),
-        video_object_detection_fields: ListOrTuple[str] = (),
-        video_transcription_fields: ListOrTuple[str] = (),
-    ) -> List[Dict]:
-        """List annotations."""
-        return list_annotations(
-            graphql_client=self.graphql_client,
-            label_id=label_id,
-            annotation_fields=annotation_fields,
-            classification_annotation_fields=classification_annotation_fields,
-            ranking_annotation_fields=ranking_annotation_fields,
-            transcription_annotation_fields=transcription_annotation_fields,
-            video_annotation_fields=video_annotation_fields,
-            video_classification_fields=video_classification_fields,
-            video_object_detection_fields=video_object_detection_fields,
-            video_transcription_fields=video_transcription_fields,
-        )
