@@ -90,6 +90,7 @@ class ProjectUseCases(BaseUseCases):
         should_relaunch_kpi_computation: Optional[bool],
         title: Optional[str],
         use_honeypot: Optional[bool],
+        use_auto_assign: Optional[bool],
         metadata_types: Optional[Dict],
     ) -> Dict[str, object]:
         """Update properties in a project."""
@@ -125,6 +126,7 @@ class ProjectUseCases(BaseUseCases):
             should_relaunch_kpi_computation=should_relaunch_kpi_computation,
             title=title,
             use_honeypot=use_honeypot,
+            use_auto_assign=use_auto_assign,
             archived=None,
             author=None,
             rules=None,

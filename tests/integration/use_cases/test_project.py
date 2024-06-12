@@ -96,6 +96,7 @@ def test_given_a_project_when_update_its_properties_then_it_updates_project_prop
         review_coverage=None,
         should_relaunch_kpi_computation=None,
         use_honeypot=None,
+        use_auto_assign=None,
         metadata_types=None,
     )
 

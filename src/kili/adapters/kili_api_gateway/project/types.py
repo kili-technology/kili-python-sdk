@@ -35,3 +35,4 @@ class ProjectDataKiliAPIGatewayInput:
     should_relaunch_kpi_computation: Optional[bool]
     title: Optional[str]
     use_honeypot: Optional[bool]
+    use_auto_assign: Optional[bool]

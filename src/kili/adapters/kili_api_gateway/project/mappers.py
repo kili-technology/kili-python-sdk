@@ -51,4 +51,5 @@ def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> Dict:
         "shouldRelaunchKpiComputation": data.should_relaunch_kpi_computation,
         "title": data.title,
         "useHoneyPot": data.use_honeypot,
+        "useAutoAssign": data.use_auto_assign,
     }

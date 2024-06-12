@@ -37,6 +37,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         "minConsensusSize",
         "useHoneyPot",
         "reviewCoverage",
+        "useAutoAssign",
     )
 
     def __init__(self, kili: "Kili") -> None:
@@ -159,6 +160,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             consensus_tot_coverage=src_project["consensusTotCoverage"],
             min_consensus_size=src_project["minConsensusSize"],
             use_honeypot=src_project["useHoneyPot"],
+            use_auto_assign=src_project["useAutoAssign"],
             review_coverage=src_project["reviewCoverage"],
         )
 
