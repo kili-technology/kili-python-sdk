@@ -2,7 +2,7 @@ import json
 from typing import Dict
 
 from kili.adapters.http_client import HttpClient
-from kili.adapters.kili_api_gateway.helpers.queries import PaginatedGraphQLQuery
+from kili.adapters.kili_api_gateway.helpers.queries import PaginatedGraphQLQuery, QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
 from kili.core.graphql.graphql_client import GraphQLClient
@@ -48,7 +48,7 @@ def test_given_projects_when_i_query_them_then_it_works(
         kili_gateway.list_projects(
             project_filters=ProjectFilters(id=None),
             fields=("id", "jsonInterface"),
-            options=mocker.MagicMock(),
+            options=QueryOptions(disable_tqdm=False),
         )
     )
 

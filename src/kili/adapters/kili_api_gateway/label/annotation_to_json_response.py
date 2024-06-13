@@ -4,8 +4,6 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, Generator, List, Optional, Tuple, TypeVar, Union, cast, overload
 
-from kili.adapters.kili_api_gateway.project.common import get_project
-from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.annotation import (
     ClassicAnnotation,
     ClassificationAnnotation,
@@ -20,23 +18,16 @@ from kili.domain.annotation import (
     VideoTranscriptionAnnotation,
     VideoTranscriptionKeyAnnotation,
 )
-from kili.domain.label import LabelId
 from kili.domain.ontology import JobName, JobTool
-from kili.domain.project import ProjectId
-
-from .common import list_annotations
 
 
 class AnnotationsToJsonResponseConverter:
     """Convert annotations to JSON response."""
 
-    def __init__(self, graphql_client: GraphQLClient, project_id: ProjectId) -> None:
+    def __init__(self, project_input_type: str, json_interface) -> None:
         """Initialize the converter."""
-        self._graphql_client = graphql_client
-
-        project_info = get_project(graphql_client, project_id, ("inputType", "jsonInterface"))
-        self._project_input_type = project_info["inputType"]
-        self._project_json_interface = project_info["jsonInterface"]
+        self._project_input_type = project_input_type
+        self._project_json_interface = json_interface
 
     def _label_has_json_response_data(self, label: Dict) -> bool:
         if self._project_input_type == "VIDEO":
@@ -53,39 +44,14 @@ class AnnotationsToJsonResponseConverter:
 
         return False
 
-    def patch_label_json_response(self, label: Dict, label_id: LabelId) -> None:
+    def patch_label_json_response(
+        self, label: Dict, annotations: Union[List[VideoAnnotation], List[ClassicAnnotation]]
+    ) -> None:
         """Patch the label json response using the annotations.
 
         Modifies the input label.
         """
         if self._project_input_type in {"VIDEO", "LLM_RLHF"}:
-            annotations = list_annotations(
-                graphql_client=self._graphql_client,
-                label_id=label_id,
-                annotation_fields=("__typename", "id", "job", "path", "labelId"),
-                classification_annotation_fields=("annotationValue.categories",),
-                ranking_annotation_fields=(
-                    "annotationValue.orders.elements",
-                    "annotationValue.orders.rank",
-                ),
-                transcription_annotation_fields=("annotationValue.text",),
-                video_annotation_fields=(
-                    "frames.start",
-                    "frames.end",
-                    "keyAnnotations.id",
-                    "keyAnnotations.frame",
-                ),
-                video_object_detection_fields=(
-                    "keyAnnotations.annotationValue.vertices.x",
-                    "keyAnnotations.annotationValue.vertices.y",
-                    "name",
-                    "mid",
-                    "category",
-                ),
-                video_classification_fields=("keyAnnotations.annotationValue.categories",),
-                video_transcription_fields=("keyAnnotations.annotationValue.text",),
-            )
-
             if not annotations and self._label_has_json_response_data(label):
                 return
 
