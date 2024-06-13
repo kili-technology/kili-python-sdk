@@ -290,7 +290,7 @@ class ProjectClientMethods(BaseClientMethods):
         should_relaunch_kpi_computation: Optional[bool] = None,
         title: Optional[str] = None,
         use_honeypot: Optional[bool] = None,
-        use_auto_assign: Optional[bool] = None,
+        seconds_to_label_before_auto_assign: Optional[bool] = None,
         metadata_types: Optional[dict] = None,
     ) -> Dict[str, Any]:
         """Update properties of a project.
@@ -325,7 +325,8 @@ class ProjectClientMethods(BaseClientMethods):
                 in honeypot or consensus settings
             title: Title of the project
             use_honeypot: Activate / Deactivate the use of honeypot in the project
-            use_auto_assign: Activate / Deactivate the auto assign in the project
+            seconds_to_label_before_auto_assign: Number of seconds before an asset is automatically
+                assigned to a labeler on new label.
             metadata_types: Types of the project metadata.
                 Should be a `dict` of metadata fields name as keys and metadata types as values.
                 Currently, possible types are: `string`, `number`
@@ -375,7 +376,7 @@ class ProjectClientMethods(BaseClientMethods):
             review_coverage=review_coverage,
             should_relaunch_kpi_computation=should_relaunch_kpi_computation,
             use_honeypot=use_honeypot,
-            use_auto_assign=use_auto_assign,
+            seconds_to_label_before_auto_assign=seconds_to_label_before_auto_assign,
             title=title,
             metadata_types=metadata_types,
         )
