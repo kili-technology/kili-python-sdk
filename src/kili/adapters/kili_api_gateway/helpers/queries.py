@@ -2,6 +2,7 @@
 
 from typing import Any, Dict, Generator, NamedTuple, Optional
 
+from pyparsing import Union
 from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
@@ -16,6 +17,7 @@ class QueryOptions(NamedTuple):
     disable_tqdm: Optional[bool]
     first: Optional[int] = None
     skip: int = 0
+    batch_size: int = QUERY_BATCH_SIZE
 
 
 class PaginatedGraphQLQuery:
@@ -69,9 +71,9 @@ class PaginatedGraphQLQuery:
 
                     skip = count_elements_retrieved + options.skip
                     first = (
-                        min(QUERY_BATCH_SIZE, nb_elements_to_query - count_elements_retrieved)
+                        min(options.batch_size, nb_elements_to_query - count_elements_retrieved)
                         if nb_elements_to_query is not None
-                        else QUERY_BATCH_SIZE
+                        else options.batch_size
                     )
                     payload = {"where": where, "skip": skip, "first": first}
                     elements = self._graphql_client.execute(query, payload)["data"]
@@ -123,12 +125,17 @@ class PaginatedGraphQLQuery:
 
 
 @typechecked
-def fragment_builder(fields: ListOrTuple[str]) -> str:
+def fragment_builder(
+    fields: ListOrTuple[str], static_fragments: Union[Dict[str, str], None] = None
+) -> str:
     """Build a GraphQL fragment for a list of fields to query.
 
     Args:
         fields: The list of fields to query
+        static_fragments: Already computed fragments to add to the query at a specific level
     """
+    if static_fragments is None:
+        static_fragments = {}
     fragment = ""
 
     # split a field and its subfields (e.g. "roles.user.id" -> ["roles", "user.id"])
@@ -142,6 +149,8 @@ def fragment_builder(fields: ListOrTuple[str]) -> str:
             fields_subquery = [subfield[1] for subfield in subfields if subfield[0] == root_field]
             # build the subquery fragment (e.g. "user{id}" in "roles{user{id}}")
             new_fragment = fragment_builder(fields_subquery)
+            if static_fragments.get(root_field):
+                new_fragment += f" {static_fragments[root_field]}"
             # add the subquery to the fragment
             fragment += f" {root_field}{{{new_fragment}}}"
 

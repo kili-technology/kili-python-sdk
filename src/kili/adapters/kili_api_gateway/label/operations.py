@@ -88,8 +88,7 @@ mutation(
 """
 
 
-def get_annotations_query(
-    *,
+def get_annotations_partial_query(
     annotation_fragment: str,
     classification_annotation_fragment: str,
     ranking_annotation_fragment: str,
@@ -152,10 +151,6 @@ def get_annotations_query(
         """
 
     return f"""
-    query annotations($where: AnnotationWhere!) {{
-        data: annotations(where: $where) {{
             {annotation_fragment}
             {inline_fragments}
-        }}
-    }}
     """

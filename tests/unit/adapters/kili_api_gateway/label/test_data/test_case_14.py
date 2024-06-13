@@ -30,47 +30,6 @@ json_interface = {
     }
 }
 
-assets = [
-    {
-        "content": "./fake_path_to_asset.csv",
-        "externalId": "Click here to start",
-        "id": "clr4rvcyt00023b6zme74rmxd",
-        "isHoneypot": False,
-        "isProcessingAuthorized": True,
-        "jsonContent": "",
-        "jsonMetadata": "{}",
-        "latestLabel": {
-            "id": "clr53q1as0208kjba8jwcavcx",
-            "author": {
-                "id": "user-1",
-                "email": "test+admin@kili-technology.com",
-                "firstname": "Test",
-                "lastname": "Admin",
-                "__typename": "User",
-            },
-            "createdAt": "2024-01-08T10:21:00.624Z",
-            "honeypotMark": None,
-            "isHoneypot": False,
-            "isLatestLabelForUser": True,
-            "isSentBackToQueue": False,
-            "jsonResponse": "{}",
-            "labelType": "DEFAULT",
-            "modelName": None,
-            "numberOfAnnotations": 0,
-            "reviewScore": None,
-            "totalSecondsToLabel": 10,
-            "__typename": "Label",
-        },
-        "ocrMetadata": None,
-        "status": "LABELED",
-        "skipped": False,
-        "projectId": "clr4ru09f01mnkjbadmvzb6vt",
-        "toBeLabeledBy": [],
-        "__typename": "Asset",
-    }
-]
-
-
 annotations = [
     {
         "id": "4eb1c8e2-05fd-42ae-aa17-7c18a803c682",
@@ -116,6 +75,47 @@ annotations = [
         "__typename": "TranscriptionAnnotation",
     },
 ]
+
+assets = [
+    {
+        "content": "./fake_path_to_asset.csv",
+        "externalId": "Click here to start",
+        "id": "clr4rvcyt00023b6zme74rmxd",
+        "isHoneypot": False,
+        "isProcessingAuthorized": True,
+        "jsonContent": "",
+        "jsonMetadata": "{}",
+        "latestLabel": {
+            "annotations": annotations,
+            "author": {
+                "id": "user-1",
+                "email": "test+admin@kili-technology.com",
+                "firstname": "Test",
+                "lastname": "Admin",
+                "__typename": "User",
+            },
+            "createdAt": "2024-01-08T10:21:00.624Z",
+            "honeypotMark": None,
+            "isHoneypot": False,
+            "isLatestLabelForUser": True,
+            "isSentBackToQueue": False,
+            "jsonResponse": "{}",
+            "labelType": "DEFAULT",
+            "modelName": None,
+            "numberOfAnnotations": 0,
+            "reviewScore": None,
+            "totalSecondsToLabel": 10,
+            "__typename": "Label",
+        },
+        "ocrMetadata": None,
+        "status": "LABELED",
+        "skipped": False,
+        "projectId": "clr4ru09f01mnkjbadmvzb6vt",
+        "toBeLabeledBy": [],
+        "__typename": "Asset",
+    }
+]
+
 
 expected_json_resp = {
     "RANKING_JOB": {

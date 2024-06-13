@@ -626,10 +626,15 @@ def test_kili_export_labels_llm(mocker: pytest_mock.MockerFixture):
             return {"data": test_case_14.assets}
 
         if "labels(" in query:
-            return {"data": [{"id": "fake_llm_label_id", "jsonResponse": "{}"}]}
-
-        if "annotations(" in query:
-            return {"data": test_case_14.annotations}
+            return {
+                "data": [
+                    {
+                        "id": "fake_llm_label_id",
+                        "jsonResponse": "{}",
+                        "annotations": test_case_14.annotations,
+                    }
+                ]
+            }
 
         raise NotImplementedError
 

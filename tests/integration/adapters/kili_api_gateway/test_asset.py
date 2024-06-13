@@ -10,7 +10,7 @@ def test_given_a_query_returning_serialized_json_it_parses_json_fields(graphql_c
     # mocking
     def mock_graphql_execute(query, variables, **kwargs):
         if "query assets" in query:
-            label = {"id": "fake_label_id", "jsonResponse": "{}"}
+            label = {"jsonResponse": "{}"}
             return {
                 "data": [
                     {
