@@ -845,6 +845,7 @@ def test_export_with_asset_filter_kwargs(mocker):
         "content",
         "jsonContent",
         "jsonMetadata",
+        "status",
         "pageResolutions.pageNumber",
         "pageResolutions.height",
         "pageResolutions.width",
