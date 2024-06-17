@@ -19,6 +19,7 @@ COMMON_FIELDS = [
     "content",
     "jsonContent",
     "jsonMetadata",
+    "status",
     "pageResolutions.pageNumber",
     "pageResolutions.height",
     "pageResolutions.width",
