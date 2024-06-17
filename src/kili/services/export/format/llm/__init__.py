@@ -25,8 +25,6 @@ class LLMExporter(AbstractExporter):
                 f"Project with input type \"{self.project['inputType']}\" not compatible with LLM"
                 " export format."
             )
-        if not self.single_file:
-            raise ValueError("LLM export are always single file.")
 
     def _is_job_compatible(self, job: Job) -> bool:
         """Check job compatibility with the LLM format."""
