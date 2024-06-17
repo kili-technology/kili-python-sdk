@@ -21,6 +21,7 @@ class LLMDataType(Enum):
     """LLM data type."""
 
     DICT = "DICT"
+    LIST = "LIST"
     LOCAL_FILE = "LOCAL_FILE"
     HOSTED_FILE = "HOSTED_FILE"
 
@@ -46,7 +47,29 @@ class LLMDataImporter(BaseAbstractAssetImporter):
             return LLMDataType.LOCAL_FILE
         if all(isinstance(content, dict) for content in content_array):
             return LLMDataType.DICT
+        if all(isinstance(content, list) for content in content_array):
+            return LLMDataType.LIST
         raise ImportValidationError("Invalid value in content for LLM project.")
+
+    @staticmethod
+    def transform_asset_content(asset_content, json_metadata):
+        """Transform asset content."""
+        content, additional_json_metadata = process_json(asset_content)
+        transformed_asset_content = json.dumps(content).encode("utf-8")
+
+        json_metadata_dict = {}
+        if json_metadata and isinstance(json_metadata, str):
+            json_metadata_dict = json.loads(json_metadata)
+        elif json_metadata:
+            json_metadata_dict = json_metadata
+
+        merged_json_metadata = {
+            **json_metadata_dict,
+            **additional_json_metadata,
+        }
+        changed_json_metadata = json.dumps(merged_json_metadata)
+
+        return transformed_asset_content, changed_json_metadata
 
     def import_assets(self, assets: List[AssetLike]):
         """Import LLM assets into Kili."""
@@ -63,27 +86,16 @@ class LLMDataImporter(BaseAbstractAssetImporter):
             for asset in assets:
                 file_path = asset.get("content", None)
                 json_metadata = asset.get("json_metadata", "{}")
-
                 if file_path and isinstance(file_path, str):
                     try:
                         with open(file_path, encoding="utf-8") as file:
                             data = json.load(file)
 
                             if is_chat_format(data, {"role", "content", "id", "chat_id", "model"}):
-                                content, additional_json_metadata = process_json(data)
-                                asset["content"] = json.dumps(content).encode("utf-8")
-
-                                json_metadata_dict = {}
-                                if json_metadata and isinstance(json_metadata, str):
-                                    json_metadata_dict = json.loads(json_metadata)
-                                elif json_metadata:
-                                    json_metadata_dict = json_metadata
-
-                                merged_json_metadata = {
-                                    **json_metadata_dict,
-                                    **additional_json_metadata,
-                                }
-                                asset["json_metadata"] = json.dumps(merged_json_metadata)
+                                (
+                                    asset["content"],
+                                    asset["json_metadata"],
+                                ) = self.transform_asset_content(data, json_metadata)
 
                                 batch_importer = JSONBatchImporter(
                                     self.kili, self.project_params, batch_params, self.pbar
@@ -99,10 +111,22 @@ class LLMDataImporter(BaseAbstractAssetImporter):
             batch_importer = ContentBatchImporter(
                 self.kili, self.project_params, batch_params, self.pbar
             )
-        elif data_type == LLMDataType.DICT:
+        elif data_type in (LLMDataType.DICT, LLMDataType.LIST):
             for asset in assets:
                 if "content" in asset and isinstance(asset["content"], dict):
                     asset["content"] = json.dumps(asset["content"]).encode("utf-8")
+                elif (
+                    "content" in asset
+                    and isinstance(asset["content"], list)
+                    and is_chat_format(
+                        asset["content"], {"role", "content", "id", "chat_id", "model"}
+                    )
+                ):
+                    json_metadata = asset.get("json_metadata", "{}")
+                    asset["content"], asset["json_metadata"] = self.transform_asset_content(
+                        asset["content"], json_metadata
+                    )
+
             batch_params = BatchParams(is_hosted=False, is_asynchronous=False)
             batch_importer = JSONBatchImporter(
                 self.kili, self.project_params, batch_params, self.pbar

@@ -103,6 +103,121 @@ class LLMTestCase(ImportTestCase):
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
+    def test_upload_from_dict_in_chat_format(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "LLM_RLHF"}
+        assets = [
+            {
+                "content": [
+                    {
+                        "role": "user",
+                        "content": "text of the user instructions",
+                        "id": "0455df65c2d6bb821a9dc9108ac1d79964a0f571",
+                        "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd",
+                        "model": None,
+                    },
+                    {
+                        "role": "assistant",
+                        "content": "text of the assistant answer",
+                        "id": "4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d",
+                        "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd",
+                        "model": "model-large",
+                    },
+                    {
+                        "role": "user",
+                        "content": "text of the user instructions",
+                        "id": "7326ff17cbfe7e3cb91b008cf0c496fcd17a1074",
+                        "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd",
+                        "model": None,
+                    },
+                    {
+                        "role": "assistant_A",
+                        "content": "text of the assistant answer A",
+                        "id": "375b55d44af2c8c801992089c797df8e12605dfb",
+                        "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd",
+                        "model": "model-large",
+                    },
+                    {
+                        "role": "assistant_B",
+                        "content": "text of the assistant answer B",
+                        "id": "9231d8819ac96cc8a6c4b7780c301b796c3f8bf2",
+                        "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd",
+                        "model": "model-medium",
+                    },
+                ],
+                "external_id": "dict",
+            }
+        ]
+        import_assets(self.kili, self.project_id, assets)
+        expected_parameters = self.get_expected_sync_call(
+            ["https://signed_url?id=id"],
+            ["dict"],
+            ["unique_id"],
+            [False],
+            [""],
+            [
+                '{"chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd", "models": "model-large_model-medium", "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2"}'
+            ],
+        )
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+
+    def test_upload_from_dict_in_chat_format_with_json_metadata(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "LLM_RLHF"}
+        assets = [
+            {
+                "content": [
+                    {
+                        "role": "user",
+                        "content": "text of the user instructions",
+                        "id": "0455df65c2d6bb821a9dc9108ac1d79964a0f571",
+                        "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd",
+                        "model": None,
+                    },
+                    {
+                        "role": "assistant",
+                        "content": "text of the assistant answer",
+                        "id": "4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d",
+                        "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd",
+                        "model": "model-large",
+                    },
+                    {
+                        "role": "user",
+                        "content": "text of the user instructions",
+                        "id": "7326ff17cbfe7e3cb91b008cf0c496fcd17a1074",
+                        "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd",
+                        "model": None,
+                    },
+                    {
+                        "role": "assistant_A",
+                        "content": "text of the assistant answer A",
+                        "id": "375b55d44af2c8c801992089c797df8e12605dfb",
+                        "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd",
+                        "model": "model-large",
+                    },
+                    {
+                        "role": "assistant_B",
+                        "content": "text of the assistant answer B",
+                        "id": "9231d8819ac96cc8a6c4b7780c301b796c3f8bf2",
+                        "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd",
+                        "model": "model-medium",
+                    },
+                ],
+                "json_metadata": '{ "customKey": "customValue" }',
+                "external_id": "dict",
+            }
+        ]
+        import_assets(self.kili, self.project_id, assets)
+        expected_parameters = self.get_expected_sync_call(
+            ["https://signed_url?id=id"],
+            ["dict"],
+            ["unique_id"],
+            [False],
+            [""],
+            [
+                '{"customKey": "customValue", "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd", "models": "model-large_model-medium", "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2"}'
+            ],
+        )
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+
     def test_process_json(self, *_):
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/llm/test_llm_file_in_chat_format.json"
         path = self.downloader(url)
