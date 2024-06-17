@@ -12,7 +12,8 @@ from .base import (
     BatchParams,
     ContentBatchImporter,
 )
-from .exceptions import ImportValidationError
+from .exceptions import ImportFileConversionError, ImportValidationError
+from .helpers import is_chat_format, process_json
 from .types import AssetLike
 
 
@@ -52,12 +53,47 @@ class LLMDataImporter(BaseAbstractAssetImporter):
         self._check_upload_is_allowed(assets)
         data_type = self.get_data_type(assets)
         assets = self.filter_duplicate_external_ids(assets)
+
         if data_type == LLMDataType.LOCAL_FILE:
             assets = self.filter_local_assets(assets, self.raise_error)
             batch_params = BatchParams(is_hosted=False, is_asynchronous=False)
             batch_importer = ContentBatchImporter(
                 self.kili, self.project_params, batch_params, self.pbar
             )
+            for asset in assets:
+                file_path = asset.get("content", None)
+                json_metadata = asset.get("json_metadata", "{}")
+
+                if file_path and isinstance(file_path, str):
+                    try:
+                        with open(file_path, encoding="utf-8") as file:
+                            data = json.load(file)
+
+                            if is_chat_format(data, {"role", "content", "id", "chat_id", "model"}):
+                                content, additional_json_metadata = process_json(data)
+                                asset["content"] = json.dumps(content).encode("utf-8")
+
+                                json_metadata_dict = {}
+                                if json_metadata and isinstance(json_metadata, str):
+                                    json_metadata_dict = json.loads(json_metadata)
+                                elif json_metadata:
+                                    json_metadata_dict = json_metadata
+
+                                merged_json_metadata = {
+                                    **json_metadata_dict,
+                                    **additional_json_metadata,
+                                }
+                                asset["json_metadata"] = json.dumps(merged_json_metadata)
+
+                                batch_importer = JSONBatchImporter(
+                                    self.kili, self.project_params, batch_params, self.pbar
+                                )
+
+                    except Exception as exception:
+                        raise ImportFileConversionError(
+                            f"Error processing file: {exception}"
+                        ) from exception
+
         elif data_type == LLMDataType.HOSTED_FILE:
             batch_params = BatchParams(is_hosted=True, is_asynchronous=False)
             batch_importer = ContentBatchImporter(
