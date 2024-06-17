@@ -2,7 +2,6 @@
 
 import json
 import logging
-import shutil
 from pathlib import Path
 from typing import Dict, List, Union
 
@@ -26,6 +25,8 @@ class LLMExporter(AbstractExporter):
                 f"Project with input type \"{self.project['inputType']}\" not compatible with LLM"
                 " export format."
             )
+        if not self.single_file:
+            raise ValueError("LLM export are always single file.")
 
     def _is_job_compatible(self, job: Job) -> bool:
         """Check job compatibility with the LLM format."""
@@ -34,30 +35,11 @@ class LLMExporter(AbstractExporter):
 
     def _save_assets_export(self, assets: List[Dict], output_filename: Path) -> None:
         """Save the assets to a file and return the link to that file."""
-        self.logger.info("Exporting to kili format...")
+        self.logger.info("Exporting to llm format...")
 
-        if self.single_file:
-            project_json = json.dumps(assets, sort_keys=True, indent=4)
-            self.base_folder.mkdir(parents=True, exist_ok=True)
-            with (self.base_folder / "data.json").open("wb") as output_file:
-                output_file.write(project_json.encode("utf-8"))
-        else:
-            labels_folder = self.base_folder / "labels"
-            labels_folder.mkdir(parents=True, exist_ok=True)
-            for asset in assets:
-                external_id = asset["external_id"].replace(" ", "_")
-                asset_json = json.dumps(asset, sort_keys=True, indent=4)
-                file_path = labels_folder / f"{external_id}.json"
-                file_path.parent.mkdir(parents=True, exist_ok=True)
-                with file_path.open("wb") as output_file:
-                    output_file.write(asset_json.encode("utf-8"))
-
-        self.create_readme_kili_file(self.export_root_folder)
-        shutil.rmtree(self.export_root_folder / self.images_folder)
-
-        self.make_archive(self.export_root_folder, output_filename)
-
-        self.logger.warning(output_filename)
+        export_json = json.dumps(assets, sort_keys=False, indent=4)
+        with output_filename.open("wb") as output_file:
+            output_file.write(export_json.encode("utf-8"))
 
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """LLM specific process and save."""
