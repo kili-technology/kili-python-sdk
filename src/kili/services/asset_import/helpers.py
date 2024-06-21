@@ -17,8 +17,7 @@ def is_chat_format(data, required_keys):
         # Ensure each item is a dictionary with the required keys
         if not isinstance(item, dict) or not required_keys.issubset(item.keys()):
             missing_keys = required_keys - set(item.keys())
-            warnings.warn(f"Array item missing keys : {missing_keys}", stacklevel=3)
-            return False
+            raise ValueError(f"Chat item missing keys : {missing_keys}")
     return True
 
 
@@ -36,7 +35,13 @@ def process_json(data):
 
     for item in data:
         chat_id = item.get("chat_id", None)
-        item_ids.append(item["id"])
+        if item["id"] is not None:
+            item_ids.append(item["id"])
+        else:
+            warnings.warn(f"No id value for chat item {item}.")
+
+        if item["content"] is None:
+            raise ValueError("Chat item content cannot be null.")
 
         # Check if the model is null (indicating a prompt)
         if item["model"] is None:
@@ -53,6 +58,9 @@ def process_json(data):
             # Update the current prompt
             current_prompt = item
         else:
+            if item["role"] is None:
+                raise ValueError("Chat item role cannot be null.")
+
             # Add completion to the current prompt
             completions.append(
                 {
@@ -62,6 +70,11 @@ def process_json(data):
             )
             # Collect model for this item
             models.append(item["model"])
+
+    if current_prompt is None:
+        raise ValueError(
+            "No user prompt found in payload ('model' key set to None) : need at least one."
+        )
 
     # Add the last prompt if it exists
     if current_prompt is not None:
