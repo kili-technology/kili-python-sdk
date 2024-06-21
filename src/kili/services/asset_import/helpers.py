@@ -72,11 +72,14 @@ def process_json(data):
             }
         )
 
+    chat_item_ids = "_".join(item_ids)
+
     # Prepare additional_json_metadata
     additional_json_metadata = {
         "chat_id": chat_id,
         "models": "_".join(models[-2:]),  # Join the last two models
-        "chat_item_ids": "_".join(item_ids),  # Concatenate all item IDs
+        "chat_item_ids": chat_item_ids,  # Concatenate all item IDs
+        "text": f"Chat_id: {chat_id}\n\nChat_item_ids: {chat_item_ids}",
     }
 
     return transformed_data, additional_json_metadata
