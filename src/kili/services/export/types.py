@@ -5,7 +5,16 @@ from typing import Callable, Dict, Literal, NamedTuple
 ExportType = Literal["latest", "normal"]
 SplitOption = Literal["split", "merged"]
 LabelFormat = Literal[
-    "raw", "kili", "yolo_v4", "yolo_v5", "yolo_v7", "yolo_v8", "coco", "pascal_voc", "geojson"
+    "raw",
+    "kili",
+    "yolo_v4",
+    "yolo_v5",
+    "yolo_v7",
+    "yolo_v8",
+    "coco",
+    "pascal_voc",
+    "geojson",
+    "llm_v1",
 ]
 
 
