@@ -114,7 +114,7 @@ def _format_raw_data(asset) -> List[Dict]:
         for index, prompt in enumerate(data["prompts"]):
             raw_data.append(
                 {
-                    "role": prompt.get("title", None),
+                    "role": prompt.get("title", "user"),
                     "content": prompt["prompt"],
                     "id": _safe_pop(chat_items_ids),
                     "chat_id": chat_id,
@@ -123,7 +123,7 @@ def _format_raw_data(asset) -> List[Dict]:
             )
             raw_data.extend(
                 {
-                    "role": completion.get("title", None),
+                    "role": completion.get("title", "assistant"),
                     "content": completion["content"],
                     "id": _safe_pop(chat_items_ids),
                     "chat_id": chat_id,
