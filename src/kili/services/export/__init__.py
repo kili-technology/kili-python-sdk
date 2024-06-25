@@ -1,7 +1,7 @@
 """Service for exporting kili objects."""
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Type
+from typing import TYPE_CHECKING, Dict, List, Optional, Type, Union
 
 from typing_extensions import get_args
 
@@ -31,14 +31,14 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     label_format: LabelFormat,
     split_option: SplitOption,
     single_file: bool,
-    output_file: str,
+    output_file: Optional[str],
     disable_tqdm: Optional[bool],
     log_level: LogLevel,
     with_assets: bool,
     annotation_modifier: Optional[CocoAnnotationModifier],
     asset_filter_kwargs: Optional[Dict[str, object]],
     normalized_coordinates: Optional[bool],
-) -> None:
+) -> Optional[List[Dict[str, Union[List[str], str]]]]:
     """Export the selected assets into the required format, and save it into a file archive."""
     kili.kili_api_gateway.get_project(project_id, ["id"])
 
@@ -49,7 +49,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         label_format=label_format,
         split_option=split_option,
         single_file=single_file,
-        output_file=Path(output_file),
+        output_file=Path(output_file) if output_file is not None else None,
         with_assets=with_assets,
         annotation_modifier=annotation_modifier,
         asset_filter_kwargs=asset_filter_kwargs,
@@ -77,8 +77,8 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
             get_args(LabelFormat)
         )  # ensures full mapping
         exporter_class = format_exporter_selector_mapping[label_format]
-        exporter_class(
+        return exporter_class(
             export_params, kili, logger, disable_tqdm, content_repository
         ).export_project()
-    else:
-        raise ValueError(f'Label format "{label_format}" is not implemented or does not exist.')
+
+    raise ValueError(f'Label format "{label_format}" is not implemented or does not exist.')

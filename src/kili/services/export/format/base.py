@@ -7,7 +7,7 @@ import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, NamedTuple, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, NamedTuple, Optional, Tuple, Union
 
 from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
@@ -41,7 +41,7 @@ class ExportParams(NamedTuple):
     label_format: LabelFormat
     split_option: SplitOption
     single_file: bool
-    output_file: Path
+    output_file: Optional[Path]
     with_assets: bool
     annotation_modifier: Optional[CocoAnnotationModifier]
     asset_filter_kwargs: Optional[Dict[str, object]]
@@ -107,6 +107,10 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """Converts the asset and save them into an archive file."""
 
+    def process(self, assets: List[Dict]) -> List[Dict[str, Union[List[str], str]]]:
+        """Converts the asset."""
+        raise ValueError("Output file is required for this export format.")
+
     def make_archive(self, root_folder: Path, output_filename: Path) -> Path:
         """Make the export archive."""
         path_folder = root_folder / self.project_id
@@ -148,7 +152,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     def export_project(
         self,
-    ) -> None:
+    ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
         """Export a project to a json.
 
         Return the name of the exported archive file.
@@ -175,7 +179,10 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
             self._check_geotiff_export_compatibility(assets)
 
-            self.process_and_save(assets, self.output_file)
+            if self.output_file is None:
+                return self.process(assets)
+
+            return self.process_and_save(assets, self.output_file)
 
     def _check_and_ensure_asset_access(self) -> None:
         """Check asset access.
