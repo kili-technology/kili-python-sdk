@@ -13,6 +13,10 @@ class ImportValidationError(Exception):
     """Raised when data given to import does not follow a right format."""
 
 
+class ImportFileConversionError(Exception):
+    """Raised when an error occurs during processing a llm file for conversion."""
+
+
 class UploadFromLocalDataForbiddenError(Exception):
     """Raised when data given to import does not follow a right format."""
 

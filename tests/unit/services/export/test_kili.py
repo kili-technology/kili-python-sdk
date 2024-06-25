@@ -9,6 +9,7 @@ from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.format.kili import KiliExporter
+from kili.services.export.format.llm import _format_json_response
 from tests.fakes.fake_data import (
     kili_format_expected_frame_asset_output,
     kili_format_frame_asset,
@@ -668,3 +669,145 @@ def test_kili_export_labels_llm(mocker: pytest_mock.MockerFixture):
                 output = json.load(f)
 
     assert output == llm_project_asset
+
+
+def test_kili_export_labels_llm_1_format_raw_data(mocker: pytest_mock.MockerFixture):
+    jobs_config = {
+        "RANKING": {
+            "isNew": False,
+            "mlTask": "CLASSIFICATION",
+            "content": {
+                "input": "radio",
+                "categories": {
+                    "A_1": {
+                        "id": "category28",
+                        "name": "A is slightly better than B",
+                        "children": [],
+                    },
+                    "A_2": {"id": "category27", "name": "A is better than B", "children": []},
+                    "A_3": {"id": "category26", "name": "A is much better than B", "children": []},
+                    "B_1": {
+                        "id": "category30",
+                        "name": "B is slightly better than A",
+                        "children": [],
+                    },
+                    "B_2": {"id": "category31", "name": "B is better than A", "children": []},
+                    "B_3": {"id": "category32", "name": "B is much better than A", "children": []},
+                    "TIE": {"id": "category29", "name": "Tie", "children": []},
+                },
+            },
+            "isChild": False,
+            "required": 0,
+            "instruction": "Pairwise comparison",
+        },
+        "SKIP_REASON": {
+            "isNew": False,
+            "mlTask": "CLASSIFICATION",
+            "content": {
+                "input": "radio",
+                "categories": {
+                    "OTHER": {"id": "category40", "name": "Other", "children": ["OTHER_COMMENT"]},
+                    "CODING": {
+                        "id": "category39",
+                        "name": "Coding expertise required",
+                        "children": [],
+                    },
+                },
+            },
+            "isChild": True,
+            "required": 1,
+            "instruction": "SKIP reason",
+        },
+        "OTHER_COMMENT": {
+            "isNew": False,
+            "mlTask": "TRANSCRIPTION",
+            "content": {"input": "textField"},
+            "isChild": True,
+            "required": 1,
+            "instruction": "",
+        },
+        "TRANSCRIPTION_JOB": {
+            "isNew": False,
+            "mlTask": "TRANSCRIPTION",
+            "content": {"input": "textField"},
+            "isChild": False,
+            "required": 1,
+            "instruction": "Overall comment",
+            "isIgnoredForMetricsComputations": True,
+        },
+        "CLASSIFICATION_JOB": {
+            "isNew": False,
+            "mlTask": "CLASSIFICATION",
+            "content": {
+                "input": "checkbox",
+                "categories": {
+                    "SKIP_ASSET": {
+                        "id": "category34",
+                        "name": "SKIP asset",
+                        "children": ["SKIP_REASON"],
+                    },
+                    "CLARIFICATION": {
+                        "id": "category35",
+                        "name": "Prompt requires clarification",
+                        "children": [],
+                    },
+                    "INTERNET_ACCESS": {
+                        "id": "category36",
+                        "name": "Prompt requires internet access",
+                        "children": [],
+                    },
+                    "UNSAFE_CONTENT_IN_A": {
+                        "id": "category37",
+                        "name": "Unsafe content in A",
+                        "children": [],
+                    },
+                    "UNSAFE_CONTENT_IN_B": {
+                        "id": "category38",
+                        "name": "Unsafe content in B",
+                        "children": [],
+                    },
+                    "BOTH_OUTPUTS_ARE_BAD": {
+                        "id": "category33",
+                        "name": "Both outputs are bad",
+                        "children": [],
+                    },
+                },
+            },
+            "isChild": False,
+            "required": 0,
+            "instruction": "Specific flag",
+        },
+    }
+    json_response = {
+        "RANKING": {"categories": [{"name": "B_3"}]},
+        "CLASSIFICATION_JOB": {
+            "categories": [
+                {
+                    "name": "SKIP_ASSET",
+                    "children": {
+                        "SKIP_REASON": {
+                            "categories": [
+                                {
+                                    "name": "OTHER",
+                                    "children": {
+                                        "OTHER_COMMENT": {"text": "biology far too advanced"}
+                                    },
+                                }
+                            ]
+                        }
+                    },
+                }
+            ]
+        },
+        "TRANSCRIPTION_JOB": {
+            "text": "Answer B is much better. It directly addresses the user prompt by providing a detailed and relevant description of the materials and methods used in the study of live brain imaging in Drosophila. The text is clear, coherent, and logically structured, making it easy to follow the experimental process from protein fusion to image analysis"
+        },
+    }
+    result = _format_json_response(jobs_config=jobs_config, json_response=json_response)
+    assert result == {
+        "RANKING": ["B_3"],
+        "CLASSIFICATION_JOB": ["SKIP_ASSET"],
+        "CLASSIFICATION_JOB.SKIP_ASSET.SKIP_REASON": ["OTHER"],
+        "CLASSIFICATION_JOB.SKIP_ASSET.SKIP_REASON.OTHER.OTHER_COMMENT": "biology far too advanced",
+        "TRANSCRIPTION_JOB": "Answer B is much better. It directly addresses the user prompt by providing a detailed and relevant description of the materials and methods used in the study of live brain imaging in Drosophila. The text is clear, coherent, and logically structured, making it easy to follow the experimental process from protein fusion to image analysis",
+    }
