@@ -3,7 +3,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from kili.services.export.exceptions import NotCompatibleInputType
 from kili.services.export.format.base import AbstractExporter
@@ -25,8 +25,6 @@ class LLMExporter(AbstractExporter):
                 f"Project with input type \"{self.project['inputType']}\" not compatible with LLM"
                 " export format."
             )
-        if not self.single_file:
-            raise ValueError("LLM export are always single file.")
 
     def _is_job_compatible(self, job: Job) -> bool:
         """Check job compatibility with the LLM format."""
@@ -41,23 +39,41 @@ class LLMExporter(AbstractExporter):
         with output_filename.open("wb") as output_file:
             output_file.write(export_json.encode("utf-8"))
 
-    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
+    def process_and_save(
+        self, assets: List[Dict], output_filename: Path
+    ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
         """LLM specific process and save."""
+        result = self._process(assets)
+        self._save_assets_export(result, output_filename)
+
+    def process(self, assets: List[Dict]) -> List[Dict[str, Union[List[str], str]]]:
+        """LLM specific process."""
+        return self._process(assets)
+
+    def _process(self, assets: List[Dict]) -> List[Dict[str, Union[List[str], str]]]:
         result = []
         for asset in assets:
             jobs_config = self.project["jsonInterface"]["jobs"]
-            json_response = asset["latestLabel"]["jsonResponse"]
+            latest_label = asset["latestLabel"]
             result.append(
                 {
                     "raw_data": _format_raw_data(asset),
                     "status": asset["status"],
                     "external_id": asset["externalId"],
                     "metadata": asset["jsonMetadata"],
-                    "labels": [_format_json_response(jobs_config, json_response)],
+                    "labels": [
+                        {
+                            "author": latest_label["author"]["email"],
+                            "created_at": latest_label["createdAt"],
+                            "label_type": latest_label["labelType"],
+                            "label": _format_json_response(
+                                jobs_config, latest_label["jsonResponse"]
+                            ),
+                        }
+                    ],
                 }
             )
-
-        self._save_assets_export(result, output_filename)
+        return result
 
 
 def _format_json_response(

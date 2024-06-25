@@ -1126,7 +1126,7 @@ class LabelClientMethods(BaseClientMethods):
     def export_labels(
         self,
         project_id: str,
-        filename: str,
+        filename: Optional[str],
         fmt: LabelFormat,
         asset_ids: Optional[List[str]] = None,
         layout: SplitOption = "split",
@@ -1137,7 +1137,7 @@ class LabelClientMethods(BaseClientMethods):
         annotation_modifier: Optional[CocoAnnotationModifier] = None,
         asset_filter_kwargs: Optional[Dict[str, object]] = None,
         normalized_coordinates: Optional[bool] = None,
-    ) -> None:
+    ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
         # pylint: disable=line-too-long
         """Export the project labels with the requested format into the requested output path.
 
@@ -1225,7 +1225,7 @@ class LabelClientMethods(BaseClientMethods):
             resolved_asset_ids = cast(List[AssetId], asset_ids)
 
         try:
-            export_labels(
+            return export_labels(
                 self,  # pyright: ignore[reportGeneralTypeIssues]
                 asset_ids=resolved_asset_ids,
                 project_id=ProjectId(project_id),
@@ -1243,3 +1243,4 @@ class LabelClientMethods(BaseClientMethods):
             )
         except NoCompatibleJobError as excp:
             warnings.warn(str(excp), stacklevel=2)
+            return None
