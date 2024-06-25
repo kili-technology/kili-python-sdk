@@ -43,8 +43,8 @@ def process_json(data):
         if item["content"] is None:
             raise ValueError("Chat item content cannot be null.")
 
-        # Check if the model is null (indicating a prompt)
-        if item["model"] is None:
+        # Check if the prompt comes from a user or a model
+        if item["role"] in ["user", "system"]:
             # If there's an existing prompt being processed, add it to the prompts list
             if current_prompt is not None:
                 transformed_data["prompts"].append(
@@ -68,8 +68,9 @@ def process_json(data):
                     "title": item["role"],
                 }
             )
-            # Collect model for this item
-            models.append(item["model"])
+            # Add model if not None
+            if item["model"] is not None:
+                models.append(item["model"])
 
     if current_prompt is None:
         raise ValueError(
@@ -90,7 +91,7 @@ def process_json(data):
     # Prepare additional_json_metadata
     additional_json_metadata = {
         "chat_id": chat_id,
-        "models": "_".join(models[-2:]),  # Join the last two models
+        "models": "_".join(models[-len(completions) :]),  # Join the evaluated models
         "chat_item_ids": chat_item_ids,  # Concatenate all item IDs
         "text": f"Chat_id: {chat_id}\n\nChat_item_ids: {chat_item_ids}",
     }
