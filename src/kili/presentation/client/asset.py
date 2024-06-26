@@ -95,7 +95,12 @@ class AssetClientMethods(BaseClientMethods):
         consensus_mark_lte: Optional[float] = None,
         inference_mark_gte: Optional[float] = None,
         inference_mark_lte: Optional[float] = None,
-        label_reviewer_in: Optional[List[str]] = None,
+        label_labeler_in: Optional[ListOrTuple[str]] = None,
+        label_labeler_not_in: Optional[ListOrTuple[str]] = None,
+        label_reviewer_in: Optional[ListOrTuple[str]] = None,
+        label_reviewer_not_in: Optional[ListOrTuple[str]] = None,
+        assignee_in: Optional[ListOrTuple[str]] = None,
+        assignee_not_in: Optional[ListOrTuple[str]] = None,
         label_consensus_mark_gte: Optional[float] = None,
         label_consensus_mark_lte: Optional[float] = None,
         label_created_at_gte: Optional[str] = None,
@@ -168,7 +173,12 @@ class AssetClientMethods(BaseClientMethods):
         consensus_mark_lte: Optional[float] = None,
         inference_mark_gte: Optional[float] = None,
         inference_mark_lte: Optional[float] = None,
-        label_reviewer_in: Optional[List[str]] = None,
+        label_labeler_in: Optional[ListOrTuple[str]] = None,
+        label_labeler_not_in: Optional[ListOrTuple[str]] = None,
+        label_reviewer_in: Optional[ListOrTuple[str]] = None,
+        label_reviewer_not_in: Optional[ListOrTuple[str]] = None,
+        assignee_in: Optional[ListOrTuple[str]] = None,
+        assignee_not_in: Optional[ListOrTuple[str]] = None,
         label_consensus_mark_gte: Optional[float] = None,
         label_consensus_mark_lte: Optional[float] = None,
         label_created_at_gte: Optional[str] = None,
@@ -241,7 +251,12 @@ class AssetClientMethods(BaseClientMethods):
         consensus_mark_lte: Optional[float] = None,
         inference_mark_gte: Optional[float] = None,
         inference_mark_lte: Optional[float] = None,
-        label_reviewer_in: Optional[List[str]] = None,
+        label_labeler_in: Optional[ListOrTuple[str]] = None,
+        label_labeler_not_in: Optional[ListOrTuple[str]] = None,
+        label_reviewer_in: Optional[ListOrTuple[str]] = None,
+        label_reviewer_not_in: Optional[ListOrTuple[str]] = None,
+        assignee_in: Optional[ListOrTuple[str]] = None,
+        assignee_not_in: Optional[ListOrTuple[str]] = None,
         label_consensus_mark_gte: Optional[float] = None,
         label_consensus_mark_lte: Optional[float] = None,
         label_created_at_gte: Optional[str] = None,
@@ -302,7 +317,12 @@ class AssetClientMethods(BaseClientMethods):
             consensus_mark_gte: Minimum amount of consensus for the asset.
             inference_mark_gte: Minimum amount of human/model IoU for the asset.
             inference_mark_lte: Maximum amount of human/model IoU for the asset.
+            label_labeler_in: Returned assets should have a label whose labeler belongs to that list, if given.
+            label_labeler_not_in: Returned assets should have a label whose labeler does not belong to that list, if given.
             label_reviewer_in: Returned assets should have a label whose reviewer belongs to that list, if given.
+            label_reviewer_not_in: Returned assets should have a label whose reviewer does not belong to that list, if given.
+            assignee_in: Returned assets should have an assigned user that belongs to that list, if given.
+            assignee_not_in: Returned assets should have an assigned user that does not belong to that list, if given.
             label_consensus_mark_gte: Returned assets should have a label whose consensus is greater or equal to this number.
             label_consensus_mark_lte: Returned assets should have a label whose consensus is lower or equal to this number.
             label_created_at_lte: Returned assets should have a label whose creation date is lower or equal to this date.
@@ -446,7 +466,12 @@ class AssetClientMethods(BaseClientMethods):
             label_category_search=label_category_search,
             created_at_gte=created_at_gte,
             created_at_lte=created_at_lte,
+            label_labeler_in=label_labeler_in,
+            label_labeler_not_in=label_labeler_not_in,
             label_reviewer_in=label_reviewer_in,
+            label_reviewer_not_in=label_reviewer_not_in,
+            assignee_in=assignee_in,
+            assignee_not_in=assignee_not_in,
             issue_status=issue_status,
             issue_type=issue_type,
         )
@@ -504,7 +529,12 @@ class AssetClientMethods(BaseClientMethods):
         consensus_mark_lte: Optional[float] = None,
         inference_mark_gte: Optional[float] = None,
         inference_mark_lte: Optional[float] = None,
-        label_reviewer_in: Optional[List[str]] = None,
+        label_labeler_in: Optional[ListOrTuple[str]] = None,
+        label_labeler_not_in: Optional[ListOrTuple[str]] = None,
+        label_reviewer_in: Optional[ListOrTuple[str]] = None,
+        label_reviewer_not_in: Optional[ListOrTuple[str]] = None,
+        assignee_in: Optional[ListOrTuple[str]] = None,
+        assignee_not_in: Optional[ListOrTuple[str]] = None,
         label_consensus_mark_gte: Optional[float] = None,
         label_consensus_mark_lte: Optional[float] = None,
         label_created_at_gte: Optional[str] = None,
@@ -554,7 +584,12 @@ class AssetClientMethods(BaseClientMethods):
             consensus_mark_gte: Minimum amount of consensus for the asset.
             inference_mark_gte: Minimum amount of human/model IoU for the asset.
             inference_mark_lte: Maximum amount of human/model IoU for the asset.
+            label_labeler_in: Returned assets should have a label whose labeler belongs to that list, if given.
+            label_labeler_not_in: Returned assets should have a label whose labeler does not belong to that list, if given.
             label_reviewer_in: Returned assets should have a label whose reviewer belongs to that list, if given.
+            label_reviewer_not_in: Returned assets should have a label whose reviewer does not belong to that list, if given.
+            assignee_in: Returned assets should have an assigned user that belongs to that list, if given.
+            assignee_not_in: Returned assets should have an assigned user that does not belong to that list, if given.
             label_consensus_mark_gte: Returned assets should have a label whose consensus is greater or equal to this number.
             label_consensus_mark_lte: Returned assets should have a label whose consensus is lower or equal to this number.
             label_created_at_lte: Returned assets should have a label whose creation date is lower or equal to this date.
@@ -646,7 +681,12 @@ class AssetClientMethods(BaseClientMethods):
             inference_mark_gte=inference_mark_gte,
             inference_mark_lte=inference_mark_lte,
             label_author_in=label_author_in,
+            label_labeler_in=label_labeler_in,
+            label_labeler_not_in=label_labeler_not_in,
             label_reviewer_in=label_reviewer_in,
+            label_reviewer_not_in=label_reviewer_not_in,
+            assignee_in=assignee_in,
+            assignee_not_in=assignee_not_in,
             label_consensus_mark_gte=label_consensus_mark_gt or label_consensus_mark_gte,
             label_consensus_mark_lte=label_consensus_mark_lt or label_consensus_mark_lte,
             label_created_at=label_created_at,
