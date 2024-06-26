@@ -41,7 +41,12 @@ class AssetFilters:
     label_honeypot_mark_gte: Optional[float] = None
     label_honeypot_mark_lte: Optional[float] = None
     label_type_in: Optional[ListOrTuple["LabelType"]] = None
+    label_labeler_in: Optional[ListOrTuple[str]] = None
+    label_labeler_not_in: Optional[ListOrTuple[str]] = None
     label_reviewer_in: Optional[ListOrTuple[str]] = None
+    label_reviewer_not_in: Optional[ListOrTuple[str]] = None
+    assignee_in: Optional[ListOrTuple[str]] = None
+    assignee_not_in: Optional[ListOrTuple[str]] = None
     metadata_where: Optional[dict] = None
     skipped: Optional[bool] = None
     status_in: Optional[ListOrTuple[AssetStatus]] = None
