@@ -45,7 +45,7 @@ class LLMTestCase(ImportTestCase):
             [False],
             [""],
             [
-                '{"chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd", "models": "model-large_model-medium", "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2", "text": "Chat_id: 6e4094947af4902cd252421aba9a077e8e4402dd\\n\\nChat_item_ids: 0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2"}'
+                '{"chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd", "models": "model-large___model-medium", "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571___4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d___7326ff17cbfe7e3cb91b008cf0c496fcd17a1074___375b55d44af2c8c801992089c797df8e12605dfb___9231d8819ac96cc8a6c4b7780c301b796c3f8bf2", "text": "Chat_id: 6e4094947af4902cd252421aba9a077e8e4402dd\\n\\nChat_item_ids: 0455df65c2d6bb821a9dc9108ac1d79964a0f571___4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d___7326ff17cbfe7e3cb91b008cf0c496fcd17a1074___375b55d44af2c8c801992089c797df8e12605dfb___9231d8819ac96cc8a6c4b7780c301b796c3f8bf2"}'
             ],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
@@ -69,7 +69,7 @@ class LLMTestCase(ImportTestCase):
             [False],
             [""],
             [
-                '{"customKey": "customValue", "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd", "models": "model-large_model-medium", "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2", "text": "Chat_id: 6e4094947af4902cd252421aba9a077e8e4402dd\\n\\nChat_item_ids: 0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2"}'
+                '{"customKey": "customValue", "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd", "models": "model-large___model-medium", "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571___4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d___7326ff17cbfe7e3cb91b008cf0c496fcd17a1074___375b55d44af2c8c801992089c797df8e12605dfb___9231d8819ac96cc8a6c4b7780c301b796c3f8bf2", "text": "Chat_id: 6e4094947af4902cd252421aba9a077e8e4402dd\\n\\nChat_item_ids: 0455df65c2d6bb821a9dc9108ac1d79964a0f571___4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d___7326ff17cbfe7e3cb91b008cf0c496fcd17a1074___375b55d44af2c8c801992089c797df8e12605dfb___9231d8819ac96cc8a6c4b7780c301b796c3f8bf2"}'
             ],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
@@ -155,7 +155,7 @@ class LLMTestCase(ImportTestCase):
             [False],
             [""],
             [
-                '{"chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd", "models": "model-large_model-medium", "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2", "text": "Chat_id: 6e4094947af4902cd252421aba9a077e8e4402dd\\n\\nChat_item_ids: 0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2"}'
+                '{"chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd", "models": "model-large___model-medium", "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571___4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d___7326ff17cbfe7e3cb91b008cf0c496fcd17a1074___375b55d44af2c8c801992089c797df8e12605dfb___9231d8819ac96cc8a6c4b7780c301b796c3f8bf2", "text": "Chat_id: 6e4094947af4902cd252421aba9a077e8e4402dd\\n\\nChat_item_ids: 0455df65c2d6bb821a9dc9108ac1d79964a0f571___4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d___7326ff17cbfe7e3cb91b008cf0c496fcd17a1074___375b55d44af2c8c801992089c797df8e12605dfb___9231d8819ac96cc8a6c4b7780c301b796c3f8bf2"}'
             ],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
@@ -213,7 +213,7 @@ class LLMTestCase(ImportTestCase):
             [False],
             [""],
             [
-                '{"customKey": "customValue", "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd", "models": "model-large_model-medium", "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2", "text": "Chat_id: 6e4094947af4902cd252421aba9a077e8e4402dd\\n\\nChat_item_ids: 0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2"}'
+                '{"customKey": "customValue", "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd", "models": "model-large___model-medium", "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571___4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d___7326ff17cbfe7e3cb91b008cf0c496fcd17a1074___375b55d44af2c8c801992089c797df8e12605dfb___9231d8819ac96cc8a6c4b7780c301b796c3f8bf2", "text": "Chat_id: 6e4094947af4902cd252421aba9a077e8e4402dd\\n\\nChat_item_ids: 0455df65c2d6bb821a9dc9108ac1d79964a0f571___4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d___7326ff17cbfe7e3cb91b008cf0c496fcd17a1074___375b55d44af2c8c801992089c797df8e12605dfb___9231d8819ac96cc8a6c4b7780c301b796c3f8bf2"}'
             ],
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
@@ -255,8 +255,8 @@ class LLMTestCase(ImportTestCase):
                 },
                 {
                     "chat_id": "6e4094947af4902cd252421aba9a077e8e4402dd",
-                    "models": "model-large_model-medium",
-                    "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2",
-                    "text": "Chat_id: 6e4094947af4902cd252421aba9a077e8e4402dd\n\nChat_item_ids: 0455df65c2d6bb821a9dc9108ac1d79964a0f571_4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d_7326ff17cbfe7e3cb91b008cf0c496fcd17a1074_375b55d44af2c8c801992089c797df8e12605dfb_9231d8819ac96cc8a6c4b7780c301b796c3f8bf2",
+                    "models": "model-large___model-medium",
+                    "chat_item_ids": "0455df65c2d6bb821a9dc9108ac1d79964a0f571___4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d___7326ff17cbfe7e3cb91b008cf0c496fcd17a1074___375b55d44af2c8c801992089c797df8e12605dfb___9231d8819ac96cc8a6c4b7780c301b796c3f8bf2",
+                    "text": "Chat_id: 6e4094947af4902cd252421aba9a077e8e4402dd\n\nChat_item_ids: 0455df65c2d6bb821a9dc9108ac1d79964a0f571___4c28c86c4b22b3397691ce5cf27197fcf7e8fb2d___7326ff17cbfe7e3cb91b008cf0c496fcd17a1074___375b55d44af2c8c801992089c797df8e12605dfb___9231d8819ac96cc8a6c4b7780c301b796c3f8bf2",
                 },
             )

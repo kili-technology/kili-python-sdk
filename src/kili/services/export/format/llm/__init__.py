@@ -5,6 +5,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
+from kili.services.asset_import.helpers import SEPARATOR
 from kili.services.export.exceptions import NotCompatibleInputType
 from kili.services.export.format.base import AbstractExporter
 from kili.services.types import Job
@@ -110,7 +111,7 @@ def _format_raw_data(asset) -> List[Dict]:
         and isinstance(asset["jsonMetadata"]["chat_item_ids"], str)
         and len(asset["jsonMetadata"]["chat_item_ids"]) > 0
     ):
-        chat_items_ids = str.split(asset["jsonMetadata"]["chat_item_ids"], "_")
+        chat_items_ids = str.split(asset["jsonMetadata"]["chat_item_ids"], SEPARATOR)
     else:
         chat_items_ids = []
 
@@ -119,7 +120,7 @@ def _format_raw_data(asset) -> List[Dict]:
         and isinstance(asset["jsonMetadata"]["models"], str)
         and len(asset["jsonMetadata"]["models"]) > 0
     ):
-        models = str.split(asset["jsonMetadata"]["models"], "_")
+        models = str.split(asset["jsonMetadata"]["models"], SEPARATOR)
     else:
         models = []
 
