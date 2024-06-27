@@ -2,6 +2,8 @@
 
 import warnings
 
+SEPARATOR = "___"
+
 
 def is_chat_format(data, required_keys):
     """Checks if llm file data is in chat format."""
@@ -86,12 +88,12 @@ def process_json(data):
             }
         )
 
-    chat_item_ids = "_".join(item_ids)
+    chat_item_ids = SEPARATOR.join(item_ids)
 
     # Prepare additional_json_metadata
     additional_json_metadata = {
         "chat_id": chat_id,
-        "models": "_".join(models[-len(completions) :]),  # Join the evaluated models
+        "models": SEPARATOR.join(models[-len(completions) :]),  # Join the evaluated models
         "chat_item_ids": chat_item_ids,  # Concatenate all item IDs
         "text": f"Chat_id: {chat_id}\n\nChat_item_ids: {chat_item_ids}",
     }
