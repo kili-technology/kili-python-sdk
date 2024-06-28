@@ -54,8 +54,6 @@ class LLMExporter(AbstractExporter):
     def _process(self, assets: List[Dict]) -> List[Dict[str, Union[List[str], str]]]:
         result = []
         for asset in assets:
-            jobs_config = self.project["jsonInterface"]["jobs"]
-            latest_label = asset["latestLabel"]
             result.append(
                 {
                     "raw_data": _format_raw_data(asset),
@@ -63,14 +61,19 @@ class LLMExporter(AbstractExporter):
                     "external_id": asset["externalId"],
                     "metadata": asset["jsonMetadata"],
                     "labels": [
-                        {
-                            "author": latest_label["author"]["email"],
-                            "created_at": latest_label["createdAt"],
-                            "label_type": latest_label["labelType"],
-                            "label": _format_json_response(
-                                jobs_config, latest_label["jsonResponse"]
-                            ),
-                        }
+                        list(
+                            map(
+                                lambda label: {
+                                    "author": label["author"]["email"],
+                                    "created_at": label["createdAt"],
+                                    "label_type": label["labelType"],
+                                    "label": _format_json_response(
+                                        self.project["jsonInterface"]["jobs"], label["jsonResponse"]
+                                    ),
+                                },
+                                asset["labels"],
+                            )
+                        )
                     ],
                 }
             )
