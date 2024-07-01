@@ -15,7 +15,8 @@ Here are the steps that we will follow:
   4. Uploading a list of local images as one video asset
   5. Uploading a list of image URLs as one video asset
   6. Uploading a video asset with a custom sampling rate
-3. Cleanup
+3. Updating video metadata
+4. Cleanup
 
 ## Setting up a simple Kili project to work with
 
@@ -219,6 +220,39 @@ assets = kili.append_many_to_dataset(
     content_array=["./test.mp4"],
     external_id_array=["video_5_custom"],
     json_metadata_array=[{"processingParameters": {"framesPlayedPerSecond": 10}}],
+)
+```
+
+## Updating video metadata
+
+When importing a video, if you want to add or delete metadata, you must provide the entire list of metadata. This new list will replace the previous one, meaning any metadata not included in the new list will be erased. However, this does not apply to the `processingParameters` metadata, which will be retained even if they are not present in the new list.
+
+If you need to update `processingParameters` keep in mind that you should only do it with caution as it can have an impact on how the video will be managed by the application.
+
+To update a `processingParameters`, use this code:
+
+
+```python
+assets = kili.update_properties_in_assets(
+    project_id=project_id,
+    external_ids=["video_5_custom"],
+    json_metadatas=[{"processingParameters": {"framesPlayedPerSecond": 10}}],
+)
+```
+
+If you have set custom metadatas to your asset, see here [how](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_metadata/#adding-metadata-to-assets), and you want to update one property you will have to first get all the json_metadatas and then update the wanted metadata :
+
+
+```python
+updated_json_metadatas = kili.assets(
+    project_id=project_id, external_id_in=["video_5_custom"], fields=["jsonMetadata"]
+)
+updated_json_metadatas[0]["jsonMetadata"]["customMetadata"] = 20
+
+assets = kili.update_properties_in_assets(
+    project_id=project_id,
+    external_ids=["video_5_custom"],
+    json_metadatas=[updated_json_metadatas[0]["jsonMetadata"]],
 )
 ```
 
