@@ -41,6 +41,7 @@ class ProjectClientMethods(BaseClientMethods):
         json_interface: Dict,
         title: str,
         description: str = "",
+        project_id: Optional[ProjectId] = None,
         project_type: Optional[ProjectType] = None,
         tags: Optional[ListOrTuple[str]] = None,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
@@ -53,6 +54,7 @@ class ProjectClientMethods(BaseClientMethods):
             json_interface: The json parameters of the project, see Edit your interface.
             title: Title of the project.
             description: Description of the project.
+            project_id: Identifier of the project to copy.
             project_type: Currently, one of:
 
                 - `IMAGE_CLASSIFICATION_MULTI`
@@ -97,6 +99,7 @@ class ProjectClientMethods(BaseClientMethods):
             json_interface=json_interface,
             title=title,
             description=description,
+            project_id=project_id,
             project_type=project_type,
             compliance_tags=compliance_tags,
         )

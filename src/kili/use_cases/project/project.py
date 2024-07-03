@@ -28,18 +28,49 @@ class ProjectUseCases(BaseUseCases):
         json_interface: Dict,
         title: str,
         description: str,
+        project_id: Optional[ProjectId],
         project_type: Optional[ProjectType],
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
     ) -> ProjectId:
-        """Create a project."""
-        project_id = self._kili_api_gateway.create_project(
-            input_type=input_type,
-            json_interface=json_interface,
-            title=title,
-            description=description,
-            project_type=project_type,
-            compliance_tags=compliance_tags,
-        )
+        """Create or copy a project if project_id is set."""
+        if project_id is not None:
+            project_copied = self._kili_api_gateway.get_project(
+                project_id=project_id, fields=["jsonInterface", "instructions"]
+            )
+            project_tag = self._kili_api_gateway.list_tags_by_project(
+                project_id=project_id, fields=["id"]
+            )
+            new_project_id = self._kili_api_gateway.create_project(
+                input_type=input_type,
+                json_interface=project_copied["jsonInterface"],
+                title=title,
+                description=description,
+                project_type=project_type,
+                compliance_tags=compliance_tags,
+            )
+            if project_copied["instructions"]:
+                self.update_properties_in_project(
+                    project_id=new_project_id,
+                    instructions=project_copied["instructions"],
+                )
+            tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
+            tags_of_orga_ids = [tag["id"] for tag in tags_of_orga]
+
+            for tag in project_tag:
+                if tag["id"] not in tags_of_orga_ids:
+                    raise ValueError(
+                        f"Tag {tag['id']} doesn't belong to your organization and was not copied."
+                    )
+                self._kili_api_gateway.check_tag(project_id=new_project_id, tag_id=tag["id"])
+        else:
+            new_project_id = self._kili_api_gateway.create_project(
+                input_type=input_type,
+                json_interface=json_interface,
+                title=title,
+                description=description,
+                project_type=project_type,
+                compliance_tags=compliance_tags,
+            )
 
         # The project is not immediately available after creation
         for attempt in Retrying(
@@ -49,9 +80,9 @@ class ProjectUseCases(BaseUseCases):
             reraise=True,
         ):
             with attempt:
-                _ = self._kili_api_gateway.get_project(project_id=project_id, fields=("id",))
+                _ = self._kili_api_gateway.get_project(project_id=new_project_id, fields=("id",))
 
-        return ProjectId(project_id)
+        return ProjectId(new_project_id)
 
     def list_projects(
         self,
@@ -71,26 +102,26 @@ class ProjectUseCases(BaseUseCases):
         self,
         project_id: ProjectId,
         *,
-        can_navigate_between_assets: Optional[bool],
-        can_skip_asset: Optional[bool],
-        compliance_tags: Optional[ListOrTuple[ComplianceTag]],
-        consensus_mark: Optional[float],
-        consensus_tot_coverage: Optional[int],
-        description: Optional[str],
-        honeypot_mark: Optional[float],
-        instructions: Optional[str],
-        input_type: Optional[InputType],
-        json_interface: Optional[Dict],
-        min_consensus_size: Optional[int],
-        number_of_assets: Optional[int],
-        number_of_skipped_assets: Optional[int],
-        number_of_remaining_assets: Optional[int],
-        number_of_reviewed_assets: Optional[int],
-        review_coverage: Optional[int],
-        should_relaunch_kpi_computation: Optional[bool],
-        title: Optional[str],
-        use_honeypot: Optional[bool],
-        metadata_types: Optional[Dict],
+        can_navigate_between_assets: Optional[bool] = None,
+        can_skip_asset: Optional[bool] = None,
+        compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
+        consensus_mark: Optional[float] = None,
+        consensus_tot_coverage: Optional[int] = None,
+        description: Optional[str] = None,
+        honeypot_mark: Optional[float] = None,
+        instructions: Optional[str] = None,
+        input_type: Optional[InputType] = None,
+        json_interface: Optional[Dict] = None,
+        min_consensus_size: Optional[int] = None,
+        number_of_assets: Optional[int] = None,
+        number_of_skipped_assets: Optional[int] = None,
+        number_of_remaining_assets: Optional[int] = None,
+        number_of_reviewed_assets: Optional[int] = None,
+        review_coverage: Optional[int] = None,
+        should_relaunch_kpi_computation: Optional[bool] = None,
+        title: Optional[str] = None,
+        use_honeypot: Optional[bool] = None,
+        metadata_types: Optional[Dict] = None,
     ) -> Dict[str, object]:
         """Update properties in a project."""
         if consensus_tot_coverage is not None and not 0 <= consensus_tot_coverage <= 100:

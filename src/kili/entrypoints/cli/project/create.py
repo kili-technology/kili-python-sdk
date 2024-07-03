@@ -30,6 +30,7 @@ from kili.entrypoints.queries.project.helpers import get_project_url
 def create_project(
     api_key: Optional[str],
     endpoint: Optional[str],
+    project_id: Optional[ProjectId],
     interface: str,
     project_id_src: str,
     input_type,
@@ -83,8 +84,9 @@ def create_project(
         json_interface=json_interface,
         title=title,
         description=description,
+        project_id=project_id,
     )
-    project_id = result["id"]
+    new_project_id = result["id"]
 
-    project_url = get_project_url(project_id, kili.graphql_client.endpoint)
-    print(tabulate([[project_id, project_url]], headers=["ID", "URL"], tablefmt=tablefmt))
+    project_url = get_project_url(new_project_id, kili.graphql_client.endpoint)
+    print(tabulate([[new_project_id, project_url]], headers=["ID", "URL"], tablefmt=tablefmt))
