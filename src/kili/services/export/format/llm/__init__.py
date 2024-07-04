@@ -5,6 +5,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
+from kili.services.asset_import.helpers import SEPARATOR
 from kili.services.export.exceptions import NotCompatibleInputType
 from kili.services.export.format.base import AbstractExporter
 from kili.services.types import Job
@@ -53,8 +54,6 @@ class LLMExporter(AbstractExporter):
     def _process(self, assets: List[Dict]) -> List[Dict[str, Union[List[str], str]]]:
         result = []
         for asset in assets:
-            jobs_config = self.project["jsonInterface"]["jobs"]
-            latest_label = asset["latestLabel"]
             result.append(
                 {
                     "raw_data": _format_raw_data(asset),
@@ -62,14 +61,19 @@ class LLMExporter(AbstractExporter):
                     "external_id": asset["externalId"],
                     "metadata": asset["jsonMetadata"],
                     "labels": [
-                        {
-                            "author": latest_label["author"]["email"],
-                            "created_at": latest_label["createdAt"],
-                            "label_type": latest_label["labelType"],
-                            "label": _format_json_response(
-                                jobs_config, latest_label["jsonResponse"]
-                            ),
-                        }
+                        list(
+                            map(
+                                lambda label: {
+                                    "author": label["author"]["email"],
+                                    "created_at": label["createdAt"],
+                                    "label_type": label["labelType"],
+                                    "label": _format_json_response(
+                                        self.project["jsonInterface"]["jobs"], label["jsonResponse"]
+                                    ),
+                                },
+                                asset["labels"],
+                            )
+                        )
                     ],
                 }
             )
@@ -110,7 +114,7 @@ def _format_raw_data(asset) -> List[Dict]:
         and isinstance(asset["jsonMetadata"]["chat_item_ids"], str)
         and len(asset["jsonMetadata"]["chat_item_ids"]) > 0
     ):
-        chat_items_ids = str.split(asset["jsonMetadata"]["chat_item_ids"], "_")
+        chat_items_ids = str.split(asset["jsonMetadata"]["chat_item_ids"], SEPARATOR)
     else:
         chat_items_ids = []
 
@@ -119,7 +123,7 @@ def _format_raw_data(asset) -> List[Dict]:
         and isinstance(asset["jsonMetadata"]["models"], str)
         and len(asset["jsonMetadata"]["models"]) > 0
     ):
-        models = str.split(asset["jsonMetadata"]["models"], "_")
+        models = str.split(asset["jsonMetadata"]["models"], SEPARATOR)
     else:
         models = []
 
