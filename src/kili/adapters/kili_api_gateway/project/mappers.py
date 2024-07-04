@@ -18,6 +18,7 @@ def project_where_mapper(filters: ProjectFilters) -> Dict:
         "updatedAtLte": filters.updated_at_lte,
         "createdAtGte": filters.created_at_gte,
         "createdAtLte": filters.created_at_lte,
+        "organizationId": filters.organization_id,
         "tagIds": filters.tag_ids,
     }
     if filters.archived is not None:

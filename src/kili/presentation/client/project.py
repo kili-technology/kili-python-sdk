@@ -122,6 +122,7 @@ class ProjectClientMethods(BaseClientMethods):
         archived: Optional[bool] = None,
         starred: Optional[bool] = None,
         tags_in: Optional[ListOrTuple[str]] = None,
+        organization_id: Optional[str] = None,
         fields: ListOrTuple[str] = (
             "consensusTotCoverage",
             "id",
@@ -155,6 +156,7 @@ class ProjectClientMethods(BaseClientMethods):
         archived: Optional[bool] = None,
         starred: Optional[bool] = None,
         tags_in: Optional[ListOrTuple[str]] = None,
+        organization_id: Optional[str] = None,
         fields: ListOrTuple[str] = (
             "consensusTotCoverage",
             "id",
@@ -188,6 +190,7 @@ class ProjectClientMethods(BaseClientMethods):
         archived: Optional[bool] = None,
         starred: Optional[bool] = None,
         tags_in: Optional[ListOrTuple[str]] = None,
+        organization_id: Optional[str] = None,
         fields: ListOrTuple[str] = (
             "consensusTotCoverage",
             "id",
@@ -222,6 +225,7 @@ class ProjectClientMethods(BaseClientMethods):
             starred: If `True`, only starred projects are returned, if `False`, only unstarred projects are returned.
                 `None` disables this filter.
             tags_in: Returned projects should have at least one of these tags.
+            organization_id: Returned projects should belong to this organization.
             fields: All the fields to request among the possible fields for the projects.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#project) for all possible fields.
             first: Maximum number of projects to return.
@@ -256,6 +260,7 @@ class ProjectClientMethods(BaseClientMethods):
                 updated_at_lte=updated_at_lte,
                 created_at_gte=None,
                 created_at_lte=None,
+                organization_id=organization_id,
                 tag_ids=tag_ids,
             ),
             fields,
