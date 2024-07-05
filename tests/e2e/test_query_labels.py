@@ -9,7 +9,7 @@ from kili.client import Kili
 @pytest.fixture(scope="module")
 def project_id(kili: Kili):
     project = kili.create_project(
-        "TEXT",
+        input_type="TEXT",
         json_interface={
             "jobs": {
                 "CLASSIFICATION_JOB": {
