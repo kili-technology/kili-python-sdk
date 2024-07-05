@@ -1,11 +1,33 @@
 from types import GeneratorType
 
+import pytest
+
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.project.types import ProjectDataKiliAPIGatewayInput
 from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.use_cases.project.project import ProjectUseCases
+
+interface = {
+    "jobs": {
+        "JOB_0": {
+            "content": {
+                "categories": {
+                    "OBJECT_A": {"children": [], "name": "Object A"},
+                    "OBJECT_B": {"children": [], "name": "Object B"},
+                },
+                "input": "radio",
+            },
+            "instruction": "Categories",
+            "isChild": False,
+            "mlTask": "CLASSIFICATION",
+            "models": {},
+            "isVisible": True,
+            "required": 1,
+        }
+    }
+}
 
 
 def test_when_create_project_it_works(kili_api_gateway: KiliAPIGateway):
@@ -17,12 +39,77 @@ def test_when_create_project_it_works(kili_api_gateway: KiliAPIGateway):
         json_interface={},
         title="test",
         description="description",
+        project_id=None,
         project_type=None,
         compliance_tags=None,
     )
 
     # Then
     assert project_id == "fake_project_id"
+
+
+def test_when_create_project_with_project_id_it_works(kili_api_gateway: KiliAPIGateway):
+    # Given
+    tags = [
+        {"id": "tag1_id", "label": "tag1"},
+        {"id": "tag2_id", "label": "tag2"},
+    ]
+    kili_api_gateway.create_project.return_value = "fake_copied_project_id"
+    kili_api_gateway.get_project.return_value = {
+        "jsonInterface": interface,
+        "instructions": "fake_instructions",
+    }
+    kili_api_gateway.list_tags_by_project.return_value = tags
+    kili_api_gateway.list_tags_by_org.return_value = tags
+
+    # When
+    project_id = ProjectUseCases(kili_api_gateway).create_project(
+        input_type="TEXT",
+        json_interface=interface,
+        title="test",
+        description="description",
+        project_id=ProjectId("fake_project_id"),
+        project_type=None,
+        compliance_tags=None,
+    )
+
+    # Then
+    assert project_id == "fake_copied_project_id"
+
+
+def test_when_create_project_with_project_id_it_throw_an_error_if_tags_do_not_belong_to_the_same_organisation(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    tags = [
+        {"id": "tag1_id", "label": "tag1"},
+    ]
+    org_tags = [
+        {"id": "tag2_id", "label": "tag2"},
+    ]
+    kili_api_gateway.create_project.return_value = "fake_copied_project_id"
+    kili_api_gateway.get_project.return_value = {
+        "jsonInterface": interface,
+        "instructions": "fake_instructions",
+    }
+    kili_api_gateway.list_tags_by_project.return_value = tags
+    kili_api_gateway.list_tags_by_org.return_value = org_tags
+
+    # When
+    project_use_cases = ProjectUseCases(kili_api_gateway)
+    with pytest.raises(
+        ValueError,
+        match="Tag tag1_id doesn't belong to your organization and was not copied.",
+    ):
+        project_use_cases.create_project(
+            input_type="TEXT",
+            json_interface=interface,
+            title="test",
+            description="description",
+            project_id=ProjectId("fake_project_id"),
+            project_type=None,
+            compliance_tags=None,
+        )
 
 
 def test_when_i_query_projects_i_get_a_generator_of_projects(kili_api_gateway: KiliAPIGateway):
