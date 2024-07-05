@@ -48,6 +48,27 @@ def test_when_create_project_it_works(kili_api_gateway: KiliAPIGateway):
     assert project_id == "fake_project_id"
 
 
+def test_when_create_project_without_inputType_or_jsonInterface_it_throw_an_error(
+    kili_api_gateway: KiliAPIGateway,
+):
+    kili_api_gateway.create_project.return_value = "fake_project_id"
+
+    # When
+    project_use_cases = ProjectUseCases(kili_api_gateway)
+
+    # Then
+    with pytest.raises(
+        ValueError,
+        match="Arguments `input_type` and `json_interface` must be set\n                if no `project_id` is providen.",
+    ):
+        project_use_cases.create_project(
+            title="test",
+            description="description",
+            project_type=None,
+            compliance_tags=None,
+        )
+
+
 def test_when_create_project_with_project_id_it_works(kili_api_gateway: KiliAPIGateway):
     # Given
     tags = [
@@ -58,14 +79,13 @@ def test_when_create_project_with_project_id_it_works(kili_api_gateway: KiliAPIG
     kili_api_gateway.get_project.return_value = {
         "jsonInterface": interface,
         "instructions": "fake_instructions",
+        "inputType": "TEXT",
     }
     kili_api_gateway.list_tags_by_project.return_value = tags
     kili_api_gateway.list_tags_by_org.return_value = tags
 
     # When
     project_id = ProjectUseCases(kili_api_gateway).create_project(
-        input_type="TEXT",
-        json_interface=interface,
         title="test",
         description="description",
         project_id=ProjectId("fake_project_id"),
@@ -91,6 +111,7 @@ def test_when_create_project_with_project_id_it_throw_an_error_if_tags_do_not_be
     kili_api_gateway.get_project.return_value = {
         "jsonInterface": interface,
         "instructions": "fake_instructions",
+        "inputType": "TEXT",
     }
     kili_api_gateway.list_tags_by_project.return_value = tags
     kili_api_gateway.list_tags_by_org.return_value = org_tags
@@ -102,8 +123,6 @@ def test_when_create_project_with_project_id_it_throw_an_error_if_tags_do_not_be
         match="Tag tag1_id doesn't belong to your organization and was not copied.",
     ):
         project_use_cases.create_project(
-            input_type="TEXT",
-            json_interface=interface,
             title="test",
             description="description",
             project_id=ProjectId("fake_project_id"),

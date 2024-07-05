@@ -24,24 +24,24 @@ class ProjectUseCases(BaseUseCases):
     # pylint: disable=too-many-arguments
     def create_project(
         self,
-        input_type: InputType,
-        json_interface: Dict,
         title: str,
         description: str,
-        project_id: Optional[ProjectId],
         project_type: Optional[ProjectType],
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
+        project_id: Optional[ProjectId] = None,
+        input_type: Optional[InputType] = None,
+        json_interface: Optional[Dict] = None,
     ) -> ProjectId:
         """Create or copy a project if project_id is set."""
         if project_id is not None:
             project_copied = self._kili_api_gateway.get_project(
-                project_id=project_id, fields=["jsonInterface", "instructions"]
+                project_id=project_id, fields=["jsonInterface", "instructions", "inputType"]
             )
             project_tag = self._kili_api_gateway.list_tags_by_project(
                 project_id=project_id, fields=["id"]
             )
             new_project_id = self._kili_api_gateway.create_project(
-                input_type=input_type,
+                input_type=project_copied["inputType"],
                 json_interface=project_copied["jsonInterface"],
                 title=title,
                 description=description,
@@ -62,6 +62,11 @@ class ProjectUseCases(BaseUseCases):
                         f"Tag {tag['id']} doesn't belong to your organization and was not copied."
                     )
                 self._kili_api_gateway.check_tag(project_id=new_project_id, tag_id=tag["id"])
+        elif input_type is None or json_interface is None:
+            raise ValueError(
+                """Arguments `input_type` and `json_interface` must be set
+                if no `project_id` is providen."""
+            )
         else:
             new_project_id = self._kili_api_gateway.create_project(
                 input_type=input_type,

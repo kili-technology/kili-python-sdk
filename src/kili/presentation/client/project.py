@@ -37,10 +37,10 @@ class ProjectClientMethods(BaseClientMethods):
     # pylint: disable=too-many-arguments
     def create_project(
         self,
-        input_type: InputType,
-        json_interface: Dict,
         title: str,
         description: str = "",
+        input_type: Optional[InputType] = None,
+        json_interface: Optional[Dict] = None,
         project_id: Optional[ProjectId] = None,
         project_type: Optional[ProjectType] = None,
         tags: Optional[ListOrTuple[str]] = None,
