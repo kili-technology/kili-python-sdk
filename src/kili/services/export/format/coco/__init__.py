@@ -6,6 +6,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+import numpy as np
+from shapely.geometry import Polygon
+from shapely.ops import polygonize
+from shapely.validation import make_valid
+
 from kili.domain.ontology import JobMLTask, JobTool
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
@@ -412,11 +417,14 @@ def _get_coco_image_annotations(
             print("continue")
             continue
         bounding_poly = annotation["boundingPoly"]
-        bbox, poly = _get_coco_geometry_from_kili_bpoly(
+        area, bbox, poly = _get_coco_geometry_from_kili_bpoly(
             bounding_poly, coco_image["width"], coco_image["height"]
         )
         if len(poly) < 6:  # twice the number of vertices
             print("A polygon must contain more than 2 points. Skipping this polygon...")
+            continue
+        if bbox[2] == 0 and bbox[3] == 0:
+            print("An annotation with zero dimensions has been ignored.")
             continue
 
         categories = annotation["categories"]
@@ -429,7 +437,7 @@ def _get_coco_image_annotations(
             # But a type of object can appear several times on the same image.
             # The limitation of the single connected part comes from Kili.
             segmentation=[poly],
-            area=coco_image["height"] * coco_image["width"],
+            area=area,
             iscrowd=0,
         )
 
@@ -442,6 +450,23 @@ def _get_coco_image_annotations(
     return coco_annotations, annotation_j
 
 
+# Shoelace formula, implementation from https://stackoverflow.com/a/30408825.
+def _get_shoelace_area(x: List[float], y: List[float]):
+    # Split self intersecting polygon into multiple polygons to compute area safely.
+    polygon = Polygon(np.c_[x, y])
+    polygons = polygonize(make_valid(polygon))
+
+    area = 0
+
+    for poly in polygons:
+        p_xx, p_yy = poly.exterior.coords.xy
+        p_x = p_xx.tolist()
+        p_y = p_yy.tolist()
+        area += 0.5 * np.abs(np.dot(p_x, np.roll(p_y, 1)) - np.dot(p_y, np.roll(p_x, 1)))
+
+    return area
+
+
 def _get_coco_geometry_from_kili_bpoly(
     bounding_poly: List[Dict], asset_width: int, asset_height: int
 ):
@@ -452,9 +477,18 @@ def _get_coco_geometry_from_kili_bpoly(
     x_min, y_min = min(p_x), min(p_y)
     x_max, y_max = max(p_x), max(p_y)
     bbox_width, bbox_height = x_max - x_min, y_max - y_min
+    area = _get_shoelace_area(p_x, p_y)
+
+    # Compute and remove negative area
+    if len(bounding_poly) > 1:
+        negative_normalized_vertices = bounding_poly[1]["normalizedVertices"]
+        np_x = [float(vertice["x"]) * asset_width for vertice in negative_normalized_vertices]
+        np_y = [float(vertice["y"]) * asset_height for vertice in negative_normalized_vertices]
+        area -= _get_shoelace_area(np_x, np_y)
+
     bbox = [int(x_min), int(y_min), int(bbox_width), int(bbox_height)]
     poly = [p for vertice in poly_vertices for p in vertice]
-    return bbox, poly
+    return area, bbox, poly
 
 
 def _get_coco_categories(cat_kili_id_to_coco_id, merged) -> List[CocoCategory]:
