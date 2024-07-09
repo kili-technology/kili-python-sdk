@@ -417,10 +417,10 @@ def _get_coco_image_annotations(
             print("continue")
             continue
         bounding_poly = annotation["boundingPoly"]
-        area, bbox, poly = _get_coco_geometry_from_kili_bpoly(
+        area, bbox, polygons = _get_coco_geometry_from_kili_bpoly(
             bounding_poly, coco_image["width"], coco_image["height"]
         )
-        if len(poly) < 6:  # twice the number of vertices
+        if len(polygons[0]) < 6:  # twice the number of vertices
             print("A polygon must contain more than 2 points. Skipping this polygon...")
             continue
         if bbox[2] == 0 and bbox[3] == 0:
@@ -436,7 +436,7 @@ def _get_coco_image_annotations(
             # Objects have only one connected part.
             # But a type of object can appear several times on the same image.
             # The limitation of the single connected part comes from Kili.
-            segmentation=[poly],
+            segmentation=polygons,
             area=area,
             iscrowd=0,
         )
@@ -478,17 +478,20 @@ def _get_coco_geometry_from_kili_bpoly(
     x_max, y_max = max(p_x), max(p_y)
     bbox_width, bbox_height = x_max - x_min, y_max - y_min
     area = _get_shoelace_area(p_x, p_y)
+    polygons = [[p for vertice in poly_vertices for p in vertice]]
 
     # Compute and remove negative area
     if len(bounding_poly) > 1:
-        negative_normalized_vertices = bounding_poly[1]["normalizedVertices"]
-        np_x = [float(vertice["x"]) * asset_width for vertice in negative_normalized_vertices]
-        np_y = [float(vertice["y"]) * asset_height for vertice in negative_normalized_vertices]
-        area -= _get_shoelace_area(np_x, np_y)
+        for negative_bounding_poly in bounding_poly[1:]:
+            negative_normalized_vertices = negative_bounding_poly["normalizedVertices"]
+            np_x = [float(vertice["x"]) * asset_width for vertice in negative_normalized_vertices]
+            np_y = [float(vertice["y"]) * asset_height for vertice in negative_normalized_vertices]
+            area -= _get_shoelace_area(np_x, np_y)
+            poly_negative_vertices = [(float(x), float(y)) for x, y in zip(np_x, np_y)]
+            polygons.append([p for vertice in poly_negative_vertices for p in vertice])
 
     bbox = [int(x_min), int(y_min), int(bbox_width), int(bbox_height)]
-    poly = [p for vertice in poly_vertices for p in vertice]
-    return area, bbox, poly
+    return area, bbox, polygons
 
 
 def _get_coco_categories(cat_kili_id_to_coco_id, merged) -> List[CocoCategory]:
