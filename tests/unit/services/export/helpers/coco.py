@@ -1,6 +1,6 @@
 import math
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from kili.services.types import Job
 
@@ -8,11 +8,13 @@ from kili.services.types import Job
 def get_asset(
     content_path: Path,
     with_annotation: Optional[List[Dict]],
+    negative_polygons: Union[List[List[Dict]], None] = None,
 ) -> Dict:
     # without annotation means that: there is a label for the asset
     # but there is no labeling data for the job.
     # `annotations=[]` should not exist.
     json_response = {"author": {"firstname": "Jean-Pierre", "lastname": "Dupont"}}
+
     if with_annotation:
         json_response = {
             **json_response,
@@ -30,6 +32,10 @@ def get_asset(
                 ]
             },
         }
+        if negative_polygons:
+            json_response["JOB_0"]["annotations"][0]["boundingPoly"] += map(
+                lambda negative_polygon: {"normalizedVertices": negative_polygon}, negative_polygons
+            )
 
     return {
         "latestLabel": {"jsonResponse": json_response},

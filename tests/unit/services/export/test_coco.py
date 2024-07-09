@@ -89,7 +89,8 @@ def test__get_coco_image_annotations():
             assert coco_annotation["annotations"][0]["segmentation"] == [
                 [0.0, 0.0, 960.0, 0.0, 0.0, 540.0]
             ]
-            assert coco_annotation["annotations"][0]["area"] == 2073600
+            # Area of a triangle: base * height / 2
+            assert coco_annotation["annotations"][0]["area"] == 960.0 * 540.0 / 2
 
             good_date = True
             try:
@@ -99,6 +100,182 @@ def test__get_coco_image_annotations():
             assert good_date, (
                 "The date is not in the right format: " + coco_annotation["info"]["date_created"]
             )
+
+
+def test__get_coco_image_annotation_area_with_self_intersecting_polygon():
+    with TemporaryDirectory() as tmp_dir:
+        job_name = "JOB_0"
+        output_file = Path(tmp_dir) / job_name / "labels.json"
+        local_file_path = tmp_dir / Path("image1.jpg")
+        image_width = 1920
+        image_height = 1080
+        Image.new("RGB", (image_width, image_height)).save(local_file_path)
+        _, paths = _convert_kili_semantic_to_coco(
+            jobs={
+                JobName(job_name): {
+                    "mlTask": "OBJECT_DETECTION",
+                    "content": {
+                        "categories": {
+                            "OBJECT_A": {"name": "Object A"},
+                            "OBJECT_B": {"name": "Object B"},
+                        }
+                    },
+                    "instruction": "",
+                    "isChild": False,
+                    "isNew": False,
+                    "isVisible": True,
+                    "models": {},
+                    "required": True,
+                    "tools": ["semantic"],
+                }
+            },
+            assets=[
+                helpers.get_asset(
+                    local_file_path,
+                    with_annotation=[
+                        {
+                            "x": 0.0,
+                            "y": 0.0,
+                        },
+                        {
+                            "x": 0.5,
+                            "y": 0.0,
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 0.5,
+                        },
+                        {
+                            "x": 0.5,
+                            "y": 0.5,
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 0.0,
+                        },
+                    ],
+                )
+            ],
+            output_dir=Path(tmp_dir),
+            title="Test project",
+            project_input_type="IMAGE",
+            annotation_modifier=lambda x, _, _1: x,
+            merged=False,
+        )
+
+        assert paths[0] == output_file
+        with output_file.open("r", encoding="utf-8") as f:
+            coco_annotation = json.loads(f.read())
+
+            assert coco_annotation["annotations"][0]["bbox"] == [0, 0, 960, 540]
+            assert coco_annotation["annotations"][0]["segmentation"] == [
+                [0.0, 0.0, 960.0, 0.0, 0.0, 540.0, 960.0, 540.0, 0.0, 0.0]
+            ]
+            # Here we have a self-intersecting polygon with 2 opposites triangles, so the area is
+            # the sum of the areas of the 2 triangles.
+            # Area of a triangle: base * height / 2
+            assert coco_annotation["annotations"][0]["area"] == (960.0 * 270.0 / 2) * 2
+
+
+def test__get_coco_image_annotation_area_with_negative_polygons():
+    with TemporaryDirectory() as tmp_dir:
+        job_name = "JOB_0"
+        output_file = Path(tmp_dir) / job_name / "labels.json"
+        local_file_path = tmp_dir / Path("image1.jpg")
+        image_width = 1920
+        image_height = 1080
+        Image.new("RGB", (image_width, image_height)).save(local_file_path)
+        _, paths = _convert_kili_semantic_to_coco(
+            jobs={
+                JobName(job_name): {
+                    "mlTask": "OBJECT_DETECTION",
+                    "content": {
+                        "categories": {
+                            "OBJECT_A": {"name": "Object A"},
+                            "OBJECT_B": {"name": "Object B"},
+                        }
+                    },
+                    "instruction": "",
+                    "isChild": False,
+                    "isNew": False,
+                    "isVisible": True,
+                    "models": {},
+                    "required": True,
+                    "tools": ["semantic"],
+                }
+            },
+            assets=[
+                helpers.get_asset(
+                    local_file_path,
+                    with_annotation=[
+                        {
+                            "x": 0.0,
+                            "y": 0.0,
+                        },
+                        {
+                            "x": 0.5,
+                            "y": 0.0,
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 0.5,
+                        },
+                    ],
+                    negative_polygons=[
+                        [
+                            {
+                                "x": 0.1,
+                                "y": 0.1,
+                            },
+                            {
+                                "x": 0.4,
+                                "y": 0.1,
+                            },
+                            {
+                                "x": 0.1,
+                                "y": 0.4,
+                            },
+                        ],
+                        [
+                            {
+                                "x": 0.0,
+                                "y": 0.0,
+                            },
+                            {
+                                "x": 0.1,
+                                "y": 0.0,
+                            },
+                            {
+                                "x": 0.0,
+                                "y": 0.1,
+                            },
+                        ],
+                    ],
+                )
+            ],
+            output_dir=Path(tmp_dir),
+            title="Test project",
+            project_input_type="IMAGE",
+            annotation_modifier=lambda x, _, _1: x,
+            merged=False,
+        )
+
+        assert paths[0] == output_file
+        with output_file.open("r", encoding="utf-8") as f:
+            coco_annotation = json.loads(f.read())
+
+            assert coco_annotation["annotations"][0]["bbox"] == [0, 0, 960, 540]
+            assert coco_annotation["annotations"][0]["segmentation"] == [
+                [0.0, 0.0, 960.0, 0.0, 0.0, 540.0],
+                [192.0, 108.0, 768.0, 108.0, 192.0, 432.0],
+                [0.0, 0.0, 192.0, 0.0, 0.0, 108.0],
+            ]
+            # Here we have a positive triangle with 2 negative triangles inside, so the area is the
+            # area of the positive triangle minus the area of the negative triangles.
+            # Area of a triangle: base * height / 2
+            assert coco_annotation["annotations"][0]["area"] == (960.0 * 540.0 / 2) - (
+                576.0 * 324.0 / 2
+            ) - (192.0 * 108.0 / 2)
 
 
 @pytest.mark.parametrize(
@@ -138,8 +315,6 @@ def test__get_coco_image_annotations_with_label_modifier(
         image_height = 1080
         local_file_path = tmp_dir / Path("image1.jpg")
         Image.new("RGB", (image_width, image_height)).save(local_file_path)
-
-        area = 2073600
 
         expected_segmentation = [
             a for p in normalized_vertices for a in [p["x"] * image_width, p["y"] * image_height]
@@ -199,7 +374,10 @@ def test__get_coco_image_annotations_with_label_modifier(
             assert coco_annotation["annotations"][0]["segmentation"][0] == pytest.approx(
                 expected_segmentation
             )
-            assert coco_annotation["annotations"][0]["area"] == area
+            # Area of a rectangle: width * height
+            assert coco_annotation["annotations"][0]["area"] == pytest.approx(
+                expected_bounding_box[2] * expected_bounding_box[3]
+            )
 
             good_date = True
             try:
@@ -409,13 +587,16 @@ def test_get_coco_geometry_from_kili_bpoly():
         }
     ]
     image_width, image_height = 1920, 1080
-    bbox, poly = _get_coco_geometry_from_kili_bpoly(boundingPoly, image_width, image_height)
+    area, bbox, polygons = _get_coco_geometry_from_kili_bpoly(
+        boundingPoly, image_width, image_height
+    )
     assert bbox == [192, 108, 1344, 324]
+    assert area == bbox[2] * bbox[3]  # Area of a rectangle: width * height
     assert bbox[0] == int(0.1 * image_width)
     assert bbox[1] == int(0.1 * image_height)
     assert bbox[2] == int((0.8 - 0.1) * image_width)
     assert bbox[3] == int((0.4 - 0.1) * image_height)
-    assert poly == [192.0, 108.0, 192.0, 432.0, 1536.0, 432.0, 1536.0, 108.0]
+    assert polygons == [[192.0, 108.0, 192.0, 432.0, 1536.0, 432.0, 1536.0, 108.0]]
 
 
 def test__get_kili_cat_id_to_coco_cat_id_mapping_with_split_jobs():
