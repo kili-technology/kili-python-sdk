@@ -15,6 +15,7 @@ LabelFormat = Literal[
     "pascal_voc",
     "geojson",
     "llm_v1",
+    "llm_dynamic_v1",
 ]
 
 

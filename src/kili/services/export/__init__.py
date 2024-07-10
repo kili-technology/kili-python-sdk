@@ -72,6 +72,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
             "pascal_voc": VocExporter,
             "geojson": GeoJsonExporter,
             "llm_v1": LLMExporter,
+            "llm_dynamic_v1": LLMExporter,
         }
         assert set(format_exporter_selector_mapping.keys()) == set(
             get_args(LabelFormat)
