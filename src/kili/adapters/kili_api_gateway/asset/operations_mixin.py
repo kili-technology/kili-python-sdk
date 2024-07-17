@@ -49,7 +49,7 @@ class AssetOperationMixin(BaseOperationMixin):
         query = get_assets_query(fragment)
         where = asset_where_mapper(filters)
         assets_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
-            query, where, options, "Retrieving assets", GQL_COUNT_ASSETS
+            query, where, options, "Retrieving assets", GQL_COUNT_ASSETS, "id"
         )
         assets_gen = (
             load_asset_json_fields(asset, fields, self.http_client) for asset in assets_gen
