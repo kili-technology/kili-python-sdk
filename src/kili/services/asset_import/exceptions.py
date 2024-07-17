@@ -23,3 +23,7 @@ class UploadFromLocalDataForbiddenError(Exception):
 
 class BatchImportError(Exception):
     """Raised when an error occurs during the import a batch of assets."""
+
+
+class BatchImportPendingNotificationError(Exception):
+    """Raised when the batch import is stil pending."""

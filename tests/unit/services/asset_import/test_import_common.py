@@ -77,7 +77,7 @@ class TestContentType(ImportTestCase):
 
     @patch("kili.services.asset_import.base.BaseBatchImporter.verify_batch_imported")
     def test_import_assets_verify(self, mocked_verify_batch_imported, *_):
-        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
         assets = [{"content": "https://hosted-data", "external_id": "externalid"}]
 
         import_assets(self.kili, ProjectId("project_id"), assets, verify=False)
