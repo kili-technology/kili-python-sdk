@@ -98,6 +98,8 @@ class PaginatedGraphQLQuery:
                         yield from elements
                         pbar.update(len(elements))
                     else:
+                        check_unicity_field_presence(unicity_field, elements[0])
+
                         for element in elements:
                             unicity_value = element[unicity_field]
 
@@ -145,6 +147,12 @@ class PaginatedGraphQLQuery:
         if first is None:
             return nb_elements_queried
         return min(nb_elements_queried, first)
+
+
+def check_unicity_field_presence(field: str, object: dict):
+    """Check the presence of unicity field in queried elements."""
+    if field not in object:
+        raise ValueError(f"Unicity field {field} not found in queried elements")
 
 
 @typechecked
