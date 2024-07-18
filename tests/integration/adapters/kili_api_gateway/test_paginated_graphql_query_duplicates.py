@@ -136,3 +136,19 @@ def test_should_not_use_count_query_when_unicity_check_is_enabled(
             ),
         ]
     )
+
+
+def test_should_raise_an_exception_when_unicity_value_cannot_be_retrieved(
+    graphql_client: GraphQLClient,
+):
+    # Given
+    options = QueryOptions(disable_tqdm=False, skip=0, first=None)
+
+    # When
+    gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
+        QUERY, WHERE, options, "", COUNT_QUERY, "cat"
+    )
+
+    # Then
+    with pytest.raises(ValueError):
+        list(gen)
