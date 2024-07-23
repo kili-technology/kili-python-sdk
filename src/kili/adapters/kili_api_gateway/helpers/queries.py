@@ -38,6 +38,7 @@ class PaginatedGraphQLQuery:
         options: QueryOptions,
         tqdm_desc: str,
         count_query: Optional[str],
+        unicity_field: Optional[str] = None,
     ) -> Generator[Dict, None, None]:
         """Build a row generator from paginated query calls with the first and skip pattern.
 
@@ -49,6 +50,8 @@ class PaginatedGraphQLQuery:
             count_query: The query to count the number of objects to be retrieved.
                 It should have the same where input as the query.
                 If given, it will show a progress bar if tqdm is not disabled in options
+            unicity_field: Field that must be unique, most likely an id, to prevent
+            duplicates because of values being updated during the pagination process.
         """
         nb_elements_to_query = (
             self.get_number_of_elements_to_query(count_query, where, options)
@@ -56,6 +59,7 @@ class PaginatedGraphQLQuery:
             else None
         )
         disable_tqdm = nb_elements_to_query is None or options.disable_tqdm
+        unicity_values = {}
 
         if nb_elements_to_query == 0:
             yield from ()
@@ -65,6 +69,10 @@ class PaginatedGraphQLQuery:
                 while True:
                     if (
                         nb_elements_to_query is not None
+                        # If we need an unicity check, it means that new values can be inserted
+                        # during the pagination process, so that the initial number of element to
+                        # query, ie nb_elements_to_query, cannot be trusted.
+                        and unicity_field is None
                         and count_elements_retrieved >= nb_elements_to_query
                     ):
                         break
@@ -72,7 +80,7 @@ class PaginatedGraphQLQuery:
                     skip = count_elements_retrieved + options.skip
                     first = (
                         min(options.batch_size, nb_elements_to_query - count_elements_retrieved)
-                        if nb_elements_to_query is not None
+                        if nb_elements_to_query is not None and unicity_field is None
                         else options.batch_size
                     )
                     payload = {"where": where, "skip": skip, "first": first}
@@ -86,10 +94,27 @@ class PaginatedGraphQLQuery:
                     if len(elements) == 0:
                         break
 
-                    yield from elements
+                    if unicity_field is None:
+                        yield from elements
+                        pbar.update(len(elements))
+                    else:
+                        check_unicity_field_presence(unicity_field, elements[0])
+
+                        for element in elements:
+                            unicity_value = element[unicity_field]
+
+                            if unicity_value not in unicity_values:
+                                yield element
+                                unicity_values[unicity_value] = True
+                                pbar.update(1)
+
+                                if (
+                                    options.first is not None
+                                    and len(unicity_values) >= options.first
+                                ):
+                                    break
 
                     count_elements_retrieved += len(elements)
-                    pbar.update(len(elements))
 
                     if len(elements) < first:
                         break
@@ -122,6 +147,12 @@ class PaginatedGraphQLQuery:
         if first is None:
             return nb_elements_queried
         return min(nb_elements_queried, first)
+
+
+def check_unicity_field_presence(field: str, object: dict):
+    """Check the presence of unicity field in queried elements."""
+    if field not in object:
+        raise ValueError(f"Unicity field {field} not found in queried elements")
 
 
 @typechecked
