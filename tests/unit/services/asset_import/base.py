@@ -28,6 +28,7 @@ class ImportTestCase(TestCase):
         )
         self.kili = mocked_auth
         self.kili.kili_api_gateway.count_assets = MagicMock(return_value=1)
+        self.kili.notifications = MagicMock(return_value=[{"status": "SUCCESS"}])
         self.kili.kili_api_gateway.list_assets = MagicMock(return_value=[])
         self.kili.kili_api_gateway.list_organizations = MagicMock(
             return_value=organization_generator(upload_local_data=True)
