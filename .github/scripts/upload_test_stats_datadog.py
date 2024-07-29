@@ -15,6 +15,8 @@ import requests
 from datadog import api, initialize
 from tqdm import tqdm
 
+from kili.core.helpers import get_response_json, log_raise_for_status
+
 # https://docs.datadoghq.com/developers/guide/what-best-practices-are-recommended-for-naming-metrics-and-tags/#rules-and-best-practices-for-naming-metrics
 # map the test name to the metrics name on datadog
 TESTS_TO_PLOT_ON_DATADOG_MAP = {
@@ -77,7 +79,9 @@ def get_workflow_runs_from_github() -> List[Dict]:
     while True:
         print("Fetching page", page, "...")
         response = requests.get(url + f"&page={page}", headers=HEADERS, timeout=30)
-        response_json = response.json()
+        log_raise_for_status(response)
+
+        response_json = get_response_json(response)
         for workflow_run in response_json["workflow_runs"]:
             updated_at = datetime.strptime(workflow_run["updated_at"], r"%Y-%m-%dT%H:%M:%SZ")
 

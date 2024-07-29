@@ -2,6 +2,7 @@
 
 import functools
 import glob
+import json
 import mimetypes
 import os
 import re
@@ -10,11 +11,13 @@ from json import dumps, loads
 from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 import pyparsing as pp
+import requests
 import tenacity
 from typing_extensions import get_args, get_origin
 
 from kili.adapters.http_client import HttpClient
 from kili.core.constants import mime_extensions_for_IV2
+from kili.log.logging import logger
 
 T = TypeVar("T")
 
@@ -342,3 +345,29 @@ def is_empty_list_with_warning(method_name: str, argument_name: str, argument_va
         )
         return True
     return False
+
+
+def log_raise_for_status(response: requests.Response) -> None:
+    """Log the error message of a requests.Response if it is not ok.
+
+    Args:
+        response: a requests.Response
+    """
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        logger.exception("An error occurred while processing the response: %s", err)
+        raise
+
+
+def get_response_json(response: requests.Response) -> dict:
+    """Get the json from a requests.Response.
+
+    Args:
+        response: a requests.Response
+    """
+    try:
+        return response.json()
+    except json.JSONDecodeError:
+        logger.exception("An error occurred while decoding the json response")
+        return {}

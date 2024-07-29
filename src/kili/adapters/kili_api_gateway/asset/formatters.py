@@ -4,7 +4,7 @@ import json
 from typing import Dict
 
 from kili.adapters.http_client import HttpClient
-from kili.core.helpers import is_url
+from kili.core.helpers import get_response_json, is_url, log_raise_for_status
 from kili.domain.types import ListOrTuple
 
 
@@ -13,10 +13,9 @@ def load_json_from_link(link: str, http_client: HttpClient) -> Dict:
     if link == "" or not is_url(link):
         return {}
 
-    try:
-        return http_client.get(link, timeout=30).json()
-    except json.JSONDecodeError:
-        return {}
+    response = http_client.get(link, timeout=30)
+    log_raise_for_status(response)
+    return get_response_json(response)
 
 
 def load_asset_json_fields(asset: Dict, fields: ListOrTuple[str], http_client: HttpClient) -> Dict:
