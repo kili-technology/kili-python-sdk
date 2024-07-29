@@ -6,7 +6,11 @@ from typing import Dict, List, Optional
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.constants import QUERY_BATCH_SIZE
-from kili.core.helpers import validate_category_search_query
+from kili.core.helpers import (
+    get_response_json,
+    log_raise_for_status,
+    validate_category_search_query,
+)
 from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters, AssetId
 from kili.domain.project import ProjectId
@@ -182,7 +186,8 @@ def is_geotiff_asset_with_lat_lon_coords(asset: Dict, http_client: HttpClient) -
 
     if isinstance(asset["jsonContent"], str) and asset["jsonContent"].startswith("http"):
         response = http_client.get(asset["jsonContent"], timeout=30)
-        json_content = response.json()
+        log_raise_for_status(response)
+        json_content = get_response_json(response)
 
     else:
         json_content = asset["jsonContent"]
