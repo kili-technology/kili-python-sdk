@@ -4,7 +4,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from itertools import repeat
-from json import JSONDecodeError, loads
+from json import JSONDecodeError
 from typing import List
 
 from kili.core.helpers import get_mime_type, is_url
@@ -169,8 +169,14 @@ class VideoDataImporter(BaseAbstractAssetImporter):
         should_use_native_video_array = []
         for asset in assets:
             # json_metadata stringification is done later on the call
-            json_metadata_ = asset.get("json_metadata", {})
-            processing_parameters = json_metadata_.get("processingParameters", {})
+            json_metadata_ = asset.get("json_metadata")
+            if not json_metadata_:
+                return False
+
+            processing_parameters = json_metadata_.get("processingParameters")
+            if not processing_parameters:
+                return False
+
             should_use_native_video_array.append(
                 processing_parameters.get("shouldUseNativeVideo", True)
             )
@@ -190,11 +196,13 @@ class VideoDataImporter(BaseAbstractAssetImporter):
     def has_complete_processing_parameters(asset) -> bool:
         """Determine if assets should be imported asynchronously and cut into frames."""
         try:
-            json_metadata = asset.get("jsonMetadata")
+            # json_metadata stringification is done later on the call
+            json_metadata = asset.get("json_metadata")
             if not json_metadata:
                 return False
 
-            processing_parameters = loads(json_metadata).get("processingParameters")
+            processing_parameters = json_metadata.get("processingParameters")
+
             if not processing_parameters:
                 return False
 
@@ -205,7 +213,7 @@ class VideoDataImporter(BaseAbstractAssetImporter):
                 "numberOfFrames",
                 "startTime",
             ]
-            required_types = [str, int, float, int, float]
+            required_types = [str, float, float, int, float]
 
             for key, required_type in zip(required_keys, required_types):
                 value = processing_parameters.get(key)
