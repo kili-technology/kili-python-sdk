@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Iterator, List
 
 from kili.adapters.http_client import HttpClient
+from kili.core.helpers import get_response_json, log_raise_for_status
 
 from .exceptions import DownloadError
 
@@ -48,8 +49,11 @@ class SDKContentRepository(AbstractContentRepository):
         frames: List[str] = []
         json_content_resp = self.http_client.get(content_url, timeout=30)
 
+        log_raise_for_status(json_content_resp)
+        json_response = get_response_json(json_content_resp)
+
         if json_content_resp.ok:
-            frames = list(json_content_resp.json().values())
+            frames = list(json_response.values())
         return frames
 
     def get_content_stream(self, content_url: str, block_size: int) -> Iterator[Any]:

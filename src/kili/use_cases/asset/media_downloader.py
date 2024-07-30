@@ -12,6 +12,7 @@ from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
 
 from kili.adapters.http_client import HttpClient
+from kili.core.helpers import get_response_json, log_raise_for_status
 from kili.domain.asset import AssetExternalId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
@@ -125,8 +126,10 @@ class MediaDownloader:
     def download_single_asset(self, asset: Dict) -> Dict[str, Any]:
         """Download single asset on disk and modify asset attributes."""
         if "ocrMetadata" in asset and str(asset["ocrMetadata"]).startswith("http"):
-            response = self.http_client.get(asset["ocrMetadata"], timeout=20).json()
-            asset["ocrMetadata"] = response
+            response = self.http_client.get(asset["ocrMetadata"], timeout=20)
+            log_raise_for_status(response)
+            json_content = get_response_json(response)
+            asset["ocrMetadata"] = json_content
 
         if "jsonContent" in asset and str(asset["jsonContent"]).startswith("http"):
             # richtext
@@ -137,8 +140,10 @@ class MediaDownloader:
 
             # video frames
             elif self.project_input_type == "VIDEO":
-                response = self.http_client.get(asset["jsonContent"], timeout=20).json()
-                urls = tuple(response.values())
+                response = self.http_client.get(asset["jsonContent"], timeout=20)
+                log_raise_for_status(response)
+                json_content = get_response_json(response)
+                urls = tuple(json_content.values())
                 nbr_char_zfill = len(str(len(urls)))
                 img_names = (
                     f'{asset["externalId"]}_{f"{i+1}".zfill(nbr_char_zfill)}'
@@ -158,8 +163,10 @@ class MediaDownloader:
             # big images
             elif self.project_input_type == "IMAGE":
                 # the "jsonContent" contains some information but not the image
-                response = self.http_client.get(asset["jsonContent"], timeout=20).json()
-                asset["jsonContent"] = response
+                response = self.http_client.get(asset["jsonContent"], timeout=20)
+                log_raise_for_status(response)
+                json_content = get_response_json(response)
+                asset["jsonContent"] = json_content
 
             else:
                 raise NotImplementedError(

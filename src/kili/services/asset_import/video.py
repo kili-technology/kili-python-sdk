@@ -4,6 +4,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from itertools import repeat
+from json import JSONDecodeError, loads
 from typing import List
 
 from kili.core.helpers import get_mime_type, is_url
@@ -162,6 +163,66 @@ class VideoDataImporter(BaseAbstractAssetImporter):
             return VideoDataType.HOSTED_FILE
         return VideoDataType.LOCAL_FILE
 
+    @staticmethod
+    def are_native_videos(assets) -> bool:
+        """Determine if assets should be imported asynchronously and cut into frames."""
+        should_use_native_video_array = []
+        for asset in assets:
+            # json_metadata stringification is done later on the call
+            json_metadata_ = asset.get("json_metadata", {})
+            processing_parameters = json_metadata_.get("processingParameters", {})
+            should_use_native_video_array.append(
+                processing_parameters.get("shouldUseNativeVideo", True)
+            )
+        if all(should_use_native_video_array):
+            return True
+        if all(not b for b in should_use_native_video_array):
+            return False
+        raise ImportValidationError(
+            """
+            Cannot upload videos to split into frames
+            and video to keep as native in the same time.
+            Please separate the assets into 2 calls
+            """
+        )
+
+    @staticmethod
+    def has_complete_processing_parameters(asset) -> bool:
+        """Determine if assets should be imported asynchronously and cut into frames."""
+        try:
+            json_metadata = asset.get("jsonMetadata")
+            if not json_metadata:
+                return False
+
+            processing_parameters = loads(json_metadata).get("processingParameters")
+            if not processing_parameters:
+                return False
+
+            required_keys = [
+                "codec",
+                "delayDueToMinPts",
+                "framesPlayedPerSecond",
+                "numberOfFrames",
+                "startTime",
+            ]
+            required_types = [str, int, float, int, float]
+
+            for key, required_type in zip(required_keys, required_types):
+                value = processing_parameters.get(key)
+                if value is None or not isinstance(value, required_type):
+                    return False
+
+            return True
+        except JSONDecodeError:
+            return False
+
+    def videos_have_complete_processing_parameters(self, assets) -> bool:
+        """Determine if assets should be imported asynchronously and cut into frames."""
+        for asset in assets:
+            if not self.has_complete_processing_parameters(asset):
+                return False
+        return True
+
     def import_assets(self, assets: List[AssetLike]):
         """Import video assets into Kili."""
         self._check_upload_is_allowed(assets)
@@ -169,13 +230,23 @@ class VideoDataImporter(BaseAbstractAssetImporter):
         assets = self.filter_duplicate_external_ids(assets)
         if data_type == VideoDataType.LOCAL_FILE:
             assets = self.filter_local_assets(assets, self.raise_error)
-            batch_params = BatchParams(is_hosted=False, is_asynchronous=True)
+            are_native_videos = self.are_native_videos(assets)
+            videos_have_complete_processing_parameters = (
+                self.videos_have_complete_processing_parameters(assets)
+            )
+            is_synchronous = are_native_videos and videos_have_complete_processing_parameters
+            batch_params = BatchParams(is_hosted=False, is_asynchronous=not is_synchronous)
             batch_importer = VideoContentBatchImporter(
                 self.kili, self.project_params, batch_params, self.pbar
             )
             batch_size = IMPORT_BATCH_SIZE
         elif data_type == VideoDataType.HOSTED_FILE:
-            batch_params = BatchParams(is_hosted=True, is_asynchronous=True)
+            are_native_videos = self.are_native_videos(assets)
+            videos_have_complete_processing_parameters = (
+                self.videos_have_complete_processing_parameters(assets)
+            )
+            is_synchronous = are_native_videos and videos_have_complete_processing_parameters
+            batch_params = BatchParams(is_hosted=True, is_asynchronous=not is_synchronous)
             batch_importer = VideoContentBatchImporter(
                 self.kili, self.project_params, batch_params, self.pbar
             )
