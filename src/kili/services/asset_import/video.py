@@ -202,6 +202,7 @@ class VideoDataImporter(BaseAbstractAssetImporter):
                 return False
 
             processing_parameters = json_metadata.get("processingParameters")
+
             if not processing_parameters:
                 return False
 
