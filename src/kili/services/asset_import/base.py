@@ -22,7 +22,7 @@ from typing import (
 )
 from uuid import uuid4
 
-from tenacity import Retrying, stop_after_attempt, stop_never
+from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
 from tenacity.wait import wait_exponential
 
@@ -31,7 +31,7 @@ from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
     GQL_APPEND_MANY_FRAMES_TO_DATASET,
 )
-from kili.core.helpers import RetryLongWaitWarner, T, format_result, get_mime_type, is_url
+from kili.core.helpers import T, format_result, get_mime_type, is_url
 from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetFilters
 from kili.domain.organization import OrganizationFilters
@@ -43,6 +43,7 @@ from kili.services.asset_import.constants import (
 )
 from kili.services.asset_import.exceptions import (
     BatchImportError,
+    BatchImportPendingNotificationError,
     ImportValidationError,
     MimeTypeError,
     UploadFromLocalDataForbiddenError,
@@ -109,43 +110,42 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
         assets_ = self.loop_on_batch(self.fill_empty_fields)(assets)
+        if self.is_asynchronous and verify:
+            notification = self.import_to_kili(assets_)
+            if isinstance(notification, list):
+                error_message = (
+                    "import_to_kili should return a notification for asynchronous "
+                    "imports, not a list"
+                )
+                raise TypeError(error_message)
+            self.verify_batch_imported(notification["id"])
+            return []
+
         created_assets_ids = self.import_to_kili(assets_)
-        if verify:
-            self.verify_batch_imported(assets)
         self.pbar.update(n=len(assets))
         return created_assets_ids
 
-    def verify_batch_imported(self, assets: List):
-        """Verifies that the batch has been imported successfully."""
-        if self.is_asynchronous:
-            logger_func = self.logger.info
-            log_message = (
-                "Import of assets is taking a long time to complete. This maybe be due to files"
-                " being processed by the server."
-            )
-        else:
-            logger_func = self.logger.warning
-            log_message = (
-                "Import of assets is taking a long time to complete. This may be due to a large"
-                " number of assets to be processed by the server."
-            )
+    def verify_batch_imported(self, notification_id: str) -> None:
+        """Verify that the batch import is completed for asynchronous imports."""
+        self.logger.info("Waiting for the import to complete.")
+
         for attempt in Retrying(
-            # adds at least a limit for asynch imports to the number of time to wait = ~ 5 minutes
-            stop=stop_after_attempt(40) if self.is_asynchronous else stop_never,
-            retry=retry_if_exception_type(BatchImportError),
-            wait=wait_exponential(multiplier=1, min=1, max=8),
-            before_sleep=RetryLongWaitWarner(logger_func=logger_func, warn_message=log_message),
+            retry=retry_if_exception_type(BatchImportPendingNotificationError),
+            wait=wait_exponential(multiplier=1, min=1, max=16),
             reraise=True,
         ):
             with attempt:
-                assets_ids = [assets[-1]["id"]]  # check last asset of the batch only
-                filters = AssetFilters(project_id=self.project_id, asset_id_in=assets_ids)
-                nb_assets_in_kili = self.kili.kili_api_gateway.count_assets(filters)
-                if len(assets_ids) != nb_assets_in_kili:
-                    raise BatchImportError(
-                        "Number of assets to upload is not equal to number of assets uploaded in"
-                        " Kili."
+                notification = self.kili.notifications(notification_id=notification_id)[0]
+                if notification["status"] == "FAILURE":
+                    error_message = (
+                        "Some assets were not imported. "
+                        "Please check the notification report in the application "
+                        "for more information."
                     )
+                    raise BatchImportError(error_message)
+                if notification["status"] == "SUCCESS":
+                    return
+                raise BatchImportPendingNotificationError
 
     def add_ids(self, assets: List[AssetLike]):
         """Adds ids to all assets."""
@@ -262,8 +262,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             "where": {"id": self.project_id},
         }
         result = self.kili.graphql_client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
-        format_result("data", result, None, self.kili.http_client)
-        return []
+        return format_result("data", result, None, self.kili.http_client)
 
     def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets with synchronous resolver."""

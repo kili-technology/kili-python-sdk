@@ -1168,7 +1168,12 @@ class LabelClientMethods(BaseClientMethods):
                 - `honeypot_mark_gte`
                 - `honeypot_mark_lte`
                 - `label_author_in`
+                - `label_labeler_in`
+                - `label_labeler_not_in`
                 - `label_reviewer_in`
+                - `label_reviewer_not_in`
+                - `assignee_in`
+                - `assignee_not_in`
                 - `skipped`
                 - `status_in`
                 - `label_category_search`
