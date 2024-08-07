@@ -1,6 +1,5 @@
 import os
 import tempfile
-from unittest.mock import patch
 
 from kili.llm.presentation.client.llm import LlmClientMethods
 
@@ -340,10 +339,8 @@ def test_export_static(mocker):
             tmp.write(mock_raw_asset_content)
         for mocked_asset in mock_fetch_assets:
             mocked_asset["content"] = path
-        with patch("kili.services.export.format.base.fetch_assets") as mocked_fetch_assets:
-            kili_api_gateway.list_assets.return_value = mock_fetch_assets
-
-            result = kili_llm.export(project_id="project_id")
-            assert result == expected_export
+        kili_api_gateway.list_assets.return_value = mock_fetch_assets
+        result = kili_llm.export(project_id="project_id")
+        assert result == expected_export
     finally:
         os.remove(path)

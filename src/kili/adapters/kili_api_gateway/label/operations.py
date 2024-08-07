@@ -92,6 +92,7 @@ def get_annotations_partial_query(
     annotation_fragment: str,
     classification_annotation_fragment: str,
     ranking_annotation_fragment: str,
+    comparison_annotation_fragment: str,
     transcription_annotation_fragment: str,
     video_annotation_fragment: str,
     video_object_detection_annotation_fragment: str,
@@ -112,6 +113,13 @@ def get_annotations_partial_query(
         inline_fragments += f"""
             ... on RankingAnnotation {{
                 {ranking_annotation_fragment}
+            }}
+        """
+
+    if comparison_annotation_fragment.strip():
+        inline_fragments += f"""
+            ... on ComparisonAnnotation {{
+                {comparison_annotation_fragment}
             }}
         """
 

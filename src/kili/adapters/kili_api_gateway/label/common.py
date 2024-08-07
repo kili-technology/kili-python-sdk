@@ -9,14 +9,24 @@ def get_annotation_fragment():
     """Generates a fragment to get all annotations and their values."""
     return get_annotations_partial_query(
         annotation_fragment=fragment_builder(("__typename", "id", "job", "path", "labelId")),
-        classification_annotation_fragment=fragment_builder(("annotationValue.categories",)),
+        classification_annotation_fragment=fragment_builder(
+            ("annotationValue.categories", "chatItemId")
+        ),
         ranking_annotation_fragment=fragment_builder(
             (
                 "annotationValue.orders.elements",
                 "annotationValue.orders.rank",
             )
         ),
-        transcription_annotation_fragment=fragment_builder(("annotationValue.text",)),
+        comparison_annotation_fragment=fragment_builder(
+            (
+                "annotationValue.choice.code",
+                "annotationValue.choice.firstId",
+                "annotationValue.choice.secondId",
+                "chatItemId",
+            )
+        ),
+        transcription_annotation_fragment=fragment_builder(("annotationValue.text", "chatItemId")),
         video_annotation_fragment=fragment_builder(
             (
                 "frames.start",
