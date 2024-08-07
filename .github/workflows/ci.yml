@@ -9,7 +9,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.8
-          cache: "pip"
+          cache: 'pip'
       - uses: pre-commit/action@v3.0.1
 
   pylint:
@@ -17,14 +17,14 @@ jobs:
     name: Pylint test
     strategy:
       matrix:
-        python-version: ["3.8", "3.12"]
+        python-version: ['3.8', '3.12']
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
+          cache: 'pip'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -37,13 +37,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ["3.8", "3.12"]
+        version: ['3.8', '3.12']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.version }}
-          cache: "pip"
+          cache: 'pip'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -72,7 +72,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
@@ -102,7 +102,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.8
-          cache: "pip"
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
@@ -132,7 +132,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.8
-          cache: "pip"
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
@@ -163,7 +163,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.8
-          cache: "pip"
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
@@ -184,15 +184,16 @@ jobs:
           -e "is only referenced in tests" \
           -e "_ is never read" \
           -e "affected_rows" \
-          -e "src/kili/orm" \
+          -e "internal" \
+          -e "src/kili/client.py" \
+          -e "src/kili/core/graphql/ws_graphql_client" \
+          -e "src/kili/domain/annotation.py" \
+          -e "src/kili/domain/ontology.py" \
+          -e "src/kili/domain/project.py" \
           -e "src/kili/entrypoints" \
+          -e "src/kili/orm" \
           -e "src/kili/services" \
           -e "src/kili/types.py" \
-          -e "src/kili/core/graphql/ws_graphql_client" \
-          -e "internal" \
-          -e "src/kili/domain/ontology.py" \
-          -e "src/kili/domain/annotation.py" \
-          -e "src/kili/domain/project.py" \
           > dead_code_filtered.txt || true
 
       - name: Crash if dead code found
