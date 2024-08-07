@@ -6,6 +6,7 @@ from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset.asset import AssetFilters
 from kili.domain.project import ProjectId
 
+from .dynamic import LLMDynamicExporter
 from .static import LLMStaticExporter
 
 
@@ -22,5 +23,9 @@ def export(  # pylint: disable=too-many-arguments, too-many-locals
     if input_type == "LLM_RLHF":
         return LLMStaticExporter(kili_api_gateway, disable_tqdm).export(
             project_id, asset_filter, project["jsonInterface"]
+        )
+    if input_type == "LLM_INSTR_FOLLOWING":
+        return LLMDynamicExporter(kili_api_gateway, disable_tqdm).export(
+            asset_filter, project["jsonInterface"]
         )
     raise ValueError(f'Project Input type "{input_type}" cannot be used for llm exports.')

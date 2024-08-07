@@ -13,10 +13,20 @@ from typing import (
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.project import ProjectId
+from kili.domain.project_model import ProjectModelFilters
 from kili.llm.services.export import export
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.logcontext import for_all_methods, log_call
+
+DEFAULT_PROJECT_MODEL_FIELDS = [
+    "configuration",
+    "id",
+    "model.credentials",
+    "model.name",
+    "model.type",
+    "name",
+]
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -73,3 +83,19 @@ class LlmClientMethods:
         except NoCompatibleJobError as excp:
             warnings.warn(str(excp), stacklevel=2)
             return None
+
+    def list_project_models(
+        self, project_id: str, filters: Optional[Dict] = None, fields: Optional[List[str]] = None
+    ) -> List[Dict]:
+        """List project models."""
+        converted_filters = ProjectModelFilters(
+            project_id=project_id,
+            model_id=filters["model_id"] if filters and "model_id" in filters else None,
+        )
+
+        return list(
+            self.kili_api_gateway.list_project_models(
+                filters=converted_filters,
+                fields=fields if fields else DEFAULT_PROJECT_MODEL_FIELDS,
+            )
+        )

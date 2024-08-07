@@ -41,7 +41,7 @@ class AssetOperationMixin(BaseOperationMixin):
             project_info = get_project(
                 self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
             )
-            if project_info["inputType"] in {"VIDEO", "LLM_RLHF"}:
+            if project_info["inputType"] in {"VIDEO", "LLM_RLHF", "LLM_INSTR_FOLLOWING"}:
                 yield from self.list_assets_split(filters, fields, options, project_info)
                 return
 
@@ -90,23 +90,23 @@ class AssetOperationMixin(BaseOperationMixin):
         assets_gen = (
             load_asset_json_fields(asset, fields, self.http_client) for asset in assets_gen
         )
-
         converter = AnnotationsToJsonResponseConverter(
             json_interface=project_info["jsonInterface"],
             project_input_type=project_info["inputType"],
         )
+        is_requesting_annotations = any("annotations." in element for element in fields)
         for asset in assets_gen:
             if "latestLabel.jsonResponse" in fields and asset.get("latestLabel"):
                 converter.patch_label_json_response(
                     asset["latestLabel"], asset["latestLabel"]["annotations"]
                 )
-                if "latestLabel.annotations" not in fields:
+                if not is_requesting_annotations:
                     asset["latestLabel"].pop("annotations")
 
             if "labels.jsonResponse" in fields:
                 for label in asset.get("labels", []):
                     converter.patch_label_json_response(label, label["annotations"])
-                    if "labels.annotations" not in fields:
+                    if not is_requesting_annotations:
                         label.pop("annotations")
             yield asset
 
