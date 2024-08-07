@@ -1,4 +1,4 @@
-"""Common code for the yolo exporter."""
+"""Handle LLM_RLHF project exports."""
 
 import json
 import logging

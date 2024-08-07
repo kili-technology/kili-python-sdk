@@ -1,4 +1,4 @@
-"""Common code for the yolo exporter."""
+"""Handle LLM_INSTR_FOLLOWING project exports."""
 
 import logging
 from typing import Dict, List, Optional, Union
