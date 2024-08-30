@@ -1,10 +1,15 @@
 [
   {
-    "version": "2.159",
-    "title": "2.159",
+    "version": "2.160",
+    "title": "2.160",
     "aliases": [
       "latest"
     ]
+  },
+  {
+    "version": "2.159",
+    "title": "2.159",
+    "aliases": []
   },
   {
     "version": "2.158",
