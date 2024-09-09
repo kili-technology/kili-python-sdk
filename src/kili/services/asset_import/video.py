@@ -213,12 +213,15 @@ class VideoDataImporter(BaseAbstractAssetImporter):
                 "numberOfFrames",
                 "startTime",
             ]
-            required_types = [str, (int, float), (int, float), int, (int, float)]
+            required_types = [str, (int, float), (int, float), (int, float), (int, float)]
 
             for key, required_type in zip(required_keys, required_types):
                 value = processing_parameters.get(key)
                 if value is None or not isinstance(value, required_type):
                     return False
+
+            if not float(processing_parameters.get("numberOfFrames")).is_integer():
+                return False
 
             return True
         except JSONDecodeError:
