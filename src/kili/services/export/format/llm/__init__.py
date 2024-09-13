@@ -2,6 +2,7 @@
 
 import json
 import logging
+import warnings
 from ast import literal_eval
 from pathlib import Path
 from typing import Dict, List, Optional, Union
@@ -51,6 +52,12 @@ class LLMExporter(AbstractExporter):
 
     def process(self, assets: List[Dict]) -> List[Dict[str, Union[List[str], str]]]:
         """LLM specific process."""
+        warnings.warn(
+            "Exporting llm labels with `kili.export` is deprecated."
+            " Please use `kili.llm.export` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         if self.label_format == "llm_v1":
             return self._process_llm_v1(assets)
         return self._process_llm_dynamic_v1(assets)
