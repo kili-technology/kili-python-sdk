@@ -98,6 +98,9 @@ class GraphQLClient:
                 502,  # 502 Bad Gateway
                 503,  # 503 Service Unavailable
                 504,  # 504 Gateway Timeout
+                520,  # Unknown Error: Generic response for an unexpected result.
+                521,  # Web Server Is Down
+                522,  # Connection Timed Out
             ),
         )
 
