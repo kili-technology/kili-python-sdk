@@ -1,6 +1,18 @@
 """GraphQL payload data mappers for api keys operations."""
 
-from kili.domain.project_model import ModelToCreateInput, ModelType, ProjectModelFilters
+from kili.domain.project_model import (
+    ModelToCreateInput,
+    ModelType,
+    OrganizationModelFilters,
+    ProjectModelFilters,
+)
+
+
+def organization_model_where_wrapper(filter: OrganizationModelFilters):
+    """Build the GraphQL ProjectMapperWhere variable to be sent in an operation."""
+    return {
+        "organizationId": filter.organization_id,
+    }
 
 
 def project_model_where_mapper(filter: ProjectModelFilters):

@@ -6,11 +6,10 @@ from typing import Optional, Union
 
 
 @dataclass
-class ProjectModelFilters:
-    """Project model filters for running a project model search."""
+class OrganizationModelFilters:
+    """Model filters for running a model search."""
 
-    project_id: Optional[str] = None
-    model_id: Optional[str] = None
+    organization_id: str
 
 
 class ModelType(str, Enum):
@@ -39,3 +38,11 @@ class ModelToCreateInput:
     name: str
     type: ModelType
     organization_id: str
+
+
+@dataclass
+class ProjectModelFilters:
+    """Project model filters for running a project model search."""
+
+    project_id: Optional[str] = None
+    model_id: Optional[str] = None

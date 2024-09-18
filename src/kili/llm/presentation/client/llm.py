@@ -18,12 +18,20 @@ from kili.domain.project_model import (
     ModelToCreateInput,
     ModelType,
     OpenAISDKCredentials,
+    OrganizationModelFilters,
     ProjectModelFilters,
 )
 from kili.llm.services.export import export
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.logcontext import for_all_methods, log_call
+
+DEFAULT_ORGANIZATION_MODEL_FIELDS = [
+    "id",
+    "credentials",
+    "name",
+    "type",
+]
 
 DEFAULT_PROJECT_MODEL_FIELDS = [
     "configuration",
@@ -109,10 +117,25 @@ class LlmClientMethods:
         )
         return self.kili_api_gateway.create_model(model=model_input)
 
+    def list_organization_models(
+        self, organization_id: str, fields: Optional[List[str]] = None
+    ) -> List[Dict]:
+        """List models of given organization."""
+        converted_filters = OrganizationModelFilters(
+            organization_id=organization_id,
+        )
+
+        return list(
+            self.kili_api_gateway.list_organization_models(
+                filters=converted_filters,
+                fields=fields if fields else DEFAULT_ORGANIZATION_MODEL_FIELDS,
+            )
+        )
+
     def list_project_models(
         self, project_id: str, filters: Optional[Dict] = None, fields: Optional[List[str]] = None
     ) -> List[Dict]:
-        """List project models."""
+        """List project models of given project."""
         converted_filters = ProjectModelFilters(
             project_id=project_id,
             model_id=filters["model_id"] if filters and "model_id" in filters else None,

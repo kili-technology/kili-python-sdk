@@ -10,34 +10,40 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 )
 from kili.adapters.kili_api_gateway.model_configuration.mappers import (
     map_create_model_input,
+    organization_model_where_wrapper,
     project_model_where_mapper,
 )
 from kili.adapters.kili_api_gateway.model_configuration.operations import (
     get_create_model_mutation,
+    get_organization_models_query,
     get_project_models_query,
 )
-from kili.domain.project_model import ModelToCreateInput, ProjectModelFilters
+from kili.domain.project_model import (
+    ModelToCreateInput,
+    OrganizationModelFilters,
+    ProjectModelFilters,
+)
 from kili.domain.types import ListOrTuple
 
 
 class ModelConfigurationOperationMixin(BaseOperationMixin):
     """Mixin extending Kili API Gateway class with model configuration related operations."""
 
-    def list_project_models(
+    def list_organization_models(
         self,
-        filters: ProjectModelFilters,
+        filters: OrganizationModelFilters,
         fields: ListOrTuple[str],
         options: Optional[QueryOptions] = None,
     ) -> Generator[Dict, None, None]:
-        """List assets with given options."""
+        """List models with given options."""
         fragment = fragment_builder(fields)
-        query = get_project_models_query(fragment)
-        where = project_model_where_mapper(filters)
+        query = get_organization_models_query(fragment)
+        where = organization_model_where_wrapper(filters)
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query,
             where,
             options if options else QueryOptions(disable_tqdm=False),
-            "Retrieving project models",
+            "Retrieving organization models",
             None,
         )
 
@@ -48,3 +54,21 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         mutation = get_create_model_mutation(fragment)
         result = self.graphql_client.execute(mutation, payload)
         return result["createModel"]
+
+    def list_project_models(
+        self,
+        filters: ProjectModelFilters,
+        fields: ListOrTuple[str],
+        options: Optional[QueryOptions] = None,
+    ) -> Generator[Dict, None, None]:
+        """List project models with given options."""
+        fragment = fragment_builder(fields)
+        query = get_project_models_query(fragment)
+        where = project_model_where_mapper(filters)
+        return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
+            query,
+            where,
+            options if options else QueryOptions(disable_tqdm=False),
+            "Retrieving project models",
+            None,
+        )

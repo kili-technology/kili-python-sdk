@@ -1,14 +1,14 @@
 """GraphQL Asset operations."""
 
 
-def get_project_models_query(fragment: str) -> str:
+def get_organization_models_query(fragment: str) -> str:
     """Return the GraphQL projectModels query."""
     return f"""
-        query ProjectModels($where: ProjectModelWhere!, $first: PageSize!, $skip: Int!) {{
-          data: projectModels(where: $where, first: $first, skip: $skip) {{
-            {fragment}
-          }}
-        }}
+          query Models($where: ModelWhere!, $first: PageSize!, $skip: Int!) {{
+            data: models(where: $where, first: $first, skip: $skip) {{
+                {fragment}
+              }}
+            }}
         """
 
 
@@ -20,4 +20,15 @@ def get_create_model_mutation(fragment: str) -> str:
               {fragment}
             }}
           }}
+        """
+
+
+def get_project_models_query(fragment: str) -> str:
+    """Return the GraphQL projectModels query."""
+    return f"""
+        query ProjectModels($where: ProjectModelWhere!, $first: PageSize!, $skip: Int!) {{
+          data: projectModels(where: $where, first: $first, skip: $skip) {{
+            {fragment}
+          }}
+        }}
         """
