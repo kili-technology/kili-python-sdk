@@ -15,7 +15,7 @@ from kili.domain.llm import (
 )
 
 
-def organization_model_where_wrapper(filter: OrganizationModelFilters) -> Dict:
+def model_where_wrapper(filter: OrganizationModelFilters) -> Dict:
     """Build the GraphQL ProjectMapperWhere variable to be sent in an operation."""
     return {
         "organizationId": filter.organization_id,

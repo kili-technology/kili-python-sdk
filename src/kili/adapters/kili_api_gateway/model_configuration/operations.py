@@ -1,7 +1,7 @@
 """GraphQL Asset operations."""
 
 
-def get_organization_models_query(fragment: str) -> str:
+def get_models_query(fragment: str) -> str:
     """Return the GraphQL projectModels query."""
     return f"""
           query Models($where: ModelWhere!, $first: PageSize!, $skip: Int!) {{
@@ -12,7 +12,7 @@ def get_organization_models_query(fragment: str) -> str:
         """
 
 
-def get_organization_model_query(fragment: str) -> str:
+def get_model_query(fragment: str) -> str:
     """Return the GraphQL model query by ID."""
     return f"""
         query Model($modelId: ID!) {{

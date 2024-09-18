@@ -15,7 +15,7 @@ from kili.adapters.kili_api_gateway.model_configuration.mappers import (
     map_delete_project_model_input,
     map_update_model_input,
     map_update_project_model_input,
-    organization_model_where_wrapper,
+    model_where_wrapper,
     project_model_where_mapper,
 )
 from kili.adapters.kili_api_gateway.model_configuration.operations import (
@@ -23,8 +23,8 @@ from kili.adapters.kili_api_gateway.model_configuration.operations import (
     get_create_project_model_mutation,
     get_delete_model_mutation,
     get_delete_project_model_mutation,
-    get_organization_model_query,
-    get_organization_models_query,
+    get_model_query,
+    get_models_query,
     get_project_models_query,
     get_update_model_mutation,
     get_update_project_model_mutation,
@@ -51,8 +51,8 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
     ) -> Generator[Dict, None, None]:
         """List models with given options."""
         fragment = fragment_builder(fields)
-        query = get_organization_models_query(fragment)
-        where = organization_model_where_wrapper(filters)
+        query = get_models_query(fragment)
+        where = model_where_wrapper(filters)
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query,
             where,
@@ -64,7 +64,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
     def get_model(self, model_id: str, fields: ListOrTuple[str]) -> Optional[Dict]:
         """Get a model by ID."""
         fragment = fragment_builder(fields)
-        query = get_organization_model_query(fragment)
+        query = get_model_query(fragment)
         variables = {"modelId": model_id}
         result = self.graphql_client.execute(query, variables)
         return result.get("model")
