@@ -1138,6 +1138,7 @@ class LabelClientMethods(BaseClientMethods):
         asset_filter_kwargs: Optional[Dict[str, object]] = None,
         normalized_coordinates: Optional[bool] = None,
         label_type_in: Optional[List[str]] = None,
+        include_sent_back_labels: Optional[bool] = True,
     ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
         # pylint: disable=line-too-long
         """Export the project labels with the requested format into the requested output path.
@@ -1192,6 +1193,7 @@ class LabelClientMethods(BaseClientMethods):
                 If False, the json response will contain additional fields with coordinates in absolute values, that is, in pixels.
             label_type_in: Optional list of label type. Exported assets should have a label whose type belongs to that list.
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
+            include_sent_back_labels: If True, the export will include the labels that have been sent back.
 
         !!! Info
             The supported formats are:
@@ -1249,6 +1251,7 @@ class LabelClientMethods(BaseClientMethods):
                 asset_filter_kwargs=asset_filter_kwargs,
                 normalized_coordinates=normalized_coordinates,
                 label_type_in=label_type_in,
+                include_sent_back_labels=include_sent_back_labels,
             )
         except NoCompatibleJobError as excp:
             warnings.warn(str(excp), stacklevel=2)
