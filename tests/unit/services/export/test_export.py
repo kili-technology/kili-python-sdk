@@ -862,6 +862,7 @@ def test_export_with_asset_filter_kwargs(mocker):
         "latestLabel.author.lastname",
         "latestLabel.createdAt",
         "latestLabel.isLatestLabelForUser",
+        "latestLabel.isSentBackToQueue",
         "latestLabel.labelType",
         "latestLabel.modelName",
     ]
@@ -992,6 +993,7 @@ def test_when_exporting_geotiff_asset_with_incompatible_options_then_it_crashes(
                         },
                         "createdAt": "2023-07-19T09:06:03.028Z",
                         "isLatestLabelForUser": True,
+                        "isSentBackToQueue": False,
                         "labelType": "DEFAULT",
                         "modelName": None,
                     },
@@ -1103,3 +1105,72 @@ def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
     # Then
     process_and_save_mock.assert_called_once()
     kili.graphql_client.execute.assert_not_called()  # pyright: ignore[reportGeneralTypeIssues]
+
+
+def test_when_exporting_asset_with_include_sent_back_labels_parameter_it_filter_asset_exported(
+    mocker: pytest_mock.MockerFixture,
+):
+    mocker.patch(
+        "kili.services.export.format.base.fetch_assets",
+        return_value=[
+            {
+                "latestLabel": {
+                    "author": {
+                        "id": "user-feat1-1",
+                        "email": "test+admin+1@kili-technology.com",
+                        "firstname": "Feat1",
+                        "lastname": "Test Admin",
+                    },
+                    "jsonResponse": {
+                        "OBJECT_DETECTION_JOB": {
+                            "annotations": [
+                                {
+                                    "children": {},
+                                    "boundingPoly": [
+                                        {
+                                            "normalizedVertices": [
+                                                {"x": 4.1, "y": 52.2},
+                                                {"x": 4.5, "y": 52.7},
+                                                {"x": 4.5, "y": 52.3},
+                                                {"x": 4.1, "y": 52.4},
+                                            ]
+                                        }
+                                    ],
+                                    "categories": [{"name": "A"}],
+                                    "mid": "20230719110559896-2495",
+                                    "type": "rectangle",
+                                }
+                            ]
+                        }
+                    },
+                    "createdAt": "2023-07-19T09:06:03.028Z",
+                    "isLatestLabelForUser": True,
+                    "isSentBackToQueue": True,
+                    "labelType": "DEFAULT",
+                    "modelName": None,
+                },
+                "resolution": None,
+                "pageResolutions": None,
+                "id": "clk9i0hn000002a68a2zcd1v7",
+                "externalId": "BoundingBox.png",
+                "content": (
+                    "https://storage.googleapis.com/label-public-staging/demo-projects/Computer_vision_tutorial/BoundingBox.png"
+                ),
+                "jsonContent": None,
+                "jsonMetadata": {},
+            }
+        ],
+    )
+
+    process_and_save_mock = mocker.patch.object(KiliExporter, "process_and_save", return_value=None)
+    kili = mock_kili(mocker, with_data_connection=False)
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+
+    # When
+    kili.export_labels(project_id="fake_proj_id", filename="exp.zip", fmt="kili")
+
+    # Then
+    process_and_save_mock.assert_called_once()

@@ -5,48 +5,24 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
-from kili.domain.asset.asset import AssetFilters
 from kili.domain.project import ProjectId
 from kili.services.asset_import.helpers import SEPARATOR
 from kili.services.export.format.llm.types import ExportLLMItem
 from kili.use_cases.asset.media_downloader import MediaDownloader
 from kili.utils.tempfile import TemporaryDirectory
 
-ASSET_NEEDED_FIELDS = [
-    "content",
-    "externalId",
-    "jsonMetadata",
-    "labels.jsonResponse",
-    "labels.author.id",
-    "labels.author.email",
-    "labels.author.firstname",
-    "labels.author.lastname",
-    "labels.createdAt",
-    "labels.isLatestLabelForUser",
-    "labels.labelType",
-    "labels.modelName",
-    "status",
-]
-
 
 class LLMStaticExporter:
     """Handle exports of LLM_RLHF projects."""
 
-    def __init__(self, kili_api_gateway: KiliAPIGateway, disable_tqdm: Optional[bool]):
+    def __init__(self, kili_api_gateway: KiliAPIGateway):
         self.kili_api_gateway = kili_api_gateway
-        self.disable_tqdm = disable_tqdm
 
     def export(
-        self, project_id: ProjectId, asset_filter: AssetFilters, json_interface: Dict
+        self, assets: List[Dict], project_id: ProjectId, json_interface: Dict
     ) -> List[Dict[str, Union[List[str], str]]]:
         """Assets are static, with n labels."""
-        assets = list(
-            self.kili_api_gateway.list_assets(
-                asset_filter, ASSET_NEEDED_FIELDS, QueryOptions(disable_tqdm=self.disable_tqdm)
-            )
-        )
         with TemporaryDirectory() as tmpdirname:
             assets = MediaDownloader(
                 tmpdirname,
