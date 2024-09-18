@@ -38,6 +38,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     annotation_modifier: Optional[CocoAnnotationModifier],
     asset_filter_kwargs: Optional[Dict[str, object]],
     normalized_coordinates: Optional[bool],
+    include_sent_back_labels: Optional[bool] = True,
 ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
     """Export the selected assets into the required format, and save it into a file archive."""
     kili.kili_api_gateway.get_project(project_id, ["id"])
@@ -54,6 +55,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         annotation_modifier=annotation_modifier,
         asset_filter_kwargs=asset_filter_kwargs,
         normalized_coordinates=normalized_coordinates,
+        include_sent_back_labels=include_sent_back_labels,
     )
 
     logger = get_logger(log_level)
