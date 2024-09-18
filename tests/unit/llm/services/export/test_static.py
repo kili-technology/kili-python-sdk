@@ -54,6 +54,7 @@ mock_fetch_assets = [
                 },
                 "createdAt": "2024-08-05T13:03:00.051Z",
                 "isLatestLabelForUser": True,
+                "isSentBackToQueue": False,
                 "labelType": "DEFAULT",
                 "modelName": None,
             }
@@ -77,6 +78,7 @@ mock_fetch_assets = [
                 },
                 "createdAt": "2024-08-05T13:03:03.061Z",
                 "isLatestLabelForUser": True,
+                "isSentBackToQueue": False,
                 "labelType": "DEFAULT",
                 "modelName": None,
             }
@@ -101,6 +103,7 @@ mock_fetch_assets = [
                 },
                 "createdAt": "2024-08-05T13:03:16.028Z",
                 "isLatestLabelForUser": True,
+                "isSentBackToQueue": True,
                 "labelType": "DEFAULT",
                 "modelName": None,
             }
@@ -254,66 +257,6 @@ expected_export = [
                 "created_at": "2024-08-05T13:03:03.061Z",
                 "label_type": "DEFAULT",
                 "label": {"CLASSIFICATION_JOB": ["B_BETTER_THAN_A"]},
-            }
-        ],
-    },
-    {
-        "raw_data": [
-            {
-                "role": "user",
-                "content": "BLABLABLA",
-                "id": None,
-                "chat_id": None,
-                "model": None,
-            },
-            {
-                "role": "assistant",
-                "content": "response A1",
-                "id": None,
-                "chat_id": None,
-                "model": None,
-            },
-            {
-                "role": "assistant",
-                "content": "response B1",
-                "id": None,
-                "chat_id": None,
-                "model": None,
-            },
-            {
-                "role": "user",
-                "content": "BLIBLIBLI",
-                "id": None,
-                "chat_id": None,
-                "model": None,
-            },
-            {
-                "role": "assistant",
-                "content": "response A2",
-                "id": None,
-                "chat_id": None,
-                "model": None,
-            },
-            {
-                "role": "assistant",
-                "content": "response B2",
-                "id": None,
-                "chat_id": None,
-                "model": None,
-            },
-        ],
-        "status": "LABELED",
-        "external_id": "asset#2",
-        "metadata": {},
-        "labels": [
-            {
-                "author": "test+admin@kili-technology.com",
-                "created_at": "2024-08-05T13:03:16.028Z",
-                "label_type": "DEFAULT",
-                "label": {
-                    "CLASSIFICATION_JOB": ["TIE"],
-                    "TRANSCRIPTION_JOB": "There is only some formatting changes\n",
-                },
             }
         ],
     },

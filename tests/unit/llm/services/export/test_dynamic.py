@@ -181,9 +181,10 @@ mock_fetch_assets = [
                 ],
                 "createdAt": "2024-08-06T12:30:42.122Z",
                 "isLatestLabelForUser": True,
+                "isSentBackToQueue": False,
                 "id": "clzief6q2003e7tc91jm46uii",
                 "jsonResponse": {},
-                "labelType": "AUTOSAVE",
+                "labelType": "DEFAULT",
                 "modelName": None,
             }
         ],
@@ -257,7 +258,7 @@ expected_export = [
                 {
                     "author": "test+admin@kili-technology.com",
                     "created_at": "2024-08-06T12:30:42.122Z",
-                    "label_type": "AUTOSAVE",
+                    "label_type": "DEFAULT",
                     "label": {"COMPARISON_JOB": "A_3", "CLASSIFICATION_JOB": ["BOTH_ARE_GOOD"]},
                 }
             ],
@@ -325,7 +326,7 @@ expected_export = [
                 {
                     "author": "test+admin@kili-technology.com",
                     "created_at": "2024-08-06T12:30:42.122Z",
-                    "label_type": "AUTOSAVE",
+                    "label_type": "DEFAULT",
                     "label": {"COMPARISON_JOB": "B_1"},
                 }
             ],
@@ -407,7 +408,7 @@ expected_export = [
                 {
                     "author": "test+admin@kili-technology.com",
                     "created_at": "2024-08-06T12:30:42.122Z",
-                    "label_type": "AUTOSAVE",
+                    "label_type": "DEFAULT",
                     "label": {"COMPARISON_JOB": "A_2"},
                 }
             ],
