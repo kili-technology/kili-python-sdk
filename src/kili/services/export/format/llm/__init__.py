@@ -263,10 +263,7 @@ def _format_raw_data(
                         "id": _safe_pop(chat_items_ids),
                         "chat_id": chat_id,
                         "model": models[index_completion]
-                        if (
-                            (index == len(prompts) - 1 or all_model_keys)
-                            and len(models) > index_completion
-                        )
+                        if (index == len(prompts) - 1 or all_model_keys)
                         else None,
                     }
                 )
