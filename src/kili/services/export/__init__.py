@@ -57,7 +57,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         asset_filter_kwargs=asset_filter_kwargs,
         normalized_coordinates=normalized_coordinates,
         label_type_in=label_type_in,
-        include_sent_back_labels=include_sent_back_labels,
+        include_sent_back_labels=include_sent_back_labels if label_format != "llm_v1" else False,
     )
 
     logger = get_logger(log_level)
