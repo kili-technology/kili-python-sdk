@@ -58,9 +58,10 @@ class LLMExporter(AbstractExporter):
             DeprecationWarning,
             stacklevel=2,
         )
+        clean_assets = self.preprocess_assets(assets)
         if self.label_format == "llm_v1":
-            return self._process_llm_v1(assets)
-        return self._process_llm_dynamic_v1(assets)
+            return self._process_llm_v1(clean_assets)
+        return self._process_llm_dynamic_v1(clean_assets)
 
     def _process_llm_dynamic_v1(self, assets: List[Dict]) -> List[Dict[str, Union[List[str], str]]]:
         result = []
@@ -262,7 +263,10 @@ def _format_raw_data(
                         "id": _safe_pop(chat_items_ids),
                         "chat_id": chat_id,
                         "model": models[index_completion]
-                        if (index == len(prompts) - 1 or all_model_keys)
+                        if (
+                            (index == len(prompts) - 1 or all_model_keys)
+                            and len(models) > index_completion
+                        )
                         else None,
                     }
                 )

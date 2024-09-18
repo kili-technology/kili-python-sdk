@@ -41,6 +41,7 @@ DEFAULT_FIELDS = [
     "labels.author.lastname",
     "labels.createdAt",
     "labels.isLatestLabelForUser",
+    "labels.isSentBackToQueue",
     "labels.labelType",
     "labels.modelName",
 ]
@@ -53,6 +54,7 @@ LATEST_LABEL_FIELDS = [
     "latestLabel.author.lastname",
     "latestLabel.createdAt",
     "latestLabel.isLatestLabelForUser",
+    "latestLabel.isSentBackToQueue",
     "latestLabel.labelType",
     "latestLabel.modelName",
 ]
