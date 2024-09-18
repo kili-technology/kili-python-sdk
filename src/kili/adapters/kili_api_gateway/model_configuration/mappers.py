@@ -11,6 +11,7 @@ from kili.domain.llm import (
     OrganizationModelFilters,
     ProjectModelFilters,
     ProjectModelToCreateInput,
+    ProjectModelToUpdateInput,
 )
 
 
@@ -82,6 +83,14 @@ def map_create_project_model_input(data: ProjectModelToCreateInput) -> Dict:
         "modelId": data.model_id,
         "configuration": data.configuration,
     }
+
+
+def map_update_project_model_input(data: ProjectModelToUpdateInput) -> Dict:
+    """Build the GraphQL UpdateProjectModelInput variable to be sent in an operation."""
+    input_dict = {}
+    if data.configuration is not None:
+        input_dict["configuration"] = data.configuration
+    return input_dict
 
 
 def map_delete_model_input(model_id: str) -> Dict:

@@ -14,6 +14,7 @@ from kili.adapters.kili_api_gateway.model_configuration.mappers import (
     map_delete_model_input,
     map_delete_project_model_input,
     map_update_model_input,
+    map_update_project_model_input,
     organization_model_where_wrapper,
     project_model_where_mapper,
 )
@@ -26,6 +27,7 @@ from kili.adapters.kili_api_gateway.model_configuration.operations import (
     get_organization_models_query,
     get_project_models_query,
     get_update_model_mutation,
+    get_update_project_model_mutation,
 )
 from kili.domain.llm import (
     ModelToCreateInput,
@@ -33,6 +35,7 @@ from kili.domain.llm import (
     OrganizationModelFilters,
     ProjectModelFilters,
     ProjectModelToCreateInput,
+    ProjectModelToUpdateInput,
 )
 from kili.domain.types import ListOrTuple
 
@@ -96,6 +99,17 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         mutation = get_create_project_model_mutation(fragment)
         result = self.graphql_client.execute(mutation, payload)
         return result["createProjectModel"]
+
+    def update_project_model(self, project_model_id: str, project_model: ProjectModelToUpdateInput):
+        """Send a GraphQL request calling updateProjectModel resolver."""
+        payload = {
+            "updateProjectModelId": project_model_id,
+            "input": map_update_project_model_input(project_model),
+        }
+        fragment = fragment_builder(["id", "configuration"])
+        mutation = get_update_project_model_mutation(fragment)
+        result = self.graphql_client.execute(mutation, payload)
+        return result["updateProjectModel"]
 
     def delete_project_model(self, project_model_id: str):
         """Send a GraphQL request to delete a project model."""

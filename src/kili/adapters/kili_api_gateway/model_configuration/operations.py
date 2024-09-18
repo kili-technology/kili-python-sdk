@@ -65,6 +65,17 @@ def get_create_project_model_mutation(fragment: str) -> str:
         """
 
 
+def get_update_project_model_mutation(fragment: str) -> str:
+    """Return the GraphQL updateProjectModel mutation."""
+    return f"""
+        mutation UpdateProjectModel($updateProjectModelId: ID!, $input: UpdateProjectModelInput!) {{
+            updateProjectModel(id: $updateProjectModelId, input: $input) {{
+                {fragment}
+            }}
+        }}
+    """
+
+
 def get_delete_project_model_mutation() -> str:
     """Return the GraphQL deleteProjectModel mutation."""
     return """

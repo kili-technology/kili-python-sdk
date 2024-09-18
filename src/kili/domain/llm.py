@@ -58,6 +58,13 @@ class ProjectModelToCreateInput:
 
 
 @dataclass
+class ProjectModelToUpdateInput:
+    """Project model to update use case input."""
+
+    configuration: Optional[dict] = None
+
+
+@dataclass
 class ProjectModelFilters:
     """Project model filters for running a project model search."""
 

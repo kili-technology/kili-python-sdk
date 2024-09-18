@@ -21,6 +21,7 @@ from kili.domain.llm import (
     OrganizationModelFilters,
     ProjectModelFilters,
     ProjectModelToCreateInput,
+    ProjectModelToUpdateInput,
 )
 from kili.domain.project import ProjectId
 from kili.llm.services.export import export
@@ -186,6 +187,12 @@ class LlmClientMethods:
             project_id=project_id, model_id=model_id, configuration=configuration
         )
         return self.kili_api_gateway.create_project_model(project_model=project_model_input)
+
+    def update_project_model(self, project_model_id: str, configuration: dict):
+        project_model_input = ProjectModelToUpdateInput(configuration=configuration)
+        return self.kili_api_gateway.update_project_model(
+            project_model_id=project_model_id, project_model=project_model_input
+        )
 
     def delete_project_model(self, project_model_id: str):
         return self.kili_api_gateway.delete_project_model(project_model_id)
