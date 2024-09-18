@@ -23,6 +23,15 @@ def get_create_model_mutation(fragment: str) -> str:
         """
 
 
+def get_delete_model_mutation() -> str:
+    """Return the GraphQL deleteOrganizationModel mutation."""
+    return """
+    mutation DeleteModel($deleteModelId: ID!) {
+        deleteModel(id: $deleteModelId)
+    }
+    """
+
+
 def get_project_models_query(fragment: str) -> str:
     """Return the GraphQL projectModels query."""
     return f"""

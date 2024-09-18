@@ -117,6 +117,9 @@ class LlmClientMethods:
         )
         return self.kili_api_gateway.create_model(model=model_input)
 
+    def delete_model(self, model_id: str):
+        return self.kili_api_gateway.delete_model(model_id=model_id)
+
     def list_organization_models(
         self, organization_id: str, fields: Optional[List[str]] = None
     ) -> List[Dict]:
