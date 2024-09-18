@@ -13,7 +13,13 @@ from typing import (
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.project import ProjectId
-from kili.domain.project_model import ProjectModelFilters
+from kili.domain.project_model import (
+    AzureOpenAICredentials,
+    ModelToCreateInput,
+    ModelType,
+    OpenAISDKCredentials,
+    ProjectModelFilters,
+)
 from kili.llm.services.export import export
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.use_cases.asset.utils import AssetUseCasesUtils
@@ -83,6 +89,25 @@ class LlmClientMethods:
         except NoCompatibleJobError as excp:
             warnings.warn(str(excp), stacklevel=2)
             return None
+
+    def create_model(self, organization_id: str, model: dict):
+        credentials_data = model.get("credentials")
+        model_type = ModelType(model["type"])
+
+        if model_type == ModelType.AZURE_OPEN_AI:
+            credentials = AzureOpenAICredentials(**credentials_data)
+        elif model_type == ModelType.OPEN_AI_SDK:
+            credentials = OpenAISDKCredentials(**credentials_data)
+        else:
+            raise ValueError(f"Unsupported model type: {model['type']}")
+
+        model_input = ModelToCreateInput(
+            credentials=credentials,
+            name=model["name"],
+            type=model_type,
+            organization_id=organization_id,
+        )
+        return self.kili_api_gateway.create_model(model=model_input)
 
     def list_project_models(
         self, project_id: str, filters: Optional[Dict] = None, fields: Optional[List[str]] = None

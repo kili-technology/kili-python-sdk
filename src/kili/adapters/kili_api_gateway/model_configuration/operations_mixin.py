@@ -8,9 +8,15 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     QueryOptions,
     fragment_builder,
 )
-from kili.adapters.kili_api_gateway.model_configuration.mappers import project_model_where_mapper
-from kili.adapters.kili_api_gateway.model_configuration.operations import get_project_models_query
-from kili.domain.project_model import ProjectModelFilters
+from kili.adapters.kili_api_gateway.model_configuration.mappers import (
+    map_create_model_input,
+    project_model_where_mapper,
+)
+from kili.adapters.kili_api_gateway.model_configuration.operations import (
+    get_create_model_mutation,
+    get_project_models_query,
+)
+from kili.domain.project_model import ModelToCreateInput, ProjectModelFilters
 from kili.domain.types import ListOrTuple
 
 
@@ -34,3 +40,11 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
             "Retrieving project models",
             None,
         )
+
+    def create_model(self, model: ModelToCreateInput):
+        """Send a GraphQL request calling createModel resolver."""
+        payload = {"input": map_create_model_input(model)}
+        fragment = fragment_builder(["id"])
+        mutation = get_create_model_mutation(fragment)
+        result = self.graphql_client.execute(mutation, payload)
+        return result["createModel"]

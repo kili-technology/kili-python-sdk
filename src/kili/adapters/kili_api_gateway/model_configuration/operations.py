@@ -10,3 +10,14 @@ def get_project_models_query(fragment: str) -> str:
           }}
         }}
         """
+
+
+def get_create_model_mutation(fragment: str) -> str:
+    """Return the GraphQL createProjectModel mutation."""
+    return f"""
+          mutation CreateModel($input: CreateModelInput!) {{
+            createModel(input: $input) {{
+              {fragment}
+            }}
+          }}
+        """
