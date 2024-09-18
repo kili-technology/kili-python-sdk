@@ -12,15 +12,16 @@ from typing import (
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
-from kili.domain.project import ProjectId
-from kili.domain.project_model import (
+from kili.domain.llm import (
     AzureOpenAICredentials,
     ModelToCreateInput,
     ModelType,
     OpenAISDKCredentials,
     OrganizationModelFilters,
     ProjectModelFilters,
+    ProjectModelToCreateInput,
 )
+from kili.domain.project import ProjectId
 from kili.llm.services.export import export
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.use_cases.asset.utils import AssetUseCasesUtils
@@ -39,7 +40,6 @@ DEFAULT_PROJECT_MODEL_FIELDS = [
     "model.credentials",
     "model.name",
     "model.type",
-    "name",
 ]
 
 
@@ -98,6 +98,19 @@ class LlmClientMethods:
             warnings.warn(str(excp), stacklevel=2)
             return None
 
+    def list_models(self, organization_id: str, fields: Optional[List[str]] = None) -> List[Dict]:
+        """List models of given organization."""
+        converted_filters = OrganizationModelFilters(
+            organization_id=organization_id,
+        )
+
+        return list(
+            self.kili_api_gateway.list_models(
+                filters=converted_filters,
+                fields=fields if fields else DEFAULT_ORGANIZATION_MODEL_FIELDS,
+            )
+        )
+
     def create_model(self, organization_id: str, model: dict):
         credentials_data = model.get("credentials")
         model_type = ModelType(model["type"])
@@ -120,21 +133,6 @@ class LlmClientMethods:
     def delete_model(self, model_id: str):
         return self.kili_api_gateway.delete_model(model_id=model_id)
 
-    def list_organization_models(
-        self, organization_id: str, fields: Optional[List[str]] = None
-    ) -> List[Dict]:
-        """List models of given organization."""
-        converted_filters = OrganizationModelFilters(
-            organization_id=organization_id,
-        )
-
-        return list(
-            self.kili_api_gateway.list_organization_models(
-                filters=converted_filters,
-                fields=fields if fields else DEFAULT_ORGANIZATION_MODEL_FIELDS,
-            )
-        )
-
     def list_project_models(
         self, project_id: str, filters: Optional[Dict] = None, fields: Optional[List[str]] = None
     ) -> List[Dict]:
@@ -150,3 +148,9 @@ class LlmClientMethods:
                 fields=fields if fields else DEFAULT_PROJECT_MODEL_FIELDS,
             )
         )
+
+    def create_project_model(self, project_id: str, model_id: str, configuration: dict):
+        project_model_input = ProjectModelToCreateInput(
+            project_id=project_id, model_id=model_id, configuration=configuration
+        )
+        return self.kili_api_gateway.create_project_model(project_model=project_model_input)

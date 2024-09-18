@@ -2,11 +2,12 @@
 
 from typing import Dict
 
-from kili.domain.project_model import (
+from kili.domain.llm import (
     ModelToCreateInput,
     ModelType,
     OrganizationModelFilters,
     ProjectModelFilters,
+    ProjectModelToCreateInput,
 )
 
 
@@ -43,6 +44,15 @@ def map_create_model_input(data: ModelToCreateInput) -> Dict:
         "name": data.name,
         "type": data.type.value,
         "organizationId": data.organization_id,
+    }
+
+
+def map_create_project_model_input(data: ProjectModelToCreateInput) -> Dict:
+    """Build the GraphQL ModelInput variable to be sent in an operation."""
+    return {
+        "projectId": data.project_id,
+        "modelId": data.model_id,
+        "configuration": data.configuration,
     }
 
 

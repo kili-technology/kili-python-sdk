@@ -41,6 +41,15 @@ class ModelToCreateInput:
 
 
 @dataclass
+class ProjectModelToCreateInput:
+    """Project model to create use case input."""
+
+    project_id: str
+    model_id: str
+    configuration: dict
+
+
+@dataclass
 class ProjectModelFilters:
     """Project model filters for running a project model search."""
 
