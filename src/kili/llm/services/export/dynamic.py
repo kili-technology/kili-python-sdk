@@ -4,7 +4,6 @@ import logging
 from typing import Dict, List, Union
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
-from kili.domain.asset.asset import AssetFilters
 
 CHAT_ITEMS_NEEDED_FIELDS = [
     "id",
