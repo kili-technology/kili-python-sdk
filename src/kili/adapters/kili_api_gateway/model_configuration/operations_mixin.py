@@ -13,6 +13,7 @@ from kili.adapters.kili_api_gateway.model_configuration.mappers import (
     map_create_project_model_input,
     map_delete_model_input,
     map_delete_project_model_input,
+    map_update_model_input,
     organization_model_where_wrapper,
     project_model_where_mapper,
 )
@@ -21,11 +22,14 @@ from kili.adapters.kili_api_gateway.model_configuration.operations import (
     get_create_project_model_mutation,
     get_delete_model_mutation,
     get_delete_project_model_mutation,
+    get_organization_model_query,
     get_organization_models_query,
     get_project_models_query,
+    get_update_model_mutation,
 )
 from kili.domain.llm import (
     ModelToCreateInput,
+    ModelToUpdateInput,
     OrganizationModelFilters,
     ProjectModelFilters,
     ProjectModelToCreateInput,
@@ -54,6 +58,14 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
             None,
         )
 
+    def get_model(self, model_id: str, fields: ListOrTuple[str]) -> Optional[Dict]:
+        """Get a model by ID."""
+        fragment = fragment_builder(fields)
+        query = get_organization_model_query(fragment)
+        variables = {"modelId": model_id}
+        result = self.graphql_client.execute(query, variables)
+        return result.get("model")
+
     def create_model(self, model: ModelToCreateInput):
         """Send a GraphQL request calling createModel resolver."""
         payload = {"input": map_create_model_input(model)}
@@ -61,6 +73,14 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         mutation = get_create_model_mutation(fragment)
         result = self.graphql_client.execute(mutation, payload)
         return result["createModel"]
+
+    def update_model(self, model_id: str, model: ModelToUpdateInput):
+        """Send a GraphQL request calling updateModel resolver."""
+        payload = {"id": model_id, "input": map_update_model_input(model)}
+        fragment = fragment_builder(["id"])
+        mutation = get_update_model_mutation(fragment)
+        result = self.graphql_client.execute(mutation, payload)
+        return result["updateModel"]
 
     def delete_model(self, model_id: str):
         """Send a GraphQL request to delete an organization model."""

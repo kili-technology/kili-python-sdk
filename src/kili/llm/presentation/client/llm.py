@@ -15,6 +15,7 @@ from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.llm import (
     AzureOpenAICredentials,
     ModelToCreateInput,
+    ModelToUpdateInput,
     ModelType,
     OpenAISDKCredentials,
     OrganizationModelFilters,
@@ -111,6 +112,12 @@ class LlmClientMethods:
             )
         )
 
+    def get_model(self, model_id: str, fields: Optional[List[str]] = None) -> Dict:
+        return self.kili_api_gateway.get_model(
+            model_id=model_id,
+            fields=fields if fields else DEFAULT_ORGANIZATION_MODEL_FIELDS,
+        )
+
     def create_model(self, organization_id: str, model: dict):
         credentials_data = model.get("credentials")
         model_type = ModelType(model["type"])
@@ -129,6 +136,31 @@ class LlmClientMethods:
             organization_id=organization_id,
         )
         return self.kili_api_gateway.create_model(model=model_input)
+
+    def update_model(self, model_id: str, model: dict):
+        credentials_data = model.get("credentials")
+        credentials = None
+
+        if credentials_data:
+            existing_model = self.kili_api_gateway.get_model(
+                model_id=model_id, fields=["id", "type"]
+            )
+            if not existing_model:
+                raise ValueError(f"Model with id {model_id} not found")
+            model_type = ModelType(existing_model["type"])
+
+            if model_type == ModelType.AZURE_OPEN_AI:
+                credentials = AzureOpenAICredentials(**credentials_data)
+            elif model_type == ModelType.OPEN_AI_SDK:
+                credentials = OpenAISDKCredentials(**credentials_data)
+            else:
+                raise ValueError(f"Unsupported model type: {model_type}")
+
+        model_input = ModelToUpdateInput(
+            credentials=credentials,
+            name=model.get("name"),
+        )
+        return self.kili_api_gateway.update_model(model_id=model_id, model=model_input)
 
     def delete_model(self, model_id: str):
         return self.kili_api_gateway.delete_model(model_id=model_id)

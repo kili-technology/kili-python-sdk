@@ -41,6 +41,14 @@ class ModelToCreateInput:
 
 
 @dataclass
+class ModelToUpdateInput:
+    """Model to update use case input."""
+
+    credentials: Optional[Union[AzureOpenAICredentials, OpenAISDKCredentials]] = None
+    name: Optional[str] = None
+
+
+@dataclass
 class ProjectModelToCreateInput:
     """Project model to create use case input."""
 

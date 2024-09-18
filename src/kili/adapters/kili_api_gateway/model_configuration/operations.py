@@ -12,6 +12,17 @@ def get_organization_models_query(fragment: str) -> str:
         """
 
 
+def get_organization_model_query(fragment: str) -> str:
+    """Return the GraphQL model query by ID."""
+    return f"""
+        query Model($modelId: ID!) {{
+            model(id: $modelId) {{
+                {fragment}
+            }}
+        }}
+    """
+
+
 def get_create_model_mutation(fragment: str) -> str:
     """Return the GraphQL createProjectModel mutation."""
     return f"""
@@ -21,6 +32,17 @@ def get_create_model_mutation(fragment: str) -> str:
             }}
           }}
         """
+
+
+def get_update_model_mutation(fragment: str) -> str:
+    """Return the GraphQL updateModel mutation."""
+    return f"""
+        mutation UpdateModel($id: ID!, $input: UpdateModelInput!) {{
+            updateModel(id: $id, input: $input) {{
+                {fragment}
+            }}
+        }}
+    """
 
 
 def get_delete_model_mutation() -> str:

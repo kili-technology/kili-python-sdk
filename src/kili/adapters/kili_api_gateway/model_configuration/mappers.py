@@ -3,8 +3,11 @@
 from typing import Dict
 
 from kili.domain.llm import (
+    AzureOpenAICredentials,
     ModelToCreateInput,
+    ModelToUpdateInput,
     ModelType,
+    OpenAISDKCredentials,
     OrganizationModelFilters,
     ProjectModelFilters,
     ProjectModelToCreateInput,
@@ -45,6 +48,31 @@ def map_create_model_input(data: ModelToCreateInput) -> Dict:
         "type": data.type.value,
         "organizationId": data.organization_id,
     }
+
+
+def map_update_model_input(data: ModelToUpdateInput) -> Dict:
+    """Build the GraphQL UpdateModelInput variable to be sent in an operation."""
+    input_dict = {}
+    if data.name is not None:
+        input_dict["name"] = data.name
+
+    if data.credentials is not None:
+        if isinstance(data.credentials, AzureOpenAICredentials):
+            credentials = {
+                "apiKey": data.credentials.api_key,
+                "deploymentId": data.credentials.deployment_id,
+                "endpoint": data.credentials.endpoint,
+            }
+        elif isinstance(data.credentials, OpenAISDKCredentials):
+            credentials = {
+                "apiKey": data.credentials.api_key,
+                "endpoint": data.credentials.endpoint,
+            }
+        else:
+            raise ValueError(f"Unsupported credentials type: {type(data.credentials)}")
+        input_dict["credentials"] = credentials
+
+    return input_dict
 
 
 def map_create_project_model_input(data: ProjectModelToCreateInput) -> Dict:
