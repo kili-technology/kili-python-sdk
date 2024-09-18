@@ -12,6 +12,7 @@ from kili.adapters.kili_api_gateway.model_configuration.mappers import (
     map_create_model_input,
     map_create_project_model_input,
     map_delete_model_input,
+    map_delete_project_model_input,
     organization_model_where_wrapper,
     project_model_where_mapper,
 )
@@ -19,6 +20,7 @@ from kili.adapters.kili_api_gateway.model_configuration.operations import (
     get_create_model_mutation,
     get_create_project_model_mutation,
     get_delete_model_mutation,
+    get_delete_project_model_mutation,
     get_organization_models_query,
     get_project_models_query,
 )
@@ -74,6 +76,13 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         mutation = get_create_project_model_mutation(fragment)
         result = self.graphql_client.execute(mutation, payload)
         return result["createProjectModel"]
+
+    def delete_project_model(self, project_model_id: str):
+        """Send a GraphQL request to delete a project model."""
+        payload = map_delete_project_model_input(project_model_id)
+        mutation = get_delete_project_model_mutation()
+        result = self.graphql_client.execute(mutation, payload)
+        return result["deleteProjectModel"]
 
     def list_project_models(
         self,

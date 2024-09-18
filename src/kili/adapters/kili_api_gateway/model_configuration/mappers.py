@@ -61,3 +61,10 @@ def map_delete_model_input(model_id: str) -> Dict:
     return {
         "deleteModelId": model_id,
     }
+
+
+def map_delete_project_model_input(project_model_id: str) -> Dict:
+    """Map the input for the GraphQL deleteProjectModel mutation."""
+    return {
+        "deleteProjectModelId": project_model_id,
+    }

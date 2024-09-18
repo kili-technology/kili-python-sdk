@@ -154,3 +154,6 @@ class LlmClientMethods:
             project_id=project_id, model_id=model_id, configuration=configuration
         )
         return self.kili_api_gateway.create_project_model(project_model=project_model_input)
+
+    def delete_project_model(self, project_model_id: str):
+        return self.kili_api_gateway.delete_project_model(project_model_id)
