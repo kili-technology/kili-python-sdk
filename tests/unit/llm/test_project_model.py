@@ -75,12 +75,12 @@ def test_update_project_model(mocker):
 
 
 def test_delete_project_model(mocker):
-    delete_project_model_return_val = {"id": "project_model_id"}
+    mock_delete_project_model = {"id": "project_model_id"}
 
     kili_api_gateway = mocker.MagicMock()
-    kili_api_gateway.delete_project_model.return_value = delete_project_model_return_val
+    kili_api_gateway.delete_project_model.return_value = mock_delete_project_model
 
     kili_llm = LlmClientMethods(kili_api_gateway)
     result = kili_llm.delete_project_model(project_model_id="project_model_id")
 
-    assert result == delete_project_model_return_val
+    assert result == mock_delete_project_model
