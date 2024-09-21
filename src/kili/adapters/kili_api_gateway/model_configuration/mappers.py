@@ -32,16 +32,20 @@ def project_model_where_mapper(filter: ProjectModelFilters) -> Dict:
 
 def map_create_model_input(data: ModelToCreateInput) -> Dict:
     """Build the GraphQL ModelInput variable to be sent in an operation."""
-    if data.type == ModelType.AZURE_OPEN_AI:
+    if data.type == ModelType.AZURE_OPEN_AI and isinstance(
+        data.credentials, AzureOpenAICredentials
+    ):
         credentials = {
             "apiKey": data.credentials.api_key,
             "deploymentId": data.credentials.deployment_id,
             "endpoint": data.credentials.endpoint,
         }
-    elif data.type == ModelType.OPEN_AI_SDK:
+    elif data.type == ModelType.OPEN_AI_SDK and isinstance(data.credentials, OpenAISDKCredentials):
         credentials = {"apiKey": data.credentials.api_key, "endpoint": data.credentials.endpoint}
     else:
-        raise ValueError(f"Unsupported model type: {data.type}")
+        raise ValueError(
+            f"Unsupported model type or credentials: {data.type}, {type(data.credentials)}"
+        )
 
     return {
         "credentials": credentials,

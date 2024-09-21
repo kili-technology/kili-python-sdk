@@ -13,12 +13,26 @@ class OrganizationModelFilters:
 
 
 class ModelType(str, Enum):
+    """Enumeration of the supported model types.
+
+    - `AZURE_OPEN_AI`: Models hosted on Microsoft Azure's OpenAI service.
+    - `OPEN_AI_SDK`: Models provided via OpenAI's SDK.
+    """
+
     AZURE_OPEN_AI = "AZURE_OPEN_AI"
     OPEN_AI_SDK = "OPEN_AI_SDK"
 
 
 @dataclass
 class AzureOpenAICredentials:
+    """Credentials for accessing Azure OpenAI models.
+
+    Attributes:
+    - `api_key`: The API key required for authentication to Azure OpenAI.
+    - `deployment_id`: The specific deployment of the model within Azure.
+    - `endpoint`: The endpoint URL where the Azure OpenAI service is hosted.
+    """
+
     api_key: str
     deployment_id: str
     endpoint: str
@@ -26,6 +40,13 @@ class AzureOpenAICredentials:
 
 @dataclass
 class OpenAISDKCredentials:
+    """Credentials for accessing OpenAI SDK models.
+
+    Attributes:
+    - `api_key`: The API key required for authentication to OpenAI's SDK.
+    - `endpoint`: The endpoint URL where the OpenAI SDK service is hosted.
+    """
+
     api_key: str
     endpoint: str
 

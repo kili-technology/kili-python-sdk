@@ -61,15 +61,15 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
             None,
         )
 
-    def get_model(self, model_id: str, fields: ListOrTuple[str]) -> Optional[Dict]:
+    def get_model(self, model_id: str, fields: ListOrTuple[str]) -> Dict:
         """Get a model by ID."""
         fragment = fragment_builder(fields)
         query = get_model_query(fragment)
         variables = {"modelId": model_id}
         result = self.graphql_client.execute(query, variables)
-        return result.get("model")
+        return result["model"]
 
-    def create_model(self, model: ModelToCreateInput):
+    def create_model(self, model: ModelToCreateInput) -> Dict:
         """Send a GraphQL request calling createModel resolver."""
         payload = {"input": map_create_model_input(model)}
         fragment = fragment_builder(["id"])
@@ -77,7 +77,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(mutation, payload)
         return result["createModel"]
 
-    def update_model(self, model_id: str, model: ModelToUpdateInput):
+    def update_model(self, model_id: str, model: ModelToUpdateInput) -> Dict:
         """Send a GraphQL request calling updateModel resolver."""
         payload = {"id": model_id, "input": map_update_model_input(model)}
         fragment = fragment_builder(["id"])
@@ -85,14 +85,14 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(mutation, payload)
         return result["updateModel"]
 
-    def delete_model(self, model_id: str):
+    def delete_model(self, model_id: str) -> Dict:
         """Send a GraphQL request to delete an organization model."""
         payload = map_delete_model_input(model_id)
         mutation = get_delete_model_mutation()
         result = self.graphql_client.execute(mutation, payload)
         return result["deleteModel"]
 
-    def create_project_model(self, project_model: ProjectModelToCreateInput):
+    def create_project_model(self, project_model: ProjectModelToCreateInput) -> Dict:
         """Send a GraphQL request calling createModel resolver."""
         payload = {"input": map_create_project_model_input(project_model)}
         fragment = fragment_builder(["id"])
@@ -100,7 +100,9 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(mutation, payload)
         return result["createProjectModel"]
 
-    def update_project_model(self, project_model_id: str, project_model: ProjectModelToUpdateInput):
+    def update_project_model(
+        self, project_model_id: str, project_model: ProjectModelToUpdateInput
+    ) -> Dict:
         """Send a GraphQL request calling updateProjectModel resolver."""
         payload = {
             "updateProjectModelId": project_model_id,
@@ -111,7 +113,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(mutation, payload)
         return result["updateProjectModel"]
 
-    def delete_project_model(self, project_model_id: str):
+    def delete_project_model(self, project_model_id: str) -> Dict:
         """Send a GraphQL request to delete a project model."""
         payload = map_delete_project_model_input(project_model_id)
         mutation = get_delete_project_model_mutation()

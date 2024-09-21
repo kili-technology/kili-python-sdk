@@ -100,7 +100,7 @@ class LlmClientMethods:
             warnings.warn(str(excp), stacklevel=2)
             return None
 
-    def list_models(self, organization_id: str, fields: Optional[List[str]] = None) -> List[Dict]:
+    def list_models(self, organization_id: str, fields: Optional[List[str]] = None):
         """List models of given organization."""
         converted_filters = OrganizationModelFilters(
             organization_id=organization_id,
@@ -113,14 +113,14 @@ class LlmClientMethods:
             )
         )
 
-    def get_model(self, model_id: str, fields: Optional[List[str]] = None) -> Dict:
+    def get_model(self, model_id: str, fields: Optional[List[str]] = None):
         return self.kili_api_gateway.get_model(
             model_id=model_id,
             fields=fields if fields else DEFAULT_ORGANIZATION_MODEL_FIELDS,
         )
 
     def create_model(self, organization_id: str, model: dict):
-        credentials_data = model.get("credentials")
+        credentials_data = model["credentials"]
         model_type = ModelType(model["type"])
 
         if model_type == ModelType.AZURE_OPEN_AI:
@@ -168,7 +168,7 @@ class LlmClientMethods:
 
     def list_project_models(
         self, project_id: str, filters: Optional[Dict] = None, fields: Optional[List[str]] = None
-    ) -> List[Dict]:
+    ):
         """List project models of given project."""
         converted_filters = ProjectModelFilters(
             project_id=project_id,
