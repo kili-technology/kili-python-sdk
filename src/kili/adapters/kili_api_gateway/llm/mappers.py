@@ -118,7 +118,7 @@ def map_create_llm_asset_input(data: Dict) -> Dict:
     }
     if "status" in data:
         result["status"] = data["status"]
-    if "labelType" in data:
+    if "label_type" in data:
         result["labelType"] = data["label_type"]
     return result
 
