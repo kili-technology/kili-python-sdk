@@ -198,3 +198,17 @@ class LlmClientMethods:
 
     def delete_project_model(self, project_model_id: str):
         return self.kili_api_gateway.delete_project_model(project_model_id)
+
+    def create_conversation(self, project_id: str, prompt: str):
+        user_id = self.kili_api_gateway.get_current_user(["id"])["id"]
+        llm_asset = self.kili_api_gateway.create_llm_asset(
+            project_id=project_id,
+            author_id=user_id,
+            status="TODO",
+            label_type="PREDICTION",
+        )
+        asset_id = llm_asset["id"]
+        label_id = llm_asset["latestLabel"]["id"]
+        return self.kili_api_gateway.create_chat_item(
+            asset_id=asset_id, label_id=label_id, prompt=prompt
+        )

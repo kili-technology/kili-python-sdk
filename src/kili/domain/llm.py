@@ -91,3 +91,11 @@ class ProjectModelFilters:
 
     project_id: Optional[str] = None
     model_id: Optional[str] = None
+
+
+class ChatItemRole(str, Enum):
+    """Enumeration of the supported chat item role."""
+
+    ASSISTANT = "ASSISTANT"
+    SYSTEM = "SYSTEM"
+    USER = "USER"

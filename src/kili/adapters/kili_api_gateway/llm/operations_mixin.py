@@ -9,16 +9,22 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     fragment_builder,
 )
 from kili.adapters.kili_api_gateway.llm.mappers import (
+    map_asset_where,
+    map_create_chat_item_input,
+    map_create_llm_asset_input,
     map_create_model_input,
     map_create_project_model_input,
     map_delete_model_input,
     map_delete_project_model_input,
+    map_project_where,
     map_update_model_input,
     map_update_project_model_input,
     model_where_wrapper,
     project_model_where_mapper,
 )
 from kili.adapters.kili_api_gateway.llm.operations import (
+    get_create_chat_item_mutation,
+    get_create_llm_asset_mutation,
     get_create_model_mutation,
     get_create_project_model_mutation,
     get_delete_model_mutation,
@@ -137,3 +143,30 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
             "Retrieving project models",
             None,
         )
+
+    def create_llm_asset(
+        self,
+        project_id: str,
+        author_id: str,
+        status: Optional[str] = None,
+        label_type: Optional[str] = None,
+    ) -> Dict:
+        """Create an LLM asset in a project, with optional status and label_type."""
+        where = map_project_where(project_id)
+        data = {"author_id": author_id, "status": status, "label_type": label_type}
+        data_mapped = map_create_llm_asset_input(data)
+        variables = {"where": where, "data": data_mapped}
+        fragment = fragment_builder(["id", "latestLabel.id"])
+        mutation = get_create_llm_asset_mutation(fragment)
+        result = self.graphql_client.execute(mutation, variables)
+        return result["createLLMAsset"]
+
+    def create_chat_item(self, asset_id: str, label_id: str, prompt: str) -> Dict:
+        """Create a chat item associated with an asset."""
+        data = map_create_chat_item_input(label_id, prompt)
+        where = map_asset_where(asset_id)
+        variables = {"data": data, "where": where}
+        fragment = fragment_builder(["content", "id", "labelId", "modelId", "parentId", "role"])
+        mutation = get_create_chat_item_mutation(fragment)
+        result = self.graphql_client.execute(mutation, variables)
+        return result["createChatItem"]
