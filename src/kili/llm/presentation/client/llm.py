@@ -202,23 +202,6 @@ class LlmClientMethods:
             model_id=model_id,
             fields=fields if fields else DEFAULT_ORGANIZATION_MODEL_FIELDS,
         )
-        credentials_data = model["credentials"]
-        model_type = ModelType(model["type"])
-
-        if model_type == ModelType.AZURE_OPEN_AI:
-            credentials = AzureOpenAICredentials(**credentials_data)
-        elif model_type == ModelType.OPEN_AI_SDK:
-            credentials = OpenAISDKCredentials(**credentials_data)
-        else:
-            raise ValueError(f"Unsupported model type: {model['type']}")
-
-        model_input = ModelToCreateInput(
-            credentials=credentials,
-            name=model["name"],
-            type=model_type,
-            organization_id=organization_id,
-        )
-        return self.kili_api_gateway.create_model(model=model_input)
 
     def update_properties_in_model(self, model_id: str, model: dict):
         # pylint: disable=line-too-long
