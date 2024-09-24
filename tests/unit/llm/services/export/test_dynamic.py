@@ -1,3 +1,5 @@
+import pytest
+
 from kili.llm.presentation.client.llm import LlmClientMethods
 
 mock_json_interface = {
@@ -38,6 +40,8 @@ mock_json_interface = {
         },
     }
 }
+
+mock_empty_json_interface = {"jobs": {}}
 
 mock_fetch_assets = [
     {
@@ -435,3 +439,19 @@ def test_export_dynamic(mocker):
         project_id="project_id",
     )
     assert result == expected_export
+
+
+def test_export_dynamic_empty_json_interface(mocker):
+    get_project_return_val = {
+        "jsonInterface": mock_empty_json_interface,
+        "inputType": "LLM_INSTR_FOLLOWING",
+        "title": "Test project",
+        "id": "project_id",
+        "dataConnections": None,
+    }
+    kili_api_gateway = mocker.MagicMock()
+    kili_llm = LlmClientMethods(kili_api_gateway)
+    with pytest.raises(ValueError):
+        kili_llm.export(
+            project_id="project_id",
+        )
