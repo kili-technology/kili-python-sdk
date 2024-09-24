@@ -97,5 +97,4 @@ class ChatItemRole(str, Enum):
     """Enumeration of the supported chat item role."""
 
     ASSISTANT = "ASSISTANT"
-    SYSTEM = "SYSTEM"
     USER = "USER"
