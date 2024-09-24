@@ -121,10 +121,6 @@ class LlmClientMethods:
             ...     }
             ... }
             >>> kili.llm.create_model(organization_id="your_organization_id", model=model_data)
-
-        !!! example "Recipe"
-            For more detailed examples on how to use LLM models,
-                see [the tutorial](https://docs.kili-technology.com/tutorials/creating-a-project)          ```
         """
         credentials_data = model["credentials"]
         model_type = ModelType(model["type"])
