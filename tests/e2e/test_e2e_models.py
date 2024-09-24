@@ -56,12 +56,10 @@ def test_create_and_manage_project_and_model_resources(kili: Kili):
     assert created_model["name"] == MODEL_NAME
     assert created_model["type"] == model_data["type"]
 
-    kili.llm.update_properties_in_model(
+    updated_model = kili.llm.update_properties_in_model(
         model_id=model_id,
         model={"credentials": model_data["credentials"], "name": UPDATED_MODEL_NAME},
     )
-
-    updated_model = kili.llm.model(model_id)
     assert updated_model["name"] == UPDATED_MODEL_NAME
 
     project_model_config_1 = {
