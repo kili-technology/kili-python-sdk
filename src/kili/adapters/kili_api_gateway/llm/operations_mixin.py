@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Api Keys related operations."""
 
-from typing import Dict, Generator, Optional
+from typing import Dict, List, Optional, cast
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -36,14 +36,26 @@ from kili.adapters.kili_api_gateway.llm.operations import (
     get_update_project_model_mutation,
 )
 from kili.domain.llm import (
+    ModelDict,
     ModelToCreateInput,
     ModelToUpdateInput,
     OrganizationModelFilters,
+    ProjectModelDict,
     ProjectModelFilters,
     ProjectModelToCreateInput,
     ProjectModelToUpdateInput,
 )
 from kili.domain.types import ListOrTuple
+
+DEFAULT_PROJECT_FIELDS = ["id", "name", "credentials", "type"]
+DEFAULT_PROJECT_MODEL_FIELDS = [
+    "id",
+    "configuration",
+    "model.id",
+    "model.credentials",
+    "model.name",
+    "model.type",
+]
 
 
 class ModelConfigurationOperationMixin(BaseOperationMixin):
@@ -52,74 +64,79 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
     def list_models(
         self,
         filters: OrganizationModelFilters,
-        fields: ListOrTuple[str],
+        fields: Optional[ListOrTuple[str]] = None,
         options: Optional[QueryOptions] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> List[ModelDict]:
         """List models with given options."""
-        fragment = fragment_builder(fields)
+        fragment = fragment_builder(fields or DEFAULT_PROJECT_FIELDS)
         query = get_models_query(fragment)
         where = model_where_wrapper(filters)
-        return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
-            query,
-            where,
-            options if options else QueryOptions(disable_tqdm=False),
-            "Retrieving organization models",
-            None,
-        )
+        return [
+            cast(ModelDict, item)
+            for item in PaginatedGraphQLQuery(
+                self.graphql_client
+            ).execute_query_from_paginated_call(
+                query,
+                where,
+                options if options else QueryOptions(disable_tqdm=False),
+                "Retrieving organization models",
+                None,
+            )
+        ]
 
-    def get_model(self, model_id: str, fields: ListOrTuple[str]) -> Dict:
+    def get_model(self, model_id: str, fields: Optional[ListOrTuple[str]] = None) -> ModelDict:
         """Get a model by ID."""
-        fragment = fragment_builder(fields)
+        fragment = fragment_builder(fields or DEFAULT_PROJECT_FIELDS)
         query = get_model_query(fragment)
         variables = {"modelId": model_id}
         result = self.graphql_client.execute(query, variables)
         return result["model"]
 
-    def create_model(self, model: ModelToCreateInput) -> Dict:
+    def create_model(self, model: ModelToCreateInput) -> ModelDict:
         """Send a GraphQL request calling createModel resolver."""
         payload = {"input": map_create_model_input(model)}
-        fragment = fragment_builder(["id"])
+        fragment = fragment_builder(DEFAULT_PROJECT_FIELDS)
         mutation = get_create_model_mutation(fragment)
         result = self.graphql_client.execute(mutation, payload)
         return result["createModel"]
 
-    def update_properties_in_model(self, model_id: str, model: ModelToUpdateInput) -> Dict:
+    def update_properties_in_model(self, model_id: str, model: ModelToUpdateInput) -> ModelDict:
         """Send a GraphQL request calling updateModel resolver."""
         payload = {"id": model_id, "input": map_update_model_input(model)}
-        fragment = fragment_builder(["id"])
+        fragment = fragment_builder(DEFAULT_PROJECT_FIELDS)
         mutation = get_update_model_mutation(fragment)
         result = self.graphql_client.execute(mutation, payload)
         return result["updateModel"]
 
-    def delete_model(self, model_id: str) -> Dict:
+    def delete_model(self, model_id: str) -> bool:
         """Send a GraphQL request to delete an organization model."""
         payload = map_delete_model_input(model_id)
         mutation = get_delete_model_mutation()
         result = self.graphql_client.execute(mutation, payload)
         return result["deleteModel"]
 
-    def create_project_model(self, project_model: ProjectModelToCreateInput) -> Dict:
+    def create_project_model(self, project_model: ProjectModelToCreateInput) -> ProjectModelDict:
         """Send a GraphQL request calling createModel resolver."""
         payload = {"input": map_create_project_model_input(project_model)}
-        fragment = fragment_builder(["id"])
+        fragment = fragment_builder(DEFAULT_PROJECT_MODEL_FIELDS)
         mutation = get_create_project_model_mutation(fragment)
         result = self.graphql_client.execute(mutation, payload)
         return result["createProjectModel"]
 
     def update_project_model(
         self, project_model_id: str, project_model: ProjectModelToUpdateInput
-    ) -> Dict:
+    ) -> ProjectModelDict:
         """Send a GraphQL request calling updateProjectModel resolver."""
         payload = {
             "updateProjectModelId": project_model_id,
             "input": map_update_project_model_input(project_model),
         }
-        fragment = fragment_builder(["id", "configuration"])
+        fragment = fragment_builder(DEFAULT_PROJECT_MODEL_FIELDS)
         mutation = get_update_project_model_mutation(fragment)
         result = self.graphql_client.execute(mutation, payload)
         return result["updateProjectModel"]
 
-    def delete_project_model(self, project_model_id: str) -> Dict:
+    def delete_project_model(self, project_model_id: str) -> bool:
         """Send a GraphQL request to delete a project model."""
         payload = map_delete_project_model_input(project_model_id)
         mutation = get_delete_project_model_mutation()
@@ -129,20 +146,25 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
     def list_project_models(
         self,
         filters: ProjectModelFilters,
-        fields: ListOrTuple[str],
+        fields: Optional[ListOrTuple[str]] = None,
         options: Optional[QueryOptions] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> List[ProjectModelDict]:
         """List project models with given options."""
-        fragment = fragment_builder(fields)
+        fragment = fragment_builder(fields or DEFAULT_PROJECT_MODEL_FIELDS)
         query = get_project_models_query(fragment)
         where = project_model_where_mapper(filters)
-        return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
-            query,
-            where,
-            options if options else QueryOptions(disable_tqdm=False),
-            "Retrieving project models",
-            None,
-        )
+        return [
+            cast(ProjectModelDict, item)
+            for item in PaginatedGraphQLQuery(
+                self.graphql_client
+            ).execute_query_from_paginated_call(
+                query,
+                where,
+                options if options else QueryOptions(disable_tqdm=False),
+                "Retrieving project models",
+                None,
+            )
+        ]
 
     def create_llm_asset(
         self,

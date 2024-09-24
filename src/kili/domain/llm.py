@@ -1,8 +1,10 @@
-"""API Key domain."""
+"""LLM domain."""
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, Union
+from typing import Any, Dict, Optional, Union
+
+from typing_extensions import NotRequired, TypedDict
 
 
 @dataclass
@@ -98,3 +100,28 @@ class ChatItemRole(str, Enum):
 
     ASSISTANT = "ASSISTANT"
     USER = "USER"
+
+
+class CredentialsDict(TypedDict):
+    """Dict that represents model.Credentials."""
+
+    api_key: str
+    endpoint: str
+    deployment_id: NotRequired[str]
+
+
+class ModelDict(TypedDict):
+    """Dict that represents a Model."""
+
+    id: str
+    credentials: CredentialsDict
+    name: str
+    type: str
+
+
+class ProjectModelDict(TypedDict):
+    """Dict that represents a ProjectModel."""
+
+    id: str
+    configuration: Dict[str, Any]
+    model: ModelDict

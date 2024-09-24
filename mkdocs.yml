@@ -21,7 +21,6 @@ nav:
           - Label Utils: sdk/label_utils.md
           - Label Parsing: sdk/label_parsing.md
           - LLM: sdk/llm.md
-          - Model: sdk/model.md
           - Notification: sdk/notification.md
           - Organization: sdk/organization.md
           - Plugins: sdk/plugins.md

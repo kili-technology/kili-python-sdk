@@ -14,11 +14,13 @@ from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.llm import (
     AzureOpenAICredentials,
+    ModelDict,
     ModelToCreateInput,
     ModelToUpdateInput,
     ModelType,
     OpenAISDKCredentials,
     OrganizationModelFilters,
+    ProjectModelDict,
     ProjectModelFilters,
     ProjectModelToCreateInput,
     ProjectModelToUpdateInput,
@@ -28,21 +30,6 @@ from kili.llm.services.export import export
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.logcontext import for_all_methods, log_call
-
-DEFAULT_ORGANIZATION_MODEL_FIELDS = [
-    "id",
-    "credentials",
-    "name",
-    "type",
-]
-
-DEFAULT_PROJECT_MODEL_FIELDS = [
-    "configuration",
-    "id",
-    "model.credentials",
-    "model.name",
-    "model.type",
-]
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -100,7 +87,7 @@ class LlmClientMethods:
             warnings.warn(str(excp), stacklevel=2)
             return None
 
-    def create_model(self, organization_id: str, model: dict):
+    def create_model(self, organization_id: str, model: dict) -> ModelDict:
         # pylint: disable=line-too-long
         """Create a new model in an organization.
 
@@ -137,7 +124,7 @@ class LlmClientMethods:
 
         !!! example "Recipe"
             For more detailed examples on how to use LLM models,
-                see [the recipe](https://docs.kili-technology.com/recipes/creating-a-project)          ```
+                see [the tutorial](https://docs.kili-technology.com/tutorials/creating-a-project)          ```
         """
         credentials_data = model["credentials"]
         model_type = ModelType(model["type"])
@@ -157,7 +144,7 @@ class LlmClientMethods:
         )
         return self.kili_api_gateway.create_model(model=model_input)
 
-    def models(self, organization_id: str, fields: Optional[List[str]] = None):
+    def models(self, organization_id: str, fields: Optional[List[str]] = None) -> List[ModelDict]:
         # pylint: disable=line-too-long
         """List models in an organization.
 
@@ -176,14 +163,9 @@ class LlmClientMethods:
             organization_id=organization_id,
         )
 
-        return list(
-            self.kili_api_gateway.list_models(
-                filters=converted_filters,
-                fields=fields if fields else DEFAULT_ORGANIZATION_MODEL_FIELDS,
-            )
-        )
+        return list(self.kili_api_gateway.list_models(filters=converted_filters, fields=fields))
 
-    def model(self, model_id: str, fields: Optional[List[str]] = None):
+    def model(self, model_id: str, fields: Optional[List[str]] = None) -> ModelDict:
         # pylint: disable=line-too-long
         """Retrieve a specific model.
 
@@ -200,10 +182,10 @@ class LlmClientMethods:
         """
         return self.kili_api_gateway.get_model(
             model_id=model_id,
-            fields=fields if fields else DEFAULT_ORGANIZATION_MODEL_FIELDS,
+            fields=fields,
         )
 
-    def update_properties_in_model(self, model_id: str, model: dict):
+    def update_properties_in_model(self, model_id: str, model: dict) -> ModelDict:
         # pylint: disable=line-too-long
         """Update properties of an existing model.
 
@@ -256,7 +238,7 @@ class LlmClientMethods:
             model_id=model_id, model=model_input
         )
 
-    def delete_model(self, model_id: str):
+    def delete_model(self, model_id: str) -> bool:
         # pylint: disable=line-too-long
         """Delete a model from an organization.
 
@@ -271,7 +253,9 @@ class LlmClientMethods:
         """
         return self.kili_api_gateway.delete_model(model_id=model_id)
 
-    def create_project_model(self, project_id: str, model_id: str, configuration: dict):
+    def create_project_model(
+        self, project_id: str, model_id: str, configuration: dict
+    ) -> ProjectModelDict:
         # pylint: disable=line-too-long
         """Associate a model with a project.
 
@@ -300,7 +284,7 @@ class LlmClientMethods:
 
     def project_models(
         self, project_id: str, filters: Optional[Dict] = None, fields: Optional[List[str]] = None
-    ):
+    ) -> List[ProjectModelDict]:
         """List models associated with a project.
 
         Args:
@@ -324,11 +308,11 @@ class LlmClientMethods:
         return list(
             self.kili_api_gateway.list_project_models(
                 filters=converted_filters,
-                fields=fields if fields else DEFAULT_PROJECT_MODEL_FIELDS,
+                fields=fields,
             )
         )
 
-    def update_project_model(self, project_model_id: str, configuration: dict):
+    def update_project_model(self, project_model_id: str, configuration: dict) -> ProjectModelDict:
         """Update the configuration of a project model.
 
         Args:
@@ -352,7 +336,7 @@ class LlmClientMethods:
             project_model_id=project_model_id, project_model=project_model_input
         )
 
-    def delete_project_model(self, project_model_id: str):
+    def delete_project_model(self, project_model_id: str) -> bool:
         """Delete a project model.
 
         Args:
