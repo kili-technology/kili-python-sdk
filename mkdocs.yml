@@ -20,6 +20,8 @@ nav:
           - Label: sdk/label.md
           - Label Utils: sdk/label_utils.md
           - Label Parsing: sdk/label_parsing.md
+          - LLM: sdk/llm.md
+          - Model: sdk/model.md
           - Notification: sdk/notification.md
           - Organization: sdk/organization.md
           - Plugins: sdk/plugins.md
@@ -57,6 +59,7 @@ nav:
       - Exporting Project Data:
           - Exporting a Project: sdk/tutorials/export_a_kili_project.md
           - Parsing Labels: sdk/tutorials/label_parsing.md
+      - LLM Projects: sdk/tutorials/llm_project_setup.md
       - Setting Up Plugins:
           - Developing Plugins: sdk/tutorials/plugins_development.md
           - Plugin Example - Programmatic QA: sdk/tutorials/plugins_example.md
