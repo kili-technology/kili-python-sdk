@@ -100,7 +100,7 @@ class LlmClientMethods:
             warnings.warn(str(excp), stacklevel=2)
             return None
 
-    def list_models(self, organization_id: str, fields: Optional[List[str]] = None):
+    def models(self, organization_id: str, fields: Optional[List[str]] = None):
         """List models of given organization."""
         converted_filters = OrganizationModelFilters(
             organization_id=organization_id,
@@ -113,7 +113,7 @@ class LlmClientMethods:
             )
         )
 
-    def get_model(self, model_id: str, fields: Optional[List[str]] = None):
+    def model(self, model_id: str, fields: Optional[List[str]] = None):
         return self.kili_api_gateway.get_model(
             model_id=model_id,
             fields=fields if fields else DEFAULT_ORGANIZATION_MODEL_FIELDS,
@@ -138,7 +138,7 @@ class LlmClientMethods:
         )
         return self.kili_api_gateway.create_model(model=model_input)
 
-    def update_model(self, model_id: str, model: dict):
+    def update_properties_in_model(self, model_id: str, model: dict):
         credentials_data = model.get("credentials")
         credentials = None
 
@@ -161,12 +161,14 @@ class LlmClientMethods:
             credentials=credentials,
             name=model.get("name"),
         )
-        return self.kili_api_gateway.update_model(model_id=model_id, model=model_input)
+        return self.kili_api_gateway.update_properties_in_model(
+            model_id=model_id, model=model_input
+        )
 
     def delete_model(self, model_id: str):
         return self.kili_api_gateway.delete_model(model_id=model_id)
 
-    def list_project_models(
+    def project_models(
         self, project_id: str, filters: Optional[Dict] = None, fields: Optional[List[str]] = None
     ):
         """List project models of given project."""

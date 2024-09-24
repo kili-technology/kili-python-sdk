@@ -54,7 +54,7 @@ def test_list_models(mocker):
     kili_api_gateway.list_models.return_value = mock_list_models
 
     kili_llm = LlmClientMethods(kili_api_gateway)
-    result = kili_llm.list_models(organization_id="organization_id")
+    result = kili_llm.models(organization_id="organization_id")
 
     assert result == mock_list_models
 
@@ -64,7 +64,7 @@ def test_get_model(mocker):
     kili_api_gateway.get_model.return_value = mock_get_model_open_ai_sdk
 
     kili_llm = LlmClientMethods(kili_api_gateway)
-    result = kili_llm.get_model(model_id="model_id")
+    result = kili_llm.model(model_id="model_id")
 
     assert result == mock_get_model_open_ai_sdk
 
@@ -128,10 +128,10 @@ def test_create_invalid_model(mocker):
 def test_update_model_open_ai_sdk(mocker):
     kili_api_gateway = mocker.MagicMock()
     kili_api_gateway.get_model.return_value = mock_get_model_open_ai_sdk
-    kili_api_gateway.update_model.return_value = mock_update_model
+    kili_api_gateway.update_properties_in_model.return_value = mock_update_model
 
     kili_llm = LlmClientMethods(kili_api_gateway)
-    result = kili_llm.update_model(
+    result = kili_llm.update_properties_in_model(
         model_id="model_id",
         model={
             "name": "Updated Model",
@@ -148,10 +148,10 @@ def test_update_model_open_ai_sdk(mocker):
 def test_update_model_azure_open_ai(mocker):
     kili_api_gateway = mocker.MagicMock()
     kili_api_gateway.get_model.return_value = mock_get_model_azure_open_ai
-    kili_api_gateway.update_model.return_value = mock_update_model
+    kili_api_gateway.update_properties_in_model.return_value = mock_update_model
 
     kili_llm = LlmClientMethods(kili_api_gateway)
-    result = kili_llm.update_model(
+    result = kili_llm.update_properties_in_model(
         model_id="model_id",
         model={
             "name": "Updated Model",
@@ -171,7 +171,7 @@ def test_update_invalid_model(mocker):
     kili_llm = LlmClientMethods(kili_api_gateway)
 
     with pytest.raises(ValueError):
-        kili_llm.update_model(
+        kili_llm.update_properties_in_model(
             model_id="model_id",
             model={
                 "name": "New Model",
@@ -187,7 +187,7 @@ def test_update_non_existing_model(mocker):
     kili_api_gateway.get_model.return_value = None
 
     with pytest.raises(ValueError):
-        kili_llm.update_model(
+        kili_llm.update_properties_in_model(
             model_id="model_id",
             model={
                 "name": "New Model",

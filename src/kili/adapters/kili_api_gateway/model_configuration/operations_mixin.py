@@ -77,7 +77,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(mutation, payload)
         return result["createModel"]
 
-    def update_model(self, model_id: str, model: ModelToUpdateInput) -> Dict:
+    def update_properties_in_model(self, model_id: str, model: ModelToUpdateInput) -> Dict:
         """Send a GraphQL request calling updateModel resolver."""
         payload = {"id": model_id, "input": map_update_model_input(model)}
         fragment = fragment_builder(["id"])

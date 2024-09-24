@@ -33,7 +33,7 @@ def test_list_project_models(mocker):
     kili_api_gateway.list_project_models.return_value = mock_list_project_models
 
     kili_llm = LlmClientMethods(kili_api_gateway)
-    result = kili_llm.list_project_models(project_id="project_id")
+    result = kili_llm.project_models(project_id="project_id")
 
     assert result == mock_list_project_models
 
