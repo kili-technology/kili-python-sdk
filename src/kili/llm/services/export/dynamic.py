@@ -1,61 +1,21 @@
 """Handle LLM_INSTR_FOLLOWING project exports."""
 
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Union
 
-from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
-from kili.domain.asset.asset import AssetFilters
-
-CHAT_ITEMS_NEEDED_FIELDS = [
-    "id",
-    "content",
-    "createdAt",
-    "modelId",
-    "parentId",
-    "role",
-]
-
-LABELS_NEEDED_FIELDS = [
-    "annotations.id",
-    "author.id",
-    "author.email",
-    "author.firstname",
-    "author.lastname",
-    *(f"chatItems.{field}" for field in CHAT_ITEMS_NEEDED_FIELDS),
-    "createdAt",
-    "id",
-    "isLatestLabelForUser",
-    "jsonResponse",  # This is needed to keep annotations
-    "labelType",
-    "modelName",
-]
-
-ASSET_NEEDED_FIELDS = [
-    "assetProjectModels.id",
-    "assetProjectModels.configuration",
-    "assetProjectModels.name",
-    "content",
-    "externalId",
-    "jsonMetadata",
-    *(f"labels.{field}" for field in LABELS_NEEDED_FIELDS),
-    "status",
-]
 
 
 class LLMDynamicExporter:
     """Handle exports of LLM_RLHF projects."""
 
-    def __init__(self, kili_api_gateway: KiliAPIGateway, disable_tqdm: Optional[bool]):
+    def __init__(self, kili_api_gateway: KiliAPIGateway):
         self.kili_api_gateway = kili_api_gateway
-        self.disable_tqdm = disable_tqdm
 
     def export(
-        self, asset_filter: AssetFilters, json_interface: Dict
+        self, assets: List[Dict], json_interface: Dict
     ) -> List[Dict[str, Union[List[str], str]]]:
         """Asset content depends of each label."""
-        options = QueryOptions(disable_tqdm=self.disable_tqdm)
-        assets = self.kili_api_gateway.list_assets(asset_filter, ASSET_NEEDED_FIELDS, options)
         export_res = []
         for asset in assets:
             # obfuscate models here

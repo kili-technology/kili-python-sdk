@@ -1137,6 +1137,7 @@ class LabelClientMethods(BaseClientMethods):
         annotation_modifier: Optional[CocoAnnotationModifier] = None,
         asset_filter_kwargs: Optional[Dict[str, object]] = None,
         normalized_coordinates: Optional[bool] = None,
+        include_sent_back_labels: Optional[bool] = True,
     ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
         # pylint: disable=line-too-long
         """Export the project labels with the requested format into the requested output path.
@@ -1189,6 +1190,7 @@ class LabelClientMethods(BaseClientMethods):
             normalized_coordinates: This parameter is only effective on the Kili (a.k.a raw) format.
                 If True, the coordinates of the `(x, y)` vertices are normalized between 0 and 1.
                 If False, the json response will contain additional fields with coordinates in absolute values, that is, in pixels.
+            include_sent_back_labels: If True, the export will include the labels that have been sent back.
 
         !!! Info
             The supported formats are:
@@ -1245,6 +1247,7 @@ class LabelClientMethods(BaseClientMethods):
                 annotation_modifier=annotation_modifier,
                 asset_filter_kwargs=asset_filter_kwargs,
                 normalized_coordinates=normalized_coordinates,
+                include_sent_back_labels=include_sent_back_labels,
             )
         except NoCompatibleJobError as excp:
             warnings.warn(str(excp), stacklevel=2)

@@ -46,6 +46,7 @@ class ExportParams(NamedTuple):
     annotation_modifier: Optional[CocoAnnotationModifier]
     asset_filter_kwargs: Optional[Dict[str, object]]
     normalized_coordinates: Optional[bool]
+    include_sent_back_labels: Optional[bool]
 
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
@@ -77,6 +78,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.annotation_modifier = export_params.annotation_modifier
         self.asset_filter_kwargs = export_params.asset_filter_kwargs
         self.normalized_coordinates = export_params.normalized_coordinates
+        self.include_sent_back_labels = export_params.include_sent_back_labels
 
         self.project = kili.kili_api_gateway.get_project(
             self.project_id, ["jsonInterface", "inputType", "title", "description", "id"]
@@ -271,6 +273,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     def preprocess_assets(self, assets: List[Dict]) -> List[Dict]:
         """Format labels in the requested format, and filter out autosave labels."""
+        include_sent_back_labels = self.include_sent_back_labels
         assets_in_format = []
         for asset in assets:
             if "labels" in asset:
@@ -278,12 +281,20 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 for label in asset["labels"]:
                     clean_label = AbstractExporter._format_json_response(label)
                     labels_of_asset.append(clean_label)
+                    if not include_sent_back_labels:
+                        labels_of_asset = list(
+                            filter(
+                                lambda label: label["isSentBackToQueue"] is False, labels_of_asset
+                            )
+                        )
                 asset["labels"] = labels_of_asset
+                assets_in_format.append(asset)
             if "latestLabel" in asset:
                 label = asset["latestLabel"]
                 if label is not None:
                     clean_label = AbstractExporter._format_json_response(label)
                     asset["latestLabel"] = clean_label
-            assets_in_format.append(asset)
+                if include_sent_back_labels or asset["latestLabel"]["isSentBackToQueue"] is False:
+                    assets_in_format.append(asset)
 
         return AbstractExporter._filter_out_autosave_labels(assets_in_format)
