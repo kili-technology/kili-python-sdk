@@ -8,7 +8,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     QueryOptions,
     fragment_builder,
 )
-from kili.adapters.kili_api_gateway.model_configuration.mappers import (
+from kili.adapters.kili_api_gateway.llm.mappers import (
     map_create_model_input,
     map_create_project_model_input,
     map_delete_model_input,
@@ -18,7 +18,7 @@ from kili.adapters.kili_api_gateway.model_configuration.mappers import (
     model_where_wrapper,
     project_model_where_mapper,
 )
-from kili.adapters.kili_api_gateway.model_configuration.operations import (
+from kili.adapters.kili_api_gateway.llm.operations import (
     get_create_model_mutation,
     get_create_project_model_mutation,
     get_delete_model_mutation,
