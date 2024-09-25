@@ -125,3 +125,11 @@ class ProjectModelDict(TypedDict):
     id: str
     configuration: Dict[str, Any]
     model: ModelDict
+
+
+class ChatItemDict(TypedDict):
+    """Dict that represents a ChatItem."""
+
+    content: str
+    id: str
+    role: ChatItemRole
