@@ -33,8 +33,8 @@ LABELS_NEEDED_FIELDS = [
 
 ASSET_NEEDED_FIELDS = [
     "assetProjectModels.id",
+    "assetProjectModels.projectModelId",
     "assetProjectModels.configuration",
-    "assetProjectModels.name",
     "content",
     "externalId",
     "jsonMetadata",
@@ -254,7 +254,7 @@ def _format_models_object(models, obfuscated_models):
     for model in models:
         model_configuration = {
             "id": model["id"],
-            "name": model["name"],
+            "projectModelId": model["projectModelId"],
             "configuration": model["configuration"],
         }
         res[obfuscated_models[model["id"]]] = model_configuration

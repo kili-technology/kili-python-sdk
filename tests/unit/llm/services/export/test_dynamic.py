@@ -195,13 +195,13 @@ mock_fetch_assets = [
         "assetProjectModels": [
             {
                 "id": "clzief6pr003c7tc99680e8yj",
-                "name": "ProjectModelA",
-                "configuration": {"temperature": 1, "model": "auto"},
+                "projectModelId": "ProjectModelA",
+                "configuration": {"temperature": 1, "model": "my-model-1"},
             },
             {
                 "id": "clzief6ps003d7tc9fzgj2xkf",
-                "name": "ProjectModelB",
-                "configuration": {"temperature": 0.5, "model": "auto"},
+                "projectModelId": "ProjectModelB",
+                "configuration": {"temperature": 0.5, "model": "my-model-2"},
             },
         ],
         "externalId": "clzief6pg003a7tc9cn0p1obf",
@@ -242,19 +242,19 @@ expected_export = [
             "models": {
                 "A": {
                     "configuration": {
-                        "model": "auto",
+                        "model": "my-model-1",
                         "temperature": 1,
                     },
                     "id": "clzief6pr003c7tc99680e8yj",
-                    "name": "ProjectModelA",
+                    "projectModelId": "ProjectModelA",
                 },
                 "B": {
                     "configuration": {
-                        "model": "auto",
+                        "model": "my-model-2",
                         "temperature": 0.5,
                     },
                     "id": "clzief6ps003d7tc9fzgj2xkf",
-                    "name": "ProjectModelB",
+                    "projectModelId": "ProjectModelB",
                 },
             },
             "labels": [
@@ -310,19 +310,19 @@ expected_export = [
             "models": {
                 "A": {
                     "configuration": {
-                        "model": "auto",
+                        "model": "my-model-1",
                         "temperature": 1,
                     },
                     "id": "clzief6pr003c7tc99680e8yj",
-                    "name": "ProjectModelA",
+                    "projectModelId": "ProjectModelA",
                 },
                 "B": {
                     "configuration": {
-                        "model": "auto",
+                        "model": "my-model-2",
                         "temperature": 0.5,
                     },
                     "id": "clzief6ps003d7tc9fzgj2xkf",
-                    "name": "ProjectModelB",
+                    "projectModelId": "ProjectModelB",
                 },
             },
             "labels": [
@@ -392,19 +392,19 @@ expected_export = [
             "models": {
                 "A": {
                     "configuration": {
-                        "model": "auto",
+                        "model": "my-model-1",
                         "temperature": 1,
                     },
                     "id": "clzief6pr003c7tc99680e8yj",
-                    "name": "ProjectModelA",
+                    "projectModelId": "ProjectModelA",
                 },
                 "B": {
                     "configuration": {
-                        "model": "auto",
+                        "model": "my-model-2",
                         "temperature": 0.5,
                     },
                     "id": "clzief6ps003d7tc9fzgj2xkf",
-                    "name": "ProjectModelB",
+                    "projectModelId": "ProjectModelB",
                 },
             },
             "labels": [
