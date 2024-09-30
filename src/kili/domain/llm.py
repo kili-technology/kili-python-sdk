@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, Optional, Union
 
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import TypedDict
 
 
 @dataclass
@@ -102,19 +102,26 @@ class ChatItemRole(str, Enum):
     USER = "USER"
 
 
-class CredentialsDict(TypedDict):
-    """Dict that represents model.Credentials."""
+class OpenAISDKCredentialsDict(TypedDict):
+    """Dict that represents model.Credentials for OpenAI SDK."""
 
     api_key: str
     endpoint: str
-    deployment_id: NotRequired[str]
+
+
+class AzureOpenAICredentialsDict(TypedDict):
+    """Dict that represents model.Credentials for Azure OpenAI."""
+
+    api_key: str
+    endpoint: str
+    deployment_id: str
 
 
 class ModelDict(TypedDict):
     """Dict that represents a Model."""
 
     id: str
-    credentials: CredentialsDict
+    credentials: Union[AzureOpenAICredentialsDict, OpenAISDKCredentialsDict]
     name: str
     type: str
 
