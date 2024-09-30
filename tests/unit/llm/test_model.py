@@ -1,5 +1,16 @@
 import pytest
 
+from kili.adapters.kili_api_gateway.llm.mappers import (
+    map_create_model_input,
+    map_update_model_input,
+)
+from kili.domain.llm import (
+    AzureOpenAICredentials,
+    ModelToCreateInput,
+    ModelToUpdateInput,
+    ModelType,
+    OpenAISDKCredentials,
+)
 from kili.llm.presentation.client.llm import LlmClientMethods
 
 mock_list_models = [
@@ -47,6 +58,143 @@ mock_update_model = {
     "name": "Updated Model",
 }
 mock_delete_model = {"id": "model_id"}
+
+
+def test_map_create_model_input_with_openai_sdk_credentials():
+    credentials = OpenAISDKCredentials(api_key="api_key", endpoint="https://api.openai.com/v1/")
+    input_data = ModelToCreateInput(
+        name="Test Model",
+        type=ModelType.OPEN_AI_SDK,
+        organization_id="org_id",
+        credentials=credentials,
+    )
+    expected_output = {
+        "credentials": {
+            "apiKey": "api_key",
+            "endpoint": "https://api.openai.com/v1/",
+        },
+        "name": "Test Model",
+        "type": ModelType.OPEN_AI_SDK.value,
+        "organizationId": "org_id",
+    }
+
+    result = map_create_model_input(input_data)
+    assert result == expected_output
+
+
+def test_map_create_model_input_with_azure_openai_credentials():
+    credentials = AzureOpenAICredentials(
+        api_key="api_key",
+        deployment_id="deployment_id",
+        endpoint="https://azure-openai-endpoint.com",
+    )
+    input_data = ModelToCreateInput(
+        name="Test Azure Model",
+        type=ModelType.AZURE_OPEN_AI,
+        organization_id="org_id",
+        credentials=credentials,
+    )
+    expected_output = {
+        "credentials": {
+            "apiKey": "api_key",
+            "deploymentId": "deployment_id",
+            "endpoint": "https://azure-openai-endpoint.com",
+        },
+        "name": "Test Azure Model",
+        "type": ModelType.AZURE_OPEN_AI.value,
+        "organizationId": "org_id",
+    }
+
+    result = map_create_model_input(input_data)
+    assert result == expected_output
+
+
+def test_map_update_model_input_update_name_only():
+    input_data = ModelToUpdateInput(name="Updated Model Name")
+    expected_output = {"name": "Updated Model Name"}
+
+    result = map_update_model_input(input_data)
+    assert result == expected_output
+
+
+def test_map_update_model_input_update_openai_sdk_credentials():
+    credentials = OpenAISDKCredentials(
+        api_key="new_api_key", endpoint="https://new-openai-endpoint.com"
+    )
+    input_data = ModelToUpdateInput(credentials=credentials)
+    expected_output = {
+        "credentials": {
+            "apiKey": "new_api_key",
+            "endpoint": "https://new-openai-endpoint.com",
+        }
+    }
+
+    result = map_update_model_input(input_data)
+    assert result == expected_output
+
+
+def test_map_update_model_input_update_azure_openai_credentials():
+    credentials = AzureOpenAICredentials(
+        api_key="new_api_key",
+        deployment_id="new_deployment_id",
+        endpoint="https://new-azure-openai-endpoint.com",
+    )
+    input_data = ModelToUpdateInput(credentials=credentials)
+    expected_output = {
+        "credentials": {
+            "apiKey": "new_api_key",
+            "deploymentId": "new_deployment_id",
+            "endpoint": "https://new-azure-openai-endpoint.com",
+        }
+    }
+
+    result = map_update_model_input(input_data)
+    assert result == expected_output
+
+
+def test_map_update_model_input_update_name_and_openai_sdk_credentials():
+    credentials = OpenAISDKCredentials(
+        api_key="new_api_key", endpoint="https://new-openai-endpoint.com"
+    )
+    input_data = ModelToUpdateInput(name="Updated Model Name", credentials=credentials)
+    expected_output = {
+        "name": "Updated Model Name",
+        "credentials": {
+            "apiKey": "new_api_key",
+            "endpoint": "https://new-openai-endpoint.com",
+        },
+    }
+
+    result = map_update_model_input(input_data)
+    assert result == expected_output
+
+
+def test_map_update_model_input_update_name_and_azure_openai_credentials():
+    credentials = AzureOpenAICredentials(
+        api_key="new_api_key",
+        deployment_id="new_deployment_id",
+        endpoint="https://new-azure-openai-endpoint.com",
+    )
+    input_data = ModelToUpdateInput(name="Updated Model Name", credentials=credentials)
+    expected_output = {
+        "name": "Updated Model Name",
+        "credentials": {
+            "apiKey": "new_api_key",
+            "deploymentId": "new_deployment_id",
+            "endpoint": "https://new-azure-openai-endpoint.com",
+        },
+    }
+
+    result = map_update_model_input(input_data)
+    assert result == expected_output
+
+
+def test_map_update_model_input_no_updates():
+    input_data = ModelToUpdateInput()
+    expected_output = {}
+
+    result = map_update_model_input(input_data)
+    assert result == expected_output
 
 
 def test_list_models(mocker):

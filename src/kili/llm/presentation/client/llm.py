@@ -14,11 +14,14 @@ from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.llm import (
     AzureOpenAICredentials,
+    ChatItemDict,
+    ModelDict,
     ModelToCreateInput,
     ModelToUpdateInput,
     ModelType,
     OpenAISDKCredentials,
     OrganizationModelFilters,
+    ProjectModelDict,
     ProjectModelFilters,
     ProjectModelToCreateInput,
     ProjectModelToUpdateInput,
@@ -28,21 +31,6 @@ from kili.llm.services.export import export
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.utils.logcontext import for_all_methods, log_call
-
-DEFAULT_ORGANIZATION_MODEL_FIELDS = [
-    "id",
-    "credentials",
-    "name",
-    "type",
-]
-
-DEFAULT_PROJECT_MODEL_FIELDS = [
-    "configuration",
-    "id",
-    "model.credentials",
-    "model.name",
-    "model.type",
-]
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -100,26 +88,41 @@ class LlmClientMethods:
             warnings.warn(str(excp), stacklevel=2)
             return None
 
-    def models(self, organization_id: str, fields: Optional[List[str]] = None):
-        """List models of given organization."""
-        converted_filters = OrganizationModelFilters(
-            organization_id=organization_id,
-        )
+    def create_model(self, organization_id: str, model: dict) -> ModelDict:
+        # pylint: disable=line-too-long
+        """Create a new model in an organization.
 
-        return list(
-            self.kili_api_gateway.list_models(
-                filters=converted_filters,
-                fields=fields if fields else DEFAULT_ORGANIZATION_MODEL_FIELDS,
-            )
-        )
+        Args:
+            organization_id: Identifier of the organization.
+            model: A dictionary representing the model to create, containing:
+                - `name`: Name of the model.
+                - `type`: Type of the model, one of:
+                    - `"AZURE_OPEN_AI"`
+                    - `"OPEN_AI_SDK"`
+                - `credentials`: Credentials required for the model, depending on the type:
+                    - For `"AZURE_OPEN_AI"` type:
+                        - `api_key`: The API key for Azure OpenAI.
+                        - `deployment_id`: The deployment ID within Azure.
+                        - `endpoint`: The endpoint URL of the Azure OpenAI service.
+                    - For `"OPEN_AI_SDK"` type:
+                        - `api_key`: The API key for OpenAI SDK.
+                        - `endpoint`: The endpoint URL of the OpenAI SDK service.
 
-    def model(self, model_id: str, fields: Optional[List[str]] = None):
-        return self.kili_api_gateway.get_model(
-            model_id=model_id,
-            fields=fields if fields else DEFAULT_ORGANIZATION_MODEL_FIELDS,
-        )
+        Returns:
+            A dictionary containing the created model's details.
 
-    def create_model(self, organization_id: str, model: dict):
+        Examples:
+            >>> # Example of creating an OpenAI SDK model
+            >>> model_data = {
+            ...     "name": "My OpenAI SDK Model",
+            ...     "type": "OPEN_AI_SDK",
+            ...     "credentials": {
+            ...         "api_key": "your_open_ai_api_key",
+            ...         "endpoint": "https://api.openai.com/v1/"
+            ...     }
+            ... }
+            >>> kili.llm.create_model(organization_id="your_organization_id", model=model_data)
+        """
         credentials_data = model["credentials"]
         model_type = ModelType(model["type"])
 
@@ -138,7 +141,74 @@ class LlmClientMethods:
         )
         return self.kili_api_gateway.create_model(model=model_input)
 
-    def update_properties_in_model(self, model_id: str, model: dict):
+    def models(self, organization_id: str, fields: Optional[List[str]] = None) -> List[ModelDict]:
+        # pylint: disable=line-too-long
+        """List models in an organization.
+
+        Args:
+            organization_id: Identifier of the organization.
+            fields: All the fields to request among the possible fields for the models.
+                Defaults to ["id", "credentials", "name", "type"].
+
+        Returns:
+            A list of models.
+
+        Examples:
+            >>> kili.llm.models(organization_id="your_organization_id")
+        """
+        converted_filters = OrganizationModelFilters(
+            organization_id=organization_id,
+        )
+
+        return list(self.kili_api_gateway.list_models(filters=converted_filters, fields=fields))
+
+    def model(self, model_id: str, fields: Optional[List[str]] = None) -> ModelDict:
+        # pylint: disable=line-too-long
+        """Retrieve a specific model.
+
+        Args:
+            model_id: Identifier of the model.
+            fields: All the fields to request among the possible fields for the models.
+                Defaults to ["id", "credentials", "name", "type"].
+
+        Returns:
+            A dictionary representing the model.
+
+        Examples:
+            >>> kili.llm.model(model_id="your_model_id")
+        """
+        return self.kili_api_gateway.get_model(
+            model_id=model_id,
+            fields=fields,
+        )
+
+    def update_properties_in_model(self, model_id: str, model: dict) -> ModelDict:
+        # pylint: disable=line-too-long
+        """Update properties of an existing model.
+
+        Args:
+            model_id: Identifier of the model to update.
+            model: A dictionary containing the properties to update, which may include:
+                - `name`: New name of the model.
+                - `credentials`: Updated credentials for the model, depending on the type:
+                    - For `"AZURE_OPEN_AI"` type:
+                        - `api_key`: The API key for Azure OpenAI.
+                        - `deployment_id`: The deployment ID within Azure.
+                        - `endpoint`: The endpoint URL of the Azure OpenAI service.
+                    - For `"OPEN_AI_SDK"` type:
+                        - `api_key`: The API key for OpenAI SDK.
+                        - `endpoint`: The endpoint URL of the OpenAI SDK service.
+
+        Returns:
+            A dictionary containing the updated model's details.
+
+        Examples:
+            >>> # Update the name of a model
+            >>> kili.llm.update_properties_in_model(
+            ...     model_id="your_model_id",
+            ...     model={"name": "Updated Model Name"}
+            ... )
+        """
         credentials_data = model.get("credentials")
         credentials = None
 
@@ -165,13 +235,68 @@ class LlmClientMethods:
             model_id=model_id, model=model_input
         )
 
-    def delete_model(self, model_id: str):
+    def delete_model(self, model_id: str) -> bool:
+        # pylint: disable=line-too-long
+        """Delete a model from an organization.
+
+        Args:
+            model_id: Identifier of the model to delete.
+
+        Returns:
+            A dictionary indicating the result of the deletion.
+
+        Examples:
+            >>> kili.llm.delete_model(model_id="your_model_id")
+        """
         return self.kili_api_gateway.delete_model(model_id=model_id)
+
+    def create_project_model(
+        self, project_id: str, model_id: str, configuration: dict
+    ) -> ProjectModelDict:
+        # pylint: disable=line-too-long
+        """Associate a model with a project.
+
+        Args:
+            project_id: Identifier of the project.
+            model_id: Identifier of the model to associate.
+            configuration: Configuration parameters for the project model.
+
+        Returns:
+            A dictionary containing the created project model's details.
+
+        Examples:
+            >>> configuration = {
+            ...     # Configuration details specific to your use case
+            ... }
+            >>> kili.llm.create_project_model(
+            ...     project_id="your_project_id",
+            ...     model_id="your_model_id",
+            ...     configuration={"temperature": 0.7}
+            ... )
+        """
+        project_model_input = ProjectModelToCreateInput(
+            project_id=project_id, model_id=model_id, configuration=configuration
+        )
+        return self.kili_api_gateway.create_project_model(project_model=project_model_input)
 
     def project_models(
         self, project_id: str, filters: Optional[Dict] = None, fields: Optional[List[str]] = None
-    ):
-        """List project models of given project."""
+    ) -> List[ProjectModelDict]:
+        """List models associated with a project.
+
+        Args:
+            project_id: Identifier of the project.
+            filters: Optional filters to apply. Possible keys:
+                - `model_id`: Identifier of a specific model to filter by.
+            fields: All the fields to request among the possible fields for the project models.
+                Defaults to ["configuration", "id", "model.credentials", "model.name", "model.type"].
+
+        Returns:
+            A list of project models.
+
+        Examples:
+            >>> kili.llm.project_models(project_id="your_project_id")
+        """
         converted_filters = ProjectModelFilters(
             project_id=project_id,
             model_id=filters["model_id"] if filters and "model_id" in filters else None,
@@ -180,21 +305,82 @@ class LlmClientMethods:
         return list(
             self.kili_api_gateway.list_project_models(
                 filters=converted_filters,
-                fields=fields if fields else DEFAULT_PROJECT_MODEL_FIELDS,
+                fields=fields,
             )
         )
 
-    def create_project_model(self, project_id: str, model_id: str, configuration: dict):
-        project_model_input = ProjectModelToCreateInput(
-            project_id=project_id, model_id=model_id, configuration=configuration
-        )
-        return self.kili_api_gateway.create_project_model(project_model=project_model_input)
+    def update_project_model(self, project_model_id: str, configuration: dict) -> ProjectModelDict:
+        """Update the configuration of a project model.
 
-    def update_project_model(self, project_model_id: str, configuration: dict):
+        Args:
+            project_model_id: Identifier of the project model to update.
+            configuration: New configuration parameters.
+
+        Returns:
+            A dictionary containing the updated project model's details.
+
+        Examples:
+            >>> configuration = {
+            ...     # Updated configuration details
+            ... }
+            >>> kili.llm.update_project_model(
+            ...     project_model_id="your_project_model_id",
+            ...     configuration=configuration
+            ... )
+        """
         project_model_input = ProjectModelToUpdateInput(configuration=configuration)
         return self.kili_api_gateway.update_project_model(
             project_model_id=project_model_id, project_model=project_model_input
         )
 
-    def delete_project_model(self, project_model_id: str):
+    def delete_project_model(self, project_model_id: str) -> bool:
+        """Delete a project model.
+
+        Args:
+            project_model_id: Identifier of the project model to delete.
+
+        Returns:
+            A dictionary indicating the result of the deletion.
+
+        Examples:
+            >>> kili.llm.delete_project_model(project_model_id="your_project_model_id")
+        """
         return self.kili_api_gateway.delete_project_model(project_model_id)
+
+    def create_conversation(self, project_id: str, prompt: str) -> List[ChatItemDict]:
+        # pylint: disable=line-too-long
+        """Create a new conversation in an LLM project starting with a user's prompt.
+
+        This method initiates a new conversation in the specified project by:
+        - Creating an LLM asset and label associated with the current user.
+        - Adding the user's prompt as the first chat item.
+        - Automatically generating assistant responses using the project's models.
+
+        Args:
+            project_id: The identifier of the project where the conversation will be created.
+            prompt: The initial prompt or message from the user to start the conversation.
+
+        Returns:
+            A list of chat items in the conversation, including the user's prompt and the assistant's responses.
+
+        Examples:
+            >>> PROMPT = "Hello, how can I improve my coding skills?"
+            >>> chat_items = kili.llm.create_conversation(project_id="your_project_id", prompt=PROMPT)
+
+        Notes:
+            - The first chat item corresponds to the user's prompt.
+            - The subsequent chat items are assistant responses generated by the project's models.
+            - An LLM asset and a label are created in the project with status "TODO" and labelType "PREDICTION".
+        """
+        user_id = self.kili_api_gateway.get_current_user(["id"])["id"]
+        llm_asset = self.kili_api_gateway.create_llm_asset(
+            project_id=project_id,
+            author_id=user_id,
+            status="TODO",
+            label_type="PREDICTION",
+        )
+        asset_id = llm_asset["id"]
+        label_id = llm_asset["latestLabel"]["id"]
+        return self.kili_api_gateway.create_chat_item(
+            asset_id=asset_id, label_id=label_id, prompt=prompt
+        )

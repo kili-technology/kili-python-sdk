@@ -1,8 +1,10 @@
-"""API Key domain."""
+"""LLM domain."""
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, Union
+from typing import Any, Dict, Optional, Union
+
+from typing_extensions import TypedDict
 
 
 @dataclass
@@ -91,3 +93,50 @@ class ProjectModelFilters:
 
     project_id: Optional[str] = None
     model_id: Optional[str] = None
+
+
+class ChatItemRole(str, Enum):
+    """Enumeration of the supported chat item role."""
+
+    ASSISTANT = "ASSISTANT"
+    USER = "USER"
+
+
+class OpenAISDKCredentialsDict(TypedDict):
+    """Dict that represents model.Credentials for OpenAI SDK."""
+
+    api_key: str
+    endpoint: str
+
+
+class AzureOpenAICredentialsDict(TypedDict):
+    """Dict that represents model.Credentials for Azure OpenAI."""
+
+    api_key: str
+    endpoint: str
+    deployment_id: str
+
+
+class ModelDict(TypedDict):
+    """Dict that represents a Model."""
+
+    id: str
+    credentials: Union[AzureOpenAICredentialsDict, OpenAISDKCredentialsDict]
+    name: str
+    type: str
+
+
+class ProjectModelDict(TypedDict):
+    """Dict that represents a ProjectModel."""
+
+    id: str
+    configuration: Dict[str, Any]
+    model: ModelDict
+
+
+class ChatItemDict(TypedDict):
+    """Dict that represents a ChatItem."""
+
+    content: str
+    id: str
+    role: ChatItemRole
