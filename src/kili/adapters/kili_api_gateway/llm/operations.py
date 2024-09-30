@@ -94,3 +94,25 @@ def get_project_models_query(fragment: str) -> str:
           }}
         }}
         """
+
+
+def get_create_llm_asset_mutation(fragment: str) -> str:
+    """Return the GraphQL createLLMAsset mutation."""
+    return f"""
+        mutation CreateLLMAsset($where: ProjectWhere!, $data: CreateLLMAssetData!) {{
+            createLLMAsset(where: $where, data: $data) {{
+                {fragment}
+            }}
+        }}
+    """
+
+
+def get_create_chat_item_mutation(fragment: str) -> str:
+    """Return the GraphQL createChatItem mutation."""
+    return f"""
+        mutation CreateChatItem($data: CreateChatItemData!, $where: AssetWhere!) {{
+            createChatItem(data: $data, where: $where) {{
+                {fragment}
+            }}
+        }}
+    """

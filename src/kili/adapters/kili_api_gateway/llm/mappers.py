@@ -109,3 +109,30 @@ def map_delete_project_model_input(project_model_id: str) -> Dict:
     return {
         "deleteProjectModelId": project_model_id,
     }
+
+
+def map_create_llm_asset_input(data: Dict) -> Dict:
+    """Map the input for the createLLMAsset mutation."""
+    result = {
+        "authorId": data["author_id"],
+    }
+    if "status" in data:
+        result["status"] = data["status"]
+    if "label_type" in data:
+        result["labelType"] = data["label_type"]
+    return result
+
+
+def map_project_where(project_id: str) -> Dict:
+    """Map the 'where' parameter for mutations that require a ProjectWhere."""
+    return {"id": project_id}
+
+
+def map_create_chat_item_input(label_id: str, prompt: str) -> Dict:
+    """Map the input for the createChatItem mutation."""
+    return {"content": prompt, "role": "USER", "labelId": label_id}
+
+
+def map_asset_where(asset_id: str) -> Dict:
+    """Map the 'where' parameter for the createChatItem mutation."""
+    return {"id": asset_id}
