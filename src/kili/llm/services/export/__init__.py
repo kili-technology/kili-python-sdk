@@ -25,6 +25,7 @@ def export(  # pylint: disable=too-many-arguments, too-many-locals
             project_id, asset_filter, project["jsonInterface"]
         )
     if input_type == "LLM_INSTR_FOLLOWING":
+        asset_filter.status_in = ["LABELED", "REVIEWED", "TO_REVIEW"]
         return LLMDynamicExporter(kili_api_gateway, disable_tqdm).export(
             asset_filter, project["jsonInterface"]
         )
