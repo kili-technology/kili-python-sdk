@@ -826,7 +826,7 @@ def test_export_with_asset_filter_kwargs(mocker):
             "inference_mark_gte": 0.7,
             "inference_mark_lte": 0.8,
         },
-        label_type_in=["PREDICTION"],
+        label_type_in=["PREDICTION", "DEFAULT", "REVIEW"],
     )
     expected_where = AssetFilters(
         project_id=ProjectId("fake_proj_id"),
@@ -837,7 +837,7 @@ def test_export_with_asset_filter_kwargs(mocker):
         honeypot_mark_lte=0.4,
         created_at_gte="2022-02-03",
         created_at_lte="2023-02-03",
-        label_type_in=["PREDICTION"],
+        label_type_in=["PREDICTION", "DEFAULT", "REVIEW"],
         inference_mark_gte=0.7,
         inference_mark_lte=0.8,
         issue_type="QUESTION",
