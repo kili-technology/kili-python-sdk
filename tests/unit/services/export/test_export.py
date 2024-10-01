@@ -653,6 +653,7 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
             "annotation_modifier": None,
             "asset_filter_kwargs": None,
             "normalized_coordinates": None,
+            "label_type_in": None,
         }
 
         default_kwargs.update(test_case["export_kwargs"])
@@ -779,6 +780,7 @@ def test_export_service_errors(mocker_project, name, test_case, error):
             "annotation_modifier": None,
             "asset_filter_kwargs": None,
             "normalized_coordinates": None,
+            "label_type_in": None,
         }
 
         default_kwargs.update(test_case["export_kwargs"])
@@ -824,6 +826,7 @@ def test_export_with_asset_filter_kwargs(mocker):
             "inference_mark_gte": 0.7,
             "inference_mark_lte": 0.8,
         },
+        label_type_in=["PREDICTION"],
     )
     expected_where = AssetFilters(
         project_id=ProjectId("fake_proj_id"),
@@ -834,7 +837,7 @@ def test_export_with_asset_filter_kwargs(mocker):
         honeypot_mark_lte=0.4,
         created_at_gte="2022-02-03",
         created_at_lte="2023-02-03",
-        label_type_in=["DEFAULT", "REVIEW"],
+        label_type_in=["PREDICTION"],
         inference_mark_gte=0.7,
         inference_mark_lte=0.8,
         issue_type="QUESTION",

@@ -122,6 +122,7 @@ def export_labels(
             annotation_modifier=None,
             asset_filter_kwargs=None,
             normalized_coordinates=normalized_coordinates,
+            label_type_in=None,
         )
     except NoCompatibleJobError as excp:
         print(str(excp))

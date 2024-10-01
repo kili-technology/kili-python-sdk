@@ -46,6 +46,7 @@ class ExportParams(NamedTuple):
     annotation_modifier: Optional[CocoAnnotationModifier]
     asset_filter_kwargs: Optional[Dict[str, object]]
     normalized_coordinates: Optional[bool]
+    label_type_in: Optional[List[str]]
 
 
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
@@ -77,6 +78,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.annotation_modifier = export_params.annotation_modifier
         self.asset_filter_kwargs = export_params.asset_filter_kwargs
         self.normalized_coordinates = export_params.normalized_coordinates
+        self.label_type_in = export_params.label_type_in or ["DEFAULT", "REVIEW"]
 
         self.project = kili.kili_api_gateway.get_project(
             self.project_id, ["jsonInterface", "inputType", "title", "description", "id"]
@@ -170,7 +172,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 project_id=self.project_id,
                 asset_ids=self.assets_ids,
                 export_type=self.export_type,
-                label_type_in=["DEFAULT", "REVIEW"],
+                label_type_in=self.label_type_in,
                 disable_tqdm=self.disable_tqdm,
                 download_media=self.with_assets,
                 local_media_dir=str(self.images_folder),

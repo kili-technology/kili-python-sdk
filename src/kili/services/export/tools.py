@@ -110,7 +110,6 @@ def fetch_assets(
         List of fetched assets.
     """
     fields = get_fields_to_fetch(export_type)
-
     asset_filter_kwargs = asset_filter_kwargs or {}
     asset_where_params = {
         "project_id": project_id,
