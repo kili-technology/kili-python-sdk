@@ -61,7 +61,7 @@ mock_delete_model = {"id": "model_id"}
 
 
 def test_map_create_model_input_with_openai_sdk_credentials():
-    credentials = OpenAISDKCredentials(api_key="api_key", endpoint="https://api.openai.com/v1/")
+    credentials = OpenAISDKCredentials(api_key="api_key", endpoint="your_open_ai_endpoint")
     input_data = ModelToCreateInput(
         name="Test Model",
         type=ModelType.OPEN_AI_SDK,
@@ -71,7 +71,7 @@ def test_map_create_model_input_with_openai_sdk_credentials():
     expected_output = {
         "credentials": {
             "apiKey": "api_key",
-            "endpoint": "https://api.openai.com/v1/",
+            "endpoint": "your_open_ai_endpoint",
         },
         "name": "Test Model",
         "type": ModelType.OPEN_AI_SDK.value,
@@ -86,7 +86,7 @@ def test_map_create_model_input_with_azure_openai_credentials():
     credentials = AzureOpenAICredentials(
         api_key="api_key",
         deployment_id="deployment_id",
-        endpoint="https://azure-openai-endpoint.com",
+        endpoint="your_azure_open_ai_endpoint",
     )
     input_data = ModelToCreateInput(
         name="Test Azure Model",
@@ -98,7 +98,7 @@ def test_map_create_model_input_with_azure_openai_credentials():
         "credentials": {
             "apiKey": "api_key",
             "deploymentId": "deployment_id",
-            "endpoint": "https://azure-openai-endpoint.com",
+            "endpoint": "your_azure_open_ai_endpoint",
         },
         "name": "Test Azure Model",
         "type": ModelType.AZURE_OPEN_AI.value,
@@ -118,14 +118,12 @@ def test_map_update_model_input_update_name_only():
 
 
 def test_map_update_model_input_update_openai_sdk_credentials():
-    credentials = OpenAISDKCredentials(
-        api_key="new_api_key", endpoint="https://new-openai-endpoint.com"
-    )
+    credentials = OpenAISDKCredentials(api_key="new_api_key", endpoint="your_new_open_ai_endpoint")
     input_data = ModelToUpdateInput(credentials=credentials)
     expected_output = {
         "credentials": {
             "apiKey": "new_api_key",
-            "endpoint": "https://new-openai-endpoint.com",
+            "endpoint": "your_new_open_ai_endpoint",
         }
     }
 
@@ -137,14 +135,14 @@ def test_map_update_model_input_update_azure_openai_credentials():
     credentials = AzureOpenAICredentials(
         api_key="new_api_key",
         deployment_id="new_deployment_id",
-        endpoint="https://new-azure-openai-endpoint.com",
+        endpoint="your_new_azure_open_ai_endpoint",
     )
     input_data = ModelToUpdateInput(credentials=credentials)
     expected_output = {
         "credentials": {
             "apiKey": "new_api_key",
             "deploymentId": "new_deployment_id",
-            "endpoint": "https://new-azure-openai-endpoint.com",
+            "endpoint": "your_new_azure_open_ai_endpoint",
         }
     }
 
@@ -153,15 +151,13 @@ def test_map_update_model_input_update_azure_openai_credentials():
 
 
 def test_map_update_model_input_update_name_and_openai_sdk_credentials():
-    credentials = OpenAISDKCredentials(
-        api_key="new_api_key", endpoint="https://new-openai-endpoint.com"
-    )
+    credentials = OpenAISDKCredentials(api_key="new_api_key", endpoint="your_new_open_ai_endpoint")
     input_data = ModelToUpdateInput(name="Updated Model Name", credentials=credentials)
     expected_output = {
         "name": "Updated Model Name",
         "credentials": {
             "apiKey": "new_api_key",
-            "endpoint": "https://new-openai-endpoint.com",
+            "endpoint": "your_new_open_ai_endpoint",
         },
     }
 
@@ -173,7 +169,7 @@ def test_map_update_model_input_update_name_and_azure_openai_credentials():
     credentials = AzureOpenAICredentials(
         api_key="new_api_key",
         deployment_id="new_deployment_id",
-        endpoint="https://new-azure-openai-endpoint.com",
+        endpoint="your_new_azure_open_ai_endpoint",
     )
     input_data = ModelToUpdateInput(name="Updated Model Name", credentials=credentials)
     expected_output = {
@@ -181,7 +177,7 @@ def test_map_update_model_input_update_name_and_azure_openai_credentials():
         "credentials": {
             "apiKey": "new_api_key",
             "deploymentId": "new_deployment_id",
-            "endpoint": "https://new-azure-openai-endpoint.com",
+            "endpoint": "your_new_azure_open_ai_endpoint",
         },
     }
 
@@ -229,7 +225,7 @@ def test_create_model_open_ai_sdk(mocker):
             "type": "OPEN_AI_SDK",
             "credentials": {
                 "api_key": "***",
-                "endpoint": "https://api.openai.com",
+                "endpoint": "your_open_ai_endpoint",
             },
         },
     )
@@ -249,7 +245,7 @@ def test_create_model_azure_openai(mocker):
             "type": "AZURE_OPEN_AI",
             "credentials": {
                 "api_key": "***",
-                "endpoint": "https://api.openai.com",
+                "endpoint": "your_open_ai_endpoint",
                 "deployment_id": "deployment_id",
             },
         },
@@ -268,7 +264,7 @@ def test_create_invalid_model(mocker):
             model={
                 "name": "New Model",
                 "type": "Wrong type",
-                "credentials": {"api_key": "***", "endpoint": "https://api.openai.com"},
+                "credentials": {"api_key": "***", "endpoint": "your_open_ai_endpoint"},
             },
         )
 
@@ -285,7 +281,7 @@ def test_update_model_open_ai_sdk(mocker):
             "name": "Updated Model",
             "credentials": {
                 "api_key": "***",
-                "endpoint": "https://api.openai.com",
+                "endpoint": "your_open_ai_endpoint",
             },
         },
     )
@@ -305,7 +301,7 @@ def test_update_model_azure_open_ai(mocker):
             "name": "Updated Model",
             "credentials": {
                 "api_key": "***",
-                "endpoint": "https://api.openai.com",
+                "endpoint": "your_open_ai_endpoint",
                 "deployment_id": "deployment_id",
             },
         },
@@ -324,7 +320,7 @@ def test_update_invalid_model(mocker):
             model={
                 "name": "New Model",
                 "type": "Wrong type",
-                "credentials": {"api_key": "***", "endpoint": "https://api.openai.com"},
+                "credentials": {"api_key": "***", "endpoint": "your_open_ai_endpoint"},
             },
         )
 
@@ -340,7 +336,7 @@ def test_update_non_existing_model(mocker):
             model={
                 "name": "New Model",
                 "type": "Wrong type",
-                "credentials": {"api_key": "***", "endpoint": "https://api.openai.com"},
+                "credentials": {"api_key": "***", "endpoint": "your_open_ai_endpoint"},
             },
         )
 

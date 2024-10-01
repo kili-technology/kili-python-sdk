@@ -118,7 +118,7 @@ class LlmClientMethods:
             ...     "type": "OPEN_AI_SDK",
             ...     "credentials": {
             ...         "api_key": "your_open_ai_api_key",
-            ...         "endpoint": "https://api.openai.com/v1/"
+            ...         "endpoint": "your_open_ai_endpoint"
             ...     }
             ... }
             >>> kili.llm.create_model(organization_id="your_organization_id", model=model_data)
