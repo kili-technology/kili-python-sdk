@@ -65,6 +65,7 @@ asset_image_1 = {
     "latestLabel": {
         "jsonResponse": job_object_detection,
         "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        "labelType": "DEFAULT",
     },
     "externalId": "car_1",
     "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
@@ -77,6 +78,7 @@ asset_image_1_with_classification = {
     "latestLabel": {
         "jsonResponse": job_object_detection_with_classification,
         "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        "labelType": "DEFAULT",
     },
     "externalId": "car_1",
     "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
@@ -87,6 +89,7 @@ asset_image_1_without_annotation = {
     "latestLabel": {
         "jsonResponse": {},
         "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        "labelType": "DEFAULT",
     },
     "externalId": "car_1",
     "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
@@ -97,6 +100,7 @@ asset_image_2 = {
     "latestLabel": {
         "jsonResponse": job_object_detection,
         "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        "labelType": "DEFAULT",
     },
     "externalId": "car_2",
     "content": "https://storage.googleapis.com/label-public-staging/car/car_2.jpg",
@@ -107,6 +111,7 @@ asset_image_no_content = {
     "latestLabel": {
         "jsonResponse": job_object_detection,
         "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        "labelType": "DEFAULT",
     },
     "externalId": "car_3",
     "content": "",
@@ -134,6 +139,7 @@ asset_video_content_no_json_content = {
             "1": job_object_detection,
             **{str(i): {} for i in range(2, 28)},
         },
+        "labelType": "DEFAULT",
         "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
     },
     "externalId": "short_video",
@@ -148,6 +154,7 @@ asset_video_no_content_and_json_content = {
             "1": job_object_detection,
             **{str(i): {} for i in range(2, 130)},
         },
+        "labelType": "DEFAULT",
         "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
     },
     "externalId": "video2",
