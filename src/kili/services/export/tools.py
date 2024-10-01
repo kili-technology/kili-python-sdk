@@ -165,6 +165,31 @@ def fetch_assets(
         kili.kili_api_gateway, download_media, fields, ProjectId(project_id), local_media_dir
     )
     assets_gen = kili.kili_api_gateway.list_assets(filters, fields, options)
+
+    if (label_type_in is not None) and (len(label_type_in) > 0):
+        if export_type == "latest":
+            assets_gen = filter(
+                lambda asset: asset["latestLabel"].get("labelType") in label_type_in, assets_gen
+            )
+        else:
+            assets_gen = filter(
+                lambda asset: any(
+                    label.get("labelType") in label_type_in for label in asset["labels"]
+                ),
+                assets_gen,
+            )
+            assets_gen = (
+                {
+                    **asset,
+                    "labels": [
+                        label
+                        for label in asset["labels"]
+                        if label.get("labelType") in label_type_in
+                    ],
+                }
+                for asset in assets_gen
+            )
+
     if download_media_function is not None:
         assets: List[Dict] = []
         # TODO: modify download_media function so it can take a generator of assets

@@ -106,6 +106,7 @@ assets = [
             "isLatestLabelForUser": True,
             "isSentBackToQueue": False,
             "jsonResponse": json_response,
+            "labelType": "DEFAULT",
         },
         "priority": 0,
         "skipped": False,
