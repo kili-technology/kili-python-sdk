@@ -44,7 +44,7 @@ def test_create_and_manage_project_and_model_resources(kili: Kili):
     project_id = project["id"]
 
     model_data = {
-        "credentials": {"api_key": "***", "endpoint": "https://api.openai.com"},
+        "credentials": {"api_key": "***", "endpoint": "your_open_ai_endpoint"},
         "name": MODEL_NAME,
         "type": "OPEN_AI_SDK",
     }

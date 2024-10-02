@@ -92,7 +92,7 @@ model_response = kili.llm.create_model(
     model={
         "credentials": {
             "api_key": "<YOUR_OPEN_AI_API_KEY>",
-            "endpoint": "https://api.openai.com/v1/",
+            "endpoint": "<your_desired_open_ai_endpoint>",
         },
         "name": "My Model",
         "type": "OPEN_AI_SDK",
