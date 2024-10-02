@@ -718,6 +718,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../llm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LLM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../notification/" class="md-nav__link">
         
   
@@ -1650,6 +1671,27 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../tutorials/llm_project_setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LLM Projects
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
     
@@ -1661,10 +1703,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
         
           
-          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1675,8 +1717,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_9">
             <span class="md-nav__icon md-icon"></span>
             Setting Up Plugins
           </label>
@@ -1791,10 +1833,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
         
           
-          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1805,8 +1847,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_9">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_10">
             <span class="md-nav__icon md-icon"></span>
             Integrations
           </label>
@@ -3105,6 +3147,7 @@
         <span class="n">annotation_modifier</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CocoAnnotationModifier</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">asset_filter_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">normalized_coordinates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Export the project labels with the requested format into the requested output path.</span>
@@ -3157,6 +3200,8 @@
 <span class="sd">            normalized_coordinates: This parameter is only effective on the Kili (a.k.a raw) format.</span>
 <span class="sd">                If True, the coordinates of the `(x, y)` vertices are normalized between 0 and 1.</span>
 <span class="sd">                If False, the json response will contain additional fields with coordinates in absolute values, that is, in pixels.</span>
+<span class="sd">            label_type_in: Optional list of label type. Exported assets should have a label whose type belongs to that list.</span>
+<span class="sd">                By default, only `DEFAULT` and `REVIEW` labels are exported.</span>
 
 <span class="sd">        !!! Info</span>
 <span class="sd">            The supported formats are:</span>
@@ -3213,6 +3258,7 @@
                 <span class="n">annotation_modifier</span><span class="o">=</span><span class="n">annotation_modifier</span><span class="p">,</span>
                 <span class="n">asset_filter_kwargs</span><span class="o">=</span><span class="n">asset_filter_kwargs</span><span class="p">,</span>
                 <span class="n">normalized_coordinates</span><span class="o">=</span><span class="n">normalized_coordinates</span><span class="p">,</span>
+                <span class="n">label_type_in</span><span class="o">=</span><span class="n">label_type_in</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="n">NoCompatibleJobError</span> <span class="k">as</span> <span class="n">excp</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">excp</span><span class="p">),</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -4277,7 +4323,7 @@ provide the predictions model name.</p>
 
 
 <h3 id="kili.presentation.client.label.LabelClientMethods.export_labels" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">export_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;split&#39;</span><span class="p">,</span> <span class="n">single_file</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_assets</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">annotation_modifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_filter_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalized_coordinates</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">export_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;split&#39;</span><span class="p">,</span> <span class="n">single_file</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_assets</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">annotation_modifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_filter_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalized_coordinates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -4404,6 +4450,13 @@ If True, the coordinates of the <code>(x, y)</code> vertices are normalized betw
 If False, the json response will contain additional fields with coordinates in absolute values, that is, in pixels.</p></td>
         <td><code>None</code></td>
       </tr>
+      <tr>
+        <td><code>label_type_in</code></td>
+        <td><code>Optional[List[str]]</code></td>
+        <td><p>Optional list of label type. Exported assets should have a label whose type belongs to that list.
+By default, only <code>DEFAULT</code> and <code>REVIEW</code> labels are exported.</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>      <div class="admonition info">
 <p class="admonition-title">Info</p>
@@ -4455,6 +4508,7 @@ If False, the json response will contain additional fields with coordinates in a
     <span class="n">annotation_modifier</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CocoAnnotationModifier</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">asset_filter_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">normalized_coordinates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">label_type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Export the project labels with the requested format into the requested output path.</span>
@@ -4507,6 +4561,8 @@ If False, the json response will contain additional fields with coordinates in a
 <span class="sd">        normalized_coordinates: This parameter is only effective on the Kili (a.k.a raw) format.</span>
 <span class="sd">            If True, the coordinates of the `(x, y)` vertices are normalized between 0 and 1.</span>
 <span class="sd">            If False, the json response will contain additional fields with coordinates in absolute values, that is, in pixels.</span>
+<span class="sd">        label_type_in: Optional list of label type. Exported assets should have a label whose type belongs to that list.</span>
+<span class="sd">            By default, only `DEFAULT` and `REVIEW` labels are exported.</span>
 
 <span class="sd">    !!! Info</span>
 <span class="sd">        The supported formats are:</span>
@@ -4563,6 +4619,7 @@ If False, the json response will contain additional fields with coordinates in a
             <span class="n">annotation_modifier</span><span class="o">=</span><span class="n">annotation_modifier</span><span class="p">,</span>
             <span class="n">asset_filter_kwargs</span><span class="o">=</span><span class="n">asset_filter_kwargs</span><span class="p">,</span>
             <span class="n">normalized_coordinates</span><span class="o">=</span><span class="n">normalized_coordinates</span><span class="p">,</span>
+            <span class="n">label_type_in</span><span class="o">=</span><span class="n">label_type_in</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="n">NoCompatibleJobError</span> <span class="k">as</span> <span class="n">excp</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">excp</span><span class="p">),</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
