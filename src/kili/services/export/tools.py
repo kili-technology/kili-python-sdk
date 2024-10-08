@@ -168,10 +168,12 @@ def fetch_assets(
 
     if (label_type_in is not None) and (len(label_type_in) > 0):
         if export_type == "latest":
+            assets_gen = filter(lambda asset: asset.get("latestLabel") is not None, assets_gen)
             assets_gen = filter(
                 lambda asset: asset["latestLabel"].get("labelType") in label_type_in, assets_gen
             )
         else:
+            assets_gen = filter(lambda asset: asset.get("labels") is not None, assets_gen)
             assets_gen = filter(
                 lambda asset: any(
                     label.get("labelType") in label_type_in for label in asset["labels"]
