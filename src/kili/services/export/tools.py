@@ -44,18 +44,6 @@ DEFAULT_FIELDS = [
     "labels.labelType",
     "labels.modelName",
 ]
-LATEST_LABEL_FIELDS = [
-    *COMMON_FIELDS,
-    "latestLabel.jsonResponse",
-    "latestLabel.author.id",
-    "latestLabel.author.email",
-    "latestLabel.author.firstname",
-    "latestLabel.author.lastname",
-    "latestLabel.createdAt",
-    "latestLabel.isLatestLabelForUser",
-    "latestLabel.labelType",
-    "latestLabel.modelName",
-]
 
 
 def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportType):
@@ -109,7 +97,7 @@ def fetch_assets(
     Returns:
         List of fetched assets.
     """
-    fields = get_fields_to_fetch(export_type)
+    fields = get_fields_to_fetch()
     asset_filter_kwargs = asset_filter_kwargs or {}
     asset_where_params = {
         "project_id": project_id,
@@ -168,10 +156,34 @@ def fetch_assets(
 
     if (label_type_in is not None) and (len(label_type_in) > 0):
         if export_type == "latest":
-            assets_gen = filter(lambda asset: asset.get("latestLabel") is not None, assets_gen)
+            assets_gen = (
+                {
+                    **asset,
+                    "labels": [
+                        label
+                        for label in asset["labels"]
+                        if label.get("labelType") in label_type_in
+                        and label.get("labelType") != "AUTOSAVE"
+                    ],
+                }
+                for asset in assets_gen
+            )
+
+            assets_gen = filter(lambda asset: asset.get("labels") is not None, assets_gen)
+
+            assets_gen = (
+                {
+                    **asset,
+                    "latestLabel": max(asset["labels"], key=lambda label: label["createdAt"]),
+                }
+                for asset in assets_gen
+            )
+
             assets_gen = filter(
                 lambda asset: asset["latestLabel"].get("labelType") in label_type_in, assets_gen
             )
+
+            assets_gen = ({k: v for k, v in asset.items() if k != "labels"} for asset in assets_gen)
         else:
             assets_gen = filter(lambda asset: asset.get("labels") is not None, assets_gen)
             assets_gen = filter(
@@ -203,10 +215,8 @@ def fetch_assets(
     return assets
 
 
-def get_fields_to_fetch(export_type: ExportType):
+def get_fields_to_fetch():
     """Return the fields to fetch depending on the export type."""
-    if export_type == "latest":
-        return LATEST_LABEL_FIELDS
     return DEFAULT_FIELDS
 
 
