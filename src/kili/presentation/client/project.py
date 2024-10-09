@@ -139,6 +139,7 @@ class ProjectClientMethods(BaseClientMethods):
             "roles.user.id",
             "title",
         ),
+        deleted: Optional[bool] = None,
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -173,6 +174,7 @@ class ProjectClientMethods(BaseClientMethods):
             "roles.user.id",
             "title",
         ),
+        deleted: Optional[bool] = None,
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -207,6 +209,7 @@ class ProjectClientMethods(BaseClientMethods):
             "roles.user.id",
             "title",
         ),
+        deleted: Optional[bool] = None,
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
@@ -265,6 +268,7 @@ class ProjectClientMethods(BaseClientMethods):
                 created_at_lte=None,
                 organization_id=organization_id,
                 tag_ids=tag_ids,
+                deleted=deleted,
             ),
             fields,
             options=QueryOptions(disable_tqdm=disable_tqdm, first=first, skip=skip),
@@ -395,6 +399,7 @@ class ProjectClientMethods(BaseClientMethods):
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
+        deleted: Optional[bool] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count the number of projects with a search_query.
@@ -426,5 +431,6 @@ class ProjectClientMethods(BaseClientMethods):
                 updated_at_gte=updated_at_gte,
                 updated_at_lte=updated_at_lte,
                 archived=archived,
+                deleted=deleted,
             )
         )

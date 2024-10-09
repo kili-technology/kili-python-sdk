@@ -20,6 +20,7 @@ def project_where_mapper(filters: ProjectFilters) -> Dict:
         "createdAtLte": filters.created_at_lte,
         "organizationId": filters.organization_id,
         "tagIds": filters.tag_ids,
+        "deleted": filters.deleted,
     }
     if filters.archived is not None:
         ret["archived"] = filters.archived
