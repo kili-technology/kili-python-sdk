@@ -43,3 +43,4 @@ class ProjectFilters:
     created_at_lte: Optional[str] = None
     organization_id: Optional[str] = None
     tag_ids: Optional[ListOrTuple["TagId"]] = None
+    deleted: Optional[bool] = None
