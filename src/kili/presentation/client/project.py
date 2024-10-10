@@ -238,6 +238,7 @@ class ProjectClientMethods(BaseClientMethods):
             skip: Number of projects to skip (they are ordered by their creation).
             disable_tqdm: If `True`, the progress bar will be disabled.
             as_generator: If `True`, a generator on the projects is returned.
+            deleted: If `True`, all projects are returned (including deleted ones), if `False` only not deleted ones are returned.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -416,6 +417,7 @@ class ProjectClientMethods(BaseClientMethods):
                 whose update date is lower or equal to this date.
             archived: If `True`, only archived projects are returned, if `False`, only active projects are returned.
                 None disable this filter.
+            deleted: If `False`, only projects not deleted are counted, if `True` all projects are counted (including deleted ones)
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
