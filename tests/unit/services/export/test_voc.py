@@ -12,7 +12,7 @@ from tests.fakes.fake_data import asset_image_1, asset_image_1_without_annotatio
 def test__convert_from_kili_to_voc_format():
     parameters = {"filename": f'{asset_image_1["externalId"]}.xml'}
     annotations = _convert_from_kili_to_voc_format(
-        response=asset_image_1["latestLabel"]["jsonResponse"],
+        response=asset_image_1["labels"][0]["jsonResponse"],
         img_width=1920,
         img_height=1080,
         parameters=parameters,

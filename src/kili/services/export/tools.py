@@ -45,7 +45,6 @@ DEFAULT_FIELDS = [
     "labels.modelName",
 ]
 LATEST_LABEL_FIELDS = [
-    *COMMON_FIELDS,
     *DEFAULT_FIELDS,
     "labels.isLatestDefaultLabelForUser",
     "labels.isLatestReviewLabelForUser",

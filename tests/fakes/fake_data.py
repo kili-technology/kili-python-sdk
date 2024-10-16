@@ -62,11 +62,17 @@ job_object_detection_with_classification = {
 
 
 asset_image_1 = {
-    "latestLabel": {
-        "jsonResponse": job_object_detection,
-        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-        "labelType": "DEFAULT",
-    },
+    "labels": [
+        {
+            "jsonResponse": job_object_detection,
+            "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+            "labelType": "DEFAULT",
+            "isLatestDefaultLabelForUser": True,
+            "isLatestReviewLabelForUser": False,
+            "isLatestPredictionLabelForUser": False,
+            "createdAt": "2024-09-16T09:06:03.028Z",
+        }
+    ],
     "externalId": "car_1",
     "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
     "jsonContent": "",
@@ -75,44 +81,68 @@ asset_image_1 = {
 
 
 asset_image_1_with_classification = {
-    "latestLabel": {
-        "jsonResponse": job_object_detection_with_classification,
-        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-        "labelType": "DEFAULT",
-    },
+    "labels": [
+        {
+            "jsonResponse": job_object_detection_with_classification,
+            "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+            "labelType": "DEFAULT",
+            "isLatestDefaultLabelForUser": True,
+            "isLatestReviewLabelForUser": False,
+            "isLatestPredictionLabelForUser": False,
+            "createdAt": "2024-09-16T09:06:03.028Z",
+        }
+    ],
     "externalId": "car_1",
     "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
     "jsonContent": "",
 }
 
 asset_image_1_without_annotation = {
-    "latestLabel": {
-        "jsonResponse": {},
-        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-        "labelType": "DEFAULT",
-    },
+    "labels": [
+        {
+            "jsonResponse": {},
+            "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+            "labelType": "DEFAULT",
+            "isLatestDefaultLabelForUser": True,
+            "isLatestReviewLabelForUser": False,
+            "isLatestPredictionLabelForUser": False,
+            "createdAt": "2024-09-16T09:06:03.028Z",
+        }
+    ],
     "externalId": "car_1",
     "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
     "jsonContent": "",
 }
 
 asset_image_2 = {
-    "latestLabel": {
-        "jsonResponse": job_object_detection,
-        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-        "labelType": "DEFAULT",
-    },
+    "labels": [
+        {
+            "jsonResponse": job_object_detection,
+            "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+            "labelType": "DEFAULT",
+            "isLatestDefaultLabelForUser": True,
+            "isLatestReviewLabelForUser": False,
+            "isLatestPredictionLabelForUser": False,
+            "createdAt": "2024-09-16T09:06:03.028Z",
+        }
+    ],
     "externalId": "car_2",
     "content": "https://storage.googleapis.com/label-public-staging/car/car_2.jpg",
     "jsonContent": "",
 }
 
 asset_image_no_content = {
-    "latestLabel": {
-        "jsonResponse": job_object_detection,
-        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-        "labelType": "DEFAULT",
-    },
+    "labels": [
+        {
+            "jsonResponse": job_object_detection,
+            "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+            "labelType": "DEFAULT",
+            "isLatestDefaultLabelForUser": True,
+            "isLatestReviewLabelForUser": False,
+            "isLatestPredictionLabelForUser": False,
+            "createdAt": "2024-09-16T09:06:03.028Z",
+        }
+    ],
     "externalId": "car_3",
     "content": "",
     "jsonContent": "",
@@ -133,30 +163,42 @@ asset_video = {
 }
 
 asset_video_content_no_json_content = {
-    "latestLabel": {
-        "jsonResponse": {
-            "0": job_object_detection,
-            "1": job_object_detection,
-            **{str(i): {} for i in range(2, 28)},
-        },
-        "labelType": "DEFAULT",
-        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-    },
+    "labels": [
+        {
+            "jsonResponse": {
+                "0": job_object_detection,
+                "1": job_object_detection,
+                **{str(i): {} for i in range(2, 28)},
+            },
+            "labelType": "DEFAULT",
+            "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+            "isLatestDefaultLabelForUser": True,
+            "isLatestReviewLabelForUser": False,
+            "isLatestPredictionLabelForUser": False,
+            "createdAt": "2024-09-16T09:06:03.028Z",
+        }
+    ],
     "externalId": "short_video",
     "content": "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4",  # 28 frames
     "jsonContent": "",
 }
 
 asset_video_no_content_and_json_content = {
-    "latestLabel": {
-        "jsonResponse": {
-            "0": job_object_detection,
-            "1": job_object_detection,
-            **{str(i): {} for i in range(2, 130)},
-        },
-        "labelType": "DEFAULT",
-        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-    },
+    "labels": [
+        {
+            "jsonResponse": {
+                "0": job_object_detection,
+                "1": job_object_detection,
+                **{str(i): {} for i in range(2, 130)},
+            },
+            "labelType": "DEFAULT",
+            "isLatestDefaultLabelForUser": True,
+            "isLatestReviewLabelForUser": False,
+            "isLatestPredictionLabelForUser": False,
+            "createdAt": "2024-09-16T09:06:03.028Z",
+            "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        }
+    ],
     "externalId": "video2",
     "content": "",
     "jsonContent": "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2_video2-json-content.json",  # 130 frames

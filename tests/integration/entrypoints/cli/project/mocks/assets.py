@@ -28,10 +28,17 @@ def mocked__project_assets(where, *_):
 
         return [
             {
-                "latestLabel": {
-                    "jsonResponse": job_object_detection,
-                    "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
-                },
+                "labels": [
+                    {
+                        "jsonResponse": job_object_detection,
+                        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+                        "createdAt": "2024-01-08T10:21:00.624Z",
+                        "isLatestDefaultLabelForUser": True,
+                        "isLatestReviewLabelForUser": False,
+                        "isLatestPredictionLabelForUser": False,
+                        "labelType": "DEFAULT",
+                    }
+                ],
                 "externalId": "car_1",
                 "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
                 "jsonContent": "",

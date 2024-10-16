@@ -141,7 +141,7 @@ def test_process_asset_for_job_frame_not_served_by_kili():
 
 def test_convert_from_kili_to_yolo_format():
     converted_annotations = _convert_from_kili_to_yolo_format(
-        "JOB_0", asset_image_1["latestLabel"], category_ids
+        "JOB_0", asset_image_1["labels"][0], category_ids
     )
     expected_annotations = [
         (0, 0.501415026274802, 0.5296278884310182, 0.6727472455849373, 0.5381320101586394)
@@ -152,7 +152,7 @@ def test_convert_from_kili_to_yolo_format():
 
 def test_convert_from_kili_to_yolo_format_no_annotation():
     converted_annotations = _convert_from_kili_to_yolo_format(
-        "JOB_0", asset_image_1_without_annotation["latestLabel"], category_ids
+        "JOB_0", asset_image_1_without_annotation["labels"][0], category_ids
     )
     assert len(converted_annotations) == 0
 

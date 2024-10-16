@@ -21,6 +21,9 @@ llm_project_asset = {
         "honeypotMark": None,
         "isHoneypot": False,
         "isLatestLabelForUser": True,
+        "isLatestDefaultLabelForUser": True,
+        "isLatestReviewLabelForUser": False,
+        "isLatestPredictionLabelForUser": False,
         "isSentBackToQueue": False,
         "jsonResponse": {
             "CLASSIFICATION_JOB": {"categories": [{"name": "Choice 1"}]},
