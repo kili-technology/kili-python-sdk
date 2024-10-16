@@ -46,15 +46,10 @@ DEFAULT_FIELDS = [
 ]
 LATEST_LABEL_FIELDS = [
     *COMMON_FIELDS,
-    "latestLabel.jsonResponse",
-    "latestLabel.author.id",
-    "latestLabel.author.email",
-    "latestLabel.author.firstname",
-    "latestLabel.author.lastname",
-    "latestLabel.createdAt",
-    "latestLabel.isLatestLabelForUser",
-    "latestLabel.labelType",
-    "latestLabel.modelName",
+    *DEFAULT_FIELDS,
+    "labels.isLatestDefaultLabelForUser",
+    "labels.isLatestReviewLabelForUser",
+    "labels.isLatestPredictionLabelForUser",
 ]
 
 
@@ -168,10 +163,35 @@ def fetch_assets(
 
     if (label_type_in is not None) and (len(label_type_in) > 0):
         if export_type == "latest":
-            assets_gen = filter(lambda asset: asset.get("latestLabel") is not None, assets_gen)
-            assets_gen = filter(
-                lambda asset: asset["latestLabel"].get("labelType") in label_type_in, assets_gen
+            assets_gen = (
+                {
+                    **asset,
+                    "labels": [
+                        label
+                        for label in asset["labels"]
+                        if label.get("labelType") in label_type_in
+                        and label.get("labelType") != "AUTOSAVE"
+                        and (
+                            label.get("isLatestDefaultLabelForUser") is True
+                            or label.get("isLatestReviewLabelForUser") is True
+                            or label.get("isLatestPredictionLabelForUser") is True
+                        )
+                    ],
+                }
+                for asset in assets_gen
             )
+
+            assets_gen = filter(lambda asset: asset.get("labels") is not None, assets_gen)
+
+            assets_gen = (
+                {
+                    **asset,
+                    "latestLabel": max(asset["labels"], key=lambda label: label["createdAt"]),
+                }
+                for asset in assets_gen
+            )
+
+            assets_gen = ({k: v for k, v in asset.items() if k != "labels"} for asset in assets_gen)
         else:
             assets_gen = filter(lambda asset: asset.get("labels") is not None, assets_gen)
             assets_gen = filter(
