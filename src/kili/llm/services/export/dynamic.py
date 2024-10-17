@@ -29,17 +29,6 @@ LABELS_NEEDED_FIELDS = [
     "modelName",
 ]
 
-ASSET_NEEDED_FIELDS = [
-    "assetProjectModels.id",
-    "assetProjectModels.projectModelId",
-    "assetProjectModels.configuration",
-    "content",
-    "externalId",
-    "jsonMetadata",
-    *(f"labels.{field}" for field in LABELS_NEEDED_FIELDS),
-    "status",
-]
-
 
 class LLMDynamicExporter:
     """Handle exports of LLM_RLHF projects."""
