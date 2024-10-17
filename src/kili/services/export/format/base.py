@@ -289,8 +289,9 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                                 lambda label: label["isSentBackToQueue"] is False, labels_of_asset
                             )
                         )
-                asset["labels"] = labels_of_asset
-                assets_in_format.append(asset)
+                if len(labels_of_asset) > 0:
+                    asset["labels"] = labels_of_asset
+                    assets_in_format.append(asset)
             if "latestLabel" in asset:
                 label = asset["latestLabel"]
                 if label is not None:

@@ -1138,7 +1138,7 @@ class LabelClientMethods(BaseClientMethods):
         asset_filter_kwargs: Optional[Dict[str, object]] = None,
         normalized_coordinates: Optional[bool] = None,
         label_type_in: Optional[List[str]] = None,
-        include_sent_back_labels: Optional[bool] = True,
+        include_sent_back_labels: Optional[bool] = None,
     ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
         # pylint: disable=line-too-long
         """Export the project labels with the requested format into the requested output path.

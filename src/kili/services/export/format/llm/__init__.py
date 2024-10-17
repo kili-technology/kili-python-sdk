@@ -97,6 +97,8 @@ class LLMExporter(AbstractExporter):
 
     def _process_llm_v1(self, assets: List[Dict]) -> List[Dict[str, Union[List[str], str]]]:
         result = []
+        if len(assets) == 0:
+            return result
         for asset in assets:
             result.append(
                 {
@@ -263,7 +265,10 @@ def _format_raw_data(
                         "id": _safe_pop(chat_items_ids),
                         "chat_id": chat_id,
                         "model": models[index_completion]
-                        if (index == len(prompts) - 1 or all_model_keys)
+                        if (
+                            (index == len(prompts) - 1 or all_model_keys)
+                            and len(models) > index_completion
+                        )
                         else None,
                     }
                 )
