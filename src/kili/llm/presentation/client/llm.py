@@ -44,6 +44,7 @@ class LlmClientMethods:
         disable_tqdm: Optional[bool] = False,
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
+        include_sent_back_labels: Optional[bool] = False,
     ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
         # pylint: disable=line-too-long
         """Returns an export of llm assets with valid labels.
@@ -53,6 +54,7 @@ class LlmClientMethods:
             asset_ids: Optional list of the assets internal IDs from which to export the labels.
             disable_tqdm: Disable the progress bar if True.
             external_ids: Optional list of the assets external IDs from which to export the labels.
+            include_sent_back_labels: Include sent back labels if True.
 
         !!! Example
             ```python
@@ -83,6 +85,7 @@ class LlmClientMethods:
                 project_id=ProjectId(project_id),
                 asset_filter=asset_filter,
                 disable_tqdm=disable_tqdm,
+                include_sent_back_labels=include_sent_back_labels,
             )
         except NoCompatibleJobError as excp:
             warnings.warn(str(excp), stacklevel=2)

@@ -1,6 +1,7 @@
 # pylint: disable=missing-module-docstring
 import glob
 import os
+import tempfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -30,6 +31,10 @@ from tests.fakes.fake_kili import (
     mocked_ProjectQuery,
 )
 from tests.unit.services.export.fakes.fake_ffmpeg import mock_ffmpeg
+
+from .fakes.llm_json_interface import mock_json_interface
+from .fakes.llm_project_assets import mock_fetch_assets
+from .fakes.llm_raw_asset_content import mock_raw_asset_content
 
 
 def get_file_tree(folder: str):
@@ -654,6 +659,7 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
             "asset_filter_kwargs": None,
             "normalized_coordinates": None,
             "label_type_in": None,
+            "include_sent_back_labels": None,
         }
 
         default_kwargs.update(test_case["export_kwargs"])
@@ -781,6 +787,7 @@ def test_export_service_errors(mocker_project, name, test_case, error):
             "asset_filter_kwargs": None,
             "normalized_coordinates": None,
             "label_type_in": None,
+            "include_sent_back_labels": None,
         }
 
         default_kwargs.update(test_case["export_kwargs"])
@@ -862,6 +869,7 @@ def test_export_with_asset_filter_kwargs(mocker):
         "latestLabel.author.lastname",
         "latestLabel.createdAt",
         "latestLabel.isLatestLabelForUser",
+        "latestLabel.isSentBackToQueue",
         "latestLabel.labelType",
         "latestLabel.modelName",
     ]
@@ -992,6 +1000,7 @@ def test_when_exporting_geotiff_asset_with_incompatible_options_then_it_crashes(
                         },
                         "createdAt": "2023-07-19T09:06:03.028Z",
                         "isLatestLabelForUser": True,
+                        "isSentBackToQueue": False,
                         "labelType": "DEFAULT",
                         "modelName": None,
                     },
@@ -1103,3 +1112,442 @@ def test_given_kili_when_exporting_it_does_not_call_dataconnection_resolver(
     # Then
     process_and_save_mock.assert_called_once()
     kili.graphql_client.execute.assert_not_called()  # pyright: ignore[reportGeneralTypeIssues]
+
+
+def test_when_exporting_asset_with_include_sent_back_labels_parameter_it_filter_asset_exported(
+    mocker: pytest_mock.MockerFixture,
+):
+    mocker.patch(
+        "kili.services.export.format.base.fetch_assets",
+        return_value=[
+            {
+                "latestLabel": {
+                    "author": {
+                        "id": "user-feat1-1",
+                        "email": "test+admin+1@kili-technology.com",
+                        "firstname": "Feat1",
+                        "lastname": "Test Admin",
+                    },
+                    "jsonResponse": {
+                        "OBJECT_DETECTION_JOB": {
+                            "annotations": [
+                                {
+                                    "children": {},
+                                    "boundingPoly": [
+                                        {
+                                            "normalizedVertices": [
+                                                {"x": 4.1, "y": 52.2},
+                                                {"x": 4.5, "y": 52.7},
+                                                {"x": 4.5, "y": 52.3},
+                                                {"x": 4.1, "y": 52.4},
+                                            ]
+                                        }
+                                    ],
+                                    "categories": [{"name": "A"}],
+                                    "mid": "20230719110559896-2495",
+                                    "type": "rectangle",
+                                }
+                            ]
+                        }
+                    },
+                    "createdAt": "2023-07-19T09:06:03.028Z",
+                    "isLatestLabelForUser": True,
+                    "isSentBackToQueue": True,
+                    "labelType": "DEFAULT",
+                    "modelName": None,
+                },
+                "resolution": None,
+                "pageResolutions": None,
+                "id": "clk9i0hn000002a68a2zcd1v7",
+                "externalId": "BoundingBox.png",
+                "content": (
+                    "https://storage.googleapis.com/label-public-staging/demo-projects/Computer_vision_tutorial/BoundingBox.png"
+                ),
+                "jsonContent": None,
+                "jsonMetadata": {},
+            }
+        ],
+    )
+
+    process_and_save_mock = mocker.patch.object(KiliExporter, "process_and_save", return_value=None)
+    kili = mock_kili(mocker, with_data_connection=False)
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+
+    # When
+    kili.export_labels(project_id="fake_proj_id", filename="exp.zip", fmt="kili")
+
+    # Then
+    process_and_save_mock.assert_called_once()
+
+
+def test_when_exporting_asset_with_include_sent_back_labels_parameter_it_filter_asset_exported_on_llm_v1(
+    mocker: pytest_mock.MockerFixture,
+):
+    expected_export = [
+        {
+            "raw_data": [
+                {
+                    "role": "user",
+                    "content": "BLABLABLA",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response A1",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response B1",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "user",
+                    "content": "BLIBLIBLI",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response A2",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response B2",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+            ],
+            "status": "LABELED",
+            "external_id": "asset#0",
+            "metadata": {},
+            "labels": [
+                {
+                    "author": "test+admin@kili-technology.com",
+                    "created_at": "2024-08-05T13:03:00.051Z",
+                    "label_type": "DEFAULT",
+                    "label": {"CLASSIFICATION_JOB": ["A_BETTER_THAN_B"]},
+                }
+            ],
+        },
+        {
+            "raw_data": [
+                {
+                    "role": "user",
+                    "content": "BLABLABLA",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response A1",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response B1",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "user",
+                    "content": "BLIBLIBLI",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response A2",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response B2",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+            ],
+            "status": "LABELED",
+            "external_id": "asset#1",
+            "metadata": {},
+            "labels": [
+                {
+                    "author": "test+admin@kili-technology.com",
+                    "created_at": "2024-08-05T13:03:03.061Z",
+                    "label_type": "DEFAULT",
+                    "label": {"CLASSIFICATION_JOB": ["B_BETTER_THAN_A"]},
+                }
+            ],
+        },
+        {
+            "raw_data": [
+                {
+                    "role": "user",
+                    "content": "BLABLABLA",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response A1",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response B1",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "user",
+                    "content": "BLIBLIBLI",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response A2",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response B2",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+            ],
+            "status": "LABELED",
+            "external_id": "asset#2",
+            "metadata": {},
+            "labels": [
+                {
+                    "author": "test+admin@kili-technology.com",
+                    "created_at": "2024-08-05T13:03:16.028Z",
+                    "label_type": "DEFAULT",
+                    "label": {
+                        "CLASSIFICATION_JOB": ["TIE"],
+                        "TRANSCRIPTION_JOB": "There is only some formatting changes\n",
+                    },
+                }
+            ],
+        },
+    ]
+
+    get_project_return_val = {
+        "jsonInterface": mock_json_interface,
+        "inputType": "LLM_RLHF",
+        "title": "",
+        "id": "project_id",
+        "dataConnections": None,
+    }
+    kili = mock_kili(mocker, with_data_connection=False)
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.count_assets.return_value = 1
+    kili.kili_api_gateway.get_project.return_value = get_project_return_val
+    fd, path = tempfile.mkstemp()
+
+    try:
+        with os.fdopen(fd, "w") as tmp:
+            tmp.write(mock_raw_asset_content)
+        for mocked_asset in mock_fetch_assets:
+            mocked_asset["content"] = path
+        with patch("kili.services.export.format.base.fetch_assets") as mocked_fetch_assets:
+            mocked_fetch_assets.return_value = mock_fetch_assets
+            result = kili.export_labels(
+                project_id="project_id",
+                fmt="llm_v1",
+                filename=None,
+                include_sent_back_labels=True,
+            )
+            assert result == expected_export
+    finally:
+        os.remove(path)
+
+
+def test_when_exporting_asset_with_include_sent_back_labels_parameter_at_false_it_filter_asset_exported_on_llm_v1(
+    mocker: pytest_mock.MockerFixture,
+):
+    expected_export = [
+        {
+            "raw_data": [
+                {
+                    "role": "user",
+                    "content": "BLABLABLA",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response A1",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response B1",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "user",
+                    "content": "BLIBLIBLI",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response A2",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response B2",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+            ],
+            "status": "LABELED",
+            "external_id": "asset#0",
+            "metadata": {},
+            "labels": [
+                {
+                    "author": "test+admin@kili-technology.com",
+                    "created_at": "2024-08-05T13:03:00.051Z",
+                    "label_type": "DEFAULT",
+                    "label": {"CLASSIFICATION_JOB": ["A_BETTER_THAN_B"]},
+                }
+            ],
+        },
+        {
+            "raw_data": [
+                {
+                    "role": "user",
+                    "content": "BLABLABLA",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response A1",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response B1",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "user",
+                    "content": "BLIBLIBLI",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response A2",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+                {
+                    "role": "assistant",
+                    "content": "response B2",
+                    "id": None,
+                    "chat_id": None,
+                    "model": None,
+                },
+            ],
+            "status": "LABELED",
+            "external_id": "asset#1",
+            "metadata": {},
+            "labels": [
+                {
+                    "author": "test+admin@kili-technology.com",
+                    "created_at": "2024-08-05T13:03:03.061Z",
+                    "label_type": "DEFAULT",
+                    "label": {"CLASSIFICATION_JOB": ["B_BETTER_THAN_A"]},
+                }
+            ],
+        },
+    ]
+
+    get_project_return_val = {
+        "jsonInterface": mock_json_interface,
+        "inputType": "LLM_RLHF",
+        "title": "",
+        "id": "project_id",
+        "dataConnections": None,
+    }
+    kili = mock_kili(mocker, with_data_connection=False)
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.count_assets.return_value = 1
+    kili.kili_api_gateway.get_project.return_value = get_project_return_val
+    fd, path = tempfile.mkstemp()
+
+    try:
+        with os.fdopen(fd, "w") as tmp:
+            tmp.write(mock_raw_asset_content)
+        for mocked_asset in mock_fetch_assets:
+            mocked_asset["content"] = path
+        with patch("kili.services.export.format.base.fetch_assets") as mocked_fetch_assets:
+            mocked_fetch_assets.return_value = mock_fetch_assets
+            result = kili.export_labels(
+                project_id="project_id",
+                fmt="llm_v1",
+                filename=None,
+                include_sent_back_labels=False,
+            )
+            assert result == expected_export
+    finally:
+        os.remove(path)
