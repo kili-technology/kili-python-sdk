@@ -77,7 +77,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         self,
         api_key: Optional[str] = None,
         api_endpoint: Optional[str] = None,
-        verify: Union[bool, str] = True,
+        verify: Optional[Union[bool, str]] = None,
         client_name: GraphQLClientName = GraphQLClientName.SDK,
         graphql_client_params: Optional[Dict[str, object]] = None,
     ) -> None:
@@ -135,12 +135,17 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         if not api_key:
             raise AuthenticationFailed(api_key, api_endpoint)
 
+        if verify is None:
+            verify = os.getenv(
+                "KILI_VERIFY",
+                "True",
+            ).lower() in ("true", "1", "yes")
+
         self.api_key = api_key
         self.api_endpoint = api_endpoint
         self.verify = verify
         self.client_name = client_name
         self.http_client = HttpClient(kili_endpoint=api_endpoint, verify=verify, api_key=api_key)
-
         skip_checks = os.getenv("KILI_SDK_SKIP_CHECKS") is not None
         if not skip_checks and not is_api_key_valid(
             self.http_client, api_key, api_endpoint, client_name
