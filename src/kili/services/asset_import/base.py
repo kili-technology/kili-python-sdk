@@ -33,7 +33,6 @@ from kili.core.graphql.operations.asset.mutations import (
 )
 from kili.core.helpers import T, format_result, get_mime_type, is_url
 from kili.core.utils.pagination import batcher
-from kili.domain.asset import AssetFilters
 from kili.domain.organization import OrganizationFilters
 from kili.domain.project import InputType, ProjectId
 from kili.domain.types import ListOrTuple
@@ -576,26 +575,27 @@ class BaseAbstractAssetImporter(abc.ABC):
         """Filter out assets whose external_id is already in the project."""
         if len(assets) == 0:
             raise ImportValidationError("No assets to import")
-        assets_in_project = self.kili.kili_api_gateway.list_assets(
-            AssetFilters(project_id=self.project_params.project_id),
-            ["externalId"],
-            QueryOptions(disable_tqdm=True),
+
+        assets_external_ids = [asset.get("external_id") for asset in assets]
+        external_ids_in_project = self.kili.kili_api_gateway.filter_existing_assets(
+            self.project_params.project_id,
+            assets_external_ids,
         )
-        external_ids_in_project = [asset["externalId"] for asset in assets_in_project]
-        filtered_assets = [
-            asset for asset in assets if asset.get("external_id") not in external_ids_in_project
-        ]
-        if len(filtered_assets) == 0:
+
+        if len(external_ids_in_project) == len(assets):
             raise ImportValidationError(
                 "No assets to import, all given external_ids already exist in the project"
             )
-        nb_duplicate_assets = len(assets) - len(filtered_assets)
+        nb_duplicate_assets = len(external_ids_in_project)
         if nb_duplicate_assets > 0:
             warnings.warn(
                 f"{nb_duplicate_assets} assets were not imported because their external_id are"
                 " already in the project",
                 stacklevel=2,
             )
+        filtered_assets = [
+            asset for asset in assets if asset.get("external_id") not in external_ids_in_project
+        ]
         return filtered_assets
 
     def import_assets_by_batch(
