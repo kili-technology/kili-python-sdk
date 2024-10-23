@@ -23,3 +23,10 @@ query($filePaths: [String!]) {
   urls: createUploadBucketSignedUrls(filePaths: $filePaths)
 }
 """
+
+
+GQL_FILTER_EXISTING_ASSETS = """
+query FilterExistingAssets($projectID: ID!, $externalIDs: [String!]!) {
+  external_ids: filterExistingAssets(projectID: $projectID, externalIDs: $externalIDs)
+}
+"""

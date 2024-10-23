@@ -9,6 +9,7 @@ from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
 from kili.adapters.kili_api_gateway.asset.operations import (
     GQL_COUNT_ASSETS,
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
+    GQL_FILTER_EXISTING_ASSETS,
     get_assets_query,
 )
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
@@ -125,3 +126,12 @@ class AssetOperationMixin(BaseOperationMixin):
         }
         urls_response = self.graphql_client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
         return urls_response["urls"]
+
+    def filter_existing_assets(self, project_id: str, assets_external_ids: ListOrTuple[str]):
+        """Send a GraphQL request calling filterExistingAssets resolver."""
+        payload = {
+            "projectID": project_id,
+            "externalIDs": assets_external_ids,
+        }
+        external_id_response = self.graphql_client.execute(GQL_FILTER_EXISTING_ASSETS, payload)
+        return external_id_response["external_ids"]
