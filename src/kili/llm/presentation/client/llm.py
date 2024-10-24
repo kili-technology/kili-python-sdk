@@ -12,6 +12,7 @@ from typing import (
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
+from kili.domain.label import LabelType
 from kili.domain.llm import (
     AzureOpenAICredentials,
     ChatItemDict,
@@ -45,6 +46,7 @@ class LlmClientMethods:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         include_sent_back_labels: Optional[bool] = False,
+        label_type_in: Optional[List[LabelType]] = None,
     ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
         # pylint: disable=line-too-long
         """Returns an export of llm assets with valid labels.
@@ -55,7 +57,7 @@ class LlmClientMethods:
             disable_tqdm: Disable the progress bar if True.
             external_ids: Optional list of the assets external IDs from which to export the labels.
             include_sent_back_labels: Include sent back labels if True.
-
+            label_type_in: Optional types of label to fetch, by default ["DEFAULT", "REVIEW"].
         !!! Example
             ```python
             kili.llm.export("your_project_id")
@@ -75,8 +77,12 @@ class LlmClientMethods:
                 list(AssetId(asset_id) for asset_id in asset_ids) if asset_ids else None
             )
 
+        label_type_in = label_type_in or ["DEFAULT", "REVIEW"]
+
         asset_filter = AssetFilters(
-            project_id=ProjectId(project_id), asset_id_in=resolved_asset_ids
+            project_id=ProjectId(project_id),
+            asset_id_in=resolved_asset_ids,
+            label_type_in=label_type_in,
         )
 
         try:
@@ -86,6 +92,7 @@ class LlmClientMethods:
                 asset_filter=asset_filter,
                 disable_tqdm=disable_tqdm,
                 include_sent_back_labels=include_sent_back_labels,
+                label_type_in=label_type_in,
             )
         except NoCompatibleJobError as excp:
             warnings.warn(str(excp), stacklevel=2)

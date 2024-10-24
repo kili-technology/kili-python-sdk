@@ -5,6 +5,7 @@ from typing import Dict, List, Optional, Union
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset.asset import AssetFilters
+from kili.domain.label import LabelType
 from kili.domain.project import ProjectId
 
 from .dynamic import LLMDynamicExporter
@@ -38,7 +39,7 @@ LABELS_NEEDED_FIELDS = [
 ASSET_DYNAMIC_NEEDED_FIELDS = [
     "assetProjectModels.id",
     "assetProjectModels.configuration",
-    "assetProjectModels.name",
+    "assetProjectModels.projectModelId",
     "content",
     "externalId",
     "jsonMetadata",
@@ -70,17 +71,19 @@ def export(  # pylint: disable=too-many-arguments, too-many-locals
     asset_filter: AssetFilters,
     disable_tqdm: Optional[bool],
     include_sent_back_labels: Optional[bool],
+    label_type_in: List[LabelType],
 ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
     """Export the selected assets with their labels into the required format, and save it into a file archive."""
     project = kili_api_gateway.get_project(project_id, ["id", "inputType", "jsonInterface"])
     input_type = project["inputType"]
 
     fields = get_fields_to_fetch(input_type)
-    asset_filter.status_in = ["LABELED", "REVIEWED", "TO_REVIEW"]
+    asset_filter.status_in = ["LABELED", "REVIEWED", "TO_REVIEW", "ONGOING"]
     assets = list(
         kili_api_gateway.list_assets(asset_filter, fields, QueryOptions(disable_tqdm=disable_tqdm))
     )
-    cleaned_assets = preprocess_assets(assets, include_sent_back_labels or False)
+    cleaned_assets = preprocess_assets(assets, include_sent_back_labels or False, label_type_in)
+
     if input_type == "LLM_RLHF":
         return LLMStaticExporter(kili_api_gateway).export(
             cleaned_assets, project_id, project["jsonInterface"]
@@ -97,7 +100,9 @@ def get_fields_to_fetch(input_type: str) -> List[str]:
     return ASSET_DYNAMIC_NEEDED_FIELDS
 
 
-def preprocess_assets(assets: List[Dict], include_sent_back_labels: bool) -> List[Dict]:
+def preprocess_assets(
+    assets: List[Dict], include_sent_back_labels: bool, label_type_in: List[LabelType]
+) -> List[Dict]:
     """Format labels in the requested format, and filter out autosave labels."""
     assets_in_format = []
     for asset in assets:
@@ -105,17 +110,14 @@ def preprocess_assets(assets: List[Dict], include_sent_back_labels: bool) -> Lis
             labels_of_asset = []
             for label in asset["labels"]:
                 labels_of_asset.append(label)
+                labels_of_asset = list(
+                    filter(lambda label: label["labelType"] in label_type_in, labels_of_asset)
+                )
                 if not include_sent_back_labels:
                     labels_of_asset = list(
                         filter(lambda label: label["isSentBackToQueue"] is False, labels_of_asset)
                     )
             if len(labels_of_asset) > 0:
                 asset["labels"] = labels_of_asset
-                assets_in_format.append(asset)
-        if "latestLabel" in asset:
-            label = asset["latestLabel"]
-            if label is not None:
-                asset["latestLabel"] = label
-            if include_sent_back_labels or asset["latestLabel"]["isSentBackToQueue"] is False:
                 assets_in_format.append(asset)
     return assets_in_format
