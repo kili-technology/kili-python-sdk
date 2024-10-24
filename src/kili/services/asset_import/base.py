@@ -51,6 +51,9 @@ from kili.services.asset_import.types import AssetLike, KiliResolverAsset
 from kili.utils import bucket
 from kili.utils.tqdm import tqdm
 
+FILTER_EXISTING_BATCH_SIZE = 1000
+
+
 if TYPE_CHECKING:
     from kili.client import Kili
 
@@ -575,12 +578,20 @@ class BaseAbstractAssetImporter(abc.ABC):
         """Filter out assets whose external_id is already in the project."""
         if len(assets) == 0:
             raise ImportValidationError("No assets to import")
-
-        assets_external_ids = [asset.get("external_id") for asset in assets]
-        external_ids_in_project = self.kili.kili_api_gateway.filter_existing_assets(
-            self.project_params.project_id,
-            assets_external_ids,
-        )
+        assets_external_ids = [
+            asset.get("external_id") for asset in assets if asset.get("external_id")
+        ]
+        # split assets_external_ids into chunks of 1000
+        assets_external_ids_chunks = [
+            assets_external_ids[x : x + FILTER_EXISTING_BATCH_SIZE]
+            for x in range(0, len(assets_external_ids), FILTER_EXISTING_BATCH_SIZE)
+        ]
+        external_ids_in_project = []
+        for assets_external_ids_chunk in assets_external_ids_chunks:
+            external_ids_in_project += self.kili.kili_api_gateway.filter_existing_assets(
+                self.project_params.project_id,
+                assets_external_ids_chunk,
+            )
 
         if len(external_ids_in_project) == len(assets):
             raise ImportValidationError(
