@@ -3,6 +3,7 @@
 import logging
 import os
 import threading
+import time
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 from urllib.parse import urlparse
@@ -80,6 +81,8 @@ class GraphQLClient:
         self.http_client = http_client
         self.verify = verify
         self.enable_schema_caching = enable_schema_caching
+        self.created_at = time.time()
+        self.complexity_consumed = 0
         self.graphql_schema_cache_dir = (
             Path(graphql_schema_cache_dir) if graphql_schema_cache_dir else None
         )
@@ -309,7 +312,7 @@ class GraphQLClient:
     ) -> Dict[str, Any]:
         _limiter.try_acquire("GraphQLClient.execute")
         with _execute_lock:
-            return self._gql_client.execute(
+            res = self._gql_client.execute(
                 document=document,
                 variable_values=variables,
                 extra_args={
@@ -320,3 +323,9 @@ class GraphQLClient:
                 },
                 **kwargs,
             )
+            transport = self._gql_client.transport
+            if transport:
+                headers = transport.response_headers  # pyright: ignore[reportGeneralTypeIssues]
+                returned_complexity = int(headers.get("x-complexity", 0)) if headers else 0
+                self.complexity_consumed += returned_complexity
+            return res
