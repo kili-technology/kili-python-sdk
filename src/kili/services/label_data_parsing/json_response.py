@@ -84,7 +84,7 @@ class _ParsedJobs:
 
         # all job names in the json response should be in the json interface too
         for job_name in json_response:
-            if job_name not in json_interface:
+            if job_name not in json_interface and job_name not in IGNORED_JOBS:
                 raise JobNotExistingError(job_name)
 
         # define the list of job names to parse
