@@ -111,11 +111,19 @@ mock_fetch_assets = [
                 },
                 "chatItems": [
                     {
+                        "id": "cm2u6kgcc001aj7ja1stsbrvu",
+                        "content": "You are a helpful assistant",
+                        "createdAt": "2024-08-06T12:28:52.170Z",
+                        "modelId": None,
+                        "parentId": None,
+                        "role": "SYSTEM",
+                    },
+                    {
                         "id": "clziefeh6003k7tc99abderkk",
                         "content": "describe turtle in 100 words",
                         "createdAt": "2024-08-06T12:30:52.170Z",
                         "modelId": None,
-                        "parentId": None,
+                        "parentId": "cm2u6kgcc001aj7ja1stsbrvu",
                         "role": "USER",
                     },
                     {
@@ -216,6 +224,13 @@ expected_export = [
         "0": {
             "raw_data": [
                 {
+                    "id": "cm2u6kgcc001aj7ja1stsbrvu",
+                    "role": "system",
+                    "chat_id": "clzief6q2003e7tc91jm46uii",
+                    "content": "You are a helpful assistant",
+                    "model": None,
+                },
+                {
                     "content": "describe turtle in 100 words",
                     "role": "user",
                     "chat_id": "clzief6q2003e7tc91jm46uii",
@@ -269,6 +284,13 @@ expected_export = [
         },
         "1": {
             "raw_data": [
+                {
+                    "id": "cm2u6kgcc001aj7ja1stsbrvu",
+                    "role": "system",
+                    "chat_id": "clzief6q2003e7tc91jm46uii",
+                    "content": "You are a helpful assistant",
+                    "model": None,
+                },
                 {
                     "content": "describe turtle in 100 words",
                     "role": "user",
@@ -337,6 +359,13 @@ expected_export = [
         },
         "2": {
             "raw_data": [
+                {
+                    "id": "cm2u6kgcc001aj7ja1stsbrvu",
+                    "role": "system",
+                    "chat_id": "clzief6q2003e7tc91jm46uii",
+                    "content": "You are a helpful assistant",
+                    "model": None,
+                },
                 {
                     "content": "describe turtle in 100 words",
                     "role": "user",

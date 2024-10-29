@@ -148,7 +148,7 @@ class LLMDynamicExporter:
             if role == "user":
                 current_round["prompt"] = chat_item
             elif role == "system":
-                current_round["pre_prompt"].append(chat_item)
+                current_round["pre_prompts"].append(chat_item)
             elif role == "assistant":
                 current_round["completion"].append(chat_item)
             else:
