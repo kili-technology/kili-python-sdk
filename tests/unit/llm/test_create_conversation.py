@@ -24,7 +24,7 @@ def test_create_conversation(mocker):
 
     kili_api_gateway.get_current_user.assert_called_once_with(["id"])
     kili_api_gateway.create_llm_asset.assert_called_once_with(
-        project_id="project_id", author_id="user_id", status="TODO", label_type="PREDICTION"
+        project_id="project_id", author_id="user_id", label_type="PREDICTION"
     )
     kili_api_gateway.create_chat_item.assert_called_once_with(
         asset_id="asset_id", label_id="label_id", prompt="prompt text"
