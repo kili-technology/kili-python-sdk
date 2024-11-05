@@ -171,12 +171,11 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         self,
         project_id: str,
         author_id: str,
-        status: Optional[str] = None,
         label_type: Optional[str] = None,
     ) -> Dict:
         """Create an LLM asset in a project, with optional status and label_type."""
         where = map_project_where(project_id)
-        data = {"author_id": author_id, "status": status, "label_type": label_type}
+        data = {"author_id": author_id, "label_type": label_type}
         data_mapped = map_create_llm_asset_input(data)
         variables = {"where": where, "data": data_mapped}
         fragment = fragment_builder(["id", "latestLabel.id"])
