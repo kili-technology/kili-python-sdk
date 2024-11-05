@@ -33,6 +33,16 @@ mutation deleteTag($tagId: ID!) {
 }
 """
 
+GQL_CREATE_TAG = """
+mutation createTag($data: TagData!) {
+  createTag(data: $data) {
+    id
+    color
+    label
+  }
+}
+"""
+
 
 def get_list_tags_by_org_query(fragment: str) -> str:
     """Return the GraphQL query to list tags by organization."""
