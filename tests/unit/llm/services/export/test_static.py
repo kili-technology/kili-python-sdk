@@ -60,7 +60,7 @@ expected_export = [
                 "author": "test+admin@kili-technology.com",
                 "created_at": "2024-08-05T13:03:00.051Z",
                 "label_type": "DEFAULT",
-                "label": {"CLASSIFICATION_JOB": ["A_BETTER_THAN_B"]},
+                "label": {"conversation": {"CLASSIFICATION_JOB": ["A_BETTER_THAN_B"]}},
             }
         ],
     },
@@ -117,7 +117,7 @@ expected_export = [
                 "author": "test+admin@kili-technology.com",
                 "created_at": "2024-08-05T13:03:03.061Z",
                 "label_type": "DEFAULT",
-                "label": {"CLASSIFICATION_JOB": ["B_BETTER_THAN_A"]},
+                "label": {"conversation": {"CLASSIFICATION_JOB": ["B_BETTER_THAN_A"]}},
             }
         ],
     },
