@@ -64,7 +64,7 @@ class LLMStaticExporter:
 
 def _format_json_response(
     jobs_config: Dict, json_response: Dict
-) -> Dict[str, Union[str, List[str]]]:
+) -> Dict[str, Dict[str, Union[str, List[str]]]]:
     result = {}
     for job_name, job_value in json_response.items():
         job_config = jobs_config[job_name]
@@ -83,6 +83,8 @@ def _format_json_response(
             result[job_name] = job_value["text"]
         else:
             logging.warning(f"Job {job_name} with mlTask {job_config['mlTask']} not supported")
+    if len(result) != 0:
+        return {"conversation": result}
     return result
 
 

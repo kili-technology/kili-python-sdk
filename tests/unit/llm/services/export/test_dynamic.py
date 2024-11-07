@@ -1,3 +1,5 @@
+import copy
+
 import pytest
 
 from kili.llm.presentation.client.llm import LlmClientMethods
@@ -278,7 +280,9 @@ expected_export = [
                     "author": "test+admin@kili-technology.com",
                     "created_at": "2024-08-06T12:30:42.122Z",
                     "label_type": "DEFAULT",
-                    "label": {"COMPARISON_JOB": "A_3", "CLASSIFICATION_JOB": ["BOTH_ARE_GOOD"]},
+                    "label": {
+                        "turn": {"COMPARISON_JOB": "A_3", "CLASSIFICATION_JOB": ["BOTH_ARE_GOOD"]},
+                    },
                 }
             ],
         },
@@ -353,7 +357,9 @@ expected_export = [
                     "author": "test+admin@kili-technology.com",
                     "created_at": "2024-08-06T12:30:42.122Z",
                     "label_type": "DEFAULT",
-                    "label": {"COMPARISON_JOB": "B_1"},
+                    "label": {
+                        "turn": {"COMPARISON_JOB": "B_1"},
+                    },
                 }
             ],
         },
@@ -442,7 +448,9 @@ expected_export = [
                     "author": "test+admin@kili-technology.com",
                     "created_at": "2024-08-06T12:30:42.122Z",
                     "label_type": "DEFAULT",
-                    "label": {"COMPARISON_JOB": "A_2"},
+                    "label": {
+                        "turn": {"COMPARISON_JOB": "A_2"},
+                    },
                 }
             ],
         },
@@ -616,3 +624,88 @@ def test_export_dynamic_empty_json_interface(mocker):
         kili_llm.export(
             project_id="project_id",
         )
+
+
+def test_export_dynamic_with_conversation_level(mocker):
+    updated_mock_json_interface = copy.deepcopy(mock_json_interface)
+
+    updated_mock_json_interface["jobs"].update(
+        {
+            "CLASSIFICATION_JOB_0": {
+                "content": {
+                    "categories": {
+                        "GOOD": {"children": [], "name": "Good", "id": "category7"},
+                        "BAD": {"children": [], "name": "Bad", "id": "category8"},
+                    },
+                    "input": "radio",
+                },
+                "level": "conversation",
+                "instruction": "Overall quality",
+                "mlTask": "CLASSIFICATION",
+                "required": 1,
+                "isChild": False,
+                "isNew": False,
+            },
+            "TRANSCRIPTION_JOB": {
+                "content": {"input": "textField"},
+                "level": "conversation",
+                "instruction": "Write something about the overall quality",
+                "mlTask": "TRANSCRIPTION",
+                "required": 1,
+                "isChild": False,
+                "isNew": False,
+            },
+        }
+    )
+
+    updated_mock_fetch_assets = copy.deepcopy(mock_fetch_assets)
+    updated_mock_fetch_assets[0]["labels"][0]["annotations"].extend(
+        [
+            {
+                "id": "20241025134207822-9",
+                "job": "CLASSIFICATION_JOB_0",
+                "path": [],
+                "labelId": "clzief6q2003e7tc91jm46uii",
+                "chatItemId": None,
+                "annotationValue": {
+                    "categories": ["GOOD"],
+                },
+                "__typename": "ClassificationAnnotation",
+            },
+            {
+                "id": "20241025134209366-10",
+                "job": "TRANSCRIPTION_JOB",
+                "path": [],
+                "labelId": "clzief6q2003e7tc91jm46uii",
+                "chatItemId": None,
+                "annotationValue": {
+                    "text": "something",
+                },
+                "__typename": "TranscriptionAnnotation",
+            },
+        ]
+    )
+
+    updated_expected_export = copy.deepcopy(expected_export)
+    updated_expected_export[0]["2"]["labels"][0]["label"]["conversation"] = {
+        "CLASSIFICATION_JOB_0": ["GOOD"],
+        "TRANSCRIPTION_JOB": "something",
+    }
+    get_project_return_val = {
+        "jsonInterface": updated_mock_json_interface,
+        "inputType": "LLM_INSTR_FOLLOWING",
+        "title": "Test project",
+        "id": "project_id",
+        "dataConnections": None,
+    }
+    kili_api_gateway = mocker.MagicMock()
+    kili_api_gateway.count_assets.return_value = 3
+    kili_api_gateway.get_project.return_value = get_project_return_val
+    kili_api_gateway.list_assets.return_value = updated_mock_fetch_assets
+
+    kili_llm = LlmClientMethods(kili_api_gateway)
+
+    result = kili_llm.export(
+        project_id="project_id",
+    )
+    assert result == updated_expected_export

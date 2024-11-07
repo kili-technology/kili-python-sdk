@@ -50,6 +50,7 @@ class LLMDynamicExporter:
                 chat_items = label["chatItems"]
                 annotations = label["annotations"]
                 rounds = self._build_rounds(chat_items, annotations, json_interface)
+                total_rounds = len(rounds)
                 for step, round in enumerate(rounds):
                     raw_data = _format_raw_data(
                         round["context"]
@@ -59,25 +60,30 @@ class LLMDynamicExporter:
                         label["id"],
                         obfuscated_models,
                     )
+                    formatted_response = _format_json_response(
+                        json_interface["jobs"],
+                        round["annotations"],
+                        round["completion"],
+                        obfuscated_models,
+                    )
+                    label_data = {
+                        "author": label["author"]["email"],
+                        "created_at": label["createdAt"],
+                        "label_type": label["labelType"],
+                        "label": {},
+                    }
+                    if formatted_response["turn"]:
+                        label_data["label"]["turn"] = formatted_response["turn"]
+                    if step == total_rounds - 1 and formatted_response["conversation"]:
+                        label_data["label"]["conversation"] = formatted_response["conversation"]
+
                     result[f"{step}"] = {
                         "external_id": asset["externalId"],
                         "metadata": asset["jsonMetadata"],
                         "models": _format_models_object(
                             asset["assetProjectModels"], obfuscated_models
                         ),
-                        "labels": [
-                            {
-                                "author": label["author"]["email"],
-                                "created_at": label["createdAt"],
-                                "label_type": label["labelType"],
-                                "label": _format_json_response(
-                                    json_interface["jobs"],
-                                    round["annotations"],
-                                    round["completion"],
-                                    obfuscated_models,
-                                ),
-                            }
-                        ],
+                        "labels": [label_data],
                         "raw_data": raw_data,
                         "status": asset["status"],
                     }
@@ -173,6 +179,9 @@ class LLMDynamicExporter:
                         has_children = True
                         parent_target = chat_item["id"]
 
+                current_round["annotations"] += [
+                    annotation for annotation in annotations if annotation["chatItemId"] is None
+                ]
                 rounds.append(current_round)
                 new_context = (
                     current_round["context"]
@@ -191,6 +200,9 @@ class LLMDynamicExporter:
 
             raise ValueError(f"Role {node['role']} not supported")
         if current_round["prompt"] is not None:
+            current_round["annotations"] += [
+                annotation for annotation in annotations if annotation["chatItemId"] is None
+            ]
             rounds.append(current_round)
         return rounds
 
@@ -225,8 +237,8 @@ def _format_comparison_annotation(annotation, completions, job, obfuscated_model
 
 def _format_json_response(
     jobs_config: Dict, annotations: List[Dict], completions: List[Dict], obfuscated_models: Dict
-) -> Dict[str, Union[str, List[str]]]:
-    result = {}
+) -> Dict[str, Dict[str, Union[str, List[str]]]]:
+    result = {"turn": {}, "conversation": {}}
     for annotation in annotations:
         formatted_response = None
         job = jobs_config[annotation["job"]]
@@ -243,8 +255,10 @@ def _format_json_response(
             logging.warning(
                 f"Annotation with job {annotation['job']} with mlTask {job['mlTask']} not supported. Ignored in the export."
             )
+        elif "level" in job and job["level"] == "conversation":
+            result["conversation"][annotation["job"]] = formatted_response
         else:
-            result[annotation["job"]] = formatted_response
+            result["turn"][annotation["job"]] = formatted_response
 
     return result
 
