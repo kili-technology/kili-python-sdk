@@ -123,10 +123,9 @@ class LLMDynamicExporter:
 
     def _build_rounds(self, chat_items, annotations, json_interface):
         """A round is composed of a prompt with n pre-prompts and n completions."""
-        ordered_chat_items = sorted(chat_items, key=lambda x: x["createdAt"])
         rounds = []
         current_round = self._init_round([])
-        for chat_item in ordered_chat_items:
+        for chat_item in chat_items:
             role = chat_item["role"].lower() if chat_item["role"] else None
             if role == "user" or role == "system":
                 if current_round["prompt"] is not None:
