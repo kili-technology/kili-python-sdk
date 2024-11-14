@@ -111,12 +111,12 @@ mock_fetch_assets = [
                 },
                 "chatItems": [
                     {
-                        "id": "cm2u6kgcc001aj7ja1stsbrvu",
-                        "content": "You are a helpful assistant",
-                        "createdAt": "2024-08-06T12:28:52.170Z",
-                        "modelId": None,
-                        "parentId": None,
-                        "role": "SYSTEM",
+                        "id": "clziefeoe003m7tc976xwbh58",
+                        "content": "Turtles are reptiles known for their protective shells, which act as both home and armor. They are slow-moving on land but can be agile in water, with many species being excellent swimmers. Turtles are omnivorous, feeding on plants, insects, and small animals. They are cold-blooded and rely on external heat sources to regulate their body temperature. Turtles are long-lived, with some species living over 100 years. They are found on every continent except Antarctica, inhabiting a variety of environments including oceans, freshwater lakes, and even deserts. Many turtle species are endangered due to habitat loss and other factors.",
+                        "createdAt": "2024-08-06T12:30:52.430Z",
+                        "modelId": "clzief6pr003c7tc99680e8yj",
+                        "parentId": "clziefeh6003k7tc99abderkk",
+                        "role": "ASSISTANT",
                     },
                     {
                         "id": "clziefeh6003k7tc99abderkk",
@@ -127,12 +127,12 @@ mock_fetch_assets = [
                         "role": "USER",
                     },
                     {
-                        "id": "clziefeoe003m7tc976xwbh58",
-                        "content": "Turtles are reptiles known for their protective shells, which act as both home and armor. They are slow-moving on land but can be agile in water, with many species being excellent swimmers. Turtles are omnivorous, feeding on plants, insects, and small animals. They are cold-blooded and rely on external heat sources to regulate their body temperature. Turtles are long-lived, with some species living over 100 years. They are found on every continent except Antarctica, inhabiting a variety of environments including oceans, freshwater lakes, and even deserts. Many turtle species are endangered due to habitat loss and other factors.",
-                        "createdAt": "2024-08-06T12:30:52.430Z",
-                        "modelId": "clzief6pr003c7tc99680e8yj",
-                        "parentId": "clziefeh6003k7tc99abderkk",
-                        "role": "ASSISTANT",
+                        "id": "cm2u6kgcc001aj7ja1stsbrvu",
+                        "content": "You are a helpful assistant",
+                        "createdAt": "2024-08-06T12:28:52.170Z",
+                        "modelId": None,
+                        "parentId": None,
+                        "role": "SYSTEM",
                     },
                     {
                         "id": "clziefepk003n7tc9fyx49vei",
