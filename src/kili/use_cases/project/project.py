@@ -127,6 +127,7 @@ class ProjectUseCases(BaseUseCases):
         title: Optional[str] = None,
         use_honeypot: Optional[bool] = None,
         metadata_types: Optional[Dict] = None,
+        seconds_to_label_before_auto_assign: Optional[int] = None,
     ) -> Dict[str, object]:
         """Update properties in a project."""
         if consensus_tot_coverage is not None and not 0 <= consensus_tot_coverage <= 100:
@@ -158,6 +159,7 @@ class ProjectUseCases(BaseUseCases):
             number_of_remaining_assets=number_of_remaining_assets,
             number_of_reviewed_assets=number_of_reviewed_assets,
             review_coverage=review_coverage,
+            seconds_to_label_before_auto_assign=seconds_to_label_before_auto_assign,
             should_relaunch_kpi_computation=should_relaunch_kpi_computation,
             title=title,
             use_honeypot=use_honeypot,
