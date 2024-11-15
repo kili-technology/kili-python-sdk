@@ -51,12 +51,12 @@ jobs:
           fi
 
       - name: Publish to test PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@release/v1.10
         with:
           repository-url: https://test.pypi.org/legacy/
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@release/v1.10
 
       - name: Slack notification
         id: slack
