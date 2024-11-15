@@ -449,6 +449,115 @@ expected_export = [
     }
 ]
 
+mock_fetch_assets_no_completions = [
+    {
+        "labels": [
+            {
+                "annotations": [],
+                "author": {
+                    "id": "user-1",
+                    "email": "test+admin@kili-technology.com",
+                    "firstname": "Test",
+                    "lastname": "Admin",
+                },
+                "chatItems": [
+                    {
+                        "id": "clziefeh6003k7tc99abderkk",
+                        "content": "describe turtle in 100 words",
+                        "createdAt": "2024-08-06T12:30:52.170Z",
+                        "modelId": None,
+                        "parentId": "cm2u6kgcc001aj7ja1stsbrvu",
+                        "role": "USER",
+                    },
+                    {
+                        "id": "cm2u6kgcc001aj7ja1stsbrvu",
+                        "content": "You are a helpful assistant",
+                        "createdAt": "2024-08-06T12:28:52.170Z",
+                        "modelId": None,
+                        "parentId": None,
+                        "role": "SYSTEM",
+                    },
+                ],
+                "createdAt": "2024-08-06T12:30:42.122Z",
+                "isLatestLabelForUser": True,
+                "isSentBackToQueue": False,
+                "id": "clzief6q2003e7tc91jm46uii",
+                "jsonResponse": {},
+                "labelType": "AUTOSAVE",
+                "modelName": None,
+            }
+        ],
+        "content": "",
+        "assetProjectModels": [
+            {
+                "id": "clzief6pr003c7tc99680e8yj",
+                "projectModelId": "ProjectModelA",
+                "configuration": {"temperature": 1, "model": "my-model-1"},
+            },
+            {
+                "id": "clzief6ps003d7tc9fzgj2xkf",
+                "projectModelId": "ProjectModelB",
+                "configuration": {"temperature": 0.5, "model": "my-model-2"},
+            },
+        ],
+        "externalId": "clzief6pg003a7tc9cn0p1obf",
+        "jsonMetadata": {},
+        "status": "ONGOING",
+    }
+]
+
+expected_export_ongoing = [
+    {
+        "0": {
+            "raw_data": [
+                {
+                    "id": "cm2u6kgcc001aj7ja1stsbrvu",
+                    "role": "system",
+                    "chat_id": "clzief6q2003e7tc91jm46uii",
+                    "content": "You are a helpful assistant",
+                    "model": None,
+                },
+                {
+                    "content": "describe turtle in 100 words",
+                    "role": "user",
+                    "chat_id": "clzief6q2003e7tc91jm46uii",
+                    "id": "clziefeh6003k7tc99abderkk",
+                    "model": None,
+                },
+            ],
+            "status": "ONGOING",
+            "external_id": "clzief6pg003a7tc9cn0p1obf",
+            "metadata": {},
+            "models": {
+                "A": {
+                    "configuration": {
+                        "model": "my-model-1",
+                        "temperature": 1,
+                    },
+                    "id": "clzief6pr003c7tc99680e8yj",
+                    "projectModelId": "ProjectModelA",
+                },
+                "B": {
+                    "configuration": {
+                        "model": "my-model-2",
+                        "temperature": 0.5,
+                    },
+                    "id": "clzief6ps003d7tc9fzgj2xkf",
+                    "projectModelId": "ProjectModelB",
+                },
+            },
+            "labels": [
+                {
+                    "author": "test+admin@kili-technology.com",
+                    "created_at": "2024-08-06T12:30:42.122Z",
+                    "label_type": "AUTOSAVE",
+                    "label": {},
+                }
+            ],
+        },
+    }
+]
+
 
 def test_export_dynamic(mocker):
     get_project_return_val = {
@@ -469,6 +578,28 @@ def test_export_dynamic(mocker):
         project_id="project_id",
     )
     assert result == expected_export
+
+
+def test_export_dynamic_ongoing(mocker):
+    get_project_return_val = {
+        "jsonInterface": mock_json_interface,
+        "inputType": "LLM_INSTR_FOLLOWING",
+        "title": "Test project",
+        "id": "project_id",
+        "dataConnections": None,
+    }
+    kili_api_gateway = mocker.MagicMock()
+    kili_api_gateway.count_assets.return_value = 3
+    kili_api_gateway.get_project.return_value = get_project_return_val
+    kili_api_gateway.list_assets.return_value = mock_fetch_assets_no_completions
+
+    kili_llm = LlmClientMethods(kili_api_gateway)
+
+    result = kili_llm.export(
+        project_id="project_id",
+        label_type_in=["DEFAULT", "REVIEW", "AUTOSAVE"],
+    )
+    assert result == expected_export_ongoing
 
 
 def test_export_dynamic_empty_json_interface(mocker):
