@@ -78,7 +78,6 @@ def export(  # pylint: disable=too-many-arguments, too-many-locals
     input_type = project["inputType"]
 
     fields = get_fields_to_fetch(input_type)
-    asset_filter.status_in = ["LABELED", "REVIEWED", "TO_REVIEW", "ONGOING"]
     assets = list(
         kili_api_gateway.list_assets(asset_filter, fields, QueryOptions(disable_tqdm=disable_tqdm))
     )
