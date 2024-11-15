@@ -50,6 +50,7 @@ def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> Dict:
         "numberOfRemainingAssets": data.number_of_remaining_assets,
         "numberOfReviewedAssets": data.number_of_reviewed_assets,
         "reviewCoverage": data.review_coverage,
+        "secondsToLabelBeforeAutoAssign": data.seconds_to_label_before_auto_assign,
         "shouldRelaunchKpiComputation": data.should_relaunch_kpi_computation,
         "title": data.title,
         "useHoneyPot": data.use_honeypot,

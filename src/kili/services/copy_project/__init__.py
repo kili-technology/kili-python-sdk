@@ -33,10 +33,12 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
     )
     FIELDS_JSON_INTERFACE = ("jsonInterface",)
     FIELDS_QUALITY_SETTINGS = (
+        "canSkipAsset",
         "consensusTotCoverage",
         "minConsensusSize",
-        "useHoneyPot",
         "reviewCoverage",
+        "secondsToLabelBeforeAutoAssign",
+        "useHoneyPot",
     )
 
     def __init__(self, kili: "Kili") -> None:
@@ -156,10 +158,12 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
     def _copy_quality_settings(self, new_project_id: str, src_project: Dict) -> None:
         self.kili.update_properties_in_project(
             project_id=new_project_id,
+            can_skip_asset=src_project["canSkipAsset"],
             consensus_tot_coverage=src_project["consensusTotCoverage"],
             min_consensus_size=src_project["minConsensusSize"],
             use_honeypot=src_project["useHoneyPot"],
             review_coverage=src_project["reviewCoverage"],
+            seconds_to_label_before_auto_assign=src_project["secondsToLabelBeforeAutoAssign"],
         )
 
     def _copy_assets(self, from_project_id: str, new_project_id: str) -> None:

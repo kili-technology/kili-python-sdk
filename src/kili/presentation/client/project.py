@@ -304,6 +304,7 @@ class ProjectClientMethods(BaseClientMethods):
         title: Optional[str] = None,
         use_honeypot: Optional[bool] = None,
         metadata_types: Optional[dict] = None,
+        seconds_to_label_before_auto_assign: Optional[int] = None,
     ) -> Dict[str, Any]:
         """Update properties of a project.
 
@@ -340,6 +341,9 @@ class ProjectClientMethods(BaseClientMethods):
             metadata_types: Types of the project metadata.
                 Should be a `dict` of metadata fields name as keys and metadata types as values.
                 Currently, possible types are: `string`, `number`
+            seconds_to_label_before_auto_assign: When a user begins to annotate an asset,
+                it automatically gets assigned to them.
+                This ensures the user retains the asset until it is submitted.
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
@@ -388,6 +392,7 @@ class ProjectClientMethods(BaseClientMethods):
             use_honeypot=use_honeypot,
             title=title,
             metadata_types=metadata_types,
+            seconds_to_label_before_auto_assign=seconds_to_label_before_auto_assign,
         )
 
     @typechecked
