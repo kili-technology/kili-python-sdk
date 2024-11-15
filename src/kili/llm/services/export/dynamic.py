@@ -133,7 +133,11 @@ class LLMDynamicExporter:
         current_round = self._init_round([])
 
         while has_children:
-            node = dict_chat_items[parent_target][0]
+            nodes = dict_chat_items.get(parent_target)
+            if nodes is None or len(nodes) == 0:
+                has_children = False
+                continue
+            node = nodes[0]
             if node["role"].lower() == "system":
                 current_round["pre_prompts"].append(node)
                 parent_target = node["id"]
