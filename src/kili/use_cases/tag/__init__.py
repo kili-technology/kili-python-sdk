@@ -127,3 +127,7 @@ class TagUseCases(BaseUseCases):
             Whether the tag was successfully removed.
         """
         return self._kili_api_gateway.delete_tag(tag_id=tag_id)
+
+    def create_tag(self, name: str, color: Optional[str]) -> Dict:
+        """Create a tag."""
+        return self._kili_api_gateway.create_tag(label=name, color=color)

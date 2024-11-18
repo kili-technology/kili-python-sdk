@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Tags related operations."""
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
@@ -10,6 +10,7 @@ from kili.domain.types import ListOrTuple
 
 from .operations import (
     GQL_CHECK_TAG,
+    GQL_CREATE_TAG,
     GQL_DELETE_TAG,
     GQL_UNCHECK_TAG,
     GQL_UPDATE_TAG,
@@ -67,3 +68,9 @@ class TagOperationMixin(BaseOperationMixin):
         variables = {"tagId": tag_id}
         result = self.graphql_client.execute(GQL_DELETE_TAG, variables)
         return result["data"]
+
+    def create_tag(self, label: str, color: Optional[str] = None) -> Dict:
+        """Send a GraphQL request calling createTag resolver."""
+        variables = {"data": {"label": label, "color": color}}
+        result = self.graphql_client.execute(GQL_CREATE_TAG, variables)
+        return result["createTag"]

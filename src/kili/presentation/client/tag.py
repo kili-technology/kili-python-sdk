@@ -176,3 +176,19 @@ class TagClientMethods(BaseClientMethods):
                 raise ValueError("Either `tag_name` or `tag_id` must be provided.")
             tag_id = tag_use_cases.get_tag_ids_from_labels(labels=(tag_name,))[0]
         return tag_use_cases.delete_tag(tag_id=TagId(tag_id))
+
+    def create_tag(self, name: str, color: Optional[str] = None) -> Dict[Literal["id"], str]:
+        """Create a tag.
+
+        This operation is organization-wide.
+        The tag will be proposed for projects of the organization.
+
+        Args:
+            name: Name of the tag to create.
+            color: Color of the tag to create. If not providen a default color will be used.
+
+        Returns:
+            The id of the created tag.
+        """
+        tag_use_cases = TagUseCases(self.kili_api_gateway)
+        return tag_use_cases.create_tag(name, color)

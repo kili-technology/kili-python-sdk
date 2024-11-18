@@ -140,3 +140,51 @@ def test_given_an_api_key_away_to_expiration_when_I_check_expiry_of_key_is_not_c
         warnings.simplefilter("error")  # checks that no warning is raised
         # When
         _ = Kili()
+
+
+@patch.dict(os.environ, {"KILI_API_KEY": "fake_key"})
+def test_complexity_increases_with_calls(
+    mocker: pytest_mock.MockerFixture,
+):
+    graphql_mock = mocker.MagicMock()
+    graphql_mock.execute.return_value = {"data": 1}
+    graphql_mock.transport.response_headers = {"x-complexity": "125"}
+
+    # Given
+    mocker.patch("kili.client.is_api_key_valid", return_value=True)
+    mocker.patch.object(ApiKeyUseCases, "check_expiry_of_key_is_close")
+    mocker.patch(
+        "kili.core.graphql.graphql_client.GraphQLClient._initizalize_graphql_client",
+        return_value=graphql_mock,
+    )
+    kili = Kili()
+
+    assert kili.graphql_client.complexity_consumed == 0
+    initialized_date = kili.graphql_client.created_at
+
+    kili.count_projects()
+    assert kili.graphql_client.complexity_consumed == 125
+    assert kili.graphql_client.created_at == initialized_date
+
+
+@patch.dict(os.environ, {"KILI_API_KEY": "fake_key"})
+def test_complexity_compatibility_with_legacy(
+    mocker: pytest_mock.MockerFixture,
+):
+    graphql_mock = mocker.MagicMock()
+    graphql_mock.execute.return_value = {"data": 1}
+    graphql_mock.transport.response_headers = {}
+
+    # Given
+    mocker.patch("kili.client.is_api_key_valid", return_value=True)
+    mocker.patch.object(ApiKeyUseCases, "check_expiry_of_key_is_close")
+    mocker.patch(
+        "kili.core.graphql.graphql_client.GraphQLClient._initizalize_graphql_client",
+        return_value=graphql_mock,
+    )
+    kili = Kili()
+
+    assert kili.graphql_client.complexity_consumed == 0
+
+    kili.count_projects()
+    assert kili.graphql_client.complexity_consumed == 0
