@@ -82,9 +82,11 @@ def src_project_video(kili: "Kili"):
 
     kili.update_properties_in_project(
         project_id=project["id"],
+        can_skip_asset=True,
         consensus_tot_coverage=0,
         min_consensus_size=1,
         review_coverage=0,
+        seconds_to_label_before_auto_assign=0,
     )
 
     kili.append_to_roles(
@@ -190,6 +192,7 @@ def test_copy_project_e2e_video(kili: "Kili", src_project_video):
         description="new description",
         copy_assets=True,
         copy_labels=True,
+        copy_quality_settings=True,
     )
 
     proj_fields = (
@@ -229,6 +232,11 @@ def test_copy_project_e2e_video(kili: "Kili", src_project_video):
     assert new_proj["description"] == "new description"
     assert new_proj["inputType"] == src_proj["inputType"]
     assert new_proj["jsonInterface"] == src_proj["jsonInterface"]
+    assert new_proj["consensusTotCoverage"] == src_proj["consensusTotCoverage"]
+    assert new_proj["minConsensusSize"] == src_proj["minConsensusSize"]
+    assert new_proj["reviewCoverage"] == src_proj["reviewCoverage"]
+    assert new_proj["secondsToLabelBeforeAutoAssign"] == src_proj["secondsToLabelBeforeAutoAssign"]
+    assert new_proj["canSkipAsset"] == src_proj["canSkipAsset"]
 
     # assert quality settings
     for field_name in ProjectCopier.FIELDS_QUALITY_SETTINGS:

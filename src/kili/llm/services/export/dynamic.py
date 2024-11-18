@@ -8,7 +8,6 @@ from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 CHAT_ITEMS_NEEDED_FIELDS = [
     "id",
     "content",
-    "createdAt",
     "modelId",
     "parentId",
     "role",
@@ -123,42 +122,76 @@ class LLMDynamicExporter:
 
     def _build_rounds(self, chat_items, annotations, json_interface):
         """A round is composed of a prompt with n pre-prompts and n completions."""
-        ordered_chat_items = sorted(chat_items, key=lambda x: x["createdAt"])
+        dict_chat_items = {}
+        for chat_item in chat_items:
+            if dict_chat_items.get(chat_item["parentId"]) is None:
+                dict_chat_items[chat_item["parentId"]] = []
+            dict_chat_items[chat_item["parentId"]].append(chat_item)
         rounds = []
+        parent_target = None
+        has_children = True
         current_round = self._init_round([])
-        for chat_item in ordered_chat_items:
-            role = chat_item["role"].lower() if chat_item["role"] else None
-            if role == "user" or role == "system":
-                if current_round["prompt"] is not None:
-                    rounds.append(current_round)
-                    new_context = (
-                        current_round["context"]
-                        + current_round["pre_prompts"]
-                        + [
-                            current_round["prompt"],
-                            self._get_round_winner(
-                                current_round["completion"],
-                                current_round["annotations"],
-                                json_interface,
-                            ),
-                        ]
-                    )
-                    current_round = self._init_round(new_context)
 
-            if role == "user":
-                current_round["prompt"] = chat_item
-            elif role == "system":
-                current_round["pre_prompts"].append(chat_item)
-            elif role == "assistant":
-                current_round["completion"].append(chat_item)
-            else:
-                raise ValueError(f"Role {chat_item['role']} not supported")
-            current_round["annotations"] += [
-                annotation
-                for annotation in annotations
-                if annotation["chatItemId"] == chat_item["id"]
-            ]
-        rounds.append(current_round)
+        while has_children:
+            nodes = dict_chat_items.get(parent_target)
+            if nodes is None or len(nodes) == 0:
+                has_children = False
+                continue
+            node = nodes[0]
+            if node["role"].lower() == "system":
+                current_round["pre_prompts"].append(node)
+                parent_target = node["id"]
+                current_round["annotations"] += [
+                    annotation
+                    for annotation in annotations
+                    if annotation["chatItemId"] == node["id"]
+                ]
+                continue
+
+            if node["role"].lower() == "user":
+                current_round["prompt"] = node
+                parent_target = node["id"]
+                current_round["annotations"] += [
+                    annotation
+                    for annotation in annotations
+                    if annotation["chatItemId"] == node["id"]
+                ]
+                continue
+
+            if node["role"].lower() == "assistant":
+                has_children = False
+                if dict_chat_items.get(parent_target) is None:
+                    continue
+                for chat_item in dict_chat_items[parent_target]:
+                    current_round["completion"].append(chat_item)
+                    current_round["annotations"] += [
+                        annotation
+                        for annotation in annotations
+                        if annotation["chatItemId"] == chat_item["id"]
+                    ]
+                    if not has_children and dict_chat_items.get(chat_item["id"]) is not None:
+                        has_children = True
+                        parent_target = chat_item["id"]
+
+                rounds.append(current_round)
+                new_context = (
+                    current_round["context"]
+                    + current_round["pre_prompts"]
+                    + [
+                        current_round["prompt"],
+                        self._get_round_winner(
+                            current_round["completion"],
+                            current_round["annotations"],
+                            json_interface,
+                        ),
+                    ]
+                )
+                current_round = self._init_round(new_context)
+                continue
+
+            raise ValueError(f"Role {node['role']} not supported")
+        if current_round["prompt"] is not None:
+            rounds.append(current_round)
         return rounds
 
 

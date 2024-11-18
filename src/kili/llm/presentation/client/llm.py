@@ -11,7 +11,7 @@ from typing import (
 )
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
-from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
+from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
 from kili.domain.label import LabelType
 from kili.domain.llm import (
     AzureOpenAICredentials,
@@ -47,6 +47,7 @@ class LlmClientMethods:
         external_ids: Optional[List[str]] = None,
         include_sent_back_labels: Optional[bool] = False,
         label_type_in: Optional[List[LabelType]] = None,
+        status_in: Optional[List[AssetStatus]] = None,
     ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
         # pylint: disable=line-too-long
         """Returns an export of llm assets with valid labels.
@@ -58,6 +59,8 @@ class LlmClientMethods:
             external_ids: Optional list of the assets external IDs from which to export the labels.
             include_sent_back_labels: Include sent back labels if True.
             label_type_in: Optional types of label to fetch, by default ["DEFAULT", "REVIEW"].
+            status_in: Returned assets should have a status that belongs to that list, if given.
+                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
         !!! Example
             ```python
             kili.llm.export("your_project_id")
@@ -83,6 +86,7 @@ class LlmClientMethods:
             project_id=ProjectId(project_id),
             asset_id_in=resolved_asset_ids,
             label_type_in=label_type_in,
+            status_in=status_in,
         )
 
         try:
