@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.44">
     
     
       
@@ -2316,6 +2316,7 @@
         <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_honeypot</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">metadata_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seconds_to_label_before_auto_assign</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update properties of a project.</span>
 
@@ -2352,6 +2353,9 @@
 <span class="sd">            metadata_types: Types of the project metadata.</span>
 <span class="sd">                Should be a `dict` of metadata fields name as keys and metadata types as values.</span>
 <span class="sd">                Currently, possible types are: `string`, `number`</span>
+<span class="sd">            seconds_to_label_before_auto_assign: When a user begins to annotate an asset,</span>
+<span class="sd">                it automatically gets assigned to them.</span>
+<span class="sd">                This ensures the user retains the asset until it is submitted.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the changed properties which indicates if the mutation was successful,</span>
@@ -2400,6 +2404,7 @@
             <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
             <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
             <span class="n">metadata_types</span><span class="o">=</span><span class="n">metadata_types</span><span class="p">,</span>
+            <span class="n">seconds_to_label_before_auto_assign</span><span class="o">=</span><span class="n">seconds_to_label_before_auto_assign</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -3074,7 +3079,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 
 
 <h3 id="kili.presentation.client.project.ProjectClientMethods.update_properties_in_project" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">update_properties_in_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">can_navigate_between_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">can_skip_asset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compliance_tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_tot_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instructions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_consensus_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_skipped_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_remaining_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_reviewed_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">review_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata_types</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">update_properties_in_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">can_navigate_between_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">can_skip_asset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compliance_tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_tot_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instructions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_consensus_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_skipped_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_remaining_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_reviewed_assets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">review_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata_types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seconds_to_label_before_auto_assign</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3230,6 +3235,14 @@ Should be a <code>dict</code> of metadata fields name as keys and metadata types
 Currently, possible types are: <code>string</code>, <code>number</code></p></td>
         <td><code>None</code></td>
       </tr>
+      <tr>
+        <td><code>seconds_to_label_before_auto_assign</code></td>
+        <td><code>Optional[int]</code></td>
+        <td><p>When a user begins to annotate an asset,
+it automatically gets assigned to them.
+This ensures the user retains the asset until it is submitted.</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -3292,6 +3305,7 @@ will default to the <code>string</code> type.</p>
     <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">use_honeypot</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">metadata_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">seconds_to_label_before_auto_assign</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Update properties of a project.</span>
 
@@ -3328,6 +3342,9 @@ will default to the <code>string</code> type.</p>
 <span class="sd">        metadata_types: Types of the project metadata.</span>
 <span class="sd">            Should be a `dict` of metadata fields name as keys and metadata types as values.</span>
 <span class="sd">            Currently, possible types are: `string`, `number`</span>
+<span class="sd">        seconds_to_label_before_auto_assign: When a user begins to annotate an asset,</span>
+<span class="sd">            it automatically gets assigned to them.</span>
+<span class="sd">            This ensures the user retains the asset until it is submitted.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the changed properties which indicates if the mutation was successful,</span>
@@ -3376,6 +3393,7 @@ will default to the <code>string</code> type.</p>
         <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
         <span class="n">metadata_types</span><span class="o">=</span><span class="n">metadata_types</span><span class="p">,</span>
+        <span class="n">seconds_to_label_before_auto_assign</span><span class="o">=</span><span class="n">seconds_to_label_before_auto_assign</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
