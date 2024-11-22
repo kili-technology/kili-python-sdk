@@ -1,4 +1,5 @@
 """Notification mutations."""
+from typing import Optional
 
 from typeguard import typechecked
 
@@ -34,6 +35,7 @@ class MutationsNotification(BaseOperationEntrypointMixin):
         variables = {
             "data": {
                 "message": message,
+                "progress": None,
                 "status": status,
                 "url": url,
                 "userID": user_id,
@@ -44,7 +46,12 @@ class MutationsNotification(BaseOperationEntrypointMixin):
 
     @typechecked
     def update_properties_in_notification(
-        self, notification_id: str, has_been_seen: bool, status: str, url: str
+        self,
+        notification_id: str,
+        has_been_seen: bool,
+        status: str,
+        url: str,
+        progress: Optional[int] = None,
     ):
         """Modify a notification.
 
@@ -53,6 +60,7 @@ class MutationsNotification(BaseOperationEntrypointMixin):
         Args:
             notification_id :
             hasBeenSeen:
+            progress:
             status :
             url :
 
@@ -63,6 +71,7 @@ class MutationsNotification(BaseOperationEntrypointMixin):
         variables = {
             "id": notification_id,
             "hasBeenSeen": has_been_seen,
+            "progress": progress,
             "status": status,
             "url": url,
         }
