@@ -18,6 +18,7 @@ GQL_UPDATE_PROPERTIES_IN_NOTIFICATION = f"""
 mutation(
     $id: ID!
     $hasBeenSeen: Boolean
+    $progress: Int
     $status: NotificationStatus
     $url: String
 ) {{
@@ -25,6 +26,7 @@ mutation(
     where: {{id: $id}}
     data: {{
       hasBeenSeen: $hasBeenSeen
+      progress: $progress
       status: $status
       url: $url
     }}
