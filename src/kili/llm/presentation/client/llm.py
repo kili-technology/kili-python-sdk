@@ -16,6 +16,7 @@ from kili.domain.label import LabelType
 from kili.domain.llm import (
     AzureOpenAICredentials,
     ChatItemDict,
+    ChatItemRole,
     ModelDict,
     ModelToCreateInput,
     ModelToUpdateInput,
@@ -361,7 +362,9 @@ class LlmClientMethods:
         """
         return self.kili_api_gateway.delete_project_model(project_model_id)
 
-    def create_conversation(self, project_id: str, prompt: str) -> List[ChatItemDict]:
+    def create_conversation(
+        self, project_id: str, initial_prompt: str, system_prompt: str = None
+    ) -> List[ChatItemDict]:
         # pylint: disable=line-too-long
         """Create a new conversation in an LLM project starting with a user's prompt.
 
@@ -372,10 +375,11 @@ class LlmClientMethods:
 
         Args:
             project_id: The identifier of the project where the conversation will be created.
-            prompt: The initial prompt or message from the user to start the conversation.
+            initial_prompt: The initial prompt or message from the user to start the conversation.
+            system_prompt: Optional system prompt to guide the assistant's responses.
 
         Returns:
-            A list of chat items in the conversation, including the user's prompt and the assistant's responses.
+            A list of chat items in the conversation, including the user's prompts and the assistant's responses.
 
         Examples:
             >>> PROMPT = "Hello, how can I improve my coding skills?"
@@ -394,6 +398,20 @@ class LlmClientMethods:
         )
         asset_id = llm_asset["id"]
         label_id = llm_asset["latestLabel"]["id"]
-        return self.kili_api_gateway.create_chat_item(
-            asset_id=asset_id, label_id=label_id, prompt=prompt
+
+        system_chat_item = []
+        if system_prompt:
+            system_chat_item = self.kili_api_gateway.create_chat_item(
+                asset_id=asset_id, label_id=label_id, prompt=system_prompt, role=ChatItemRole.SYSTEM
+            )
+
+        parent_id = system_chat_item[0]["id"] if system_chat_item else None
+        prompt_chat_item = self.kili_api_gateway.create_chat_item(
+            asset_id=asset_id,
+            label_id=label_id,
+            prompt=initial_prompt,
+            role=ChatItemRole.USER,
+            parent_id=parent_id,
         )
+
+        return system_chat_item + prompt_chat_item
