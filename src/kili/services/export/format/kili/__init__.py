@@ -70,7 +70,7 @@ class KiliExporter(AbstractExporter):
                 json_content_list = [
                     str(Path(self.ASSETS_DIR_NAME) / Path(filepath).name)
                     for filepath in asset["jsonContent"]
-                    if Path(filepath).is_file()
+                    if isinstance(filepath, str) and Path(filepath).is_file()
                 ]
 
                 asset["jsonContent"] = json_content_list
