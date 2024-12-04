@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Api Keys related operations."""
 
-from typing import Dict, List, Optional, Union, cast
+from typing import Dict, List, Optional, cast
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -190,7 +190,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         label_id: str,
         prompt: str,
         role: ChatItemRole,
-        parent_id: Union[str, None] = None,
+        parent_id: Optional[str] = None,
     ) -> List[ChatItemDict]:
         """Create a chat item associated with an asset."""
         data = map_create_chat_item_input(label_id, prompt, role, parent_id)
