@@ -363,7 +363,7 @@ class LlmClientMethods:
         return self.kili_api_gateway.delete_project_model(project_model_id)
 
     def create_conversation(
-        self, project_id: str, initial_prompt: str, system_prompt: str = None
+        self, project_id: str, initial_prompt: str, system_prompt: str = Union[str, None]
     ) -> List[ChatItemDict]:
         # pylint: disable=line-too-long
         """Create a new conversation in an LLM project starting with a user's prompt.
