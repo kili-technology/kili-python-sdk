@@ -100,6 +100,7 @@ class ChatItemRole(str, Enum):
 
     ASSISTANT = "ASSISTANT"
     USER = "USER"
+    SYSTEM = "SYSTEM"
 
 
 class OpenAISDKCredentialsDict(TypedDict):

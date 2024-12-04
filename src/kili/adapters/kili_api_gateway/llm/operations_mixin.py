@@ -37,6 +37,7 @@ from kili.adapters.kili_api_gateway.llm.operations import (
 )
 from kili.domain.llm import (
     ChatItemDict,
+    ChatItemRole,
     ModelDict,
     ModelToCreateInput,
     ModelToUpdateInput,
@@ -183,9 +184,16 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(mutation, variables)
         return result["createLLMAsset"]
 
-    def create_chat_item(self, asset_id: str, label_id: str, prompt: str) -> List[ChatItemDict]:
+    def create_chat_item(
+        self,
+        asset_id: str,
+        label_id: str,
+        prompt: str,
+        role: ChatItemRole,
+        parent_id: Optional[str] = None,
+    ) -> List[ChatItemDict]:
         """Create a chat item associated with an asset."""
-        data = map_create_chat_item_input(label_id, prompt)
+        data = map_create_chat_item_input(label_id, prompt, role, parent_id)
         where = map_asset_where(asset_id)
         variables = {"data": data, "where": where}
         fragment = fragment_builder(["content", "id", "labelId", "modelId", "parentId", "role"])

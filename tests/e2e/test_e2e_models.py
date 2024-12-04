@@ -9,6 +9,7 @@ PROJECT_DESCRIPTION = "End-to-End Test Model and Project Model workflow"
 MODEL_NAME = "E2E Test Model"
 UPDATED_MODEL_NAME = "E2E Test Model Updated"
 PROMPT = "Hello, world !"
+SYSTEM_PROMPT = "You're an helpful AI assistant with cutsom instructions"
 
 INTERFACE = {
     "jobs": {
@@ -106,13 +107,22 @@ def test_create_and_manage_project_and_model_resources(kili: Kili):
     assert updated_project_model is not None
     assert updated_project_model["configuration"] == updated_project_model_config_1
 
-    chat_items = kili.llm.create_conversation(project_id=project_id, prompt=PROMPT)
+    chat_items = kili.llm.create_conversation(project_id=project_id, initial_prompt=PROMPT)
 
     assert len(chat_items) == 3
     assert chat_items[0]["content"] == PROMPT
     assert chat_items[0]["role"] == ChatItemRole.USER
-    assert chat_items[1]["role"] == ChatItemRole.ASSISTANT
-    assert chat_items[2]["role"] == ChatItemRole.ASSISTANT
+    assert chat_items[1]["role"] == chat_items[2]["role"] == ChatItemRole.ASSISTANT
+
+    chat_items = kili.llm.create_conversation(
+        project_id=project_id, initial_prompt=PROMPT, system_prompt=SYSTEM_PROMPT
+    )
+
+    assert len(chat_items) == 4
+    assert chat_items[0]["content"] == PROMPT
+    assert chat_items[0]["role"] == ChatItemRole.SYSTEM
+    assert chat_items[1]["role"] == ChatItemRole.USER
+    assert chat_items[2]["role"] == chat_items[3]["role"] == ChatItemRole.ASSISTANT
 
     assets = kili.assets(project_id)
     assert len(assets) == 1
