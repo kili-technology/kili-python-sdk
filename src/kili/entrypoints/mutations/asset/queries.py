@@ -2,6 +2,20 @@
 
 from kili.entrypoints.mutations.project.fragments import PROJECT_FRAGMENT_ID
 
+GQL_ASSIGN_ASSETS = """
+mutation assignAssetsToLabelers(
+    $where: AssetWhere!,
+    $userIds: [String!]!
+) {
+    data: assignAssetsToLabelers(
+        where: $where,
+        userIds: $userIds
+    ) {
+      id
+    }
+  }
+"""
+
 GQL_UPDATE_PROPERTIES_IN_ASSETS = """
 mutation(
     $whereArray: [AssetWhere!]!

@@ -19,6 +19,7 @@ from kili.entrypoints.mutations.asset.helpers import (
 )
 from kili.entrypoints.mutations.asset.queries import (
     GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
+    GQL_ASSIGN_ASSETS,
     GQL_DELETE_MANY_FROM_DATASET,
     GQL_SEND_BACK_ASSETS_TO_QUEUE,
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
@@ -204,6 +205,59 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         return {"id": project_id, "asset_ids": created_asset_ids}
 
     @typechecked
+    def assign_assets_to_labelers(
+        self,
+        to_be_labeled_by_array: List[List[str]],
+        asset_ids: Optional[List[str]] = None,
+        external_ids: Optional[List[str]] = None,
+    ) -> List[Dict[str, Any]]:
+        # pylint: disable=line-too-long
+        """Assign a list of assets to a list of labelers.
+
+        Args:
+            asset_ids: The internal asset IDs to assign.
+            external_ids: The external asset IDs to assign (if `asset_ids` is not already provided).
+            to_be_labeled_by_array: The array of list of labelers to assign per labelers (list of userIds).
+
+        Returns:
+            A list of dictionaries with the asset ids.
+
+        Examples:
+            >>> kili.assign_assets_to_labelers(
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    to_be_labeled_by_array=[['cm3yja6kv0i698697gcil9rtk','cm3yja6kv0i000000gcil9rtk'],
+                                            ['cm3yja6kv0i698697gcil9rtk']]
+                )
+
+                # The following call resets the assignees on the asset_ids given.
+            >>> kili.assign_assets_to_labelers(
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    to_be_labeled_by_array=[[], []]
+                )
+        """
+        if is_empty_list_with_warning(
+            "assign_assets_to_labelers", "asset_ids", asset_ids
+        ) and is_empty_list_with_warning("assign_assets_to_labelers", "external_ids", external_ids):
+            return []
+
+        if (asset_ids is not None and external_ids is not None) or (
+            asset_ids is None and external_ids is None
+        ):
+            raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
+
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id=None)
+
+        if len(resolved_asset_ids) != len(to_be_labeled_by_array):
+            raise MutationError("There must be as many assets as there are lists of labelers.")
+
+        formated_results = []
+        for asset_id, to_be_labeled_by in zip(resolved_asset_ids, to_be_labeled_by_array):
+            payload = {"userIds": to_be_labeled_by, "where": {"id": asset_id}}
+            results = self.graphql_client.execute(GQL_ASSIGN_ASSETS, payload)
+            formated_results.append(results)
+        return formated_results
+
+    @typechecked
     def update_properties_in_assets(
         self,
         asset_ids: Optional[List[str]] = None,
@@ -311,6 +365,14 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 stacklevel=1,
             )
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
+
+        if to_be_labeled_by_array is not None:
+            warnings.warn(
+                "to_be_labeled_by_array is going to be deprecated. Please use"
+                " `kili.assign_assets_to_labelers()` method instead to assign assets",
+                DeprecationWarning,
+                stacklevel=1,
+            )
 
         resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
