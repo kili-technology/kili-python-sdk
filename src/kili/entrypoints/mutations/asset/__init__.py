@@ -210,12 +210,15 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         to_be_labeled_by_array: List[List[str]],
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
+        project_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
+        # pylint: disable=line-too-long
         """Assign a list of assets to a list of labelers.
 
         Args:
             asset_ids: The internal asset IDs to assign.
             external_ids: The external asset IDs to assign (if `asset_ids` is not already provided).
+            project_id: The project ID. Only required if `external_ids` argument is provided.
             to_be_labeled_by_array: The array of list of labelers to assign per labelers (list of userIds).
 
         Returns:
@@ -244,7 +247,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ):
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
 
-        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id=None)
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
         if len(resolved_asset_ids) != len(to_be_labeled_by_array):
             raise MutationError("There must be as many assets as there are lists of labelers.")
