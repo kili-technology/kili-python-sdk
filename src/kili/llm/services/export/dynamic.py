@@ -28,7 +28,7 @@ LABELS_NEEDED_FIELDS = [
     "modelName",
 ]
 
-DEFAULT_JOB_LEVEL = "response"
+DEFAULT_JOB_LEVEL = "round"
 
 
 class LLMDynamicExporter:
@@ -74,8 +74,8 @@ class LLMDynamicExporter:
                         "label_type": label["labelType"],
                         "label": {},
                     }
-                    if formatted_response["response"]:
-                        label_data["label"]["response"] = formatted_response["response"]
+                    if formatted_response["round"]:
+                        label_data["label"]["round"] = formatted_response["round"]
                     if formatted_response["completion"]:
                         label_data["label"]["completion"] = formatted_response["completion"]
                     if step == total_rounds - 1 and formatted_response["conversation"]:
@@ -242,7 +242,7 @@ def _format_comparison_annotation(annotation, completions, job, obfuscated_model
 def _format_json_response(
     jobs_config: Dict, annotations: List[Dict], completions: List[Dict], obfuscated_models: Dict
 ) -> Dict[str, Dict[str, Union[str, List[str]]]]:
-    result = {"response": {}, "conversation": {}, "completion": {}}
+    result = {"round": {}, "conversation": {}, "completion": {}}
     for annotation in annotations:
         formatted_response = None
         job = jobs_config[annotation["job"]]

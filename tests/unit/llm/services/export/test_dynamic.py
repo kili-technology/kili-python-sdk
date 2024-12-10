@@ -281,7 +281,7 @@ expected_export = [
                     "created_at": "2024-08-06T12:30:42.122Z",
                     "label_type": "DEFAULT",
                     "label": {
-                        "response": {
+                        "round": {
                             "COMPARISON_JOB": "A_3",
                             "CLASSIFICATION_JOB": ["BOTH_ARE_GOOD"],
                         },
@@ -361,7 +361,7 @@ expected_export = [
                     "created_at": "2024-08-06T12:30:42.122Z",
                     "label_type": "DEFAULT",
                     "label": {
-                        "response": {"COMPARISON_JOB": "B_1"},
+                        "round": {"COMPARISON_JOB": "B_1"},
                     },
                 }
             ],
@@ -452,7 +452,7 @@ expected_export = [
                     "created_at": "2024-08-06T12:30:42.122Z",
                     "label_type": "DEFAULT",
                     "label": {
-                        "response": {"COMPARISON_JOB": "A_2"},
+                        "round": {"COMPARISON_JOB": "A_2"},
                     },
                 }
             ],
