@@ -33,7 +33,9 @@ class JobPayload:
         self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
 
         # cast lists to objects
-        if "categories" in self._json_data:
+        if "categories" in self._json_data and not isinstance(
+            self._json_data["categories"], category_module.CategoryList
+        ):
             self._json_data["categories"] = category_module.CategoryList(
                 job_name=self._job_name,
                 project_info=self._project_info,
