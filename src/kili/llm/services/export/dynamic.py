@@ -28,6 +28,8 @@ LABELS_NEEDED_FIELDS = [
     "modelName",
 ]
 
+DEFAULT_JOB_LEVEL = "round"
+
 
 class LLMDynamicExporter:
     """Handle exports of LLM_RLHF projects."""
@@ -72,8 +74,10 @@ class LLMDynamicExporter:
                         "label_type": label["labelType"],
                         "label": {},
                     }
-                    if formatted_response["turn"]:
-                        label_data["label"]["turn"] = formatted_response["turn"]
+                    if formatted_response["round"]:
+                        label_data["label"]["round"] = formatted_response["round"]
+                    if formatted_response["completion"]:
+                        label_data["label"]["completion"] = formatted_response["completion"]
                     if step == total_rounds - 1 and formatted_response["conversation"]:
                         label_data["label"]["conversation"] = formatted_response["conversation"]
 
@@ -238,7 +242,7 @@ def _format_comparison_annotation(annotation, completions, job, obfuscated_model
 def _format_json_response(
     jobs_config: Dict, annotations: List[Dict], completions: List[Dict], obfuscated_models: Dict
 ) -> Dict[str, Dict[str, Union[str, List[str]]]]:
-    result = {"turn": {}, "conversation": {}}
+    result = {"round": {}, "conversation": {}, "completion": {}}
     for annotation in annotations:
         formatted_response = None
         job = jobs_config[annotation["job"]]
@@ -251,14 +255,20 @@ def _format_json_response(
                 annotation, completions, job, obfuscated_models
             )
 
+        job_level = job.get("level", DEFAULT_JOB_LEVEL)
+
         if formatted_response is None:
             logging.warning(
                 f"Annotation with job {annotation['job']} with mlTask {job['mlTask']} not supported. Ignored in the export."
             )
-        elif "level" in job and job["level"] == "conversation":
-            result["conversation"][annotation["job"]] = formatted_response
+
+        elif job_level == "completion":
+            result.setdefault(job_level, {}).setdefault(annotation["job"], {})[
+                annotation["chatItemId"]
+            ] = formatted_response
+
         else:
-            result["turn"][annotation["job"]] = formatted_response
+            result[job_level][annotation["job"]] = formatted_response
 
     return result
 

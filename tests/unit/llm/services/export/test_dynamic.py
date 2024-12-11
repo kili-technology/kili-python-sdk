@@ -281,7 +281,10 @@ expected_export = [
                     "created_at": "2024-08-06T12:30:42.122Z",
                     "label_type": "DEFAULT",
                     "label": {
-                        "turn": {"COMPARISON_JOB": "A_3", "CLASSIFICATION_JOB": ["BOTH_ARE_GOOD"]},
+                        "round": {
+                            "COMPARISON_JOB": "A_3",
+                            "CLASSIFICATION_JOB": ["BOTH_ARE_GOOD"],
+                        },
                     },
                 }
             ],
@@ -358,7 +361,7 @@ expected_export = [
                     "created_at": "2024-08-06T12:30:42.122Z",
                     "label_type": "DEFAULT",
                     "label": {
-                        "turn": {"COMPARISON_JOB": "B_1"},
+                        "round": {"COMPARISON_JOB": "B_1"},
                     },
                 }
             ],
@@ -449,7 +452,7 @@ expected_export = [
                     "created_at": "2024-08-06T12:30:42.122Z",
                     "label_type": "DEFAULT",
                     "label": {
-                        "turn": {"COMPARISON_JOB": "A_2"},
+                        "round": {"COMPARISON_JOB": "A_2"},
                     },
                 }
             ],
@@ -695,6 +698,259 @@ def test_export_dynamic_with_conversation_level(mocker):
         "jsonInterface": updated_mock_json_interface,
         "inputType": "LLM_INSTR_FOLLOWING",
         "title": "Test project",
+        "id": "project_id",
+        "dataConnections": None,
+    }
+    kili_api_gateway = mocker.MagicMock()
+    kili_api_gateway.count_assets.return_value = 3
+    kili_api_gateway.get_project.return_value = get_project_return_val
+    kili_api_gateway.list_assets.return_value = updated_mock_fetch_assets
+
+    kili_llm = LlmClientMethods(kili_api_gateway)
+
+    result = kili_llm.export(
+        project_id="project_id",
+    )
+    assert result == updated_expected_export
+
+
+def test_export_dynamic_with_completion_level(mocker):
+    updated_mock_json_interface = copy.deepcopy(mock_json_interface)
+
+    updated_mock_json_interface["jobs"].update(
+        {
+            "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL": {
+                "content": {
+                    "categories": {
+                        "TOO_SHORT": {"children": [], "name": "Too short", "id": "category1"},
+                        "JUST_RIGHT": {"children": [], "name": "Just right", "id": "category2"},
+                        "TOO_VERBOSE": {"children": [], "name": "Too verbose", "id": "category3"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Verbosity",
+                "level": "completion",
+                "mlTask": "CLASSIFICATION",
+                "required": 0,
+                "isChild": False,
+                "isNew": False,
+            },
+            "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_1": {
+                "content": {
+                    "categories": {
+                        "NO_ISSUES": {"children": [], "name": "No issues", "id": "category4"},
+                        "MINOR_ISSUES": {
+                            "children": [],
+                            "name": "Minor issue(s)",
+                            "id": "category5",
+                        },
+                        "MAJOR_ISSUES": {
+                            "children": [],
+                            "name": "Major issue(s)",
+                            "id": "category6",
+                        },
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Instructions Following",
+                "level": "completion",
+                "mlTask": "CLASSIFICATION",
+                "required": 0,
+                "isChild": False,
+                "isNew": False,
+            },
+            "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_2": {
+                "content": {
+                    "categories": {
+                        "NO_ISSUES": {"children": [], "name": "No issues", "id": "category7"},
+                        "MINOR_INACCURACY": {
+                            "children": [],
+                            "name": "Minor inaccuracy",
+                            "id": "category8",
+                        },
+                        "MAJOR_INACCURACY": {
+                            "children": [],
+                            "name": "Major inaccuracy",
+                            "id": "category9",
+                        },
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Truthfulness",
+                "level": "completion",
+                "mlTask": "CLASSIFICATION",
+                "required": 0,
+                "isChild": False,
+                "isNew": False,
+            },
+            "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_3": {
+                "content": {
+                    "categories": {
+                        "NO_ISSUES": {"children": [], "name": "No issues", "id": "category10"},
+                        "MINOR_SAFETY_CONCERN": {
+                            "children": [],
+                            "name": "Minor safety concern",
+                            "id": "category11",
+                        },
+                        "MAJOR_SAFETY_CONCERN": {
+                            "children": [],
+                            "name": "Major safety concern",
+                            "id": "category12",
+                        },
+                    },
+                    "input": "radio",
+                },
+                "instruction": "Harmlessness/Safety",
+                "level": "completion",
+                "mlTask": "CLASSIFICATION",
+                "required": 0,
+                "isChild": False,
+                "isNew": False,
+            },
+        }
+    )
+
+    updated_mock_fetch_assets = copy.deepcopy(mock_fetch_assets)
+    updated_mock_fetch_assets[0]["labels"][0]["annotations"].extend(
+        [
+            {
+                "id": "20241209092703759-1",
+                "job": "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL",
+                "path": [],
+                "labelId": "clzief6q2003e7tc91jm46uii",
+                "chatItemId": "clzieuhlc005a7tc9bx6f0mb5",
+                "annotationValue": {
+                    "categories": ["TOO_SHORT"],
+                    "id": "20241209092703759-1",
+                    "isPrediction": False,
+                    "__typename": "ClassificationAnnotationValue",
+                },
+                "__typename": "ClassificationAnnotation",
+            },
+            {
+                "id": "20241209092704576-2",
+                "job": "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_1",
+                "path": [],
+                "labelId": "clzief6q2003e7tc91jm46uii",
+                "chatItemId": "clzieuhlc005a7tc9bx6f0mb5",
+                "annotationValue": {
+                    "categories": ["MINOR_ISSUES"],
+                    "id": "20241209092704576-2",
+                    "isPrediction": False,
+                    "__typename": "ClassificationAnnotationValue",
+                },
+                "__typename": "ClassificationAnnotation",
+            },
+            {
+                "id": "20241209092705314-3",
+                "job": "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_2",
+                "path": [],
+                "labelId": "clzief6q2003e7tc91jm46uii",
+                "chatItemId": "clzieuhlc005a7tc9bx6f0mb5",
+                "annotationValue": {
+                    "categories": ["MAJOR_INACCURACY"],
+                    "id": "20241209092705314-3",
+                    "isPrediction": False,
+                    "__typename": "ClassificationAnnotationValue",
+                },
+                "__typename": "ClassificationAnnotation",
+            },
+            {
+                "id": "20241209092706381-4",
+                "job": "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_3",
+                "path": [],
+                "labelId": "clzief6q2003e7tc91jm46uii",
+                "chatItemId": "clzieuhlc005a7tc9bx6f0mb5",
+                "annotationValue": {
+                    "categories": ["MAJOR_SAFETY_CONCERN"],
+                    "id": "20241209092706381-4",
+                    "isPrediction": False,
+                    "__typename": "ClassificationAnnotationValue",
+                },
+                "__typename": "ClassificationAnnotation",
+            },
+            {
+                "id": "20241209092707543-5",
+                "job": "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL",
+                "path": [],
+                "labelId": "clzief6q2003e7tc91jm46uii",
+                "chatItemId": "clzieuhm1005b7tc9b747clxw",
+                "annotationValue": {
+                    "categories": ["JUST_RIGHT"],
+                    "id": "20241209092707543-5",
+                    "isPrediction": False,
+                    "__typename": "ClassificationAnnotationValue",
+                },
+                "__typename": "ClassificationAnnotation",
+            },
+            {
+                "id": "20241209092710361-6",
+                "job": "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_1",
+                "path": [],
+                "labelId": "clzief6q2003e7tc91jm46uii",
+                "chatItemId": "clzieuhm1005b7tc9b747clxw",
+                "annotationValue": {
+                    "categories": ["NO_ISSUES"],
+                    "id": "20241209092710361-6",
+                    "isPrediction": False,
+                    "__typename": "ClassificationAnnotationValue",
+                },
+                "__typename": "ClassificationAnnotation",
+            },
+            {
+                "id": "20241209092711511-7",
+                "job": "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_2",
+                "path": [],
+                "labelId": "clzief6q2003e7tc91jm46uii",
+                "chatItemId": "clzieuhm1005b7tc9b747clxw",
+                "annotationValue": {
+                    "categories": ["NO_ISSUES"],
+                    "id": "20241209092711511-7",
+                    "isPrediction": False,
+                    "__typename": "ClassificationAnnotationValue",
+                },
+                "__typename": "ClassificationAnnotation",
+            },
+            {
+                "id": "20241209092713123-8",
+                "job": "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_3",
+                "path": [],
+                "labelId": "clzief6q2003e7tc91jm46uii",
+                "chatItemId": "clzieuhm1005b7tc9b747clxw",
+                "annotationValue": {
+                    "categories": ["NO_ISSUES"],
+                    "id": "20241209092713123-8",
+                    "isPrediction": False,
+                    "__typename": "ClassificationAnnotationValue",
+                },
+                "__typename": "ClassificationAnnotation",
+            },
+        ]
+    )
+
+    updated_expected_export = copy.deepcopy(expected_export)
+    updated_expected_export[0]["2"]["labels"][0]["label"]["completion"] = {
+        "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL": {
+            "clzieuhlc005a7tc9bx6f0mb5": ["TOO_SHORT"],
+            "clzieuhm1005b7tc9b747clxw": ["JUST_RIGHT"],
+        },
+        "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_1": {
+            "clzieuhlc005a7tc9bx6f0mb5": ["MINOR_ISSUES"],
+            "clzieuhm1005b7tc9b747clxw": ["NO_ISSUES"],
+        },
+        "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_2": {
+            "clzieuhlc005a7tc9bx6f0mb5": ["MAJOR_INACCURACY"],
+            "clzieuhm1005b7tc9b747clxw": ["NO_ISSUES"],
+        },
+        "CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_3": {
+            "clzieuhlc005a7tc9bx6f0mb5": ["MAJOR_SAFETY_CONCERN"],
+            "clzieuhm1005b7tc9b747clxw": ["NO_ISSUES"],
+        },
+    }
+    get_project_return_val = {
+        "jsonInterface": updated_mock_json_interface,
+        "inputType": "LLM_INSTR_FOLLOWING",
+        "title": "Test project with classifications at completion level",
         "id": "project_id",
         "dataConnections": None,
     }
