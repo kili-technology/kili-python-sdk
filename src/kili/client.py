@@ -21,6 +21,7 @@ from kili.entrypoints.queries.plugins import QueriesPlugins
 from kili.entrypoints.queries.project_user import QueriesProjectUser
 from kili.entrypoints.queries.project_version import QueriesProjectVersion
 from kili.entrypoints.subscriptions.label import SubscriptionsLabel
+from kili.event.presentation.client.event import EventClientMethods
 from kili.exceptions import AuthenticationFailed
 from kili.llm.presentation.client.llm import LlmClientMethods
 from kili.presentation.client.asset import AssetClientMethods
@@ -167,6 +168,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         self.kili_api_gateway = KiliAPIGateway(self.graphql_client, self.http_client)
         self.internal = InternalClientMethods(self.kili_api_gateway)
         self.llm = LlmClientMethods(self.kili_api_gateway)
+        self.events = EventClientMethods(self.kili_api_gateway)
 
         if not skip_checks:
             api_key_use_cases = ApiKeyUseCases(self.kili_api_gateway)
