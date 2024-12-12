@@ -16,6 +16,7 @@ nav:
       - Reference:
           - Asset: sdk/asset.md
           - Cloud Storage: sdk/cloud_storage.md
+          - Event: sdk/event.md
           - Issue: sdk/issue.md
           - Label: sdk/label.md
           - Label Utils: sdk/label_utils.md
