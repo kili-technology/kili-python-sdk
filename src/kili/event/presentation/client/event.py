@@ -37,7 +37,7 @@ class EventClientMethods:
                 Defaults is ["createdAt", "event", "id", "organizationId", "payload", "projectId", "userId"].
             created_at_gte: Filter events created after this date.
             created_at_lte: Filter events created before this date.
-            user_id: Filter events by user.
+            user_id: Filter events by user id.
             event: Filter events by event type.
             skip: Number of events to skip.
             from_event_id: Filter events from this event id.
