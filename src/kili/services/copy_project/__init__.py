@@ -286,22 +286,34 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             ],
             disable_tqdm=True,
         )
-        labels = [label for label in labels if label["isLatestLabelForUser"]]
+        labels = [
+            label for label in labels if (label["isLatestLabelForUser"] or label.get("modelName"))
+        ]
 
         # `append_labels` does not take arrays for `model_name` and `label_type` arguments
         # we need to sort and group the labels by `model_name` and `label_type`
         # and upload the grouped labels by batch to `append_labels`
         labels = sorted(
             labels,
-            key=lambda label: (label["labelType"], label["modelName"] is None, label["modelName"]),
+            key=lambda label: (
+                label["labelType"],
+                label["modelName"] is None,
+                label["isLatestLabelForUser"],
+                label["modelName"],
+            ),
         )
         labels_iterator = itertools.groupby(
             labels,
-            key=lambda label: (label["labelType"], label["modelName"] is None, label["modelName"]),
+            key=lambda label: (
+                label["labelType"],
+                label["modelName"] is None,
+                label["isLatestLabelForUser"],
+                label["modelName"],
+            ),
         )
 
         for key, group in labels_iterator:
-            label_type, _, model_name = key
+            label_type, _, _, model_name = key
             group = list(group)
 
             # map external id of source project asset to
