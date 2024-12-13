@@ -146,7 +146,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             disable_tqdm=True,
         )
 
-        members = [memb for memb in members if memb["status"] == "CREATED" and memb["activated"]]
+        members = [memb for memb in members if memb["status"] == "ACTIVATED" and memb["activated"]]
 
         for member in tqdm(members, disable=self.disable_tqdm):
             self.kili.append_to_roles(
