@@ -78,6 +78,9 @@ class CloudStorageUseCases(BaseUseCases):
         project_id: ProjectId,
         selected_folders: Optional[List[str]],
         fields: ListOrTuple[str],
+        prefix: Optional[str] = None,
+        include: Optional[List[str]] = None,
+        exclude: Optional[List[str]] = None,
     ) -> Dict:
         """Add data connection to a project."""
         if (
@@ -90,9 +93,12 @@ class CloudStorageUseCases(BaseUseCases):
         return self._kili_api_gateway.add_data_connection(
             fields=fields,
             data=AddDataConnectionKiliAPIGatewayInput(
-                is_checking=False,
+                exclude=exclude,
+                include=include,
                 integration_id=data_integration_id,
+                is_checking=False,
                 last_checked=datetime.now(),
+                prefix=prefix,
                 project_id=project_id,
                 selected_folders=selected_folders,
             ),

@@ -33,10 +33,13 @@ def data_connection_where_mapper(filters: DataConnectionFilters) -> Dict:
 def add_data_connection_data_mapper(data: AddDataConnectionKiliAPIGatewayInput) -> Dict:
     """Build the GraphQL DataConnectionInput variable to be sent in an operation."""
     return {
-        "projectId": data.project_id,
+        "exclude": data.exclude,
+        "include": data.include,
         "integrationId": data.integration_id,
         "isChecking": data.is_checking,
         "lastChecked": data.last_checked.isoformat(sep="T", timespec="milliseconds") + "Z",
+        "prefix": data.prefix,
+        "projectId": data.project_id,
         "selectedFolders": data.selected_folders,
     }
 
