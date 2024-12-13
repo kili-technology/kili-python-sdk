@@ -17,9 +17,12 @@ from kili.domain.project import ProjectId
 class AddDataConnectionKiliAPIGatewayInput:
     """Add data connection input data for Kili API Gateway."""
 
-    is_checking: bool
+    exclude: Optional[List[str]]
+    include: Optional[List[str]]
     integration_id: DataIntegrationId
+    is_checking: bool
     last_checked: datetime
+    prefix: Optional[str]
     project_id: ProjectId
     selected_folders: Optional[List[str]]
 
@@ -52,10 +55,10 @@ class DataIntegrationData:
     name: Optional[str]
     organization_id: Optional[OrganizationId]
     platform: Optional[DataIntegrationPlatform]
-    status: Optional[DataIntegrationStatus]
     s3_access_key: Optional[str]
     s3_bucket_name: Optional[str]
     s3_endpoint: Optional[str]
     s3_region: Optional[str]
     s3_secret_key: Optional[str]
     s3_session_token: Optional[str]
+    status: Optional[DataIntegrationStatus]

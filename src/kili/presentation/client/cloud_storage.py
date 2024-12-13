@@ -296,23 +296,39 @@ class CloudStorageClientMethods(BaseClientMethods):
         project_id: str,
         cloud_storage_integration_id: str,
         selected_folders: Optional[List[str]] = None,
+        prefix: Optional[str] = None,
+        include: Optional[List[str]] = None,
+        exclude: Optional[List[str]] = None,
     ) -> Dict:
-        """Connect a cloud storage to a project.
+        """Connect a cloud storage to a project. More details about parameters
+        can be found in the [documentation](https://docs.kili-technology.com/docs/filtering-assets-from-cloud-storage).
 
         Args:
             project_id: Id of the project.
             cloud_storage_integration_id: Id of the cloud storage integration.
             selected_folders: List of folders of the data integration to connect to the project.
                 If not provided, all folders of the data integration will be connected.
+                This option is deprecated and will be removed in the future.
+            prefix: Filter files to synchronize based on their base path.
+            include: List of pattern used to include files based on their path.
+            exclude: List of pattern used to exclude files based on their path.
 
         Returns:
             A dict with the DataConnection Id.
         """
+        if selected_folders is not None:
+            logger.warning(
+                "The selected_folders argument is deprecated and will be removed in the future."
+            )
+
         data_connection_id = CloudStorageUseCases(self.kili_api_gateway).add_data_connection(
             project_id=ProjectId(project_id),
             data_integration_id=DataIntegrationId(cloud_storage_integration_id),
             selected_folders=selected_folders,
             fields=("id",),
+            prefix=prefix,
+            include=include,
+            exclude=exclude,
         )["id"]
 
         return {"id": data_connection_id}
