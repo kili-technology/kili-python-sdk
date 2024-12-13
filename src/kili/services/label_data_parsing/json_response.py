@@ -142,7 +142,6 @@ class ParsedJobs(_ParsedJobs, _ParsedVideoJobs):
         json_response: Dict,
         job_names_to_parse: Optional[List[str]] = None,
     ) -> None:
-        # pylint: disable=line-too-long
         """Class for label json response parsing.
 
         This class will modify the input json_response.

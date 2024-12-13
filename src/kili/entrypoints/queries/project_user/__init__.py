@@ -182,7 +182,6 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             "ORG_ADMIN",
         ),
     ) -> int:
-        # pylint: disable=line-too-long
         """Count the number of projects and their users that match a set of criteria.
 
         Args:

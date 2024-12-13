@@ -15,7 +15,6 @@ OrderType = Literal["asc", "desc"]
 
 
 @dataclass
-# pylint: disable=too-many-instance-attributes
 class EventFilters:
     """Event filters for running an event search."""
 

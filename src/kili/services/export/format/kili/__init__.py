@@ -59,7 +59,6 @@ class KiliExporter(AbstractExporter):
         self.logger.warning(output_filename)
 
     def _clean_filepaths(self, assets: List[Dict]) -> List[Dict]:
-        # pylint: disable=line-too-long
         """Remove TemporaryDirectory() prefix from filepaths in "jsonContent" and "content" fields."""
         for asset in assets:
             if Path(asset["content"]).is_file():

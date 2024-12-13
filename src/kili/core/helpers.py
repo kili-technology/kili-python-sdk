@@ -39,10 +39,8 @@ def format_result(
     if isinstance(formatted_json, list):
         if get_origin(object_) is list:
             obj = get_args(object_)[0]
-            # pylint: disable=line-too-long
             return [obj(element) for element in formatted_json]  # pyright: ignore[reportGeneralTypeIssues]
         # the legacy "orm" objects fall into this category.
-        # pylint: disable=line-too-long
         return [object_(element) for element in formatted_json]  # pyright: ignore[reportGeneralTypeIssues]
 
     return object_(formatted_json)
@@ -287,7 +285,6 @@ def get_file_paths_to_upload(
 
 
 def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
-    # pylint: disable=line-too-long
     """Returns true if the mime type of the file corresponds to the allowed mime types of the project."""
     mime_type = get_mime_type(path.lower())
 

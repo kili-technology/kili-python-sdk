@@ -150,7 +150,6 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
 
     @typechecked
     def activate_plugin_on_project(self, plugin_name: str, project_id: str) -> Optional[str]:
-        # pylint: disable=line-too-long
         """Activates a plugin on a project.
 
         Args:
@@ -167,7 +166,6 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
 
     @typechecked
     def deactivate_plugin_on_project(self, plugin_name: str, project_id: str) -> str:
-        # pylint: disable=line-too-long
         """Activates a plugin on a project.
 
         Args:

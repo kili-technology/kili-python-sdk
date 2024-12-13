@@ -46,7 +46,6 @@ class ProjectClientMethods(BaseClientMethods):
         tags: Optional[ListOrTuple[str]] = None,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
     ) -> Dict[Literal["id"], str]:
-        # pylint: disable=line-too-long
         """Create a project.
 
         Args:

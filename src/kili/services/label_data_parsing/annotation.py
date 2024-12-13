@@ -282,7 +282,6 @@ class _BaseAnnotationWithBoundingPoly(_BaseAnnotation):
         return self._json_data["boundingPoly"]
 
 
-# pylint: disable=line-too-long
 class EntityInPdfAnnotation(_BaseNamedEntityRecognitionAnnotation, _BaseAnnotationWithBoundingPoly):
     """Class for parsing the "annotations" key of a job response for named entities recognition in PDFs."""
 

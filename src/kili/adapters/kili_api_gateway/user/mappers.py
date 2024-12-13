@@ -35,7 +35,7 @@ def update_user_data_mapper(data: UserDataKiliGatewayInput) -> Dict:
     return {
         "activated": data.activated,
         "apiKey": data.api_key,
-        # "auth0Id": data.auth0_id,  # refused by the backend: only used for service account  # noqa: ERA001  # pylint: disable=line-too-long
+        # "auth0Id": data.auth0_id,  # refused by the backend: only used for service account  # noqa: ERA001
         "email": data.email,
         "firstname": data.firstname,
         "hasCompletedLabelingTour": data.has_completed_labeling_tour,

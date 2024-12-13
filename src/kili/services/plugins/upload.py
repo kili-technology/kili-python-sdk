@@ -47,7 +47,6 @@ POSSIBLE_HANDLERS = {
 def check_file_mime_type(
     path: Path, compatible_mime_extensions: List[str], verbose: bool = True
 ) -> bool:
-    # pylint: disable=line-too-long
     """Returns true if the mime type of the file corresponds to one of compatible_mime_extensions."""
     mime_type = get_mime_type(path.as_posix())
 
@@ -167,7 +166,6 @@ class PluginUploader:
         self.handler_types = None
 
     def _retrieve_plugin_src(self) -> List[Path]:
-        # pylint: disable=line-too-long
         """Retrieve script from plugin_path and execute it to prevent an upload with indentation errors."""
         if self.plugin_path.is_dir():
             file_path = self.plugin_path / "main.py"
@@ -197,7 +195,6 @@ class PluginUploader:
         return [file_path]
 
     def _retrieve_requirements(self) -> Union[Path, None]:
-        # pylint: disable=line-too-long
         """Retrieve script from file_path and execute it to prevent an upload with indentation errors."""
         if not self.plugin_path.is_dir():
             return None

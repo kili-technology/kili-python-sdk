@@ -68,7 +68,6 @@ class GraphQLQuery(ABC):
         options: QueryOptions,
         post_call_function: Optional[Callable] = None,
     ) -> Generator[Dict, None, None]:
-        # pylint: disable=line-too-long
         """Get a generator of objects of the specified type in accordance with the provided where."""
         fragment = fragment_builder(fields)
         query = self.query(fragment)

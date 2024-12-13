@@ -329,7 +329,6 @@ class ContentBatchImporter(BaseBatchImporter):
     def get_type_and_data_from_content_array(
         self, content_array: List[Optional[Union[str, bytes]]]
     ) -> List[Tuple[Union[bytes, str], Optional[str]]]:
-        # pylint:disable=line-too-long
         """Returns the data of the content (path) and its content type for each element in the array."""
         return list(map(self.get_content_type_and_data_from_content, content_array))
 
@@ -417,7 +416,6 @@ class JsonContentBatchImporter(BaseBatchImporter):
                 ["text/plain"] * len(assets),
                 repeat(self.http_client),
             )
-        # pylint: disable=line-too-long
         return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
 
     def import_batch(self, assets: List[AssetLike], verify: bool):
@@ -546,7 +544,6 @@ class BaseAbstractAssetImporter(abc.ABC):
                 if raise_error:
                     raise
         if len(filtered_assets) == 0:
-            # pylint: disable=line-too-long
             raise ImportValidationError(
                 """No files to upload. Check that the paths exist and file types are compatible with the project."""
             )

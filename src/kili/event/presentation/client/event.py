@@ -28,7 +28,6 @@ class EventClientMethods:
         until_event_id: Optional[str] = None,
         order: Optional[OrderType] = "asc",
     ) -> List[EventDict]:
-        # pylint: disable=line-too-long
         """List events of my project.
 
         Args:

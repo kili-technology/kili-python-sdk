@@ -33,7 +33,6 @@ def check_asset_type(key: str, value: str, http_client: Optional[HttpClient]) ->
 
 
 def generate_json_metadata(as_frames: bool, fps: Optional[int]):
-    # pylint: disable=line-too-long
     """Generate the json_metadata for input of the import_assets service when uploading from a list of path.
 
     Args:
