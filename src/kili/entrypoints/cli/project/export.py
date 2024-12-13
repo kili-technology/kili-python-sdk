@@ -72,7 +72,6 @@ def export_labels(
     with_assets: bool,
     normalized_coordinates: Optional[bool],
 ) -> None:
-    # pylint: disable=line-too-long
     """Export the Kili labels of a project to a given format.
 
     \b

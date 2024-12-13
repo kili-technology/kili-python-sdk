@@ -13,7 +13,6 @@ def check_asset_identifier_arguments(
     asset_id_array: Optional[ListOrTuple[AssetId]],
     asset_external_id_array: Optional[ListOrTuple[AssetExternalId]],
 ) -> None:
-    # pylint: disable=line-too-long
     """Check that a list of assets can be identified either by their asset IDs or their external IDs."""
     if asset_id_array is not None:
         if asset_external_id_array is not None:

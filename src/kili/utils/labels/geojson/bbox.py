@@ -135,7 +135,6 @@ def geojson_polygon_feature_to_kili_bbox_annotation(
     children: Optional[Dict] = None,
     mid: Optional[str] = None,
 ) -> Dict[str, Any]:
-    # pylint: disable=line-too-long
     """Convert a geojson polygon feature to a Kili bounding box annotation.
 
     Args:

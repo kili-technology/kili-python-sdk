@@ -24,7 +24,6 @@ class QuestionClientMethods(BaseClientMethods):
         asset_id_array: Optional[ListOrTuple[str]] = None,
         asset_external_id_array: Optional[ListOrTuple[str]] = None,
     ) -> List[Dict[Literal["id"], str]]:
-        # pylint:disable=line-too-long
         """Create questions.
 
         Args:

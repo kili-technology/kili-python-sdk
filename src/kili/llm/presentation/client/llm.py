@@ -50,7 +50,6 @@ class LlmClientMethods:
         label_type_in: Optional[List[LabelType]] = None,
         status_in: Optional[List[AssetStatus]] = None,
     ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
-        # pylint: disable=line-too-long
         """Returns an export of llm assets with valid labels.
 
         Args:
@@ -104,7 +103,6 @@ class LlmClientMethods:
             return None
 
     def create_model(self, organization_id: str, model: dict) -> ModelDict:
-        # pylint: disable=line-too-long
         """Create a new model in an organization.
 
         Args:
@@ -157,7 +155,6 @@ class LlmClientMethods:
         return self.kili_api_gateway.create_model(model=model_input)
 
     def models(self, organization_id: str, fields: Optional[List[str]] = None) -> List[ModelDict]:
-        # pylint: disable=line-too-long
         """List models in an organization.
 
         Args:
@@ -178,7 +175,6 @@ class LlmClientMethods:
         return list(self.kili_api_gateway.list_models(filters=converted_filters, fields=fields))
 
     def model(self, model_id: str, fields: Optional[List[str]] = None) -> ModelDict:
-        # pylint: disable=line-too-long
         """Retrieve a specific model.
 
         Args:
@@ -198,7 +194,6 @@ class LlmClientMethods:
         )
 
     def update_properties_in_model(self, model_id: str, model: dict) -> ModelDict:
-        # pylint: disable=line-too-long
         """Update properties of an existing model.
 
         Args:
@@ -251,7 +246,6 @@ class LlmClientMethods:
         )
 
     def delete_model(self, model_id: str) -> bool:
-        # pylint: disable=line-too-long
         """Delete a model from an organization.
 
         Args:
@@ -268,7 +262,6 @@ class LlmClientMethods:
     def create_project_model(
         self, project_id: str, model_id: str, configuration: dict
     ) -> ProjectModelDict:
-        # pylint: disable=line-too-long
         """Associate a model with a project.
 
         Args:
@@ -365,7 +358,6 @@ class LlmClientMethods:
     def create_conversation(
         self, project_id: str, initial_prompt: str, system_prompt: Optional[str] = None
     ) -> List[ChatItemDict]:
-        # pylint: disable=line-too-long
         """Create a new conversation in an LLM project starting with a user's prompt.
 
         This method initiates a new conversation in the specified project by:

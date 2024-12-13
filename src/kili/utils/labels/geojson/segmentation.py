@@ -122,7 +122,6 @@ def geojson_polygon_feature_to_kili_segmentation_annotation(
     children: Optional[Dict] = None,
     mid: Optional[str] = None,
 ) -> Dict[str, Any]:
-    # pylint: disable=line-too-long
     """Convert a geojson polygon feature to a Kili segmentation annotation.
 
     Args:

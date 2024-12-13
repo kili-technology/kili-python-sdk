@@ -65,7 +65,6 @@ class QueriesPlugins(BaseOperationEntrypointMixin):
         limit: int = 100,
         skip: int = 0,
     ) -> str:
-        # pylint: disable=line-too-long
         """Get paginated logs of a plugin on a project.
 
         Args:

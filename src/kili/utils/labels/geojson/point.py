@@ -82,7 +82,6 @@ def geojson_point_feature_to_kili_point_annotation(
     children: Optional[Dict] = None,
     mid: Optional[str] = None,
 ) -> Dict[str, Any]:
-    # pylint: disable=line-too-long
     """Convert a geojson point feature to a Kili point annotation.
 
     Args:

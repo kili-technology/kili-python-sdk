@@ -89,7 +89,6 @@ def geojson_linestring_feature_to_kili_line_annotation(
     children: Optional[Dict] = None,
     mid: Optional[str] = None,
 ) -> Dict[str, Any]:
-    # pylint: disable=line-too-long
     """Convert a geojson linestring feature to a Kili line annotation.
 
     Args:
