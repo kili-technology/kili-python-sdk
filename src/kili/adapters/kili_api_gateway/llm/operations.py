@@ -116,3 +116,12 @@ def get_create_chat_item_mutation(fragment: str) -> str:
             }}
         }}
     """
+
+
+def get_import_conversations_mutation() -> str:
+    """Return the GraphQL importConversations mutation."""
+    return """
+        mutation ImportConversations($data: ImportConversationsData!, $where: ProjectWhere!) {
+            importConversations(data: $data, where: $where)
+        }
+    """
