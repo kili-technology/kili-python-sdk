@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from typing_extensions import TypedDict
 
@@ -135,9 +135,14 @@ class ProjectModelDict(TypedDict):
     model: ModelDict
 
 
-class ChatItemDict(TypedDict):
+class ChatItem(TypedDict):
     """Dict that represents a ChatItem."""
 
     content: str
     id: str
     role: ChatItemRole
+
+
+class Conversation(TypedDict):
+    chat_items: List[ChatItem]
+    metadata: Dict

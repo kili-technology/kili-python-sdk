@@ -15,8 +15,9 @@ from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatu
 from kili.domain.label import LabelType
 from kili.domain.llm import (
     AzureOpenAICredentials,
-    ChatItemDict,
+    ChatItem,
     ChatItemRole,
+    Conversation,
     ModelDict,
     ModelToCreateInput,
     ModelToUpdateInput,
@@ -39,6 +40,15 @@ from kili.utils.logcontext import for_all_methods, log_call
 class LlmClientMethods:
     def __init__(self, kili_api_gateway: KiliAPIGateway):
         self.kili_api_gateway = kili_api_gateway
+
+    def import_conversations(
+        self,
+        project_id: str,
+        conversations: List[Conversation],
+    ):
+        self.kili_api_gateway.import_conversations(
+            project_id=project_id, conversations=conversations
+        )
 
     def export(
         self,
@@ -357,7 +367,7 @@ class LlmClientMethods:
 
     def create_conversation(
         self, project_id: str, initial_prompt: str, system_prompt: Optional[str] = None
-    ) -> List[ChatItemDict]:
+    ) -> List[ChatItem]:
         """Create a new conversation in an LLM project starting with a user's prompt.
 
         This method initiates a new conversation in the specified project by:
