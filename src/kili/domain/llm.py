@@ -144,6 +144,7 @@ class ChatItem(TypedDict):
 
 
 class Conversation(TypedDict):
-    chat_external_id: str
+    chat_external_id: Optional[str]
     chat_items: List[ChatItem]
-    metadata: Dict
+    labeler: str
+    metadata: Optional[dict]
