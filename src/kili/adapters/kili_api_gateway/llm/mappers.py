@@ -141,7 +141,11 @@ def map_import_conversations_input(conversations: List[Conversation]) -> Dict:
     """Map the input for the importConversations mutation."""
     return {
         "conversations": [
-            {"chatItems": conversation["chat_items"], "metadata": conversation.get("metadata")}
+            {
+                "chatItems": conversation["chat_items"],
+                "chatExternalId": conversation.get("chat_external_id"),
+                "metadata": conversation.get("metadata"),
+            }
             for conversation in conversations
         ]
     }
