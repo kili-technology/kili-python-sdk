@@ -142,7 +142,14 @@ def map_import_conversations_input(conversations: List[Conversation]) -> Dict:
     return {
         "conversations": [
             {
-                "chatItems": conversation["chat_items"],
+                "chatItems": [
+                    {
+                        "content": chat_item["content"],
+                        "role": chat_item["role"],
+                        "modelName": chat_item.get("model_name"),
+                    }
+                    for chat_item in conversation["chat_items"]
+                ],
                 "chatExternalId": conversation.get("chat_external_id"),
                 "labeler": conversation["labeler"],
                 "metadata": conversation.get("metadata"),
