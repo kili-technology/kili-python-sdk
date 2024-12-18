@@ -140,6 +140,7 @@ class ChatItem(TypedDict):
 
     content: str
     id: str
+    model_name: Optional[str]
     role: ChatItemRole
 
 
