@@ -139,13 +139,22 @@ class ChatItem(TypedDict):
     """Dict that represents a ChatItem."""
 
     content: str
-    id: str
+    external_id: str
     model_name: Optional[str]
     role: ChatItemRole
 
 
+class ConversationLabel(TypedDict):
+    """Dict that represents a ConversationLabel."""
+
+    completion: Optional[Dict]
+    conversation: Optional[Dict]
+    round: Optional[Dict]
+
+
 class Conversation(TypedDict):
-    chat_external_id: Optional[str]
+    external_id: Optional[str]
     chat_items: List[ChatItem]
+    label: Optional[ConversationLabel]
     labeler: str
     metadata: Optional[dict]
