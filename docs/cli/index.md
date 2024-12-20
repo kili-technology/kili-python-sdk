@@ -28,7 +28,7 @@ kili project [COMMAND]
 ## Workflow example
 
 Let's take an example where you want to start a project from scratch <br>
-You can download ressources to run this example [here](https://storage.googleapis.com/kili-machine-learning-web/cli/CLI_Demo_Ressources.zip).<br>
+You can download ressources to run this example [here](https://storage.googleapis.com/label-public-staging/SDK/CLI_Demo_Ressources.zip).<br>
 Once in the current directory where all files are stored, you can run the following commands:
 
 ### Create a project
