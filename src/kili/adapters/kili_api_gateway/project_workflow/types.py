@@ -5,7 +5,6 @@ from typing import Optional
 
 
 @dataclass
-# pylint: disable=too-many-instance-attributes
 class ProjectWorkflowDataKiliAPIGatewayInput:
     """ProjectWorkflow input data for Kili API Gateway."""
 

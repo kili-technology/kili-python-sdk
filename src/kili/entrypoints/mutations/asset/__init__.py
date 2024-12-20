@@ -212,7 +212,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
-        # pylint: disable=line-too-long
         """Assign a list of assets to a list of labelers.
 
         Args:

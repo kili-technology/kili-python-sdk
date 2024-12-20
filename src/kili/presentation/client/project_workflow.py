@@ -1,4 +1,4 @@
-"""Client presentation methods for questions."""
+"""Client presentation methods for project workflow."""
 
 from typing import Any, Dict, Optional
 
@@ -23,7 +23,8 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
 
         Args:
             project_id: Id of the project.
-            enforce_step_separation: Prevents the same user from being assigned to multiple steps in the workflow for a same asset,
+            enforce_step_separation: Prevents the same user from being assigned to
+                multiple steps in the workflow for a same asset,
                 ensuring independent review and labeling processes
 
         Returns:
