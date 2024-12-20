@@ -17,6 +17,9 @@ from kili.adapters.kili_api_gateway.organization.operations_mixin import (
     OrganizationOperationMixin,
 )
 from kili.adapters.kili_api_gateway.project.operations_mixin import ProjectOperationMixin
+from kili.adapters.kili_api_gateway.project_workflow.operations_mixin import (
+    ProjectWorkflowOperationMixin,
+)
 from kili.adapters.kili_api_gateway.tag import TagOperationMixin
 from kili.adapters.kili_api_gateway.user.operation_mixin import UserOperationMixin
 from kili.core.graphql.graphql_client import GraphQLClient
@@ -32,6 +35,7 @@ class KiliAPIGateway(
     NotificationOperationMixin,
     OrganizationOperationMixin,
     ProjectOperationMixin,
+    ProjectWorkflowOperationMixin,
     TagOperationMixin,
     UserOperationMixin,
     EventOperationMixin,

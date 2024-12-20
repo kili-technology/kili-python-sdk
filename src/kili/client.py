@@ -32,6 +32,7 @@ from kili.presentation.client.label import LabelClientMethods
 from kili.presentation.client.notification import NotificationClientMethods
 from kili.presentation.client.organization import OrganizationClientMethods
 from kili.presentation.client.project import ProjectClientMethods
+from kili.presentation.client.project_workflow import ProjectWorkflowClientMethods
 from kili.presentation.client.tag import TagClientMethods
 from kili.presentation.client.user import UserClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
@@ -68,6 +69,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     NotificationClientMethods,
     OrganizationClientMethods,
     ProjectClientMethods,
+    ProjectWorkflowClientMethods,
     TagClientMethods,
     UserClientMethods,
 ):
