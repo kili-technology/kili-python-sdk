@@ -47,18 +47,15 @@ def test_gql_bad_query_local_validation(query, mocker):
     api_endpoint = os.getenv(
         "KILI_API_ENDPOINT", "https://cloud.kili-technology.com/api/label/v2/graphql"
     )
-
-    # we need to remove "Authorization" api key from the header
-    # if not, the backend will refuse the introspection query
-    mocker.patch.object(GraphQLClient, "_get_headers", return_value={})
+    api_key = os.getenv("KILI_API_KEY", "")
 
     client = GraphQLClient(
         endpoint=api_endpoint,
-        api_key="",
+        api_key=api_key,
         client_name=GraphQLClientName.SDK,
         verify=True,
         http_client=HttpClient(
-            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
+            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key=api_key, verify=True
         ),
     )
 
