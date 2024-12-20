@@ -22,6 +22,4 @@ class ProjectWorkflowUseCases(BaseUseCases):
             enforce_step_separation=enforce_step_separation,
         )
 
-        return self._kili_api_gateway.update_properties_in_project_workflow(
-            project_id, project_workflow_data
-        )
+        return self._kili_api_gateway.update_project_workflow(project_id, project_workflow_data)
