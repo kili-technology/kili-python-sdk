@@ -153,7 +153,7 @@ def map_import_conversations_input(conversations: List[Conversation]) -> Dict:
                 ],
                 "externalId": conversation.get("external_id"),
                 "label": conversation.get("label"),
-                "labeler": conversation["labeler"],
+                "labeler": conversation.get("labeler"),
                 "metadata": conversation.get("metadata"),
             }
             for conversation in conversations
