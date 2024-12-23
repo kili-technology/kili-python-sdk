@@ -87,7 +87,7 @@ def export(  # pylint: disable=too-many-arguments, too-many-locals
         return LLMStaticExporter(kili_api_gateway).export(
             cleaned_assets, project_id, project["jsonInterface"]
         )
-    if input_type == "LLM_INSTR_FOLLOWING":
+    if input_type in ["LLM_STATIC", "LLM_INSTR_FOLLOWING"]:
         return LLMDynamicExporter(kili_api_gateway).export(cleaned_assets, project["jsonInterface"])
     raise ValueError(f'Project Input type "{input_type}" cannot be used for llm exports.')
 
