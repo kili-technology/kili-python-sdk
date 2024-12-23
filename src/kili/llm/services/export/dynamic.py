@@ -1,4 +1,4 @@
-"""Handle LLM_INSTR_FOLLOWING project exports."""
+"""Handle LLM_INSTR_FOLLOWING & LLM_STATIC project exports."""
 
 import logging
 from typing import Dict, List, Union
@@ -32,7 +32,7 @@ DEFAULT_JOB_LEVEL = "round"
 
 
 class LLMDynamicExporter:
-    """Handle exports of LLM_RLHF projects."""
+    """Handle exports of LLM_STATIC and LLM_INSTR_FOLLOWING projects."""
 
     def __init__(self, kili_api_gateway: KiliAPIGateway):
         self.kili_api_gateway = kili_api_gateway
@@ -228,7 +228,8 @@ def _format_comparison_annotation(annotation, completions, job, obfuscated_model
             break
 
     if model_id is None:
-        raise ValueError(f"Failed to found model of annotation {annotation['id']}")
+        # FIXME : model_id can be null on LLM_STATIC
+        return None
 
     iteration = 0
     for _comparison_code, comparison_note in job["content"]["options"].items():
