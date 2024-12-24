@@ -772,6 +772,12 @@ class LabelClientMethods(BaseClientMethods):
         Examples:
             >>> kili.update_properties_in_label(label_id=label_id, json_response={...})
         """
+        warnings.warn(
+            "The method `update_properties_in_label` is going to be deprecated. Please use"
+            " `kili.append_labels` method instead to add a new label.",
+            DeprecationWarning,
+            stacklevel=1,
+        )
         return LabelUseCases(self.kili_api_gateway).update_properties_in_label(
             label_id=LabelId(label_id),
             seconds_to_label=seconds_to_label,
