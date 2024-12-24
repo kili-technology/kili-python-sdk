@@ -283,9 +283,11 @@ def _format_raw_data(chat_items, label_id, obfuscated_models):
                 "role": chat_item["role"].lower(),
                 "chat_id": label_id,
                 "id": chat_item["id"],
+                "external_id": chat_item.get("externalId"),
                 "model": obfuscated_models[chat_item["modelId"]]
                 if chat_item["modelId"] in obfuscated_models
                 else None,
+                "model_name": chat_item.get("modelName"),
             }
         )
     return raw_data
