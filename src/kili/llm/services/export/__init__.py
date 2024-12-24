@@ -15,6 +15,8 @@ CHAT_ITEMS_NEEDED_FIELDS = [
     "id",
     "content",
     "createdAt",
+    "externalId",
+    "modelName",
     "modelId",
     "parentId",
     "role",
