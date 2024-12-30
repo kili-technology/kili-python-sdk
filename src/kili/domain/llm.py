@@ -138,6 +138,7 @@ class ProjectModelDict(TypedDict):
 class ChatItem(TypedDict):
     """Dict that represents a ChatItem."""
 
+    id: str
     content: str
     external_id: str
     model_name: Optional[str]
@@ -153,8 +154,9 @@ class ConversationLabel(TypedDict):
 
 
 class Conversation(TypedDict):
+    """Dict that represents a Conversation."""
+
     external_id: Optional[str]
     chat_items: List[ChatItem]
     label: Optional[ConversationLabel]
-    labeler: str
     metadata: Optional[dict]
