@@ -20,10 +20,14 @@ mutation(
     $hasBeenSeen: Boolean
     $progress: Int
     $status: NotificationStatus
+    $taskId: ID
     $url: String
 ) {{
   data: updatePropertiesInNotification(
-    where: {{id: $id}}
+    where: {{
+      id: $id
+      taskId: $taskId
+    }}
     data: {{
       hasBeenSeen: $hasBeenSeen
       progress: $progress

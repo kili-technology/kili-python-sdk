@@ -52,17 +52,11 @@ class MutationsNotification(BaseOperationEntrypointMixin):
         status: str,
         url: str,
         progress: Optional[int] = None,
+        task_id: Optional[str] = None,
     ):
         """Modify a notification.
 
         This method is currently only active for Kili administrators.
-
-        Args:
-            notification_id :
-            hasBeenSeen:
-            progress:
-            status :
-            url :
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -73,6 +67,7 @@ class MutationsNotification(BaseOperationEntrypointMixin):
             "hasBeenSeen": has_been_seen,
             "progress": progress,
             "status": status,
+            "taskId": task_id,
             "url": url,
         }
         result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_NOTIFICATION, variables)
