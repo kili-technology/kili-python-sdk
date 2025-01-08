@@ -122,6 +122,14 @@ def get_import_conversations_mutation() -> str:
     """Return the GraphQL importConversations mutation."""
     return """
         mutation ImportConversations($data: ImportConversationsData!, $where: ProjectWhere!) {
-            importConversations(data: $data, where: $where)
+            importConversations(data: $data, where: $where) {
+                numberOfUploadedAssets
+                warnings {
+                   type
+                   details
+                   externalId
+                   lineNumber
+                }
+            }
         }
     """
