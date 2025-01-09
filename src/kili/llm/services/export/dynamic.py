@@ -51,7 +51,8 @@ class LLMDynamicExporter:
             else:
                 model_names = {
                     chat_item.get("modelName")
-                    for chat_item in asset["labels"][0]["chatItems"]
+                    for label in asset["labels"]
+                    for chat_item in label["chatItems"]
                     if chat_item.get("modelName") is not None
                 }
                 obfuscated_models = {
