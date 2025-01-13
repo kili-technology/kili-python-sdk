@@ -8,8 +8,8 @@ from kili.domain.asset.asset import AssetFilters
 from kili.domain.label import LabelType
 from kili.domain.project import ProjectId
 
-from .dynamic import LLMDynamicExporter
-from .static import LLMStaticExporter
+from .dynamic import LLMExporter
+from .static import LLMRLHFExporter
 
 CHAT_ITEMS_NEEDED_FIELDS = [
     "id",
@@ -86,11 +86,11 @@ def export(  # pylint: disable=too-many-arguments, too-many-locals
     cleaned_assets = preprocess_assets(assets, include_sent_back_labels or False, label_type_in)
 
     if input_type == "LLM_RLHF":
-        return LLMStaticExporter(kili_api_gateway).export(
+        return LLMRLHFExporter(kili_api_gateway).export(
             cleaned_assets, project_id, project["jsonInterface"]
         )
     if input_type in ["LLM_STATIC", "LLM_INSTR_FOLLOWING"]:
-        return LLMDynamicExporter(kili_api_gateway).export(cleaned_assets, project["jsonInterface"])
+        return LLMExporter(kili_api_gateway).export(cleaned_assets, project["jsonInterface"])
     raise ValueError(f'Project Input type "{input_type}" cannot be used for llm exports.')
 
 

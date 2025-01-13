@@ -140,8 +140,9 @@ class ChatItem(TypedDict):
 
     id: str
     content: str
-    external_id: str
-    model_name: Optional[str]
+    createdAt: Optional[str]
+    externalId: str
+    modelName: Optional[str]
     role: ChatItemRole
 
 
@@ -156,7 +157,8 @@ class ConversationLabel(TypedDict):
 class Conversation(TypedDict):
     """Dict that represents a Conversation."""
 
-    external_id: Optional[str]
-    chat_items: List[ChatItem]
+    chatItems: List[ChatItem]
+    externalId: Optional[str]
     label: Optional[ConversationLabel]
+    labeler: Optional[str]
     metadata: Optional[dict]
