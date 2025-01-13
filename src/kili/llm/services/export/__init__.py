@@ -39,6 +39,7 @@ LABELS_NEEDED_FIELDS = [
 ]
 
 ASSET_DYNAMIC_NEEDED_FIELDS = [
+    "id",
     "assetProjectModels.id",
     "assetProjectModels.configuration",
     "assetProjectModels.projectModelId",

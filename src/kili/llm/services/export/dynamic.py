@@ -1,3 +1,4 @@
+import json
 from typing import Dict, List
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
@@ -43,29 +44,43 @@ class LLMExporter:
         self.kili_api_gateway = kili_api_gateway
 
     def export(self, assets: List[Dict], json_interface: Dict) -> List[Dict]:
-        return [self.format_asset(asset, json_interface) for asset in assets if asset.get("labels")]
+        export_result = [
+            self.format_asset(asset, json_interface) for asset in assets if asset.get("labels")
+        ]
+
+        # FIXME : temporary write json file of export
+        with open("export_dynamic.json", "w") as f:
+            f.write(json.dumps(export_result))
+
+        return export_result
 
     def format_asset(self, asset: Dict, json_interface: Dict) -> Conversation:
         label = asset["labels"][0]
         chat_items = [
             {
-                "content": chat_item["content"],
-                "externalId": chat_item.get("externalId") or chat_item["id"],
-                "modelName": chat_item.get("modelName") or chat_item["modelId"],
-                "role": chat_item["role"],
+                "id": chat_item["id"],
+                "content": chat_item.get("content"),
+                "externalId": chat_item.get("externalId"),
+                "modelName": chat_item.get("modelName") or chat_item.get("modelId"),
+                "role": chat_item.get("role"),
             }
-            for chat_item in label["chatItems"]
+            for chat_item in self.kili_api_gateway.list_chat_items(asset["id"])
         ]
+
         metadata = {}
         if asset.get("assetProjectModels"):
             metadata["models"] = asset["assetProjectModels"]
 
+        chat_items_without_ids = [
+            {k: v for k, v in chat_item.items() if k != "id"} for chat_item in chat_items
+        ]
+
         return {
-            "chatItems": chat_items,
+            "chatItems": chat_items_without_ids,
             "externalId": asset["externalId"],
             "label": self.format_llm_label(
                 annotations=label["annotations"],
-                chat_items=label["chatItems"],
+                chat_items=chat_items,
                 jobs=json_interface["jobs"],
             ),
             "labeler": label["author"]["email"],
@@ -87,7 +102,8 @@ class LLMExporter:
             else:
                 raise ValueError(f"Unknown job level: {job_level}")
 
-            formatted_label[job_level][job_name] = job_label
+            if job_label:
+                formatted_label[job_level][job_name] = job_label
 
         return formatted_label
 
@@ -130,8 +146,11 @@ class LLMExporter:
 
     @staticmethod
     def format_conversation_job(job_name: str, annotations: List[Dict]) -> Dict:
-        annotation = next(annotation for annotation in annotations if annotation["job"] == job_name)
-        return annotation["annotationValue"]
+        annotation = next(
+            (annotation for annotation in annotations if annotation["job"] == job_name), None
+        )
+        if annotation:
+            return annotation["annotationValue"]
 
     @staticmethod
     def format_annotation_value(annotation_value: Dict, id_to_external_id: Dict[str, str]) -> Dict:

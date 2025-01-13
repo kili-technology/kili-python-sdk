@@ -107,6 +107,17 @@ def get_create_llm_asset_mutation(fragment: str) -> str:
     """
 
 
+def get_chat_items_query(fragment: str) -> str:
+    """Return the GraphQL chatItems query."""
+    return f"""
+        query ChatItems($where: ChatItemsWhere!) {{
+            data: chatItems(where: $where) {{
+                {fragment}
+            }}
+        }}
+    """
+
+
 def get_create_chat_item_mutation(fragment: str) -> str:
     """Return the GraphQL createChatItem mutation."""
     return f"""
