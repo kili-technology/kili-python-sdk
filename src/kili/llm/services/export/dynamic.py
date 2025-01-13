@@ -56,6 +56,10 @@ class LLMExporter:
             }
             for chat_item in label["chatItems"]
         ]
+        metadata = {}
+        if asset.get("assetProjectModels"):
+            metadata["models"] = asset["assetProjectModels"]
+
         return {
             "chatItems": chat_items,
             "externalId": asset["externalId"],
@@ -65,7 +69,7 @@ class LLMExporter:
                 jobs=json_interface["jobs"],
             ),
             "labeler": label["author"]["email"],
-            "metadata": {},
+            "metadata": metadata,
         }
 
     def format_llm_label(self, annotations: List[Dict], chat_items: List[Dict], jobs: Dict) -> Dict:
