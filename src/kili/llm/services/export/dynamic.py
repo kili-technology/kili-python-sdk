@@ -55,7 +55,7 @@ class LLMExporter:
         return export_result
 
     def format_asset(self, asset: Dict, json_interface: Dict) -> Conversation:
-        label = asset["labels"][0]
+        label = asset["labels"][-1]
         chat_items = [
             {
                 "id": chat_item["id"],
