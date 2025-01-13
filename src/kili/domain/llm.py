@@ -142,6 +142,7 @@ class ChatItem(TypedDict):
     content: str
     createdAt: Optional[str]
     externalId: str
+    modelId: Optional[str]
     modelName: Optional[str]
     role: ChatItemRole
 

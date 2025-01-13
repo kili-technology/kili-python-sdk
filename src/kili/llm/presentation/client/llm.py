@@ -90,13 +90,7 @@ class LlmClientMethods:
                 list(AssetId(asset_id) for asset_id in asset_ids) if asset_ids else None
             )
 
-        label_type_in = label_type_in or [
-            "AUTOSAVE",
-            "DEFAULT",
-            "INFERENCE",
-            "PREDICTION",
-            "REVIEW",
-        ]
+        label_type_in = label_type_in or ["DEFAULT", "REVIEW"]
 
         asset_filter = AssetFilters(
             project_id=ProjectId(project_id),
@@ -370,6 +364,20 @@ class LlmClientMethods:
             >>> kili.llm.delete_project_model(project_model_id="your_project_model_id")
         """
         return self.kili_api_gateway.delete_project_model(project_model_id)
+
+    def list_chat_items(self, asset_id: str) -> List[ChatItem]:
+        """List chat items associated with an asset.
+
+        Args:
+            asset_id: Identifier of the asset.
+
+        Returns:
+            A list of chat items associated with the asset.
+
+        Examples:
+            >>> kili.llm.list_chat_items(asset_id="your_asset_id")
+        """
+        return self.kili_api_gateway.list_chat_items(asset_id=asset_id)
 
     def create_conversation(
         self, project_id: str, initial_prompt: str, system_prompt: Optional[str] = None

@@ -24,6 +24,7 @@ from kili.adapters.kili_api_gateway.llm.mappers import (
     project_model_where_mapper,
 )
 from kili.adapters.kili_api_gateway.llm.operations import (
+    get_chat_items_query,
     get_create_chat_item_mutation,
     get_create_llm_asset_mutation,
     get_create_model_mutation,
@@ -60,6 +61,16 @@ DEFAULT_PROJECT_MODEL_FIELDS = [
     "model.credentials",
     "model.name",
     "model.type",
+]
+DEFAULT_CHAT_ITEMS_FIELDS = [
+    "id",
+    "content",
+    "createdAt",
+    "externalId",
+    "modelName",
+    "modelId",
+    "parentId",
+    "role",
 ]
 
 
@@ -176,6 +187,27 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
                 where,
                 options if options else QueryOptions(disable_tqdm=False),
                 "Retrieving project models",
+                None,
+            )
+        ]
+
+    def list_chat_items(
+        self,
+        asset_id: str,
+        options: Optional[QueryOptions] = None,
+    ) -> List[ChatItem]:
+        fragment = fragment_builder(DEFAULT_CHAT_ITEMS_FIELDS)
+        where = {"assetId": asset_id}
+        query = get_chat_items_query(fragment)
+        return [
+            cast(ChatItem, item)
+            for item in PaginatedGraphQLQuery(
+                self.graphql_client
+            ).execute_query_from_paginated_call(
+                query,
+                where,
+                options if options else QueryOptions(disable_tqdm=False),
+                "Retrieving chat items",
                 None,
             )
         ]
