@@ -90,7 +90,13 @@ class LlmClientMethods:
                 list(AssetId(asset_id) for asset_id in asset_ids) if asset_ids else None
             )
 
-        label_type_in = label_type_in or ["DEFAULT", "REVIEW"]
+        label_type_in = label_type_in or [
+            "AUTOSAVE",
+            "DEFAULT",
+            "INFERENCE",
+            "PREDICTION",
+            "REVIEW",
+        ]
 
         asset_filter = AssetFilters(
             project_id=ProjectId(project_id),
