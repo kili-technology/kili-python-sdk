@@ -43,7 +43,7 @@ class LLMExporter:
     def __init__(self, kili_api_gateway: KiliAPIGateway):
         self.kili_api_gateway = kili_api_gateway
 
-    def export(self, assets: List[Dict], json_interface: Dict) -> List[Dict]:
+    def export(self, assets: List[Dict], json_interface: Dict) -> List[Conversation]:
         export_result = [
             self.format_asset(asset, json_interface) for asset in assets if asset.get("labels")
         ]
@@ -60,7 +60,7 @@ class LLMExporter:
             {
                 "id": chat_item["id"],
                 "content": chat_item.get("content"),
-                "externalId": chat_item.get("externalId"),
+                "externalId": chat_item.get("externalId") or chat_item["id"],
                 "modelName": chat_item.get("modelName") or chat_item.get("modelId"),
                 "role": chat_item.get("role"),
             }

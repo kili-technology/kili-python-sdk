@@ -4,12 +4,12 @@ from kili.client import Kili
 from kili.domain.llm import ChatItemRole
 from kili.exceptions import GraphQLError
 
-PROJECT_TITLE = "[E2E Test]: Model"
-PROJECT_DESCRIPTION = "End-to-End Test Model and Project Model workflow"
-MODEL_NAME = "E2E Test Model"
-UPDATED_MODEL_NAME = "E2E Test Model Updated"
+PROJECT_TITLE = "[E2E Test]: LLM Dynamic"
+PROJECT_DESCRIPTION = "End-to-End Test LLM Dynamic and Project Model workflow"
+MODEL_NAME = "E2E LLM Dynamic Raw"
+UPDATED_MODEL_NAME = "E2E LLM Dynamic"
 PROMPT = "Hello, world !"
-SYSTEM_PROMPT = "You're an helpful AI assistant with cutsom instructions"
+SYSTEM_PROMPT = "You're an helpful AI assistant with custom instructions"
 
 INTERFACE = {
     "jobs": {
