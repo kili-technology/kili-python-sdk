@@ -46,7 +46,30 @@ class LlmClientMethods:
         project_id: str,
         conversations: List[Conversation],
     ):
-        self.kili_api_gateway.import_conversations(
+        """Import conversations into a LLM Static project.
+
+        Args:
+            project_id: Identifier of the project.
+            conversations: List of conversations to import. Each conversation should be a dictionary with the following keys
+                - `chatItems`: List of chat items in the conversation. Each chat item should be a dictionary with the following keys
+                    - `content`: (required) Content of the chat item.
+                    - `externalId`: (required) Identifier of the chat item (must be unique).
+                    - `modelName`: Name of the model that generated the chat item. Required only for ASSISTANT chat items.
+                    - `role`: (required) Role of the chat item, one of `SYSTEM`, `USER` or `ASSISTANT`.
+                - `externalId`: (required) Identifier of the conversation (must be unique).
+                - `label`: (optional) Label associated with the conversation. Should be a dictionary with the following keys
+                    - `conversation`
+                    - `completion`
+                    - `round`
+                - `labeler`: (optional) Email of the labeler associated with the conversation.
+                - `metadata`: (optional) Additional metadata associated with the conversation.
+
+        Returns:
+            A dict containing following keys
+            - `numberOfUploadedAssets`: Number of assets uploaded.
+            - `warnings`: List of detailed warnings generated during the import process, for each conversation.
+        """
+        return self.kili_api_gateway.import_conversations(
             project_id=project_id, conversations=conversations
         )
 
