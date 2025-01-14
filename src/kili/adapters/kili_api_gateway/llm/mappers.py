@@ -137,28 +137,11 @@ def map_create_chat_item_input(
     return {"content": prompt, "role": role.value, "labelId": label_id, "parentId": parent_id}
 
 
-def map_import_conversations_input(conversations: List[Conversation]) -> Dict:
+def map_import_conversations_input(
+    conversations: List[Conversation],
+) -> Dict[str, List[Conversation]]:
     """Map the input for the importConversations mutation."""
-    return {
-        "conversations": [
-            {
-                "chatItems": [
-                    {
-                        "content": chat_item["content"],
-                        "externalId": chat_item.get("external_id"),
-                        "role": chat_item["role"],
-                        "modelName": chat_item.get("model_name"),
-                    }
-                    for chat_item in conversation["chat_items"]
-                ],
-                "externalId": conversation.get("external_id"),
-                "label": conversation.get("label"),
-                "labeler": conversation.get("labeler"),
-                "metadata": conversation.get("metadata"),
-            }
-            for conversation in conversations
-        ]
-    }
+    return {"conversations": conversations}
 
 
 def map_asset_where(asset_id: str) -> Dict:
