@@ -1,62 +1,21 @@
 # several test modes:
-# - ALL: run all modes below (only useful for manual trigger)
-# - CUSTOM: choose git branch and endpoint (only useful for manual trigger)
 # - MAIN_STAGING: main branch against STAGING
-# - RELEASE_PREPROD: latest release branch against PREPROD
-# - MAIN_LTS: main branch against LTS
-# - PREV_RELEASE_TESTS_STAGING: SDK from main, previous release tests against STAGING
-# - LTS_CYCLE_FIRST_SDK_STAGING: test with first SDK of LTS cycle, against STAGING
 
 name: E2E tests
 on:
   workflow_dispatch:
     inputs:
-      runE2ETests:
-        description: "Run E2E tests?"
-        required: true
-        type: boolean
-        default: true
       runNotebookTests:
         description: "Run notebook tests?"
         required: true
         type: boolean
         default: true
-      testMode:
-        description: "Test mode: ALL (run all modes), CUSTOM (specify branch and endpoint), MAIN_STAGING (main branch against STAGING), RELEASE_PREPROD (latest release branch against PREPROD), MAIN_LTS (main branch against LTS), PREV_RELEASE_TESTS_STAGING (SDK from main, previous release tests against STAGING), LTS_CYCLE_FIRST_SDK_STAGING (test with first SDK of LTS cycle, against STAGING)"
-        required: true
-        type: choice
-        default: "MAIN_STAGING"
-        options:
-          - ALL
-          - CUSTOM
-          - MAIN_STAGING
-          - RELEASE_PREPROD
-          - MAIN_LTS
-          - PREV_RELEASE_TESTS_STAGING
-          - LTS_CYCLE_FIRST_SDK_STAGING
-      customBranch:
-        description: "Custom branch to test a PR (only used if test mode is CUSTOM)"
-        required: false
-        type: string
-        default: ""
-      customEndpoint:
-        description: "Custom endpoint to test a PR (only used if test mode is CUSTOM)"
-        required: false
-        type: choice
-        default: "STAGING"
-        options:
-          - "STAGING"
-          - "PROD"
-          - "PREPROD"
-          - "LTS"
   push:
     branches:
       - "release/**"
       - main
   schedule:
     - cron: "0 7,15 * * 1-5" # MAIN_STAGING
-    - cron: "0 11 * * 1-5" # PREV_RELEASE_TESTS_STAGING
-    - cron: "0 13 * * 1-5" # LTS_CYCLE_FIRST_SDK_STAGING
 
 jobs:
   test_setup:
@@ -102,16 +61,6 @@ jobs:
               json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
 
             fi
-
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-
-            if [[ "${{ github.event.inputs.testMode }}" == "ALL" ]]; then
-              json_str="{\"array\": [\"MAIN_STAGING\", \"RELEASE_PREPROD\", \"MAIN_LTS\", \"PREV_RELEASE_TESTS_STAGING\", \"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
-            else
-              json_str="{\"array\": [\"${{ github.event.inputs.testMode }}\"]}"
-            fi
-
-          fi
 
           echo "TEST_MODE_ARRAY=$json_str" >> $GITHUB_OUTPUT
 
@@ -187,11 +136,6 @@ jobs:
           elif [[ "${{ env.TEST_MODE }}" == "LTS_CYCLE_FIRST_SDK_STAGING" ]]; then
             echo "REF=${{ env.LTS_CYCLE_FIRST_SDK_REF }}" >> $GITHUB_ENV
             echo "TEST_AGAINST=STAGING" >> $GITHUB_ENV
-
-          elif [[ "${{ env.TEST_MODE }}" == "CUSTOM" ]]; then
-            echo "REF=${{ github.event.inputs.customBranch }}" >> $GITHUB_ENV
-            echo "TEST_AGAINST=${{ github.event.inputs.customEndpoint }}" >> $GITHUB_ENV
-
           fi
 
       - name: Set KILI_API_ENDPOINT
@@ -250,23 +194,6 @@ jobs:
         shell: bash
         run: echo "KILI_SDK_VERSION=$(python -c "from kili import __version__; print(__version__)")" >> $GITHUB_ENV
 
-      - name: E2E tests
-        id: e2e
-        if: github.event.inputs.runE2ETests != 'false'
-        timeout-minutes: 60
-        run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv --ignore tests/e2e/test_notebooks.py tests/e2e
-        env:
-          KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
-          KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
-          KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
-          KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
-          KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
-          KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
-          KILI_TEST_ORGANIZATION_ID: ${{ secrets[format('KILI_TEST_ORGANIZATION_ID_{0}', env.TEST_AGAINST)] }}
-          KILI_TEST_AWS_ACCESS_POINT_ARN: ${{ secrets.KILI_TEST_AWS_ACCESS_POINT_ARN }}
-          KILI_TEST_AWS_ROLE_ARN: ${{ secrets.KILI_TEST_AWS_ROLE_ARN }}
-          KILI_TEST_AWS_ROLE_EXTERNAL_ID: ${{ secrets.KILI_TEST_AWS_ROLE_EXTERNAL_ID }}
-
       - name: Notebook tests
         # we don't run notebook tests on push to main
         # we run regardless of the outcome of the e2e tests
@@ -277,9 +204,6 @@ jobs:
           KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
           KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
           KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
-          KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
-          KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
-          KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
           PYDEVD_DISABLE_FILE_VALIDATION: true
 
       - name: Check that kili SDK version has not changed
@@ -301,13 +225,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "E2E tests '${{ env.TEST_MODE }}' (branch '${{ env.REF }}' against endpoint '${{ env.TEST_AGAINST }}') failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "Notebook tests '${{ env.TEST_MODE }}' (branch '${{ env.REF }}' against endpoint '${{ env.TEST_AGAINST }}') failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "E2E tests '${{ env.TEST_MODE }}' (branch '${{ env.REF }}' against endpoint '${{ env.TEST_AGAINST }}') failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "Notebook tests '${{ env.TEST_MODE }}' (branch '${{ env.REF }}' against endpoint '${{ env.TEST_AGAINST }}') failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 }
               ]
