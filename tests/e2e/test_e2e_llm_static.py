@@ -1,9 +1,11 @@
 import json
+from typing import List, cast
 
 import pytest
 import requests
 
 from kili.client import Kili
+from kili.domain.llm import Conversation
 
 PROJECT_TITLE = "[E2E Test]: LLM Static"
 PROJECT_DESCRIPTION = "End-to-End Test LLM Static with conversations import & export"
@@ -352,7 +354,9 @@ def test_create_llm_static_project_and_import_conversations(kili: Kili):
     assets = kili.assets(project_id=project_id)
     assert len(assets) == 0
 
-    response = kili.llm.import_conversations(project_id, conversations=CONVERSATIONS)
+    response = kili.llm.import_conversations(
+        project_id, conversations=cast(List[Conversation], CONVERSATIONS)
+    )
     upload_warnings = response["warnings"]
     assert len(upload_warnings) == 0
 
