@@ -9,8 +9,8 @@ from kili.domain.label import LabelType
 from kili.domain.llm import Conversation
 from kili.domain.project import ProjectId
 
-from .dynamic import LLMExporter
-from .static import LLMRLHFExporter
+from .export_llm_rlhf import LLMRLHFExporter
+from .export_llm_static_or_dynamic import LLMExporter
 
 CHAT_ITEMS_NEEDED_FIELDS = [
     "id",
