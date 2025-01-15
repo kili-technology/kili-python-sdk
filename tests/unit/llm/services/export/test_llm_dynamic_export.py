@@ -725,7 +725,7 @@ def test_export_dynamic(mocker):
     get_project_return_val = {
         "jsonInterface": mock_json_interface,
         "inputType": "LLM_INSTR_FOLLOWING",
-        "title": "Test project",
+        "title": "LLM Dynamic test export project",
         "id": "project_id",
         "dataConnections": None,
     }

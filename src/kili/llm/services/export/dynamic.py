@@ -1,4 +1,3 @@
-import json
 from typing import Dict, List
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
@@ -44,15 +43,7 @@ class LLMExporter:
         self.kili_api_gateway = kili_api_gateway
 
     def export(self, assets: List[Dict], json_interface: Dict) -> List[Conversation]:
-        export_result = [
-            self.format_asset(asset, json_interface) for asset in assets if asset.get("labels")
-        ]
-
-        # FIXME : temporary write json file of export
-        with open("export_dynamic.json", "w") as f:
-            f.write(json.dumps(export_result))
-
-        return export_result
+        return [self.format_asset(asset, json_interface) for asset in assets if asset.get("labels")]
 
     def format_asset(self, asset: Dict, json_interface: Dict) -> Conversation:
         label = asset["labels"][-1]
