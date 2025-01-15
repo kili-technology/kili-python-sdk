@@ -196,6 +196,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         asset_id: str,
         options: Optional[QueryOptions] = None,
     ) -> List[ChatItem]:
+        """Send a GraphQL request to retrieve chat items of an asset (conversation)."""
         fragment = fragment_builder(DEFAULT_CHAT_ITEMS_FIELDS)
         where = {"assetId": asset_id}
         query = get_chat_items_query(fragment)
