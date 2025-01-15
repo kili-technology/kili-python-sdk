@@ -6,6 +6,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset.asset import AssetFilters
 from kili.domain.label import LabelType
+from kili.domain.llm import Conversation
 from kili.domain.project import ProjectId
 
 from .dynamic import LLMExporter
@@ -75,7 +76,7 @@ def export(  # pylint: disable=too-many-arguments, too-many-locals
     disable_tqdm: Optional[bool],
     include_sent_back_labels: Optional[bool],
     label_type_in: List[LabelType],
-) -> Optional[List[Dict[str, Union[List[str], str]]]]:
+) -> Union[List[Conversation], List[Dict[str, Union[List[str], str]]]]:
     """Export the selected assets with their labels into the required format, and save it into a file archive."""
     project = kili_api_gateway.get_project(project_id, ["id", "inputType", "jsonInterface"])
     input_type = project["inputType"]

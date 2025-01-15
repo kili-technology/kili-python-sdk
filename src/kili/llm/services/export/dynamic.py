@@ -1,7 +1,7 @@
-from typing import Dict, List
+from typing import Dict, List, cast
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
-from kili.domain.llm import ChatItemRole, Conversation
+from kili.domain.llm import ChatItem, ChatItemRole, Conversation, ConversationLabel
 
 CHAT_ITEMS_NEEDED_FIELDS = [
     "id",
@@ -63,7 +63,8 @@ class LLMExporter:
             metadata["models"] = asset["assetProjectModels"]
 
         chat_items_without_ids = [
-            {k: v for k, v in chat_item.items() if k != "id"} for chat_item in chat_items
+            cast(ChatItem, {k: v for k, v in chat_item.items() if k != "id"})
+            for chat_item in chat_items
         ]
 
         return {
@@ -78,7 +79,9 @@ class LLMExporter:
             "metadata": metadata,
         }
 
-    def format_llm_label(self, annotations: List[Dict], chat_items: List[Dict], jobs: Dict) -> Dict:
+    def format_llm_label(
+        self, annotations: List[Dict], chat_items: List[Dict], jobs: Dict
+    ) -> ConversationLabel:
         formatted_label = {JobLevel.COMPLETION: {}, JobLevel.CONVERSATION: {}, JobLevel.ROUND: {}}
 
         for job_name, job in jobs.items():
@@ -96,7 +99,7 @@ class LLMExporter:
             if job_label:
                 formatted_label[job_level][job_name] = job_label
 
-        return formatted_label
+        return cast(ConversationLabel, formatted_label)
 
     @staticmethod
     def format_completion_job(
@@ -142,6 +145,7 @@ class LLMExporter:
         )
         if annotation:
             return annotation["annotationValue"]
+        return {}
 
     @staticmethod
     def format_annotation_value(annotation_value: Dict, id_to_external_id: Dict[str, str]) -> Dict:

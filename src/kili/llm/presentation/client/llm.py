@@ -82,8 +82,8 @@ class LlmClientMethods:
         include_sent_back_labels: Optional[bool] = False,
         label_type_in: Optional[List[LabelType]] = None,
         status_in: Optional[List[AssetStatus]] = None,
-    ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
-        """Returns an export of llm assets with valid labels.
+    ) -> Optional[Union[List[Conversation], List[Dict[str, Union[List[str], str]]]]]:
+        """Returns an export of llm conversations with valid labels.
 
         Args:
             project_id: Identifier of the project.
