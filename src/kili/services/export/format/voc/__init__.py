@@ -11,7 +11,7 @@ from kili.services.export.exceptions import (
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.base import AbstractExporter, reverse_rotation_vertices
 from kili.services.export.media.image import get_frame_dimensions, get_image_dimensions
 from kili.services.export.media.video import cut_video, get_video_dimensions
 from kili.services.types import Job
@@ -136,6 +136,9 @@ def _parse_annotations(
     valid_jobs: Sequence[str],
 ) -> None:
     # pylint: disable=too-many-locals
+    rotation_val = 0
+    if "ROTATION_JOB" in response:
+        rotation_val = response["ROTATION_JOB"]["rotation"]
     for job_name, job_response in response.items():
         if job_name not in valid_jobs:
             continue
@@ -159,16 +162,17 @@ def _parse_annotations(
                     occluded = ET.SubElement(annotation_category, "occluded")
                     occluded.text = "0"
                     bndbox = ET.SubElement(annotation_category, "bndbox")
-                    x_vertices = [int(round(v["x"] * img_width)) for v in vertices]
-                    y_vertices = [int(round(v["y"] * img_height)) for v in vertices]
+                    vertices_before_rotate = reverse_rotation_vertices(vertices, rotation_val)
+                    x_vertices = [v["x"] * img_width for v in vertices_before_rotate]
+                    y_vertices = [v["y"] * img_height for v in vertices_before_rotate]
                     xmin = ET.SubElement(bndbox, "xmin")
-                    xmin.text = str(min(x_vertices))
+                    xmin.text = str(round(min(x_vertices)))
                     xmax = ET.SubElement(bndbox, "xmax")
-                    xmax.text = str(max(x_vertices))
+                    xmax.text = str(round(max(x_vertices)))
                     ymin = ET.SubElement(bndbox, "ymin")
-                    ymin.text = str(min(y_vertices))
+                    ymin.text = str(round(min(y_vertices)))
                     ymax = ET.SubElement(bndbox, "ymax")
-                    ymax.text = str(max(y_vertices))
+                    ymax.text = str(round(max(y_vertices)))
 
 
 def _provide_voc_headers(

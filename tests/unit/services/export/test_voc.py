@@ -6,21 +6,67 @@ from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import VocExporter
 from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.format.voc import _convert_from_kili_to_voc_format, _process_asset
-from tests.fakes.fake_data import asset_image_1, asset_image_1_without_annotation
+from tests.fakes.fake_data import (
+    asset_image_1,
+    asset_image_1_with_0_rotation,
+    asset_image_1_with_90_rotation,
+    asset_image_1_with_180_rotation,
+    asset_image_1_with_270_rotation,
+    asset_image_1_without_annotation,
+)
 
 
 def test__convert_from_kili_to_voc_format():
-    parameters = {"filename": f'{asset_image_1["externalId"]}.xml'}
+    parameters = {"filename": f'{asset_image_1_with_0_rotation["externalId"]}.xml'}
     annotations = _convert_from_kili_to_voc_format(
-        response=asset_image_1["latestLabel"]["jsonResponse"],
+        response=asset_image_1_with_0_rotation["latestLabel"]["jsonResponse"],
         img_width=1920,
         img_height=1080,
         parameters=parameters,
         valid_jobs=["JOB_0"],
     )
-    expected_annotations = Path("./tests/unit/services/export/expected/car_1.xml").read_text(
-        encoding="utf-8"
+    expected_annotations = Path(
+        "./tests/unit/services/export/expected/car_1_with_0_rotation.xml"
+    ).read_text(encoding="utf-8")
+    assert annotations == expected_annotations
+
+    parameters = {"filename": f'{asset_image_1_with_90_rotation["externalId"]}.xml'}
+    annotations = _convert_from_kili_to_voc_format(
+        response=asset_image_1_with_90_rotation["latestLabel"]["jsonResponse"],
+        img_width=1920,
+        img_height=1080,
+        parameters=parameters,
+        valid_jobs=["JOB_0"],
     )
+    expected_annotations = Path(
+        "./tests/unit/services/export/expected/car_1_with_0_rotation.xml"
+    ).read_text(encoding="utf-8")
+    assert annotations == expected_annotations
+
+    parameters = {"filename": f'{asset_image_1_with_180_rotation["externalId"]}.xml'}
+    annotations = _convert_from_kili_to_voc_format(
+        response=asset_image_1_with_180_rotation["latestLabel"]["jsonResponse"],
+        img_width=1920,
+        img_height=1080,
+        parameters=parameters,
+        valid_jobs=["JOB_0"],
+    )
+    expected_annotations = Path(
+        "./tests/unit/services/export/expected/car_1_with_0_rotation.xml"
+    ).read_text(encoding="utf-8")
+    assert annotations == expected_annotations
+
+    parameters = {"filename": f'{asset_image_1_with_270_rotation["externalId"]}.xml'}
+    annotations = _convert_from_kili_to_voc_format(
+        response=asset_image_1_with_270_rotation["latestLabel"]["jsonResponse"],
+        img_width=1920,
+        img_height=1080,
+        parameters=parameters,
+        valid_jobs=["JOB_0"],
+    )
+    expected_annotations = Path(
+        "./tests/unit/services/export/expected/car_1_with_0_rotation.xml"
+    ).read_text(encoding="utf-8")
     assert annotations == expected_annotations
 
 

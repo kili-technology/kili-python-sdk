@@ -18,6 +18,10 @@ from kili.services.export.format.yolo import (
 from kili.utils.tempfile import TemporaryDirectory
 from tests.fakes.fake_data import (
     asset_image_1,
+    asset_image_1_with_0_rotation,
+    asset_image_1_with_90_rotation,
+    asset_image_1_with_180_rotation,
+    asset_image_1_with_270_rotation,
     asset_image_1_without_annotation,
     asset_video,
     category_ids,
@@ -143,11 +147,34 @@ def test_convert_from_kili_to_yolo_format():
     converted_annotations = _convert_from_kili_to_yolo_format(
         "JOB_0", asset_image_1["latestLabel"], category_ids
     )
-    expected_annotations = [
+    converted_annotations_with_rotation_0 = _convert_from_kili_to_yolo_format(
+        "JOB_0", asset_image_1_with_0_rotation["latestLabel"], category_ids
+    )
+    converted_annotations_with_rotation_90 = _convert_from_kili_to_yolo_format(
+        "JOB_0", asset_image_1_with_90_rotation["latestLabel"], category_ids
+    )
+    converted_annotations_with_rotation_180 = _convert_from_kili_to_yolo_format(
+        "JOB_0", asset_image_1_with_180_rotation["latestLabel"], category_ids
+    )
+    converted_annotations_with_rotation_270 = _convert_from_kili_to_yolo_format(
+        "JOB_0", asset_image_1_with_270_rotation["latestLabel"], category_ids
+    )
+    expected_annotations1 = [
         (0, 0.501415026274802, 0.5296278884310182, 0.6727472455849373, 0.5381320101586394)
     ]
+    expected_annotations2 = [
+        (0, 0.20836785418392711, 0.28447691496573013, 0.2609776304888154, 0.3803570083603225)
+    ]
     assert len(converted_annotations) == 1
-    assert converted_annotations == expected_annotations
+    assert converted_annotations == expected_annotations1
+    assert len(converted_annotations_with_rotation_0) == 1
+    assert converted_annotations_with_rotation_0 == expected_annotations2
+    assert len(converted_annotations_with_rotation_90) == 1
+    assert converted_annotations_with_rotation_90 == expected_annotations2
+    assert len(converted_annotations_with_rotation_180) == 1
+    assert converted_annotations_with_rotation_180 == expected_annotations2
+    assert len(converted_annotations_with_rotation_270) == 1
+    assert converted_annotations_with_rotation_270 == expected_annotations2
 
 
 def test_convert_from_kili_to_yolo_format_no_annotation():
