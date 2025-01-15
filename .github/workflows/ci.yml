@@ -188,6 +188,7 @@ jobs:
           -e "src/kili/client.py" \
           -e "src/kili/core/graphql/ws_graphql_client" \
           -e "src/kili/domain/annotation.py" \
+          -e "src/kili/domain/llm.py" \
           -e "src/kili/domain/ontology.py" \
           -e "src/kili/domain/project.py" \
           -e "src/kili/entrypoints" \
