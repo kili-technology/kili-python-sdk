@@ -17,7 +17,7 @@ from kili.services.export.exceptions import (
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.base import AbstractExporter, reverse_rotation_vertices
 from kili.services.export.format.coco.types import (
     CocoAnnotation,
     CocoCategory,
@@ -288,7 +288,9 @@ def _get_images_and_annotation_for_images(
             width=width,
             date_captured=None,
         )
-
+        rotation_val = 0
+        if "ROTATION_JOB" in asset["latestLabel"]["jsonResponse"]:
+            rotation_val = asset["latestLabel"]["jsonResponse"]["ROTATION_JOB"]["rotation"]
         coco_images.append(coco_image)
         if is_single_job:
             assert len(list(jobs.keys())) == 1
@@ -304,6 +306,7 @@ def _get_images_and_annotation_for_images(
                     annotation_offset,
                     coco_image,
                     annotation_modifier=annotation_modifier,
+                    rotation=rotation_val,
                 )
             coco_annotations.extend(coco_img_annotations)
         else:
@@ -318,6 +321,7 @@ def _get_images_and_annotation_for_images(
                     annotation_offset,
                     coco_image,
                     annotation_modifier=annotation_modifier,
+                    rotation=rotation_val,
                 )
                 coco_annotations.extend(coco_img_annotations)
     return coco_images, coco_annotations
@@ -367,7 +371,6 @@ def _get_images_and_annotation_for_videos(
                 date_captured=None,
             )
             coco_images.append(coco_image)
-
             if is_single_job:
                 job_name = next(iter(jobs.keys()))
                 if job_name not in json_response:
@@ -405,6 +408,7 @@ def _get_coco_image_annotations(
     annotation_offset: int,
     coco_image: CocoImage,
     annotation_modifier: Optional[CocoAnnotationModifier],
+    rotation: int = 0,
 ) -> Tuple[List[CocoAnnotation], int]:
     coco_annotations = []
 
@@ -418,7 +422,7 @@ def _get_coco_image_annotations(
             continue
         bounding_poly = annotation["boundingPoly"]
         area, bbox, polygons = _get_coco_geometry_from_kili_bpoly(
-            bounding_poly, coco_image["width"], coco_image["height"]
+            bounding_poly, coco_image["width"], coco_image["height"], rotation
         )
         if len(polygons[0]) < 6:  # twice the number of vertices
             print("A polygon must contain more than 2 points. Skipping this polygon...")
@@ -468,28 +472,37 @@ def _get_shoelace_area(x: List[float], y: List[float]):
 
 
 def _get_coco_geometry_from_kili_bpoly(
-    bounding_poly: List[Dict], asset_width: int, asset_height: int
+    bounding_poly: List[Dict], asset_width: int, asset_height: int, rotation_angle: int
 ):
     normalized_vertices = bounding_poly[0]["normalizedVertices"]
-    p_x = [float(vertice["x"]) * asset_width for vertice in normalized_vertices]
-    p_y = [float(vertice["y"]) * asset_height for vertice in normalized_vertices]
+    vertices_before_rotate = reverse_rotation_vertices(normalized_vertices, rotation_angle)
+    p_x = [float(vertice["x"]) * asset_width for vertice in vertices_before_rotate]
+    p_y = [float(vertice["y"]) * asset_height for vertice in vertices_before_rotate]
     poly_vertices = [(float(x), float(y)) for x, y in zip(p_x, p_y)]
-    x_min, y_min = min(p_x), min(p_y)
-    x_max, y_max = max(p_x), max(p_y)
+    x_min, y_min = round(min(p_x)), round(min(p_y))
+    x_max, y_max = round(max(p_x)), round(max(p_y))
     bbox_width, bbox_height = x_max - x_min, y_max - y_min
-    area = _get_shoelace_area(p_x, p_y)
+    area = round(_get_shoelace_area(p_x, p_y))
     polygons = [[p for vertice in poly_vertices for p in vertice]]
 
     # Compute and remove negative area
     if len(bounding_poly) > 1:
         for negative_bounding_poly in bounding_poly[1:]:
             negative_normalized_vertices = negative_bounding_poly["normalizedVertices"]
-            np_x = [float(vertice["x"]) * asset_width for vertice in negative_normalized_vertices]
-            np_y = [float(vertice["y"]) * asset_height for vertice in negative_normalized_vertices]
+            negative_vertices_before_rotate = reverse_rotation_vertices(
+                negative_normalized_vertices, rotation_angle
+            )
+            np_x = [
+                float(negative_vertice["x"]) * asset_width
+                for negative_vertice in negative_vertices_before_rotate
+            ]
+            np_y = [
+                float(negative_vertice["y"]) * asset_height
+                for negative_vertice in negative_vertices_before_rotate
+            ]
             area -= _get_shoelace_area(np_x, np_y)
             poly_negative_vertices = [(float(x), float(y)) for x, y in zip(np_x, np_y)]
             polygons.append([p for vertice in poly_negative_vertices for p in vertice])
-
     bbox = [int(x_min), int(y_min), int(bbox_width), int(bbox_height)]
     return area, bbox, polygons
 

@@ -375,7 +375,7 @@ def test__get_coco_image_annotations_with_label_modifier(
                 expected_segmentation
             )
             # Area of a rectangle: width * height
-            assert coco_annotation["annotations"][0]["area"] == pytest.approx(
+            assert coco_annotation["annotations"][0]["area"] == round(
                 expected_bounding_box[2] * expected_bounding_box[3]
             )
 
@@ -586,16 +586,87 @@ def test_get_coco_geometry_from_kili_bpoly():
             ]
         }
     ]
+    boundingPoly_with_90_rotation = [
+        {
+            "normalizedVertices": [
+                {"x": 0.9, "y": 0.1},
+                {"x": 0.6, "y": 0.1},
+                {"x": 0.6, "y": 0.8},
+                {"x": 0.9, "y": 0.8},
+            ]
+        }
+    ]
+    boundingPoly_with_180_rotation = [
+        {
+            "normalizedVertices": [
+                {"x": 0.9, "y": 0.9},
+                {"x": 0.9, "y": 0.6},
+                {"x": 0.2, "y": 0.6},
+                {"x": 0.2, "y": 0.9},
+            ]
+        }
+    ]
+    boundingPoly_with_270_rotation = [
+        {
+            "normalizedVertices": [
+                {"x": 0.1, "y": 0.9},
+                {"x": 0.4, "y": 0.9},
+                {"x": 0.4, "y": 0.2},
+                {"x": 0.1, "y": 0.2},
+            ]
+        }
+    ]
     image_width, image_height = 1920, 1080
     area, bbox, polygons = _get_coco_geometry_from_kili_bpoly(
-        boundingPoly, image_width, image_height
+        boundingPoly, image_width, image_height, 0
+    )
+    area_90_rotation, bbox_90_rotation, polygons_90_rotation = _get_coco_geometry_from_kili_bpoly(
+        boundingPoly_with_90_rotation, image_width, image_height, 90
+    )
+    (
+        area_180_rotation,
+        bbox_180_rotation,
+        polygons_180_rotation,
+    ) = _get_coco_geometry_from_kili_bpoly(
+        boundingPoly_with_180_rotation, image_width, image_height, 180
+    )
+    (
+        area_270_rotation,
+        bbox_270_rotation,
+        polygons_270_rotation,
+    ) = _get_coco_geometry_from_kili_bpoly(
+        boundingPoly_with_270_rotation, image_width, image_height, 270
     )
     assert bbox == [192, 108, 1344, 324]
+    assert bbox_90_rotation == [192, 108, 1344, 324]
+    assert bbox_180_rotation == [192, 108, 1344, 324]
+    assert bbox_270_rotation == [192, 108, 1344, 324]
+
     assert area == bbox[2] * bbox[3]  # Area of a rectangle: width * height
-    assert bbox[0] == int(0.1 * image_width)
-    assert bbox[1] == int(0.1 * image_height)
-    assert bbox[2] == int((0.8 - 0.1) * image_width)
-    assert bbox[3] == int((0.4 - 0.1) * image_height)
+    assert area_90_rotation == bbox_90_rotation[2] * bbox_90_rotation[3]
+    assert area_180_rotation == bbox_180_rotation[2] * bbox_180_rotation[3]
+    assert area_270_rotation == bbox_270_rotation[2] * bbox_270_rotation[3]
+
+    assert bbox[0] == 0.1 * image_width
+    assert bbox[1] == 0.1 * image_height
+    assert bbox[2] == round((0.8 - 0.1) * image_width)
+    assert bbox[3] == round((0.4 - 0.1) * image_height)
+
+    assert bbox_90_rotation[0] == 0.1 * image_width
+    assert bbox_90_rotation[1] == 0.1 * image_height
+    assert bbox_90_rotation[2] == round((0.8 - 0.1) * image_width)
+    assert bbox_90_rotation[3] == round((0.4 - 0.1) * image_height)
+
+    assert bbox_180_rotation[0] == 0.1 * image_width
+    assert bbox_180_rotation[1] == 0.1 * image_height
+    assert bbox_180_rotation[2] == round((0.8 - 0.1) * image_width)
+    assert bbox_180_rotation[3] == round((0.4 - 0.1) * image_height)
+
+    assert bbox_270_rotation[0] == 0.1 * image_width
+    assert bbox_270_rotation[1] == 0.1 * image_height
+    assert bbox_270_rotation[2] == round((0.8 - 0.1) * image_width)
+    assert bbox_270_rotation[3] == round((0.4 - 0.1) * image_height)
+
     assert polygons == [[192.0, 108.0, 192.0, 432.0, 1536.0, 432.0, 1536.0, 108.0]]
 
 
