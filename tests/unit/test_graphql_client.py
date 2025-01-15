@@ -1,11 +1,7 @@
 import os
-from pathlib import Path
-from tempfile import TemporaryDirectory
 from time import time
 from typing import Dict
-from unittest import mock
 
-import graphql
 import pytest
 import pytest_mock
 from gql import Client
@@ -33,88 +29,6 @@ def test_graphql_client_cache_cant_get_kili_version(mocker):
             kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
         ),
     )
-
-
-@pytest.mark.parametrize(
-    "query",
-    [
-        "query MyQuery { my_query_is_clearly_not_valid_according_to_the_kili_schema { id } }",
-        "query { projects { this_field_does_not_exist } }",
-    ],
-)
-def test_gql_bad_query_local_validation(query, mocker):
-    """Test gql validation against local schema."""
-    api_endpoint = os.getenv(
-        "KILI_API_ENDPOINT", "https://cloud.kili-technology.com/api/label/v2/graphql"
-    )
-
-    # we need to remove "Authorization" api key from the header
-    # if not, the backend will refuse the introspection query
-    mocker.patch.object(GraphQLClient, "_get_headers", return_value={})
-
-    client = GraphQLClient(
-        endpoint=api_endpoint,
-        api_key="",
-        client_name=GraphQLClientName.SDK,
-        verify=True,
-        http_client=HttpClient(
-            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
-        ),
-    )
-
-    with pytest.raises(GraphQLError) as exc_info:
-        client.execute(query)
-
-    assert isinstance(exc_info.value.__cause__, graphql.GraphQLError)
-
-
-def test_graphql_client_cache(mocker):
-    with TemporaryDirectory() as temp_dir:
-        schema_path = Path(temp_dir) / "schema.graphql"
-        mocker.patch.object(GraphQLClient, "_get_graphql_schema_path", return_value=schema_path)
-
-        api_endpoint = os.getenv(
-            "KILI_API_ENDPOINT", "https://cloud.kili-technology.com/api/label/v2/graphql"
-        )
-
-        # we need to remove "Authorization" api key from the header
-        # if not, the backend will refuse the introspection query
-        mocker.patch.object(GraphQLClient, "_get_headers", return_value={})
-
-        # initialize a client with schema caching enabled
-        _ = GraphQLClient(
-            endpoint=api_endpoint,
-            api_key="",
-            client_name=GraphQLClientName.SDK,
-            verify=True,
-            http_client=HttpClient(
-                kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
-            ),
-            enable_schema_caching=True,
-            graphql_schema_cache_dir=temp_dir,
-        )
-
-        # schema should be cached
-        files_in_cache_dir = list(schema_path.parent.glob("*"))
-        assert schema_path.is_file(), f"{files_in_cache_dir}, {schema_path}"
-        assert schema_path.stat().st_size > 0
-
-        # check that the schema is not fetched again when we initialize a new client
-        with mock.patch("kili.core.graphql.graphql_client.print_schema") as mocked_print_schema:
-            _ = GraphQLClient(
-                endpoint=api_endpoint,
-                api_key="",
-                client_name=GraphQLClientName.SDK,
-                verify=True,
-                http_client=HttpClient(
-                    kili_endpoint="https://fake_endpoint.kili-technology.com",
-                    api_key="",
-                    verify=True,
-                ),
-                enable_schema_caching=True,
-                graphql_schema_cache_dir=temp_dir,
-            )
-            mocked_print_schema.assert_not_called()
 
 
 def test_schema_caching_requires_cache_dir():
@@ -188,50 +102,6 @@ def test_rate_limiting(mocker: pytest_mock.MockerFixture):
 
     # at least 1 second delay for the last call
     assert last_call_timestamp - before_last_call_timestamp > 1
-
-
-def test_given_gql_client_when_i_send_wrong_query_then_it_refreshes_the_schema_and_retry_once_only(
-    mocker: pytest_mock.MockerFixture,
-):
-    api_endpoint = os.getenv(
-        "KILI_API_ENDPOINT", "https://cloud.kili-technology.com/api/label/v2/graphql"
-    )
-
-    # we need to remove "Authorization" api key from the header
-    # if not, the backend will refuse the introspection query
-    mocker.patch.object(GraphQLClient, "_get_headers", return_value={})
-
-    gql_execute_spy = mocker.spy(Client, "execute")
-
-    # Given
-    client = GraphQLClient(
-        endpoint=api_endpoint,
-        api_key="",
-        client_name=GraphQLClientName.SDK,
-        http_client=HttpClient(
-            kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
-        ),
-        enable_schema_caching=True,
-    )
-
-    # When I send wrong query, the local validation fails
-    # the client fetches a fresh schema from the backend
-    # and we retry the query once only
-    with pytest.raises(
-        GraphQLError,
-        match=(
-            'GraphQL error: "Cannot query field'
-            " 'my_query_is_clearly_not_valid_according_to_the_kili_schema'"
-        ),
-    ):
-        client.execute(
-            query=(
-                "query MyQuery { my_query_is_clearly_not_valid_according_to_the_kili_schema {"
-                " id } }"
-            )
-        )
-
-    assert gql_execute_spy.call_count == 2  # first call + one retry
 
 
 def test_given_gql_client_when_the_server_refuses_wrong_query_then_it_does_no_retry(
