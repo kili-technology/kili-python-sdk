@@ -10,7 +10,7 @@ from kili.services.export.exceptions import (
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.base import AbstractExporter, reverse_rotation_vertices
 from kili.services.export.media.video import cut_video
 from kili.services.export.repository import AbstractContentRepository, DownloadError
 from kili.services.export.types import JobCategory, LabelFormat, SplitOption
@@ -259,6 +259,10 @@ def _convert_from_kili_to_yolo_format(
     if label is None or "jsonResponse" not in label:
         return []
     json_response = label["jsonResponse"]
+    rotation_val = 0
+    if "ROTATION_JOB" in json_response:
+        rotation_val = json_response["ROTATION_JOB"]["rotation"]
+
     if not (job_id in json_response and "annotations" in json_response[job_id]):
         return []
     annotations = json_response[job_id]["annotations"]
@@ -273,8 +277,9 @@ def _convert_from_kili_to_yolo_format(
         if len(bounding_poly) < 1 or "normalizedVertices" not in bounding_poly[0]:
             continue
         normalized_vertices = bounding_poly[0]["normalizedVertices"]
-        x_s: List[float] = [vertice["x"] for vertice in normalized_vertices]
-        y_s: List[float] = [vertice["y"] for vertice in normalized_vertices]
+        vertices_before_rotate = reverse_rotation_vertices(normalized_vertices, rotation_val)
+        x_s: List[float] = [vertice["x"] for vertice in vertices_before_rotate]
+        y_s: List[float] = [vertice["y"] for vertice in vertices_before_rotate]
 
         if annotation["type"] == JobTool.RECTANGLE:
             x_min, y_min = min(x_s), min(y_s)

@@ -32,6 +32,105 @@ job_object_detection = {
         ]
     }
 }
+job_object_detection_with_0_rotation = {
+    "JOB_0": {
+        "annotations": [
+            {
+                "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                "jobName": "JOB_0",
+                "mid": "2022040515434712-7532",
+                "mlTask": "OBJECT_DETECTION",
+                "boundingPoly": [
+                    {
+                        "normalizedVertices": [
+                            {"x": 0.07787903893951942, "y": 0.4746554191458914},
+                            {"x": 0.07787903893951942, "y": 0.09429841078556889},
+                            {"x": 0.3388566694283348, "y": 0.09429841078556889},
+                            {"x": 0.3388566694283348, "y": 0.4746554191458914},
+                        ]
+                    }
+                ],
+                "type": "rectangle",
+                "children": {},
+            }
+        ]
+    }
+}
+job_object_detection_with_90_rotation = {
+    "JOB_0": {
+        "annotations": [
+            {
+                "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                "jobName": "JOB_0",
+                "mid": "2022040515434712-7532",
+                "mlTask": "OBJECT_DETECTION",
+                "boundingPoly": [
+                    {
+                        "normalizedVertices": [
+                            {"x": 0.5253445808541086, "y": 0.07787903893951942},
+                            {"x": 0.9057015892144311, "y": 0.07787903893951942},
+                            {"x": 0.9057015892144311, "y": 0.3388566694283348},
+                            {"x": 0.5253445808541086, "y": 0.3388566694283348},
+                        ]
+                    }
+                ],
+                "type": "rectangle",
+                "children": {},
+            }
+        ]
+    },
+    "ROTATION_JOB": {"rotation": 90},
+}
+job_object_detection_with_180_rotation = {
+    "JOB_0": {
+        "annotations": [
+            {
+                "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                "jobName": "JOB_0",
+                "mid": "2022040515434712-7532",
+                "mlTask": "OBJECT_DETECTION",
+                "boundingPoly": [
+                    {
+                        "normalizedVertices": [
+                            {"x": 0.9221209610604806, "y": 0.5253445808541086},
+                            {"x": 0.9221209610604806, "y": 0.9057015892144311},
+                            {"x": 0.6611433305716652, "y": 0.9057015892144311},
+                            {"x": 0.6611433305716652, "y": 0.5253445808541086},
+                        ]
+                    }
+                ],
+                "type": "rectangle",
+                "children": {},
+            }
+        ]
+    },
+    "ROTATION_JOB": {"rotation": 180},
+}
+job_object_detection_with_270_rotation = {
+    "JOB_0": {
+        "annotations": [
+            {
+                "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                "jobName": "JOB_0",
+                "mid": "2022040515434712-7532",
+                "mlTask": "OBJECT_DETECTION",
+                "boundingPoly": [
+                    {
+                        "normalizedVertices": [
+                            {"x": 0.4746554191458914, "y": 0.9221209610604806},
+                            {"x": 0.09429841078556889, "y": 0.9221209610604806},
+                            {"x": 0.09429841078556889, "y": 0.6611433305716652},
+                            {"x": 0.4746554191458914, "y": 0.6611433305716652},
+                        ]
+                    }
+                ],
+                "type": "rectangle",
+                "children": {},
+            }
+        ]
+    },
+    "ROTATION_JOB": {"rotation": 270},
+}
 job_object_detection_with_classification = {
     "JOB_0": {
         "annotations": [
@@ -77,6 +176,50 @@ asset_image_1 = {
 asset_image_1_with_classification = {
     "latestLabel": {
         "jsonResponse": job_object_detection_with_classification,
+        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        "labelType": "DEFAULT",
+    },
+    "externalId": "car_1",
+    "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
+    "jsonContent": "",
+}
+
+asset_image_1_with_0_rotation = {
+    "latestLabel": {
+        "jsonResponse": job_object_detection_with_0_rotation,
+        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        "labelType": "DEFAULT",
+    },
+    "externalId": "car_1",
+    "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
+    "jsonContent": "",
+}
+
+asset_image_1_with_90_rotation = {
+    "latestLabel": {
+        "jsonResponse": job_object_detection_with_90_rotation,
+        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        "labelType": "DEFAULT",
+    },
+    "externalId": "car_1",
+    "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
+    "jsonContent": "",
+}
+
+asset_image_1_with_180_rotation = {
+    "latestLabel": {
+        "jsonResponse": job_object_detection_with_180_rotation,
+        "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        "labelType": "DEFAULT",
+    },
+    "externalId": "car_1",
+    "content": "https://storage.googleapis.com/label-public-staging/car/car_1.jpg",
+    "jsonContent": "",
+}
+
+asset_image_1_with_270_rotation = {
+    "latestLabel": {
+        "jsonResponse": job_object_detection_with_270_rotation,
         "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
         "labelType": "DEFAULT",
     },
