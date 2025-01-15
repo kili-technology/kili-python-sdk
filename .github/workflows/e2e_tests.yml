@@ -11,11 +11,6 @@ name: E2E tests
 on:
   workflow_dispatch:
     inputs:
-      runE2ETests:
-        description: "Run E2E tests?"
-        required: true
-        type: boolean
-        default: true
       runNotebookTests:
         description: "Run notebook tests?"
         required: true
@@ -250,23 +245,6 @@ jobs:
         shell: bash
         run: echo "KILI_SDK_VERSION=$(python -c "from kili import __version__; print(__version__)")" >> $GITHUB_ENV
 
-      - name: E2E tests
-        id: e2e
-        if: github.event.inputs.runE2ETests != 'false'
-        timeout-minutes: 60
-        run: pytest --timeout=600 -ra -sv --color yes --code-highlight yes --durations=0 -vv --ignore tests/e2e/test_notebooks.py tests/e2e
-        env:
-          KILI_API_CLOUD_VISION: ${{ secrets.KILI_API_CLOUD_VISION }}
-          KILI_API_ENDPOINT: ${{ env.KILI_API_ENDPOINT }}
-          KILI_API_KEY: ${{ secrets[format('KILI_USER_API_KEY_{0}', env.TEST_AGAINST)] }}
-          KILI_USER_EMAIL: ${{ secrets[format('KILI_USER_EMAIL_{0}', env.TEST_AGAINST)] }}
-          KILI_USER_ID: ${{ secrets[format('KILI_USER_ID_{0}', env.TEST_AGAINST)] }}
-          KILI_TEST_DATA_INTEGRATION_ID: ${{ secrets.KILI_TEST_DATA_INTEGRATION_ID }}
-          KILI_TEST_ORGANIZATION_ID: ${{ secrets[format('KILI_TEST_ORGANIZATION_ID_{0}', env.TEST_AGAINST)] }}
-          KILI_TEST_AWS_ACCESS_POINT_ARN: ${{ secrets.KILI_TEST_AWS_ACCESS_POINT_ARN }}
-          KILI_TEST_AWS_ROLE_ARN: ${{ secrets.KILI_TEST_AWS_ROLE_ARN }}
-          KILI_TEST_AWS_ROLE_EXTERNAL_ID: ${{ secrets.KILI_TEST_AWS_ROLE_EXTERNAL_ID }}
-
       - name: Notebook tests
         # we don't run notebook tests on push to main
         # we run regardless of the outcome of the e2e tests
@@ -301,13 +279,13 @@ jobs:
         with:
           payload: |
             {
-              "text": "E2E tests '${{ env.TEST_MODE }}' (branch '${{ env.REF }}' against endpoint '${{ env.TEST_AGAINST }}') failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "Notebook tests '${{ env.TEST_MODE }}' (branch '${{ env.REF }}' against endpoint '${{ env.TEST_AGAINST }}') failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "E2E tests '${{ env.TEST_MODE }}' (branch '${{ env.REF }}' against endpoint '${{ env.TEST_AGAINST }}') failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "Notebook tests '${{ env.TEST_MODE }}' (branch '${{ env.REF }}' against endpoint '${{ env.TEST_AGAINST }}') failed with status '${{ job.status }}'\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 }
               ]
