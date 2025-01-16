@@ -36,6 +36,15 @@ class JobLevel:
 DEFAULT_JOB_LEVEL = JobLevel.ROUND
 
 
+def get_model_name(model_id: str, project_models: List[Dict]) -> str:
+    try:
+        return next(
+            model["configuration"]["model"] for model in project_models if model["id"] == model_id
+        )
+    except (KeyError, StopIteration):
+        return model_id
+
+
 class LLMExporter:
     """Handle exports of LLM_STATIC and LLM_INSTR_FOLLOWING projects."""
 
@@ -52,7 +61,8 @@ class LLMExporter:
                 "id": chat_item["id"],
                 "content": chat_item.get("content"),
                 "externalId": chat_item.get("externalId") or chat_item["id"],
-                "modelName": chat_item.get("modelName") or chat_item.get("modelId"),
+                "modelName": chat_item.get("modelName")
+                or get_model_name(chat_item.get("modelId"), asset["assetProjectModels"]),
                 "role": chat_item.get("role"),
             }
             for chat_item in self.kili_api_gateway.list_chat_items(asset["id"])
