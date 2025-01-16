@@ -60,7 +60,9 @@ nav:
       - Exporting Project Data:
           - Exporting a Project: sdk/tutorials/export_a_kili_project.md
           - Parsing Labels: sdk/tutorials/label_parsing.md
-      - LLM Projects: sdk/tutorials/llm_project_setup.md
+      - LLM Projects:
+          - Importing Conversations: sdk/tutorials/llm_static.md
+          - Model Configuration: sdk/tutorials/llm_dynamic.md
       - Setting Up Plugins:
           - Developing Plugins: sdk/tutorials/plugins_development.md
           - Plugin Example - Programmatic QA: sdk/tutorials/plugins_example.md

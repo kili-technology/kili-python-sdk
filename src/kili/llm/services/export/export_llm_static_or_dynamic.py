@@ -1,4 +1,4 @@
-from typing import Dict, List, cast
+from typing import Dict, List, Optional, cast
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.llm import ChatItem, ChatItemRole, Conversation, ConversationLabel
@@ -36,7 +36,7 @@ class JobLevel:
 DEFAULT_JOB_LEVEL = JobLevel.ROUND
 
 
-def get_model_name(model_id: str, project_models: List[Dict]) -> str:
+def get_model_name(model_id: Optional[str], project_models: List[Dict]) -> Optional[str]:
     try:
         return next(
             model["configuration"]["model"] for model in project_models if model["id"] == model_id
