@@ -65,7 +65,9 @@ class LLMExporter:
                 or get_model_name(chat_item.get("modelId"), asset["assetProjectModels"]),
                 "role": chat_item.get("role"),
             }
-            for chat_item in self.kili_api_gateway.list_chat_items(asset["id"])
+            for chat_item in (
+                label.get("chatItems") or self.kili_api_gateway.list_chat_items(asset["id"])
+            )
         ]
 
         metadata = {}
