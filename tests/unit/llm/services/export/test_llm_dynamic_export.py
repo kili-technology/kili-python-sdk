@@ -566,14 +566,14 @@ expected_export = [
                 "content": " It looks like everything is working correctly. "
                 "How can I assist you today?",
                 "externalId": "cm5wnudcb01f1p30wcay0hht8",
-                "modelName": "cm5wnub7p01etp30w1e5wgwww",
+                "modelName": "AI21-Jamba-1-5-Large-ykxca",
                 "role": "ASSISTANT",
             },
             {
                 "content": " It looks like everything is working correctly. "
                 "How can I assist you today?",
                 "externalId": "cm5wnudfv01f2p30whovhbwzp",
-                "modelName": "cm5wnub7q01eup30w0g273df8",
+                "modelName": "AI21-Jamba-1-5-Large-ykxca",
                 "role": "ASSISTANT",
             },
         ],
@@ -633,14 +633,14 @@ expected_export = [
                 "conversation. What's the topic you'd like to "
                 "discuss or the question you have in mind?",
                 "externalId": "cm5wnurbv01g1p30wbzgb1vjx",
-                "modelName": "cm5wnum1301ftp30wgb2vax6e",
+                "modelName": "AI21-Jamba-1-5-Large-ykxca",
                 "role": "ASSISTANT",
             },
             {
                 "content": " Sure, let's have a two-round conversation. What "
                 "would you like to talk about in this first round?",
                 "externalId": "cm5wnus9n01g2p30wbb1q0e7x",
-                "modelName": "cm5wnum1301fup30w4ic45z5z",
+                "modelName": "AI21-Jamba-1-5-Large-ykxca",
                 "role": "ASSISTANT",
             },
             {
@@ -653,14 +653,14 @@ expected_export = [
                 "content": " I'm doing well, thank you! How about you? How "
                 "can I assist you today?",
                 "externalId": "cm5wnv6ax01gvp30w2q9ba29v",
-                "modelName": "cm5wnum1301fup30w4ic45z5z",
+                "modelName": "AI21-Jamba-1-5-Large-ykxca",
                 "role": "ASSISTANT",
             },
             {
                 "content": " I'm doing well, thank you! How about you? How "
                 "can I assist you today?",
                 "externalId": "cm5wnv6b501gwp30w764fegsi",
-                "modelName": "cm5wnum1301ftp30wgb2vax6e",
+                "modelName": "AI21-Jamba-1-5-Large-ykxca",
                 "role": "ASSISTANT",
             },
         ],
