@@ -6,15 +6,18 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset.asset import AssetFilters
 from kili.domain.label import LabelType
+from kili.domain.llm import Conversation
 from kili.domain.project import ProjectId
 
-from .dynamic import LLMDynamicExporter
-from .static import LLMStaticExporter
+from .export_llm_rlhf import LLMRLHFExporter
+from .export_llm_static_or_dynamic import LLMExporter
 
 CHAT_ITEMS_NEEDED_FIELDS = [
     "id",
     "content",
     "createdAt",
+    "externalId",
+    "modelName",
     "modelId",
     "parentId",
     "role",
@@ -37,6 +40,7 @@ LABELS_NEEDED_FIELDS = [
 ]
 
 ASSET_DYNAMIC_NEEDED_FIELDS = [
+    "id",
     "assetProjectModels.id",
     "assetProjectModels.configuration",
     "assetProjectModels.projectModelId",
@@ -72,7 +76,7 @@ def export(  # pylint: disable=too-many-arguments, too-many-locals
     disable_tqdm: Optional[bool],
     include_sent_back_labels: Optional[bool],
     label_type_in: List[LabelType],
-) -> Optional[List[Dict[str, Union[List[str], str]]]]:
+) -> Union[List[Conversation], List[Dict[str, Union[List[str], str]]]]:
     """Export the selected assets with their labels into the required format, and save it into a file archive."""
     project = kili_api_gateway.get_project(project_id, ["id", "inputType", "jsonInterface"])
     input_type = project["inputType"]
@@ -84,11 +88,11 @@ def export(  # pylint: disable=too-many-arguments, too-many-locals
     cleaned_assets = preprocess_assets(assets, include_sent_back_labels or False, label_type_in)
 
     if input_type == "LLM_RLHF":
-        return LLMStaticExporter(kili_api_gateway).export(
+        return LLMRLHFExporter(kili_api_gateway).export(
             cleaned_assets, project_id, project["jsonInterface"]
         )
-    if input_type == "LLM_INSTR_FOLLOWING":
-        return LLMDynamicExporter(kili_api_gateway).export(cleaned_assets, project["jsonInterface"])
+    if input_type in ["LLM_STATIC", "LLM_INSTR_FOLLOWING"]:
+        return LLMExporter(kili_api_gateway).export(cleaned_assets, project["jsonInterface"])
     raise ValueError(f'Project Input type "{input_type}" cannot be used for llm exports.')
 
 

@@ -15,8 +15,9 @@ from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatu
 from kili.domain.label import LabelType
 from kili.domain.llm import (
     AzureOpenAICredentials,
-    ChatItemDict,
+    ChatItem,
     ChatItemRole,
+    Conversation,
     ModelDict,
     ModelToCreateInput,
     ModelToUpdateInput,
@@ -40,6 +41,38 @@ class LlmClientMethods:
     def __init__(self, kili_api_gateway: KiliAPIGateway):
         self.kili_api_gateway = kili_api_gateway
 
+    def import_conversations(
+        self,
+        project_id: str,
+        conversations: List[Conversation],
+    ):
+        """Import conversations into a LLM Static project.
+
+        Args:
+            project_id: Identifier of the project.
+            conversations: List of conversations to import. Each conversation should be a dictionary with the following keys
+                - `chatItems`: List of chat items in the conversation. Each chat item should be a dictionary with the following keys
+                    - `content`: (required) Content of the chat item.
+                    - `externalId`: (required) Identifier of the chat item (must be unique).
+                    - `modelName`: Name of the model that generated the chat item. Required only for ASSISTANT chat items.
+                    - `role`: (required) Role of the chat item, one of `SYSTEM`, `USER` or `ASSISTANT`.
+                - `externalId`: (required) Identifier of the conversation (must be unique).
+                - `label`: (optional) Label associated with the conversation. Should be a dictionary with the following keys
+                    - `conversation`
+                    - `completion`
+                    - `round`
+                - `labeler`: (optional) Email of the labeler associated with the conversation.
+                - `metadata`: (optional) Additional metadata associated with the conversation.
+
+        Returns:
+            A dict containing following keys
+            - `numberOfUploadedAssets`: Number of assets uploaded.
+            - `warnings`: List of detailed warnings generated during the import process, for each conversation.
+        """
+        return self.kili_api_gateway.import_conversations(
+            project_id=project_id, conversations=conversations
+        )
+
     def export(
         self,
         project_id: str,
@@ -49,8 +82,8 @@ class LlmClientMethods:
         include_sent_back_labels: Optional[bool] = False,
         label_type_in: Optional[List[LabelType]] = None,
         status_in: Optional[List[AssetStatus]] = None,
-    ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
-        """Returns an export of llm assets with valid labels.
+    ) -> Optional[Union[List[Conversation], List[Dict[str, Union[List[str], str]]]]]:
+        """Returns an export of llm conversations with valid labels.
 
         Args:
             project_id: Identifier of the project.
@@ -355,9 +388,23 @@ class LlmClientMethods:
         """
         return self.kili_api_gateway.delete_project_model(project_model_id)
 
+    def list_chat_items(self, asset_id: str) -> List[ChatItem]:
+        """List chat items associated with an asset.
+
+        Args:
+            asset_id: Identifier of the asset.
+
+        Returns:
+            A list of chat items associated with the asset.
+
+        Examples:
+            >>> kili.llm.list_chat_items(asset_id="your_asset_id")
+        """
+        return self.kili_api_gateway.list_chat_items(asset_id=asset_id)
+
     def create_conversation(
         self, project_id: str, initial_prompt: str, system_prompt: Optional[str] = None
-    ) -> List[ChatItemDict]:
+    ) -> List[ChatItem]:
         """Create a new conversation in an LLM project starting with a user's prompt.
 
         This method initiates a new conversation in the specified project by:

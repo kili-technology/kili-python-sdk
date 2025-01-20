@@ -107,6 +107,17 @@ def get_create_llm_asset_mutation(fragment: str) -> str:
     """
 
 
+def get_chat_items_query(fragment: str) -> str:
+    """Return the GraphQL chatItems query."""
+    return f"""
+        query ChatItems($where: ChatItemsWhere!) {{
+            data: chatItems(where: $where) {{
+                {fragment}
+            }}
+        }}
+    """
+
+
 def get_create_chat_item_mutation(fragment: str) -> str:
     """Return the GraphQL createChatItem mutation."""
     return f"""
@@ -115,4 +126,21 @@ def get_create_chat_item_mutation(fragment: str) -> str:
                 {fragment}
             }}
         }}
+    """
+
+
+def get_import_conversations_mutation() -> str:
+    """Return the GraphQL importConversations mutation."""
+    return """
+        mutation ImportConversations($data: ImportConversationsData!, $where: ProjectWhere!) {
+            importConversations(data: $data, where: $where) {
+                numberOfUploadedAssets
+                warnings {
+                   type
+                   details
+                   externalId
+                   lineNumber
+                }
+            }
+        }
     """

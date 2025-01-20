@@ -1,10 +1,11 @@
 """GraphQL payload data mappers for api keys operations."""
 
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from kili.domain.llm import (
     AzureOpenAICredentials,
     ChatItemRole,
+    Conversation,
     ModelToCreateInput,
     ModelToUpdateInput,
     ModelType,
@@ -134,6 +135,13 @@ def map_create_chat_item_input(
 ) -> Dict:
     """Map the input for the createChatItem mutation."""
     return {"content": prompt, "role": role.value, "labelId": label_id, "parentId": parent_id}
+
+
+def map_import_conversations_input(
+    conversations: List[Conversation],
+) -> Dict[str, List[Conversation]]:
+    """Map the input for the importConversations mutation."""
+    return {"conversations": conversations}
 
 
 def map_asset_where(asset_id: str) -> Dict:

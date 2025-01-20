@@ -16,6 +16,7 @@ from kili.adapters.kili_api_gateway.llm.mappers import (
     map_create_project_model_input,
     map_delete_model_input,
     map_delete_project_model_input,
+    map_import_conversations_input,
     map_project_where,
     map_update_model_input,
     map_update_project_model_input,
@@ -23,12 +24,14 @@ from kili.adapters.kili_api_gateway.llm.mappers import (
     project_model_where_mapper,
 )
 from kili.adapters.kili_api_gateway.llm.operations import (
+    get_chat_items_query,
     get_create_chat_item_mutation,
     get_create_llm_asset_mutation,
     get_create_model_mutation,
     get_create_project_model_mutation,
     get_delete_model_mutation,
     get_delete_project_model_mutation,
+    get_import_conversations_mutation,
     get_model_query,
     get_models_query,
     get_project_models_query,
@@ -36,8 +39,9 @@ from kili.adapters.kili_api_gateway.llm.operations import (
     get_update_project_model_mutation,
 )
 from kili.domain.llm import (
-    ChatItemDict,
+    ChatItem,
     ChatItemRole,
+    Conversation,
     ModelDict,
     ModelToCreateInput,
     ModelToUpdateInput,
@@ -58,10 +62,29 @@ DEFAULT_PROJECT_MODEL_FIELDS = [
     "model.name",
     "model.type",
 ]
+DEFAULT_CHAT_ITEMS_FIELDS = [
+    "id",
+    "content",
+    "createdAt",
+    "externalId",
+    "modelName",
+    "modelId",
+    "parentId",
+    "role",
+]
 
 
 class ModelConfigurationOperationMixin(BaseOperationMixin):
     """Mixin extending Kili API Gateway class with model configuration related operations."""
+
+    def import_conversations(self, project_id: str, conversations: List[Conversation]):
+        """Import conversations into a project."""
+        where = map_project_where(project_id)
+        data = map_import_conversations_input(conversations)
+        variables = {"where": where, "data": data}
+        mutation = get_import_conversations_mutation()
+        result = self.graphql_client.execute(mutation, variables)
+        return result["importConversations"]
 
     def list_models(
         self,
@@ -168,6 +191,28 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
             )
         ]
 
+    def list_chat_items(
+        self,
+        asset_id: str,
+        options: Optional[QueryOptions] = None,
+    ) -> List[ChatItem]:
+        """Send a GraphQL request to retrieve chat items of an asset (conversation)."""
+        fragment = fragment_builder(DEFAULT_CHAT_ITEMS_FIELDS)
+        where = {"assetId": asset_id}
+        query = get_chat_items_query(fragment)
+        return [
+            cast(ChatItem, item)
+            for item in PaginatedGraphQLQuery(
+                self.graphql_client
+            ).execute_query_from_paginated_call(
+                query,
+                where,
+                options if options else QueryOptions(disable_tqdm=False),
+                "Retrieving chat items",
+                None,
+            )
+        ]
+
     def create_llm_asset(
         self,
         project_id: str,
@@ -191,7 +236,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         prompt: str,
         role: ChatItemRole,
         parent_id: Optional[str] = None,
-    ) -> List[ChatItemDict]:
+    ) -> List[ChatItem]:
         """Create a chat item associated with an asset."""
         data = map_create_chat_item_input(label_id, prompt, role, parent_id)
         where = map_asset_where(asset_id)
@@ -199,4 +244,4 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         fragment = fragment_builder(["content", "id", "labelId", "modelId", "parentId", "role"])
         mutation = get_create_chat_item_mutation(fragment)
         result = self.graphql_client.execute(mutation, variables)
-        return [cast(ChatItemDict, item) for item in result["createChatItem"]]
+        return [cast(ChatItem, item) for item in result["createChatItem"]]
