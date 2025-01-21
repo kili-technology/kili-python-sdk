@@ -1,5 +1,5 @@
 """Notification mutations."""
-from typing import Optional
+from typing import Optional, Union
 
 from typeguard import typechecked
 
@@ -48,7 +48,7 @@ class MutationsNotification(BaseOperationEntrypointMixin):
     def update_properties_in_notification(
         self,
         notification_id: str,
-        has_been_seen: bool,
+        has_been_seen: Union[bool, None],
         status: str,
         url: str,
         progress: Optional[int] = None,
