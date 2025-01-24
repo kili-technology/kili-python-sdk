@@ -26,6 +26,7 @@ class EventClientMethods:
         skip: int = 0,
         from_event_id: Optional[str] = None,
         until_event_id: Optional[str] = None,
+        organization_id: Optional[str] = None,
         order: Optional[OrderType] = "asc",
     ) -> List[EventDict]:
         """List events of my project.
@@ -51,6 +52,7 @@ class EventClientMethods:
         """
         converted_filters = EventFilters(
             project_id=ProjectId(project_id),
+            organization_id=organization_id,
             created_at_gte=created_at_gte,
             created_at_lte=created_at_lte,
             user_id=UserId(user_id) if user_id else None,
