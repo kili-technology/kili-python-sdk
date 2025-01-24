@@ -23,6 +23,7 @@ class EventFilters:
     created_at_lte: Optional[str] = None
     user_id: Optional["UserId"] = None
     event: Optional[str] = None
+    organization_id: Optional[str] = None
 
 
 class EventDict(TypedDict):

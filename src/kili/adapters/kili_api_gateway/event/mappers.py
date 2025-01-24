@@ -8,6 +8,7 @@ from kili.domain.event import EventFilters, QueryOptions
 def event_where_wrapper(filter: EventFilters) -> Dict:
     """Build the GraphQL EventMapperWhere variable to be sent in an operation."""
     return {
+        "organizationId": filter.organization_id,
         "projectId": filter.project_id,
         "createdAtGte": filter.created_at_gte,
         "createdAtLte": filter.created_at_lte,
