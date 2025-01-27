@@ -61,7 +61,7 @@ jobs:
               json_str="{\"array\": [\"LTS_CYCLE_FIRST_SDK_STAGING\"]}"
 
             fi
-
+          fi
           echo "TEST_MODE_ARRAY=$json_str" >> $GITHUB_OUTPUT
 
   tests:
