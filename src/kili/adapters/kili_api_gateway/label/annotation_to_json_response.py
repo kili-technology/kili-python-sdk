@@ -20,6 +20,8 @@ from kili.domain.annotation import (
 )
 from kili.domain.ontology import JobName, JobTool
 
+ASSET_LEVEL_KEY = "assetLevel"
+
 
 class AnnotationsToJsonResponseConverter:
     """Convert annotations to JSON response."""
@@ -81,7 +83,9 @@ def _add_annotation_metadata(annotations: List[VideoAnnotation], json_response: 
 
 
 def _fill_empty_frames(json_response: Dict) -> None:
-    max_frame_id = max((int(frame_id) for frame_id in json_response), default=-1)
+    max_frame_id = max(
+        (int(frame_id) for frame_id in json_response if frame_id != ASSET_LEVEL_KEY), default=-1
+    )
     for frame_id in range(max_frame_id + 1):
         json_response.setdefault(str(frame_id), {})
 
@@ -98,7 +102,12 @@ def _video_annotations_to_json_response(
 
         other_annotations = annotations[:i] + annotations[i + 1 :]
 
-        if ann["__typename"] == "VideoObjectDetectionAnnotation":
+        if ann["__typename"] == "TranscriptionAnnotation":
+            ann = cast(TranscriptionAnnotation, ann)
+            ann_json_resp = _transcription_annotation_to_json_response(ann)
+            json_resp[ASSET_LEVEL_KEY] = {**json_resp[ASSET_LEVEL_KEY], **ann_json_resp}
+
+        elif ann["__typename"] == "VideoObjectDetectionAnnotation":
             ann = cast(VideoObjectDetectionAnnotation, ann)
             ann_json_resp = _video_object_detection_annotation_to_json_response(
                 ann, other_annotations, json_interface=json_interface
@@ -133,7 +142,11 @@ def _video_annotations_to_json_response(
     _add_annotation_metadata(annotations, json_resp)
     _fill_empty_frames(json_resp)
 
-    return dict(sorted(json_resp.items(), key=lambda item: int(item[0])))  # sort by frame id
+    return dict(
+        sorted(
+            json_resp.items(), key=lambda item: -1 if item[0] == ASSET_LEVEL_KEY else int(item[0])
+        )
+    )  # sort by frame id
 
 
 def _classic_annotations_to_json_response(
