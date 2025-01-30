@@ -13,7 +13,7 @@ from kili.use_cases.asset.media_downloader import MediaDownloader
 from kili.utils.tempfile import TemporaryDirectory
 
 
-class LLMStaticExporter:
+class LLMRLHFExporter:
     """Handle exports of LLM_RLHF projects."""
 
     def __init__(self, kili_api_gateway: KiliAPIGateway):

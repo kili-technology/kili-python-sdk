@@ -61,7 +61,12 @@ class LabelOperationMixin(BaseOperationMixin):
             project_info = get_project(
                 self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
             )
-            if project_info["inputType"] in {"VIDEO", "LLM_RLHF", "LLM_INSTR_FOLLOWING"}:
+            if project_info["inputType"] in {
+                "VIDEO",
+                "LLM_RLHF",
+                "LLM_INSTR_FOLLOWING",
+                "LLM_STATIC",
+            }:
                 yield from self.list_labels_split(filters, fields, options, project_info)
                 return
 
