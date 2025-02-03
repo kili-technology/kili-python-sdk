@@ -5,9 +5,20 @@ from pathlib import Path
 from typing import Callable, Dict, List
 
 from kili.services.export.exceptions import NotCompatibleInputType, NotCompatibleOptions
-from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.base import AbstractExporter, reverse_rotation_vertices
 from kili.services.export.media.video import cut_video
 from kili.services.types import Job
+
+
+def _clean_json_response(asset: Dict):
+    if "latestLabel" in asset and "jsonResponse" in asset["latestLabel"]:
+        if "ROTATION_JOB" in asset["latestLabel"]["jsonResponse"]:
+            asset["latestLabel"]["jsonResponse"].pop("ROTATION_JOB")
+    if "labels" in asset:
+        for label in asset["labels"]:
+            if "jsonResponse" in label and "ROTATION_JOB" in label["jsonResponse"]:
+                label["jsonResponse"].pop("ROTATION_JOB")
+    return asset
 
 
 class KiliExporter(AbstractExporter):
@@ -96,10 +107,10 @@ class KiliExporter(AbstractExporter):
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """Extract formatted annotations from labels and save the json in the buckets."""
         clean_assets = self.preprocess_assets(assets)
-
-        if self.normalized_coordinates is False:
-            clean_assets = [self.convert_to_pixel_coords(asset) for asset in clean_assets]
-
+        if self.project["inputType"] != "LLM_RLHF":
+            for i, asset in enumerate(clean_assets):
+                clean_assets[i] = self.convert_to_pixel_coords(asset)
+                clean_assets[i] = _clean_json_response(asset)
         return self._save_assets_export(
             clean_assets,
             output_filename,
@@ -131,30 +142,38 @@ class KiliExporter(AbstractExporter):
             else False
         )
 
+        rotation_val = 0
+        if "ROTATION_JOB" in label["jsonResponse"]:
+            rotation_val = label["jsonResponse"]["ROTATION_JOB"]["rotation"]
+
+        normalized_vertices = self.normalized_coordinates is not False
+
         if self.project["inputType"] == "PDF":
             self._scale_json_response_vertices(
-                label["jsonResponse"],
-                asset,
-                is_label_rotated,
-                _scale_normalized_vertices_pdf_annotation,
+                json_resp=label["jsonResponse"],
+                asset=asset,
+                is_label_rotated=is_label_rotated,
+                annotation_scaler=_scale_normalized_vertices_pdf_annotation,
             )
 
         elif self.project["inputType"] == "IMAGE":
             self._scale_json_response_vertices(
-                label["jsonResponse"],
-                asset,
-                is_label_rotated,
-                _scale_normalized_vertices_image_video_annotation,
+                json_resp=label["jsonResponse"],
+                asset=asset,
+                rotation=rotation_val,
+                normalized_vertices=normalized_vertices,
+                annotation_scaler=_scale_normalized_vertices_image_video_annotation,
             )
 
         elif self.project["inputType"] == "VIDEO":
             for frame_resp in label["jsonResponse"].values():
                 if frame_resp:
                     self._scale_json_response_vertices(
-                        frame_resp,
-                        asset,
-                        is_label_rotated,
-                        _scale_normalized_vertices_image_video_annotation,
+                        json_resp=frame_resp,
+                        asset=asset,
+                        rotation=rotation_val,
+                        normalized_vertices=normalized_vertices,
+                        annotation_scaler=_scale_normalized_vertices_image_video_annotation,
                     )
 
         else:
@@ -164,18 +183,16 @@ class KiliExporter(AbstractExporter):
             )
 
     def _scale_json_response_vertices(
-        self,
-        json_resp: Dict,
-        asset: Dict,
-        is_label_rotated: bool,
-        annotation_scaler: Callable[[Dict, Dict, bool], None],
+        self, asset: Dict, json_resp: Dict, annotation_scaler: Callable, **kwargs
     ) -> None:
+        if not callable(annotation_scaler):
+            return
         for job_name in json_resp:
             if self._can_scale_vertices_for_job_name(job_name) and json_resp.get(job_name, {}).get(
                 "annotations"
             ):
                 for ann in json_resp[job_name]["annotations"]:
-                    annotation_scaler(ann, asset, is_label_rotated)
+                    annotation_scaler(ann, asset, **kwargs)
 
     def _can_scale_vertices_for_job_name(self, job_name: str) -> bool:
         return (
@@ -211,15 +228,15 @@ def _scale_all_vertices(object_, width: int, height: int):
     return object_
 
 
-def _scale_normalized_vertices_pdf_annotation(
-    annotation: Dict, asset: Dict, is_label_rotated: bool = False
-) -> None:
+def _scale_normalized_vertices_pdf_annotation(annotation: Dict, asset: Dict, **kwargs) -> None:
     """Scale normalized vertices of a PDF annotation.
 
     PDF annotations are different from image annotations because the asset width/height can vary.
 
     PDF only have BBox detection, so we only scale the boundingPoly and polys keys.
     """
+    is_label_rotated = kwargs.get("is_label_rotated", False)
+
     if is_label_rotated:
         raise NotCompatibleOptions("PDF labels cannot be rotated")
 
@@ -227,7 +244,7 @@ def _scale_normalized_vertices_pdf_annotation(
         # pdf annotations have two layers of "annotations"
         # https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs
         for ann in annotation["annotations"]:
-            _scale_normalized_vertices_pdf_annotation(ann, asset)
+            _scale_normalized_vertices_pdf_annotation(ann, asset, **kwargs)
 
     # an annotation has three keys:
     # - pageNumberArray: list of page numbers
@@ -265,31 +282,48 @@ def _scale_normalized_vertices_pdf_annotation(
 
 
 def _scale_normalized_vertices_image_video_annotation(
-    annotation: Dict, asset: Dict, is_label_rotated: bool
+    annotation: Dict, asset: Dict, **kwargs
 ) -> None:
     """Scale normalized vertices of an image/video object detection annotation."""
-    if "resolution" not in asset or asset["resolution"] is None:
+    rotation = kwargs.get("rotation", 0)
+    normalized_vertices = kwargs.get("normalized_vertices", True)
+
+    if not normalized_vertices and ("resolution" not in asset or asset["resolution"] is None):
         raise NotCompatibleOptions(
             "Image and video labels export with absolute coordinates require `resolution` in the"
             " asset. Please use `kili.update_properties_in_assets(resolution_array=...)` to update"
             " the resolution of your asset.`"
         )
 
-    width = asset["resolution"]["width"] if not is_label_rotated else asset["resolution"]["height"]
-    height = asset["resolution"]["height"] if not is_label_rotated else asset["resolution"]["width"]
+    width = asset["resolution"]["width"] if "resolution" in asset else 0
+    height = asset["resolution"]["height"] if "resolution" in asset else 0
 
     # bbox, segmentation, polygons
-    if "boundingPoly" in annotation:
+    if "boundingPoly" in annotation and normalized_vertices:
         annotation["boundingPoly"] = [
             {
-                **norm_vertices_dict,  # keep the original normalizedVertices
-                "vertices": _scale_all_vertices(
-                    norm_vertices_dict["normalizedVertices"], width=width, height=height
+                "normalizedVertices": reverse_rotation_vertices(
+                    norm_vertices_dict["normalizedVertices"], rotation
                 ),
             }
             for norm_vertices_dict in annotation["boundingPoly"]
         ]
+        return
 
+    if "boundingPoly" in annotation and not normalized_vertices:
+        annotation["boundingPoly"] = [
+            {
+                "normalizedVertices": reverse_rotation_vertices(
+                    norm_vertices_dict["normalizedVertices"], rotation
+                ),
+                "vertices": _scale_all_vertices(
+                    reverse_rotation_vertices(norm_vertices_dict["normalizedVertices"], rotation),
+                    width=width,
+                    height=height,
+                ),
+            }
+            for norm_vertices_dict in annotation["boundingPoly"]
+        ]
     # point jobs
     if "point" in annotation:
         annotation["pointPixels"] = _scale_all_vertices(
