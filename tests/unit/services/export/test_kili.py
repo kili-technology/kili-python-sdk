@@ -33,6 +33,7 @@ def test_preprocess_assets(mocker: pytest_mock.MockFixture):
 def test_kili_exporter_convert_to_pixel_coords_pdf(mocker: pytest_mock.MockerFixture):
     mocker.patch.object(KiliExporter, "__init__", return_value=None)
     exporter = KiliExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
+    exporter.normalized_coordinates = None
     exporter.project = {
         "inputType": "PDF",
         "jsonInterface": {
