@@ -36,3 +36,9 @@ mutation($data: CreateProjectData!) {
     }
 }
 """
+
+GQL_COPY_PROJECT = """
+mutation CopyProject($data: CopyProjectData!) {
+  data: copyProject(data: $data)
+}
+"""
