@@ -36,3 +36,11 @@ class ProjectDataKiliAPIGatewayInput:
     should_relaunch_kpi_computation: Optional[bool]
     title: Optional[str]
     use_honeypot: Optional[bool]
+
+
+@dataclass
+class CopyProjectInput:
+    """Copy project input data for Kili API Gateway."""
+
+    should_copy_members: Optional[bool]
+    should_copy_assets: Optional[bool]

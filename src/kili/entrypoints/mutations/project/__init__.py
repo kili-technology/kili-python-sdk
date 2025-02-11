@@ -183,8 +183,8 @@ class MutationsProject(BaseOperationEntrypointMixin):
                 title if `None` is provided.
             description: Description for the new project. Defaults to empty string
                 if `None` is provided.
-            copy_json_interface: Include json interface in the copy.
-            copy_quality_settings: Include quality settings in the copy.
+            copy_json_interface: Deprecated. Always include json interface in the copy.
+            copy_quality_settings: Deprecated. Always include quality settings in the copy.
             copy_members: Include members in the copy.
             copy_assets: Include assets in the copy.
             copy_labels: Include labels in the copy.
@@ -196,12 +196,15 @@ class MutationsProject(BaseOperationEntrypointMixin):
         Examples:
             >>> kili.copy_project(from_project_id="clbqn56b331234567890l41c0")
         """
+        if (not copy_json_interface) or (not copy_quality_settings):
+            raise ValueError(
+                "The 'copy_json_interface' and 'copy_quality_settings' arguments are deprecated."
+            )
+
         return ProjectCopier(self).copy_project(  # pyright: ignore[reportGeneralTypeIssues]
             from_project_id,
             title,
             description,
-            copy_json_interface,
-            copy_quality_settings,
             copy_members,
             copy_assets,
             copy_labels,
