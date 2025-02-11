@@ -21,11 +21,12 @@ from kili.domain.types import ListOrTuple
 from .common import get_project
 from .mappers import project_data_mapper, project_where_mapper
 from .operations import (
+    GQL_COPY_PROJECT,
     GQL_COUNT_PROJECTS,
     GQL_CREATE_PROJECT,
     get_update_properties_in_project_mutation,
 )
-from .types import ProjectDataKiliAPIGatewayInput
+from .types import CopyProjectInput, ProjectDataKiliAPIGatewayInput
 
 
 class ProjectOperationMixin(BaseOperationMixin):
@@ -104,3 +105,20 @@ class ProjectOperationMixin(BaseOperationMixin):
         variables = {"data": data, "where": {"id": project_id}}
         result = self.graphql_client.execute(mutation, variables)
         return load_project_json_fields(result["data"], fields)
+
+    def copy_project(
+        self,
+        project_id: ProjectId,
+        project_data: CopyProjectInput,
+    ) -> ProjectId:
+        """Copy a project."""
+        variables = {
+            "data": {
+                "projectId": project_id,
+                "shouldCopyAssets": project_data.should_copy_assets,
+                "shouldCopyUsers": project_data.should_copy_members,
+            }
+        }
+
+        result = self.graphql_client.execute(GQL_COPY_PROJECT, variables)
+        return ProjectId(result.get("data", ""))
