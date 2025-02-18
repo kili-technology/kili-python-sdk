@@ -43,6 +43,7 @@ nav:
           - PDF Assets: sdk/tutorials/importing_pdf_assets.md
           - Rich Text Assets: sdk/tutorials/import_text_assets.md
           - Multi-Layer Geosatellite Assets: sdk/tutorials/importing_multilayer_geosat_assets.md
+          - LLM Static Assets : sdk/tutorials/llm_static.md
       - Importing Labels:
           - Importing Labels: sdk/tutorials/importing_labels.md
           - OpenAI NER Pre-annotations: sdk/tutorials/ner_pre_annotations_openai.md
@@ -60,9 +61,7 @@ nav:
       - Exporting Project Data:
           - Exporting a Project: sdk/tutorials/export_a_kili_project.md
           - Parsing Labels: sdk/tutorials/label_parsing.md
-      - LLM Projects:
-          - Importing Conversations: sdk/tutorials/llm_static.md
-          - Model Configuration: sdk/tutorials/llm_dynamic.md
+      - LLM Dynamic Projects: sdk/tutorials/llm_dynamic.md
       - Setting Up Plugins:
           - Developing Plugins: sdk/tutorials/plugins_development.md
           - Plugin Example - Programmatic QA: sdk/tutorials/plugins_example.md

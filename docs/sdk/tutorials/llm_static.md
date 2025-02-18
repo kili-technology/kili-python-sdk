@@ -336,6 +336,14 @@ For each classification job, provide a `categories` array, and for transcription
 }
 ```
 
+> 💡 Tip: For transcription jobs, if the job has been configured with:
+> ```json
+> "content": {"input": "markdown"}
+> ```
+> then the transcription can be edited in Markdown format
+
+
+
 ##### 2. Round-Level Labels
 
 
@@ -491,3 +499,17 @@ Here is a condensed example illustrating conversation, round, and completion lab
 - Make sure your labeling schema aligns with the job definitions in your project’s JSON interface.
 
 If you follow these guidelines, you’ll be able to seamlessly import both unlabeled and labeled conversations into your Kili LLM Static project.
+
+
+
+
+
+
+
+
+
+
+
+```python
+
+```
