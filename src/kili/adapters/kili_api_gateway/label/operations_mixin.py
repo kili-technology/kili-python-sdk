@@ -27,7 +27,6 @@ from .mappers import (
     append_label_data_mapper,
     append_to_labels_data_mapper,
     label_where_mapper,
-    update_label_data_mapper,
 )
 from .operations import (
     GQL_COUNT_LABELS,
@@ -36,9 +35,8 @@ from .operations import (
     get_append_to_labels_mutation,
     get_create_honeypot_mutation,
     get_labels_query,
-    get_update_properties_in_label_mutation,
 )
-from .types import AppendManyLabelsData, AppendToLabelsData, UpdateLabelData
+from .types import AppendManyLabelsData, AppendToLabelsData
 
 
 class LabelOperationMixin(BaseOperationMixin):
@@ -116,17 +114,6 @@ class LabelOperationMixin(BaseOperationMixin):
 
         else:
             yield from labels_gen
-
-    def update_properties_in_label(
-        self, label_id: LabelId, data: UpdateLabelData, fields: ListOrTuple[str]
-    ) -> Dict:
-        """Update properties in label."""
-        fragment = fragment_builder(fields)
-        query = get_update_properties_in_label_mutation(fragment)
-        variables = {"where": {"id": label_id}, "data": update_label_data_mapper(data)}
-        result = self.graphql_client.execute(query, variables)
-        modified_label = result["data"]
-        return load_label_json_fields(modified_label, fields=fields)
 
     def delete_labels(
         self, ids: ListOrTuple[LabelId], disable_tqdm: Optional[bool]

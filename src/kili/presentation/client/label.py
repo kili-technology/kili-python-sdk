@@ -751,42 +751,6 @@ class LabelClientMethods(BaseClientMethods):
         )
 
     @typechecked
-    def update_properties_in_label(
-        self,
-        label_id: str,
-        seconds_to_label: Optional[int] = None,
-        model_name: Optional[str] = None,
-        json_response: Optional[dict] = None,
-    ) -> Dict[Literal["id"], str]:
-        """Update properties of a label.
-
-        Args:
-            label_id: Identifier of the label
-            seconds_to_label: Time to create the label
-            model_name: Name of the model
-            json_response: The label is given here
-
-        Returns:
-            A dictionary with the label `id`.
-
-        Examples:
-            >>> kili.update_properties_in_label(label_id=label_id, json_response={...})
-        """
-        warnings.warn(
-            "The method `update_properties_in_label` is going to be deprecated. Please use"
-            " `kili.append_labels` method instead to add a new label.",
-            DeprecationWarning,
-            stacklevel=1,
-        )
-        return LabelUseCases(self.kili_api_gateway).update_properties_in_label(
-            label_id=LabelId(label_id),
-            seconds_to_label=seconds_to_label,
-            model_name=model_name,
-            json_response=json_response,
-            fields=("id",),
-        )
-
-    @typechecked
     def delete_labels(
         self,
         ids: ListOrTuple[str],
