@@ -8,7 +8,6 @@ video_project_asset_unnormalized = {
     "jsonMetadata": {
         "processingParameters": {
             "codec": "h264",
-            "delayDueToMinPts": 0,
             "framesPlayedPerSecond": 20,
             "numberOfFrames": 86,
             "shouldKeepNativeFrameRate": True,

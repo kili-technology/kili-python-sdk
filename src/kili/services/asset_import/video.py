@@ -208,12 +208,11 @@ class VideoDataImporter(BaseAbstractAssetImporter):
 
             required_keys = [
                 "codec",
-                "delayDueToMinPts",
                 "framesPlayedPerSecond",
                 "numberOfFrames",
                 "startTime",
             ]
-            required_types = [str, (int, float), (int, float), (int, float), (int, float)]
+            required_types = [str, (int, float), (int, float), (int, float)]
 
             for key, required_type in zip(required_keys, required_types):
                 value = processing_parameters.get(key)
