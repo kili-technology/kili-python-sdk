@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 importer_by_type: Dict[str, Type[BaseAbstractAssetImporter]] = {
     "PDF": PdfDataImporter,
     "IMAGE": ImageDataImporter,
+    "GEOSPATIAL": ImageDataImporter,
     "TEXT": TextDataImporter,
     "VIDEO": VideoDataImporter,
     "VIDEO_LEGACY": VideoDataImporter,
