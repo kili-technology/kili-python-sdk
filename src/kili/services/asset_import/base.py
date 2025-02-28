@@ -236,7 +236,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
 
     def _async_import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets with asynchronous resolver."""
-        if self.input_type == "IMAGE":
+        if self.input_type in ["IMAGE", "GEOSPATIAL"]:
             upload_type = "GEO_SATELLITE"
         elif self.input_type in ("VIDEO", "VIDEO_LEGACY"):
             upload_type = "NATIVE_VIDEO" if self.are_native_videos(assets) else "FRAME_VIDEO"

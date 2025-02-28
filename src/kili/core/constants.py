@@ -12,6 +12,7 @@ mime_extensions = {
         "application/vnd.nitf, image/jp2,image/jpeg,image/png,image/bmp,image/gif,image/webp,"
         "image/x-icon,image/tiff,image/vnd.microsoft.icon,image/svg+xml,image/avif,image/apng"
     ),
+    "Geospatial": ("application/vnd.nitf, image/jp2, image/tiff"),
     "Pdf": "application/pdf",
     "Text": "text/plain",
     "TimeSeries": "text/csv",
@@ -21,6 +22,7 @@ mime_extensions = {
 mime_extensions_for_IV2 = {
     "AUDIO": mime_extensions["Audio"],
     "IMAGE": mime_extensions["Image"],
+    "GEOSPATIAL": mime_extensions["Geospatial"],
     "NA": "",
     "PDF": mime_extensions["Pdf"],
     "TEXT": mime_extensions["Text"],
