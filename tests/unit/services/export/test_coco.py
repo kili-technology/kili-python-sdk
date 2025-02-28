@@ -14,6 +14,7 @@ from kili.services.export.format.coco import (
     _convert_kili_semantic_to_coco,
     _get_coco_categories_with_mapping,
     _get_coco_geometry_from_kili_bpoly,
+    _get_images_and_annotation_for_videos,
 )
 from kili.services.types import Job, JobName
 from kili.utils.tempfile import TemporaryDirectory
@@ -573,6 +574,81 @@ def test_coco_video_jsoncontent():
 
             assert labels_json["annotations"][0]["image_id"] == 2
             assert labels_json["annotations"][1]["image_id"] == 3
+
+
+def test_coco_get_images_and_annotation_for_videos():
+    json_interface = {
+        "jobs": {
+            "JOB_0": {
+                "content": {
+                    "categories": {
+                        "OBJECT_A": {"children": [], "color": "#472CED", "name": "A"},
+                        "OBJECT_B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                    },
+                    "input": "radio",
+                },
+                "instruction": "dfgdfg",
+                "mlTask": "OBJECT_DETECTION",
+                "required": 1,
+                "tools": ["rectangle"],
+                "isChild": False,
+                "models": {"tracking": {}},
+            }
+        }
+    }
+    job_object_detection = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                    "jobName": "JOB_0",
+                    "mid": "2022040515434712-7532",
+                    "mlTask": "OBJECT_DETECTION",
+                    "boundingPoly": [
+                        {
+                            "normalizedVertices": [
+                                {"x": 0.16504140348233334, "y": 0.7986938935103378},
+                                {"x": 0.16504140348233334, "y": 0.2605618833516984},
+                                {"x": 0.8377886490672706, "y": 0.2605618833516984},
+                                {"x": 0.8377886490672706, "y": 0.7986938935103378},
+                            ]
+                        }
+                    ],
+                    "type": "rectangle",
+                    "children": {},
+                }
+            ]
+        }
+    }
+    asset_video = {
+        "latestLabel": {
+            "jsonResponse": {
+                "0": {},
+                "1": job_object_detection,
+                "2": job_object_detection,
+                **{str(i): {} for i in range(3, 5)},
+            },
+            "author": {"firstname": "Jean-Pierre", "lastname": "Dupont"},
+        },
+        "resolution": {"width": 593, "height": 334},
+        "externalId": "Click here to start",
+        "content": "",
+        "jsonContent": "https://storage.googleapis.com/label-public-staging/video1/video1-json-content.json",
+    }
+
+    images, annotations = _get_images_and_annotation_for_videos(
+        jobs={JobName("JOB_0"): Job(**json_interface["jobs"]["JOB_0"])},
+        assets=[asset_video],
+        cat_kili_id_to_coco_id={JobName("JOB_0"): {"OBJECT_A": 3}},
+        annotation_modifier=lambda x, _, _1: x,
+        is_single_job=True,
+    )
+
+    assert len(images) == 5
+    assert len(annotations) == 2
+
+    assert annotations[0]["image_id"] == 2
+    assert annotations[1]["image_id"] == 3
 
 
 def test_get_coco_geometry_from_kili_bpoly():
