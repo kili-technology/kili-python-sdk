@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
+import requests
 from shapely.geometry import Polygon
 from shapely.ops import polygonize
 from shapely.validation import make_valid
@@ -349,8 +350,18 @@ def _get_images_and_annotation_for_videos(
             width, height = get_frame_dimensions(asset)
             frame_ext = Path(asset["jsonContent"][0]).suffix
 
+        elif (
+            asset["jsonContent"] != ""
+            and requests.head(asset["jsonContent"], timeout=100).status_code == 200
+        ):
+            width, height = get_frame_dimensions(asset)
+            frame_ext = Path(asset["jsonContent"]).suffix
+
         # video with shouldUseNativeVideo set to True (no frames available)
-        elif Path(asset["content"]).is_file():
+        elif Path(asset["content"]).is_file() or (
+            asset["content"] != ""
+            and requests.head(asset["content"], timeout=100).status_code == 200
+        ):
             width, height = get_video_dimensions(asset)
             cut_video(asset["content"], asset, leading_zeros, Path(asset["content"]).parent)
             frame_ext = ".jpg"
