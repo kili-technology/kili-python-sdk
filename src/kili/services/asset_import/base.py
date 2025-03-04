@@ -345,10 +345,7 @@ class ContentBatchImporter(BaseBatchImporter):
             if multi_layer_content:
                 for j, item in enumerate(multi_layer_content):
                     bucket_path = BaseBatchImporter.build_url_from_parts(
-                        project_bucket_path,
-                        asset_id,
-                        "content",  # FIXME : multilayer GEOSPATIAL project must have .tif extension
-                        str(j),
+                        project_bucket_path, asset_id, "content", f"{j!s}.tif"
                     )
                     to_upload.append((bucket_path, item.get("path"), i, j))
             else:
