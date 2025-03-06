@@ -62,7 +62,7 @@ class BatchParams(NamedTuple):
 
     is_asynchronous: bool
     is_hosted: bool
-    input_type: InputType = None
+    input_type: Optional[InputType] = None
 
 
 class ProcessingParams(NamedTuple):
@@ -103,8 +103,8 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
 
-    def import_batch(
-        self, assets: ListOrTuple[AssetLike], verify: bool, input_type: InputType = None
+    def import_batch(  # pylint: disable=unused-argument
+        self, assets: ListOrTuple[AssetLike], verify: bool, input_type: Optional[InputType] = None
     ) -> List[str]:
         """Base actions to import a batch of asset.
 
@@ -299,7 +299,9 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
 class ContentBatchImporter(BaseBatchImporter):
     """Class defining the methods to import a batch of assets with content."""
 
-    def import_batch(self, assets: List[AssetLike], verify: bool, input_type: InputType = None):
+    def import_batch(
+        self, assets: List[AssetLike], verify: bool, input_type: Optional[InputType] = None
+    ):
         """Method to import a batch of asset with content."""
         assets = self.add_ids(assets)
         if not self.is_hosted:
@@ -334,7 +336,9 @@ class ContentBatchImporter(BaseBatchImporter):
         """Returns the data of the content (path) and its content type for each element in the array."""
         return list(map(self.get_content_type_and_data_from_content, content_array))
 
-    def upload_local_content_to_bucket(self, assets: List[AssetLike], input_type: InputType = None):
+    def upload_local_content_to_bucket(
+        self, assets: List[AssetLike], input_type: Optional[InputType] = None
+    ):
         """Upload local content to a bucket."""
         project_bucket_path = self.generate_project_bucket_path()
         # tuple containing (bucket_path, file_path, asset_index, content_index)
@@ -422,7 +426,9 @@ class JsonContentBatchImporter(BaseBatchImporter):
             )
         return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
 
-    def import_batch(self, assets: List[AssetLike], verify: bool, input_type: InputType = None):
+    def import_batch(
+        self, assets: List[AssetLike], verify: bool, input_type: Optional[InputType] = None
+    ):
         """Method to import a batch of asset with json content."""
         assets = self.add_ids(assets)
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
@@ -615,7 +621,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         assets: List[AssetLike],
         batch_importer: BaseBatchImporter,
         batch_size=IMPORT_BATCH_SIZE,
-        input_type: InputType = None,
+        input_type: Optional[InputType] = None,
     ):
         """Split assets by batch and import them with a given batch importer."""
         batch_generator = batcher(assets, batch_size)

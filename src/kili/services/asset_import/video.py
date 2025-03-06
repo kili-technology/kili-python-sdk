@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from itertools import repeat
 from json import JSONDecodeError
-from typing import List
+from typing import List, Optional
 
 from kili.core.helpers import get_mime_type, is_url
 from kili.domain.project import InputType
@@ -75,7 +75,9 @@ class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
         return AssetLike(**{**asset, "json_metadata": json_metadata})  # type: ignore
 
-    def import_batch(self, assets: List[AssetLike], verify: bool, input_type: InputType = None):
+    def import_batch(
+        self, assets: List[AssetLike], verify: bool, input_type: Optional[InputType] = None
+    ):
         """Import a batch of video assets from content into Kili."""
         assets = self.loop_on_batch(self.add_video_processing_parameters)(assets)
         return super().import_batch(assets, verify)
@@ -91,7 +93,9 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
         return AssetLike(**{**asset, "json_metadata": json_metadata})  # type: ignore
 
-    def import_batch(self, assets: List[AssetLike], verify: bool, input_type: InputType = None):
+    def import_batch(
+        self, assets: List[AssetLike], verify: bool, input_type: Optional[InputType] = None
+    ):
         """Import a batch of video assets from frames."""
         assets = self.add_ids(assets)
         if not self.is_hosted:
