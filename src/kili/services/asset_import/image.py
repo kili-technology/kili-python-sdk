@@ -3,12 +3,16 @@
 import os
 from typing import List
 
+from PIL import Image
+
 from kili.core.constants import mime_extensions_that_need_post_processing
 from kili.core.helpers import get_mime_type
 
 from .base import BaseAbstractAssetImporter, BatchParams, ContentBatchImporter
-from .constants import LARGE_IMAGE_THRESHOLD_SIZE
+from .constants import LARGE_IMAGE_THRESHOLD_SIZE, MAX_WIDTH_OR_HEIGHT_NON_TILED
 from .types import AssetLike
+
+Image.MAX_IMAGE_PIXELS = None
 
 
 class ImageDataImporter(BaseAbstractAssetImporter):
@@ -38,6 +42,16 @@ class ImageDataImporter(BaseAbstractAssetImporter):
         return created_asset_ids
 
     @staticmethod
+    def get_is_large_image(image_path: str) -> bool:
+        """Define if an image is too large and so on has to be tiled."""
+        if os.path.getsize(image_path) >= LARGE_IMAGE_THRESHOLD_SIZE:
+            return True
+
+        image = Image.open(image_path)
+        width, height = image.size
+        return width >= MAX_WIDTH_OR_HEIGHT_NON_TILED or height >= MAX_WIDTH_OR_HEIGHT_NON_TILED
+
+    @staticmethod
     def split_asset_by_upload_type(assets: List[AssetLike], is_hosted: bool):
         """Split assets into two groups, assets to to imported synchronously or asynchronously."""
         if is_hosted:
@@ -56,7 +70,7 @@ class ImageDataImporter(BaseAbstractAssetImporter):
             assert path
             assert isinstance(path, str)
             mime_type = get_mime_type(path)
-            is_large_image = os.path.getsize(path) >= LARGE_IMAGE_THRESHOLD_SIZE
+            is_large_image = ImageDataImporter.get_is_large_image(path)
             if is_large_image or mime_type in mime_extensions_that_need_post_processing:
                 async_assets.append(asset)
             else:
