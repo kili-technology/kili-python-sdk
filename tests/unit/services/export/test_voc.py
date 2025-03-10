@@ -150,3 +150,39 @@ def test_process_asset_image_with_external_id(tmp_path: Path):
     label_path = Path(tmp_path) / "labels"
     _process_asset(asset, label_path, "IMAGE", ["JOB_0"])
     assert Path(label_path / "a/b.png.xml").is_file()
+
+
+def test_process_asset_video_with_external_id(tmp_path: Path):
+    asset = {
+        "latestLabel": {
+            "jsonResponse": {
+                "0": {
+                    "JOB_0": {
+                        "annotations": [
+                            {
+                                "categories": [{"name": "OBJECT_A"}],
+                                "mid": "20230111125258113-44528",
+                                "type": "rectangle",
+                                "boundingPoly": [
+                                    {
+                                        "normalizedVertices": [
+                                            {"x": 0.6101435505380516, "y": 0.7689773770786136},
+                                            {"x": 0.6101435505380516, "y": 0.39426226491370664},
+                                            {"x": 0.8962087421313937, "y": 0.39426226491370664},
+                                            {"x": 0.8962087421313937, "y": 0.7689773770786136},
+                                        ]
+                                    }
+                                ],
+                                "polyline": [],
+                                "children": {},
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "externalId": "a/b.png",
+        "resolution": {"width": 593, "height": 334},
+        "jsonContent": "https://storage.googleapis.com/label-public-staging/video1/video1-json-content.json",
+    }
+    _process_asset(asset, Path(), "VIDEO", ["JOB_0"])
