@@ -264,7 +264,7 @@ class AssetClientMethods(BaseClientMethods):
         label_honeypot_mark_gte: Optional[float] = None,
         label_honeypot_mark_lte: Optional[float] = None,
         issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
-        issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
+        issue_status: Optional[Literal["CANCELLED", "OPEN", "SOLVED"]] = None,
         external_id_strictly_in: Optional[List[str]] = None,
         external_id_in: Optional[List[str]] = None,
         label_output_format: Literal["dict", "parsed_label"] = "dict",
@@ -330,7 +330,7 @@ class AssetClientMethods(BaseClientMethods):
             label_honeypot_mark_gte: Returned assets should have a label whose honeypot is greater or equal to this number.
             label_honeypot_mark_lte: Returned assets should have a label whose honeypot is lower or equal to this number.
             issue_type: Returned assets should have issues of type `QUESTION` or `ISSUE`.
-            issue_status: Returned assets should have issues of status `OPEN` or `SOLVED`.
+            issue_status: Returned assets should have issues of status `CANCELLED`, `OPEN` or `SOLVED`.
             external_id_strictly_in: Returned assets should have external ids that match exactly the ones in the list.
             external_id_in: Returned assets should have external ids that partially match the ones in the list.
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
