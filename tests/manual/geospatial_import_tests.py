@@ -175,7 +175,7 @@ if "GEOSPATIAL" in PROJECT_TYPES_TO_TEST:
         project_id=geospatial_project_id,
         multi_layer_content_array=multi_layer_content_array,
         json_metadata_array=json_metadata_array,
-        json_content_array=json_content_array,
+        json_content_array=json_content_array,  # type: ignore
     )
 
 if "IMAGE" in PROJECT_TYPES_TO_TEST:
@@ -193,5 +193,5 @@ if "IMAGE" in PROJECT_TYPES_TO_TEST:
         project_id=image_project_id,
         multi_layer_content_array=multi_layer_content_array,
         json_metadata_array=json_metadata_array,
-        json_content_array=json_content_array,
+        json_content_array=json_content_array,  # type: ignore
     )
