@@ -5,6 +5,7 @@ from enum import Enum
 from typing import List, Optional, Tuple
 
 from kili.core.helpers import is_url
+from kili.domain.project import InputType
 
 from .base import (
     BaseAbstractAssetImporter,
@@ -62,7 +63,7 @@ class TextDataImporter(BaseAbstractAssetImporter):
             return TextDataType.HOSTED_FILE
         return TextDataType.RAW_TEXT
 
-    def import_assets(self, assets: List[AssetLike]):
+    def import_assets(self, assets: List[AssetLike], input_type: InputType):
         """Import TEXT assets into Kili."""
         self._check_upload_is_allowed(assets)
         data_type = self.get_data_type(assets)

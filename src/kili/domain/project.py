@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 ProjectId = NewType("ProjectId", str)
 InputType = Literal[
-    "IMAGE", "PDF", "TEXT", "VIDEO", "LLM_RLHF", "LLM_INSTR_FOLLOWING", "LLM_STATIC"
+    "IMAGE", "GEOSPATIAL", "PDF", "TEXT", "VIDEO", "LLM_RLHF", "LLM_INSTR_FOLLOWING", "LLM_STATIC"
 ]
 
 
