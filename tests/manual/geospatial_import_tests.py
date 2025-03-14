@@ -5,7 +5,7 @@ from kili.client import Kili
 
 LOCAL_KILI_API_KEY = "cm7nd7k63001gg90w28ot9vl7/881232fb4cce6e745f61612c5c5918d0"
 
-PROJECT_TYPES_TO_TEST = ["GEOSPATIAL"]
+PROJECT_TYPES_TO_TEST = ["IMAGE", "GEOSPATIAL"]
 
 IMAGE_PROJECT_TITLE = "Image Samples (from SDK)"
 GEOSPATIAL_PROJECT_TITLE = "Geospatial Samples (from SDK)"
@@ -95,7 +95,7 @@ GEOSPATIAL_FILES_MULTILAYER = ["3B_uint16_epsg4326_layer1.tif", "3B_uint16_epsg4
 def archive_previous_project():
     projects = kili.projects()
     for project in projects:
-        if project["inputType"] == "GEOSPATIAL" and project["title"] in [
+        if project["inputType"] in PROJECT_TYPES_TO_TEST and project["title"] in [
             IMAGE_PROJECT_TITLE,
             GEOSPATIAL_PROJECT_TITLE,
         ]:
