@@ -3,7 +3,7 @@ import urllib.request
 
 from kili.client import Kili
 
-LOCAL_KILI_API_KEY = "cm7nd7k63001gg90w28ot9vl7/881232fb4cce6e745f61612c5c5918d0"
+LOCAL_KILI_API_KEY = ""
 
 PROJECT_TYPES_TO_TEST = ["IMAGE", "GEOSPATIAL"]
 
