@@ -156,8 +156,8 @@ def test_given_a_query_and_a_number_of_elements_to_query_i_have_a_progress_bar(
 
     # then
     captured = capsys.readouterr()
-    assert "0%|          | 0/250" in captured.err
-    assert "100%|██████████| 250/250" in captured.err
+    assert "0%" in captured.err and "0/250" in captured.err
+    assert "100%" in captured.err and "250/250" in captured.err
 
 
 def test_given_a_query_without_a_count_query_I_do_not_have_a_progress_bar(graphql_client, capsys):

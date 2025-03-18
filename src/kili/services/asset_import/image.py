@@ -5,6 +5,7 @@ from typing import List
 
 from kili.core.constants import mime_extensions_that_need_post_processing
 from kili.core.helpers import get_mime_type
+from kili.domain.project import InputType
 
 from .base import BaseAbstractAssetImporter, BatchParams, ContentBatchImporter
 from .constants import LARGE_IMAGE_THRESHOLD_SIZE
@@ -12,9 +13,9 @@ from .types import AssetLike
 
 
 class ImageDataImporter(BaseAbstractAssetImporter):
-    """Class for importing assets into an IMAGE project."""
+    """Class for importing assets into an IMAGE or GEOSPATIAL project."""
 
-    def import_assets(self, assets: List[AssetLike]):
+    def import_assets(self, assets: List[AssetLike], input_type: InputType):
         """Import IMAGE assets into Kili."""
         self._check_upload_is_allowed(assets)
         is_hosted = self.is_hosted_content(assets)
@@ -24,17 +25,25 @@ class ImageDataImporter(BaseAbstractAssetImporter):
         sync_assets, async_assets = self.split_asset_by_upload_type(assets, is_hosted)
         created_asset_ids: List[str] = []
         if len(sync_assets) > 0:
-            sync_batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=False)
+            sync_batch_params = BatchParams(
+                is_hosted=is_hosted, is_asynchronous=False, input_type=input_type
+            )
             batch_importer = ContentBatchImporter(
                 self.kili, self.project_params, sync_batch_params, self.pbar
             )
-            created_asset_ids += self.import_assets_by_batch(sync_assets, batch_importer)
+            created_asset_ids += self.import_assets_by_batch(
+                sync_assets, batch_importer, input_type=input_type
+            )
         if len(async_assets) > 0:
-            async_batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=True)
+            async_batch_params = BatchParams(
+                is_hosted=is_hosted, is_asynchronous=True, input_type=input_type
+            )
             batch_importer = ContentBatchImporter(
                 self.kili, self.project_params, async_batch_params, self.pbar
             )
-            created_asset_ids += self.import_assets_by_batch(async_assets, batch_importer)
+            created_asset_ids += self.import_assets_by_batch(
+                async_assets, batch_importer, input_type=input_type
+            )
         return created_asset_ids
 
     @staticmethod

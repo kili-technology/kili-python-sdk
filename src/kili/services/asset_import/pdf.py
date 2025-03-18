@@ -2,6 +2,8 @@
 
 from typing import List
 
+from kili.domain.project import InputType
+
 from .base import BaseAbstractAssetImporter, BatchParams, ContentBatchImporter
 from .types import AssetLike
 
@@ -9,7 +11,7 @@ from .types import AssetLike
 class PdfDataImporter(BaseAbstractAssetImporter):
     """Class for importing data into a PDF project."""
 
-    def import_assets(self, assets: List[AssetLike]):
+    def import_assets(self, assets: List[AssetLike], input_type: InputType):
         """Import PDF assets into Kili."""
         self._check_upload_is_allowed(assets)
         is_hosted = self.is_hosted_content(assets)
