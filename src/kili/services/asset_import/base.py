@@ -53,7 +53,6 @@ from kili.utils.tqdm import tqdm
 
 FILTER_EXISTING_BATCH_SIZE = 1000
 
-
 if TYPE_CHECKING:
     from kili.client import Kili
 
@@ -63,6 +62,7 @@ class BatchParams(NamedTuple):
 
     is_asynchronous: bool
     is_hosted: bool
+    input_type: Optional[InputType] = None
 
 
 class ProcessingParams(NamedTuple):
@@ -103,7 +103,9 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
 
-    def import_batch(self, assets: ListOrTuple[AssetLike], verify: bool) -> List[str]:
+    def import_batch(  # pylint: disable=unused-argument
+        self, assets: ListOrTuple[AssetLike], verify: bool, input_type: Optional[InputType] = None
+    ) -> List[str]:
         """Base actions to import a batch of asset.
 
         Returns:
@@ -236,7 +238,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
 
     def _async_import_to_kili(self, assets: List[KiliResolverAsset]):
         """Import assets with asynchronous resolver."""
-        if self.input_type == "IMAGE":
+        if self.input_type in ["IMAGE", "GEOSPATIAL"]:
             upload_type = "GEO_SATELLITE"
         elif self.input_type in ("VIDEO", "VIDEO_LEGACY"):
             upload_type = "NATIVE_VIDEO" if self.are_native_videos(assets) else "FRAME_VIDEO"
@@ -297,7 +299,9 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
 class ContentBatchImporter(BaseBatchImporter):
     """Class defining the methods to import a batch of assets with content."""
 
-    def import_batch(self, assets: List[AssetLike], verify: bool):
+    def import_batch(
+        self, assets: List[AssetLike], verify: bool, input_type: Optional[InputType] = None
+    ):
         """Method to import a batch of asset with content."""
         assets = self.add_ids(assets)
         if not self.is_hosted:
@@ -312,7 +316,7 @@ class ContentBatchImporter(BaseBatchImporter):
                 if not asset.get("content") and not asset.get("multi_layer_content")
             ]
             if len(assets_with_content) > 0:
-                assets += self.upload_local_content_to_bucket(assets_with_content)
+                assets += self.upload_local_content_to_bucket(assets_with_content, input_type)
         return super().import_batch(assets, verify)
 
     def get_content_type_and_data_from_content(
@@ -332,7 +336,9 @@ class ContentBatchImporter(BaseBatchImporter):
         """Returns the data of the content (path) and its content type for each element in the array."""
         return list(map(self.get_content_type_and_data_from_content, content_array))
 
-    def upload_local_content_to_bucket(self, assets: List[AssetLike]):
+    def upload_local_content_to_bucket(
+        self, assets: List[AssetLike], input_type: Optional[InputType] = None
+    ):
         """Upload local content to a bucket."""
         project_bucket_path = self.generate_project_bucket_path()
         # tuple containing (bucket_path, file_path, asset_index, content_index)
@@ -343,12 +349,14 @@ class ContentBatchImporter(BaseBatchImporter):
             if multi_layer_content:
                 for j, item in enumerate(multi_layer_content):
                     bucket_path = BaseBatchImporter.build_url_from_parts(
-                        project_bucket_path, asset_id, "content", str(j)
+                        project_bucket_path, asset_id, "content", f"{j!s}.tif"
                     )
                     to_upload.append((bucket_path, item.get("path"), i, j))
             else:
                 bucket_path = BaseBatchImporter.build_url_from_parts(
-                    project_bucket_path, asset_id, "content"
+                    project_bucket_path,
+                    asset_id,
+                    "content.tif" if input_type == "GEOSPATIAL" else "content",
                 )
                 to_upload.append((bucket_path, asset.get("content"), i, None))
         signed_urls = bucket.request_signed_urls(
@@ -418,7 +426,9 @@ class JsonContentBatchImporter(BaseBatchImporter):
             )
         return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
 
-    def import_batch(self, assets: List[AssetLike], verify: bool):
+    def import_batch(
+        self, assets: List[AssetLike], verify: bool, input_type: Optional[InputType] = None
+    ):
         """Method to import a batch of asset with json content."""
         assets = self.add_ids(assets)
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
@@ -443,7 +453,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         self.pbar = tqdm(disable=logger_params.disable_tqdm)
 
     @abc.abstractmethod
-    def import_assets(self, assets: List[AssetLike]) -> List[str]:
+    def import_assets(self, assets: List[AssetLike], input_type: InputType) -> List[str]:
         """Import assets into Kili.
 
         Returns:
@@ -611,6 +621,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         assets: List[AssetLike],
         batch_importer: BaseBatchImporter,
         batch_size=IMPORT_BATCH_SIZE,
+        input_type: Optional[InputType] = None,
     ):
         """Split assets by batch and import them with a given batch importer."""
         batch_generator = batcher(assets, batch_size)
@@ -622,5 +633,5 @@ class BaseAbstractAssetImporter(abc.ABC):
         for i, batch_assets in enumerate(batch_generator):
             # check last batch only
             verify = i == (nb_batch - 1) and self.verify
-            created_asset_ids += batch_importer.import_batch(batch_assets, verify)
+            created_asset_ids += batch_importer.import_batch(batch_assets, verify, input_type)
         return created_asset_ids

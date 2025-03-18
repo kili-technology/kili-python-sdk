@@ -52,11 +52,13 @@ def import_assets(  # pylint: disable=too-many-arguments
 
     if input_type not in importer_by_type:
         raise NotImplementedError(f"There is no importer for the input type: {input_type}")
-    if input_type != "IMAGE" and any(asset.get("multi_layer_content") for asset in assets):
+    if input_type not in ["IMAGE", "GEOSPATIAL"] and any(
+        asset.get("multi_layer_content") for asset in assets
+    ):
         raise ImportValidationError(
             f"Import of multi-layer assets is not supported for input type: {input_type}"
         )
     asset_importer = importer_by_type[input_type](*importer_params)
     casted_assets = cast(List[AssetLike], assets)
     asset_importer.check_asset_contents(casted_assets)
-    return asset_importer.import_assets(assets=casted_assets)
+    return asset_importer.import_assets(assets=casted_assets, input_type=input_type)
