@@ -6,7 +6,7 @@ from typing import List, Literal, NewType, Optional
 from kili.domain.project import ProjectId
 
 IssueType = Literal["ISSUE", "QUESTION"]
-IssueStatus = Literal["OPEN", "SOLVED"]
+IssueStatus = Literal["CANCELLED", "OPEN", "SOLVED"]
 IssueId = NewType("IssueId", str)
 
 

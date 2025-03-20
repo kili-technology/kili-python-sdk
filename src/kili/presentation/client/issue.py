@@ -215,7 +215,7 @@ class IssueClientMethods(BaseClientMethods):
 
         Args:
             issue_id: Identifier of the issue.
-            status: New status of the issue. "OPEN" or "SOLVED"
+            status: New status of the issue. "CANCELLED", "OPEN" or "SOLVED"
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
