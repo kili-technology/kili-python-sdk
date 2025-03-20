@@ -3,7 +3,7 @@
 import os
 from typing import List
 
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 from kili.core.constants import mime_extensions_that_need_post_processing
 from kili.core.helpers import get_mime_type
@@ -79,9 +79,15 @@ class ImageDataImporter(BaseAbstractAssetImporter):
             assert path
             assert isinstance(path, str)
             mime_type = get_mime_type(path)
-            is_large_image = ImageDataImporter.get_is_large_image(path)
-            if is_large_image or mime_type in mime_extensions_that_need_post_processing:
+            if mime_type in mime_extensions_that_need_post_processing:
                 async_assets.append(asset)
             else:
-                sync_assets.append(asset)
+                try:
+                    is_large_image = ImageDataImporter.get_is_large_image(path)
+                    if is_large_image:
+                        async_assets.append(asset)
+                    else:
+                        sync_assets.append(asset)
+                except UnidentifiedImageError:
+                    async_assets.append(asset)
         return sync_assets, async_assets
