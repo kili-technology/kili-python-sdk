@@ -85,7 +85,7 @@ def check_file_contains_handler(path: Path) -> Tuple[bool, Optional[List[str]]]:
                 for child in node.body
                 if isinstance(child, ast.FunctionDef) and child.name in POSSIBLE_HANDLERS
             ]
-            return True, handlers
+            return (True, handlers) if handlers else (True, None)
     return False, None
 
 
@@ -101,6 +101,7 @@ class WebhookUploader:
         header: Optional[str],
         verbose: bool,
         handler_types: Optional[List[str]],
+        event_matcher: Optional[List[str]],
     ) -> None:
         self.kili = kili
         self.webhook_url = webhook_url
@@ -108,10 +109,12 @@ class WebhookUploader:
         self.header = header
         self.verbose = verbose
         self.handler_types = handler_types
+        self.event_matcher = event_matcher
 
     def create_webhook(self) -> str:
         """Create a webhook receiving Kili events."""
         variables = {
+            "eventMatcher": self.event_matcher,
             "handlerTypes": self.handler_types,
             "pluginName": self.plugin_name,
             "webhookUrl": self.webhook_url,
@@ -125,6 +128,7 @@ class WebhookUploader:
     def update_webhook(self) -> str:
         """Update a webhook receiving Kili events."""
         variables = {
+            "eventMatcher": self.event_matcher,
             "handlerTypes": self.handler_types,
             "pluginName": self.plugin_name,
             "webhookUrl": self.webhook_url,
@@ -147,10 +151,12 @@ class PluginUploader:
         plugin_name: Optional[str],
         verbose: bool,
         http_client: HttpClient,
+        event_matcher: Optional[List[str]],
     ) -> None:
         self.kili = kili
         self.plugin_path = Path(plugin_path)
         self.http_client = http_client
+        self.event_matcher = event_matcher
 
         if (not self.plugin_path.is_dir()) and (not self.plugin_path.is_file()):
             raise FileNotFoundError(
@@ -276,7 +282,7 @@ class PluginUploader:
 
     def _create_plugin_runner(self) -> Any:
         """Create plugin's runner."""
-        variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
+        variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types, "eventMatcher": self.event_matcher}
 
         result = self.kili.graphql_client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
         return self.kili.format_result("data", result)
@@ -345,7 +351,7 @@ class PluginUploader:
 
     def _update_plugin_runner(self) -> Any:
         """Update plugin's runner."""
-        variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types}
+        variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types, "eventMatcher": self.event_matcher}
 
         result = self.kili.graphql_client.execute(GQL_UPDATE_PLUGIN_RUNNER, variables)
         return self.kili.format_result("data", result)
