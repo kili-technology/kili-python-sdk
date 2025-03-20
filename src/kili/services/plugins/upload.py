@@ -147,10 +147,12 @@ class PluginUploader:
         plugin_name: Optional[str],
         verbose: bool,
         http_client: HttpClient,
+        handler_types: Optional[List[str]],
     ) -> None:
         self.kili = kili
         self.plugin_path = Path(plugin_path)
         self.http_client = http_client
+        self.handler_types = handler_types
 
         if (not self.plugin_path.is_dir()) and (not self.plugin_path.is_file()):
             raise FileNotFoundError(
@@ -163,7 +165,6 @@ class PluginUploader:
         else:
             self.plugin_name = self.plugin_path.name
         self.verbose = verbose
-        self.handler_types = None
 
     def _retrieve_plugin_src(self) -> List[Path]:
         """Retrieve script from plugin_path and execute it to prevent an upload with indentation errors."""
@@ -177,7 +178,8 @@ class PluginUploader:
             if not contains_handler:
                 raise ValueError("PluginHandler class is not present in your main.py file.")
 
-            self.handler_types = handler_types
+            if self.handler_types is None:
+                self.handler_types = handler_types
 
             return list(self.plugin_path.glob("**/*.py"))
 
@@ -190,7 +192,8 @@ class PluginUploader:
         if not contains_handler:
             raise ValueError("PluginHandler class is not present in your plugin file.")
 
-        self.handler_types = handler_types
+        if self.handler_types is None:
+            self.handler_types = handler_types
 
         return [file_path]
 

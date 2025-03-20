@@ -113,6 +113,7 @@ class QueriesPlugins(BaseOperationEntrypointMixin):
             plugin_name,
             verbose,
             self.http_client,
+            handler_types=None,
         ).get_plugin_runner_status()
 
     @typechecked

@@ -14,7 +14,7 @@ mutation(
 
 GQL_CREATE_PLUGIN_RUNNER = """
 mutation(
-  $handlerTypes: [PluginHandlerType!]
+  $handlerTypes: [String!]
   $pluginName: String!
   ) {
   data: createPluginRunner(
@@ -28,7 +28,7 @@ mutation(
 
 GQL_CREATE_WEBHOOK = """
 mutation(
-  $handlerTypes: [PluginHandlerType!]
+  $handlerTypes: [String!]
   $pluginName: String!
   $webhookUrl: String!
   $header: String
@@ -58,7 +58,7 @@ mutation(
 
 GQL_UPDATE_PLUGIN_RUNNER = """
 mutation(
-  $handlerTypes: [PluginHandlerType!]
+  $handlerTypes: [String!]
   $pluginName: String!
   ) {
   data: updatePluginRunner(
@@ -72,7 +72,7 @@ mutation(
 
 GQL_UPDATE_WEBHOOK = """
 mutation(
-  $handlerTypes: [PluginHandlerType!]
+  $handlerTypes: [String!]
   $pluginName: String!
   $webhookUrl: String!
   $header: String

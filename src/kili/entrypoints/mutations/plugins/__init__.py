@@ -26,6 +26,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
+        handler_types: Optional[List[str]] = None,
         **kwargs,  # pylint: disable=missing-param-doc
     ) -> LiteralString:
         """Uploads a plugin.
@@ -60,6 +61,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             plugin_name,
             verbose,
             self.http_client,
+            handler_types,
         ).create_plugin()
 
     @typechecked
@@ -203,6 +205,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
+        handler_types: Optional[List[str]] = None,
         **kwargs,  # pylint: disable=missing-param-doc
     ) -> LiteralString:
         """Update a plugin with new code.
@@ -240,4 +243,5 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             plugin_name,
             verbose,
             self.http_client,
+            handler_types
         ).update_plugin()
