@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
     
     
       
@@ -28,7 +28,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8608ea7d.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.4af4bdda.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -2341,7 +2341,7 @@
         <span class="n">label_honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">label_honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">issue_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;QUESTION&quot;</span><span class="p">,</span> <span class="s2">&quot;ISSUE&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">issue_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;OPEN&quot;</span><span class="p">,</span> <span class="s2">&quot;SOLVED&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">issue_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;CANCELLED&quot;</span><span class="p">,</span> <span class="s2">&quot;OPEN&quot;</span><span class="p">,</span> <span class="s2">&quot;SOLVED&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">external_id_strictly_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">label_output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;parsed_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
@@ -2407,7 +2407,7 @@
 <span class="sd">            label_honeypot_mark_gte: Returned assets should have a label whose honeypot is greater or equal to this number.</span>
 <span class="sd">            label_honeypot_mark_lte: Returned assets should have a label whose honeypot is lower or equal to this number.</span>
 <span class="sd">            issue_type: Returned assets should have issues of type `QUESTION` or `ISSUE`.</span>
-<span class="sd">            issue_status: Returned assets should have issues of status `OPEN` or `SOLVED`.</span>
+<span class="sd">            issue_status: Returned assets should have issues of status `CANCELLED`, `OPEN` or `SOLVED`.</span>
 <span class="sd">            external_id_strictly_in: Returned assets should have external ids that match exactly the ones in the list.</span>
 <span class="sd">            external_id_in: Returned assets should have external ids that partially match the ones in the list.</span>
 <span class="sd">                For example, with `external_id_in=[&#39;abc&#39;]`, any asset with an external id containing `&#39;abc&#39;` will be returned.</span>
@@ -3147,8 +3147,8 @@ Possible choices: <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>,
       </tr>
       <tr>
         <td><code>issue_status</code></td>
-        <td><code>Optional[Literal[&#39;OPEN&#39;, &#39;SOLVED&#39;]]</code></td>
-        <td><p>Returned assets should have issues of status <code>OPEN</code> or <code>SOLVED</code>.</p></td>
+        <td><code>Optional[Literal[&#39;CANCELLED&#39;, &#39;OPEN&#39;, &#39;SOLVED&#39;]]</code></td>
+        <td><p>Returned assets should have issues of status <code>CANCELLED</code>, <code>OPEN</code> or <code>SOLVED</code>.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -3305,7 +3305,7 @@ with the assets (and not only the ones matching the criteria)</p>
     <span class="n">label_honeypot_mark_gte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">label_honeypot_mark_lte</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">issue_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;QUESTION&quot;</span><span class="p">,</span> <span class="s2">&quot;ISSUE&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">issue_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;OPEN&quot;</span><span class="p">,</span> <span class="s2">&quot;SOLVED&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">issue_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;CANCELLED&quot;</span><span class="p">,</span> <span class="s2">&quot;OPEN&quot;</span><span class="p">,</span> <span class="s2">&quot;SOLVED&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">external_id_strictly_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">external_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">label_output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;parsed_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
@@ -3371,7 +3371,7 @@ with the assets (and not only the ones matching the criteria)</p>
 <span class="sd">        label_honeypot_mark_gte: Returned assets should have a label whose honeypot is greater or equal to this number.</span>
 <span class="sd">        label_honeypot_mark_lte: Returned assets should have a label whose honeypot is lower or equal to this number.</span>
 <span class="sd">        issue_type: Returned assets should have issues of type `QUESTION` or `ISSUE`.</span>
-<span class="sd">        issue_status: Returned assets should have issues of status `OPEN` or `SOLVED`.</span>
+<span class="sd">        issue_status: Returned assets should have issues of status `CANCELLED`, `OPEN` or `SOLVED`.</span>
 <span class="sd">        external_id_strictly_in: Returned assets should have external ids that match exactly the ones in the list.</span>
 <span class="sd">        external_id_in: Returned assets should have external ids that partially match the ones in the list.</span>
 <span class="sd">            For example, with `external_id_in=[&#39;abc&#39;]`, any asset with an external id containing `&#39;abc&#39;` will be returned.</span>
@@ -3839,7 +3839,7 @@ with the assets (and not only the ones matching the criteria)</p>
       </tr>
       <tr>
         <td><code>issue_status</code></td>
-        <td><code>Optional[Literal[&#39;OPEN&#39;, &#39;SOLVED&#39;]]</code></td>
+        <td><code>Optional[Literal[&#39;CANCELLED&#39;, &#39;OPEN&#39;, &#39;SOLVED&#39;]]</code></td>
         <td><p>Returned assets should have issues of status <code>OPEN</code> or <code>SOLVED</code>.</p></td>
         <td><code>None</code></td>
       </tr>
@@ -6320,7 +6320,7 @@ corresponding asset. Each resolution can be passed as a
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.f1b6f286.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
       
