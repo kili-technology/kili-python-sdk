@@ -257,7 +257,11 @@ class GraphQLClient:
         document = query if isinstance(query, DocumentNode) else gql(query)
         variables = self._remove_nullable_inputs(variables) if variables else None
 
+        no_retry = kwargs.pop("no_retry", False)
+
         try:
+            if no_retry:
+                return self._raw_execute(document, variables, **kwargs)
             return self._execute_with_retries(document, variables, **kwargs)
 
         except graphql.GraphQLError:  # local validation error
