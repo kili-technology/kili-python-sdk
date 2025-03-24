@@ -120,5 +120,7 @@ class ProjectOperationMixin(BaseOperationMixin):
             }
         }
 
-        result = self.graphql_client.execute(GQL_COPY_PROJECT, variables)
+        # For the copy_project call, we want a much higher timeout, since it can take a long time for large projects.
+        # Instead of 60 seconds, we pass to waiting for 10 minutes.
+        result = self.graphql_client.execute(GQL_COPY_PROJECT, variables, retry=False, timeout=600)
         return ProjectId(result.get("data", ""))

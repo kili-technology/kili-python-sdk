@@ -52,6 +52,8 @@ def copy_project(
 
     By default, only the json interface, quality settings and project members are copied.
 
+    By default, this method is not configured with a retry mechanism and its timeout is extended to 10 minutes.
+
     If no `title` is provided, the source project title will be used.
     If no description is provided, the description will be set to an empty string.
 
