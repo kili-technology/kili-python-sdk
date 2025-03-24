@@ -257,8 +257,12 @@ class GraphQLClient:
         document = query if isinstance(query, DocumentNode) else gql(query)
         variables = self._remove_nullable_inputs(variables) if variables else None
 
+        should_retry = kwargs.pop("retry", True)
+
         try:
-            return self._execute_with_retries(document, variables, **kwargs)
+            if should_retry:
+                return self._execute_with_retries(document, variables, **kwargs)
+            return self._raw_execute(document, variables, **kwargs)
 
         except graphql.GraphQLError:  # local validation error
             # the local schema might be outdated
