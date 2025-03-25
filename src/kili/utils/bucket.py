@@ -1,6 +1,7 @@
 """Module for managing bucket's signed urls."""
 
 import itertools
+import os
 from typing import List, Union
 from urllib.parse import parse_qs, urlparse
 
@@ -67,5 +68,15 @@ def clean_signed_url(url: str, endpoint: str) -> str:
     """Return a cleaned signed url for frame upload."""
     query = urlparse(url).query
     id_param = parse_qs(query)["id"][0]
-    base_path = endpoint.replace("/graphql", "/files").replace("http://", "https://")
+    # Check if Kili is using http or https
+    kili_path = os.getenv(
+        "KILI_API_ENDPOINT", "https://cloud.kili-technology.com/api/label/v2/graphql"
+    )
+    is_using_http = kili_path.startswith("http://")
+    if is_using_http:
+        base_path = endpoint.replace("https://", "http://")
+    else:
+        base_path = endpoint.replace("http://", "https://")
+
+    base_path = endpoint.replace("/graphql", "/files")
     return f"{base_path}?id={id_param}"

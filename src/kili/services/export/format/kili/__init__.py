@@ -295,9 +295,6 @@ def _scale_normalized_vertices_image_video_annotation(
             " the resolution of your asset.`"
         )
 
-    width = asset["resolution"]["width"] if "resolution" in asset else 0
-    height = asset["resolution"]["height"] if "resolution" in asset else 0
-
     # bbox, segmentation, polygons
     if "boundingPoly" in annotation and normalized_vertices:
         annotation["boundingPoly"] = [
@@ -309,6 +306,9 @@ def _scale_normalized_vertices_image_video_annotation(
             for norm_vertices_dict in annotation["boundingPoly"]
         ]
         return
+
+    width = asset["resolution"]["width"] if "resolution" in asset else 0
+    height = asset["resolution"]["height"] if "resolution" in asset else 0
 
     if "boundingPoly" in annotation and not normalized_vertices:
         annotation["boundingPoly"] = [

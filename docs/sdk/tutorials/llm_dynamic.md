@@ -147,7 +147,7 @@ Now, we'll generate a conversation by providing a prompt.
 
 ```python
 conversation = kili.llm.create_conversation(
-    project_id=project_id, prompt="Give me Schrödinger equation."
+    project_id=project_id, initial_prompt="Give me Schrödinger equation."
 )
 ```
 
