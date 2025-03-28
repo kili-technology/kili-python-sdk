@@ -251,5 +251,5 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             plugin_name,
             verbose,
             self.http_client,
-            event_matcher
+            event_matcher,
         ).update_plugin()

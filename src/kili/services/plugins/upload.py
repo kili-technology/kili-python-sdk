@@ -74,7 +74,7 @@ def check_file_is_txt(path: Path, verbose: bool = True) -> bool:
     return check_file_mime_type(path, mime_extensions_for_txt_files, verbose)
 
 
-def check_file_contains_handler(path: Path) -> Tuple[bool, Optional[List[str]]]:
+def check_file_contains_handler(path: Path) -> Tuple[bool, Optional[List[str]], bool]:
     """Return true if the file contain PluginHandler Class."""
     with path.open(encoding="utf-8") as file:
         module = ast.parse(file.read())
@@ -85,8 +85,12 @@ def check_file_contains_handler(path: Path) -> Tuple[bool, Optional[List[str]]]:
                 for child in node.body
                 if isinstance(child, ast.FunctionDef) and child.name in POSSIBLE_HANDLERS
             ]
-            return (True, handlers) if handlers else (True, None)
-    return False, None
+            has_on_event = any(
+                isinstance(child, ast.FunctionDef) and child.name == "on_event"
+                for child in node.body
+            )
+            return (True, handlers, has_on_event) if handlers else (True, None, has_on_event)
+    return False, None, False
 
 
 class WebhookUploader:
@@ -179,9 +183,15 @@ class PluginUploader:
                 raise FileNotFoundError(
                     f"No main.py file in the provided folder: {self.plugin_path.absolute()}"
                 )
-            contains_handler, handler_types = check_file_contains_handler(file_path)
+            contains_handler, handler_types, has_on_event = check_file_contains_handler(file_path)
             if not contains_handler:
                 raise ValueError("PluginHandler class is not present in your main.py file.")
+
+            if has_on_event and not self.event_matcher:
+                raise ValueError("Event matcher is required for plugins with on_event method.")
+
+            if handler_types and self.event_matcher:
+                raise ValueError("Cannot have both handler types and event matcher.")
 
             self.handler_types = handler_types
 
@@ -192,9 +202,15 @@ class PluginUploader:
         if not check_file_is_py(file_path, self.verbose):
             raise ValueError("Wrong file format.")
 
-        contains_handler, handler_types = check_file_contains_handler(file_path)
+        contains_handler, handler_types, has_on_event = check_file_contains_handler(file_path)
         if not contains_handler:
             raise ValueError("PluginHandler class is not present in your plugin file.")
+
+        if has_on_event and not self.event_matcher:
+            raise ValueError("Event matcher is required for plugins with on_event method.")
+
+        if handler_types and self.event_matcher:
+            raise ValueError("Cannot have both handler types and event matcher.")
 
         self.handler_types = handler_types
 
@@ -282,7 +298,11 @@ class PluginUploader:
 
     def _create_plugin_runner(self) -> Any:
         """Create plugin's runner."""
-        variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types, "eventMatcher": self.event_matcher}
+        variables = {
+            "pluginName": self.plugin_name,
+            "handlerTypes": self.handler_types,
+            "eventMatcher": self.event_matcher,
+        }
 
         result = self.kili.graphql_client.execute(GQL_CREATE_PLUGIN_RUNNER, variables)
         return self.kili.format_result("data", result)
@@ -351,7 +371,11 @@ class PluginUploader:
 
     def _update_plugin_runner(self) -> Any:
         """Update plugin's runner."""
-        variables = {"pluginName": self.plugin_name, "handlerTypes": self.handler_types, "eventMatcher": self.event_matcher}
+        variables = {
+            "pluginName": self.plugin_name,
+            "handlerTypes": self.handler_types,
+            "eventMatcher": self.event_matcher,
+        }
 
         result = self.kili.graphql_client.execute(GQL_UPDATE_PLUGIN_RUNNER, variables)
         return self.kili.format_result("data", result)
