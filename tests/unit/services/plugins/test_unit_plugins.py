@@ -46,6 +46,7 @@ def test_wrong_plugin_path(kili):
             HttpClient(
                 kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
             ),
+            event_matcher=None,
         )
 
 
@@ -54,9 +55,10 @@ def test_no_plugin_handler():
         os.path.join("tests", "unit", "services", "plugins", "test_plugins", "no_plugin_handler.py")
     )
 
-    contains_handler, handlers = check_file_contains_handler(plugin_path)
+    contains_handler, handlers, has_on_event = check_file_contains_handler(plugin_path)
     assert contains_handler is False
     assert handlers is None
+    assert has_on_event is False
 
 
 def test_no_handlers_implemented():
@@ -66,9 +68,10 @@ def test_no_handlers_implemented():
         )
     )
 
-    contains_handler, handlers = check_file_contains_handler(plugin_path)
+    contains_handler, handlers, has_on_event = check_file_contains_handler(plugin_path)
     assert contains_handler is True
-    assert handlers == []
+    assert handlers is None
+    assert has_on_event is False
 
 
 def test_handlers_correctly_implemented():
@@ -83,9 +86,46 @@ def test_handlers_correctly_implemented():
         )
     )
 
-    contains_handler, handlers = check_file_contains_handler(plugin_path)
+    contains_handler, handlers, has_on_event = check_file_contains_handler(plugin_path)
     assert contains_handler is True
     assert handlers == ["onSubmit", "onReview"]
+    assert has_on_event is False
+
+
+def test_handlers_correctly_implemented_with_events():
+    plugin_path = Path(
+        os.path.join(
+            "tests",
+            "unit",
+            "services",
+            "plugins",
+            "test_plugins",
+            "handlers_correctly_implemented_events.py",
+        )
+    )
+
+    contains_handler, handlers, has_on_event = check_file_contains_handler(plugin_path)
+    assert contains_handler is True
+    assert handlers is None
+    assert has_on_event is True
+
+
+def test_handlers_correctly_implemented_with_events_and_handlers():
+    plugin_path = Path(
+        os.path.join(
+            "tests",
+            "unit",
+            "services",
+            "plugins",
+            "test_plugins",
+            "handlers_correctly_implemented_events_handlers.py",
+        )
+    )
+
+    contains_handler, handlers, has_on_event = check_file_contains_handler(plugin_path)
+    assert contains_handler is True
+    assert handlers == ["onSubmit", "onReview"]
+    assert has_on_event is True
 
 
 def test_commented_handler():
@@ -93,9 +133,10 @@ def test_commented_handler():
         os.path.join("tests", "unit", "services", "plugins", "test_plugins", "commented_handler.py")
     )
 
-    contains_handler, handlers = check_file_contains_handler(plugin_path)
+    contains_handler, handlers, has_on_event = check_file_contains_handler(plugin_path)
     assert contains_handler is True
     assert handlers == ["onSubmit"]
+    assert has_on_event is False
 
 
 def test_no_pluginhandler_when_creating_zip_from_file(kili):
@@ -116,6 +157,7 @@ def test_no_pluginhandler_when_creating_zip_from_file(kili):
                     api_key="",
                     verify=True,
                 ),
+                event_matcher=None,
             )._create_zip(tmp_dir)
 
 
@@ -133,6 +175,7 @@ def test_zip_creation_from_file(kili):
             HttpClient(
                 kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
             ),
+            event_matcher=None,
         )._create_zip(tmp_dir)
 
         zip_path = tmp_dir / "archive.zip"
@@ -165,6 +208,7 @@ def test_no_main_when_creating_zip_from_folder(kili):
                     api_key="",
                     verify=True,
                 ),
+                event_matcher=None,
             )._create_zip(tmp_dir)
 
 
@@ -188,6 +232,7 @@ def test_no_pluginhandler_when_creating_zip_from_folder(kili):
                     api_key="",
                     verify=True,
                 ),
+                event_matcher=None,
             )._create_zip(tmp_dir)
 
 
@@ -203,6 +248,7 @@ def test_zip_creation_from_folder(kili):
             HttpClient(
                 kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
             ),
+            event_matcher=None,
         )._create_zip(tmp_dir)
 
         zip_path = tmp_dir / "archive.zip"

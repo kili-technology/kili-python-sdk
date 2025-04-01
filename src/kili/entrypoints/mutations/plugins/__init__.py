@@ -26,6 +26,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
+        event_matcher: Optional[List[str]] = None,
         **kwargs,  # pylint: disable=missing-param-doc
     ) -> LiteralString:
         """Uploads a plugin.
@@ -36,6 +37,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
                 - a folder containing a main.py (mandatory) and a requirements.txt (optional)
                 - a .py file
             plugin_name: name of your plugin, if not provided, it will be the name from your file
+            event_matcher: List of events for which the plugin should be called.
             verbose: If false, minimal logs are displayed
 
         Returns:
@@ -60,6 +62,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             plugin_name,
             verbose,
             self.http_client,
+            event_matcher,
         ).create_plugin()
 
     @typechecked
@@ -70,6 +73,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         header: Optional[str] = None,
         verbose: bool = True,
         handler_types: Optional[List[str]] = None,
+        event_matcher: Optional[List[str]] = None,
     ) -> str:
         # pylint: disable=line-too-long,too-many-arguments
         """Create a webhook linked to Kili's events.
@@ -92,6 +96,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             handler_types: List of actions for which the webhook should be called.
                 Possible variants: `onSubmit`, `onReview`.
                 By default, is [`onSubmit`, `onReview`].
+            event_matcher: List of events for which the webhook should be called.
 
         Returns:
             A string which indicates if the mutation was successful,
@@ -107,6 +112,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             header,
             verbose,
             handler_types,
+            event_matcher,
         ).create_webhook()
 
     @typechecked
@@ -117,6 +123,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         new_header: Optional[str] = None,
         verbose: bool = True,
         handler_types: Optional[List[str]] = None,
+        event_matcher: Optional[List[str]] = None,
     ) -> str:
         # pylint: disable=line-too-long,too-many-arguments
         """Update a webhook linked to Kili's events.
@@ -131,6 +138,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             handler_types: List of actions for which the webhook should be called.
                 Possible variants: `onSubmit`, `onReview`.
                 By default, is [`onSubmit`, `onReview`]
+            event_matcher: List of events for which the webhook should be called.
 
         Returns:
             A string which indicates if the mutation was successful,
@@ -146,6 +154,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             new_header,
             verbose,
             handler_types,
+            event_matcher,
         ).update_webhook()
 
     @typechecked
@@ -203,6 +212,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
+        event_matcher: Optional[List[str]] = None,
         **kwargs,  # pylint: disable=missing-param-doc
     ) -> LiteralString:
         """Update a plugin with new code.
@@ -213,6 +223,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
                 - a folder containing a main.py (mandatory) and a requirements.txt (optional)
                 - a .py file
             plugin_name: Name of the plugin
+            event_matcher: List of events names and/or globs for which the plugin should be called.
             verbose: If false, minimal logs are displayed
 
         Returns:
@@ -240,4 +251,5 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             plugin_name,
             verbose,
             self.http_client,
+            event_matcher,
         ).update_plugin()
