@@ -223,7 +223,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
                 - a folder containing a main.py (mandatory) and a requirements.txt (optional)
                 - a .py file
             plugin_name: Name of the plugin
-            event_matcher: List of events for which the plugin should be called.
+            event_matcher: List of events names and/or globs for which the plugin should be called.
             verbose: If false, minimal logs are displayed
 
         Returns:
