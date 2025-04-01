@@ -21,6 +21,7 @@ class PluginCore:
         on_custom_interface_click(self, label: Dict, asset_id: str)
         on_project_updated(self, settings_updated: List[Dict])
         on_send_back_to_queue(self, asset_id: str)
+        on_event(self, payload: Dict)
 
     !!! warning
         if using a custom init, be sure to call super().__init__()
@@ -192,3 +193,15 @@ class PluginCore:
         """
         # pylint: disable=unused-argument
         self.logger.warning("Handler is in active development.")
+
+    def on_event(
+        self,
+        payload: Dict,
+    ) -> None:
+        """Handler for all events, triggered when an event is triggered.
+
+        Args:
+            payload: Dict.
+        """
+        # pylint: disable=unused-argument
+        self.logger.warning("Method not implemented. Define a custom on_event on your plugin")
