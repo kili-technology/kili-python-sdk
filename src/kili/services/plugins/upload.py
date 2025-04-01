@@ -75,7 +75,12 @@ def check_file_is_txt(path: Path, verbose: bool = True) -> bool:
 
 
 def check_file_contains_handler(path: Path) -> Tuple[bool, Optional[List[str]], bool]:
-    """Return true if the file contain PluginHandler Class."""
+    """Test if the file is a python file with the right content.
+
+    Return true if the file contain PluginHandler Class.
+    Return the list of handlers or None if they are present in the file.
+    Return true if the file contains on_event method.
+    """
     with path.open(encoding="utf-8") as file:
         module = ast.parse(file.read())
     for node in module.body:
