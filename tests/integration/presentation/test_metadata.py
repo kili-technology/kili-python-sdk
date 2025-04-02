@@ -1,10 +1,12 @@
 """Tests for asset metadata functions."""
 
+from typing import Any, Dict, List, cast
+
 import pytest_mock
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetFilters, AssetId
 from kili.domain.project import ProjectId
 from kili.entrypoints.mutations.asset import MutationsAsset
 
@@ -38,14 +40,14 @@ def test_add_metadata_adds_to_existing_metadata(mocker: pytest_mock.MockerFixtur
 
     project_id = "project1"
     asset_ids = ["asset1", "asset2"]
-    new_metadata = [{"new_key1": "new_value1"}, {"new_key2": "new_value2"}]
+    new_metadata: List[Dict[str, Any]] = [{"new_key1": "new_value1"}, {"new_key2": "new_value2"}]
 
     result = mutations_asset.add_metadata(
         asset_labeling_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
     )
 
     kili_api_gateway.list_assets.assert_called_once_with(
-        AssetFilters(project_id=ProjectId(project_id), asset_id_in=asset_ids),
+        AssetFilters(project_id=ProjectId(project_id), asset_id_in=cast(List[AssetId], asset_ids)),
         ["id", "jsonMetadata"],
         QueryOptions(disable_tqdm=True),
     )
@@ -102,14 +104,15 @@ def test_set_metadata_replaces_existing_metadata(mocker: pytest_mock.MockerFixtu
 
     project_id = "project1"
     asset_ids = ["asset1", "asset2"]
-    new_metadata = [{"new_key1": "new_value1"}, {"new_key2": "new_value2"}]
+    # Use Dict[str, Any] to satisfy the type checker
+    new_metadata: List[Dict[str, Any]] = [{"new_key1": "new_value1"}, {"new_key2": "new_value2"}]
 
     result = mutations_asset.set_metadata(
         asset_labeling_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
     )
 
     kili_api_gateway.list_assets.assert_called_once_with(
-        AssetFilters(project_id=ProjectId(project_id), asset_id_in=asset_ids),
+        AssetFilters(project_id=ProjectId(project_id), asset_id_in=cast(List[AssetId], asset_ids)),
         ["id", "jsonMetadata"],
         QueryOptions(disable_tqdm=True),
     )
@@ -148,7 +151,8 @@ def test_add_metadata_handles_missing_metadata(mocker: pytest_mock.MockerFixture
 
     project_id = "project1"
     asset_ids = ["asset1", "asset2"]
-    new_metadata = [{"new_key1": "new_value1"}, {"new_key2": "new_value2"}]
+    # Use Dict[str, Any] to satisfy the type checker
+    new_metadata: List[Dict[str, Any]] = [{"new_key1": "new_value1"}, {"new_key2": "new_value2"}]
 
     mutations_asset.add_metadata(
         asset_labeling_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
@@ -192,7 +196,8 @@ def test_multiple_assets_with_different_metadata_structures(mocker: pytest_mock.
 
     project_id = "project1"
     asset_ids = ["asset1", "asset2", "asset3", "asset4"]
-    new_metadata = [
+    # Use Dict[str, Any] to satisfy the type checker
+    new_metadata: List[Dict[str, Any]] = [
         {"meta1": "value1"},
         {"meta2": "value2"},
         {"meta3": "value3"},
