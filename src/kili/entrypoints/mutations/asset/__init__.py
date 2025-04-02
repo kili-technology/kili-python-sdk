@@ -1,5 +1,4 @@
 """Asset mutations."""
-
 import warnings
 from typing import Any, Dict, List, Literal, Optional, Union, cast
 
@@ -91,8 +90,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
             json_metadata_array: The metadata given to each asset should be stored in a json like dict with keys.
 
-                - Add metadata visible on the asset with the following keys: `imageUrl`, `text`, `url`.
-                    Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': ''}]`.
+                - Add metadata visible on the asset with the following keys: `imageUrl`, `text`, `url`, `assetLabelingMetadata`.
+                    Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': '','assetLabelingMetadata': {'key': 'value'}}]`.
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
                 - In Image projects with geoTIFF assets, you can specify the epsg, the `minZoom` and `maxZoom` values for the `processingParameters` key.
@@ -408,6 +407,126 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         )
         formated_results = [self.format_result("data", result, None) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
+
+    @typechecked
+    def add_metadata(
+        self,
+        asset_labeling_metadata: List[Dict[str, Any]],
+        asset_ids: Optional[List[str]] = None,
+        external_ids: Optional[List[str]] = None,
+        project_id: Optional[str] = None,
+    ) -> List[Dict[Literal["id"], str]]:
+        """Add metadata to assets without overriding existing metadata.
+
+        Args:
+            asset_labeling_metadata: List of metadata dictionaries to add to each asset.
+                Each dictionary contains key/value pairs to be added to the asset's metadata.
+            asset_ids: The asset IDs to modify.
+            external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
+            project_id: The project ID. Only required if `external_ids` argument is provided.
+
+        Returns:
+            A list of dictionaries with the asset ids.
+
+        Examples:
+            >>> kili.add_metadata(
+                    asset_labeling_metadata=[
+                        {"key1": "value1", "key2": "value2"},
+                        {"key3": "value3"}
+                    ],
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                )
+        """
+        if is_empty_list_with_warning(
+            "add_metadata", "asset_labeling_metadata", asset_labeling_metadata
+        ):
+            return []
+
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
+
+        assets = self.kili_api_gateway.list_assets(
+            AssetFilters(project_id=ProjectId(project_id), asset_id_in=resolved_asset_ids),
+            ["id", "jsonMetadata"],
+            QueryOptions(disable_tqdm=True),
+        )
+
+        json_metadatas = []
+        for i, asset in enumerate(assets):
+            current_metadata = asset.get("jsonMetadata", {}) if asset.get("jsonMetadata") else {}
+
+            current_labeling_metadata = current_metadata.get("assetLabelingMetadata", {})
+
+            new_metadata = asset_labeling_metadata[i] if i < len(asset_labeling_metadata) else {}
+
+            current_labeling_metadata.update(new_metadata)
+
+            updated_metadata = current_metadata.copy()
+            updated_metadata["assetLabelingMetadata"] = current_labeling_metadata
+
+            json_metadatas.append(updated_metadata)
+
+        return self.update_properties_in_assets(
+            asset_ids=resolved_asset_ids,
+            json_metadatas=json_metadatas,
+        )
+
+    @typechecked
+    def set_metadata(
+        self,
+        asset_labeling_metadata: List[Dict[str, Any]],
+        asset_ids: Optional[List[str]] = None,
+        external_ids: Optional[List[str]] = None,
+        project_id: Optional[str] = None,
+    ) -> List[Dict[Literal["id"], str]]:
+        """Set metadata on assets, replacing any existing assetLabelingMetadata.
+
+        Args:
+            asset_labeling_metadata: List of metadata dictionaries to set on each asset.
+                Each dictionary contains key/value pairs to be set as the asset's metadata.
+            asset_ids: The asset IDs to modify.
+            external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
+            project_id: The project ID. Only required if `external_ids` argument is provided.
+
+        Returns:
+            A list of dictionaries with the asset ids.
+
+        Examples:
+            >>> kili.set_metadata(
+                    asset_labeling_metadata=[
+                        {"key1": "value1", "key2": "value2"},
+                        {"key3": "value3"}
+                    ],
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                )
+        """
+        if is_empty_list_with_warning(
+            "set_metadata", "asset_labeling_metadata", asset_labeling_metadata
+        ):
+            return []
+
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
+
+        assets = self.kili_api_gateway.list_assets(
+            AssetFilters(project_id=ProjectId(project_id), asset_id_in=resolved_asset_ids),
+            ["id", "jsonMetadata"],
+            QueryOptions(disable_tqdm=True),
+        )
+
+        json_metadatas = []
+        for i, asset in enumerate(assets):
+            current_metadata = asset.get("jsonMetadata", {}) if asset.get("jsonMetadata") else {}
+
+            new_metadata = asset_labeling_metadata[i] if i < len(asset_labeling_metadata) else {}
+
+            updated_metadata = current_metadata.copy()
+            updated_metadata["assetLabelingMetadata"] = new_metadata
+
+            json_metadatas.append(updated_metadata)
+
+        return self.update_properties_in_assets(
+            asset_ids=resolved_asset_ids,
+            json_metadatas=json_metadatas,
+        )
 
     @typechecked
     def change_asset_external_ids(
