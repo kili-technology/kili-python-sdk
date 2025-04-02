@@ -471,7 +471,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     @typechecked
     def set_metadata(
         self,
-        asset_labeling_metadata: List[Dict[str, Any]],
+        asset_labeling_metadata: List[Dict[str, Union[str, int, float]]],
         asset_ids: List[str],
         project_id: str,
     ) -> List[Dict[Literal["id"], str]]:
