@@ -64,6 +64,27 @@ ProjectType = Literal[
 ]
 
 
+DemoProjectType = Literal[
+    "DEMO_COMPUTER_VISION_TUTORIAL",
+    "DEMO_TEXT_TUTORIAL",
+    "DEMO_PDF_TUTORIAL",
+    "VIDEO_FRAME_OBJECT_TRACKING",
+    "DEMO_SEGMENTATION_COCO",
+    "DEMO_NER",
+    "DEMO_ID_OCR",
+    "DEMO_REVIEWS",
+    "DEMO_OCR",
+    "DEMO_NER_TWEETS",
+    "DEMO_PLASTIC",
+    "DEMO_CHATBOT",
+    "DEMO_PDF",
+    "DEMO_ANIMALS",
+    "DEMO_LLM",
+    "DEMO_LLM_INSTR_FOLLOWING",
+    "DEMO_SEGMENTATION",
+]
+
+
 Right = Literal[
     "CAN_ACCESS_SMART_TOOLS",
     "CAN_LABEL",
