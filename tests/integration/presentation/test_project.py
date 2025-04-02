@@ -69,7 +69,7 @@ def test_when_updating_project_then_it_returns_updated_project(mocker: pytest_mo
                 "numberOfRemainingAssets": None,
                 "numberOfReviewedAssets": None,
                 "reviewCoverage": 42,
-                "secondsToLabelBeforeAutoAssign": None,
+                "shouldAutoAssign": None,
                 "shouldRelaunchKpiComputation": None,
                 "title": None,
                 "useHoneyPot": None,

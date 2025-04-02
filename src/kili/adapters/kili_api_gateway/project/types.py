@@ -32,7 +32,7 @@ class ProjectDataKiliAPIGatewayInput:
     number_of_remaining_assets: Optional[int]
     number_of_reviewed_assets: Optional[int]
     review_coverage: Optional[int]
-    seconds_to_label_before_auto_assign: Optional[int]
+    should_auto_assign: Optional[bool]
     should_relaunch_kpi_computation: Optional[bool]
     title: Optional[str]
     use_honeypot: Optional[bool]

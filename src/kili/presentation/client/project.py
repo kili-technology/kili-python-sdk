@@ -1,5 +1,6 @@
 """Client presentation methods for projects."""
 
+import warnings
 from typing import (
     Any,
     Dict,
@@ -304,6 +305,7 @@ class ProjectClientMethods(BaseClientMethods):
         use_honeypot: Optional[bool] = None,
         metadata_types: Optional[dict] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
+        should_auto_assign: Optional[bool] = None,
     ) -> Dict[str, Any]:
         """Update properties of a project.
 
@@ -340,9 +342,8 @@ class ProjectClientMethods(BaseClientMethods):
             metadata_types: Types of the project metadata.
                 Should be a `dict` of metadata fields name as keys and metadata types as values.
                 Currently, possible types are: `string`, `number`
-            seconds_to_label_before_auto_assign: When a user begins to annotate an asset,
-                it automatically gets assigned to them.
-                This ensures the user retains the asset until it is submitted.
+            seconds_to_label_before_auto_assign: DEPRECATED, use `should_auto_assign` instead.
+            should_auto_assign: If `True`, assets are automatically assigned to users when they start annotating.
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
@@ -369,6 +370,14 @@ class ProjectClientMethods(BaseClientMethods):
             Not providing a type for a metadata field or providing an unsupported one
             will default to the `string` type.
         """
+        if seconds_to_label_before_auto_assign is not None:
+            warnings.warn(
+                "seconds_to_label_before_auto_assign is going to be deprecated. Please use"
+                " `should_auto_assign` field instead to auto assign assets",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
         return ProjectUseCases(self.kili_api_gateway).update_properties_in_project(
             ProjectId(project_id),
             can_navigate_between_assets=can_navigate_between_assets,
@@ -391,6 +400,7 @@ class ProjectClientMethods(BaseClientMethods):
             use_honeypot=use_honeypot,
             title=title,
             metadata_types=metadata_types,
+            should_auto_assign=should_auto_assign,
             seconds_to_label_before_auto_assign=seconds_to_label_before_auto_assign,
         )
 

@@ -127,6 +127,7 @@ class ProjectUseCases(BaseUseCases):
         title: Optional[str] = None,
         use_honeypot: Optional[bool] = None,
         metadata_types: Optional[Dict] = None,
+        should_auto_assign: Optional[bool] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
     ) -> Dict[str, object]:
         """Update properties in a project."""
@@ -140,6 +141,10 @@ class ProjectUseCases(BaseUseCases):
 
         if review_coverage is not None and not 0 <= review_coverage <= 100:
             raise ValueError("Argument `review_coverage` must be comprised between 0 and 100.")
+
+        # if should_auto_assign is True or false use it, else use seconds_to_label_before_auto_assign
+        if should_auto_assign is None and seconds_to_label_before_auto_assign is not None:
+            should_auto_assign = seconds_to_label_before_auto_assign is not None
 
         project_data = ProjectDataKiliAPIGatewayInput(
             can_navigate_between_assets=can_navigate_between_assets,
@@ -159,7 +164,7 @@ class ProjectUseCases(BaseUseCases):
             number_of_remaining_assets=number_of_remaining_assets,
             number_of_reviewed_assets=number_of_reviewed_assets,
             review_coverage=review_coverage,
-            seconds_to_label_before_auto_assign=seconds_to_label_before_auto_assign,
+            should_auto_assign=should_auto_assign,
             should_relaunch_kpi_computation=should_relaunch_kpi_computation,
             title=title,
             use_honeypot=use_honeypot,
