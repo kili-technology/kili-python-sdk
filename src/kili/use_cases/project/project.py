@@ -11,7 +11,7 @@ from tenacity.wait import wait_fixed
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.project.mappers import project_data_mapper
 from kili.adapters.kili_api_gateway.project.types import ProjectDataKiliAPIGatewayInput
-from kili.core.enums import ProjectType
+from kili.core.enums import DemoProjectType, ProjectType
 from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
@@ -21,13 +21,14 @@ from kili.use_cases.base import BaseUseCases
 class ProjectUseCases(BaseUseCases):
     """Project use cases."""
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments, too-many-locals
     def create_project(
         self,
         title: str,
         description: str,
         project_type: Optional[ProjectType],
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
+        from_demo_project: Optional[DemoProjectType],
         project_id: Optional[ProjectId] = None,
         input_type: Optional[InputType] = None,
         json_interface: Optional[Dict] = None,
@@ -47,6 +48,7 @@ class ProjectUseCases(BaseUseCases):
                 description=description,
                 project_type=project_type,
                 compliance_tags=compliance_tags,
+                from_demo_project=from_demo_project,
             )
             if project_copied["instructions"]:
                 self.update_properties_in_project(
@@ -75,6 +77,7 @@ class ProjectUseCases(BaseUseCases):
                 description=description,
                 project_type=project_type,
                 compliance_tags=compliance_tags,
+                from_demo_project=from_demo_project,
             )
 
         # The project is not immediately available after creation

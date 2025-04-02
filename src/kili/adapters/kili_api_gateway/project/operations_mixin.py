@@ -14,7 +14,7 @@ from kili.adapters.kili_api_gateway.project.formatters import (
     load_project_json_fields,
 )
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
-from kili.core.enums import ProjectType
+from kili.core.enums import DemoProjectType, ProjectType
 from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 
@@ -45,18 +45,20 @@ class ProjectOperationMixin(BaseOperationMixin):
         description: str,
         project_type: Optional[ProjectType],
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
+        from_demo_project: Optional[DemoProjectType],
     ) -> ProjectId:
         """Create a project."""
         variables = {
             "data": {
                 "description": description,
+                "fromDemoProject": from_demo_project,
                 "inputType": input_type,
                 "jsonInterface": json.dumps(json_interface),
                 "projectType": project_type,
                 "title": title,
             }
         }
-        # complience tags are only available for Kili app > 2.138
+        # compliance tags are only available for Kili app > 2.138
         if compliance_tags:
             variables["data"]["complianceTags"] = compliance_tags
 
