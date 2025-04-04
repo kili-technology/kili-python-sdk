@@ -28,6 +28,7 @@ def test_when_creating_project_then_it_returns_project_id(mocker: pytest_mock.Mo
                 "jsonInterface": "{}",
                 "projectType": None,
                 "title": "fake_title",
+                "fromDemoProject": None,
             }
         },
     )
