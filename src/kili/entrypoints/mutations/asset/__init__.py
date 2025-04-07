@@ -411,14 +411,14 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     @typechecked
     def add_metadata(
         self,
-        asset_labeling_metadata: List[Dict[str, Union[str, int, float]]],
+        json_metadata: List[Dict[str, Union[str, int, float]]],
         asset_ids: List[str],
         project_id: str,
     ) -> List[Dict[Literal["id"], str]]:
         """Add metadata to assets without overriding existing metadata.
 
         Args:
-            asset_labeling_metadata: List of metadata dictionaries to add to each asset.
+            json_metadata: List of metadata dictionaries to add to each asset.
                 Each dictionary contains key/value pairs to be added to the asset's metadata.
             asset_ids: The asset IDs to modify.
             project_id: The project ID.
@@ -428,16 +428,15 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         Examples:
             >>> kili.add_metadata(
-                    asset_labeling_metadata=[
+                    json_metadata=[
                         {"key1": "value1", "key2": "value2"},
                         {"key3": "value3"}
                     ],
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    project_id="cm92to3cx012u7l0w6kij9qvx"
                 )
         """
-        if is_empty_list_with_warning(
-            "add_metadata", "asset_labeling_metadata", asset_labeling_metadata
-        ):
+        if is_empty_list_with_warning("add_metadata", "json_metadata", json_metadata):
             return []
 
         assets = self.kili_api_gateway.list_assets(
@@ -451,17 +450,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         json_metadatas = []
         for i, asset in enumerate(assets):
             current_metadata = asset.get("jsonMetadata", {}) if asset.get("jsonMetadata") else {}
+            new_metadata = json_metadata[i] if i < len(json_metadata) else {}
 
-            current_labeling_metadata = current_metadata.get("assetLabelingMetadata", {})
+            current_metadata.update(new_metadata)
 
-            new_metadata = asset_labeling_metadata[i] if i < len(asset_labeling_metadata) else {}
-
-            current_labeling_metadata.update(new_metadata)
-
-            updated_metadata = current_metadata.copy()
-            updated_metadata["assetLabelingMetadata"] = current_labeling_metadata
-
-            json_metadatas.append(updated_metadata)
+            json_metadatas.append(current_metadata)
 
         return self.update_properties_in_assets(
             asset_ids=asset_ids,
@@ -471,14 +464,14 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     @typechecked
     def set_metadata(
         self,
-        asset_labeling_metadata: List[Dict[str, Union[str, int, float]]],
+        json_metadata: List[Dict[str, Union[str, int, float]]],
         asset_ids: List[str],
         project_id: str,
     ) -> List[Dict[Literal["id"], str]]:
-        """Set metadata on assets, replacing any existing assetLabelingMetadata.
+        """Set metadata on assets, replacing any existing metadata.
 
         Args:
-            asset_labeling_metadata: List of metadata dictionaries to set on each asset.
+            json_metadata: List of metadata dictionaries to set on each asset.
                 Each dictionary contains key/value pairs to be set as the asset's metadata.
             asset_ids: The asset IDs to modify.
             project_id: The project ID.
@@ -488,16 +481,15 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         Examples:
             >>> kili.set_metadata(
-                    asset_labeling_metadata=[
+                    json_metadata=[
                         {"key1": "value1", "key2": "value2"},
                         {"key3": "value3"}
                     ],
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    project_id="cm92to3cx012u7l0w6kij9qvx"
                 )
         """
-        if is_empty_list_with_warning(
-            "set_metadata", "asset_labeling_metadata", asset_labeling_metadata
-        ):
+        if is_empty_list_with_warning("set_metadata", "json_metadata", json_metadata):
             return []
 
         assets = self.kili_api_gateway.list_assets(
@@ -511,13 +503,16 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         json_metadatas = []
         for i, asset in enumerate(assets):
             current_metadata = asset.get("jsonMetadata", {}) if asset.get("jsonMetadata") else {}
+            new_metadata = json_metadata[i] if i < len(json_metadata) else {}
 
-            new_metadata = asset_labeling_metadata[i] if i < len(asset_labeling_metadata) else {}
+            special_keys = ["text", "imageUrl", "url", "processingParameters"]
+            preserved_metadata = {
+                k: current_metadata[k] for k in special_keys if k in current_metadata
+            }
 
-            updated_metadata = current_metadata.copy()
-            updated_metadata["assetLabelingMetadata"] = new_metadata
+            preserved_metadata.update(new_metadata)
 
-            json_metadatas.append(updated_metadata)
+            json_metadatas.append(preserved_metadata)
 
         return self.update_properties_in_assets(
             asset_ids=asset_ids,
