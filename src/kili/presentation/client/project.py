@@ -1,5 +1,4 @@
 """Client presentation methods for projects."""
-
 import warnings
 from typing import (
     Any,
@@ -16,10 +15,11 @@ from typing import (
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.enums import ProjectType
+from kili.core.enums import DemoProjectType, ProjectType
 from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
+from kili.exceptions import IncompatibleArgumentsError
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )
@@ -46,6 +46,7 @@ class ProjectClientMethods(BaseClientMethods):
         project_type: Optional[ProjectType] = None,
         tags: Optional[ListOrTuple[str]] = None,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
+        from_demo_project: Optional[DemoProjectType] = None,
     ) -> Dict[Literal["id"], str]:
         """Create a project.
 
@@ -55,34 +56,31 @@ class ProjectClientMethods(BaseClientMethods):
             title: Title of the project.
             description: Description of the project.
             project_id: Identifier of the project to copy.
-            project_type: Currently, one of:
-
-                - `IMAGE_CLASSIFICATION_MULTI`
-                - `IMAGE_CLASSIFICATION_SINGLE`
-                - `IMAGE_OBJECT_DETECTION_POLYGON`
-                - `IMAGE_OBJECT_DETECTION_RECTANGLE`
-                - `IMAGE_OBJECT_DETECTION_SEMANTIC`
-                - `IMAGE_POSE_ESTIMATION`
-                - `OCR`
-                - `PDF_CLASSIFICATION_MULTI`
-                - `PDF_CLASSIFICATION_SINGLE`
-                - `PDF_NAMED_ENTITY_RECOGNITION`
-                - `PDF_OBJECT_DETECTION_RECTANGLE`
-                - `SPEECH_TO_TEXT`
-                - `TEXT_CLASSIFICATION_MULTI`
-                - `TEXT_CLASSIFICATION_SINGLE`
-                - `TEXT_NER`
-                - `TEXT_TRANSCRIPTION`
-                - `TIME_SERIES`
-                - `VIDEO_CLASSIFICATION_SINGLE`
-                - `VIDEO_FRAME_CLASSIFICATION`
-                - `VIDEO_FRAME_OBJECT_TRACKING`
-
+            project_type: Will be deprecated soon, use from_demo_project instead.
             tags: Tags to add to the project. The tags must already exist in the organization.
             compliance_tags: Compliance tags of the project.
                 Compliance tags are used to categorize projects based on the sensitivity of
                 the data being handled and the legal constraints associated with it.
                 Possible values are: `PHI` and `PII`.
+            from_demo_project: Currently, one of:
+
+                - `DEMO_COMPUTER_VISION_TUTORIAL`
+                - `DEMO_TEXT_TUTORIAL`
+                - `DEMO_PDF_TUTORIAL`
+                - `VIDEO_FRAME_OBJECT_TRACKING`
+                - `DEMO_SEGMENTATION_COCO`
+                - `DEMO_NER`
+                - `DEMO_ID_OCR`
+                - `DEMO_REVIEWS`
+                - `DEMO_OCR`
+                - `DEMO_NER_TWEETS`
+                - `DEMO_PLASTIC`
+                - `DEMO_CHATBOT`
+                - `DEMO_PDF`
+                - `DEMO_ANIMALS`
+                - `DEMO_LLM`
+                - `DEMO_LLM_INSTR_FOLLOWING`
+                - `DEMO_SEGMENTATION`
 
         Returns:
             A dict with the id of the created project.
@@ -94,6 +92,18 @@ class ProjectClientMethods(BaseClientMethods):
             For more detailed examples on how to create projects,
                 see [the recipe](https://docs.kili-technology.com/recipes/creating-a-project).
         """
+        if project_type is not None:
+            warnings.warn(
+                "Parameter project_type will be soon deprecated, please use from_demo_project instead.",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
+        if project_type is not None and from_demo_project is not None:
+            raise IncompatibleArgumentsError(
+                "Either provide project_type or from_demo_project. Not both at the same time."
+            )
+
         project_id = ProjectUseCases(self.kili_api_gateway).create_project(
             input_type=input_type,
             json_interface=json_interface,
@@ -102,6 +112,7 @@ class ProjectClientMethods(BaseClientMethods):
             project_id=project_id,
             project_type=project_type,
             compliance_tags=compliance_tags,
+            from_demo_project=from_demo_project,
         )
 
         if tags is not None:
