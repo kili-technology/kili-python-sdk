@@ -304,6 +304,7 @@ class ProjectClientMethods(BaseClientMethods):
         title: Optional[str] = None,
         use_honeypot: Optional[bool] = None,
         metadata_types: Optional[dict] = None,
+        metadata_properties: Optional[dict] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
         should_auto_assign: Optional[bool] = None,
     ) -> Dict[str, Any]:
@@ -339,9 +340,16 @@ class ProjectClientMethods(BaseClientMethods):
                 in honeypot or consensus settings
             title: Title of the project
             use_honeypot: Activate / Deactivate the use of honeypot in the project
-            metadata_types: Types of the project metadata.
+            metadata_types: DEPRECATED. Types of the project metadata.
                 Should be a `dict` of metadata fields name as keys and metadata types as values.
                 Currently, possible types are: `string`, `number`
+            metadata_properties: Properties of the project metadata.
+                Should be a `dict` of metadata fields name as keys and metadata properties as values.
+                Each property is a dict with the following keys:
+                    - `type`: Type of the metadata. Currently, possible types are: `string`, `number`
+                    - `filterable`: If `True`, the metadata can be used as filters in project queue
+                    - `visibleByLabeler`: If `True`, the metadata is visible one the asset by labelers
+                    - `visibleByReviewer`: If `True`, the metadata is visible one the asset by reviewers
             seconds_to_label_before_auto_assign: DEPRECATED, use `should_auto_assign` instead.
             should_auto_assign: If `True`, assets are automatically assigned to users when they start annotating.
 
@@ -349,31 +357,55 @@ class ProjectClientMethods(BaseClientMethods):
             A dict with the changed properties which indicates if the mutation was successful,
                 else an error message.
 
-        !!! example "Change Metadata Types"
-            Metadata fields are by default interpreted as `string` types. To change the type
-            of a metadata field, you can use the `update_properties_in_project` function with the
-            metadata_types argument. `metadata_types` is given as a dict of metadata field names
-            as keys and metadata types as values.
+        !!! example "Change Metadata Properties"
+            Metadata fields are by default interpreted as `string` types and have default properties.
+            To change the properties of a metadata field, you can use the `update_properties_in_project`
+            function with the `metadata_properties` argument. `metadata_properties` is given as a dict
+            of metadata field names as keys and metadata properties as values.
 
             ```python
             kili.update_properties_in_project(
                 project_id = project_id,
-                metadata_types = {
-                    'customConsensus': 'number',
-                    'sensitiveData': 'string',
-                    'uploadedFromCloud': 'string',
-                    'modelLabelErrorScore': 'number'
+                metadata_properties = {
+                    'customConsensus': {
+                        'filterable': True,
+                        'type': 'number',
+                        'visibleByLabeler': True,
+                        'visibleByReviewer': True,
+                    },
+                    'sensitiveData': {
+                        'filterable': True,
+                        'type': 'string',
+                        'visibleByLabeler': False,
+                        'visibleByReviewer': True,
+                    }
                 }
             )
             ```
 
-            Not providing a type for a metadata field or providing an unsupported one
-            will default to the `string` type.
+            Not providing a property or providing an unsupported one will use the default values:
+            ```
+            filterable: True
+            type: 'string'
+            visibleByLabeler: True
+            visibleByReviewer: True
+            ```
+
+        !!! note "Deprecated: Change Metadata Types"
+            The `metadata_types` parameter is deprecated. Please use `metadata_properties` instead.
         """
         if seconds_to_label_before_auto_assign is not None:
             warnings.warn(
                 "seconds_to_label_before_auto_assign is going to be deprecated. Please use"
                 " `should_auto_assign` field instead to auto assign assets",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
+        if metadata_types is not None:
+            warnings.warn(
+                "metadata_types is going to be deprecated. Please use"
+                " `metadata_properties` field instead to configure metadata properties.",
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -400,6 +432,7 @@ class ProjectClientMethods(BaseClientMethods):
             use_honeypot=use_honeypot,
             title=title,
             metadata_types=metadata_types,
+            metadata_properties=metadata_properties,
             should_auto_assign=should_auto_assign,
             seconds_to_label_before_auto_assign=seconds_to_label_before_auto_assign,
         )
