@@ -29,7 +29,7 @@ def project_where_mapper(filters: ProjectFilters) -> Dict:
 
 def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> Dict:
     """Build the GraphQL ProjectData variable to be sent in an operation."""
-    return {
+    result = {
         "archived": data.archived,
         "author": data.author,
         "complianceTags": data.compliance_tags,
@@ -42,7 +42,6 @@ def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> Dict:
         "inputType": data.input_type,
         "instructions": data.instructions,
         "jsonInterface": data.json_interface,
-        "metadataTypes": data.metadata_types,
         "minConsensusSize": data.min_consensus_size,
         "numberOfAssets": data.number_of_assets,
         "rules": data.rules,
@@ -55,3 +54,18 @@ def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> Dict:
         "title": data.title,
         "useHoneyPot": data.use_honeypot,
     }
+
+    if data.metadata_properties is not None:
+        result["metadataProperties"] = data.metadata_properties
+    elif data.metadata_types is not None:
+        metadata_properties = {}
+        for key, type_value in data.metadata_types.items():
+            metadata_properties[key] = {
+                "filterable": True,
+                "type": type_value,
+                "visibleByLabeler": True,
+                "visibleByReviewer": True,
+            }
+        result["metadataProperties"] = metadata_properties
+
+    return result

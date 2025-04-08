@@ -25,6 +25,7 @@ class ProjectDataKiliAPIGatewayInput:
     instructions: Optional[str]
     json_interface: Optional[str]
     metadata_types: Optional[Dict]
+    metadata_properties: Optional[Dict]
     min_consensus_size: Optional[int]
     number_of_assets: Optional[int]
     rules: Optional[str]
