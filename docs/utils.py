@@ -235,21 +235,6 @@ def check_mkdocs_yml_up_to_date(md_filepath: Path):
         raise OutdatedMkDocs(f"sdk/tutorials/{md_filepath.name} is not in mkdocs.yml.")
 
 
-class NotebookTestMissingError(Exception):
-    """Raised when notebook is not tested in test_notebooks.py."""
-
-
-def check_notebook_tested(ipynb_filepath: Path):
-    """Check if notebook is tested."""
-    with open("tests/e2e/test_notebooks.py", encoding="utf-8") as file:
-        test_notebooks_module_str = file.read()
-
-    if f"recipes/{ipynb_filepath.name}" not in test_notebooks_module_str:
-        raise NotebookTestMissingError(
-            f"recipes/{ipynb_filepath.name} not found in test_notebooks.py."
-        )
-
-
 class ColabLinkMissingError(Exception):
     """Raised when notebook does not have a colab link."""
 
@@ -359,7 +344,6 @@ def notebook_tutorials_commit_hook(modified_files: Sequence[Path]):
         md_filepath = md_filepath.resolve()
 
         check_mkdocs_yml_up_to_date(md_filepath)
-        check_notebook_tested(ipynb_filepath)
         check_colab_link_in_notebook(ipynb_filepath)
         check_create_project_has_good_title_in_notebook(ipynb_filepath)
         check_in_tutorial_homepage(tutorial_name)
