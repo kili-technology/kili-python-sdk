@@ -105,7 +105,7 @@ class ProjectUseCases(BaseUseCases):
         """Return the number of projects that match the filter."""
         return self._kili_api_gateway.count_projects(project_filters)
 
-    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-locals,too-many-branches
     def update_properties_in_project(
         self,
         project_id: ProjectId,
@@ -130,6 +130,7 @@ class ProjectUseCases(BaseUseCases):
         title: Optional[str] = None,
         use_honeypot: Optional[bool] = None,
         metadata_types: Optional[Dict] = None,
+        metadata_properties: Optional[Dict] = None,
         should_auto_assign: Optional[bool] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
     ) -> Dict[str, object]:
@@ -149,6 +150,29 @@ class ProjectUseCases(BaseUseCases):
         if should_auto_assign is None and seconds_to_label_before_auto_assign is not None:
             should_auto_assign = seconds_to_label_before_auto_assign is not None
 
+        # Handle metadata_types deprecation and conversion to metadata_properties
+        if metadata_types is not None:
+            if metadata_properties is None:
+                metadata_properties = {}
+                for key, type_value in metadata_types.items():
+                    metadata_properties[key] = {
+                        "filterable": True,
+                        "type": type_value,
+                        "visibleByLabeler": True,
+                        "visibleByReviewer": True,
+                    }
+
+        if metadata_properties is not None:
+            for key, properties in metadata_properties.items():
+                if "filterable" not in properties:
+                    properties["filterable"] = True
+                if "type" not in properties:
+                    properties["type"] = "string"
+                if "visibleByLabeler" not in properties:
+                    properties["visibleByLabeler"] = True
+                if "visibleByReviewer" not in properties:
+                    properties["visibleByReviewer"] = True
+
         project_data = ProjectDataKiliAPIGatewayInput(
             can_navigate_between_assets=can_navigate_between_assets,
             can_skip_asset=can_skip_asset,
@@ -161,6 +185,7 @@ class ProjectUseCases(BaseUseCases):
             input_type=input_type,
             json_interface=json.dumps(json_interface) if json_interface is not None else None,
             metadata_types=metadata_types,
+            metadata_properties=metadata_properties,
             min_consensus_size=min_consensus_size,
             number_of_assets=number_of_assets,
             number_of_skipped_assets=number_of_skipped_assets,

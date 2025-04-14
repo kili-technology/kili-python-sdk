@@ -24,7 +24,7 @@ mutation(
     $instructions: String
     $inputType: InputType
     $jsonInterface: String
-    $metadataTypes: JSON
+    $metadataProperties: JSON
     $minConsensusSize: Int
     $numberOfAssets: Int
     $numberOfSkippedAssets: Int
@@ -50,7 +50,7 @@ mutation(
       instructions: $instructions
       inputType: $inputType
       jsonInterface: $jsonInterface
-      metadataTypes: $metadataTypes
+      metadataProperties: $metadataProperties
       minConsensusSize: $minConsensusSize
       numberOfAssets: $numberOfAssets
       numberOfSkippedAssets: $numberOfSkippedAssets
