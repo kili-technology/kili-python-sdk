@@ -18,14 +18,11 @@ def test_add_metadata_adds_to_existing_metadata(mocker: pytest_mock.MockerFixtur
     existing_assets = [
         {
             "id": "asset1",
-            "jsonMetadata": {"text": "Some text", "assetLabelingMetadata": {"existing1": "value1"}},
+            "jsonMetadata": {"text": "Some text", "existing1": "value1"},
         },
         {
             "id": "asset2",
-            "jsonMetadata": {
-                "imageUrl": "http://example.com/image.jpg",
-                "assetLabelingMetadata": {"existing2": "value2"},
-            },
+            "jsonMetadata": {"imageUrl": "http://example.com/image.jpg", "existing2": "value2"},
         },
     ]
 
@@ -46,7 +43,7 @@ def test_add_metadata_adds_to_existing_metadata(mocker: pytest_mock.MockerFixtur
     ]
 
     result = mutations_asset.add_metadata(
-        asset_labeling_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
+        json_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
     )
 
     kili_api_gateway.list_assets.assert_called_once_with(
@@ -61,13 +58,11 @@ def test_add_metadata_adds_to_existing_metadata(mocker: pytest_mock.MockerFixtur
     assert call_args["asset_ids"] == asset_ids
 
     expected_metadata = [
-        {
-            "text": "Some text",
-            "assetLabelingMetadata": {"existing1": "value1", "new_key1": "new_value1"},
-        },
+        {"text": "Some text", "existing1": "value1", "new_key1": "new_value1"},
         {
             "imageUrl": "http://example.com/image.jpg",
-            "assetLabelingMetadata": {"existing2": "value2", "new_key2": "new_value2"},
+            "existing2": "value2",
+            "new_key2": "new_value2",
         },
     ]
 
@@ -82,16 +77,14 @@ def test_set_metadata_replaces_existing_metadata(mocker: pytest_mock.MockerFixtu
     existing_assets = [
         {
             "id": "asset1",
-            "jsonMetadata": {
-                "text": "Some text",
-                "assetLabelingMetadata": {"existing1": "value1", "should_be_removed": True},
-            },
+            "jsonMetadata": {"text": "Some text", "existing1": "value1", "should_be_removed": True},
         },
         {
             "id": "asset2",
             "jsonMetadata": {
                 "imageUrl": "http://example.com/image.jpg",
-                "assetLabelingMetadata": {"existing2": "value2", "also_remove": "yes"},
+                "existing2": "value2",
+                "also_remove": "yes",
             },
         },
     ]
@@ -113,7 +106,7 @@ def test_set_metadata_replaces_existing_metadata(mocker: pytest_mock.MockerFixtu
     ]
 
     result = mutations_asset.set_metadata(
-        asset_labeling_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
+        json_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
     )
 
     kili_api_gateway.list_assets.assert_called_once_with(
@@ -128,11 +121,8 @@ def test_set_metadata_replaces_existing_metadata(mocker: pytest_mock.MockerFixtu
     assert call_args["asset_ids"] == asset_ids
 
     expected_metadata = [
-        {"text": "Some text", "assetLabelingMetadata": {"new_key1": "new_value1"}},
-        {
-            "imageUrl": "http://example.com/image.jpg",
-            "assetLabelingMetadata": {"new_key2": "new_value2"},
-        },
+        {"text": "Some text", "new_key1": "new_value1"},
+        {"imageUrl": "http://example.com/image.jpg", "new_key2": "new_value2"},
     ]
 
     assert call_args["json_metadatas"] == expected_metadata
@@ -162,14 +152,14 @@ def test_add_metadata_handles_missing_metadata(mocker: pytest_mock.MockerFixture
     ]
 
     mutations_asset.add_metadata(
-        asset_labeling_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
+        json_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
     )
 
     call_args = update_mock.call_args[1]
 
     expected_metadata = [
-        {"assetLabelingMetadata": {"new_key1": "new_value1"}},
-        {"assetLabelingMetadata": {"new_key2": "new_value2"}},
+        {"new_key1": "new_value1"},
+        {"new_key2": "new_value2"},
     ]
 
     assert call_args["json_metadatas"] == expected_metadata
@@ -185,11 +175,10 @@ def test_multiple_assets_with_different_metadata_structures(mocker: pytest_mock.
             "id": "asset2",
             "jsonMetadata": {
                 "imageUrl": "http://example.com/image.jpg",
-                "assetLabelingMetadata": {},
             },
         },
         {"id": "asset3", "jsonMetadata": None},
-        {"id": "asset4", "jsonMetadata": {"assetLabelingMetadata": {"existing4": "value4"}}},
+        {"id": "asset4", "jsonMetadata": {"existing4": "value4"}},
     ]
 
     kili_api_gateway.list_assets.return_value = existing_assets
@@ -211,7 +200,7 @@ def test_multiple_assets_with_different_metadata_structures(mocker: pytest_mock.
     ]
 
     mutations_asset.add_metadata(
-        asset_labeling_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
+        json_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
     )
 
     add_metadata_call_args = update_mock.call_args[1]
@@ -219,23 +208,23 @@ def test_multiple_assets_with_different_metadata_structures(mocker: pytest_mock.
     update_mock.reset_mock()
 
     mutations_asset.set_metadata(
-        asset_labeling_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
+        json_metadata=new_metadata, asset_ids=asset_ids, project_id=project_id
     )
 
     set_metadata_call_args = update_mock.call_args[1]
 
     expected_add_metadata = [
-        {"text": "Text 1", "assetLabelingMetadata": {"meta1": "value1"}},
-        {"imageUrl": "http://example.com/image.jpg", "assetLabelingMetadata": {"meta2": "value2"}},
-        {"assetLabelingMetadata": {"meta3": "value3"}},
-        {"assetLabelingMetadata": {"existing4": "value4", "meta4": "value4"}},
+        {"text": "Text 1", "meta1": "value1"},
+        {"imageUrl": "http://example.com/image.jpg", "meta2": "value2"},
+        {"meta3": "value3"},
+        {"existing4": "value4", "meta4": "value4"},
     ]
 
     expected_set_metadata = [
-        {"text": "Text 1", "assetLabelingMetadata": {"meta1": "value1"}},
-        {"imageUrl": "http://example.com/image.jpg", "assetLabelingMetadata": {"meta2": "value2"}},
-        {"assetLabelingMetadata": {"meta3": "value3"}},
-        {"assetLabelingMetadata": {"meta4": "value4"}},
+        {"text": "Text 1", "meta1": "value1"},
+        {"imageUrl": "http://example.com/image.jpg", "meta2": "value2"},
+        {"meta3": "value3"},
+        {"meta4": "value4"},
     ]
 
     assert add_metadata_call_args["json_metadatas"] == expected_add_metadata

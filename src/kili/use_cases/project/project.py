@@ -102,7 +102,7 @@ class ProjectUseCases(BaseUseCases):
         """Return the number of projects that match the filter."""
         return self._kili_api_gateway.count_projects(project_filters)
 
-    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-locals,too-many-branches
     def update_properties_in_project(
         self,
         project_id: ProjectId,
