@@ -34,12 +34,16 @@ from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
     disable_tqdm_if_as_generator,
 )
+from kili.presentation.client.helpers.filter_conversion import (
+    convert_step_in_to_step_id_in_filter,
+)
 from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.label import LabelUseCases
 from kili.use_cases.label.types import LabelToCreateUseCaseInput
+from kili.use_cases.project.project import ProjectUseCases
 from kili.utils.labels.parsing import ParsedLabel
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -1146,8 +1150,8 @@ class LabelClientMethods(BaseClientMethods):
                 - `label_reviewer_not_in`
                 - `assignee_in`
                 - `assignee_not_in`
-                - `skipped`
-                - `status_in`
+                - `skipped`: only applicable if the project is in the WorkflowV1 (legacy).
+                - `status_in`: only applicable if the project is in the WorkflowV1 (legacy).
                 - `label_category_search`
                 - `created_at_gte`
                 - `created_at_lte`
@@ -1156,6 +1160,8 @@ class LabelClientMethods(BaseClientMethods):
                 - `inference_mark_gte`
                 - `inference_mark_lte`
                 - `metadata_where`
+                - `step_name_in`: : only applicable if the project is in the WorkflowV2.
+                - `step_status_in`: only applicable if the project is in the WorkflowV2.
 
                 See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.
             normalized_coordinates: This parameter is only effective on the Kili (a.k.a raw) format.
@@ -1203,6 +1209,31 @@ class LabelClientMethods(BaseClientMethods):
             resolved_asset_ids = [id_map[AssetExternalId(i)] for i in external_ids]
         else:
             resolved_asset_ids = cast(List[AssetId], asset_ids)
+
+        if asset_filter_kwargs and (
+            asset_filter_kwargs.get("step_name_in") is not None
+            or asset_filter_kwargs.get("step_status_in") is not None
+            or asset_filter_kwargs.get("status_in") is not None
+            or asset_filter_kwargs.get("skipped") is not None
+        ):
+            project_use_cases = ProjectUseCases(self.kili_api_gateway)
+            project_steps = project_use_cases.get_project_steps(project_id)
+
+            step_name_in = asset_filter_kwargs.get("step_name_in")
+            step_status_in = asset_filter_kwargs.get("step_status_in")
+            status_in = asset_filter_kwargs.get("status_in")
+            skipped = asset_filter_kwargs.get("skipped")
+            if step_name_in is not None or step_status_in is not None or status_in is not None:
+                step_id_in = convert_step_in_to_step_id_in_filter(
+                    project_steps=project_steps, asset_filter_kwargs=asset_filter_kwargs
+                )
+                asset_filter_kwargs.pop("step_name_in", None)
+                asset_filter_kwargs["step_id_in"] = step_id_in
+            elif skipped is not None and len(project_steps) != 0:
+                warnings.warn(
+                    "Filter skipped given : only use filter step_status_in with the SKIPPED step status instead for this project",
+                    stacklevel=1,
+                )
 
         try:
             return export_labels(

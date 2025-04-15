@@ -140,6 +140,8 @@ def fetch_assets(
         "inference_mark_gte": asset_filter_kwargs.pop("inference_mark_gte", None),
         "inference_mark_lte": asset_filter_kwargs.pop("inference_mark_lte", None),
         "metadata_where": asset_filter_kwargs.pop("metadata_where", None),
+        "step_id_in": asset_filter_kwargs.pop("step_id_in", None),
+        "step_status_in": asset_filter_kwargs.pop("step_status_in", None),
     }
 
     if asset_filter_kwargs:
