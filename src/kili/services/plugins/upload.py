@@ -318,7 +318,7 @@ class PluginUploader:
 
         action = "updated" if update else "created"
 
-        logger.info(f"Plugin is being {action}... This should take approximately 3 minutes.")
+        logger.info(f"Plugin is being {action}... This should take few minutes.")
 
         n_tries = 0
         status = None
@@ -335,7 +335,9 @@ class PluginUploader:
 
             n_tries += 1
 
-        if status == "DEPLOYING" and n_tries == 20:
+        # this represents the case where the plugin is still deploying
+        # after 150 tries (37.5 minutes)
+        if status == "DEPLOYING" and n_tries == 150:
             raise RuntimeError(
                 "We could not check your plugin was deployed in time. Please check again the"
                 " status of the plugin after some minutes with the command:"
