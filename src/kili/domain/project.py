@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, Literal, NewType, Optional
+from typing import TYPE_CHECKING, Literal, NewType, Optional, TypedDict
 
 from .types import ListOrTuple
 
@@ -13,6 +13,14 @@ ProjectId = NewType("ProjectId", str)
 InputType = Literal[
     "IMAGE", "GEOSPATIAL", "PDF", "TEXT", "VIDEO", "LLM_RLHF", "LLM_INSTR_FOLLOWING", "LLM_STATIC"
 ]
+
+
+@dataclass(frozen=True)
+class ProjectStep(TypedDict, total=True):
+    """Project step type."""
+
+    id: str
+    name: str
 
 
 class InputTypeEnum(str, Enum):

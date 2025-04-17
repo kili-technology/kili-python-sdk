@@ -12,9 +12,11 @@ if TYPE_CHECKING:
 
 AssetId = NewType("AssetId", str)
 AssetExternalId = NewType("AssetExternalId", str)
-
+AssetStatusInStep = NewType("AssetStatusInStep", str)
 
 AssetStatus = Literal["TODO", "ONGOING", "LABELED", "REVIEWED", "TO_REVIEW"]
+
+StatusInStep = Literal["TO_DO", "DOING", "PARTIALLY_DONE", "REDO", "DONE", "SKIPPED"]
 
 
 @dataclass
@@ -48,8 +50,6 @@ class AssetFilters:
     assignee_in: Optional[ListOrTuple[str]] = None
     assignee_not_in: Optional[ListOrTuple[str]] = None
     metadata_where: Optional[dict] = None
-    skipped: Optional[bool] = None
-    status_in: Optional[ListOrTuple[AssetStatus]] = None
     updated_at_gte: Optional[str] = None
     updated_at_lte: Optional[str] = None
     label_category_search: Optional[str] = None
@@ -59,3 +59,7 @@ class AssetFilters:
     inference_mark_lte: Optional[float] = None
     issue_type: Optional["IssueType"] = None
     issue_status: Optional["IssueStatus"] = None
+    skipped: Optional[bool] = None
+    status_in: Optional[ListOrTuple[AssetStatus]] = None
+    step_id_in: Optional[ListOrTuple[str]] = None
+    step_status_in: Optional[ListOrTuple[StatusInStep]] = None
