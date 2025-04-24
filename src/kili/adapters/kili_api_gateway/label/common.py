@@ -40,8 +40,7 @@ def get_annotation_fragment():
         ),
         video_object_detection_annotation_fragment=fragment_builder(
             (
-                "keyAnnotations.annotationValue.vertices.x",
-                "keyAnnotations.annotationValue.vertices.y",
+                "keyAnnotations.annotationValue.vertices",
                 "name",
                 "mid",
                 "category",
