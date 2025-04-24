@@ -1,7 +1,7 @@
 """Project use cases."""
 
 import json
-from typing import Dict, Generator, Optional
+from typing import Dict, Generator, List, Optional
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -12,7 +12,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.project.mappers import project_data_mapper
 from kili.adapters.kili_api_gateway.project.types import ProjectDataKiliAPIGatewayInput
 from kili.core.enums import DemoProjectType, ProjectType
-from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
+from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId, ProjectStep
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 from kili.use_cases.base import BaseUseCases
@@ -183,3 +183,18 @@ class ProjectUseCases(BaseUseCases):
             fields += ("id",)
 
         return self._kili_api_gateway.update_properties_in_project(project_id, project_data, fields)
+
+    def get_project_steps(
+        self,
+        project_id: str,
+    ) -> List[ProjectStep]:
+        """Get and return project steps."""
+        project_filters = ProjectFilters(id=ProjectId(project_id))
+        options = QueryOptions(disable_tqdm=True, first=1)
+        project_gen = self.list_projects(
+            project_filters=project_filters, fields=["steps.id", "steps.name"], options=options
+        )
+        projects = list(project_gen)
+        project = projects[0]
+
+        return project["steps"]

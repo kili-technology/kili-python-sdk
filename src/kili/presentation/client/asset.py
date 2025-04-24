@@ -17,7 +17,13 @@ from typing import (
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
+from kili.domain.asset.asset import (
+    AssetExternalId,
+    AssetFilters,
+    AssetId,
+    AssetStatus,
+    StatusInStep,
+)
 from kili.domain.issue import IssueStatus, IssueType
 from kili.domain.label import LabelType
 from kili.domain.project import ProjectId
@@ -25,7 +31,11 @@ from kili.domain.types import ListOrTuple
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )
+from kili.presentation.client.helpers.filter_conversion import (
+    convert_step_in_to_step_id_in_filter,
+)
 from kili.use_cases.asset import AssetUseCases
+from kili.use_cases.project.project import ProjectUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .base import BaseClientMethods
@@ -80,8 +90,6 @@ class AssetClientMethods(BaseClientMethods):
         label_honeypot_mark_lt: Optional[float] = None,
         label_type_in: Optional[List[LabelType]] = None,
         metadata_where: Optional[dict] = None,
-        skipped: Optional[bool] = None,
-        status_in: Optional[List[AssetStatus]] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         label_category_search: Optional[str] = None,
@@ -112,6 +120,10 @@ class AssetClientMethods(BaseClientMethods):
         external_id_strictly_in: Optional[List[str]] = None,
         external_id_in: Optional[List[str]] = None,
         label_output_format: Literal["dict", "parsed_label"] = "dict",
+        skipped: Optional[bool] = None,
+        status_in: Optional[List[AssetStatus]] = None,
+        step_name_in: Optional[List[str]] = None,
+        step_status_in: Optional[List[StatusInStep]] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[Dict, None, None]:
@@ -158,8 +170,6 @@ class AssetClientMethods(BaseClientMethods):
         label_honeypot_mark_lt: Optional[float] = None,
         label_type_in: Optional[List[LabelType]] = None,
         metadata_where: Optional[dict] = None,
-        skipped: Optional[bool] = None,
-        status_in: Optional[List[AssetStatus]] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         label_category_search: Optional[str] = None,
@@ -190,6 +200,10 @@ class AssetClientMethods(BaseClientMethods):
         external_id_strictly_in: Optional[List[str]] = None,
         external_id_in: Optional[List[str]] = None,
         label_output_format: Literal["dict", "parsed_label"] = "dict",
+        skipped: Optional[bool] = None,
+        status_in: Optional[List[AssetStatus]] = None,
+        step_name_in: Optional[List[str]] = None,
+        step_status_in: Optional[List[StatusInStep]] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> List[Dict]:
@@ -236,8 +250,6 @@ class AssetClientMethods(BaseClientMethods):
         label_honeypot_mark_lt: Optional[float] = None,
         label_type_in: Optional[List[LabelType]] = None,
         metadata_where: Optional[dict] = None,
-        skipped: Optional[bool] = None,
-        status_in: Optional[List[AssetStatus]] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
         label_category_search: Optional[str] = None,
@@ -268,6 +280,10 @@ class AssetClientMethods(BaseClientMethods):
         external_id_strictly_in: Optional[List[str]] = None,
         external_id_in: Optional[List[str]] = None,
         label_output_format: Literal["dict", "parsed_label"] = "dict",
+        skipped: Optional[bool] = None,
+        status_in: Optional[List[AssetStatus]] = None,
+        step_name_in: Optional[List[str]] = None,
+        step_status_in: Optional[List[StatusInStep]] = None,
         *,
         as_generator: bool = False,
     ) -> Union[Iterable[Dict], "pd.DataFrame"]:
@@ -289,8 +305,6 @@ class AssetClientMethods(BaseClientMethods):
             metadata_where: Filters by the values of the metadata of the asset.
             honeypot_mark_gt: Deprecated. Use `honeypot_mark_gte` instead.
             honeypot_mark_lt: Deprecated. Use `honeypot_mark_lte` instead.
-            status_in: Returned assets should have a status that belongs to that list, if given.
-                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
             label_author_in: Returned assets should have a label whose author belongs to that list, if given. An author can be designated by the first name, the last name, or the first name + last name.
             label_consensus_mark_gt: Deprecated. Use `label_consensus_mark_gte` instead.
@@ -300,7 +314,6 @@ class AssetClientMethods(BaseClientMethods):
             label_created_at_lt: Deprecated. Use `label_created_at_lte` instead.
             label_honeypot_mark_gt: Deprecated. Use `label_honeypot_mark_gte` instead.
             label_honeypot_mark_lt: Deprecated. Use `label_honeypot_mark_lte` instead.
-            skipped: Returned assets should be skipped
             updated_at_gte: Returned assets should have a label whose update date is greater or equal to this date.
             updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.
             format: If equal to 'pandas', returns a pandas DataFrame
@@ -335,6 +348,15 @@ class AssetClientMethods(BaseClientMethods):
             external_id_in: Returned assets should have external ids that partially match the ones in the list.
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
             label_output_format: If `parsed_label`, the labels in the assets will be parsed. More information on parsed labels in the [documentation](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/).
+            skipped: Returned assets should be skipped
+                Only applicable if the project is in WorkflowV1 (legacy).
+            status_in: Returned assets should have a status that belongs to that list, if given.
+                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
+                Only applicable if the project is in the WorkflowV1 (legacy).
+            step_name_in: Returned assets are in the step whose name belong to that list, if given.
+                Only applicable if the project is in WorkflowV2.
+            step_status_in: Returned assets have the status in their step that belongs to that list, if given.
+                Only applicable if the project is in WorkflowV2.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -431,6 +453,33 @@ class AssetClientMethods(BaseClientMethods):
 
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
+        step_id_in = None
+        if (
+            step_name_in is not None
+            or step_status_in is not None
+            or status_in is not None
+            or skipped is not None
+        ):
+            project_use_cases = ProjectUseCases(self.kili_api_gateway)
+            project_steps = project_use_cases.get_project_steps(project_id)
+
+            if step_name_in is not None or step_status_in is not None or status_in is not None:
+                step_id_in = convert_step_in_to_step_id_in_filter(
+                    project_steps=project_steps,
+                    fields=fields,
+                    asset_filter_kwargs={
+                        "step_name_in": step_name_in,
+                        "step_status_in": step_status_in,
+                        "status_in": status_in,
+                        "skipped": skipped,
+                    },
+                )
+            elif skipped is not None and len(project_steps) != 0:
+                warnings.warn(
+                    "Filter skipped given : only use filter step_status_in with the SKIPPED step status instead for this project",
+                    stacklevel=1,
+                )
+
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
         filters = AssetFilters(
             project_id=ProjectId(project_id),
@@ -474,6 +523,8 @@ class AssetClientMethods(BaseClientMethods):
             assignee_not_in=assignee_not_in,
             issue_status=issue_status,
             issue_type=issue_type,
+            step_id_in=step_id_in,
+            step_status_in=step_status_in,
         )
         assets_gen = asset_use_cases.list_assets(
             filters,
