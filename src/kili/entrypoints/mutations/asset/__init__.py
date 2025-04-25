@@ -90,8 +90,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
             json_metadata_array: The metadata given to each asset should be stored in a json like dict with keys.
 
-                - Add metadata visible on the asset with the following keys: `imageUrl`, `text`, `url`, `assetLabelingMetadata`.
-                    Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': '','assetLabelingMetadata': {'key': 'value'}}]`.
+                - Add metadata visible on the asset
+                    Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': '','key1': 'value1'}]`.
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
                 - In Image projects with geoTIFF assets, you can specify the epsg, the `minZoom` and `maxZoom` values for the `processingParameters` key.
