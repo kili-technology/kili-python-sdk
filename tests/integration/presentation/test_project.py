@@ -62,7 +62,6 @@ def test_when_updating_project_then_it_returns_updated_project(mocker: pytest_mo
                 "inputType": None,
                 "instructions": None,
                 "jsonInterface": None,
-                "metadataTypes": None,
                 "minConsensusSize": None,
                 "numberOfAssets": None,
                 "rules": None,

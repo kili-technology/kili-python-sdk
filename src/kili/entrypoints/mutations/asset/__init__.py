@@ -1,5 +1,4 @@
 """Asset mutations."""
-
 import warnings
 from typing import Any, Dict, List, Literal, Optional, Union, cast
 
@@ -11,7 +10,7 @@ from typeguard import typechecked
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetFilters, AssetId
 from kili.domain.project import ProjectId
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
@@ -91,8 +90,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
             json_metadata_array: The metadata given to each asset should be stored in a json like dict with keys.
 
-                - Add metadata visible on the asset with the following keys: `imageUrl`, `text`, `url`.
-                    Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': ''}]`.
+                - Add metadata visible on the asset
+                    Example for one asset: `json_metadata_array = [{'imageUrl': '','text': '','url': '','key1': 'value1'}]`.
                 - For VIDEO projects (and not VIDEO_LEGACY), you can specify a value with key 'processingParameters' to specify the sampling rate (default: 30).
                     Example for one asset: `json_metadata_array = [{'processingParameters': {'framesPlayedPerSecond': 10}}]`.
                 - In Image projects with geoTIFF assets, you can specify the epsg, the `minZoom` and `maxZoom` values for the `processingParameters` key.
@@ -408,6 +407,117 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         )
         formated_results = [self.format_result("data", result, None) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
+
+    @typechecked
+    def add_metadata(
+        self,
+        json_metadata: List[Dict[str, Union[str, int, float]]],
+        asset_ids: List[str],
+        project_id: str,
+    ) -> List[Dict[Literal["id"], str]]:
+        """Add metadata to assets without overriding existing metadata.
+
+        Args:
+            json_metadata: List of metadata dictionaries to add to each asset.
+                Each dictionary contains key/value pairs to be added to the asset's metadata.
+            asset_ids: The asset IDs to modify.
+            project_id: The project ID.
+
+        Returns:
+            A list of dictionaries with the asset ids.
+
+        Examples:
+            >>> kili.add_metadata(
+                    json_metadata=[
+                        {"key1": "value1", "key2": "value2"},
+                        {"key3": "value3"}
+                    ],
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    project_id="cm92to3cx012u7l0w6kij9qvx"
+                )
+        """
+        if is_empty_list_with_warning("add_metadata", "json_metadata", json_metadata):
+            return []
+
+        assets = self.kili_api_gateway.list_assets(
+            AssetFilters(
+                project_id=ProjectId(project_id), asset_id_in=cast(List[AssetId], asset_ids)
+            ),
+            ["id", "jsonMetadata"],
+            QueryOptions(disable_tqdm=True),
+        )
+
+        json_metadatas = []
+        for i, asset in enumerate(assets):
+            current_metadata = asset.get("jsonMetadata", {}) if asset.get("jsonMetadata") else {}
+            new_metadata = json_metadata[i] if i < len(json_metadata) else {}
+
+            current_metadata.update(new_metadata)
+
+            json_metadatas.append(current_metadata)
+
+        return self.update_properties_in_assets(
+            asset_ids=asset_ids,
+            json_metadatas=json_metadatas,
+        )
+
+    @typechecked
+    def set_metadata(
+        self,
+        json_metadata: List[Dict[str, Union[str, int, float]]],
+        asset_ids: List[str],
+        project_id: str,
+    ) -> List[Dict[Literal["id"], str]]:
+        """Set metadata on assets, replacing any existing metadata.
+
+        Args:
+            json_metadata: List of metadata dictionaries to set on each asset.
+                Each dictionary contains key/value pairs to be set as the asset's metadata.
+            asset_ids: The asset IDs to modify.
+            project_id: The project ID.
+
+        Returns:
+            A list of dictionaries with the asset ids.
+
+        Examples:
+            >>> kili.set_metadata(
+                    json_metadata=[
+                        {"key1": "value1", "key2": "value2"},
+                        {"key3": "value3"}
+                    ],
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    project_id="cm92to3cx012u7l0w6kij9qvx"
+                )
+        """
+        if is_empty_list_with_warning("set_metadata", "json_metadata", json_metadata):
+            return []
+
+        assets = self.kili_api_gateway.list_assets(
+            AssetFilters(
+                project_id=ProjectId(project_id), asset_id_in=cast(List[AssetId], asset_ids)
+            ),
+            ["id", "jsonMetadata"],
+            QueryOptions(disable_tqdm=True),
+        )
+
+        json_metadatas = []
+        for i, asset in enumerate(assets):
+            current_metadata = asset.get("jsonMetadata", {}) if asset.get("jsonMetadata") else {}
+            new_metadata = json_metadata[i] if i < len(json_metadata) else {}
+
+            special_keys = ["text", "imageUrl", "url", "processingParameters"]
+            preserved_metadata = {
+                k: current_metadata[k] for k in special_keys if k in current_metadata
+            }
+
+            preserved_metadata.update(new_metadata)
+
+            json_metadatas.append(preserved_metadata)
+
+        return self.update_properties_in_assets(
+            asset_ids=asset_ids,
+            json_metadatas=json_metadatas,
+        )
 
     @typechecked
     def change_asset_external_ids(
