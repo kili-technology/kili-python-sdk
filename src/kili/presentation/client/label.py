@@ -1257,3 +1257,56 @@ class LabelClientMethods(BaseClientMethods):
         except NoCompatibleJobError as excp:
             warnings.warn(str(excp), stacklevel=2)
             return None
+
+    @typechecked
+    def append_labels_from_shapefiles(
+        self,
+        project_id: str,
+        asset_external_id: str,
+        shapefile_paths: List[str],
+        job_names: List[str],
+        category_names: List[str],
+        from_epsgs: Optional[List[int]] = None,
+    ):
+        """Import and convert shapefiles into annotations for a specific asset in a Kili project.
+
+        This method processes shapefile geometries (points, polylines, and polygons), converts them
+        to the appropriate Kili annotation format, and appends them as labels to the specified asset.
+        Each shapefile's geometries are associated with a job and category name in the Kili project.
+
+        Args:
+            project_id: The ID of the Kili project to add the labels to.
+            asset_external_id: The external ID of the asset to label.
+            shapefile_paths: List of file paths to the shapefiles to be processed.
+            job_names: List of job names in the Kili project, corresponding to each shapefile.
+                      Each job name must match an existing job in the project.
+            category_names: List of category names corresponding to each shapefile.
+                           Each category name must exist in the corresponding job's ontology.
+            from_epsgs: Optional list of EPSG codes specifying the coordinate reference systems
+                       of the shapefiles. If not provided, EPSG:4326 (WGS84) is assumed for all files.
+                       All geometries will be transformed to EPSG:4326 before being added to Kili.
+
+        Note:
+            This function requires the 'gis' extra dependencies.
+            Install them with: pip install kili[gis] or pip install 'kili[gis]'
+        """
+        try:
+            from kili.use_cases.label.process_shapefiles import get_json_response_from_shapefiles
+        except ImportError:
+            raise ImportError(
+                "This function requires the 'gis' extra dependencies. "
+                "Install them with: pip install kili[gis] or pip install 'kili[gis]'"
+            )
+
+        json_response = get_json_response_from_shapefiles(
+            shapefile_paths=shapefile_paths,
+            job_names=job_names,
+            category_names=category_names,
+            from_epsgs=from_epsgs,
+        )
+
+        self.append_labels(
+            project_id=project_id,
+            json_response_array=[json_response],
+            asset_external_id_array=[asset_external_id],
+        )
