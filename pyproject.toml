@@ -94,6 +94,7 @@ dev = [
 ]
 image-utils = ["opencv-python >= 4.0.0, < 5.0.0"]
 azure = ["azure-storage-blob >= 12.0.0, < 13.0.0"]
+gis = ["pyproj >= 3.7.1; python_version >= '3.10'"]
 
 [tool.pyright]
 exclude = ["**/__pycache__", ".github/scripts/upload_test_stats_datadog.py"]

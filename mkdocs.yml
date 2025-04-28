@@ -51,6 +51,7 @@ nav:
           - Segmentation Pre-annotations: sdk/tutorials/pixel_level_masks.md
           - Inference Labels: sdk/tutorials/inference_labels.md
           - DINOv2 Classification Pre-annotations: sdk/tutorials/finetuning_dinov2.md
+          - Import labels from shapefiles (GIS): sdk/tutorials/import_labels_from_shapefiles.md
       - Converting Labels:
           - DICOM: sdk/tutorials/medical_imaging.md
           - Tagtog: sdk/tutorials/tagtog_to_kili.md
