@@ -42,6 +42,7 @@ from kili.services.export.exceptions import NoCompatibleJobError
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.label import LabelUseCases
+from kili.use_cases.label.process_shapefiles import get_json_response_from_shapefiles
 from kili.use_cases.label.types import LabelToCreateUseCaseInput
 from kili.use_cases.project.project import ProjectUseCases
 from kili.utils.labels.parsing import ParsedLabel
@@ -1290,14 +1291,6 @@ class LabelClientMethods(BaseClientMethods):
             This function requires the 'gis' extra dependencies.
             Install them with: pip install kili[gis] or pip install 'kili[gis]'
         """
-        try:
-            from kili.use_cases.label.process_shapefiles import get_json_response_from_shapefiles
-        except ImportError:
-            raise ImportError(
-                "This function requires the 'gis' extra dependencies. "
-                "Install them with: pip install kili[gis] or pip install 'kili[gis]'"
-            )
-
         json_response = get_json_response_from_shapefiles(
             shapefile_paths=shapefile_paths,
             job_names=job_names,

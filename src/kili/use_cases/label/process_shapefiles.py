@@ -1,5 +1,13 @@
+"""Shapefile to Kili annotations converter.
+
+This module provides functions for reading and processing Shapefile (.shp) files,
+extracting their geometries (points, polylines, polygons), and converting them into
+a JSON response for geospatial annotations.
+"""
+
+
 import struct
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, cast
 
 import pyproj
 from shapely.geometry import LinearRing, LineString, Point, Polygon
@@ -97,7 +105,7 @@ def read_polygon_record(file_handle) -> List[Polygon]:
 
     # Create polygons with holes
     polygons = []
-    for ext_ring, ext_points in exterior_rings:
+    for _, ext_points in exterior_rings:
         ext_poly = Polygon(ext_points)
 
         # Find interior rings contained by this exterior
@@ -143,14 +151,14 @@ def read_shape_record(
 
     if shape_type == 1:  # Point
         return shape_type, read_point_record(file_handle)
-    elif shape_type == 3:  # Polyline
+    if shape_type == 3:  # Polyline
         return shape_type, read_polyline_record(file_handle)
-    elif shape_type == 5:  # Polygon
+    if shape_type == 5:  # Polygon
         return shape_type, read_polygon_record(file_handle)
-    else:
-        # Unsupported geometry type - skip to next record
-        # Subtract 4 because we already read the shape type
-        file_handle.seek(content_length - 4, 1)
+    # Unsupported geometry type - skip to next record
+    # Subtract 4 because we already read the shape type
+    file_handle.seek(content_length - 4, 1)
+    return None
 
 
 def read_shapefile(filename):
@@ -184,7 +192,9 @@ def read_shapefile(filename):
     return points, polyline_records, polygon_records
 
 
-def transform_geometry(geometry, from_epsg: int):
+def transform_geometry(
+    geometry: Union[Point, LineString, Polygon], from_epsg: int
+) -> Union[Point, LineString, Polygon]:
     """Transform a Shapely geometry from one coordinate system to EPSG:4326."""
     if from_epsg == 4326:
         return geometry
@@ -193,7 +203,8 @@ def transform_geometry(geometry, from_epsg: int):
         f"EPSG:{from_epsg}", "EPSG:4326", always_xy=True
     ).transform
 
-    return transform(project, geometry)
+    transformed = transform(project, geometry)
+    return cast(Union[Point, LineString, Polygon], transformed)
 
 
 def get_json_response_from_shapefiles(

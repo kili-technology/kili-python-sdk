@@ -1,8 +1,35 @@
+import os
+import shutil
+import tempfile
+
+import requests
+
 from kili.use_cases.label.process_shapefiles import get_json_response_from_shapefiles
 
 
+def get_shapefile_from_gcs(filename):
+    base_url = "https://storage.googleapis.com/label-public-staging/cypress-tests/fixtures/satellite/shapefiles"
+    temp_dir = tempfile.mkdtemp()
+    local_path = os.path.join(temp_dir, f"{filename}.shp")
+
+    url = f"{base_url}/{filename}.shp"
+    response = requests.get(url)
+    with open(local_path, "wb") as f:
+        f.write(response.content)
+
+    return local_path, temp_dir
+
+
+def is_almost_equal(a, b, tolerance=1e-14):
+    """Due to different versions of pyproj, the coordinates of the points may differ slightly.
+
+    This function checks if two coordinates are almost equal within a given tolerance.
+    """
+    return abs(a - b) <= tolerance
+
+
 def test_point_shapefile():
-    shapefile_path = "test_data/shapefiles/points.shp"
+    shapefile_path, temp_dir = get_shapefile_from_gcs("points")
     job_name = "points_job"
     category_name = "point_category"
 
@@ -26,16 +53,18 @@ def test_point_shapefile():
         assert annotation["type"] == "marker"
         assert "point" in annotation
 
-        assert annotation["point"]["x"] == expected_coordinates[index]["x"]
-        assert annotation["point"]["y"] == expected_coordinates[index]["y"]
+        assert is_almost_equal(annotation["point"]["x"], expected_coordinates[index]["x"])
+        assert is_almost_equal(annotation["point"]["y"], expected_coordinates[index]["y"])
 
         assert "categories" in annotation
         assert len(annotation["categories"]) == 1
         assert annotation["categories"][0]["name"] == category_name
 
+    shutil.rmtree(temp_dir)
+
 
 def test_line_shapefile():
-    shapefile_path = "test_data/shapefiles/lines.shp"
+    shapefile_path, temp_dir = get_shapefile_from_gcs("lines")
     job_name = "lines_job"
     category_name = "line_category"
 
@@ -117,16 +146,18 @@ def test_line_shapefile():
         assert "polyline" in annotation
 
         for point_index, point in enumerate(annotation["polyline"]):
-            assert point["x"] == expected_coordinates[index][point_index]["x"]
-            assert point["y"] == expected_coordinates[index][point_index]["y"]
+            assert is_almost_equal(point["x"], expected_coordinates[index][point_index]["x"])
+            assert is_almost_equal(point["y"], expected_coordinates[index][point_index]["y"])
 
         assert "categories" in annotation
         assert len(annotation["categories"]) == 1
         assert annotation["categories"][0]["name"] == category_name
 
+    shutil.rmtree(temp_dir)
+
 
 def test_polygon_simple_shapefile():
-    shapefile_path = "test_data/shapefiles/polygons-simple.shp"
+    shapefile_path, temp_dir = get_shapefile_from_gcs("polygons-simple")
     job_name = "polygons_job"
     category_name = "polygon_category"
 
@@ -262,16 +293,18 @@ def test_polygon_simple_shapefile():
         outer_ring = annotation["boundingPoly"][0]["normalizedVertices"]
         assert len(outer_ring) == len(expected_polygons[index])
         for point_index, point in enumerate(outer_ring):
-            assert point["x"] == expected_polygons[index][point_index]["x"]
-            assert point["y"] == expected_polygons[index][point_index]["y"]
+            assert is_almost_equal(point["x"], expected_polygons[index][point_index]["x"])
+            assert is_almost_equal(point["y"], expected_polygons[index][point_index]["y"])
 
         assert "categories" in annotation
         assert len(annotation["categories"]) == 1
         assert annotation["categories"][0]["name"] == category_name
 
+    shutil.rmtree(temp_dir)
+
 
 def test_polygon_multipart_with_holes_shapefile():
-    shapefile_path = "test_data/shapefiles/polygons-multipart-with-holes-epsg-3857.shp"
+    shapefile_path, temp_dir = get_shapefile_from_gcs("polygons-multipart-with-holes-epsg-3857")
     job_name = "multipart_polygons_job"
     category_name = "multipart_polygon_category"
     from_epsg = 3857
@@ -451,14 +484,14 @@ def test_polygon_multipart_with_holes_shapefile():
     first_polygon_exterior = first_polygon["boundingPoly"][0]["normalizedVertices"]
     assert len(first_polygon_exterior) == len(expected_first_polygon_exterior)
     for i, point in enumerate(first_polygon_exterior):
-        assert point["x"] == expected_first_polygon_exterior[i]["x"]
-        assert point["y"] == expected_first_polygon_exterior[i]["y"]
+        assert is_almost_equal(point["x"], expected_first_polygon_exterior[i]["x"])
+        assert is_almost_equal(point["y"], expected_first_polygon_exterior[i]["y"])
 
     first_polygon_hole = first_polygon["boundingPoly"][1]["normalizedVertices"]
     assert len(first_polygon_hole) == len(expected_first_polygon_hole)
     for i, point in enumerate(first_polygon_hole):
-        assert point["x"] == expected_first_polygon_hole[i]["x"]
-        assert point["y"] == expected_first_polygon_hole[i]["y"]
+        assert is_almost_equal(point["x"], expected_first_polygon_hole[i]["x"])
+        assert is_almost_equal(point["y"], expected_first_polygon_hole[i]["y"])
 
     second_polygon_parts = [a for a in annotations if a["mid"] == second_polygon_mid]
     assert len(second_polygon_parts) == 2, "Second polygon should have two parts"
@@ -568,16 +601,16 @@ def test_polygon_multipart_with_holes_shapefile():
     ]
     assert len(second_polygon_part1_exterior) == len(expected_second_polygon_part1_exterior)
     for i, point in enumerate(second_polygon_part1_exterior):
-        assert point["x"] == expected_second_polygon_part1_exterior[i]["x"]
-        assert point["y"] == expected_second_polygon_part1_exterior[i]["y"]
+        assert is_almost_equal(point["x"], expected_second_polygon_part1_exterior[i]["x"])
+        assert is_almost_equal(point["y"], expected_second_polygon_part1_exterior[i]["y"])
 
     second_polygon_part1_hole = second_polygon_part_with_hole["boundingPoly"][1][
         "normalizedVertices"
     ]
     assert len(second_polygon_part1_hole) == len(expected_second_polygon_part1_hole)
     for i, point in enumerate(second_polygon_part1_hole):
-        assert point["x"] == expected_second_polygon_part1_hole[i]["x"]
-        assert point["y"] == expected_second_polygon_part1_hole[i]["y"]
+        assert is_almost_equal(point["x"], expected_second_polygon_part1_hole[i]["x"])
+        assert is_almost_equal(point["y"], expected_second_polygon_part1_hole[i]["y"])
 
     expected_second_polygon_part2_exterior = [
         {"x": 9.833684187307194, "y": 54.376695428400765},
@@ -651,5 +684,7 @@ def test_polygon_multipart_with_holes_shapefile():
     ]
     assert len(second_polygon_part2_exterior) == len(expected_second_polygon_part2_exterior)
     for i, point in enumerate(second_polygon_part2_exterior):
-        assert point["x"] == expected_second_polygon_part2_exterior[i]["x"]
-        assert point["y"] == expected_second_polygon_part2_exterior[i]["y"]
+        assert is_almost_equal(point["x"], expected_second_polygon_part2_exterior[i]["x"])
+        assert is_almost_equal(point["y"], expected_second_polygon_part2_exterior[i]["y"])
+
+    shutil.rmtree(temp_dir)
