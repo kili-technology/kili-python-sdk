@@ -1,11 +1,12 @@
 from pathlib import Path
 
 import pytest
+from kili_export_formats import convert_from_kili_to_voc_format
 
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import VocExporter
 from kili.services.export.exceptions import NotCompatibleOptions
-from kili.services.export.format.voc import _convert_from_kili_to_voc_format, _process_asset
+from kili.services.export.format.voc import _process_asset
 from tests.fakes.fake_data import (
     asset_image_1,
     asset_image_1_with_0_rotation,
@@ -18,10 +19,10 @@ from tests.fakes.fake_data import (
 
 def test__convert_from_kili_to_voc_format():
     parameters = {"filename": f'{asset_image_1_with_0_rotation["externalId"]}.xml'}
-    annotations = _convert_from_kili_to_voc_format(
+    annotations = convert_from_kili_to_voc_format(
         response=asset_image_1_with_0_rotation["latestLabel"]["jsonResponse"],
-        img_width=1920,
-        img_height=1080,
+        width=1920,
+        height=1080,
         parameters=parameters,
         valid_jobs=["JOB_0"],
     )
@@ -31,10 +32,10 @@ def test__convert_from_kili_to_voc_format():
     assert annotations == expected_annotations
 
     parameters = {"filename": f'{asset_image_1_with_90_rotation["externalId"]}.xml'}
-    annotations = _convert_from_kili_to_voc_format(
+    annotations = convert_from_kili_to_voc_format(
         response=asset_image_1_with_90_rotation["latestLabel"]["jsonResponse"],
-        img_width=1920,
-        img_height=1080,
+        width=1920,
+        height=1080,
         parameters=parameters,
         valid_jobs=["JOB_0"],
     )
@@ -44,10 +45,10 @@ def test__convert_from_kili_to_voc_format():
     assert annotations == expected_annotations
 
     parameters = {"filename": f'{asset_image_1_with_180_rotation["externalId"]}.xml'}
-    annotations = _convert_from_kili_to_voc_format(
+    annotations = convert_from_kili_to_voc_format(
         response=asset_image_1_with_180_rotation["latestLabel"]["jsonResponse"],
-        img_width=1920,
-        img_height=1080,
+        width=1920,
+        height=1080,
         parameters=parameters,
         valid_jobs=["JOB_0"],
     )
@@ -57,10 +58,10 @@ def test__convert_from_kili_to_voc_format():
     assert annotations == expected_annotations
 
     parameters = {"filename": f'{asset_image_1_with_270_rotation["externalId"]}.xml'}
-    annotations = _convert_from_kili_to_voc_format(
+    annotations = convert_from_kili_to_voc_format(
         response=asset_image_1_with_270_rotation["latestLabel"]["jsonResponse"],
-        img_width=1920,
-        img_height=1080,
+        width=1920,
+        height=1080,
         parameters=parameters,
         valid_jobs=["JOB_0"],
     )
@@ -72,10 +73,10 @@ def test__convert_from_kili_to_voc_format():
 
 def test__convert_from_kili_to_voc_format_no_annotation():
     parameters = {"filename": f'{asset_image_1["externalId"]}.xml'}
-    annotations = _convert_from_kili_to_voc_format(
+    annotations = convert_from_kili_to_voc_format(
         response=asset_image_1_without_annotation,
-        img_width=1920,
-        img_height=1080,
+        width=1920,
+        height=1080,
         parameters=parameters,
         valid_jobs=["JOB_0"],
     )
