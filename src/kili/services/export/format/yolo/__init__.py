@@ -4,16 +4,19 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
+from kili_export_formats import convert_from_kili_to_yolo_format
+from kili_export_formats.types import JobCategory
+
 from kili.domain.ontology import JobMLTask, JobTool
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from kili.services.export.format.base import AbstractExporter, reverse_rotation_vertices
+from kili.services.export.format.base import AbstractExporter
 from kili.services.export.media.video import cut_video
 from kili.services.export.repository import AbstractContentRepository, DownloadError
-from kili.services.export.types import JobCategory, LabelFormat, SplitOption
+from kili.services.export.types import LabelFormat, SplitOption
 from kili.services.types import Job
 from kili.utils.tqdm import tqdm
 
@@ -251,54 +254,6 @@ class _LabelFrames:
         return f"{self.external_id}_{str(idx + 1).zfill(self.get_leading_zeros())}"
 
 
-def _convert_from_kili_to_yolo_format(
-    job_id: str, label: Dict, category_ids: Dict[str, JobCategory]
-) -> List[Tuple]:
-    # pylint: disable=too-many-locals
-    """Extract formatted annotations from labels and save the zip in the buckets."""
-    if label is None or "jsonResponse" not in label:
-        return []
-    json_response = label["jsonResponse"]
-    rotation_val = 0
-    if "ROTATION_JOB" in json_response:
-        rotation_val = json_response["ROTATION_JOB"]["rotation"]
-
-    if not (job_id in json_response and "annotations" in json_response[job_id]):
-        return []
-    annotations = json_response[job_id]["annotations"]
-    converted_annotations: List[Tuple] = []
-    for annotation in annotations:
-        category_idx: JobCategory = category_ids[
-            get_category_full_name(job_id, annotation["categories"][0]["name"])
-        ]
-        if "boundingPoly" not in annotation:
-            continue
-        bounding_poly = annotation["boundingPoly"]
-        if len(bounding_poly) < 1 or "normalizedVertices" not in bounding_poly[0]:
-            continue
-        normalized_vertices = bounding_poly[0]["normalizedVertices"]
-        vertices_before_rotate = reverse_rotation_vertices(normalized_vertices, rotation_val)
-        x_s: List[float] = [vertice["x"] for vertice in vertices_before_rotate]
-        y_s: List[float] = [vertice["y"] for vertice in vertices_before_rotate]
-
-        if annotation["type"] == JobTool.RECTANGLE:
-            x_min, y_min = min(x_s), min(y_s)
-            x_max, y_max = max(x_s), max(y_s)
-            bbox_center_x, bbox_center_y = (x_min + x_max) / 2, (y_min + y_max) / 2  # type: ignore
-            bbox_width, bbox_height = x_max - x_min, y_max - y_min  # type: ignore
-            converted_annotations.append(
-                (category_idx.id, bbox_center_x, bbox_center_y, bbox_width, bbox_height)
-            )
-
-        elif annotation["type"] in {JobTool.POLYGON, JobTool.SEMANTIC}:
-            # <class-index> <x1> <y1> <x2> <y2> ... <xn> <yn>
-            # Each segmentation label must have a minimum of 3 xy points (polygon)
-            points = [val for pair in zip(x_s, y_s) for val in pair]
-            converted_annotations.append((category_idx.id, *points))
-
-    return converted_annotations
-
-
 def get_category_full_name(job_id: str, category_name: str):
     """Return a full name to identify uniquely a category."""
     return f"{job_id}__{category_name}"
@@ -414,7 +369,7 @@ def _get_frame_labels(
 ) -> List[Tuple]:
     annotations = []
     for job_id in job_ids:
-        job_annotations = _convert_from_kili_to_yolo_format(
+        job_annotations = convert_from_kili_to_yolo_format(
             job_id, frame["latestLabel"], category_ids
         )
         annotations += job_annotations

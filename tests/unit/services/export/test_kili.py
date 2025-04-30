@@ -1,9 +1,11 @@
 import json
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
+from typing import TYPE_CHECKING
 from zipfile import ZipFile
 
 import pytest_mock
+from kili_export_formats import convert_to_pixel_coords
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.presentation.client.label import LabelClientMethods
@@ -22,6 +24,9 @@ from .expected.llm_project_assets import llm_project_asset
 from .expected.pdf_project_assets_unnormalized import pdf_project_asset_unnormalized
 from .expected.video_project_assets_unnormalized import video_project_asset_unnormalized
 
+if TYPE_CHECKING:
+    from kili_export_formats.types import ProjectDict
+
 
 def test_preprocess_assets(mocker: pytest_mock.MockFixture):
     mocker_exporter = mocker.MagicMock()
@@ -34,7 +39,12 @@ def test_kili_exporter_convert_to_pixel_coords_pdf(mocker: pytest_mock.MockerFix
     mocker.patch.object(KiliExporter, "__init__", return_value=None)
     exporter = KiliExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
     exporter.normalized_coordinates = None
-    exporter.project = {
+
+    project: ProjectDict = {
+        "id": "fake_project_id",
+        "title": "Fake Project Title",
+        "description": "Fake Project Description",
+        "organizationId": "fake_organization_id",
         "inputType": "PDF",
         "jsonInterface": {
             "jobs": {
@@ -114,7 +124,7 @@ def test_kili_exporter_convert_to_pixel_coords_pdf(mocker: pytest_mock.MockerFix
         "content": "https://",
         "jsonContent": "https://",
     }
-    scaled_asset = exporter.convert_to_pixel_coords(asset)  # type: ignore
+    scaled_asset = convert_to_pixel_coords(asset, project)
 
     assert scaled_asset == {
         "content": "https://",

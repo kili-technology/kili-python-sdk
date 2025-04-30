@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Dict, List, Sequence
 from xml.dom import minidom
 
+from kili_export_formats import convert_from_kili_to_voc_format
+
 from kili.domain.ontology import JobMLTask, JobTool
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
@@ -103,7 +105,7 @@ def _process_asset(
         for frame_id, json_response in asset["latestLabel"]["jsonResponse"].items():
             frame_name = f'{asset["externalId"]}_{str(int(frame_id)+1).zfill(leading_zeros)}'
             parameters = {"filename": f"{frame_name}{frame_ext}"}
-            annotations = _convert_from_kili_to_voc_format(
+            annotations = convert_from_kili_to_voc_format(
                 json_response, width, height, parameters, valid_jobs
             )
             filepath = labels_folder / f"{frame_name}.xml"
@@ -118,7 +120,7 @@ def _process_asset(
             Path(asset["content"]).name if Path(asset["content"]).is_file() else asset["externalId"]
         )
         parameters = {"filename": filename}
-        annotations = _convert_from_kili_to_voc_format(
+        annotations = convert_from_kili_to_voc_format(
             json_response, width, height, parameters, valid_jobs
         )
         xml_filename = f'{asset["externalId"]}.xml'

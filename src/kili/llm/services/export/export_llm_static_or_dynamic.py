@@ -1,7 +1,9 @@
 from typing import Dict, List, Optional, cast
 
+from kili_export_formats import convert_from_kili_to_llm_static_or_dynamic_format
+
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
-from kili.domain.llm import ChatItem, ChatItemRole, Conversation, ConversationLabel
+from kili.domain.llm import ChatItem, Conversation
 
 CHAT_ITEMS_NEEDED_FIELDS = [
     "id",
@@ -82,7 +84,7 @@ class LLMExporter:
         return {
             "chatItems": chat_items_without_ids,
             "externalId": asset["externalId"],
-            "label": self.format_llm_label(
+            "label": convert_from_kili_to_llm_static_or_dynamic_format(
                 annotations=label["annotations"],
                 chat_items=chat_items,
                 jobs=json_interface["jobs"],
@@ -90,81 +92,3 @@ class LLMExporter:
             "labeler": label["author"]["email"],
             "metadata": metadata,
         }
-
-    def format_llm_label(
-        self, annotations: List[Dict], chat_items: List[Dict], jobs: Dict
-    ) -> ConversationLabel:
-        formatted_label = {JobLevel.COMPLETION: {}, JobLevel.CONVERSATION: {}, JobLevel.ROUND: {}}
-
-        for job_name, job in jobs.items():
-            job_level = job.get("level", DEFAULT_JOB_LEVEL)
-
-            if job_level == JobLevel.COMPLETION:
-                job_label = self.format_completion_job(job_name, annotations, chat_items)
-            elif job_level == JobLevel.CONVERSATION:
-                job_label = self.format_conversation_job(job_name, annotations)
-            elif job_level == JobLevel.ROUND:
-                job_label = self.format_round_job(job_name, annotations, chat_items)
-            else:
-                raise ValueError(f"Unknown job level: {job_level}")
-
-            if job_label:
-                formatted_label[job_level][job_name] = job_label
-
-        return cast(ConversationLabel, formatted_label)
-
-    @staticmethod
-    def format_completion_job(
-        job_name: str, annotations: List[Dict], chat_items: List[Dict]
-    ) -> Dict:
-        id_to_external_id = {
-            item["id"]: item.get("externalId") or item["id"] for item in chat_items
-        }
-        job_annotations = [
-            annotation for annotation in annotations if annotation.get("job") == job_name
-        ]
-        return {
-            id_to_external_id.get(annotation["chatItemId"]): annotation["annotationValue"]
-            for annotation in job_annotations
-        }
-
-    def format_round_job(
-        self, job_name: str, annotations: List[Dict], chat_items: List[Dict]
-    ) -> Dict:
-        id_to_external_id = {
-            item["id"]: item.get("externalId") or item["id"] for item in chat_items
-        }
-        job_annotations = [
-            annotation for annotation in annotations if annotation.get("job") == job_name
-        ]
-        user_chat_item_ids = [
-            chat_item.get("external_id") or chat_item["id"]
-            for chat_item in chat_items
-            if chat_item["role"] == ChatItemRole.USER
-        ]
-
-        return {
-            user_chat_item_ids.index(annotation["chatItemId"]): self.format_annotation_value(
-                annotation["annotationValue"], id_to_external_id
-            )
-            for annotation in job_annotations
-        }
-
-    @staticmethod
-    def format_conversation_job(job_name: str, annotations: List[Dict]) -> Dict:
-        annotation = next(
-            (annotation for annotation in annotations if annotation["job"] == job_name), None
-        )
-        if annotation:
-            return annotation["annotationValue"]
-        return {}
-
-    @staticmethod
-    def format_annotation_value(annotation_value: Dict, id_to_external_id: Dict[str, str]) -> Dict:
-        if annotation_value.get("choice"):
-            return {
-                "code": annotation_value["choice"]["code"],
-                "firstId": id_to_external_id.get(annotation_value["choice"]["firstId"]),
-                "secondId": id_to_external_id.get(annotation_value["choice"]["secondId"]),
-            }
-        return annotation_value
