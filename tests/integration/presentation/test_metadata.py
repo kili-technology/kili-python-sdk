@@ -261,7 +261,7 @@ def test_add_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
 
     project_id = "project1"
     external_ids = ["ext1", "ext2"]
-    new_metadata = [
+    new_metadata: List[Dict[str, Union[str, float, int]]] = [
         {"new_key1": "new_value1"},
         {"new_key2": "new_value2"},
     ]
@@ -273,7 +273,9 @@ def test_add_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
     resolve_mock.assert_called_once_with(None, external_ids, project_id)
 
     kili_api_gateway.list_assets.assert_called_once_with(
-        AssetFilters(project_id=ProjectId(project_id), asset_id_in=resolved_asset_ids),
+        AssetFilters(
+            project_id=ProjectId(project_id), asset_id_in=cast(List[AssetId], resolved_asset_ids)
+        ),
         ["id", "jsonMetadata"],
         QueryOptions(disable_tqdm=True),
     )
@@ -329,7 +331,7 @@ def test_set_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
 
     project_id = "project1"
     external_ids = ["ext1", "ext2"]
-    new_metadata = [
+    new_metadata: List[Dict[str, Union[str, float, int]]] = [
         {"new_key1": "new_value1"},
         {"new_key2": "new_value2"},
     ]
@@ -341,7 +343,9 @@ def test_set_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
     resolve_mock.assert_called_once_with(None, external_ids, project_id)
 
     kili_api_gateway.list_assets.assert_called_once_with(
-        AssetFilters(project_id=ProjectId(project_id), asset_id_in=resolved_asset_ids),
+        AssetFilters(
+            project_id=ProjectId(project_id), asset_id_in=cast(List[AssetId], resolved_asset_ids)
+        ),
         ["id", "jsonMetadata"],
         QueryOptions(disable_tqdm=True),
     )

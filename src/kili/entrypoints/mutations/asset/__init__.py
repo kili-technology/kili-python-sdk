@@ -460,7 +460,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         assets = self.kili_api_gateway.list_assets(
             AssetFilters(
-                project_id=ProjectId(project_id) if project_id else None,
+                project_id=ProjectId(project_id),
                 asset_id_in=cast(List[AssetId], resolved_asset_ids),
             ),
             ["id", "jsonMetadata"],
@@ -477,7 +477,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             json_metadatas.append(current_metadata)
 
         return self.update_properties_in_assets(
-            asset_ids=resolved_asset_ids,
+            asset_ids=cast(List[str], resolved_asset_ids),
             json_metadatas=json_metadatas,
         )
 
@@ -533,7 +533,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         assets = self.kili_api_gateway.list_assets(
             AssetFilters(
-                project_id=ProjectId(project_id) if project_id else None,
+                project_id=ProjectId(project_id),
                 asset_id_in=cast(List[AssetId], resolved_asset_ids),
             ),
             ["id", "jsonMetadata"],
@@ -555,7 +555,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             json_metadatas.append(preserved_metadata)
 
         return self.update_properties_in_assets(
-            asset_ids=resolved_asset_ids,
+            asset_ids=cast(List[str], resolved_asset_ids),
             json_metadatas=json_metadatas,
         )
 
