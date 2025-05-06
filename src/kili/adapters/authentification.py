@@ -20,7 +20,7 @@ def is_api_key_valid(
     """
     response = http_client.post(
         url=api_endpoint,
-        data='{"query":"{ me { id email } }"}',
+        data='{"query":"{ viewer { id email } }"}',
         timeout=30,
         headers={
             "Authorization": f"X-API-Key: {api_key}",

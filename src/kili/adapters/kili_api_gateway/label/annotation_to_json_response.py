@@ -7,6 +7,7 @@ from typing import Dict, Generator, List, Optional, Tuple, TypeVar, Union, cast,
 from kili.domain.annotation import (
     ClassicAnnotation,
     ClassificationAnnotation,
+    ObjectDetectionAnnotation,
     RankingAnnotation,
     TranscriptionAnnotation,
     Vertice,
@@ -53,7 +54,7 @@ class AnnotationsToJsonResponseConverter:
 
         Modifies the input label.
         """
-        if self._project_input_type in {"VIDEO", "LLM_RLHF"}:
+        if self._project_input_type in {"VIDEO", "LLM_RLHF", "GEOSPATIAL"}:
             if not annotations and self._label_has_json_response_data(label):
                 return
 
@@ -63,8 +64,11 @@ class AnnotationsToJsonResponseConverter:
                     annotations=annotations, json_interface=self._project_json_interface
                 )
             else:
+                print("converting annotations")
                 annotations = cast(List[ClassicAnnotation], annotations)
-                converted_json_resp = _classic_annotations_to_json_response(annotations=annotations)
+                converted_json_resp = _classic_annotations_to_json_response(
+                    annotations=annotations, json_interface=self._project_json_interface
+                )
 
             label["jsonResponse"] = converted_json_resp
 
@@ -150,7 +154,7 @@ def _video_annotations_to_json_response(
 
 
 def _classic_annotations_to_json_response(
-    annotations: List[ClassicAnnotation],
+    annotations: List[ClassicAnnotation], json_interface: Dict
 ) -> Dict[str, Dict[JobName, Dict]]:
     """Convert label annotations to a json response."""
     json_resp = defaultdict(dict)
@@ -182,6 +186,18 @@ def _classic_annotations_to_json_response(
             ann_json_resp = _transcription_annotation_to_json_response(ann)
             for job_name, job_resp in ann_json_resp.items():
                 json_resp.setdefault(job_name, {}).setdefault("text", job_resp["text"])
+
+        elif ann["__typename"] == "ObjectDetectionAnnotation":
+            ann = cast(ObjectDetectionAnnotation, ann)
+            ann_json_resp = _object_detection_annotation_to_json_response(
+                ann,
+                other_annotations,
+                json_interface,
+            )
+            for job_name, job_resp in ann_json_resp.items():
+                json_resp.setdefault(job_name, {}).setdefault("annotations", []).extend(
+                    job_resp["annotations"]
+                )
 
         else:
             raise NotImplementedError(f"Cannot convert classic annotation to json response: {ann}")
@@ -348,6 +364,46 @@ def _transcription_annotation_to_json_response(
     }
 
     return json_resp
+
+
+def _object_detection_annotation_to_json_response(
+    annotation: ObjectDetectionAnnotation,
+    other_annotations: List[ClassicAnnotation],
+    json_interface: Dict,
+) -> Dict[JobName, Dict]:
+    """Convert object detection annotation to a json response."""
+    child_annotations = _get_child_annotations(annotation, other_annotations)
+    json_resp_child_jobs = (
+        _compute_children_json_resp(child_annotations, other_annotations)
+        if child_annotations
+        else {}
+    )
+
+    annotation_dict = {
+        "children": json_resp_child_jobs,
+        "categories": [{"name": annotation["category"]}],
+        "mid": annotation["mid"],
+        "type": json_interface["jobs"][annotation["job"]]["tools"][0],
+    }
+
+    norm_vertices = annotation["annotationValue"]["vertices"]
+
+    if json_interface["jobs"][annotation["job"]]["tools"][0] == "marker":
+        annotation_dict["point"] = norm_vertices[0][0][0]
+
+    elif json_interface["jobs"][annotation["job"]]["tools"][0] in {"polygon", "rectangle"}:
+        annotation_dict["boundingPoly"] = [{"normalizedVertices": norm_vertices[0][0]}]
+
+    elif json_interface["jobs"][annotation["job"]]["tools"][0] == "semantic":
+        annotation_dict["boundingPoly"] = [
+            {"normalizedVertices": norm_vert} for norm_vert in norm_vertices[0]
+        ]
+
+    return {
+        annotation["job"]: {
+            "annotations": [annotation_dict],
+        },
+    }
 
 
 def _video_transcription_annotation_to_json_response(
