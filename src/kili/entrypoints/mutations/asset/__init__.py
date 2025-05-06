@@ -10,7 +10,7 @@ from typeguard import typechecked
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
-from kili.domain.asset import AssetFilters, AssetId
+from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.project import ProjectId
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
@@ -456,17 +456,17 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ):
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
 
-        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
-
         assets = self.kili_api_gateway.list_assets(
             AssetFilters(
                 project_id=ProjectId(project_id),
-                asset_id_in=cast(List[AssetId], resolved_asset_ids),
+                asset_id_in=cast(List[AssetId], asset_ids),
+                external_id_in=cast(List[AssetExternalId], external_ids),
             ),
             ["id", "jsonMetadata"],
             QueryOptions(disable_tqdm=True),
         )
 
+        resolved_asset_ids = []
         json_metadatas = []
         for i, asset in enumerate(assets):
             current_metadata = asset.get("jsonMetadata", {}) if asset.get("jsonMetadata") else {}
@@ -475,6 +475,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             current_metadata.update(new_metadata)
 
             json_metadatas.append(current_metadata)
+            resolved_asset_ids.append(asset["id"])
 
         return self.update_properties_in_assets(
             asset_ids=cast(List[str], resolved_asset_ids),
@@ -529,17 +530,17 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         ):
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
 
-        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
-
         assets = self.kili_api_gateway.list_assets(
             AssetFilters(
                 project_id=ProjectId(project_id),
-                asset_id_in=cast(List[AssetId], resolved_asset_ids),
+                asset_id_in=cast(List[AssetId], asset_ids),
+                external_id_in=cast(List[AssetExternalId], external_ids),
             ),
             ["id", "jsonMetadata"],
             QueryOptions(disable_tqdm=True),
         )
 
+        resolved_asset_ids = []
         json_metadatas = []
         for i, asset in enumerate(assets):
             current_metadata = asset.get("jsonMetadata", {}) if asset.get("jsonMetadata") else {}
@@ -553,6 +554,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             preserved_metadata.update(new_metadata)
 
             json_metadatas.append(preserved_metadata)
+            resolved_asset_ids.append(asset["id"])
 
         return self.update_properties_in_assets(
             asset_ids=cast(List[str], resolved_asset_ids),

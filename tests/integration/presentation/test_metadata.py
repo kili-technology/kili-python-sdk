@@ -6,7 +6,7 @@ import pytest_mock
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
-from kili.domain.asset import AssetFilters, AssetId
+from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.project import ProjectId
 from kili.entrypoints.mutations.asset import MutationsAsset
 
@@ -235,10 +235,6 @@ def test_add_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
     """Test that add_metadata works correctly with external IDs."""
     kili_api_gateway = mocker.Mock(spec=KiliAPIGateway)
 
-    resolve_mock = mocker.patch.object(MutationsAsset, "_resolve_asset_ids")
-    resolved_asset_ids = ["asset1", "asset2"]
-    resolve_mock.return_value = resolved_asset_ids
-
     existing_assets = [
         {
             "id": "asset1",
@@ -270,11 +266,10 @@ def test_add_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
         json_metadata=new_metadata, external_ids=external_ids, project_id=project_id
     )
 
-    resolve_mock.assert_called_once_with(None, external_ids, project_id)
-
     kili_api_gateway.list_assets.assert_called_once_with(
         AssetFilters(
-            project_id=ProjectId(project_id), asset_id_in=cast(List[AssetId], resolved_asset_ids)
+            project_id=ProjectId(project_id),
+            external_id_in=cast(List[AssetExternalId], external_ids),
         ),
         ["id", "jsonMetadata"],
         QueryOptions(disable_tqdm=True),
@@ -282,7 +277,6 @@ def test_add_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
 
     update_mock.assert_called_once()
     call_args = update_mock.call_args[1]
-    assert call_args["asset_ids"] == resolved_asset_ids
 
     expected_metadata = [
         {"text": "Some text", "existing1": "value1", "new_key1": "new_value1"},
@@ -300,10 +294,6 @@ def test_add_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
 def test_set_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
     """Test that set_metadata works correctly with external IDs."""
     kili_api_gateway = mocker.Mock(spec=KiliAPIGateway)
-
-    resolve_mock = mocker.patch.object(MutationsAsset, "_resolve_asset_ids")
-    resolved_asset_ids = ["asset1", "asset2"]
-    resolve_mock.return_value = resolved_asset_ids
 
     existing_assets = [
         {
@@ -340,11 +330,10 @@ def test_set_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
         json_metadata=new_metadata, external_ids=external_ids, project_id=project_id
     )
 
-    resolve_mock.assert_called_once_with(None, external_ids, project_id)
-
     kili_api_gateway.list_assets.assert_called_once_with(
         AssetFilters(
-            project_id=ProjectId(project_id), asset_id_in=cast(List[AssetId], resolved_asset_ids)
+            project_id=ProjectId(project_id),
+            external_id_in=cast(List[AssetExternalId], external_ids),
         ),
         ["id", "jsonMetadata"],
         QueryOptions(disable_tqdm=True),
@@ -352,7 +341,6 @@ def test_set_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
 
     update_mock.assert_called_once()
     call_args = update_mock.call_args[1]
-    assert call_args["asset_ids"] == resolved_asset_ids
 
     expected_metadata = [
         {"text": "Some text", "new_key1": "new_value1"},
