@@ -26,10 +26,6 @@ mutation(
     $jsonInterface: String
     $metadataProperties: JSON
     $minConsensusSize: Int
-    $numberOfAssets: Int
-    $numberOfSkippedAssets: Int
-    $numberOfRemainingAssets: Int
-    $numberOfReviewedAssets: Int
     $projectID: ID!
     $reviewCoverage: Int
     $title: String
@@ -52,10 +48,6 @@ mutation(
       jsonInterface: $jsonInterface
       metadataProperties: $metadataProperties
       minConsensusSize: $minConsensusSize
-      numberOfAssets: $numberOfAssets
-      numberOfSkippedAssets: $numberOfSkippedAssets
-      numberOfRemainingAssets: $numberOfRemainingAssets
-      numberOfReviewedAssets: $numberOfReviewedAssets
       reviewCoverage: $reviewCoverage
       title: $title
       useHoneyPot: $useHoneyPot

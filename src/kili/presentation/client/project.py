@@ -306,10 +306,6 @@ class ProjectClientMethods(BaseClientMethods):
         input_type: Optional[InputType] = None,
         json_interface: Optional[dict] = None,
         min_consensus_size: Optional[int] = None,
-        number_of_assets: Optional[int] = None,
-        number_of_skipped_assets: Optional[int] = None,
-        number_of_remaining_assets: Optional[int] = None,
-        number_of_reviewed_assets: Optional[int] = None,
         review_coverage: Optional[int] = None,
         should_relaunch_kpi_computation: Optional[bool] = None,
         title: Optional[str] = None,
@@ -340,10 +336,6 @@ class ProjectClientMethods(BaseClientMethods):
             json_interface: The json parameters of the project, see Edit your interface.
             min_consensus_size: Should be between 1 and 10
                 Number of people that will annotate the same asset, for consensus computation.
-            number_of_assets: Defaults to 0
-            number_of_skipped_assets: Defaults to 0
-            number_of_remaining_assets: Defaults to 0
-            number_of_reviewed_assets: Defaults to 0
             review_coverage: Allow to set the percentage of assets
                 that will be queued in the review interface.
                 Should be between 0 and 100
@@ -434,10 +426,6 @@ class ProjectClientMethods(BaseClientMethods):
             input_type=input_type,
             json_interface=json_interface,
             min_consensus_size=min_consensus_size,
-            number_of_assets=number_of_assets,
-            number_of_skipped_assets=number_of_skipped_assets,
-            number_of_remaining_assets=number_of_remaining_assets,
-            number_of_reviewed_assets=number_of_reviewed_assets,
             review_coverage=review_coverage,
             should_relaunch_kpi_computation=should_relaunch_kpi_computation,
             use_honeypot=use_honeypot,
