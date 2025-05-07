@@ -513,6 +513,8 @@ def test_save_assets_export_with_external_id_containing_slash(
     exporter.project = {
         "id": "fake_proj_id",
         "title": "fake_proj_title",
+        "description": "fake_proj_description",
+        "organizationId": "fake_organization_id",
         "inputType": "IMAGE",
         "jsonInterface": {
             "jobs": {
