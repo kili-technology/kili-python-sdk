@@ -4,8 +4,8 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
-from kili_export_formats import convert_from_kili_to_yolo_format
-from kili_export_formats.types import JobCategory
+from kili_formats import convert_from_kili_to_yolo_format
+from kili_formats.types import JobCategory
 
 from kili.domain.ontology import JobMLTask, JobTool
 from kili.services.export.exceptions import (
