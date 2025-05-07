@@ -2,10 +2,10 @@
 
 from typing import Dict, List, Optional
 
+from kili_formats.types import ChatItemRole, Conversation
+
 from kili.domain.llm import (
     AzureOpenAICredentials,
-    ChatItemRole,
-    Conversation,
     ModelToCreateInput,
     ModelToUpdateInput,
     ModelType,

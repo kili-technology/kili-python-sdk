@@ -7,7 +7,9 @@ import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Literal, NamedTuple, Optional, Tuple, TypedDict, Union
+from typing import TYPE_CHECKING, Dict, List, Literal, NamedTuple, Optional, Tuple, Union
+
+from kili_formats.types import Job
 
 from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
@@ -25,24 +27,12 @@ from kili.services.export.types import (
     LabelFormat,
     SplitOption,
 )
-from kili.services.types import Job
 from kili.utils.tempfile import TemporaryDirectory
 
 if TYPE_CHECKING:
     from kili.client import Kili
 
 InputType = Literal["IMAGE", "LLM_INSTR_FOLLOWING", "LLM_RLHF", "PDF", "TEXT", "VIDEO"]
-
-
-class ProjectDict(TypedDict):
-    """Project dictionary."""
-
-    description: str
-    id: str
-    inputType: InputType
-    jsonInterface: Optional[Dict]
-    organizationId: str
-    title: str
 
 
 class ExportParams(NamedTuple):

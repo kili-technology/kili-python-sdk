@@ -7,11 +7,12 @@ from ast import literal_eval
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
+from kili_formats.types import ExportLLMItem, Job
+
 from kili.services.asset_import.helpers import SEPARATOR
 from kili.services.export.exceptions import NotCompatibleInputType
 from kili.services.export.format.base import AbstractExporter
-from kili.services.export.format.llm.types import ExportLLMItem, RankingValue
-from kili.services.types import Job
+from kili.services.export.format.llm.types import RankingValue
 
 
 class LLMExporter(AbstractExporter):

@@ -4,6 +4,8 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, Generator, List, Optional, Tuple, TypeVar, Union, cast, overload
 
+from kili_formats.types import JobTool
+
 from kili.domain.annotation import (
     ClassicAnnotation,
     ClassificationAnnotation,
@@ -18,7 +20,7 @@ from kili.domain.annotation import (
     VideoTranscriptionAnnotation,
     VideoTranscriptionKeyAnnotation,
 )
-from kili.domain.ontology import JobName, JobTool
+from kili.domain.ontology import JobName
 
 ASSET_LEVEL_KEY = "assetLevel"
 

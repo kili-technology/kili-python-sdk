@@ -4,8 +4,9 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from kili_formats import convert_from_kili_to_coco_format
+from kili_formats.types import Job, JobTool
 
-from kili.domain.ontology import JobMLTask, JobTool
+from kili.domain.ontology import JobMLTask
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
@@ -13,7 +14,6 @@ from kili.services.export.exceptions import (
 )
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.types import CocoAnnotationModifier
-from kili.services.types import Job
 
 DATA_SUBDIR = "data"
 

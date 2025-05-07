@@ -1,6 +1,6 @@
 """Types used by the conversion service."""
 
-from typing import Callable, Dict, Literal, NamedTuple
+from typing import Callable, Dict, Literal
 
 ExportType = Literal["latest", "normal"]
 SplitOption = Literal["split", "merged"]
@@ -17,14 +17,6 @@ LabelFormat = Literal[
     "llm_v1",
     "llm_dynamic_v1",
 ]
-
-
-class JobCategory(NamedTuple):
-    """Contains information for a category."""
-
-    category_name: str
-    id: int
-    job_id: str
 
 
 CocoAnnotationModifier = Callable[[Dict, Dict, Dict], Dict]

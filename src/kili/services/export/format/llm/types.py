@@ -1,17 +1,9 @@
 """Custom Types."""
 
 from enum import Enum
-from typing import List, Optional, TypedDict
+from typing import List, TypedDict
 
-
-class ExportLLMItem(TypedDict):
-    """LLM asset chat part."""
-
-    role: str
-    content: str
-    id: Optional[str]
-    chat_id: Optional[str]
-    model: Optional[str]
+from kili_formats.types import ExportLLMItem
 
 
 class ExportLLMAsset(TypedDict):

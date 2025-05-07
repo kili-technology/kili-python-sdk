@@ -629,7 +629,7 @@ def get_file_tree(folder: str):
 )
 def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_case):
     # mocker.patch.object(ProjectQuery, "__call__", side_effect=mocked_ProjectQuery)
-    mocker_ffmpeg = mocker.patch("kili.services.export.media.video.ffmpeg")
+    mocker_ffmpeg = mocker.patch("kili_formats.media.video.ffmpeg")
     mocker.patch(
         "kili.services.export.format.geojson.is_geotiff_asset_with_lat_lon_coords",
         return_value=True,
