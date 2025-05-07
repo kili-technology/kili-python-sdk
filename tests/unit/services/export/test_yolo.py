@@ -4,7 +4,7 @@ from pathlib import Path
 from zipfile import ZipFile
 
 import pytest_mock
-from kili_export_formats import convert_from_kili_to_yolo_format
+from kili_formats import convert_from_kili_to_yolo_format
 
 from kili.adapters.http_client import HttpClient
 from kili.presentation.client.label import LabelClientMethods

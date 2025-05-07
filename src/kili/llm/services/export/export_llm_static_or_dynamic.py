@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, cast
 
-from kili_export_formats import convert_from_kili_to_llm_static_or_dynamic_format
+from kili_formats import convert_from_kili_to_llm_static_or_dynamic_format
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.llm import ChatItem, Conversation

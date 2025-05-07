@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from kili_export_formats import convert_from_kili_to_voc_format
+from kili_formats import convert_from_kili_to_voc_format
 
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import VocExporter

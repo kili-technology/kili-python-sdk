@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from zipfile import ZipFile
 
 import pytest_mock
-from kili_export_formats import convert_to_pixel_coords
+from kili_formats import convert_to_pixel_coords
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.presentation.client.label import LabelClientMethods
@@ -25,7 +25,7 @@ from .expected.pdf_project_assets_unnormalized import pdf_project_asset_unnormal
 from .expected.video_project_assets_unnormalized import video_project_asset_unnormalized
 
 if TYPE_CHECKING:
-    from kili_export_formats.types import ProjectDict
+    from kili_formats.types import ProjectDict
 
 
 def test_preprocess_assets(mocker: pytest_mock.MockFixture):

@@ -3,7 +3,7 @@
 import logging
 from typing import Dict, List, Union
 
-from kili_export_formats import convert_from_kili_to_llm_rlhf_format
+from kili_formats import convert_from_kili_to_llm_rlhf_format
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.project import ProjectId

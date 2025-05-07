@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Dict, List
 
-from kili_export_formats import clean_json_response, convert_to_pixel_coords
+from kili_formats import clean_json_response, convert_to_pixel_coords
 
 from kili.services.export.format.base import AbstractExporter, ProjectDict
 from kili.services.export.media.video import cut_video
@@ -102,9 +102,9 @@ class KiliExporter(AbstractExporter):
         if self.project["inputType"] != "LLM_RLHF":
             for i, asset in enumerate(clean_assets):
                 clean_assets[i] = convert_to_pixel_coords(asset, self.project)
-                cleaned_asset = clean_json_response(asset)
-                if cleaned_asset is not None:
-                    clean_assets[i] = cleaned_asset
+                clean_json_response(asset)
+                if asset is not None:
+                    clean_assets[i] = asset
                 else:
                     self.logger.warning(
                         "Asset could not be cleaned and was skipped", extra={"asset_index": i}
