@@ -3,9 +3,9 @@ from datetime import datetime
 from pathlib import Path
 
 from kili_formats import convert_from_kili_to_coco_format
+from kili_formats.types import JobTool
 from PIL import Image
 
-from kili.services.types import JobName
 from kili.utils.tempfile import TemporaryDirectory
 
 from .helpers import coco as helpers
@@ -21,7 +21,7 @@ def test__get_coco_image_annotations():
         Image.new("RGB", (image_width, image_height)).save(local_file_path)
         _, paths = convert_from_kili_to_coco_format(
             jobs={
-                JobName(job_name): {
+                job_name: {
                     "mlTask": "OBJECT_DETECTION",
                     "content": {
                         "categories": {
@@ -35,7 +35,7 @@ def test__get_coco_image_annotations():
                     "isVisible": True,
                     "models": {},
                     "required": True,
-                    "tools": ["semantic"],
+                    "tools": [JobTool.SEMANTIC],
                 }
             },
             assets=[

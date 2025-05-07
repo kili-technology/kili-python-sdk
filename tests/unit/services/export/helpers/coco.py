@@ -2,7 +2,7 @@ import math
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from kili_formats.types import Job
+from kili_formats.types import Job, JobTool
 
 
 def get_asset(
@@ -127,7 +127,7 @@ DESSERT_JOB = Job(
     },
     instruction="dessert",
     isChild=False,
-    tools=["rectangle"],
+    tools=[JobTool.RECTANGLE],
     mlTask="OBJECT_DETECTION",
     models=None,
     isVisible=True,
@@ -141,7 +141,7 @@ MAIN_JOB = Job(
     },
     instruction="main course",
     isChild=False,
-    tools=["rectangle"],
+    tools=[JobTool.RECTANGLE],
     mlTask="OBJECT_DETECTION",
     models=None,
     isVisible=True,
