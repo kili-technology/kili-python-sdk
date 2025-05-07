@@ -4,17 +4,17 @@ from pathlib import Path
 from typing import Dict, List, Sequence
 
 from kili_formats import convert_from_kili_to_voc_format
+from kili_formats.media.image import get_frame_dimensions, get_image_dimensions
+from kili_formats.media.video import cut_video, get_video_dimensions
+from kili_formats.types import Job, JobTool
 
-from kili.domain.ontology import JobMLTask, JobTool
+from kili.domain.ontology import JobMLTask
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
 from kili.services.export.format.base import AbstractExporter
-from kili.services.export.media.image import get_frame_dimensions, get_image_dimensions
-from kili.services.export.media.video import cut_video, get_video_dimensions
-from kili.services.types import Job
 from kili.utils.tqdm import tqdm
 
 

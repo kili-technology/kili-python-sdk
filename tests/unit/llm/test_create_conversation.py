@@ -1,4 +1,5 @@
-from kili.domain.llm import ChatItemRole
+from kili_formats.types import ChatItemRole
+
 from kili.llm.presentation.client.llm import LlmClientMethods
 
 

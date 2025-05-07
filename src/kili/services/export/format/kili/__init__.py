@@ -5,10 +5,10 @@ from pathlib import Path
 from typing import Dict, List
 
 from kili_formats import clean_json_response, convert_to_pixel_coords
+from kili_formats.media.video import cut_video
+from kili_formats.types import Job, ProjectDict
 
-from kili.services.export.format.base import AbstractExporter, ProjectDict
-from kili.services.export.media.video import cut_video
-from kili.services.types import Job
+from kili.services.export.format.base import AbstractExporter
 
 
 class KiliExporter(AbstractExporter):

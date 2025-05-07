@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from typing_extensions import TypedDict
 
@@ -95,14 +95,6 @@ class ProjectModelFilters:
     model_id: Optional[str] = None
 
 
-class ChatItemRole(str, Enum):
-    """Enumeration of the supported chat item role."""
-
-    ASSISTANT = "ASSISTANT"
-    USER = "USER"
-    SYSTEM = "SYSTEM"
-
-
 class OpenAISDKCredentialsDict(TypedDict):
     """Dict that represents model.Credentials for OpenAI SDK."""
 
@@ -133,33 +125,3 @@ class ProjectModelDict(TypedDict):
     id: str
     configuration: Dict[str, Any]
     model: ModelDict
-
-
-class ChatItem(TypedDict):
-    """Dict that represents a ChatItem."""
-
-    id: str
-    content: str
-    createdAt: Optional[str]
-    externalId: str
-    modelId: Optional[str]
-    modelName: Optional[str]
-    role: ChatItemRole
-
-
-class ConversationLabel(TypedDict):
-    """Dict that represents a ConversationLabel."""
-
-    completion: Optional[Dict]
-    conversation: Optional[Dict]
-    round: Optional[Dict]
-
-
-class Conversation(TypedDict):
-    """Dict that represents a Conversation."""
-
-    chatItems: List[ChatItem]
-    externalId: Optional[str]
-    label: Optional[ConversationLabel]
-    labeler: Optional[str]
-    metadata: Optional[dict]

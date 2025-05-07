@@ -1,9 +1,9 @@
 from typing import Dict, List, Optional, cast
 
 from kili_formats import convert_from_kili_to_llm_static_or_dynamic_format
+from kili_formats.types import ChatItem, Conversation, JobLevel
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
-from kili.domain.llm import ChatItem, Conversation
 
 CHAT_ITEMS_NEEDED_FIELDS = [
     "id",
@@ -27,12 +27,6 @@ LABELS_NEEDED_FIELDS = [
     "labelType",
     "modelName",
 ]
-
-
-class JobLevel:
-    ROUND = "round"
-    CONVERSATION = "conversation"
-    COMPLETION = "completion"
 
 
 DEFAULT_JOB_LEVEL = JobLevel.ROUND

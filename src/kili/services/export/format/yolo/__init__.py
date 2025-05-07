@@ -5,19 +5,18 @@ from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
 from kili_formats import convert_from_kili_to_yolo_format
-from kili_formats.types import JobCategory
+from kili_formats.media.video import cut_video
+from kili_formats.types import Job, JobCategory, JobTool
 
-from kili.domain.ontology import JobMLTask, JobTool
+from kili.domain.ontology import JobMLTask
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
 from kili.services.export.format.base import AbstractExporter
-from kili.services.export.media.video import cut_video
 from kili.services.export.repository import AbstractContentRepository, DownloadError
 from kili.services.export.types import LabelFormat, SplitOption
-from kili.services.types import Job
 from kili.utils.tqdm import tqdm
 
 

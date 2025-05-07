@@ -2,7 +2,7 @@ import math
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from kili.services.types import Job
+from kili_formats.types import Job
 
 
 def get_asset(
