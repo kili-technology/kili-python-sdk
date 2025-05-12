@@ -7,7 +7,7 @@ import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Literal, NamedTuple, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, NamedTuple, Optional, Tuple, Union
 
 from kili_formats.types import Job
 
@@ -31,8 +31,6 @@ from kili.utils.tempfile import TemporaryDirectory
 
 if TYPE_CHECKING:
     from kili.client import Kili
-
-InputType = Literal["IMAGE", "LLM_INSTR_FOLLOWING", "LLM_RLHF", "PDF", "TEXT", "VIDEO"]
 
 
 class ExportParams(NamedTuple):

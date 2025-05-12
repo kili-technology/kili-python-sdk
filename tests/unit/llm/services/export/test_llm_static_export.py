@@ -1,7 +1,6 @@
 import pytest
 
 from kili.llm.presentation.client.llm import LlmClientMethods
-from tests.unit.services.export.test_llm import expected_export
 
 mock_json_interface = {
     "jobs": {
