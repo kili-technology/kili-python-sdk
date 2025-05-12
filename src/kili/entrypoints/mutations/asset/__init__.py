@@ -10,7 +10,7 @@ from typeguard import typechecked
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
-from kili.domain.asset import AssetFilters, AssetId
+from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.project import ProjectId
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
@@ -412,16 +412,18 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     def add_metadata(
         self,
         json_metadata: List[Dict[str, Union[str, int, float]]],
-        asset_ids: List[str],
         project_id: str,
+        asset_ids: Optional[List[str]] = None,
+        external_ids: Optional[List[str]] = None,
     ) -> List[Dict[Literal["id"], str]]:
         """Add metadata to assets without overriding existing metadata.
 
         Args:
             json_metadata: List of metadata dictionaries to add to each asset.
                 Each dictionary contains key/value pairs to be added to the asset's metadata.
-            asset_ids: The asset IDs to modify.
             project_id: The project ID.
+            asset_ids: The asset IDs to modify.
+            external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
 
         Returns:
             A list of dictionaries with the asset ids.
@@ -432,21 +434,39 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                         {"key1": "value1", "key2": "value2"},
                         {"key3": "value3"}
                     ],
-                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
-                    project_id="cm92to3cx012u7l0w6kij9qvx"
+                    project_id="cm92to3cx012u7l0w6kij9qvx",
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"]
+                )
+
+                # Or using external IDs
+            >>> kili.add_metadata(
+                    json_metadata=[
+                        {"key1": "value1", "key2": "value2"},
+                        {"key3": "value3"}
+                    ],
+                    project_id="cm92to3cx012u7l0w6kij9qvx",
+                    external_ids=["asset1", "asset2"]
                 )
         """
         if is_empty_list_with_warning("add_metadata", "json_metadata", json_metadata):
             return []
 
+        if (asset_ids is not None and external_ids is not None) or (
+            asset_ids is None and external_ids is None
+        ):
+            raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
+
         assets = self.kili_api_gateway.list_assets(
             AssetFilters(
-                project_id=ProjectId(project_id), asset_id_in=cast(List[AssetId], asset_ids)
+                project_id=ProjectId(project_id),
+                asset_id_in=cast(List[AssetId], asset_ids),
+                external_id_in=cast(List[AssetExternalId], external_ids),
             ),
             ["id", "jsonMetadata"],
             QueryOptions(disable_tqdm=True),
         )
 
+        resolved_asset_ids = []
         json_metadatas = []
         for i, asset in enumerate(assets):
             current_metadata = asset.get("jsonMetadata", {}) if asset.get("jsonMetadata") else {}
@@ -455,9 +475,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             current_metadata.update(new_metadata)
 
             json_metadatas.append(current_metadata)
+            resolved_asset_ids.append(asset["id"])
 
         return self.update_properties_in_assets(
-            asset_ids=asset_ids,
+            asset_ids=cast(List[str], resolved_asset_ids),
             json_metadatas=json_metadatas,
         )
 
@@ -465,16 +486,18 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     def set_metadata(
         self,
         json_metadata: List[Dict[str, Union[str, int, float]]],
-        asset_ids: List[str],
         project_id: str,
+        asset_ids: Optional[List[str]] = None,
+        external_ids: Optional[List[str]] = None,
     ) -> List[Dict[Literal["id"], str]]:
         """Set metadata on assets, replacing any existing metadata.
 
         Args:
             json_metadata: List of metadata dictionaries to set on each asset.
                 Each dictionary contains key/value pairs to be set as the asset's metadata.
-            asset_ids: The asset IDs to modify.
             project_id: The project ID.
+            asset_ids: The asset IDs to modify (if `external_ids` is not already provided).
+            external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
 
         Returns:
             A list of dictionaries with the asset ids.
@@ -485,21 +508,39 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                         {"key1": "value1", "key2": "value2"},
                         {"key3": "value3"}
                     ],
-                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                     project_id="cm92to3cx012u7l0w6kij9qvx"
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"]
+                )
+
+                # Or using external IDs
+            >>> kili.set_metadata(
+                    json_metadata=[
+                        {"key1": "value1", "key2": "value2"},
+                        {"key3": "value3"}
+                    ],
+                    project_id="cm92to3cx012u7l0w6kij9qvx",
+                    external_ids=["asset1", "asset2"]
                 )
         """
         if is_empty_list_with_warning("set_metadata", "json_metadata", json_metadata):
             return []
 
+        if (asset_ids is not None and external_ids is not None) or (
+            asset_ids is None and external_ids is None
+        ):
+            raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
+
         assets = self.kili_api_gateway.list_assets(
             AssetFilters(
-                project_id=ProjectId(project_id), asset_id_in=cast(List[AssetId], asset_ids)
+                project_id=ProjectId(project_id),
+                asset_id_in=cast(List[AssetId], asset_ids),
+                external_id_in=cast(List[AssetExternalId], external_ids),
             ),
             ["id", "jsonMetadata"],
             QueryOptions(disable_tqdm=True),
         )
 
+        resolved_asset_ids = []
         json_metadatas = []
         for i, asset in enumerate(assets):
             current_metadata = asset.get("jsonMetadata", {}) if asset.get("jsonMetadata") else {}
@@ -513,9 +554,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             preserved_metadata.update(new_metadata)
 
             json_metadatas.append(preserved_metadata)
+            resolved_asset_ids.append(asset["id"])
 
         return self.update_properties_in_assets(
-            asset_ids=asset_ids,
+            asset_ids=cast(List[str], resolved_asset_ids),
             json_metadatas=json_metadatas,
         )
 

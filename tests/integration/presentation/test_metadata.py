@@ -6,7 +6,7 @@ import pytest_mock
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
-from kili.domain.asset import AssetFilters, AssetId
+from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
 from kili.domain.project import ProjectId
 from kili.entrypoints.mutations.asset import MutationsAsset
 
@@ -229,3 +229,123 @@ def test_multiple_assets_with_different_metadata_structures(mocker: pytest_mock.
 
     assert add_metadata_call_args["json_metadatas"] == expected_add_metadata
     assert set_metadata_call_args["json_metadatas"] == expected_set_metadata
+
+
+def test_add_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
+    """Test that add_metadata works correctly with external IDs."""
+    kili_api_gateway = mocker.Mock(spec=KiliAPIGateway)
+
+    existing_assets = [
+        {
+            "id": "asset1",
+            "jsonMetadata": {"text": "Some text", "existing1": "value1"},
+        },
+        {
+            "id": "asset2",
+            "jsonMetadata": {"imageUrl": "http://example.com/image.jpg", "existing2": "value2"},
+        },
+    ]
+
+    kili_api_gateway.list_assets.return_value = existing_assets
+
+    update_mock = mocker.patch.object(MutationsAsset, "update_properties_in_assets")
+    update_mock.return_value = [{"id": "asset1"}, {"id": "asset2"}]
+
+    mutations_asset = MutationsAsset()
+    mutations_asset.kili_api_gateway = kili_api_gateway
+    mutations_asset.graphql_client = mocker.Mock()
+
+    project_id = "project1"
+    external_ids = ["ext1", "ext2"]
+    new_metadata: List[Dict[str, Union[str, float, int]]] = [
+        {"new_key1": "new_value1"},
+        {"new_key2": "new_value2"},
+    ]
+
+    result = mutations_asset.add_metadata(
+        json_metadata=new_metadata, external_ids=external_ids, project_id=project_id
+    )
+
+    kili_api_gateway.list_assets.assert_called_once_with(
+        AssetFilters(
+            project_id=ProjectId(project_id),
+            external_id_in=cast(List[AssetExternalId], external_ids),
+        ),
+        ["id", "jsonMetadata"],
+        QueryOptions(disable_tqdm=True),
+    )
+
+    update_mock.assert_called_once()
+    call_args = update_mock.call_args[1]
+
+    expected_metadata = [
+        {"text": "Some text", "existing1": "value1", "new_key1": "new_value1"},
+        {
+            "imageUrl": "http://example.com/image.jpg",
+            "existing2": "value2",
+            "new_key2": "new_value2",
+        },
+    ]
+
+    assert call_args["json_metadatas"] == expected_metadata
+    assert result == [{"id": "asset1"}, {"id": "asset2"}]
+
+
+def test_set_metadata_with_external_ids(mocker: pytest_mock.MockerFixture):
+    """Test that set_metadata works correctly with external IDs."""
+    kili_api_gateway = mocker.Mock(spec=KiliAPIGateway)
+
+    existing_assets = [
+        {
+            "id": "asset1",
+            "jsonMetadata": {"text": "Some text", "existing1": "value1", "should_be_removed": True},
+        },
+        {
+            "id": "asset2",
+            "jsonMetadata": {
+                "imageUrl": "http://example.com/image.jpg",
+                "existing2": "value2",
+                "also_remove": "yes",
+            },
+        },
+    ]
+
+    kili_api_gateway.list_assets.return_value = existing_assets
+
+    update_mock = mocker.patch.object(MutationsAsset, "update_properties_in_assets")
+    update_mock.return_value = [{"id": "asset1"}, {"id": "asset2"}]
+
+    mutations_asset = MutationsAsset()
+    mutations_asset.kili_api_gateway = kili_api_gateway
+    mutations_asset.graphql_client = mocker.Mock()
+
+    project_id = "project1"
+    external_ids = ["ext1", "ext2"]
+    new_metadata: List[Dict[str, Union[str, float, int]]] = [
+        {"new_key1": "new_value1"},
+        {"new_key2": "new_value2"},
+    ]
+
+    result = mutations_asset.set_metadata(
+        json_metadata=new_metadata, external_ids=external_ids, project_id=project_id
+    )
+
+    kili_api_gateway.list_assets.assert_called_once_with(
+        AssetFilters(
+            project_id=ProjectId(project_id),
+            external_id_in=cast(List[AssetExternalId], external_ids),
+        ),
+        ["id", "jsonMetadata"],
+        QueryOptions(disable_tqdm=True),
+    )
+
+    update_mock.assert_called_once()
+    call_args = update_mock.call_args[1]
+
+    expected_metadata = [
+        {"text": "Some text", "new_key1": "new_value1"},
+        {"imageUrl": "http://example.com/image.jpg", "new_key2": "new_value2"},
+    ]
+
+    assert call_args["json_metadatas"] == expected_metadata
+    assert result == [{"id": "asset1"}, {"id": "asset2"}]
