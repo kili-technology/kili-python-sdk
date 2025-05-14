@@ -173,7 +173,7 @@ def test_given_classic_label_annotations_when_converting_to_json_resp_it_works(
     _ = annotations
 
     # When
-    json_resp = _classic_annotations_to_json_response(annotations)
+    json_resp = _classic_annotations_to_json_response(annotations, {})
 
     # Then
     assert json_resp == expected_json_resp
