@@ -1,13 +1,13 @@
 from typing import Dict, List
 
 import pytest
-
-from kili.adapters.kili_api_gateway.label.annotation_to_json_response import (
+from kili_formats.tool.annotations_to_json_response import (
     _classic_annotations_to_json_response,
     _interpolate_point,
     _interpolate_rectangle,
     _video_annotations_to_json_response,
 )
+
 from kili.domain.annotation import ClassicAnnotation, Vertice, VideoAnnotation
 
 from .test_data import (
