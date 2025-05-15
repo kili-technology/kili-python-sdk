@@ -7,8 +7,9 @@ from kili_formats.tool.annotations_to_json_response import (
     _interpolate_rectangle,
     _video_annotations_to_json_response,
 )
+from kili_formats.types import ClassicAnnotation, VideoAnnotation
 
-from kili.domain.annotation import ClassicAnnotation, Vertice, VideoAnnotation
+from kili.domain.annotation import Vertice
 
 from .test_data import (
     test_case_1,

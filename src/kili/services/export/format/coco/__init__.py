@@ -1,5 +1,6 @@
 """Common code for the coco exporter."""
 
+import json
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -69,31 +70,39 @@ class CocoExporter(AbstractExporter):
         if self.split_option == "split":
             for job_name, job in self.project["jsonInterface"]["jobs"].items():
                 if self._is_job_compatible(job):
-                    convert_from_kili_to_coco_format(
+                    labels_json = convert_from_kili_to_coco_format(
                         jobs={job_name: job},
                         assets=assets,
-                        output_dir=Path(output_directory) / self.project["id"],
                         title=self.project["title"],
                         project_input_type=self.project["inputType"],
                         annotation_modifier=annotation_modifier,
                         merged=False,
                     )
+                    label_file_name = (
+                        Path(output_directory) / self.project["id"] / job_name / "labels.json"
+                    )
+                    label_file_name.parent.mkdir(parents=True, exist_ok=True)
+                    with label_file_name.open("w") as outfile:
+                        json.dump(labels_json, outfile)
                 else:
                     self.logger.warning(f"Job {job_name} is not compatible with the COCO format.")
         else:  # merged
-            convert_from_kili_to_coco_format(
+            labels_json = convert_from_kili_to_coco_format(
                 jobs={
                     k: job
                     for k, job in self.project["jsonInterface"]["jobs"].items()
                     if self._is_job_compatible(job)
                 },
                 assets=assets,
-                output_dir=Path(output_directory) / self.project["id"],
                 title=self.project["title"],
                 project_input_type=self.project["inputType"],
                 annotation_modifier=annotation_modifier,
                 merged=True,
             )
+            label_file_name = Path(output_directory) / self.project["id"] / "labels.json"
+            label_file_name.parent.mkdir(parents=True, exist_ok=True)
+            with label_file_name.open("w") as outfile:
+                json.dump(labels_json, outfile)
 
     def _is_job_compatible(self, job: Job) -> bool:
         if "tools" not in job:
