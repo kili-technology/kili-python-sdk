@@ -28,13 +28,31 @@ def is_almost_equal(a, b, tolerance=1e-14):
     return abs(a - b) <= tolerance
 
 
+def create_mock_json_interface(job_name, tool_type):
+    """Create a mock JSON interface for testing purposes."""
+    return {
+        "jobs": {
+            job_name: {
+                "tools": [tool_type],
+                "content": {"categories": {"CATEGORY1": {"name": "Category1", "color": "#FF0000"}}},
+            }
+        }
+    }
+
+
 def test_point_shapefile():
     shapefile_path, temp_dir = get_shapefile_from_gcs("points")
     job_name = "points_job"
     category_name = "point_category"
 
+    # Create mock JSON interface with a marker tool
+    json_interface = create_mock_json_interface(job_name, "marker")
+
     response = get_json_response_from_shapefiles(
-        shapefile_paths=[shapefile_path], job_names=[job_name], category_names=[category_name]
+        shapefile_paths=[shapefile_path],
+        job_names=[job_name],
+        category_names=[category_name],
+        json_interface=json_interface,
     )
 
     assert job_name in response
@@ -68,8 +86,14 @@ def test_line_shapefile():
     job_name = "lines_job"
     category_name = "line_category"
 
+    # Create mock JSON interface with a polyline tool
+    json_interface = create_mock_json_interface(job_name, "polyline")
+
     response = get_json_response_from_shapefiles(
-        shapefile_paths=[shapefile_path], job_names=[job_name], category_names=[category_name]
+        shapefile_paths=[shapefile_path],
+        job_names=[job_name],
+        category_names=[category_name],
+        json_interface=json_interface,
     )
 
     assert job_name in response
@@ -161,8 +185,14 @@ def test_polygon_simple_shapefile():
     job_name = "polygons_job"
     category_name = "polygon_category"
 
+    # Create mock JSON interface with a semantic tool
+    json_interface = create_mock_json_interface(job_name, "semantic")
+
     response = get_json_response_from_shapefiles(
-        shapefile_paths=[shapefile_path], job_names=[job_name], category_names=[category_name]
+        shapefile_paths=[shapefile_path],
+        job_names=[job_name],
+        category_names=[category_name],
+        json_interface=json_interface,
     )
 
     assert job_name in response
@@ -238,7 +268,6 @@ def test_polygon_simple_shapefile():
             {"x": 9.625073664922276, "y": 54.44564495692932},
             {"x": 9.620033189053865, "y": 54.447110386123754},
             {"x": 9.614992713185453, "y": 54.447110386123754},
-            {"x": 9.504102244080421, "y": 54.51885219373373},
         ],
         [
             {"x": 10.05351411373718, "y": 54.316481719000855},
@@ -277,7 +306,6 @@ def test_polygon_simple_shapefile():
             {"x": 10.108959348289698, "y": 54.22081591952478},
             {"x": 10.103918872421284, "y": 54.219342403433615},
             {"x": 10.098878396552875, "y": 54.217868834759784},
-            {"x": 10.05351411373718, "y": 54.316481719000855},
         ],
     ]
 
@@ -309,10 +337,14 @@ def test_polygon_multipart_with_holes_shapefile():
     category_name = "multipart_polygon_category"
     from_epsg = 3857
 
+    # Create mock JSON interface with a semantic tool
+    json_interface = create_mock_json_interface(job_name, "semantic")
+
     response = get_json_response_from_shapefiles(
         shapefile_paths=[shapefile_path],
         job_names=[job_name],
         category_names=[category_name],
+        json_interface=json_interface,
         from_epsgs=[from_epsg],
     )
 
@@ -435,7 +467,6 @@ def test_polygon_multipart_with_holes_shapefile():
         {"x": 9.984513909812655, "y": 54.275972664418326},
         {"x": 9.984513909812655, "y": 54.277639508622684},
         {"x": 9.984513909812655, "y": 54.278750700633786},
-        {"x": 10.066352118869245, "y": 54.30541031990684},
     ]
     expected_first_polygon_hole = [
         {"x": 10.041134531194832, "y": 54.27736170593762},
@@ -478,7 +509,6 @@ def test_polygon_multipart_with_holes_shapefile():
         {"x": 10.05255381617947, "y": 54.27402792762705},
         {"x": 10.048747387851257, "y": 54.27513921703135},
         {"x": 10.045892566605096, "y": 54.27625047646807},
-        {"x": 10.041134531194832, "y": 54.27736170593762},
     ]
 
     first_polygon_exterior = first_polygon["boundingPoly"][0]["normalizedVertices"]
@@ -560,7 +590,6 @@ def test_polygon_multipart_with_holes_shapefile():
         {"x": 9.663346519619639, "y": 54.288472352523826},
         {"x": 9.662394912537584, "y": 54.28958325238011},
         {"x": 9.662394912537584, "y": 54.2906941222739},
-        {"x": 9.743281514512121, "y": 54.327336022364776},
     ]
     expected_second_polygon_part1_hole = [
         {"x": 9.72044294454284, "y": 54.29791404627456},
@@ -593,7 +622,6 @@ def test_polygon_multipart_with_holes_shapefile():
         {"x": 9.727104194117215, "y": 54.29236037093575},
         {"x": 9.724249372871057, "y": 54.29513730223186},
         {"x": 9.722346158706948, "y": 54.29680337112751},
-        {"x": 9.72044294454284, "y": 54.29791404627456},
     ]
 
     second_polygon_part1_exterior = second_polygon_part_with_hole["boundingPoly"][0][
@@ -676,7 +704,6 @@ def test_polygon_multipart_with_holes_shapefile():
         {"x": 9.791813475696845, "y": 54.35895505247248},
         {"x": 9.790861868614794, "y": 54.36006405048648},
         {"x": 9.790861868614794, "y": 54.361173018562845},
-        {"x": 9.833684187307194, "y": 54.376695428400765},
     ]
 
     second_polygon_part2_exterior = second_polygon_part_without_hole["boundingPoly"][0][
