@@ -1291,10 +1291,15 @@ class LabelClientMethods(BaseClientMethods):
             This function requires the 'gis' extra dependencies.
             Install them with: pip install kili[gis] or pip install 'kili[gis]'
         """
+        json_interface = self.kili_api_gateway.get_project(
+            ProjectId(project_id), ("jsonInterface",)
+        )["jsonInterface"]
+
         json_response = get_json_response_from_shapefiles(
             shapefile_paths=shapefile_paths,
             job_names=job_names,
             category_names=category_names,
+            json_interface=json_interface,
             from_epsgs=from_epsgs,
         )
 

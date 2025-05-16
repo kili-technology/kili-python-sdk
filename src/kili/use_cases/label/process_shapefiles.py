@@ -5,11 +5,11 @@ extracting their geometries (points, polylines, polygons), and converting them i
 a JSON response for geospatial annotations.
 """
 
-
 import struct
 from typing import Dict, List, Optional, Tuple, Union, cast
 
 import pyproj
+from cuid import cuid
 from shapely.geometry import LinearRing, LineString, Point, Polygon
 from shapely.ops import transform
 
@@ -161,33 +161,30 @@ def read_shape_record(
     return None
 
 
-def read_shapefile(filename):
+def read_shapefile(
+    filename: str,
+) -> Tuple[List[Point], List[List[LineString]], List[List[Polygon]]]:
     """Reads a shapefile and extracts geometries."""
     points = []
     polyline_records = []
     polygon_records = []
 
-    with open(filename, "rb") as f:
-        read_shapefile_header(f)
-
-        record_id = 0
+    with open(filename, "rb") as shapefile:
+        read_shapefile_header(shapefile)
 
         while True:
-            record = read_shape_record(f)
+            record = read_shape_record(shapefile)
             if record is None:
                 break  # End of file
 
             shape_type, geometry = record
 
             if shape_type == 1 and geometry:  # Point
-                points.append({"record_id": record_id, "geometry": geometry})
-                record_id += 1
+                points.append(geometry)
             elif shape_type == 3 and geometry:  # Polyline
-                polyline_records.append({"record_id": record_id, "geometries": geometry})
-                record_id += 1
+                polyline_records.append(geometry)
             elif shape_type == 5 and geometry:  # Polygon
-                polygon_records.append({"record_id": record_id, "geometries": geometry})
-                record_id += 1
+                polygon_records.append(geometry)
 
     return points, polyline_records, polygon_records
 
@@ -211,6 +208,7 @@ def get_json_response_from_shapefiles(
     shapefile_paths: List[str],
     job_names: List[str],
     category_names: List[str],
+    json_interface: Dict,
     from_epsgs: Optional[List[int]] = None,
 ) -> Dict:
     """Process multiple shapefiles and convert them to a JSON response.
@@ -219,7 +217,8 @@ def get_json_response_from_shapefiles(
         shapefile_paths: List of paths to shapefiles
         job_names: List of job names corresponding to each shapefile
         category_names: List of category names corresponding to each shapefile
-        from_epsgs: List of source EPSG codes (if omitted, defaults to 4326 fr each shapefile)
+        json_interface: JSON interface containing job configurations
+        from_epsgs: List of source EPSG codes (if omitted, defaults to 4326 for each shapefile)
     """
     if len(shapefile_paths) != len(job_names) or len(shapefile_paths) != len(category_names):
         raise ValueError("Shapefile paths, job names, and category names must have the same length")
@@ -231,57 +230,175 @@ def get_json_response_from_shapefiles(
         category_name = category_names[file_idx]
         from_epsg = from_epsgs[file_idx] if from_epsgs else 4326
 
+        if job_name not in json_interface.get("jobs", {}):
+            continue
+
+        tool_type = json_interface["jobs"][job_name]["tools"][0]
+
         if job_name not in json_response:
             json_response[job_name] = {"annotations": []}
 
         point_records, polyline_records, polygon_records = read_shapefile(shapefile_path)
 
-        for point_record in point_records:
-            point = transform_geometry(point_record["geometry"], from_epsg)
+        if tool_type == "marker":
+            _process_marker_records(
+                point_records, category_name, from_epsg, json_response, job_name
+            )
+        elif tool_type == "polyline":
+            _process_polyline_records(
+                polyline_records, category_name, from_epsg, json_response, job_name
+            )
+        elif tool_type in ["rectangle", "polygon", "semantic"]:
+            _process_polygon_records(
+                polygon_records, category_name, from_epsg, json_response, job_name, tool_type
+            )
+
+    return json_response
+
+
+def _remove_duplicate_points(coords):
+    """Remove the last point if it's identical to the first point in a coordinate list.
+
+    This function is typically used for handling closed polygon coordinates from QGIS, where
+    the first and last points are the same.
+    """
+    if len(coords) > 1 and coords[0] == coords[-1]:
+        coords = coords[:-1]
+
+    return coords
+
+
+def _process_marker_records(point_records, category_name, from_epsg, json_response, job_name):
+    """Process point records for marker job type."""
+    for point_record in point_records:
+        point = transform_geometry(point_record, from_epsg)
+
+        annotation = {
+            "point": {"x": point.x, "y": point.y},
+            "categories": [{"name": category_name}],
+            "type": "marker",
+            "mid": cuid(),
+            "labelVersion": "default",
+            "children": {},
+        }
+
+        json_response[job_name]["annotations"].append(annotation)
+
+
+def _process_polyline_records(polyline_records, category_name, from_epsg, json_response, job_name):
+    """Process polyline records for polyline job type."""
+    for polyline_record in polyline_records:
+        for line in polyline_record:
+            transformed_line = transform_geometry(line, from_epsg)
+
+            # Remove duplicate consecutive points
+            coords = list(transformed_line.coords)
+            unique_coords = _remove_duplicate_points(coords)
 
             annotation = {
-                "point": {"x": point.x, "y": point.y},
+                "polyline": [{"x": x, "y": y} for x, y in unique_coords],
                 "categories": [{"name": category_name}],
-                "type": "marker",
+                "type": "polyline",
+                "mid": cuid(),
+                "labelVersion": "default",
+                "children": {},
             }
 
             json_response[job_name]["annotations"].append(annotation)
 
-        for polyline_record in polyline_records:
-            for line in polyline_record["geometries"]:
-                transformed_line = transform_geometry(line, from_epsg)
 
-                annotation = {
-                    "polyline": [{"x": x, "y": y} for x, y in transformed_line.coords],
-                    "categories": [{"name": category_name}],
-                    "type": "polyline",
-                }
+def _process_polygon_records(
+    polygon_records, category_name, from_epsg, json_response, job_name, tool_type
+):
+    """Process polygon records based on the tool type."""
+    for polygon_record in polygon_records:
+        mid = cuid()
 
-                json_response[job_name]["annotations"].append(annotation)
+        for polygon in polygon_record:
+            transformed_polygon = transform_geometry(polygon, from_epsg)
 
-        for polygon_record in polygon_records:
-            record_id = polygon_record["record_id"]
-            mid = f"mask-{record_id}"
+            if tool_type == "rectangle":
+                _process_rectangle(transformed_polygon, category_name, mid, json_response, job_name)
+            elif tool_type == "polygon":
+                _process_simple_polygon(
+                    transformed_polygon, category_name, mid, json_response, job_name
+                )
+            elif tool_type == "semantic":
+                _process_semantic_polygon(
+                    transformed_polygon, category_name, mid, json_response, job_name
+                )
 
-            for polygon in polygon_record["geometries"]:
-                transformed_polygon = transform_geometry(polygon, from_epsg)
 
-                # Extract exterior coordinates
-                exterior_points = [{"x": x, "y": y} for x, y in transformed_polygon.exterior.coords]
-                bounding_poly = [{"normalizedVertices": exterior_points}]
+def _process_rectangle(polygon, category_name, mid, json_response, job_name):
+    """Process a polygon as a rectangle."""
+    exterior_coords = list(polygon.exterior.coords)
 
-                # Extract interior coordinates (holes)
-                for interior in transformed_polygon.interiors:
-                    interior_points = [{"x": x, "y": y} for x, y in interior.coords]
-                    bounding_poly.append({"normalizedVertices": interior_points})
+    unique_coords = _remove_duplicate_points(exterior_coords)
 
-                annotation = {
-                    "boundingPoly": bounding_poly,
-                    "categories": [{"name": category_name}],
-                    "type": "semantic",
-                    "mid": mid,
-                }
+    if len(unique_coords) == 4:
+        rectangle_coords = [{"x": x, "y": y} for x, y in unique_coords]
+    else:
+        minx, miny, maxx, maxy = polygon.bounds
+        rectangle_coords = [
+            {"x": minx, "y": miny},
+            {"x": minx, "y": maxy},
+            {"x": maxx, "y": maxy},
+            {"x": maxx, "y": miny},
+        ]
 
-                json_response[job_name]["annotations"].append(annotation)
+    annotation = {
+        "boundingPoly": [{"normalizedVertices": rectangle_coords}],
+        "categories": [{"name": category_name}],
+        "type": "rectangle",
+        "mid": mid,
+        "labelVersion": "default",
+    }
 
-    return json_response
+    json_response[job_name]["annotations"].append(annotation)
+
+
+def _process_simple_polygon(polygon, category_name, mid, json_response, job_name):
+    """Process a polygon for a polygon job type."""
+    exterior_coords = list(polygon.exterior.coords)
+
+    unique_coords = _remove_duplicate_points(exterior_coords)
+
+    polygon_coords = [{"x": x, "y": y} for x, y in unique_coords]
+
+    annotation = {
+        "boundingPoly": [{"normalizedVertices": polygon_coords}],
+        "categories": [{"name": category_name}],
+        "type": "polygon",
+        "mid": mid,
+        "labelVersion": "default",
+    }
+
+    json_response[job_name]["annotations"].append(annotation)
+
+
+def _process_semantic_polygon(polygon, category_name, mid, json_response, job_name):
+    """Process a polygon for a semantic job type."""
+    exterior_coords = list(polygon.exterior.coords)
+
+    unique_exterior_coords = _remove_duplicate_points(exterior_coords)
+
+    exterior_points = [{"x": x, "y": y} for x, y in unique_exterior_coords]
+    bounding_poly = [{"normalizedVertices": exterior_points}]
+
+    for interior in polygon.interiors:
+        interior_coords = list(interior.coords)
+
+        unique_interior_coords = _remove_duplicate_points(interior_coords)
+
+        interior_points = [{"x": x, "y": y} for x, y in unique_interior_coords]
+        bounding_poly.append({"normalizedVertices": interior_points})
+
+    annotation = {
+        "boundingPoly": bounding_poly,
+        "categories": [{"name": category_name}],
+        "type": "semantic",
+        "mid": mid,
+        "labelVersion": "default",
+    }
+
+    json_response[job_name]["annotations"].append(annotation)
