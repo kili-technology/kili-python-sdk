@@ -93,6 +93,21 @@ class Annotation(TypedDict):
     path: List[List[str]]
 
 
+class ObjectDetectionAnnotation(TypedDict):
+    """Object detection annotation."""
+
+    # pylint: disable=unused-private-member
+    __typename: Literal["ObjectDetectionAnnotation"]
+    id: AnnotationId
+    labelId: LabelId
+    job: JobName
+    path: List[List[str]]
+    annotationValue: ObjectDetectionAnnotationValue
+    name: Optional[str]
+    mid: str
+    category: str
+
+
 class FrameInterval(TypedDict):
     """Frame interval."""
 
@@ -174,6 +189,7 @@ VideoAnnotation = Union[
 
 ClassicAnnotation = Union[
     ClassificationAnnotation,
+    ObjectDetectionAnnotation,
     RankingAnnotation,
     TranscriptionAnnotation,
 ]

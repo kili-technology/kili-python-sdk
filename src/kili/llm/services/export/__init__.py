@@ -2,11 +2,12 @@
 
 from typing import Dict, List, Optional, Union
 
+from kili_formats.types import Conversation
+
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset.asset import AssetFilters
 from kili.domain.label import LabelType
-from kili.domain.llm import Conversation
 from kili.domain.project import ProjectId
 
 from .export_llm_rlhf import LLMRLHFExporter

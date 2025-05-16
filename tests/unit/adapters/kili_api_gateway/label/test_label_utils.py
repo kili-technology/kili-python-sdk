@@ -1,14 +1,15 @@
 from typing import Dict, List
 
 import pytest
-
-from kili.adapters.kili_api_gateway.label.annotation_to_json_response import (
+from kili_formats.tool.annotations_to_json_response import (
     _classic_annotations_to_json_response,
     _interpolate_point,
     _interpolate_rectangle,
     _video_annotations_to_json_response,
 )
-from kili.domain.annotation import ClassicAnnotation, Vertice, VideoAnnotation
+from kili_formats.types import ClassicAnnotation, VideoAnnotation
+
+from kili.domain.annotation import Vertice
 
 from .test_data import (
     test_case_1,
@@ -173,7 +174,7 @@ def test_given_classic_label_annotations_when_converting_to_json_resp_it_works(
     _ = annotations
 
     # When
-    json_resp = _classic_annotations_to_json_response(annotations)
+    json_resp = _classic_annotations_to_json_response(annotations, {})
 
     # Then
     assert json_resp == expected_json_resp

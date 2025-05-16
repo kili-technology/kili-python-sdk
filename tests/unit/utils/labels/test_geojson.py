@@ -3,8 +3,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 import pytest
-
-from kili.utils.labels.geojson import (
+from kili_formats.format.geojson import (
     features_to_feature_collection,
     geojson_feature_collection_to_kili_json_response,
     geojson_linestring_feature_to_kili_line_annotation,

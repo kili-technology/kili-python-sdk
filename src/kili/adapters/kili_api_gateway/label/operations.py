@@ -81,6 +81,7 @@ def get_annotations_partial_query(
     video_object_detection_annotation_fragment: str,
     video_classification_annotation_fragment: str,
     video_transcription_annotation_fragment: str,
+    object_detection_annotation_fragment: str,
 ) -> str:
     """Get the gql annotations query."""
     inline_fragments = ""
@@ -138,6 +139,13 @@ def get_annotations_partial_query(
         inline_fragments += f"""
             ... on VideoTranscriptionAnnotation {{
                 {video_transcription_annotation_fragment}
+            }}
+        """
+
+    if object_detection_annotation_fragment.strip():
+        inline_fragments += f"""
+            ... on ObjectDetectionAnnotation {{
+                {object_detection_annotation_fragment}
             }}
         """
 

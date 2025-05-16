@@ -56,24 +56,24 @@ The module `kili.utils.labels` provides a set of helpers to convert point, bound
 
 ### Point
 
-::: kili.utils.labels.geojson.point
+::: kili_formats.format.geojson.point
 
 ### Line
 
-::: kili.utils.labels.geojson.line
+::: kili_formats.format.geojson.line
 
 ### Bounding box
 
-::: kili.utils.labels.geojson.bbox
+::: kili_formats.format.geojson.bbox
 
 ### Polygon
 
-::: kili.utils.labels.geojson.polygon
+::: kili_formats.format.geojson.polygon
 
 ### Segmentation
 
-::: kili.utils.labels.geojson.segmentation
+::: kili_formats.format.geojson.segmentation
 
 ### Collection
 
-::: kili.utils.labels.geojson.collection
+::: kili_formats.format.geojson.collection

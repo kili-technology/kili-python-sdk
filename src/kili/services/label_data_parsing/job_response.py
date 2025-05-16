@@ -3,12 +3,12 @@
 from datetime import datetime
 from typing import Dict, List, Optional, cast
 
+from kili_formats.types import Job
 from typeguard import typechecked
 
 from kili.services.label_data_parsing import annotation as annotation_module
 from kili.services.label_data_parsing import category as category_module
 from kili.services.label_data_parsing import json_response as json_response_module
-from kili.services.types import Job
 
 from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
 from .types import Project

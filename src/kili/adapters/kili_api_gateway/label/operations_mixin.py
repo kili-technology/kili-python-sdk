@@ -3,6 +3,8 @@
 import json
 from typing import Dict, Generator, List, Optional
 
+from kili_formats.tool.annotations_to_json_response import AnnotationsToJsonResponseConverter
+
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
@@ -18,16 +20,9 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
-from .annotation_to_json_response import (
-    AnnotationsToJsonResponseConverter,
-)
 from .common import get_annotation_fragment
 from .formatters import load_label_json_fields
-from .mappers import (
-    append_label_data_mapper,
-    append_to_labels_data_mapper,
-    label_where_mapper,
-)
+from .mappers import append_label_data_mapper, append_to_labels_data_mapper, label_where_mapper
 from .operations import (
     GQL_COUNT_LABELS,
     GQL_DELETE_LABELS,

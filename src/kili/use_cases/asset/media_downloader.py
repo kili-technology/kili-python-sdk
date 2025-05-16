@@ -168,6 +168,10 @@ class MediaDownloader:
                 json_content = get_response_json(response)
                 asset["jsonContent"] = json_content
 
+            elif self.project_input_type == "GEOSPATIAL":
+                # no need for jsonContent nor content
+                return asset
+
             else:
                 raise NotImplementedError(
                     f"jsonContent download for type {self.project_input_type} not implemented yet."

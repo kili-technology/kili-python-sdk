@@ -4,13 +4,13 @@ from pathlib import Path
 from zipfile import ZipFile
 
 import pytest_mock
+from kili_formats import convert_from_kili_to_yolo_format
 
 from kili.adapters.http_client import HttpClient
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import YoloExporter
 from kili.services.export.format.yolo import (
     YoloExporter,
-    _convert_from_kili_to_yolo_format,
     _process_asset,
     _write_class_file,
     _write_labels_to_file,
@@ -144,19 +144,19 @@ def test_process_asset_for_job_frame_not_served_by_kili():
 
 
 def test_convert_from_kili_to_yolo_format():
-    converted_annotations = _convert_from_kili_to_yolo_format(
+    converted_annotations = convert_from_kili_to_yolo_format(
         "JOB_0", asset_image_1["latestLabel"], category_ids
     )
-    converted_annotations_with_rotation_0 = _convert_from_kili_to_yolo_format(
+    converted_annotations_with_rotation_0 = convert_from_kili_to_yolo_format(
         "JOB_0", asset_image_1_with_0_rotation["latestLabel"], category_ids
     )
-    converted_annotations_with_rotation_90 = _convert_from_kili_to_yolo_format(
+    converted_annotations_with_rotation_90 = convert_from_kili_to_yolo_format(
         "JOB_0", asset_image_1_with_90_rotation["latestLabel"], category_ids
     )
-    converted_annotations_with_rotation_180 = _convert_from_kili_to_yolo_format(
+    converted_annotations_with_rotation_180 = convert_from_kili_to_yolo_format(
         "JOB_0", asset_image_1_with_180_rotation["latestLabel"], category_ids
     )
-    converted_annotations_with_rotation_270 = _convert_from_kili_to_yolo_format(
+    converted_annotations_with_rotation_270 = convert_from_kili_to_yolo_format(
         "JOB_0", asset_image_1_with_270_rotation["latestLabel"], category_ids
     )
     expected_annotations1 = [
@@ -178,7 +178,7 @@ def test_convert_from_kili_to_yolo_format():
 
 
 def test_convert_from_kili_to_yolo_format_no_annotation():
-    converted_annotations = _convert_from_kili_to_yolo_format(
+    converted_annotations = convert_from_kili_to_yolo_format(
         "JOB_0", asset_image_1_without_annotation["latestLabel"], category_ids
     )
     assert len(converted_annotations) == 0

@@ -9,6 +9,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, NamedTuple, Optional, Tuple, Union
 
+from kili_formats.types import Job
+
 from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
 from kili.services.export.exceptions import (
@@ -25,7 +27,6 @@ from kili.services.export.types import (
     LabelFormat,
     SplitOption,
 )
-from kili.services.types import Job
 from kili.utils.tempfile import TemporaryDirectory
 
 if TYPE_CHECKING:

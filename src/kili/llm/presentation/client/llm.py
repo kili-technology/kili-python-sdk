@@ -10,14 +10,13 @@ from typing import (
     cast,
 )
 
+from kili_formats.types import ChatItem, ChatItemRole, Conversation
+
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
 from kili.domain.label import LabelType
 from kili.domain.llm import (
     AzureOpenAICredentials,
-    ChatItem,
-    ChatItemRole,
-    Conversation,
     ModelDict,
     ModelToCreateInput,
     ModelToUpdateInput,

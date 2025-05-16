@@ -4,12 +4,13 @@ import json
 from pathlib import Path
 from typing import Dict, List
 
-from kili.domain.ontology import JobMLTask, JobTool
+from kili_formats.format.geojson import convert_from_kili_to_geojson_format
+from kili_formats.types import Job, JobTool
+
+from kili.domain.ontology import JobMLTask
 from kili.services.export.exceptions import NotCompatibleInputType, NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.tools import is_geotiff_asset_with_lat_lon_coords
-from kili.services.types import Job
-from kili.utils.labels.geojson import kili_json_response_to_feature_collection
 from kili.utils.tqdm import tqdm
 
 
@@ -36,7 +37,7 @@ class GeoJsonExporter(AbstractExporter):
 
     def _check_project_compatibility(self) -> None:
         """Checks if the export label format is compatible with the project."""
-        if self.project["inputType"] != "IMAGE":
+        if self.project["inputType"] not in ["IMAGE", "GEOSPATIAL"]:
             raise NotCompatibleInputType(
                 f"Project with input type '{self.project['inputType']}' not compatible with"
                 " GeoJson export format."
@@ -90,7 +91,7 @@ class GeoJsonExporter(AbstractExporter):
 
 
 def _process_asset(asset: Dict, labels_folder: Path) -> None:
-    geojson_feature_collection = kili_json_response_to_feature_collection(
+    geojson_feature_collection = convert_from_kili_to_geojson_format(
         asset["latestLabel"]["jsonResponse"]
     )
     filepath = labels_folder / f'{asset["externalId"]}.geojson'
