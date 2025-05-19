@@ -12,6 +12,7 @@ from typing import (
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
+from kili.domain.asset.asset import StatusInStep
 from kili.domain.label import LabelType
 from kili.domain.llm import (
     AzureOpenAICredentials,
@@ -31,8 +32,10 @@ from kili.domain.llm import (
 )
 from kili.domain.project import ProjectId
 from kili.llm.services.export import export
+from kili.presentation.client.helpers.filter_conversion import convert_step_in_to_step_id_in_filter
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.use_cases.asset.utils import AssetUseCasesUtils
+from kili.use_cases.project.project import ProjectUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
 
@@ -82,6 +85,8 @@ class LlmClientMethods:
         include_sent_back_labels: Optional[bool] = False,
         label_type_in: Optional[List[LabelType]] = None,
         status_in: Optional[List[AssetStatus]] = None,
+        step_name_in: Optional[List[str]] = None,
+        step_status_in: Optional[List[StatusInStep]] = None,
     ) -> Optional[Union[List[Conversation], List[Dict[str, Union[List[str], str]]]]]:
         """Returns an export of llm conversations with valid labels.
 
@@ -94,6 +99,11 @@ class LlmClientMethods:
             label_type_in: Optional types of label to fetch, by default ["DEFAULT", "REVIEW"].
             status_in: Returned assets should have a status that belongs to that list, if given.
                 Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
+            step_name_in: Returned assets are in a step whose name belong to that list, if given.
+                Only applicable if the project is in WorkflowV2.
+            step_status_in: Returned assets have the status of their step that belongs to that list, if given.
+                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2.
         !!! Example
             ```python
             kili.llm.export("your_project_id")
@@ -115,11 +125,26 @@ class LlmClientMethods:
 
         label_type_in = label_type_in or ["DEFAULT", "REVIEW"]
 
+        step_id_in = None
+
+        if status_in is not None or step_name_in is not None or step_status_in is not None:
+            project_use_cases = ProjectUseCases(self.kili_api_gateway)
+            step_id_in = convert_step_in_to_step_id_in_filter(
+                project_steps=project_use_cases.get_project_steps(project_id),
+                asset_filter_kwargs={
+                    "step_name_in": step_name_in,
+                    "step_status_in": step_status_in,
+                    "status_in": status_in,
+                },
+            )
+
         asset_filter = AssetFilters(
             project_id=ProjectId(project_id),
             asset_id_in=resolved_asset_ids,
             label_type_in=label_type_in,
             status_in=status_in,
+            step_id_in=step_id_in,
+            step_status_in=step_status_in,
         )
 
         try:
