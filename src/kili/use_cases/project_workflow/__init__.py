@@ -1,6 +1,6 @@
 """Project use cases."""
 
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from kili.adapters.kili_api_gateway.project_workflow.types import (
     ProjectWorkflowDataKiliAPIGatewayInput,
@@ -23,3 +23,10 @@ class ProjectWorkflowUseCases(BaseUseCases):
         )
 
         return self._kili_api_gateway.update_project_workflow(project_id, project_workflow_data)
+
+    def get_steps(
+        self,
+        project_id: ProjectId,
+    ) -> List[Dict[str, object]]:
+        """Get steps in a project workflow."""
+        return self._kili_api_gateway.get_steps(project_id)
