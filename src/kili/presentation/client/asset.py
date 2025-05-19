@@ -596,6 +596,8 @@ class AssetClientMethods(BaseClientMethods):
         issue_status: Optional[IssueStatus] = None,
         external_id_strictly_in: Optional[List[str]] = None,
         external_id_in: Optional[List[str]] = None,
+        step_name_in: Optional[List[str]] = None,
+        step_status_in: Optional[List[StatusInStep]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count and return the number of assets with the given constraints.
@@ -652,6 +654,11 @@ class AssetClientMethods(BaseClientMethods):
             external_id_strictly_in: Returned assets should have external ids that match exactly the ones in the list.
             external_id_in: Returned assets should have external ids that partially match the ones in the list.
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
+            step_name_in: Returned assets are in a step whose name belong to that list, if given.
+                Only applicable if the project is in WorkflowV2.
+            step_status_in: Returned assets have the status of their step that belongs to that list, if given.
+                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -714,6 +721,19 @@ class AssetClientMethods(BaseClientMethods):
                     stacklevel=1,
                 )
 
+        step_id_in = None
+
+        if status_in is not None or step_name_in is not None or step_status_in is not None:
+            project_use_cases = ProjectUseCases(self.kili_api_gateway)
+            step_id_in = convert_step_in_to_step_id_in_filter(
+                project_steps=project_use_cases.get_project_steps(project_id),
+                asset_filter_kwargs={
+                    "step_name_in": step_name_in,
+                    "step_status_in": step_status_in,
+                    "status_in": status_in,
+                },
+            )
+
         filters = AssetFilters(
             project_id=ProjectId(project_id),
             asset_id=AssetId(asset_id) if asset_id else None,
@@ -756,6 +776,8 @@ class AssetClientMethods(BaseClientMethods):
             created_at_lte=created_at_lte,
             issue_status=issue_status,
             issue_type=issue_type,
+            step_id_in=step_id_in,
+            step_status_in=step_status_in,
         )
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
         return asset_use_cases.count_assets(filters)

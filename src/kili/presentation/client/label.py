@@ -25,6 +25,7 @@ from kili.core.helpers import (
     validate_category_search_query,
 )
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
+from kili.domain.asset.asset import StatusInStep
 from kili.domain.asset.helpers import check_asset_identifier_arguments
 from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectId
@@ -66,6 +67,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_status_in: Optional[List[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
         asset_external_id_strictly_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -88,6 +91,11 @@ class LabelClientMethods(BaseClientMethods):
                 Possible choices : `TODO`, `ONGOING`, `LABELED` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.
+            asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
+                Only applicable if the project is in WorkflowV2.
+            asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
+                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -110,6 +118,23 @@ class LabelClientMethods(BaseClientMethods):
         if category_search:
             validate_category_search_query(category_search)
 
+        asset_step_id_in = None
+
+        if (
+            asset_status_in is not None
+            or asset_step_name_in is not None
+            or asset_step_status_in is not None
+        ):
+            project_use_cases = ProjectUseCases(self.kili_api_gateway)
+            asset_step_id_in = convert_step_in_to_step_id_in_filter(
+                project_steps=project_use_cases.get_project_steps(project_id),
+                asset_filter_kwargs={
+                    "step_name_in": asset_step_name_in,
+                    "step_status_in": asset_step_status_in,
+                    "status_in": asset_status_in,
+                },
+            )
+
         filters = LabelFilters(
             project_id=ProjectId(project_id),
             asset=AssetFilters(
@@ -126,6 +151,8 @@ class LabelClientMethods(BaseClientMethods):
                     if asset_external_id_strictly_in
                     else None
                 ),
+                step_id_in=asset_step_id_in,
+                step_status_in=asset_step_status_in,
             ),
             author_in=author_in,
             created_at=created_at,
@@ -154,6 +181,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
         asset_external_id_strictly_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -192,6 +221,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
         asset_external_id_strictly_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -230,6 +261,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
         asset_external_id_strictly_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -268,6 +301,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
         asset_external_id_strictly_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -306,6 +341,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
         asset_external_id_strictly_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -344,6 +381,11 @@ class LabelClientMethods(BaseClientMethods):
                 Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`.
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.
+            asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
+                Only applicable if the project is in WorkflowV2.
+            asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
+                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have their creation date equal to this date.
@@ -399,6 +441,23 @@ class LabelClientMethods(BaseClientMethods):
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
 
+        asset_step_id_in = None
+
+        if (
+            asset_status_in is not None
+            or asset_step_name_in is not None
+            or asset_step_status_in is not None
+        ):
+            project_use_cases = ProjectUseCases(self.kili_api_gateway)
+            asset_step_id_in = convert_step_in_to_step_id_in_filter(
+                project_steps=project_use_cases.get_project_steps(project_id),
+                asset_filter_kwargs={
+                    "step_name_in": asset_step_name_in,
+                    "step_status_in": asset_step_status_in,
+                    "status_in": asset_status_in,
+                },
+            )
+
         filters = LabelFilters(
             project_id=ProjectId(project_id),
             asset=AssetFilters(
@@ -415,6 +474,8 @@ class LabelClientMethods(BaseClientMethods):
                     if asset_external_id_strictly_in
                     else None
                 ),
+                step_id_in=asset_step_id_in,
+                step_status_in=asset_step_status_in,
             ),
             author_in=author_in,
             created_at=created_at,
@@ -452,6 +513,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -485,6 +548,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -518,6 +583,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -553,6 +620,11 @@ class LabelClientMethods(BaseClientMethods):
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
+            asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
+                Only applicable if the project is in WorkflowV2.
+            asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
+                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -582,6 +654,8 @@ class LabelClientMethods(BaseClientMethods):
             asset_id=asset_id,
             asset_status_in=asset_status_in,
             asset_external_id_in=asset_external_id_in,
+            asset_step_name_in=asset_step_name_in,
+            asset_step_status_in=asset_step_status_in,
             author_in=author_in,
             created_at=created_at,
             created_at_gte=created_at_gte,
@@ -607,6 +681,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -640,6 +716,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -673,6 +751,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
         asset_external_id_in: Optional[List[str]] = None,
+        asset_step_name_in: Optional[List[str]] = None,
+        asset_step_status_in: Optional[List[StatusInStep]] = None,
         author_in: Optional[List[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -708,6 +788,11 @@ class LabelClientMethods(BaseClientMethods):
             asset_status_in: Returned labels should have a status that belongs to that list, if given.
                 Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
+            asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
+                Only applicable if the project is in WorkflowV2.
+            asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
+                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -737,6 +822,8 @@ class LabelClientMethods(BaseClientMethods):
             asset_id=asset_id,
             asset_status_in=asset_status_in,
             asset_external_id_in=asset_external_id_in,
+            asset_step_name_in=asset_step_name_in,
+            asset_step_status_in=asset_step_status_in,
             author_in=author_in,
             created_at=created_at,
             created_at_gte=created_at_gte,
