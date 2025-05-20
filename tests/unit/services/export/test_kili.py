@@ -1,26 +1,29 @@
 import json
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
+from typing import TYPE_CHECKING
 from zipfile import ZipFile
 
 import pytest_mock
+from kili_formats import convert_to_pixel_coords
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.format.kili import KiliExporter
-from kili.services.export.format.llm import _format_json_response
 from tests.fakes.fake_data import (
     kili_format_expected_frame_asset_output,
     kili_format_frame_asset,
 )
-from tests.unit.adapters.kili_api_gateway.label.test_data import test_case_13, test_case_14
+from tests.unit.adapters.kili_api_gateway.label.test_data import test_case_13
 
 from .expected.geojson_project_assets_export import geojson_project_asset
 from .expected.image_project_assets_unnormalized import image_project_asset_unnormalized
-from .expected.llm_project_assets import llm_project_asset
 from .expected.pdf_project_assets_unnormalized import pdf_project_asset_unnormalized
 from .expected.video_project_assets_unnormalized import video_project_asset_unnormalized
+
+if TYPE_CHECKING:
+    from kili_formats.types import ProjectDict
 
 
 def test_preprocess_assets(mocker: pytest_mock.MockFixture):
@@ -34,7 +37,12 @@ def test_kili_exporter_convert_to_pixel_coords_pdf(mocker: pytest_mock.MockerFix
     mocker.patch.object(KiliExporter, "__init__", return_value=None)
     exporter = KiliExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
     exporter.normalized_coordinates = None
-    exporter.project = {
+
+    project: ProjectDict = {
+        "id": "fake_project_id",
+        "title": "Fake Project Title",
+        "description": "Fake Project Description",
+        "organizationId": "fake_organization_id",
         "inputType": "PDF",
         "jsonInterface": {
             "jobs": {
@@ -114,7 +122,7 @@ def test_kili_exporter_convert_to_pixel_coords_pdf(mocker: pytest_mock.MockerFix
         "content": "https://",
         "jsonContent": "https://",
     }
-    scaled_asset = exporter.convert_to_pixel_coords(asset)  # type: ignore
+    scaled_asset = convert_to_pixel_coords(asset, project)
 
     assert scaled_asset == {
         "content": "https://",
@@ -503,6 +511,8 @@ def test_save_assets_export_with_external_id_containing_slash(
     exporter.project = {
         "id": "fake_proj_id",
         "title": "fake_proj_title",
+        "description": "fake_proj_description",
+        "organizationId": "fake_organization_id",
         "inputType": "IMAGE",
         "jsonInterface": {
             "jobs": {
@@ -599,216 +609,3 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
                 output = json.load(f)
 
     assert output == geojson_project_asset
-
-
-def test_kili_export_labels_llm(mocker: pytest_mock.MockerFixture):
-    def mocked_graphql_execute(query, variables, **kwargs):
-        if "projects(" in query:
-            return {
-                "data": [
-                    {
-                        "inputType": "LLM_RLHF",
-                        "title": "",
-                        "id": "fake_llm_project_id",
-                        "jsonInterface": test_case_14.json_interface,
-                    }
-                ]
-            }
-
-        if "countProjects(" in query:
-            return {"data": 1}
-
-        if "countLabels(" in query:
-            return {"data": 1}
-
-        if "countAssets(" in query:
-            return {"data": 1}
-
-        if "assets(" in query:
-            return {"data": test_case_14.assets}
-
-        if "labels(" in query:
-            return {
-                "data": [
-                    {
-                        "id": "fake_llm_label_id",
-                        "jsonResponse": "{}",
-                        "annotations": test_case_14.annotations,
-                    }
-                ]
-            }
-
-        raise NotImplementedError
-
-    mocker.patch.object(AbstractExporter, "_check_and_ensure_asset_access", return_value=None)
-    graphql_client = mocker.MagicMock()
-    graphql_client.execute.side_effect = mocked_graphql_execute
-    http_client = mocker.MagicMock()
-
-    kili = LabelClientMethods()
-    kili.api_endpoint = "https://"  # type: ignore
-    kili.api_key = ""  # type: ignore
-    kili.kili_api_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
-    kili.graphql_client = graphql_client  # pyright: ignore[reportGeneralTypeIssues]
-    kili.http_client = http_client  # pyright: ignore[reportGeneralTypeIssues]
-
-    with TemporaryDirectory() as export_folder:
-        export_filename = str(Path(export_folder) / "export_kili_llm.zip")
-
-        kili.export_labels("fake_llm_label_id", export_filename, fmt="kili", with_assets=False)
-
-        with TemporaryDirectory() as extract_folder:
-            with ZipFile(export_filename, "r") as z_f:
-                # extract in a temp dir
-                z_f.extractall(extract_folder)
-
-            assert Path(f"{extract_folder}/README.kili.txt").is_file()
-            assert Path(f"{extract_folder}/labels").is_dir()
-            assert Path(f"{extract_folder}/labels/Click_here_to_start.json").is_file()
-
-            with Path(f"{extract_folder}/labels/Click_here_to_start.json").open() as f:
-                output = json.load(f)
-
-    assert output == llm_project_asset
-
-
-def test_kili_export_labels_llm_1_format_raw_data(mocker: pytest_mock.MockerFixture):
-    jobs_config = {
-        "RANKING": {
-            "isNew": False,
-            "mlTask": "CLASSIFICATION",
-            "content": {
-                "input": "radio",
-                "categories": {
-                    "A_1": {
-                        "id": "category28",
-                        "name": "A is slightly better than B",
-                        "children": [],
-                    },
-                    "A_2": {"id": "category27", "name": "A is better than B", "children": []},
-                    "A_3": {"id": "category26", "name": "A is much better than B", "children": []},
-                    "B_1": {
-                        "id": "category30",
-                        "name": "B is slightly better than A",
-                        "children": [],
-                    },
-                    "B_2": {"id": "category31", "name": "B is better than A", "children": []},
-                    "B_3": {"id": "category32", "name": "B is much better than A", "children": []},
-                    "TIE": {"id": "category29", "name": "Tie", "children": []},
-                },
-            },
-            "isChild": False,
-            "required": 0,
-            "instruction": "Pairwise comparison",
-        },
-        "SKIP_REASON": {
-            "isNew": False,
-            "mlTask": "CLASSIFICATION",
-            "content": {
-                "input": "radio",
-                "categories": {
-                    "OTHER": {"id": "category40", "name": "Other", "children": ["OTHER_COMMENT"]},
-                    "CODING": {
-                        "id": "category39",
-                        "name": "Coding expertise required",
-                        "children": [],
-                    },
-                },
-            },
-            "isChild": True,
-            "required": 1,
-            "instruction": "SKIP reason",
-        },
-        "OTHER_COMMENT": {
-            "isNew": False,
-            "mlTask": "TRANSCRIPTION",
-            "content": {"input": "textField"},
-            "isChild": True,
-            "required": 1,
-            "instruction": "",
-        },
-        "TRANSCRIPTION_JOB": {
-            "isNew": False,
-            "mlTask": "TRANSCRIPTION",
-            "content": {"input": "textField"},
-            "isChild": False,
-            "required": 1,
-            "instruction": "Overall comment",
-            "isIgnoredForMetricsComputations": True,
-        },
-        "CLASSIFICATION_JOB": {
-            "isNew": False,
-            "mlTask": "CLASSIFICATION",
-            "content": {
-                "input": "checkbox",
-                "categories": {
-                    "SKIP_ASSET": {
-                        "id": "category34",
-                        "name": "SKIP asset",
-                        "children": ["SKIP_REASON"],
-                    },
-                    "CLARIFICATION": {
-                        "id": "category35",
-                        "name": "Prompt requires clarification",
-                        "children": [],
-                    },
-                    "INTERNET_ACCESS": {
-                        "id": "category36",
-                        "name": "Prompt requires internet access",
-                        "children": [],
-                    },
-                    "UNSAFE_CONTENT_IN_A": {
-                        "id": "category37",
-                        "name": "Unsafe content in A",
-                        "children": [],
-                    },
-                    "UNSAFE_CONTENT_IN_B": {
-                        "id": "category38",
-                        "name": "Unsafe content in B",
-                        "children": [],
-                    },
-                    "BOTH_OUTPUTS_ARE_BAD": {
-                        "id": "category33",
-                        "name": "Both outputs are bad",
-                        "children": [],
-                    },
-                },
-            },
-            "isChild": False,
-            "required": 0,
-            "instruction": "Specific flag",
-        },
-    }
-    json_response = {
-        "RANKING": {"categories": [{"name": "B_3"}]},
-        "CLASSIFICATION_JOB": {
-            "categories": [
-                {
-                    "name": "SKIP_ASSET",
-                    "children": {
-                        "SKIP_REASON": {
-                            "categories": [
-                                {
-                                    "name": "OTHER",
-                                    "children": {
-                                        "OTHER_COMMENT": {"text": "biology far too advanced"}
-                                    },
-                                }
-                            ]
-                        }
-                    },
-                }
-            ]
-        },
-        "TRANSCRIPTION_JOB": {
-            "text": "Answer B is much better. It directly addresses the user prompt by providing a detailed and relevant description of the materials and methods used in the study of live brain imaging in Drosophila. The text is clear, coherent, and logically structured, making it easy to follow the experimental process from protein fusion to image analysis"
-        },
-    }
-    result = _format_json_response(jobs_config=jobs_config, json_response=json_response)
-    assert result == {
-        "RANKING": ["B_3"],
-        "CLASSIFICATION_JOB": ["SKIP_ASSET"],
-        "CLASSIFICATION_JOB.SKIP_ASSET.SKIP_REASON": ["OTHER"],
-        "CLASSIFICATION_JOB.SKIP_ASSET.SKIP_REASON.OTHER.OTHER_COMMENT": "biology far too advanced",
-        "TRANSCRIPTION_JOB": "Answer B is much better. It directly addresses the user prompt by providing a detailed and relevant description of the materials and methods used in the study of live brain imaging in Drosophila. The text is clear, coherent, and logically structured, making it easy to follow the experimental process from protein fusion to image analysis",
-    }

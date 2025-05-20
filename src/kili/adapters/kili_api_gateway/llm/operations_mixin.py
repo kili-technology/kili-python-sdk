@@ -2,6 +2,8 @@
 
 from typing import Dict, List, Optional, cast
 
+from kili_formats.types import ChatItem, ChatItemRole, Conversation
+
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
@@ -39,9 +41,6 @@ from kili.adapters.kili_api_gateway.llm.operations import (
     get_update_project_model_mutation,
 )
 from kili.domain.llm import (
-    ChatItem,
-    ChatItemRole,
-    Conversation,
     ModelDict,
     ModelToCreateInput,
     ModelToUpdateInput,

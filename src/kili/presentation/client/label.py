@@ -1328,7 +1328,7 @@ class LabelClientMethods(BaseClientMethods):
                 self,  # pyright: ignore[reportGeneralTypeIssues]
                 asset_ids=resolved_asset_ids,
                 project_id=ProjectId(project_id),
-                export_type="normal" if fmt == "llm_v1" else "latest",
+                export_type="latest",
                 label_format=fmt,
                 split_option=layout,
                 single_file=single_file,

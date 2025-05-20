@@ -11,7 +11,6 @@ from kili.services.export.format.base import AbstractExporter, ExportParams
 from kili.services.export.format.coco import CocoExporter
 from kili.services.export.format.geojson import GeoJsonExporter
 from kili.services.export.format.kili import KiliExporter
-from kili.services.export.format.llm import LLMExporter
 from kili.services.export.format.voc import VocExporter
 from kili.services.export.format.yolo import YoloExporter
 from kili.services.export.logger import get_logger
@@ -45,9 +44,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     kili.kili_api_gateway.get_project(project_id, ["id"])
 
     include_sent_back_labels = (
-        include_sent_back_labels
-        if include_sent_back_labels is not None
-        else (label_format != "llm_v1")
+        include_sent_back_labels if include_sent_back_labels is not None else True
     )
 
     export_params = ExportParams(
@@ -81,8 +78,6 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
             "yolo_v8": YoloExporter,
             "pascal_voc": VocExporter,
             "geojson": GeoJsonExporter,
-            "llm_v1": LLMExporter,
-            "llm_dynamic_v1": LLMExporter,
         }
         assert set(format_exporter_selector_mapping.keys()) == set(
             get_args(LabelFormat)

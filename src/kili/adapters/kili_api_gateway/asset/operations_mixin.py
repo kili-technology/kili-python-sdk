@@ -2,6 +2,10 @@
 
 from typing import Dict, Generator, List
 
+from kili_formats.tool.annotations_to_json_response import (
+    AnnotationsToJsonResponseConverter,
+)
+
 from kili.adapters.kili_api_gateway.asset.formatters import (
     load_asset_json_fields,
 )
@@ -17,9 +21,6 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
     QueryOptions,
     fragment_builder,
-)
-from kili.adapters.kili_api_gateway.label.annotation_to_json_response import (
-    AnnotationsToJsonResponseConverter,
 )
 from kili.adapters.kili_api_gateway.label.common import get_annotation_fragment
 from kili.adapters.kili_api_gateway.project.common import get_project
@@ -47,6 +48,7 @@ class AssetOperationMixin(BaseOperationMixin):
                 "LLM_RLHF",
                 "LLM_INSTR_FOLLOWING",
                 "LLM_STATIC",
+                "GEOSPATIAL",
             }:
                 yield from self.list_assets_split(filters, fields, options, project_info)
                 return

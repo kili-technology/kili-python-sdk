@@ -1,4 +1,4 @@
-from kili.utils.labels.geojson.exceptions import (
+from kili_formats.format.geojson.exceptions import (
     ConversionError,
 )
 
