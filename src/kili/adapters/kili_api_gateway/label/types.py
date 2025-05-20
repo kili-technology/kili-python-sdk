@@ -37,6 +37,7 @@ class AppendManyLabelsData:
     labels_data: List[AppendLabelData]
     label_type: LabelType
     overwrite: Optional[bool]
+    step_name: Optional[str] = None
 
 
 @dataclass
