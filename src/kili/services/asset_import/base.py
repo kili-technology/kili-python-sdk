@@ -52,6 +52,7 @@ from kili.utils import bucket
 from kili.utils.tqdm import tqdm
 
 FILTER_EXISTING_BATCH_SIZE = 1000
+MAX_ASSET_EXTERNAL_IDS_TO_LOG = 20
 
 if TYPE_CHECKING:
     from kili.client import Kili
@@ -588,10 +589,34 @@ class BaseAbstractAssetImporter(abc.ABC):
         assets_external_ids = [
             asset.get("external_id") for asset in assets if asset.get("external_id")
         ]
-        # split assets_external_ids into chunks of 1000
+        unique_externals_ids = []
+        duplicated_externals_ids = []
+
+        for external_id in assets_external_ids:
+            if assets_external_ids.count(external_id) == 1:
+                unique_externals_ids.append(external_id)
+            elif external_id not in duplicated_externals_ids:
+                duplicated_externals_ids.append(external_id)
+
+        nb_duplicated_externals_ids = len(duplicated_externals_ids)
+
+        if nb_duplicated_externals_ids > 0:
+            if nb_duplicated_externals_ids <= MAX_ASSET_EXTERNAL_IDS_TO_LOG:
+                warnings.warn(
+                    "The following input assets have been ignored because of duplicated external_id: "
+                    + ", ".join(duplicated_externals_ids),
+                    stacklevel=2,
+                )
+            else:
+                warnings.warn(
+                    "Some input assets have been ignored because of duplicated external_id",
+                    stacklevel=2,
+                )
+
+        # split unique_externals_ids into chunks of 1000
         assets_external_ids_chunks = [
-            assets_external_ids[x : x + FILTER_EXISTING_BATCH_SIZE]
-            for x in range(0, len(assets_external_ids), FILTER_EXISTING_BATCH_SIZE)
+            unique_externals_ids[x : x + FILTER_EXISTING_BATCH_SIZE]
+            for x in range(0, len(unique_externals_ids), FILTER_EXISTING_BATCH_SIZE)
         ]
         external_ids_in_project = []
         for assets_external_ids_chunk in assets_external_ids_chunks:
@@ -606,13 +631,23 @@ class BaseAbstractAssetImporter(abc.ABC):
             )
         nb_duplicate_assets = len(external_ids_in_project)
         if nb_duplicate_assets > 0:
-            warnings.warn(
-                f"{nb_duplicate_assets} assets were not imported because their external_id are"
-                " already in the project",
-                stacklevel=2,
-            )
+            if nb_duplicate_assets <= MAX_ASSET_EXTERNAL_IDS_TO_LOG:
+                warnings.warn(
+                    "The following assets were not imported because their external_id are"
+                    f" already in the project: {', '.join(external_ids_in_project)}",
+                    stacklevel=2,
+                )
+            else:
+                warnings.warn(
+                    f"{nb_duplicate_assets} assets were not imported because their external_id are"
+                    " already in the project",
+                    stacklevel=2,
+                )
         filtered_assets = [
-            asset for asset in assets if asset.get("external_id") not in external_ids_in_project
+            asset
+            for asset in assets
+            if asset.get("external_id") not in duplicated_externals_ids
+            and asset.get("external_id") not in external_ids_in_project
         ]
         return filtered_assets
 
