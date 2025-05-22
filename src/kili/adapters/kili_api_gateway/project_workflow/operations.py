@@ -10,3 +10,18 @@ def get_update_project_workflow_mutation(fragment: str) -> str:
             }}
         }}
         """
+
+
+GQL_GET_STEPS = """
+query getSteps($where: ProjectWhere!, $first: PageSize!, $skip: Int!) {
+    data: projects(where: $where, first: $first, skip: $skip) {
+        id
+        steps {
+            id
+            name
+            type
+            isActivated
+        }
+    }
+}
+"""

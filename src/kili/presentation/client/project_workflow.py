@@ -1,6 +1,6 @@
 """Client presentation methods for project workflow."""
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from typeguard import typechecked
 
@@ -34,4 +34,21 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
         return ProjectWorkflowUseCases(self.kili_api_gateway).update_project_workflow(
             project_id=ProjectId(project_id),
             enforce_step_separation=enforce_step_separation,
+        )
+
+    @typechecked
+    def get_steps(
+        self,
+        project_id: str,
+    ) -> List[Dict[str, Any]]:
+        """Get steps in a project workflow.
+
+        Args:
+            project_id: Id of the project.
+
+        Returns:
+            A dict with the steps of the project workflow.
+        """
+        return ProjectWorkflowUseCases(self.kili_api_gateway).get_steps(
+            project_id=ProjectId(project_id),
         )
