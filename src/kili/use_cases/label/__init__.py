@@ -82,6 +82,7 @@ class LabelUseCases(BaseUseCases):
         project_id: Optional[ProjectId],
         fields: ListOrTuple[str],
         disable_tqdm: Optional[bool],
+        step_name: Optional[str] = None,
     ) -> List[Dict]:
         """Append labels."""
         check_input_labels(labels)
@@ -111,6 +112,7 @@ class LabelUseCases(BaseUseCases):
 
         data = AppendManyLabelsData(
             label_type=label_type,
+            step_name=step_name,
             overwrite=overwrite,
             labels_data=labels_to_add,
         )

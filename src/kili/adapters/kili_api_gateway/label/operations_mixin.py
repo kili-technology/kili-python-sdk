@@ -145,6 +145,7 @@ class LabelOperationMixin(BaseOperationMixin):
                 variables = {
                     "data": {
                         "labelType": data.label_type,
+                        "stepName": data.step_name,
                         "overwrite": data.overwrite,
                         "labelsData": [
                             append_label_data_mapper(label) for label in batch_of_label_data
