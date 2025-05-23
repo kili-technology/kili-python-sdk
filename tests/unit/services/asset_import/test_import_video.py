@@ -25,14 +25,22 @@ class VideoTestCase(ImportTestCase):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
         url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
         path = self.downloader(url)
-        assets = [{"content": path, "external_id": "local video file to native"}]
+        assets = [
+            {
+                "content": path,
+                "external_id": "local video file to native",
+                "json_metadata": {
+                    "processingParameters": {
+                        "framesPlayedPerSecond": 20,
+                    }
+                },
+            }
+        ]
         import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
         expected_json_metadata = json.dumps(
             {
                 "processingParameters": {
-                    "shouldKeepNativeFrameRate": True,
-                    "framesPlayedPerSecond": 30,
-                    "shouldUseNativeVideo": True,
+                    "framesPlayedPerSecond": 20,
                 }
             }
         )
@@ -51,15 +59,7 @@ class VideoTestCase(ImportTestCase):
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
         import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
-        expected_json_metadata = json.dumps(
-            {
-                "processingParameters": {
-                    "shouldKeepNativeFrameRate": True,
-                    "framesPlayedPerSecond": 30,
-                    "shouldUseNativeVideo": True,
-                }
-            }
-        )
+        expected_json_metadata = json.dumps({"processingParameters": {}})
         expected_parameters = self.get_expected_async_call(
             ["https://hosted-data"],
             ["hosted file"],
@@ -78,15 +78,7 @@ class VideoTestCase(ImportTestCase):
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
         import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
-        expected_json_metadata = json.dumps(
-            {
-                "processingParameters": {
-                    "shouldKeepNativeFrameRate": True,
-                    "framesPlayedPerSecond": 30,
-                    "shouldUseNativeVideo": True,
-                }
-            }
-        )
+        expected_json_metadata = json.dumps({"processingParameters": {}})
         expected_parameters = self.get_expected_async_call(
             ["https://hosted-data"],
             ["hosted file"],
@@ -123,8 +115,6 @@ class VideoTestCase(ImportTestCase):
             {
                 "processingParameters": {
                     "shouldUseNativeVideo": False,
-                    "shouldKeepNativeFrameRate": True,
-                    "framesPlayedPerSecond": 30,
                 }
             }
         )
@@ -157,8 +147,6 @@ class VideoTestCase(ImportTestCase):
             {
                 "processingParameters": {
                     "shouldUseNativeVideo": False,
-                    "shouldKeepNativeFrameRate": True,
-                    "framesPlayedPerSecond": 30,
                 }
             }
         )
@@ -187,15 +175,7 @@ class VideoTestCase(ImportTestCase):
             }
         ]
         import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
-        expected_json_metadata = json.dumps(
-            {
-                "processingParameters": {
-                    "shouldKeepNativeFrameRate": False,
-                    "framesPlayedPerSecond": 30,
-                    "shouldUseNativeVideo": False,
-                }
-            }
-        )
+        expected_json_metadata = json.dumps({"processingParameters": {}})
         expected_parameters = self.get_expected_sync_call(
             [""],
             ["from local frames"],
@@ -219,15 +199,7 @@ class VideoTestCase(ImportTestCase):
             }
         ]
         import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
-        expected_json_metadata = json.dumps(
-            {
-                "processingParameters": {
-                    "shouldKeepNativeFrameRate": False,
-                    "framesPlayedPerSecond": 30,
-                    "shouldUseNativeVideo": False,
-                }
-            }
-        )
+        expected_json_metadata = json.dumps({"processingParameters": {}})
         expected_parameters = self.get_expected_sync_call(
             [""],
             ["from hosted frames"],
@@ -252,15 +224,7 @@ class VideoTestCase(ImportTestCase):
             }
         ]
         import_assets(self.kili, self.project_id, assets)
-        expected_json_metadata = json.dumps(
-            {
-                "processingParameters": {
-                    "shouldKeepNativeFrameRate": False,
-                    "framesPlayedPerSecond": 30,
-                    "shouldUseNativeVideo": False,
-                }
-            }
-        )
+        expected_json_metadata = json.dumps({"processingParameters": {}})
         expected_parameters = self.get_expected_sync_call(
             ["https://reading_signed_url_content"],
             ["from label-import"],
@@ -286,11 +250,7 @@ class VideoTestCase(ImportTestCase):
             {
                 "fromBucket": True,
                 "score": 10,
-                "processingParameters": {
-                    "shouldKeepNativeFrameRate": True,
-                    "framesPlayedPerSecond": 30,
-                    "shouldUseNativeVideo": True,
-                },
+                "processingParameters": {},
             }
         )
         expected_parameters = self.get_expected_async_call(
@@ -319,15 +279,7 @@ class VideoLegacyTestCase(ImportTestCase):
             {"content": "https://hosted-data", "external_id": "hosted file", "id": "unique_id"}
         ]
         import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
-        expected_json_metadata = json.dumps(
-            {
-                "processingParameters": {
-                    "shouldKeepNativeFrameRate": True,
-                    "framesPlayedPerSecond": 30,
-                    "shouldUseNativeVideo": True,
-                }
-            }
-        )
+        expected_json_metadata = json.dumps({"processingParameters": {}})
         expected_parameters = self.get_expected_async_call(
             ["https://hosted-data"],
             ["hosted file"],
