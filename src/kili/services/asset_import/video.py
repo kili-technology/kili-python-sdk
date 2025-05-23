@@ -37,20 +37,12 @@ class VideoMixin:
     """Helping functions for importing Video assets."""
 
     @staticmethod
-    def get_video_processing_parameters(asset: AssetLike, from_frames: bool):
+    def get_video_processing_parameters(asset: AssetLike):
         """Base method for adding video processing parameters."""
         json_metadata = asset.get("json_metadata", {})
-        processing_parameters = json_metadata.get(  # pyright: ignore[reportGeneralTypeIssues]
+        return json_metadata.get(  # pyright: ignore[reportGeneralTypeIssues]
             "processingParameters", {}
         )
-        video_parameters = [
-            ("shouldKeepNativeFrameRate", not from_frames),
-            ("framesPlayedPerSecond", 30),
-            ("shouldUseNativeVideo", not from_frames),
-        ]
-        for key, default_value in video_parameters:
-            processing_parameters[key] = processing_parameters.get(key, default_value)
-        return processing_parameters
 
     @staticmethod
     def map_frame_urls_to_index(asset: AssetLike):
@@ -70,7 +62,7 @@ class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
     def add_video_processing_parameters(self, asset):
         """Add video processing parameters for a content upload."""
         json_metadata = asset.get("json_metadata", {})
-        processing_parameters = self.get_video_processing_parameters(asset, from_frames=False)
+        processing_parameters = self.get_video_processing_parameters(asset)
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
         return AssetLike(**{**asset, "json_metadata": json_metadata})  # type: ignore
 
@@ -88,7 +80,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
     def add_video_processing_parameters(self, asset):
         """Add video processing parameters for a frames upload."""
         json_metadata = asset.get("json_metadata", {})
-        processing_parameters = self.get_video_processing_parameters(asset, from_frames=True)
+        processing_parameters = self.get_video_processing_parameters(asset)
         json_metadata = {**json_metadata, "processingParameters": processing_parameters}
         return AssetLike(**{**asset, "json_metadata": json_metadata})  # type: ignore
 
