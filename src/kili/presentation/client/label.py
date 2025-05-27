@@ -881,6 +881,7 @@ class LabelClientMethods(BaseClientMethods):
         asset_external_id_array: Optional[List[str]] = None,
         disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
+        step_name: Optional[str] = None,
     ) -> List[Dict[Literal["id"], str]]:
         """Append labels to assets.
 
@@ -898,6 +899,8 @@ class LabelClientMethods(BaseClientMethods):
             overwrite: when uploading prediction or inference labels, if True,
                 it will overwrite existing labels with the same model name
                 and of the same label type, on the targeted assets.
+            step_name: Name of the step to which the labels belong.
+                The label_type must match accordingly.
 
         Returns:
             A list of dictionaries with the label ids.
@@ -956,6 +959,7 @@ class LabelClientMethods(BaseClientMethods):
             fields=("id",),
             disable_tqdm=disable_tqdm,
             label_type=label_type,
+            step_name=step_name,
             labels=labels,
             overwrite=overwrite,
             project_id=ProjectId(project_id) if project_id else None,
