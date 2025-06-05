@@ -147,7 +147,7 @@ Additionally, three specific metadata types can be used as information presented
 As an optional step, you can define properties for each type of your metadata.
 These properties allow you to control:
 
-- The data type (`string` or `number`)
+- The data type (`string`, `number` or `date`)
 - Whether the metadata is filterable in project queue
 - Visibility of each metadata to labelers and reviewers
 
@@ -177,6 +177,12 @@ kili.update_properties_in_project(
         },
         "modelLabelErrorScore": {
             "type": "number",
+            "filterable": True,
+            "visibleByLabeler": True,
+            "visibleByReviewer": True,
+        },
+        "date": {
+            "type": "date",
             "filterable": True,
             "visibleByLabeler": True,
             "visibleByReviewer": True,
@@ -214,6 +220,7 @@ kili.update_properties_in_assets(
             "imageUrl": "https://placehold.co/600x400/EEE/31343C",
             "text": "Some text for asset 1",
             "url": "www.example-website.com",
+            "date": "2023-10-01T12:00:00Z",
         },
         {
             "customConsensus": 40,
@@ -223,6 +230,7 @@ kili.update_properties_in_assets(
             "imageUrl": "https://placehold.co/600x400/EEE/31343C",
             "text": "Some text for asset 2",
             "url": "www.example-website.com",
+            "date": "2023-24-03T14:00:00Z",
         },
     ],
 )
