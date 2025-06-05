@@ -349,7 +349,7 @@ class ProjectClientMethods(BaseClientMethods):
             metadata_properties: Properties of the project metadata.
                 Should be a `dict` of metadata fields name as keys and metadata properties as values.
                 Each property is a dict with the following keys:
-                    - `type`: Type of the metadata. Currently, possible types are: `string`, `number`
+                    - `type`: Type of the metadata. Currently, possible types are: `string`, `number`, `date`
                     - `filterable`: If `True`, the metadata can be used as filters in project queue
                     - `visibleByLabeler`: If `True`, the metadata is visible one the asset by labelers
                     - `visibleByReviewer`: If `True`, the metadata is visible one the asset by reviewers
@@ -381,7 +381,13 @@ class ProjectClientMethods(BaseClientMethods):
                         'type': 'string',
                         'visibleByLabeler': False,
                         'visibleByReviewer': True,
-                    }
+                    },
+                    'date': {
+                        'filterable': True,
+                        'type': 'date',
+                        'visibleByLabeler': False,
+                        'visibleByReviewer': True,
+                    },
                 }
             )
             ```
