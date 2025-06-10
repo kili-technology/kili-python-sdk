@@ -2,6 +2,7 @@
 
 import itertools
 import os
+import sys
 from typing import List, Union
 from urllib.parse import parse_qs, urlparse
 
@@ -58,8 +59,20 @@ def upload_data_via_rest(
     url_to_use_for_upload = url_with_id.split("&id=")[0]
     if "blob.core.windows.net" in url_to_use_for_upload:
         headers["x-ms-blob-type"] = "BlockBlob"
-    # Do we not put a timeout here because it can take an arbitrary long time (ML-1395)
-    response = http_client.put(url_to_use_for_upload, data=data, headers=headers)
+    try:
+        # Do we not put a timeout here because it can take an arbitrary long time (ML-1395)
+        response = http_client.put(url_to_use_for_upload, data=data, headers=headers)
+    except OverflowError as error:
+        python_version = (
+            f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+        )
+        raise ValueError(
+            f"Unable to upload file larger than 2GB with Python {python_version}. "
+            f"This is caused by a known Python SSL limitation in versions ≤3.9 (Python bug #42853). "
+            f"To fix this issue, please upgrade to Python 3.10 or later. "
+            f"Alternatively, compress your file or split it into smaller chunks before uploading. "
+            f"For more details, see: https://bugs.python.org/issue42853"
+        ) from error
     response.raise_for_status()
     return url_with_id
 
