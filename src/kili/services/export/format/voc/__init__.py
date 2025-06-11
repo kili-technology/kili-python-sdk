@@ -93,9 +93,14 @@ def _process_asset(
 
         # video with shouldUseNativeVideo set to True (no frames available)
         elif Path(asset["content"]).is_file():
-            width, height = get_video_dimensions(asset)
-            cut_video(asset["content"], asset, leading_zeros, Path(asset["content"]).parent)
-            frame_ext = ".jpg"
+            try:
+                width, height = get_video_dimensions(asset)
+                cut_video(asset["content"], asset, leading_zeros, Path(asset["content"]).parent)
+                frame_ext = ".jpg"
+            except ImportError as e:
+                raise ImportError(
+                    "Install with `pip install kili[video]` to use this feature."
+                ) from e
 
         else:
             raise FileNotFoundError(f"Could not find frames or video for asset {asset}")

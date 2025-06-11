@@ -6,15 +6,23 @@ a JSON response for geospatial annotations.
 """
 
 import struct
-from typing import Dict, List, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union, cast
 
-import pyproj
 from cuid import cuid
-from shapely.geometry import LinearRing, LineString, Point, Polygon
-from shapely.ops import transform
+
+if TYPE_CHECKING:
+    from shapely.geometry import LinearRing, LineString, Point, Polygon
+    from shapely.ops import transform
+
+SHAPELY_INSTALLED = True
+try:
+    from shapely.geometry import LinearRing, LineString, Point, Polygon
+    from shapely.ops import transform
+except ImportError:
+    SHAPELY_INSTALLED = False
 
 
-def read_shapefile_header(file_handle):
+def _read_shapefile_header(file_handle):
     """Reads the shapefile header (100 bytes) which contains metadata about the file.
 
     Shapefile header structure:
@@ -32,14 +40,14 @@ def read_shapefile_header(file_handle):
     file_handle.seek(100)
 
 
-def read_point_record(file_handle) -> Point:
+def _read_point_record(file_handle) -> "Point":
     """Reads a Point (type 1) record from the shapefile."""
     # Read X and Y coordinates (double precision floating point numbers)
     x, y = struct.unpack("<dd", file_handle.read(16))
     return Point(x, y)
 
 
-def read_polyline_record(file_handle) -> List[LineString]:
+def _read_polyline_record(file_handle) -> List["LineString"]:
     """Reads a Polyline (type 3) record from the shapefile."""
     # Skip the bounding box (4 doubles = 32 bytes)
     file_handle.read(32)
@@ -69,7 +77,7 @@ def read_polyline_record(file_handle) -> List[LineString]:
     return polylines
 
 
-def read_polygon_record(file_handle) -> List[Polygon]:
+def _read_polygon_record(file_handle) -> List["Polygon"]:
     """Reads a Polygon (type 5) record from the shapefile."""
     # Skip the bounding box (4 doubles = 32 bytes)
     file_handle.read(32)
@@ -129,7 +137,7 @@ def read_polygon_record(file_handle) -> List[Polygon]:
 
 def read_shape_record(
     file_handle,
-) -> Optional[Tuple[int, Union[Point, List[LineString], List[Polygon]]]]:
+) -> Optional[Tuple[int, Union["Point", List["LineString"], List["Polygon"]]]]:
     """Reads a single shape record from the shapefile.
 
     Returns a tuple (shape_type, geometry) where geometry depends on shape_type.
@@ -150,27 +158,27 @@ def read_shape_record(
     shape_type = struct.unpack("<i", shape_type_data)[0]
 
     if shape_type == 1:  # Point
-        return shape_type, read_point_record(file_handle)
+        return shape_type, _read_point_record(file_handle)
     if shape_type == 3:  # Polyline
-        return shape_type, read_polyline_record(file_handle)
+        return shape_type, _read_polyline_record(file_handle)
     if shape_type == 5:  # Polygon
-        return shape_type, read_polygon_record(file_handle)
+        return shape_type, _read_polygon_record(file_handle)
     # Unsupported geometry type - skip to next record
     # Subtract 4 because we already read the shape type
     file_handle.seek(content_length - 4, 1)
     return None
 
 
-def read_shapefile(
+def _read_shapefile(
     filename: str,
-) -> Tuple[List[Point], List[List[LineString]], List[List[Polygon]]]:
+) -> Tuple[List["Point"], List[List["LineString"]], List[List["Polygon"]]]:
     """Reads a shapefile and extracts geometries."""
     points = []
     polyline_records = []
     polygon_records = []
 
     with open(filename, "rb") as shapefile:
-        read_shapefile_header(shapefile)
+        _read_shapefile_header(shapefile)
 
         while True:
             record = read_shape_record(shapefile)
@@ -189,10 +197,15 @@ def read_shapefile(
     return points, polyline_records, polygon_records
 
 
-def transform_geometry(
-    geometry: Union[Point, LineString, Polygon], from_epsg: int
-) -> Union[Point, LineString, Polygon]:
+def _transform_geometry(
+    geometry: Union["Point", "LineString", "Polygon"], from_epsg: int
+) -> Union["Point", "LineString", "Polygon"]:
     """Transform a Shapely geometry from one coordinate system to EPSG:4326."""
+    try:
+        import pyproj  # pylint: disable=import-outside-toplevel
+    except ImportError as e:
+        raise ImportError("Install with `pip install kili[gis]` to use GIS features.") from e
+
     if from_epsg == 4326:
         return geometry
 
@@ -223,6 +236,9 @@ def get_json_response_from_shapefiles(
     if len(shapefile_paths) != len(job_names) or len(shapefile_paths) != len(category_names):
         raise ValueError("Shapefile paths, job names, and category names must have the same length")
 
+    if not SHAPELY_INSTALLED:
+        raise ImportError("Install with `pip install kili[gis]` to use GIS features.")
+
     json_response = {}
 
     for file_idx, shapefile_path in enumerate(shapefile_paths):
@@ -238,7 +254,7 @@ def get_json_response_from_shapefiles(
         if job_name not in json_response:
             json_response[job_name] = {"annotations": []}
 
-        point_records, polyline_records, polygon_records = read_shapefile(shapefile_path)
+        point_records, polyline_records, polygon_records = _read_shapefile(shapefile_path)
 
         if tool_type == "marker":
             _process_marker_records(
@@ -271,7 +287,7 @@ def _remove_duplicate_points(coords):
 def _process_marker_records(point_records, category_name, from_epsg, json_response, job_name):
     """Process point records for marker job type."""
     for point_record in point_records:
-        point = transform_geometry(point_record, from_epsg)
+        point = _transform_geometry(point_record, from_epsg)
 
         annotation = {
             "point": {"x": point.x, "y": point.y},
@@ -289,7 +305,7 @@ def _process_polyline_records(polyline_records, category_name, from_epsg, json_r
     """Process polyline records for polyline job type."""
     for polyline_record in polyline_records:
         for line in polyline_record:
-            transformed_line = transform_geometry(line, from_epsg)
+            transformed_line = _transform_geometry(line, from_epsg)
 
             # Remove duplicate consecutive points
             coords = list(transformed_line.coords)
@@ -315,7 +331,7 @@ def _process_polygon_records(
         mid = cuid()
 
         for polygon in polygon_record:
-            transformed_polygon = transform_geometry(polygon, from_epsg)
+            transformed_polygon = _transform_geometry(polygon, from_epsg)
 
             if tool_type == "rectangle":
                 _process_rectangle(transformed_polygon, category_name, mid, json_response, job_name)

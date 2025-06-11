@@ -10,6 +10,7 @@ from PIL import Image
 
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.coco.types import CocoFormat
 from kili.utils.tempfile import TemporaryDirectory
 
 from .helpers import coco as helpers
@@ -22,7 +23,7 @@ def test__convert_from_kili_to_coco_format():
         image_width = 1920
         image_height = 1080
         Image.new("RGB", (image_width, image_height)).save(local_file_path)
-        labels_json = convert_from_kili_to_coco_format(
+        labels_json: CocoFormat = convert_from_kili_to_coco_format(
             jobs={
                 job_name: {
                     "mlTask": "OBJECT_DETECTION",
@@ -65,8 +66,6 @@ def test__convert_from_kili_to_coco_format():
             annotation_modifier=lambda x, _, _1: x,
             merged=False,
         )
-        if isinstance(labels_json, tuple):
-            labels_json = labels_json[0]
 
         assert "Test project" in labels_json["info"]["description"]
         categories_by_id = {cat["id"]: cat["name"] for cat in labels_json["categories"]}

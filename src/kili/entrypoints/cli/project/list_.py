@@ -5,7 +5,6 @@ from typing import Optional
 import click
 import numpy as np
 import pandas as pd
-from tabulate import tabulate
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.project import ProjectFilters
@@ -33,6 +32,10 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
         kili project list --max 10 --stdout-format pretty
         ```
     """
+    try:
+        from tabulate import tabulate  # pylint: disable=import-outside-toplevel
+    except ImportError as e:
+        raise ImportError("Install with `pip install kili[cli]` to use this feature.") from e
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     projects = list(
         kili.kili_api_gateway.list_projects(
