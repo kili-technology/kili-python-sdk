@@ -3,8 +3,6 @@
 import os
 from typing import List
 
-from PIL import Image, UnidentifiedImageError
-
 from kili.core.constants import mime_extensions_that_need_post_processing
 from kili.core.helpers import get_mime_type
 from kili.domain.project import InputType
@@ -12,8 +10,6 @@ from kili.domain.project import InputType
 from .base import BaseAbstractAssetImporter, BatchParams, ContentBatchImporter
 from .constants import LARGE_IMAGE_THRESHOLD_SIZE, MAX_WIDTH_OR_HEIGHT_NON_TILED
 from .types import AssetLike
-
-Image.MAX_IMAGE_PIXELS = None
 
 
 class ImageDataImporter(BaseAbstractAssetImporter):
@@ -53,6 +49,13 @@ class ImageDataImporter(BaseAbstractAssetImporter):
     @staticmethod
     def get_is_large_image(image_path: str) -> bool:
         """Define if an image is too large and so on has to be tiled."""
+        try:
+            from PIL import Image  # pylint: disable=import-outside-toplevel
+
+            Image.MAX_IMAGE_PIXELS = None
+        except ImportError as e:
+            raise ImportError("Install with `pip install kili[image]` to use this feature.") from e
+
         if os.path.getsize(image_path) >= LARGE_IMAGE_THRESHOLD_SIZE:
             return True
 
@@ -63,6 +66,10 @@ class ImageDataImporter(BaseAbstractAssetImporter):
     @staticmethod
     def split_asset_by_upload_type(assets: List[AssetLike], is_hosted: bool):
         """Split assets into two groups, assets to to imported synchronously or asynchronously."""
+        try:
+            from PIL import UnidentifiedImageError  # pylint: disable=import-outside-toplevel
+        except ImportError as e:
+            raise ImportError("Install with `pip install kili[image]` to use this feature.") from e
         if is_hosted:
             return assets, []
         sync_assets, async_assets = [], []

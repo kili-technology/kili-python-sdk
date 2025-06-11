@@ -6,8 +6,6 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, NamedTuple, Optional, Type
 
-import yaml
-
 from kili.core.helpers import get_file_paths_to_upload
 from kili.domain.label import LabelType
 from kili.domain.project import ProjectId
@@ -203,14 +201,21 @@ class YoloLabelImporter(AbstractLabelImporter):
                 with meta_file_path.open("r", encoding="utf-8") as m_f:
                     classes = Classes(dict(enumerate(m_f.read().splitlines())))
 
-        elif input_format == "yolo_v5":
-            with meta_file_path.open("r", encoding="utf-8") as m_f:
-                m_d = yaml.load(m_f, yaml.FullLoader)
-                classes = Classes(m_d["names"])
-        elif input_format == "yolo_v7":
-            with meta_file_path.open("r", encoding="utf-8") as m_f:
-                m_d = yaml.load(m_f, yaml.FullLoader)
-                classes = Classes(dict(enumerate(m_d["names"])))
+        elif input_format in ("yolo_v5", "yolo_v7"):
+            try:
+                import yaml  # pylint: disable=import-outside-toplevel
+            except ImportError as e:
+                raise ImportError(
+                    "Install with `pip install kili[yolo]` to use this feature."
+                ) from e
+            if input_format == "yolo_v5":
+                with meta_file_path.open("r", encoding="utf-8") as m_f:
+                    m_d = yaml.load(m_f, yaml.FullLoader)
+                    classes = Classes(m_d["names"])
+            elif input_format == "yolo_v7":
+                with meta_file_path.open("r", encoding="utf-8") as m_f:
+                    m_d = yaml.load(m_f, yaml.FullLoader)
+                    classes = Classes(dict(enumerate(m_d["names"])))
         else:
             raise NotImplementedError(f"The format f{input_format} does not have a metadata parser")
 
