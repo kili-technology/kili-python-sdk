@@ -51,10 +51,12 @@ class CocoExporter(AbstractExporter):
     def process_and_save(self, assets: List[Dict], output_filename: Path):
         """Extract formatted annotations from labels."""
         clean_assets = self.preprocess_assets(assets)
-
-        self._save_assets_export(
-            clean_assets, self.export_root_folder, annotation_modifier=self.annotation_modifier
-        )
+        try:
+            self._save_assets_export(
+                clean_assets, self.export_root_folder, annotation_modifier=self.annotation_modifier
+            )
+        except ImportError as e:
+            raise ImportError("Install with `pip install kili[coco]` to use this feature.") from e
         self.create_readme_kili_file(self.export_root_folder)
         self.make_archive(self.export_root_folder, output_filename)
 
