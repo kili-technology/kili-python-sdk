@@ -2,7 +2,9 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, List, Literal, NewType, Optional, Required, TypedDict
+from typing import TYPE_CHECKING, List, Literal, NewType, Optional, TypedDict
+
+from typing_extensions import Required
 
 from .types import ListOrTuple
 
@@ -22,6 +24,7 @@ class ProjectStep(TypedDict, total=True):
     id: str
     name: str
 
+
 class WorkflowStepCreate(TypedDict, total=False):
     """Project workflow step."""
 
@@ -32,6 +35,7 @@ class WorkflowStepCreate(TypedDict, total=False):
     step_coverage: Optional[int]
     type: Required[Literal["DEFAULT", "REVIEW"]]
     assignees: Required[List[str]]
+
 
 class WorkflowStepUpdate(TypedDict, total=False):
     """Project workflow step."""
@@ -45,8 +49,9 @@ class WorkflowStepUpdate(TypedDict, total=False):
     type: Optional[Literal["DEFAULT", "REVIEW"]]
     assignees: Optional[List[str]]
 
+
 @dataclass(frozen=True)
-class Worfklow(TypedDict, total=True):
+class Workflow(TypedDict, total=True):
     """Workflow step type."""
 
     enforce_step_separation: bool

@@ -2,7 +2,9 @@
 
 from dataclasses import dataclass
 from typing import List, Optional
+
 from kili.domain.project import WorkflowStepCreate, WorkflowStepUpdate
+
 
 @dataclass
 class ProjectWorkflowDataKiliAPIGatewayInput:

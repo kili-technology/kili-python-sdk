@@ -28,7 +28,11 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         """Update properties in a project workflow."""
         project_workflow_input = project_input_mapper(data=project_workflow_data)
 
-        fields = tuple(name for name, val in project_workflow_input.items() if val is not None and name != "steps")
+        fields = tuple(
+            name
+            for name, val in project_workflow_input.items()
+            if val is not None and name != "steps"
+        )
         fragment = fragment_builder(fields)
         mutation = get_update_project_workflow_mutation(fragment)
 

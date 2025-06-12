@@ -2,7 +2,7 @@
 
 from typing import Dict, Union
 
-from kili.domain.project import WorkflowStepCreate, WorkflowStepUpdate
+from kili.domain.project import Workflow, WorkflowStepCreate, WorkflowStepUpdate
 
 from .types import ProjectWorkflowDataKiliAPIGatewayInput
 
@@ -12,11 +12,24 @@ def project_input_mapper(data: ProjectWorkflowDataKiliAPIGatewayInput) -> Dict:
     return {
         "enforceStepSeparation": data.enforce_step_separation,
         "steps": {
-            "creates": [update_step_mapper(step) for step in data.create_steps] if data.create_steps else [],
-            "updates": [update_step_mapper(step) for step in data.update_steps] if data.update_steps else [],
+            "creates": [update_step_mapper(step) for step in data.create_steps]
+            if data.create_steps
+            else [],
+            "updates": [update_step_mapper(step) for step in data.update_steps]
+            if data.update_steps
+            else [],
             "deletes": data.delete_steps if data.delete_steps else [],
-        }
+        },
     }
+
+
+def create_project_workflow_mapper(data: Workflow) -> Dict:
+    """Build the GraphQL Workflow variable to be sent in an operation."""
+    return {
+        "enforceStepSeparation": data["enforce_step_separation"],
+        "steps": [update_step_mapper(step) for step in data["steps"]] if data["steps"] else [],
+    }
+
 
 def update_step_mapper(data: Union[WorkflowStepCreate, WorkflowStepUpdate]) -> Dict:
     """Build the GraphQL create StepData variable to be sent in an operation."""
@@ -24,7 +37,9 @@ def update_step_mapper(data: Union[WorkflowStepCreate, WorkflowStepUpdate]) -> D
         "id": data["id"] if "id" in data else None,
         "name": data["name"] if "name" in data else None,
         "consensusCoverage": data["consensus_coverage"] if "consensus_coverage" in data else None,
-        "numberOfExpectedLabelsForConsensus": data["number_of_expected_labels_for_consensus"] if "number_of_expected_labels_for_consensus" in data else None,
+        "numberOfExpectedLabelsForConsensus": data["number_of_expected_labels_for_consensus"]
+        if "number_of_expected_labels_for_consensus" in data
+        else None,
         "order": data["order"] if "order" in data else None,
         "stepCoverage": data["step_coverage"] if "step_coverage" in data else None,
         "type": data["type"] if "type" in data else None,

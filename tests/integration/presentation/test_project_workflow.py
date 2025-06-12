@@ -25,7 +25,15 @@ def test_when_updating_project_workflow_then_it_returns_updated_project_workflow
     kili.kili_api_gateway.graphql_client.execute.assert_called_once_with(
         get_update_project_workflow_mutation(" enforceStepSeparation"),
         {
-            "input": {"projectId": "fake_proj_id", "enforceStepSeparation": False},
+            "input": {
+                "projectId": "fake_proj_id",
+                "enforceStepSeparation": False,
+                "steps": {
+                    "creates": [],
+                    "deletes": [],
+                    "updates": [],
+                },
+            },
         },
     )
 
