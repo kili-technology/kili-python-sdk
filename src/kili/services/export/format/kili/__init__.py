@@ -107,7 +107,7 @@ class KiliExporter(AbstractExporter):
     def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
         """Extract formatted annotations from labels and save the json in the buckets."""
         clean_assets = self.preprocess_assets(assets)
-        if self.project["inputType"] != "LLM_RLHF":
+        if self.project["inputType"] in ["IMAGE", "VIDEO", "PDF"]:
             for i, asset in enumerate(clean_assets):
                 clean_assets[i] = self.convert_to_pixel_coords(asset)
                 clean_assets[i] = _clean_json_response(asset)
