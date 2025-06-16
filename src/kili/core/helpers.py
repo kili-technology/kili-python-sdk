@@ -8,15 +8,19 @@ import os
 import re
 import warnings
 from json import dumps, loads
-from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union
 
+import ffmpeg
 import pyparsing as pp
 import requests
 import tenacity
+from PIL import Image
 from typing_extensions import get_args, get_origin
 
 from kili.adapters.http_client import HttpClient
 from kili.core.constants import mime_extensions_for_IV2
+from kili.exceptions import NotFound
 from kili.log.logging import logger
 
 T = TypeVar("T")
@@ -368,3 +372,69 @@ def get_response_json(response: requests.Response) -> dict:
     except json.JSONDecodeError:
         logger.exception("An error occurred while decoding the json response")
         return {}
+
+
+def _get_image_dimensions(filepath: str) -> Tuple:
+    """Get an image width and height."""
+    image = Image.open(filepath)
+    return image.size
+
+
+def get_frame_dimensions(asset: Dict) -> Tuple:
+    """Get a video asset frame width and height."""
+    if "resolution" in asset and asset["resolution"] is not None:
+        return (asset["resolution"]["width"], asset["resolution"]["height"])
+
+    if (
+        isinstance(asset["jsonContent"], list)
+        and len(asset["jsonContent"]) > 0
+        and Path(asset["jsonContent"][0]).is_file()
+    ):
+        return _get_image_dimensions(asset["jsonContent"][0])
+
+    raise NotFound(
+        f"Could not find dimensions for asset with externalId '{asset['externalId']}'. Please"
+        " use `kili.update_properties_in_assets()` to update the resolution of your asset. Or use"
+        " `kili.export_labels(with_assets=True).`"
+    )
+
+
+def get_video_and_frame_dimensions(
+    asset: Dict,
+) -> Tuple[int, int]:
+    """Get a video width and height, and a frame width and height."""
+    width = height = 0
+    if "resolution" in asset and asset["resolution"] is not None:
+        width = asset["resolution"]["width"]
+        height = asset["resolution"]["height"]
+        return width, height
+    if isinstance(asset["jsonContent"], list) and Path(asset["jsonContent"][0]).is_file():
+        width, height = get_frame_dimensions(asset)
+    elif Path(asset["content"]).is_file():
+        width, height = get_video_dimensions(asset)
+    else:
+        raise FileNotFoundError(
+            f"Could not find video dimensions for asset with externalId '{asset['externalId']}'. Please"
+            " use `kili.update_properties_in_assets()` to update the resolution of your asset. Or use"
+            " `kili.export_labels(with_assets=True).`"
+        )
+    return width, height
+
+
+def get_video_dimensions(asset: Dict) -> Tuple:
+    """Get a video width and height."""
+    if "resolution" in asset and asset["resolution"] is not None:
+        return (asset["resolution"]["width"], asset["resolution"]["height"])
+
+    if Path(asset["content"]).is_file():
+        probe = ffmpeg.probe(str(asset["content"]))
+        video_info = next(s for s in probe["streams"] if s["codec_type"] == "video")
+        width = video_info["width"]
+        height = video_info["height"]
+        return width, height
+
+    raise NotFound(
+        f"Could not find video dimensions for asset with externalId '{asset['externalId']}'. Please"
+        " use `kili.update_properties_in_assets()` to update the resolution of your asset. Or use"
+        " `kili.export_labels(with_assets=True).`"
+    )
