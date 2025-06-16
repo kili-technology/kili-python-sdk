@@ -17,6 +17,11 @@ def test_given_a_project_workflow_when_update_it_then_it_updates_project_workflo
         return {
             "enforce_step_separation": project_workflow_data.enforce_step_separation,
             "project_id": project_id,
+            "steps": {
+                "creates": [],
+                "deletes": [],
+                "updates": [],
+            },
         }
 
     kili_api_gateway.update_project_workflow.side_effect = mocked_update_project_workflow
@@ -28,4 +33,12 @@ def test_given_a_project_workflow_when_update_it_then_it_updates_project_workflo
     )
 
     # Then
-    assert project == {"enforce_step_separation": False, "project_id": "fake_proj_id"}
+    assert project == {
+        "enforce_step_separation": False,
+        "project_id": "fake_proj_id",
+        "steps": {
+            "creates": [],
+            "deletes": [],
+            "updates": [],
+        },
+    }
