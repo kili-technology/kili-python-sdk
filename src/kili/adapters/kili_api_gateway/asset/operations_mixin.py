@@ -87,6 +87,13 @@ class AssetOperationMixin(BaseOperationMixin):
                 {inner_annotation_fragment}
             }}
         """
+        # Ensure 'content', 'resolution', and 'jsonContent' are present in fields
+        required_fields = {"content", "jsonContent", "resolution.width", "resolution.height"}
+        fields = list(fields)
+        for field in required_fields:
+            if field not in fields:
+                fields.append(field)
+
         fragment = fragment_builder(
             fields, {"labels": annotation_fragment, "latestLabel": annotation_fragment}
         )
@@ -106,14 +113,14 @@ class AssetOperationMixin(BaseOperationMixin):
         for asset in assets_gen:
             if "latestLabel.jsonResponse" in fields and asset.get("latestLabel"):
                 converter.patch_label_json_response(
-                    asset["latestLabel"], asset["latestLabel"]["annotations"]
+                    asset, asset["latestLabel"], asset["latestLabel"]["annotations"]
                 )
                 if not is_requesting_annotations:
                     asset["latestLabel"].pop("annotations")
 
             if "labels.jsonResponse" in fields:
                 for label in asset.get("labels", []):
-                    converter.patch_label_json_response(label, label["annotations"])
+                    converter.patch_label_json_response(asset, label, label["annotations"])
                     if not is_requesting_annotations:
                         label.pop("annotations")
             yield asset
