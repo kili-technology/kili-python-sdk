@@ -14,7 +14,7 @@ Kili Python SDK has been designed to perform complex project-related tasks by us
 
 ## Requirements
 
-You only need Python 3.8 or higher.
+You only need Python 3.9 or higher.
 
 ## Installation
 
