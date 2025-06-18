@@ -2,7 +2,7 @@
 
 ## Set up the Development environment
 
-To install the development environment, please follow these steps, preferably in a Python 3.8 virtual environment.
+To install the development environment, please follow these steps, preferably in a Python 3.9 virtual environment.
 
 ```bash
 pip install -e ".[dev]"

@@ -1,6 +1,6 @@
 # Kili Python SDK
 
-[![Python 3.8](https://img.shields.io/badge/python-%203.8%20|%203.9%20|%203.10%20|%203.11%20|%203.12%20-blue.svg)](https://www.python.org/)
+[![Python 3.9](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/kili-technology/kili-python-sdk?label=pypi%20package)
 
@@ -36,7 +36,7 @@ It comes with several [tutorials](https://python-sdk-docs.kili-technology.com/la
 
 ## Requirements
 
-- Python >= 3.8
+- Python >= 3.9
 - Create and copy a [Kili API key](https://docs.kili-technology.com/docs/creating-an-api-key)
 - Add the `KILI_API_KEY` variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value you copied above:
 
