@@ -281,12 +281,15 @@ def _process_asset(
 
     # If the asset is a video, we need to cut it into frames
     if project_input_type == "VIDEO" and asset["jsonContent"] == "" and with_assets:
-        asset["jsonContent"] = cut_video(
-            video_path=asset["content"],
-            asset=asset,
-            leading_zeros=leading_zeros,
-            output_dir=images_folder,
-        )
+        try:
+            asset["jsonContent"] = cut_video(
+                video_path=asset["content"],
+                asset=asset,
+                leading_zeros=leading_zeros,
+                output_dir=images_folder,
+            )
+        except ImportError as e:
+            raise ImportError("Install with `pip install kili[video]` to use this feature.") from e
 
     content_frames = []
     if isinstance(asset["jsonContent"], list):

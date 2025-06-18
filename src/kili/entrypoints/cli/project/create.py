@@ -4,7 +4,6 @@ import json
 from typing import Optional
 
 import click
-from tabulate import tabulate
 
 from kili.domain.project import InputTypeEnum, ProjectId
 from kili.entrypoints.cli.common_args import Options
@@ -63,6 +62,10 @@ def create_project(
     To build a Kili project interface, please visit: \n
     https://docs.kili-technology.com/docs/customizing-the-interface-through-json-settings
     """
+    try:
+        from tabulate import tabulate  # pylint: disable=import-outside-toplevel
+    except ImportError as e:
+        raise ImportError("Install with `pip install kili[cli]` to use this feature.") from e
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
 
     if ((interface is not None) + (project_id_src is not None)) > 1:

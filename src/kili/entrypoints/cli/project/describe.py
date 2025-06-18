@@ -3,7 +3,6 @@
 from typing import Optional
 
 import click
-from tabulate import tabulate
 
 from kili.domain.project import ProjectId
 from kili.entrypoints.cli.common_args import Arguments, Options
@@ -27,6 +26,10 @@ def describe_project(api_key: Optional[str], endpoint: Optional[str], project_id
         kili project describe --project-id <project_id>
         ```
     """
+    try:
+        from tabulate import tabulate  # pylint: disable=import-outside-toplevel
+    except ImportError as e:
+        raise ImportError("Install with `pip install kili[cli]` to use this feature.") from e
     kili = get_kili_client(api_key=api_key, api_endpoint=endpoint)
     query_fields = [
         "title",
