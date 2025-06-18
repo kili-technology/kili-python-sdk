@@ -21,7 +21,9 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 from kili.adapters.kili_api_gateway.label.annotation_to_json_response import (
     AnnotationsToJsonResponseConverter,
 )
-from kili.adapters.kili_api_gateway.label.common import get_annotation_fragment
+from kili.adapters.kili_api_gateway.label.common import (
+    get_annotation_fragment,
+)
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.domain.asset import AssetFilters
 from kili.domain.types import ListOrTuple
@@ -104,14 +106,16 @@ class AssetOperationMixin(BaseOperationMixin):
         for asset in assets_gen:
             if "latestLabel.jsonResponse" in fields and asset.get("latestLabel"):
                 converter.patch_label_json_response(
-                    asset["latestLabel"], asset["latestLabel"]["annotations"]
+                    asset,
+                    asset["latestLabel"],
+                    asset["latestLabel"]["annotations"],
                 )
                 if not is_requesting_annotations:
                     asset["latestLabel"].pop("annotations")
 
             if "labels.jsonResponse" in fields:
                 for label in asset.get("labels", []):
-                    converter.patch_label_json_response(label, label["annotations"])
+                    converter.patch_label_json_response(asset, label, label["annotations"])
                     if not is_requesting_annotations:
                         label.pop("annotations")
             yield asset
