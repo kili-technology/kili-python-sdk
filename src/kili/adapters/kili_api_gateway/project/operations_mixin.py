@@ -14,9 +14,8 @@ from kili.adapters.kili_api_gateway.project.formatters import (
     load_project_json_fields,
 )
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
-from kili.adapters.kili_api_gateway.project_workflow.mappers import create_project_workflow_mapper
 from kili.core.enums import DemoProjectType, ProjectType
-from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId, Workflow
+from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 
 from .common import get_project
@@ -47,7 +46,6 @@ class ProjectOperationMixin(BaseOperationMixin):
         project_type: Optional[ProjectType],
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
         from_demo_project: Optional[DemoProjectType],
-        workflow: Optional[Workflow] = None,
     ) -> ProjectId:
         """Create a project."""
         variables = {
@@ -58,7 +56,6 @@ class ProjectOperationMixin(BaseOperationMixin):
                 "jsonInterface": json.dumps(json_interface),
                 "projectType": project_type,
                 "title": title,
-                "workflow": create_project_workflow_mapper(workflow) if workflow else None,
             }
         }
         # compliance tags are only available for Kili app > 2.138

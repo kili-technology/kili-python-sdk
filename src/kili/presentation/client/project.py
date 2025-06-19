@@ -16,7 +16,7 @@ from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.enums import DemoProjectType, ProjectType
-from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId, Workflow
+from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import IncompatibleArgumentsError
@@ -47,7 +47,6 @@ class ProjectClientMethods(BaseClientMethods):
         tags: Optional[ListOrTuple[str]] = None,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
         from_demo_project: Optional[DemoProjectType] = None,
-        workflow: Optional[Workflow] = None,
     ) -> Dict[Literal["id"], str]:
         """Create a project.
 
@@ -82,7 +81,6 @@ class ProjectClientMethods(BaseClientMethods):
                 - `DEMO_LLM`
                 - `DEMO_LLM_INSTR_FOLLOWING`
                 - `DEMO_SEGMENTATION`
-            workflow: The workflow settings to use for the project.
 
         Returns:
             A dict with the id of the created project.
@@ -115,7 +113,6 @@ class ProjectClientMethods(BaseClientMethods):
             project_type=project_type,
             compliance_tags=compliance_tags,
             from_demo_project=from_demo_project,
-            workflow=workflow,
         )
 
         if tags is not None:
