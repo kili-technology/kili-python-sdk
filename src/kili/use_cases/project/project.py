@@ -18,7 +18,6 @@ from kili.domain.project import (
     ProjectFilters,
     ProjectId,
     ProjectStep,
-    Workflow,
 )
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
@@ -39,7 +38,6 @@ class ProjectUseCases(BaseUseCases):
         project_id: Optional[ProjectId] = None,
         input_type: Optional[InputType] = None,
         json_interface: Optional[Dict] = None,
-        workflow: Optional[Workflow] = None,
     ) -> ProjectId:
         """Create or copy a project if project_id is set."""
         if project_id is not None:
@@ -57,7 +55,6 @@ class ProjectUseCases(BaseUseCases):
                 project_type=project_type,
                 compliance_tags=compliance_tags,
                 from_demo_project=from_demo_project,
-                workflow=workflow,
             )
             if project_copied["instructions"]:
                 self.update_properties_in_project(
@@ -87,7 +84,6 @@ class ProjectUseCases(BaseUseCases):
                 project_type=project_type,
                 compliance_tags=compliance_tags,
                 from_demo_project=from_demo_project,
-                workflow=workflow,
             )
 
         # The project is not immediately available after creation

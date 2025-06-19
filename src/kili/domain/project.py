@@ -50,14 +50,6 @@ class WorkflowStepUpdate(TypedDict, total=False):
     assignees: Optional[List[str]]
 
 
-@dataclass(frozen=True)
-class Workflow(TypedDict, total=True):
-    """Workflow step type."""
-
-    enforce_step_separation: bool
-    steps: List[WorkflowStepCreate]
-
-
 class InputTypeEnum(str, Enum):
     """Input type enum."""
 

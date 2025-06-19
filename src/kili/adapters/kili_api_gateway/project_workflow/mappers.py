@@ -2,7 +2,7 @@
 
 from typing import Dict, Union
 
-from kili.domain.project import Workflow, WorkflowStepCreate, WorkflowStepUpdate
+from kili.domain.project import WorkflowStepCreate, WorkflowStepUpdate
 
 from .types import ProjectWorkflowDataKiliAPIGatewayInput
 
@@ -20,14 +20,6 @@ def project_input_mapper(data: ProjectWorkflowDataKiliAPIGatewayInput) -> Dict:
             else [],
             "deletes": data.delete_steps if data.delete_steps else [],
         },
-    }
-
-
-def create_project_workflow_mapper(data: Workflow) -> Dict:
-    """Build the GraphQL Workflow variable to be sent in an operation."""
-    return {
-        "enforceStepSeparation": data["enforce_step_separation"],
-        "steps": [update_step_mapper(step) for step in data["steps"]] if data["steps"] else [],
     }
 
 
