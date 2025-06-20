@@ -555,14 +555,6 @@ def _video_object_detection_annotation_to_json_response(
             # get the frame json response of child jobs
             child_jobs_frame_json_resp = json_resp_child_jobs.get(str(frame_id), {})
 
-            annotation_dict = {
-                "children": child_jobs_frame_json_resp,
-                "isKeyFrame": frame_id == key_ann_frame,
-                "categories": [{"name": annotation["category"]}],
-                "mid": annotation["mid"],
-                "type": json_interface["jobs"][annotation["job"]]["tools"][0],
-            }
-
             if frame_id == key_ann_frame or next_key_ann is None:
                 norm_vertices = key_ann["annotationValue"]["vertices"]
             # between two key frame annotations, an object (point, bbox, polygon) is
@@ -580,19 +572,38 @@ def _video_object_detection_annotation_to_json_response(
                 )
 
             if json_interface["jobs"][annotation["job"]]["tools"][0] == "marker":
-                annotation_dict["point"] = norm_vertices[0][0][0]
+                single_annotation = {
+                    "children": child_jobs_frame_json_resp,
+                    "isKeyFrame": frame_id == key_ann_frame,
+                    "categories": [{"name": annotation["category"]}],
+                    "mid": annotation["mid"],
+                    "type": json_interface["jobs"][annotation["job"]]["tools"][0],
+                    "point": norm_vertices[0][0][0],
+                }
+                json_resp[str(frame_id)].setdefault(annotation["job"], {}).setdefault(
+                    "annotations", []
+                ).append(single_annotation)
 
-            elif json_interface["jobs"][annotation["job"]]["tools"][0] in {"polygon", "rectangle"}:
-                annotation_dict["boundingPoly"] = [{"normalizedVertices": norm_vertices[0][0]}]
-
-            elif json_interface["jobs"][annotation["job"]]["tools"][0] == "semantic":
-                annotation_dict["boundingPoly"] = [
-                    {"normalizedVertices": norm_vert} for norm_vert in norm_vertices[0]
+            elif json_interface["jobs"][annotation["job"]]["tools"][0] in {
+                "polygon",
+                "semantic",
+                "rectangle",
+            }:
+                annotations = [
+                    {
+                        "children": child_jobs_frame_json_resp,
+                        "isKeyFrame": frame_id == key_ann_frame,
+                        "categories": [{"name": annotation["category"]}],
+                        "mid": annotation["mid"],
+                        "type": json_interface["jobs"][annotation["job"]]["tools"][0],
+                        "boundingPoly": [{"normalizedVertices": ring} for ring in object_part],
+                    }
+                    for object_part in norm_vertices
                 ]
 
-            json_resp[str(frame_id)].setdefault(annotation["job"], {}).setdefault(
-                "annotations", []
-            ).append(annotation_dict)
+                json_resp[str(frame_id)].setdefault(annotation["job"], {}).setdefault(
+                    "annotations", []
+                ).extend(annotations)
 
     return json_resp
 
