@@ -3,6 +3,7 @@ from typing import Dict, List
 import pytest
 
 from kili.adapters.kili_api_gateway.label.annotation_to_json_response import (
+    AnnotationsToJsonResponseConverter,
     _classic_annotations_to_json_response,
     _interpolate_point,
     _interpolate_rectangle,
@@ -30,6 +31,7 @@ from .test_data import (
     test_case_18,
     test_case_19,
 )
+from .test_data.test_case_20 import test_cases
 
 
 @pytest.mark.parametrize(
@@ -315,3 +317,21 @@ def test_given_two_bboxes_on_different_frames_when_generating_intermediate_bboxe
     for vertice_interpolated, vertice_expected in zip(interpolated_bbox, expected_bbox):
         assert vertice_interpolated["x"] == pytest.approx(vertice_expected["x"], 1e-3)
         assert vertice_interpolated["y"] == pytest.approx(vertice_expected["y"], 1e-3)
+
+
+@pytest.mark.parametrize(
+    "json_interface, latest_label_annotations, expected_latest_label_result", test_cases
+)
+def test_video_object_detection_annotation_to_json_response(
+    json_interface, latest_label_annotations, expected_latest_label_result
+):
+    """Test the conversion from annotations to jsonResponse."""
+    converter = AnnotationsToJsonResponseConverter(
+        json_interface=json_interface,
+        project_input_type="VIDEO",
+    )
+    converter.patch_label_json_response(
+        latest_label_annotations, latest_label_annotations["annotations"]
+    )
+    del latest_label_annotations["annotations"]
+    assert expected_latest_label_result == latest_label_annotations
