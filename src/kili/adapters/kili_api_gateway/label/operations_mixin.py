@@ -20,7 +20,7 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
-from .common import get_annotation_fragment
+from .common import get_annotation_fragment, get_asset
 from .formatters import load_label_json_fields
 from .mappers import append_label_data_mapper, append_to_labels_data_mapper, label_where_mapper
 from .operations import (
@@ -51,6 +51,8 @@ class LabelOperationMixin(BaseOperationMixin):
     ) -> Generator[Dict, None, None]:
         """List labels."""
         if "jsonResponse" in fields:
+            if "labelOf" not in fields:
+                fields = [*list(fields), "assetId"]
             project_info = get_project(
                 self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
             )
@@ -102,7 +104,15 @@ class LabelOperationMixin(BaseOperationMixin):
                 project_input_type=project_info["inputType"],
             )
             for label in labels_gen:
-                converter.patch_label_json_response(label, label["annotations"])
+                asset = None
+                if project_info["inputType"] == "VIDEO":
+                    asset = get_asset(
+                        self.graphql_client,
+                        self.http_client,
+                        label["assetId"],
+                        ["content", "jsonContent", "resolution.width", "resolution.height"],
+                    )
+                converter.patch_label_json_response(asset, label, label["annotations"])
                 if "annotations" not in fields:
                     label.pop("annotations")
                 yield label

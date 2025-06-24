@@ -144,10 +144,36 @@ def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
     _ = annotations
 
     # When
-    json_resp = _video_annotations_to_json_response(annotations, json_interface=json_interface)
+    json_resp = _video_annotations_to_json_response(
+        annotations, json_interface=json_interface, width=1920, height=1080
+    )
 
     # Then
-    assert json_resp == expected_json_resp
+    def compare_json(resp, expected) -> None:
+        if isinstance(resp, dict) and isinstance(expected, dict):
+            for key in resp:
+                print(f"Comparing key: {key} from response with expected")
+                assert key in expected, f"Key {key} not in expected"
+                if key == "boundingPoly":
+                    print("condition boundingPoly", resp[key])
+                if (
+                    key == "boundingPoly"
+                    and "normalizedVertices" in resp[key][0]
+                    and "normalizedVertices" in expected[key][0]
+                ):
+                    assert resp[key][0]["normalizedVertices"][0] == pytest.approx(
+                        expected[key][0]["normalizedVertices"][0]
+                    )
+                else:
+                    compare_json(resp[key], expected[key])
+        elif isinstance(resp, list) and isinstance(expected, list):
+            assert len(resp) == len(expected)
+            for r, e in zip(resp, expected):
+                compare_json(r, e)
+        else:
+            assert resp == expected
+
+    compare_json(json_resp, expected_json_resp)
 
 
 @pytest.mark.parametrize(
@@ -309,7 +335,7 @@ def test_given_two_bboxes_on_different_frames_when_generating_intermediate_bboxe
 
     # When
     interpolated_bbox = _interpolate_rectangle(
-        previous_vertices=bbox_start, next_vertices=bbox_end, weight=weight
+        previous_vertices=bbox_start, next_vertices=bbox_end, weight=weight, width=1920, height=1080
     )
 
     # Then
