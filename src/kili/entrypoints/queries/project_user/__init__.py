@@ -128,7 +128,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
                 - `ACTIVATED`: Has been invited to the project. Is not an Organization Admin
                 - `ORG_SUSPENDED`: Has been suspended at the organization level. Can no longer access any projects.
             fields: All the fields to request among the possible fields for the projectUsers.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#projectuser) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/project-user) for all possible fields.
             first: Maximum number of users to return.
             skip: Number of project users to skip.
             disable_tqdm: If `True`, the progress bar will be disabled.

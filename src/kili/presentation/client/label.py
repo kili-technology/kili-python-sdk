@@ -392,7 +392,7 @@ class LabelClientMethods(BaseClientMethods):
             created_at_gte: Returned labels should have their creation date greater or equal to this date.
             created_at_lte: Returned labels should have their creation date lower or equal to this date.
             fields: All the fields to request among the possible fields for the labels.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/label) for all possible fields.
             first: Maximum number of labels to return.
             honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
             honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
@@ -631,7 +631,7 @@ class LabelClientMethods(BaseClientMethods):
             created_at_gte: Returned labels should have a label whose creation date is greater than this date.
             created_at_lte: Returned labels should have a label whose creation date is lower than this date.
             fields: All the fields to request among the possible fields for the labels.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/label) for all possible fields.
             first: Maximum number of labels to return.
             honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
             honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
@@ -799,7 +799,7 @@ class LabelClientMethods(BaseClientMethods):
             created_at_gte: Returned labels should have a label whose creation date is greater than this date.
             created_at_lte: Returned labels should have a label whose creation date is lower than this date.
             fields: All the fields to request among the possible fields for the labels.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/label) for all possible fields.
             first: Maximum number of labels to return.
             honeypot_mark_gte: Returned labels should have a label whose honeypot is greater than this number.
             honeypot_mark_lte: Returned labels should have a label whose honeypot is lower than this number.
@@ -1178,9 +1178,9 @@ class LabelClientMethods(BaseClientMethods):
         Args:
             project_id: Identifier of the project
             fields: All the fields to request among the possible fields for the labels.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#label) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/label) for all possible fields.
             asset_fields: All the fields to request among the possible fields for the assets.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#asset) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/asset) for all possible fields.
 
         Returns:
             A pandas DataFrame containing the labels.

@@ -297,7 +297,7 @@ class AssetClientMethods(BaseClientMethods):
             asset_id_not_in: A list of the IDs of the assets to exclude.
             skip: Number of assets to skip (they are ordered by their date of creation, first to last).
             fields: All the fields to request among the possible fields for the assets.
-                    See [the documentation](https://docs.kili-technology.com/reference/graphql-api#asset) for all possible fields.
+                    See [the documentation](https://api-docs.kili-technology.com/types/objects/asset) for all possible fields.
             first: Maximum number of assets to return.
             consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.
             consensus_mark_lt: Deprecated. Use `consensus_mark_lte` instead.

@@ -29,7 +29,7 @@ class TagClientMethods(BaseClientMethods):
             project_id: Id of the project to which the tags belong.
                 If not provided, tags of the organization are retrieved.
             fields: Fields of tags to be retrieved.
-                See the [documentation](https://docs.kili-technology.com/reference/graphql-api#tag)
+                See the [documentation](https://api-docs.kili-technology.com/types/objects/tag)
                 for all possible fields.
 
         Returns:

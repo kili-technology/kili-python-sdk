@@ -176,7 +176,7 @@ class IssueClientMethods(BaseClientMethods):
             issue_type: Type of the issue to return. An issue object both represents issues and questions in the app.
             status: Status of the issues to return.
             fields: All the fields to request among the possible fields for the assets.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#issue) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/issue) for all possible fields.
             first: Maximum number of issues to return.
             skip: Number of issues to skip (they are ordered by their date of creation, first to last).
             disable_tqdm: If `True`, the progress bar will be disabled

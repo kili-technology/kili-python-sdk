@@ -73,7 +73,7 @@ class UserClientMethods(BaseClientMethods):
             email: Email of the user
             organization_id: Identifier of the user's organization
             fields: All the fields to request among the possible fields for the users.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#user) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/user) for all possible fields.
             first: Maximum number of users to return
             skip: Number of skipped users (they are ordered by creation date)
             disable_tqdm: If `True`, the progress bar will be disabled

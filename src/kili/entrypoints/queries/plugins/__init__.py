@@ -126,7 +126,7 @@ class QueriesPlugins(BaseOperationEntrypointMixin):
 
         Args:
             fields: All the fields to request among the possible fields for the plugins
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#plugins) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/plugin) for all possible fields.
 
         Returns:
             A result array which contains all the plugins from your organization,

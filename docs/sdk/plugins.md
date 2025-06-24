@@ -26,7 +26,7 @@ The plugin you are going to upload has to contain a `class PluginHandler(PluginC
 
 These methods have a predefined set of parameters:
 
-- the `label` submitted (a dictionary containing the fields of the GraphQL type [Label](https://docs.kili-technology.com/reference/graphql-api#label))
+- the `label` submitted (a dictionary containing the fields of the GraphQL type [Label](https://api-docs.kili-technology.com/types/objects/label/))
 - the `asset_id` of the asset labeled
 
 You can add custom methods in your class as well.
