@@ -90,7 +90,7 @@ class NotificationClientMethods(BaseClientMethods):
 
         Args:
             fields: All the fields to request among the possible fields for the notifications
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#notification) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/notification) for all possible fields.
             first: Number of notifications to query
             has_been_seen: If the notifications returned should have been seen.
             notification_id: If given, will return the notification which has this id

@@ -103,7 +103,7 @@ class CloudStorageClientMethods(BaseClientMethods):
             cloud_storage_integration_id: ID of the cloud storage integration.
             project_id: ID of the project.
             fields: All the fields to request among the possible fields for the cloud storage connections.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataconnection) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/data-connection) for all possible fields.
             first: Maximum number of cloud storage connections to return.
             skip: Number of skipped cloud storage connections.
             disable_tqdm: If `True`, the progress bar will be disabled.
@@ -216,7 +216,7 @@ class CloudStorageClientMethods(BaseClientMethods):
             status: Status of the cloud storage integration.
             organization_id: ID of the organization.
             fields: All the fields to request among the possible fields for the cloud storage integrations.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataintegration) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/data-integration) for all possible fields.
             first: Maximum number of cloud storage integrations to return.
             skip: Number of skipped cloud storage integrations.
             disable_tqdm: If `True`, the progress bar will be disabled.
@@ -409,7 +409,7 @@ class CloudStorageClientMethods(BaseClientMethods):
 
         Args:
             fields: All the fields to request among the possible fields for the cloud storage integration.
-                See [the documentation](https://docs.kili-technology.com/reference/graphql-api#dataintegration) for all possible fields.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/data-integration) for all possible fields.
             allowed_paths: List of allowed paths.
             allowed_projects: List of allowed projects.
             aws_access_point_arn: AWS access point ARN.

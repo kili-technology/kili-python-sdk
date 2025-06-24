@@ -70,6 +70,8 @@ nav:
           - Webhooks: sdk/tutorials/webhooks_example.md
       - Integrations:
           - Vertex AI AutoML: sdk/tutorials/vertex_ai_automl_od.md
+  - Product Documentation: https://docs.kili-technology.com/docs/introduction-to-kili-technology
+  - API Documentation: https://api-docs.kili-technology.com/
 
 ## Configuration
 plugins:
