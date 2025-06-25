@@ -19,6 +19,8 @@ from kili.services.export.repository import AbstractContentRepository, DownloadE
 from kili.services.export.types import LabelFormat, SplitOption
 from kili.utils.tqdm import tqdm
 
+IMAGE_EXTENSIONS = {".jpeg", ".jpg", ".png", ".bmp", ".gif", ".webp", ".ico"}
+
 
 class YoloExporter(AbstractExporter):
     """Common code for Yolo exporters."""
@@ -324,7 +326,9 @@ def _process_asset(
                     asset_id = asset["id"]
                     logging.warning("for asset %s: %s", asset_id, str(download_error))
         else:
-            asset_remote_content.append([asset["externalId"], content_frame, f"{filename}.txt"])
+            asset_remote_content.append(
+                [asset["externalId"], content_frame, f"{_remove_image_extension(filename)}.txt"]
+            )
 
     return asset_remote_content, video_filenames
 
@@ -394,9 +398,19 @@ def _write_content_frame_to_file(
 
 
 def _write_labels_to_file(labels_folder: Path, filename: str, annotations: List[Tuple]) -> None:
-    file_path = labels_folder / f"{filename}.txt"
+    file_path = labels_folder / f"{_remove_image_extension(filename)}.txt"
     file_path.parent.mkdir(parents=True, exist_ok=True)
     with file_path.open("wb") as fout:
         for category_idx, *points in annotations:
             points_str = " ".join([str(point) for point in points])
             fout.write(f"{category_idx} {points_str}\n".encode())
+
+
+def _remove_image_extension(filename: str) -> str:
+    try:
+        path = Path(filename)
+        if path.suffix and path.suffix in IMAGE_EXTENSIONS:
+            return str(path.with_suffix(""))
+        return filename
+    except TypeError:
+        return filename

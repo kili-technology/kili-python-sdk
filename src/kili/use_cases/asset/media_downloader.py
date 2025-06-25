@@ -146,7 +146,7 @@ class MediaDownloader:
                 urls = tuple(json_content.values())
                 nbr_char_zfill = len(str(len(urls)))
                 img_names = (
-                    f'{asset["externalId"]}_{f"{i+1}".zfill(nbr_char_zfill)}'
+                    f'{asset["externalId"]}_{f"{i+1}".zfill(nbr_char_zfill)}.jpg'
                     for i, _ in enumerate(urls)
                 )
                 with ThreadPoolExecutor() as threads:
