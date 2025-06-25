@@ -352,12 +352,18 @@ def test_video_object_detection_annotation_to_json_response(
     json_interface, latest_label_annotations, expected_latest_label_result
 ):
     """Test the conversion from annotations to jsonResponse."""
+    asset = {
+        "id": "fake_asset_id",
+        "resolution": {"width": 1920, "height": 1080},
+        "content": "video1.mp4",
+        "jsonContent": "",
+    }
     converter = AnnotationsToJsonResponseConverter(
         json_interface=json_interface,
         project_input_type="VIDEO",
     )
     converter.patch_label_json_response(
-        latest_label_annotations, latest_label_annotations["annotations"]
+        asset, latest_label_annotations, latest_label_annotations["annotations"]
     )
     del latest_label_annotations["annotations"]
     assert expected_latest_label_result == latest_label_annotations
