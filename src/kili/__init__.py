@@ -1,3 +1,3 @@
 """Kili Python SDK."""
 
-__version__ = "2.173.1"
+__version__ = "2.174.0"
