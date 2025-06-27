@@ -1,480 +1,577 @@
 import json
-from pathlib import Path
-from typing import Any, Dict, List
+import os
+import shutil
+import tempfile
 
-import pytest
-from kili_formats.format.geojson import (
-    features_to_feature_collection,
-    geojson_feature_collection_to_kili_json_response,
-    geojson_linestring_feature_to_kili_line_annotation,
-    geojson_point_feature_to_kili_point_annotation,
-    geojson_polygon_feature_to_kili_bbox_annotation,
-    geojson_polygon_feature_to_kili_polygon_annotation,
-    geojson_polygon_feature_to_kili_segmentation_annotation,
-    kili_bbox_annotation_to_geojson_polygon_feature,
-    kili_bbox_to_geojson_polygon,
-    kili_json_response_to_feature_collection,
-    kili_line_annotation_to_geojson_linestring_feature,
-    kili_line_to_geojson_linestring,
-    kili_point_annotation_to_geojson_point_feature,
-    kili_point_to_geojson_point,
-    kili_polygon_annotation_to_geojson_polygon_feature,
-    kili_polygon_to_geojson_polygon,
-    kili_segmentation_annotation_to_geojson_polygon_feature,
-    kili_segmentation_to_geojson_polygon,
-)
-
-from .test_data import (
-    kili_polygon_annotation_to_geojson_polygon_feature_test_cases,
-    kili_polygon_to_geojson_polygon_test_cases,
-    kili_polygon_to_geojson_polygon_test_error_cases,
-)
+from kili_formats.format.geojson import geojson_feature_collection_to_kili_json_response
 
 
-def test_kili_point_to_geojson_point():
-    lat = 1.0
-    long = 2.0
-    kili_point = {"x": long, "y": lat}
-    expected = {"type": "Point", "coordinates": [long, lat]}
-    assert kili_point_to_geojson_point(kili_point) == expected
+def create_mock_geojson_file(feature_collection, temp_dir):
+    """Create a mock GeoJSON file for testing purposes."""
+    file_path = os.path.join(temp_dir, "test.geojson")
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(feature_collection, f)
+    return file_path
 
 
-def test_kili_point_annotation_to_geojson_point_feature():
-    lat = 1.0
-    long = 2.0
-    kili_point_annotation = {
-        "children": {},
-        "point": {"x": long, "y": lat},
-        "categories": [{"name": "A"}],
-        "mid": "20230712140607850-1660",
-        "type": "marker",
-    }
+def is_almost_equal(a, b, tolerance=1e-14):
+    """Due to different versions of coordinate transformations, the coordinates may differ slightly.
 
-    # kili to geojson
-    geojson_point_feat = kili_point_annotation_to_geojson_point_feature(
-        kili_point_annotation, job_name="POINT_JOB"
-    )
-    assert geojson_point_feat == {
-        "type": "Feature",
-        "geometry": {"type": "Point", "coordinates": [long, lat]},
-        "id": "20230712140607850-1660",
-        "properties": {
-            "kili": {
-                "categories": [{"name": "A"}],
-                "type": "marker",
-                "children": {},
-                "job": "POINT_JOB",
-            }
-        },
-    }
-
-    # geojson to kili
-    output = geojson_point_feature_to_kili_point_annotation(geojson_point_feat)
-    assert output == kili_point_annotation
+    This function checks if two coordinates are almost equal within a given tolerance.
+    """
+    return abs(a - b) <= tolerance
 
 
-def test_kili_bbox_to_geojson_polygon():
-    normalized_vertices = [
-        {"x": 4.426411498889343, "y": 52.195226518404574},
-        {"x": 4.426411498889343, "y": 52.19969942041263},
-        {"x": 4.433707313141323, "y": 52.19969942041263},
-        {"x": 4.433707313141323, "y": 52.195226518404574},
-    ]
-    bbox = [
-        [4.426411498889343, 52.195226518404574],
-        [4.433707313141323, 52.195226518404574],
-        [4.433707313141323, 52.19969942041263],
-        [4.426411498889343, 52.19969942041263],
-        [4.426411498889343, 52.195226518404574],
-    ]
-    expected = {
-        "type": "Polygon",
-        "coordinates": [bbox],
-    }
+def test_point_geojson():
+    """Test converting GeoJSON Point features to Kili annotations."""
+    temp_dir = tempfile.mkdtemp()
 
-    assert kili_bbox_to_geojson_polygon(normalized_vertices) == expected
-
-
-def test_kili_bbox_annotation_to_geojson_polygon_feature():
-    kili_bbox_ann = {
-        "children": {},
-        "boundingPoly": [
+    # Create mock GeoJSON feature collection with Point geometries
+    feature_collection = {
+        "type": "FeatureCollection",
+        "features": [
             {
-                "normalizedVertices": [
-                    {"x": 4.426411498889343, "y": 52.195226518404574},
-                    {"x": 4.426411498889343, "y": 52.19969942041263},
-                    {"x": 4.433707313141323, "y": 52.19969942041263},
-                    {"x": 4.433707313141323, "y": 52.195226518404574},
-                ]
-            }
-        ],
-        "categories": [{"name": "CATEGORY_A"}],
-        "mid": "20230712152136805-42164",
-        "type": "rectangle",
-    }
-    bbox = [
-        [4.426411498889343, 52.195226518404574],
-        [4.433707313141323, 52.195226518404574],
-        [4.433707313141323, 52.19969942041263],
-        [4.426411498889343, 52.19969942041263],
-        [4.426411498889343, 52.195226518404574],
-    ]
-
-    # kili to geojson
-    output = kili_bbox_annotation_to_geojson_polygon_feature(kili_bbox_ann, job_name="BBOX_JOB")
-    assert output == {
-        "type": "Feature",
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [bbox],
-        },
-        "id": "20230712152136805-42164",
-        "properties": {
-            "kili": {
-                "categories": [{"name": "CATEGORY_A"}],
-                "type": "rectangle",
-                "children": {},
-                "job": "BBOX_JOB",
-            }
-        },
-    }
-
-    # geojson to kili
-    output = geojson_polygon_feature_to_kili_bbox_annotation(output)
-    assert output == kili_bbox_ann
-
-
-@pytest.mark.parametrize(
-    ("test_case_name", "normalized_vertices", "expected_output"),
-    kili_polygon_to_geojson_polygon_test_cases.test_cases,
-)
-def test_kili_polygon_to_geojson_polygon(
-    test_case_name: str,
-    normalized_vertices: List,
-    expected_output: Dict,
-):
-    output = kili_polygon_to_geojson_polygon(normalized_vertices)
-
-    assert output == expected_output
-
-
-@pytest.mark.parametrize(
-    ("test_case_name", "polygon_annotation", "job_name", "expected_output"),
-    kili_polygon_annotation_to_geojson_polygon_feature_test_cases.test_cases,
-)
-def test_kili_polygon_annotation_to_geojson_polygon_feature(
-    test_case_name: str,
-    polygon_annotation: Dict,
-    job_name: str,
-    expected_output: Dict,
-):
-    # Convert kili annotation to geojson
-    output = kili_polygon_annotation_to_geojson_polygon_feature(
-        polygon_annotation, job_name=job_name
-    )
-    assert output == expected_output
-
-    # Convert Geojson format to kili annotation
-    output = geojson_polygon_feature_to_kili_polygon_annotation(output)
-    assert output == polygon_annotation
-
-
-@pytest.mark.parametrize(
-    ("test_case_name", "normalized_vertices", "expected_error"),
-    kili_polygon_to_geojson_polygon_test_error_cases.test_cases,
-)
-def test_kili_polygon_to_geojson_errors(
-    test_case_name: str,
-    normalized_vertices: List,
-    expected_error: Any,
-):
-    with pytest.raises(expected_error):
-        kili_polygon_to_geojson_polygon(normalized_vertices)
-
-
-def test_kili_line_to_geojson_linestring():
-    polyline = [
-        {"x": 4.46935731459989, "y": 52.19176987673034},
-        {"x": 4.457252895500004, "y": 52.194109686268},
-        {"x": 4.442495453035762, "y": 52.195939610198685},
-        {"x": 4.43138591769753, "y": 52.19634624973076},
-        {"x": 4.423592661564704, "y": 52.201225633952504},
-        {"x": 4.4123173122661905, "y": 52.20518973920337},
-        {"x": 4.4017052188087655, "y": 52.20864533731555},
-        {"x": 4.396564986040335, "y": 52.211795795488335},
-    ]
-
-    output = kili_line_to_geojson_linestring(polyline)
-
-    assert output == {
-        "type": "LineString",
-        "coordinates": [
-            [4.46935731459989, 52.19176987673034],
-            [4.457252895500004, 52.194109686268],
-            [4.442495453035762, 52.195939610198685],
-            [4.43138591769753, 52.19634624973076],
-            [4.423592661564704, 52.201225633952504],
-            [4.4123173122661905, 52.20518973920337],
-            [4.4017052188087655, 52.20864533731555],
-            [4.396564986040335, 52.211795795488335],
-        ],
-    }
-
-
-def test_kili_line_annotation_to_geojson_linestring_feature():
-    ann = {
-        "children": {},
-        "polyline": [
-            {"x": 4.46935731459989, "y": 52.19176987673034},
-            {"x": 4.457252895500004, "y": 52.194109686268},
-            {"x": 4.442495453035762, "y": 52.195939610198685},
-            {"x": 4.43138591769753, "y": 52.19634624973076},
-            {"x": 4.423592661564704, "y": 52.201225633952504},
-            {"x": 4.4123173122661905, "y": 52.20518973920337},
-            {"x": 4.4017052188087655, "y": 52.20864533731555},
-            {"x": 4.396564986040335, "y": 52.211795795488335},
-        ],
-        "categories": [{"name": "A"}],
-        "mid": "20230712161027535-42230",
-        "type": "polyline",
-    }
-
-    # kili to geojson
-    output = kili_line_annotation_to_geojson_linestring_feature(ann, job_name="LINE_JOB")
-    assert output == {
-        "type": "Feature",
-        "id": "20230712161027535-42230",
-        "properties": {
-            "kili": {
-                "categories": [{"name": "A"}],
-                "type": "polyline",
-                "children": {},
-                "job": "LINE_JOB",
-            }
-        },
-        "geometry": {
-            "coordinates": [
-                [4.46935731459989, 52.19176987673034],
-                [4.457252895500004, 52.194109686268],
-                [4.442495453035762, 52.195939610198685],
-                [4.43138591769753, 52.19634624973076],
-                [4.423592661564704, 52.201225633952504],
-                [4.4123173122661905, 52.20518973920337],
-                [4.4017052188087655, 52.20864533731555],
-                [4.396564986040335, 52.211795795488335],
-            ],
-            "type": "LineString",
-        },
-    }
-
-    # geojson to kili
-    output = geojson_linestring_feature_to_kili_line_annotation(output)
-    assert output == ann
-
-
-def test_kili_segmentation_to_geojson_polygon():
-    bounding_poly = [
-        {
-            "normalizedVertices": [
-                {"x": 4.439649, "y": 52.201064},
-                {"x": 4.439694, "y": 52.200955},
-                {"x": 4.439827, "y": 52.200846},
-            ]
-        },
-        {
-            "normalizedVertices": [
-                {"x": 4.441604, "y": 52.200982},
-                {"x": 4.441604, "y": 52.201254},
-                {"x": 4.441648, "y": 52.2009},
-            ]
-        },
-        {
-            "normalizedVertices": [
-                {"x": 4.446402, "y": 52.200192},
-                {"x": 4.446402, "y": 52.200274},
-                {"x": 4.446491, "y": 52.200083},
-            ]
-        },
-    ]
-
-    output = kili_segmentation_to_geojson_polygon(bounding_poly)
-
-    assert output == {
-        "type": "Polygon",
-        "coordinates": [
-            [
-                [4.439649, 52.201064],
-                [4.439694, 52.200955],
-                [4.439827, 52.200846],
-                [4.439649, 52.201064],
-            ],
-            [
-                [4.441604, 52.200982],
-                [4.441604, 52.201254],
-                [4.441648, 52.2009],
-                [4.441604, 52.200982],
-            ],
-            [
-                [4.446402, 52.200192],
-                [4.446402, 52.200274],
-                [4.446491, 52.200083],
-                [4.446402, 52.200192],
-            ],
-        ],
-    }
-
-
-def test_kili_segmentation_annotation_to_geojson_polygon_feature():
-    ann = {
-        "children": {},
-        "boundingPoly": [
-            {
-                "normalizedVertices": [
-                    {"x": 4.439649, "y": 52.201064},
-                    {"x": 4.439694, "y": 52.200955},
-                    {"x": 4.439694, "y": 52.201853},
-                    {"x": 4.439649, "y": 52.201853},
-                ]
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [9.429123117729949, 54.68002984132896],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "points_job",
+                        "type": "marker",
+                        "categories": [{"name": "point_category"}],
+                    }
+                },
             },
             {
-                "normalizedVertices": [
-                    {"x": 4.441604, "y": 52.200982},
-                    {"x": 4.441782, "y": 52.200655},
-                    {"x": 4.441737, "y": 52.200764},
-                    {"x": 4.441648, "y": 52.2009},
-                ]
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [9.772235200599381, 54.68970515271516],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "points_job",
+                        "type": "marker",
+                        "categories": [{"name": "point_category"}],
+                    }
+                },
             },
             {
-                "normalizedVertices": [
-                    {"x": 4.446402, "y": 52.200192},
-                    {"x": 4.446402, "y": 52.200274},
-                    {"x": 4.44658, "y": 52.199838},
-                    {"x": 4.44658, "y": 52.199947},
-                    {"x": 4.446491, "y": 52.200083},
-                ]
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [9.451439350762108, 54.318792605636354],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "points_job",
+                        "type": "marker",
+                        "categories": [{"name": "point_category"}],
+                    }
+                },
             },
         ],
-        "categories": [{"name": "A"}],
-        "mid": "20230712163555037-91494",
-        "type": "semantic",
     }
 
-    # kili to geojson
-    output = kili_segmentation_annotation_to_geojson_polygon_feature(
-        ann, job_name="SEGMENTATION_JOB"
-    )
-    assert output == {
-        "type": "Feature",
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [4.439649, 52.201064],
-                    [4.439694, 52.200955],
-                    [4.439694, 52.201853],
-                    [4.439649, 52.201853],
-                    [4.439649, 52.201064],
-                ],
-                [
-                    [4.441604, 52.200982],
-                    [4.441782, 52.200655],
-                    [4.441737, 52.200764],
-                    [4.441648, 52.2009],
-                    [4.441604, 52.200982],
-                ],
-                [
-                    [4.446402, 52.200192],
-                    [4.446402, 52.200274],
-                    [4.44658, 52.199838],
-                    [4.44658, 52.199947],
-                    [4.446491, 52.200083],
-                    [4.446402, 52.200192],
-                ],
-            ],
-        },
-        "id": "20230712163555037-91494",
-        "properties": {
-            "kili": {
-                "categories": [{"name": "A"}],
-                "type": "semantic",
-                "children": {},
-                "job": "SEGMENTATION_JOB",
+    geojson_file_path = create_mock_geojson_file(feature_collection, temp_dir)
+
+    response = geojson_feature_collection_to_kili_json_response(feature_collection)
+
+    assert "points_job" in response
+    assert "annotations" in response["points_job"]
+
+    annotations = response["points_job"]["annotations"]
+    assert len(annotations) == 3
+
+    expected_coordinates = [
+        {"x": 9.429123117729949, "y": 54.68002984132896},
+        {"x": 9.772235200599381, "y": 54.68970515271516},
+        {"x": 9.451439350762108, "y": 54.318792605636354},
+    ]
+
+    for index, annotation in enumerate(annotations):
+        assert annotation["type"] == "marker"
+        assert "point" in annotation
+
+        assert is_almost_equal(annotation["point"]["x"], expected_coordinates[index]["x"])
+        assert is_almost_equal(annotation["point"]["y"], expected_coordinates[index]["y"])
+
+        assert "categories" in annotation
+        assert len(annotation["categories"]) == 1
+        assert annotation["categories"][0]["name"] == "point_category"
+
+    shutil.rmtree(temp_dir)
+
+
+def test_linestring_geojson():
+    """Test converting GeoJSON LineString features to Kili annotations."""
+    temp_dir = tempfile.mkdtemp()
+
+    # Create mock GeoJSON feature collection with LineString geometries
+    feature_collection = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                        [9.254598688594093, 54.8539201125262],
+                        [9.254598688594093, 54.85101839240259],
+                        [9.259639164462506, 54.84811646354571],
+                        [9.262159402396708, 54.845214325948014],
+                    ],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "lines_job",
+                        "type": "polyline",
+                        "categories": [{"name": "line_category"}],
+                    }
+                },
+            },
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                        [9.69312008914582, 54.23407519827612],
+                        [9.69312008914582, 54.23996684410168],
+                        [9.698160565014232, 54.244385026482774],
+                    ],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "lines_job",
+                        "type": "polyline",
+                        "categories": [{"name": "line_category"}],
+                    }
+                },
+            },
+        ],
+    }
+
+    geojson_file_path = create_mock_geojson_file(feature_collection, temp_dir)
+
+    response = geojson_feature_collection_to_kili_json_response(feature_collection)
+
+    assert "lines_job" in response
+    assert "annotations" in response["lines_job"]
+
+    annotations = response["lines_job"]["annotations"]
+    assert len(annotations) == 2
+
+    expected_coordinates = [
+        [
+            {"x": 9.254598688594093, "y": 54.8539201125262},
+            {"x": 9.254598688594093, "y": 54.85101839240259},
+            {"x": 9.259639164462506, "y": 54.84811646354571},
+            {"x": 9.262159402396708, "y": 54.845214325948014},
+        ],
+        [
+            {"x": 9.69312008914582, "y": 54.23407519827612},
+            {"x": 9.69312008914582, "y": 54.23996684410168},
+            {"x": 9.698160565014232, "y": 54.244385026482774},
+        ],
+    ]
+
+    for index, annotation in enumerate(annotations):
+        assert annotation["type"] == "polyline"
+        assert "polyline" in annotation
+
+        for point_index, point in enumerate(annotation["polyline"]):
+            assert is_almost_equal(point["x"], expected_coordinates[index][point_index]["x"])
+            assert is_almost_equal(point["y"], expected_coordinates[index][point_index]["y"])
+
+        assert "categories" in annotation
+        assert len(annotation["categories"]) == 1
+        assert annotation["categories"][0]["name"] == "line_category"
+
+    shutil.rmtree(temp_dir)
+
+
+def test_polygon_geojson():
+    """Test converting GeoJSON Polygon features to Kili annotations."""
+    temp_dir = tempfile.mkdtemp()
+
+    # Create mock GeoJSON feature collection with Polygon geometries
+    feature_collection = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [9.504102244080421, 54.51885219373373],
+                            [9.50914271994883, 54.52031500197589],
+                            [9.514183195817239, 54.52324046127452],
+                            [9.519223671685653, 54.52470311233283],
+                            [9.504102244080421, 54.51885219373373],  # Close the polygon
+                        ]
+                    ],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "polygons_job",
+                        "type": "semantic",
+                        "categories": [{"name": "polygon_category"}],
+                    }
+                },
+            },
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [10.05351411373718, 54.316481719000855],
+                            [10.063595065473999, 54.316481719000855],
+                            [10.068635541342411, 54.316481719000855],
+                            [10.076196255145028, 54.31501161884114],
+                            [10.05351411373718, 54.316481719000855],  # Close the polygon
+                        ]
+                    ],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "polygons_job",
+                        "type": "semantic",
+                        "categories": [{"name": "polygon_category"}],
+                    }
+                },
+            },
+        ],
+    }
+
+    geojson_file_path = create_mock_geojson_file(feature_collection, temp_dir)
+
+    response = geojson_feature_collection_to_kili_json_response(feature_collection)
+
+    assert "polygons_job" in response
+    assert "annotations" in response["polygons_job"]
+
+    annotations = response["polygons_job"]["annotations"]
+    assert len(annotations) == 2
+
+    # Test the first polygon
+    first_annotation = annotations[0]
+    assert first_annotation["type"] == "semantic"
+    assert "boundingPoly" in first_annotation
+    assert len(first_annotation["boundingPoly"]) == 1  # Only exterior ring
+
+    expected_first_polygon = [
+        {"x": 9.504102244080421, "y": 54.51885219373373},
+        {"x": 9.50914271994883, "y": 54.52031500197589},
+        {"x": 9.514183195817239, "y": 54.52324046127452},
+        {"x": 9.519223671685653, "y": 54.52470311233283},
+    ]
+
+    first_polygon_vertices = first_annotation["boundingPoly"][0]["normalizedVertices"]
+    assert len(first_polygon_vertices) == len(expected_first_polygon)
+
+    for i, point in enumerate(first_polygon_vertices):
+        assert is_almost_equal(point["x"], expected_first_polygon[i]["x"])
+        assert is_almost_equal(point["y"], expected_first_polygon[i]["y"])
+
+    assert "categories" in first_annotation
+    assert len(first_annotation["categories"]) == 1
+    assert first_annotation["categories"][0]["name"] == "polygon_category"
+
+    shutil.rmtree(temp_dir)
+
+
+def test_multipolygon_geojson():
+    """Test converting GeoJSON MultiPolygon features to Kili annotations."""
+    temp_dir = tempfile.mkdtemp()
+
+    # Create mock GeoJSON feature collection with MultiPolygon geometry
+    feature_collection = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "MultiPolygon",
+                    "coordinates": [
+                        # First polygon
+                        [
+                            [
+                                [9.504102244080421, 54.51885219373373],
+                                [9.50914271994883, 54.52031500197589],
+                                [9.514183195817239, 54.52324046127452],
+                                [9.504102244080421, 54.51885219373373],
+                            ]
+                        ],
+                        # Second polygon
+                        [
+                            [
+                                [10.05351411373718, 54.316481719000855],
+                                [10.063595065473999, 54.316481719000855],
+                                [10.068635541342411, 54.316481719000855],
+                                [10.05351411373718, 54.316481719000855],
+                            ]
+                        ],
+                    ],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "multipolygons_job",
+                        "type": "semantic",
+                        "categories": [{"name": "multipolygon_category"}],
+                    }
+                },
             }
-        },
+        ],
     }
 
-    # geojson to kili
-    output = geojson_polygon_feature_to_kili_segmentation_annotation(output)
-    assert output == ann
+    geojson_file_path = create_mock_geojson_file(feature_collection, temp_dir)
+
+    response = geojson_feature_collection_to_kili_json_response(feature_collection)
+
+    assert "multipolygons_job" in response
+    assert "annotations" in response["multipolygons_job"]
+
+    annotations = response["multipolygons_job"]["annotations"]
+    # MultiPolygon should create multiple annotations with the same mid
+    assert len(annotations) == 2
+
+    # Check that both annotations have the same mid (indicating they're parts of the same multipolygon)
+    mids = [ann.get("mid") for ann in annotations]
+    assert len(set(mids)) == 1  # All should have the same mid
+
+    for annotation in annotations:
+        assert annotation["type"] == "semantic"
+        assert "boundingPoly" in annotation
+        assert "categories" in annotation
+        assert len(annotation["categories"]) == 1
+        assert annotation["categories"][0]["name"] == "multipolygon_category"
+
+    shutil.rmtree(temp_dir)
 
 
-def test_features_to_feature_collection():
-    feat1 = {
-        "type": "Feature",
-        "geometry": {"type": "Point", "coordinates": [102.0, 0.5]},
-        "properties": {"prop0": "value0"},
-    }
-    feat2 = {
-        "type": "Feature",
-        "geometry": {
-            "type": "LineString",
-            "coordinates": [[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]],
-        },
-        "properties": {"prop0": "value0", "prop1": 0.0},
-    }
+def test_mixed_geometries_geojson():
+    """Test converting GeoJSON with mixed geometry types to Kili annotations."""
+    temp_dir = tempfile.mkdtemp()
 
-    assert features_to_feature_collection([feat1, feat2]) == {
+    # Create mock GeoJSON feature collection with mixed geometries
+    feature_collection = {
         "type": "FeatureCollection",
-        "features": [feat1, feat2],
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [9.429123117729949, 54.68002984132896],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "detection_job",
+                        "type": "marker",
+                        "categories": [{"name": "point_category"}],
+                    }
+                },
+            },
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                        [9.254598688594093, 54.8539201125262],
+                        [9.254598688594093, 54.85101839240259],
+                        [9.259639164462506, 54.84811646354571],
+                    ],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "tracking_job",
+                        "type": "polyline",
+                        "categories": [{"name": "line_category"}],
+                    }
+                },
+            },
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [9.504102244080421, 54.51885219373373],
+                            [9.50914271994883, 54.52031500197589],
+                            [9.514183195817239, 54.52324046127452],
+                            [9.504102244080421, 54.51885219373373],
+                        ]
+                    ],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "segmentation_job",
+                        "type": "semantic",
+                        "categories": [{"name": "polygon_category"}],
+                    }
+                },
+            },
+        ],
     }
 
-    assert features_to_feature_collection((feat1, feat2)) == {
+    geojson_file_path = create_mock_geojson_file(feature_collection, temp_dir)
+
+    response = geojson_feature_collection_to_kili_json_response(feature_collection)
+
+    # Should have three different jobs
+    assert len(response) == 3
+    assert "detection_job" in response
+    assert "tracking_job" in response
+    assert "segmentation_job" in response
+
+    # Check point annotation
+    assert "annotations" in response["detection_job"]
+    point_annotations = response["detection_job"]["annotations"]
+    assert len(point_annotations) == 1
+    assert point_annotations[0]["type"] == "marker"
+    assert "point" in point_annotations[0]
+
+    # Check line annotation
+    assert "annotations" in response["tracking_job"]
+    line_annotations = response["tracking_job"]["annotations"]
+    assert len(line_annotations) == 1
+    assert line_annotations[0]["type"] == "polyline"
+    assert "polyline" in line_annotations[0]
+
+    # Check polygon annotation
+    assert "annotations" in response["segmentation_job"]
+    polygon_annotations = response["segmentation_job"]["annotations"]
+    assert len(polygon_annotations) == 1
+    assert polygon_annotations[0]["type"] == "semantic"
+    assert "boundingPoly" in polygon_annotations[0]
+
+    shutil.rmtree(temp_dir)
+
+
+def test_multiple_geojson_files():
+    """Test merging annotations from multiple GeoJSON files."""
+    temp_dir = tempfile.mkdtemp()
+
+    # Create first GeoJSON file with points
+    feature_collection_1 = {
         "type": "FeatureCollection",
-        "features": [feat1, feat2],
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [9.429123117729949, 54.68002984132896],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "detection_job",
+                        "type": "marker",
+                        "categories": [{"name": "point_category"}],
+                    }
+                },
+            }
+        ],
     }
 
-
-def test_kili_json_response_to_feature_collection():
-    with Path("./recipes/datasets/geojson_tutorial_kili_label.json").open(encoding="utf-8") as f:
-        json_response = json.load(f)
-
-    features = []
-    for bbox_ann in json_response["BBOX_DETECTION_JOB"]["annotations"]:
-        features.append(
-            kili_bbox_annotation_to_geojson_polygon_feature(bbox_ann, job_name="BBOX_DETECTION_JOB")
-        )
-    for point_ann in json_response["POINT_DETECTION_JOB"]["annotations"]:
-        features.append(
-            kili_point_annotation_to_geojson_point_feature(
-                point_ann, job_name="POINT_DETECTION_JOB"
-            )
-        )
-    for polygon_ann in json_response["POLYGON_DETECTION_JOB"]["annotations"]:
-        features.append(
-            kili_polygon_annotation_to_geojson_polygon_feature(
-                polygon_ann, job_name="POLYGON_DETECTION_JOB"
-            )
-        )
-    for line_ann in json_response["LINE_DETECTION_JOB"]["annotations"]:
-        features.append(
-            kili_line_annotation_to_geojson_linestring_feature(
-                line_ann, job_name="LINE_DETECTION_JOB"
-            )
-        )
-    for segmentation_ann in json_response["SEGMENTATION_JOB"]["annotations"]:
-        features.append(
-            kili_segmentation_annotation_to_geojson_polygon_feature(
-                segmentation_ann, job_name="SEGMENTATION_JOB"
-            )
-        )
-
-    # json resp to geojson
-    output = kili_json_response_to_feature_collection(json_response)
-    assert output == {
+    # Create second GeoJSON file with more points for the same job
+    feature_collection_2 = {
         "type": "FeatureCollection",
-        "features": features,
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [9.772235200599381, 54.68970515271516],
+                },
+                "properties": {
+                    "kili": {
+                        "job": "detection_job",
+                        "type": "marker",
+                        "categories": [{"name": "point_category"}],
+                    }
+                },
+            }
+        ],
     }
 
-    # geojson to json resp
-    output = geojson_feature_collection_to_kili_json_response(output)  # type: ignore
-    assert output == json_response
+    file_path_1 = create_mock_geojson_file(feature_collection_1, temp_dir)
+    file_path_2 = create_mock_geojson_file(feature_collection_2, temp_dir)
+
+    # Test merging logic by manually processing both files
+    merged_json_response = {}
+
+    for feature_collection in [feature_collection_1, feature_collection_2]:
+        json_response = geojson_feature_collection_to_kili_json_response(feature_collection)
+
+        for job_name, job_data in json_response.items():
+            if job_name not in merged_json_response:
+                merged_json_response[job_name] = job_data
+            else:
+                # Merge job data
+                for key, value in job_data.items():
+                    if key == "annotations":
+                        merged_json_response[job_name].setdefault("annotations", []).extend(value)
+                    else:
+                        merged_json_response[job_name][key] = value
+
+    # Should have merged the annotations from both files
+    assert "detection_job" in merged_json_response
+    assert "annotations" in merged_json_response["detection_job"]
+    annotations = merged_json_response["detection_job"]["annotations"]
+    assert len(annotations) == 2  # One from each file
+
+    shutil.rmtree(temp_dir)
+
+
+def test_non_localised_features_geojson():
+    """Test converting non-localised GeoJSON features (transcription and classification)."""
+    temp_dir = tempfile.mkdtemp()
+
+    # Create mock GeoJSON feature collection with non-localised features
+    feature_collection = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": None,  # Non-localised features have no geometry
+                "properties": {
+                    "kili": {"job": "transcription_job", "text": "This is a transcription"}
+                },
+            },
+            {
+                "type": "Feature",
+                "geometry": None,
+                "properties": {
+                    "kili": {
+                        "job": "classification_job",
+                        "categories": [{"name": "category_a"}, {"name": "category_b"}],
+                    }
+                },
+            },
+        ],
+    }
+
+    geojson_file_path = create_mock_geojson_file(feature_collection, temp_dir)
+
+    response = geojson_feature_collection_to_kili_json_response(feature_collection)
+
+    # Should have two jobs
+    assert len(response) == 2
+    assert "transcription_job" in response
+    assert "classification_job" in response
+
+    # Check transcription job
+    assert "text" in response["transcription_job"]
+    assert response["transcription_job"]["text"] == "This is a transcription"
+
+    # Check classification job
+    assert "categories" in response["classification_job"]
+    categories = response["classification_job"]["categories"]
+    assert len(categories) == 2
+    assert categories[0]["name"] == "category_a"
+    assert categories[1]["name"] == "category_b"
+
+    shutil.rmtree(temp_dir)

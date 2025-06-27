@@ -1,6 +1,7 @@
 """Client presentation methods for labels."""
 
 # pylint: disable=too-many-lines
+import json
 import warnings
 from itertools import repeat
 from typing import (
@@ -16,6 +17,7 @@ from typing import (
     overload,
 )
 
+from kili_formats.format.geojson import geojson_feature_collection_to_kili_json_response
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -1397,5 +1399,67 @@ class LabelClientMethods(BaseClientMethods):
         self.append_labels(
             project_id=project_id,
             json_response_array=[json_response],
+            asset_external_id_array=[asset_external_id],
+        )
+
+    @typechecked
+    def append_labels_from_geojson_files(
+        self,
+        project_id: str,
+        asset_external_id: str,
+        geojson_file_paths: List[str],
+    ):
+        """Import and convert GeoJSON files into annotations for a specific asset in a Kili project.
+
+        This method processes GeoJSON feature collections, converts them to the appropriate
+        Kili annotation format, and appends them as labels to the specified asset.
+        The GeoJSON features must contain job names and category information in their properties.
+
+        Args:
+            project_id: The ID of the Kili project to add the labels to.
+            asset_external_id: The external ID of the asset to label.
+            geojson_file_paths: List of file paths to the GeoJSON files to be processed.
+                Each file should contain a FeatureCollection with features that have
+                'kili' metadata in their properties, including 'job', 'type', and 'categories'.
+
+        Note:
+            The GeoJSON features must contain a 'kili' property with the following structure:
+            - 'job': The name of the job in the Kili project
+            - 'type': The annotation type ('marker', 'polyline', 'semantic', etc.)
+            - 'categories': List of category objects with 'name' field
+
+            Supported geometries: Point, LineString, Polygon, and MultiPolygon.
+            Polygon and MultiPolygon are always mapped to semantic segmentation jobs in Kili.
+
+        Examples:
+            >>> kili.append_labels_from_geojson_files(
+                    project_id="project_id",
+                    asset_external_id="asset_1",
+                    geojson_file_paths=["annotations.geojson"]
+                )
+        """
+        merged_json_response = {}
+
+        for file_path in geojson_file_paths:
+            with open(file_path, encoding="utf-8") as f:
+                feature_collection = json.load(f)
+
+            json_response = geojson_feature_collection_to_kili_json_response(feature_collection)
+
+            for job_name, job_data in json_response.items():
+                if job_name not in merged_json_response:
+                    merged_json_response[job_name] = job_data
+                else:
+                    for key, value in job_data.items():
+                        if key == "annotations":
+                            merged_json_response[job_name].setdefault("annotations", []).extend(
+                                value
+                            )
+                        else:
+                            merged_json_response[job_name][key] = value
+
+        self.append_labels(
+            project_id=project_id,
+            json_response_array=[merged_json_response],
             asset_external_id_array=[asset_external_id],
         )
