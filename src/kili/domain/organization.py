@@ -29,10 +29,6 @@ class OrganizationToCreateInput:
     """Organization to create use case input."""
 
     name: str
-    address: str
-    city: str
-    country: str
-    zip_code: str
 
 
 @dataclass(frozen=True)

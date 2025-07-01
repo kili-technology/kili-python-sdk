@@ -43,10 +43,6 @@ def test_given_orginization_info_when_I_call_create_it_creates_the_organization(
     # When
     organization = kili_client.internal.create_organization(
         name=organization_name,
-        address="1, rue de Rivoli",
-        city="Paris",
-        country="France",
-        zip_code="75001",
     )
 
     # Then

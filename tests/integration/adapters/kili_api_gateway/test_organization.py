@@ -32,10 +32,6 @@ def test_create_organization(graphql_client):
     organization = kili_api_gateway.create_organization(
         OrganizationToCreateInput(
             name=organization_name,
-            address="1, rue de Rivoli",
-            city="Paris",
-            country="France",
-            zip_code="75001",
         ),
     )
 
@@ -48,10 +44,6 @@ def test_create_organization(graphql_client):
         {
             "data": {
                 "name": "test_organization",
-                "address": "1, rue de Rivoli",
-                "city": "Paris",
-                "country": "France",
-                "zipCode": "75001",
             }
         },
     )
