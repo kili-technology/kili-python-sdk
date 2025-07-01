@@ -31,10 +31,6 @@ def test_given_orginization_info_when_I_call_create_use_case_it_creates_the_orga
     organization = organization_use_case.create_organization(
         OrganizationToCreateInput(
             name=organization_name,
-            address="1, rue de Rivoli",
-            city="Paris",
-            country="France",
-            zip_code="75001",
         ),
     )
 

@@ -28,10 +28,6 @@ class InternalOrganizationClientMethods(BaseClientMethods):
     def create_organization(
         self,
         name: str,
-        address: str,
-        zip_code: str,
-        city: str,
-        country: str,
     ) -> Dict:
         """Create an organization.
 
@@ -41,10 +37,6 @@ class InternalOrganizationClientMethods(BaseClientMethods):
 
         Args:
             name : Name of the organization
-            address : Address of the organization
-            zip_code : Zip code of the organization
-            city : City of the organization
-            country : Country of the organization
 
         Returns:
             A result object which indicates if the mutation was successful,
@@ -54,10 +46,6 @@ class InternalOrganizationClientMethods(BaseClientMethods):
         return organization_use_case.create_organization(
             OrganizationToCreateInput(
                 name=name,
-                address=address,
-                zip_code=zip_code,
-                city=city,
-                country=country,
             ),
         )
 
