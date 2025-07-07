@@ -11,6 +11,7 @@ from kili.adapters.kili_api_gateway.asset.formatters import (
 )
 from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
 from kili.adapters.kili_api_gateway.asset.operations import (
+    GQL_COUNT_ASSET_ANNOTATIONS,
     GQL_COUNT_ASSETS,
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
     GQL_FILTER_EXISTING_ASSETS,
@@ -26,6 +27,12 @@ from kili.adapters.kili_api_gateway.label.common import get_annotation_fragment
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.domain.asset import AssetFilters
 from kili.domain.types import ListOrTuple
+
+# Threshold for batching based on number of annotations
+# This is used to determine whether to use a single batch or multiple batches
+# when fetching assets. If the number of annotations counted exceeds this threshold,
+# the asset fetch will be done in multiple smaller batches to avoid performance issues.
+THRESHOLD_FOR_BATCHING = 200
 
 
 class AssetOperationMixin(BaseOperationMixin):
@@ -74,12 +81,14 @@ class AssetOperationMixin(BaseOperationMixin):
         self, filters: AssetFilters, fields: ListOrTuple[str], options: QueryOptions, project_info
     ) -> Generator[Dict, None, None]:
         """List assets with given options."""
-        options = QueryOptions(
-            options.disable_tqdm,
-            options.first,
-            options.skip,
-            min(options.batch_size, 10 if project_info["inputType"] == "VIDEO" else 50),
+        nb_annotations = self.count_assets_annotations(filters)
+        assets_batch_max_amount = 10 if project_info["inputType"] == "VIDEO" else 50
+        batch_size_to_use = min(options.batch_size, assets_batch_max_amount)
+        batch_size = (
+            1 if nb_annotations / batch_size_to_use > THRESHOLD_FOR_BATCHING else batch_size_to_use
         )
+
+        options = QueryOptions(options.disable_tqdm, options.first, options.skip, batch_size)
 
         inner_annotation_fragment = get_annotation_fragment()
         annotation_fragment = f"""
@@ -149,3 +158,11 @@ class AssetOperationMixin(BaseOperationMixin):
         }
         external_id_response = self.graphql_client.execute(GQL_FILTER_EXISTING_ASSETS, payload)
         return external_id_response["external_ids"]
+
+    def count_assets_annotations(self, filters: AssetFilters) -> int:
+        """Count the number of annotations for assets matching the filters."""
+        where = asset_where_mapper(filters)
+        payload = {"where": where}
+        count_result = self.graphql_client.execute(GQL_COUNT_ASSET_ANNOTATIONS, payload)
+        count: int = count_result["data"]
+        return count
