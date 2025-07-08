@@ -48,7 +48,10 @@ from kili.use_cases.label import LabelUseCases
 from kili.use_cases.label.process_shapefiles import get_json_response_from_shapefiles
 from kili.use_cases.label.types import LabelToCreateUseCaseInput
 from kili.use_cases.project.project import ProjectUseCases
-from kili.utils.labels.geojson import enrich_geojson_with_kili_properties
+from kili.utils.labels.geojson import (
+    enrich_geojson_with_kili_properties,
+    enrich_geojson_with_specific_mapping,
+)
 from kili.utils.labels.parsing import ParsedLabel
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -1409,55 +1412,121 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_external_id: str,
         geojson_file_paths: List[str],
+        job_names: Optional[List[str]] = None,
+        category_names: Optional[List[str]] = None,
     ):
         """Import and convert GeoJSON files into annotations for a specific asset in a Kili project.
 
         This method processes GeoJSON feature collections, converts them to the appropriate
         Kili annotation format, and appends them as labels to the specified asset.
-        The GeoJSON features can contain job names and category information in their properties,
-        or they will be automatically mapped based on geometry type and available jobs.
+
+        Three modes of import are supported:
+
+        1. **With `kili` properties**: GeoJSON features contain 'kili' metadata in their properties
+           with job, type, and category information.
+
+        2. **With specific job/category names**: Provide `job_names` and `category_names` to map
+           all compatible geometries from each file to the specified job and category.
+
+        3. **Automatic mapping**: When no 'kili' properties or specific names are provided,
+           geometries are automatically mapped based on type and available jobs.
 
         Args:
             project_id: The ID of the Kili project to add the labels to.
             asset_external_id: The external ID of the asset to label.
             geojson_file_paths: List of file paths to the GeoJSON files to be processed.
-                Each file should contain a FeatureCollection with features that optionally have
-                'kili' metadata in their properties, including 'job', 'type', and 'categories'.
+                Each file should contain a FeatureCollection with features.
+            job_names: Optional list of job names in the Kili project, one for each GeoJSON file.
+                When provided, all compatible geometries from the corresponding file will be
+                mapped to this job. Must have the same length as `geojson_file_paths`.
+            category_names: Optional list of category names, one for each GeoJSON file.
+                When provided, all geometries from the corresponding file will be assigned
+                to this category. Must have the same length as `geojson_file_paths`.
+                Each category must exist in the corresponding job's ontology.
 
         Note:
-            The GeoJSON features can contain a 'kili' property with the following structure:
-            - 'job': The name of the job in the Kili project
-            - 'type': The annotation type ('marker', 'polyline', 'semantic', etc.)
-            - 'categories': List of category objects with 'name' field
+            **Geometry-to-job compatibility:**
+            - Point geometries → jobs with 'marker' tool
+            - LineString geometries → jobs with 'polyline' tool
+            - Polygon geometries → jobs with 'polygon' or 'semantic' tool
+            - MultiPolygon geometries → jobs with 'semantic' tool
 
-            If 'kili' properties are missing, they will be automatically mapped based on:
-            - Point geometries → first 'marker' job
-            - LineString geometries → first 'polyline' job
-            - Polygon geometries → first 'polygon' job, or 'semantic' if no polygon job found
-            - MultiPolygon geometries → first job with 'semantic' tool
+            **GeoJSON 'kili' properties structure (Mode 1):**
+            ```json
+            {
+                "properties": {
+                    "kili": {
+                        "job": "job_name",
+                        "type": "marker|polyline|polygon|semantic",
+                        "categories": [{"name": "category_name"}]
+                    }
+                }
+            }
+            ```
 
-            Supported geometries: Point, LineString, Polygon, and MultiPolygon.
+            **Automatic mapping priority (Mode 3):**
+            - Point → first available 'marker' job
+            - LineString → first available 'polyline' job
+            - Polygon → first available 'polygon' job, fallback to 'semantic'
+            - MultiPolygon → first available 'semantic' job
 
         Examples:
+            Mode 1 - With kili properties in GeoJSON:
             >>> kili.append_labels_from_geojson_files(
                     project_id="project_id",
                     asset_external_id="asset_1",
                     geojson_file_paths=["annotations.geojson"]
                 )
+
+            Mode 2 - With specific job/category mapping:
+            >>> kili.append_labels_from_geojson_files(
+                    project_id="project_id",
+                    asset_external_id="asset_1",
+                    geojson_file_paths=["points.geojson", "polygons.geojson"],
+                    job_names=["MARKERS", "POLYGONS"],
+                    category_names=["BUILDING", "ROAD"]
+                )
+
+            Mode 3 - Automatic mapping:
+            >>> kili.append_labels_from_geojson_files(
+                    project_id="project_id",
+                    asset_external_id="asset_1",
+                    geojson_file_paths=["mixed_geometries.geojson"]
+                )
         """
+        if job_names is not None and category_names is not None:
+            if len(job_names) != len(geojson_file_paths):
+                raise ValueError("job_names must have the same length as geojson_file_paths")
+            if len(category_names) != len(geojson_file_paths):
+                raise ValueError("category_names must have the same length as geojson_file_paths")
+            if len(job_names) != len(category_names):
+                raise ValueError("job_names and category_names must have the same length")
+        elif job_names is not None or category_names is not None:
+            raise ValueError(
+                "Both job_names and category_names must be provided together, or both must be None"
+            )
+
         json_interface = self.kili_api_gateway.get_project(
             ProjectId(project_id), ("jsonInterface",)
         )["jsonInterface"]
 
         merged_json_response = {}
 
-        for file_path in geojson_file_paths:
-            with open(file_path, encoding="utf-8") as f:
-                feature_collection = json.load(f)
+        for file_index, file_path in enumerate(geojson_file_paths):
+            with open(file_path, encoding="utf-8") as file:
+                feature_collection = json.load(file)
 
-            enriched_feature_collection = enrich_geojson_with_kili_properties(
-                feature_collection, json_interface
-            )
+            if job_names is not None and category_names is not None:
+                enriched_feature_collection = enrich_geojson_with_specific_mapping(
+                    feature_collection,
+                    json_interface,
+                    job_names[file_index],
+                    category_names[file_index],
+                )
+            else:
+                enriched_feature_collection = enrich_geojson_with_kili_properties(
+                    feature_collection, json_interface
+                )
 
             json_response = geojson_feature_collection_to_kili_json_response(
                 enriched_feature_collection
