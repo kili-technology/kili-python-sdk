@@ -1406,6 +1406,7 @@ class LabelClientMethods(BaseClientMethods):
             asset_external_id_array=[asset_external_id],
         )
 
+    # pylint: disable=too-many-branches
     @typechecked
     def append_labels_from_geojson_files(
         self,
