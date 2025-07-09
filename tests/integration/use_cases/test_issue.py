@@ -14,9 +14,6 @@ from kili.use_cases.issue.types import IssueToCreateUseCaseInput
 
 
 def test_create_one_issue(kili_api_gateway: KiliAPIGateway, mocker: pytest_mock.MockerFixture):
-    mocker.patch(
-        "kili.use_cases.issue.get_labels_asset_ids_map", return_value={"label_id": "asset_id"}
-    )
     kili_api_gateway.create_issues.return_value = [IssueId("created_issue_id")]
 
     # given one issue to create
