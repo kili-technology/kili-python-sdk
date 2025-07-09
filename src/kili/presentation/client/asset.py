@@ -314,8 +314,8 @@ class AssetClientMethods(BaseClientMethods):
             label_created_at_lt: Deprecated. Use `label_created_at_lte` instead.
             label_honeypot_mark_gt: Deprecated. Use `label_honeypot_mark_gte` instead.
             label_honeypot_mark_lt: Deprecated. Use `label_honeypot_mark_lte` instead.
-            updated_at_gte: Returned assets should have a label whose update date is greater or equal to this date.
-            updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.
+            updated_at_gte: Returned assets should have an update date that is greater or equal to this date. The update date represents the last time a modification has been done at the asset level.
+            updated_at_lte: Returned assets should have an update date that is lower or equal to this date. The update date represents the last time a modification has been done at the asset level.
             format: If equal to 'pandas', returns a pandas DataFrame
             disable_tqdm: If `True`, the progress bar will be disabled
             as_generator: If `True`, a generator on the assets is returned.
@@ -626,8 +626,8 @@ class AssetClientMethods(BaseClientMethods):
             label_honeypot_mark_gt: Deprecated. Use `label_honeypot_mark_gte` instead.
             label_honeypot_mark_lt: Deprecated. Use `label_honeypot_mark_lte` instead.
             skipped: Returned assets should be skipped.
-            updated_at_gte: Returned assets should have a label whose update date is greated or equal to this date.
-            updated_at_lte: Returned assets should have a label whose update date is lower or equal to this date.
+            updated_at_gte: Returned assets should have an update date that is greated or equal to this date. The update date represents the last time a modification has been done at the asset level.
+            updated_at_lte: Returned assets should have an update date that is lower or equal to this date. The update date represents the last time a modification has been done at the asset level.
             label_category_search: Returned assets should have a label that follows this category search query.
             created_at_gte: Returned assets should have their import date greater or equal to this date.
             created_at_lte: Returned assets should have their import date lower or equal to this date.
