@@ -16,6 +16,7 @@ from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatew
 from kili.core.constants import MUTATION_BATCH_SIZE
 from kili.core.utils.pagination import batcher
 from kili.domain.issue import IssueFilters, IssueId, IssueStatus, IssueType
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.utils import tqdm
 
@@ -27,13 +28,16 @@ class IssueOperationMixin(BaseOperationMixin):
     """GraphQL Mixin extending GraphQL Gateway class with Issue related operations."""
 
     def create_issues(
-        self, type_: IssueType, issues: List[IssueToCreateKiliAPIGatewayInput], description: str
+        self,
+        project_id: ProjectId,
+        type_: IssueType,
+        issues: List[IssueToCreateKiliAPIGatewayInput],
+        description: str,
     ) -> List[IssueId]:
         """Send a GraphQL request calling createIssues resolver."""
         created_issue_entities: List[IssueId] = []
         with tqdm.tqdm(total=len(issues), desc=description) as pbar:
             for issues_batch in batcher(issues, batch_size=MUTATION_BATCH_SIZE):
-                batch_targeted_asset_ids = [issue.asset_id for issue in issues_batch]
                 payload = {
                     "issues": [
                         {
@@ -46,7 +50,7 @@ class IssueOperationMixin(BaseOperationMixin):
                         }
                         for issue in issues_batch
                     ],
-                    "where": {"idIn": batch_targeted_asset_ids},
+                    "where": {"project": {"id": project_id}},
                 }
                 result = self.graphql_client.execute(GQL_CREATE_ISSUES, payload)
                 batch_created_issues = result["data"]

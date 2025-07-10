@@ -10,5 +10,5 @@ class IssueToCreateKiliAPIGatewayInput:
 
     label_id: Optional[str]
     object_mid: Optional[str]
-    asset_id: str
+    asset_id: Optional[str]
     text: Optional[str]

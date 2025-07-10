@@ -55,6 +55,9 @@ class QuestionUseCases(BaseUseCases):
         return [
             QuestionId(str(id_))
             for id_ in self._kili_api_gateway.create_issues(
-                type_="QUESTION", issues=gateway_issues, description="Creating questions"
+                project_id=project_id,
+                type_="QUESTION",
+                issues=gateway_issues,
+                description="Creating questions",
             )
         ]

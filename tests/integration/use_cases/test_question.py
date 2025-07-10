@@ -38,6 +38,7 @@ def test_given_text_and_asset_ids_when_calling_create_questions_it_creates_quest
     # Then
     assert len(question_ids) == 2
     kili_api_gateway.create_issues.assert_called_once_with(
+        project_id=project_id,
         type_="QUESTION",
         issues=[
             IssueToCreateKiliAPIGatewayInput(
@@ -94,6 +95,7 @@ def test_given_text_and_external_ids_when_calling_create_questions_it_creates_qu
     # Then
     assert len(question_ids) == 2
     kili_api_gateway.create_issues.assert_called_once_with(
+        project_id=project_id,
         type_="QUESTION",
         issues=[
             IssueToCreateKiliAPIGatewayInput(
