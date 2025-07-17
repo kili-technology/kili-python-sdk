@@ -1365,6 +1365,9 @@ class LabelClientMethods(BaseClientMethods):
         job_names: List[str],
         category_names: List[str],
         from_epsgs: Optional[List[int]] = None,
+        label_type: Optional[LabelType] = "DEFAULT",
+        step_name: Optional[str] = None,
+        model_name: Optional[str] = None,
     ):
         """Import and convert shapefiles into annotations for a specific asset in a Kili project.
 
@@ -1383,6 +1386,11 @@ class LabelClientMethods(BaseClientMethods):
             from_epsgs: Optional list of EPSG codes specifying the coordinate reference systems
                        of the shapefiles. If not provided, EPSG:4326 (WGS84) is assumed for all files.
                        All geometries will be transformed to EPSG:4326 before being added to Kili.
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
+            step_name: Name of the step to which the labels belong.
+                The label_type must match accordingly.
+            model_name: Name of the model that generated the labels.
+                Only useful when uploading PREDICTION or INFERENCE labels.
 
         Note:
             This function requires the 'gis' extra dependencies.
@@ -1404,6 +1412,9 @@ class LabelClientMethods(BaseClientMethods):
             project_id=project_id,
             json_response_array=[json_response],
             asset_external_id_array=[asset_external_id],
+            label_type=label_type,
+            step_name=step_name,
+            model_name=model_name,
         )
 
     # pylint: disable=too-many-branches
@@ -1415,6 +1426,9 @@ class LabelClientMethods(BaseClientMethods):
         geojson_file_paths: List[str],
         job_names: Optional[List[str]] = None,
         category_names: Optional[List[str]] = None,
+        label_type: Optional[LabelType] = "DEFAULT",
+        step_name: Optional[str] = None,
+        model_name: Optional[str] = None,
     ):
         """Import and convert GeoJSON files into annotations for a specific asset in a Kili project.
 
@@ -1444,6 +1458,12 @@ class LabelClientMethods(BaseClientMethods):
                 When provided, all geometries from the corresponding file will be assigned
                 to this category. Must have the same length as `geojson_file_paths`.
                 Each category must exist in the corresponding job's ontology.
+            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
+            step_name: Name of the step to which the labels belong.
+                The label_type must match accordingly.
+            model_name: Name of the model that generated the labels.
+                Only useful when uploading PREDICTION or INFERENCE labels.
+
 
         Note:
             **Geometry-to-job compatibility:**
@@ -1549,4 +1569,7 @@ class LabelClientMethods(BaseClientMethods):
             project_id=project_id,
             json_response_array=[merged_json_response],
             asset_external_id_array=[asset_external_id],
+            label_type=label_type,
+            step_name=step_name,
+            model_name=model_name,
         )
