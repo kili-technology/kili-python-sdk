@@ -156,9 +156,9 @@ def enrich_geojson_with_specific_mapping(
         kili_property = None
 
         # Map geometry types to annotation types based on available tools
-        if geometry_type == "Point" and "marker" in tools:
+        if geometry_type in ["Point", "MultiPoint"] and "marker" in tools:
             kili_property = create_kili_property("marker")
-        elif geometry_type == "LineString" and "polyline" in tools:
+        elif geometry_type in ["LineString", "MultiLineString"] and "polyline" in tools:
             kili_property = create_kili_property("polyline")
         elif geometry_type == "Polygon":
             if "polygon" in tools:
