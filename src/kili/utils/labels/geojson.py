@@ -71,11 +71,11 @@ def enrich_geojson_with_kili_properties(feature_collection: Dict, json_interface
         geometry_type = feature.get("geometry", {}).get("type")
         kili_property = None
 
-        if geometry_type == "Point" and marker_job:
+        if geometry_type in ["Point", "MultiPoint"] and marker_job:
             job_name, job_config = marker_job
             kili_property = create_kili_property(job_name, job_config, "marker")
 
-        elif geometry_type == "LineString" and polyline_job:
+        elif geometry_type in ["LineString", "MultiLineString"] and polyline_job:
             job_name, job_config = polyline_job
             kili_property = create_kili_property(job_name, job_config, "polyline")
 
