@@ -1365,7 +1365,7 @@ class LabelClientMethods(BaseClientMethods):
         job_names: List[str],
         category_names: List[str],
         from_epsgs: Optional[List[int]] = None,
-        label_type: Optional[LabelType] = "DEFAULT",
+        label_type: LabelType = "DEFAULT",
         step_name: Optional[str] = None,
         model_name: Optional[str] = None,
     ):
@@ -1426,7 +1426,7 @@ class LabelClientMethods(BaseClientMethods):
         geojson_file_paths: List[str],
         job_names: Optional[List[str]] = None,
         category_names: Optional[List[str]] = None,
-        label_type: Optional[LabelType] = "DEFAULT",
+        label_type: LabelType = "DEFAULT",
         step_name: Optional[str] = None,
         model_name: Optional[str] = None,
     ):
