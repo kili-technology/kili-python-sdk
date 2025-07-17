@@ -30,3 +30,9 @@ query FilterExistingAssets($projectID: ID!, $externalIDs: [String!]!) {
   external_ids: filterExistingAssets(projectID: $projectID, externalIDs: $externalIDs)
 }
 """
+
+GQL_COUNT_ASSET_ANNOTATIONS = """
+query countAssetAnnotations($where: AssetWhere!) {
+    data: countAssetAnnotations(where: $where)
+}
+"""
