@@ -24,6 +24,7 @@ from .common import get_annotation_fragment, get_asset
 from .formatters import load_label_json_fields
 from .mappers import append_label_data_mapper, append_to_labels_data_mapper, label_where_mapper
 from .operations import (
+    GQL_COPY_LABELS,
     GQL_COUNT_LABELS,
     GQL_DELETE_LABELS,
     get_append_many_labels_mutation,
@@ -200,3 +201,15 @@ class LabelOperationMixin(BaseOperationMixin):
         }
         result = self.graphql_client.execute(query, variables)
         return result["data"]
+
+    def copy_labels(self, src_asset_id: str, dst_asset_id: str, project_id: str) -> bool:
+        """Copy labels from one asset to another."""
+        variables = {
+            "data": {
+                "srcAssetId": src_asset_id,
+                "dstAssetId": dst_asset_id,
+                "projectId": project_id,
+            },
+        }
+        self.graphql_client.execute(GQL_COPY_LABELS, variables)
+        return True
