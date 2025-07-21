@@ -38,12 +38,3 @@ def update_step_mapper(data: Union[WorkflowStepCreate, WorkflowStepUpdate]) -> D
         "assignees": data["assignees"] if "assignees" in data else None,
     }
     return {k: v for k, v in step.items() if v is not None}
-
-
-def step_data_mapper(data: Dict) -> Dict:
-    """Build the GraphQL StepData variable to be sent in an operation."""
-    return {
-        "id": data["id"],
-        "name": data["name"],
-        "type": data["type"],
-    }
