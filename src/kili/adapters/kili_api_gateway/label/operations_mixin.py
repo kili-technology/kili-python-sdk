@@ -113,7 +113,7 @@ class LabelOperationMixin(BaseOperationMixin):
                         ["content", "jsonContent", "resolution.width", "resolution.height"],
                     )
                 converter.patch_label_json_response(asset, label, label["annotations"])
-                if "annotations" not in fields:
+                if not any("annotations." in element for element in fields):
                     label.pop("annotations")
                 yield label
 
