@@ -6,8 +6,9 @@ from typing import Dict, List, Optional
 class GraphQLError(Exception):
     """Raised when the GraphQL call returns an error."""
 
-    def __init__(self, error, batch_number=None) -> None:
+    def __init__(self, error, batch_number=None, context=None) -> None:
         self.error = error
+        self.context = context
 
         if isinstance(error, List):
             error = error[0]
