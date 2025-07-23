@@ -1,7 +1,7 @@
 """Project use cases."""
 
 import json
-from typing import Dict, Generator, List, Optional
+from typing import Dict, Generator, List, Optional, Tuple
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -18,6 +18,7 @@ from kili.domain.project import (
     ProjectFilters,
     ProjectId,
     ProjectStep,
+    WorkflowVersion,
 )
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
@@ -207,17 +208,13 @@ class ProjectUseCases(BaseUseCases):
 
         return self._kili_api_gateway.update_properties_in_project(project_id, project_data, fields)
 
-    def get_project_steps(
+    def get_project_steps_and_version(
         self,
         project_id: str,
-    ) -> List[ProjectStep]:
-        """Get and return project steps."""
-        project_filters = ProjectFilters(id=ProjectId(project_id))
-        options = QueryOptions(disable_tqdm=True, first=1)
-        project_gen = self.list_projects(
-            project_filters=project_filters, fields=["steps.id", "steps.name"], options=options
+    ) -> Tuple[List[ProjectStep], WorkflowVersion]:
+        """Get and return project steps and version."""
+        project = self._kili_api_gateway.get_project(
+            project_id=ProjectId(project_id), fields=["steps.id", "steps.name", "workflowVersion"]
         )
-        projects = list(project_gen)
-        project = projects[0]
 
-        return project["steps"]
+        return project["steps"], project["workflowVersion"]

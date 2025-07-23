@@ -2,19 +2,14 @@
 
 # pylint: disable=too-many-lines
 import warnings
-from typing import (
-    Dict,
-    List,
-    Optional,
-    Union,
-    cast,
-)
+from typing import Dict, List, Optional, Union, cast
 
 from kili_formats.types import ChatItem, ChatItemRole, Conversation
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
 from kili.domain.asset.asset import StatusInStep
+from kili.domain.asset.helpers import check_asset_workflow_arguments
 from kili.domain.label import LabelType
 from kili.domain.llm import (
     AzureOpenAICredentials,
@@ -31,7 +26,9 @@ from kili.domain.llm import (
 )
 from kili.domain.project import ProjectId
 from kili.llm.services.export import export
-from kili.presentation.client.helpers.filter_conversion import convert_step_in_to_step_id_in_filter
+from kili.presentation.client.helpers.filter_conversion import (
+    extract_step_ids_from_project_steps,
+)
 from kili.services.export.exceptions import NoCompatibleJobError
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.project.project import ProjectUseCases
@@ -128,14 +125,25 @@ class LlmClientMethods:
 
         if status_in is not None or step_name_in is not None or step_status_in is not None:
             project_use_cases = ProjectUseCases(self.kili_api_gateway)
-            step_id_in = convert_step_in_to_step_id_in_filter(
-                project_steps=project_use_cases.get_project_steps(project_id),
-                asset_filter_kwargs={
+            (
+                project_steps,
+                project_workflow_version,
+            ) = project_use_cases.get_project_steps_and_version(project_id)
+            check_asset_workflow_arguments(
+                project_workflow_version=project_workflow_version,
+                asset_workflow_filters={
+                    "skipped": None,
+                    "status_in": status_in,
                     "step_name_in": step_name_in,
                     "step_status_in": step_status_in,
-                    "status_in": status_in,
                 },
             )
+
+            if project_workflow_version == "V2" and step_name_in is not None:
+                step_id_in = extract_step_ids_from_project_steps(
+                    project_steps=project_steps,
+                    step_name_in=step_name_in,
+                )
 
         asset_filter = AssetFilters(
             project_id=ProjectId(project_id),
