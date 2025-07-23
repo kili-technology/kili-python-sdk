@@ -33,6 +33,7 @@ from kili import __version__
 from kili.adapters.http_client import HttpClient
 from kili.core.constants import MAX_CALLS_PER_MINUTE
 from kili.core.graphql.clientnames import GraphQLClientName
+from kili.core.graphql.exceptions import extract_error_context
 from kili.utils.logcontext import LogContext
 
 gql_requests_logger.setLevel(logging.WARNING)
@@ -281,8 +282,8 @@ class GraphQLClient:
                 raise kili.exceptions.GraphQLError(error=err.errors) from err
 
         except exceptions.TransportQueryError as err:  # remove validation error
-            # the server refused the query after some retries, we crash
-            raise kili.exceptions.GraphQLError(error=err.errors) from err
+            context = extract_error_context(str(err.errors))
+            raise kili.exceptions.GraphQLError(error=err.errors, context=context) from err
 
     @retry(
         reraise=True,  # re-raise the last exception

@@ -14,6 +14,7 @@ from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.domain.user import UserId
+from kili.exceptions import GraphQLError
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.base import BaseUseCases
 from kili.utils.labels.parsing import parse_labels
@@ -23,6 +24,23 @@ from .validator import check_input_labels
 
 if TYPE_CHECKING:
     import pandas as pd
+
+
+LOCK_ERRORS = {
+    "AlreadyHaveLabelOnCurrentStep": "You cannot edit this asset as you've already submitted a label.",
+    "AssetAlreadyAssigned": "This asset is assigned to someone else. You cannot edit it.",
+    "AssetAlreadyLocked": "This asset is currently being edited by another user.",
+    "AssetInDoneStepStatus": "This asset is already labeled or reviewed and cannot be edited.",
+    "AssetInDoneStepStatusWithCorrectAction": "You already labeled this asset, but you can still correct it.",
+    "AssetInDoneStepStatusWithReviewAction": "This asset is completed. Take it for review to make changes.",
+    "AssetInNextStepWithCorrectAction": "This asset is awaiting to be reviewed but can still be corrected.",
+    "AssetLockedNoReason": "This asset is currently locked. You cannot edit it.",
+    "BlockedByEnforceStepSeparation": "You can't edit this asset as you already worked on another step.",
+    "LabelNotEditable": "This label was created in another step and is read-only.",
+    "NotAssignedWithAssignAction": "This asset is in read-only mode because you are not assigned to it."
+    + "To make edits, add yourself as an assignee.",
+    "NotInStepAssignees": "You cannot edit this asset in its current step.",
+}
 
 
 class LabelUseCases(BaseUseCases):
@@ -116,12 +134,20 @@ class LabelUseCases(BaseUseCases):
             overwrite=overwrite,
             labels_data=labels_to_add,
         )
-        return self._kili_api_gateway.append_many_labels(
-            fields=fields,
-            disable_tqdm=disable_tqdm,
-            data=data,
-            project_id=project_id,
-        )
+        try:
+            return self._kili_api_gateway.append_many_labels(
+                fields=fields,
+                disable_tqdm=disable_tqdm,
+                data=data,
+                project_id=project_id,
+            )
+        except GraphQLError as e:
+            if e.context and e.context.get("reason"):
+                reason = e.context.get("reason")
+                if reason in LOCK_ERRORS:
+                    raise ValueError(LOCK_ERRORS[reason]) from e
+
+            raise e
 
     def append_to_labels(
         self,

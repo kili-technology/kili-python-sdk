@@ -73,7 +73,6 @@ class MutationsIssue(BaseOperationEntrypointMixin):
         variables = {
             "issues": [
                 {
-                    "issueNumber": 0,
                     "labelID": label_id,
                     "objectMid": object_mid,
                     "type": type_,

@@ -41,7 +41,6 @@ class IssueOperationMixin(BaseOperationMixin):
                 payload = {
                     "issues": [
                         {
-                            "issueNumber": 0,
                             "labelID": issue.label_id,
                             "objectMid": issue.object_mid,
                             "type": type_,
