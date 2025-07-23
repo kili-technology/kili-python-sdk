@@ -9,7 +9,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.project.types import CopyProjectInput
 from kili.domain.asset import AssetFilters
 from kili.domain.label import LabelFilters
-from kili.domain.project import ProjectId
+from kili.domain.project import InputTypeEnum, ProjectId
 
 if TYPE_CHECKING:
     from kili.client import Kili
@@ -66,6 +66,15 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
         if src_project["dataConnections"] and copy_assets:
             raise NotImplementedError("Copying projects with cloud storage is not supported.")
+
+        if src_project["inputType"] in [
+            InputTypeEnum.LLM_INSTR_FOLLOWING,
+            InputTypeEnum.LLM_RLHF,
+            InputTypeEnum.LLM_STATIC,
+        ]:
+            raise NotImplementedError(
+                f"Copying projects with input type {src_project['inputType']} is not supported."
+            )
 
         logger.info("Copying new project...")
 
