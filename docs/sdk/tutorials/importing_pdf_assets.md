@@ -99,42 +99,6 @@ assets = kili.append_many_to_dataset(
 
 
 
-## Update and check the resolutions
-
-You can now update and check the resolutions of the pdf assets.
-
-⚠️ This step is only necessary for assets that have been annotated before the 2023-07-05. Before this date, the page resolutions were not stored once a label was submitted, so if you need to backfill this value if you need it.
-
-
-```python
-from kili.utils.assets import PageResolution
-
-kili.update_properties_in_assets(
-    project_id=project_id,
-    external_ids=external_ids,
-    page_resolutions_array=[
-        [
-            PageResolution(page_number=1, height=700, width=500),
-            PageResolution(page_number=2, height=700, width=500),
-            PageResolution(page_number=3, height=700, width=500),
-            PageResolution(page_number=4, height=700, width=500),
-        ],
-        [
-            PageResolution(page_number=1, height=700, width=500),
-            PageResolution(page_number=2, height=700, width=500),
-            PageResolution(page_number=3, height=700, width=500),
-            PageResolution(page_number=4, height=700, width=500),
-        ],
-        [
-            PageResolution(page_number=1, height=700, width=500),
-            PageResolution(page_number=2, height=700, width=500),
-            PageResolution(page_number=3, height=700, width=500),
-            PageResolution(page_number=4, height=700, width=500),
-        ],
-    ],
-)
-```
-
 ## Fetching the asset resolutions
 
 You can fetch the PDF asset resolutions this way:
