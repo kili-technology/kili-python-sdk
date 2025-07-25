@@ -52,8 +52,6 @@ This [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials
 
 This [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_pascalvoc/) shows how to import PascalVOC annotations into Kili.
 
-On this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/geojson/), you will learn how to import GeoJSON annotations into Kili, and how to export Kili annotations to GeoJSON.
-
 ## Managing workflows
 
 In [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/set_up_workflows/) you will learn how to manage your review queue, set up quality assurance measures, assign specific labelers to assets, and prioritize assets to be annotated.
