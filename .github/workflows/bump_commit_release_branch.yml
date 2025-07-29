@@ -5,10 +5,10 @@ on:
       releaseBranchVersion:
         description: >
           "This workflow will create a PR to add a bump version commit on the release branch.
-          Enter the release branch version release/X.XXX.0:"
+          Enter the release branch version release/XX.Y.Z:"
         required: true
         type: string
-        default: "X.XXX.0"
+        default: "XX.Y.Z"
       bumpCommitType:
         description: "Choose the type of bump commit:"
         required: true
