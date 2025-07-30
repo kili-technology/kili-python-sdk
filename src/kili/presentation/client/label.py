@@ -6,6 +6,7 @@ import warnings
 from itertools import repeat
 from typing import (
     TYPE_CHECKING,
+    Any,
     Dict,
     Generator,
     Iterable,
@@ -28,7 +29,10 @@ from kili.core.helpers import (
 )
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssetStatus
 from kili.domain.asset.asset import StatusInStep
-from kili.domain.asset.helpers import check_asset_identifier_arguments
+from kili.domain.asset.helpers import (
+    check_asset_identifier_arguments,
+    check_asset_workflow_arguments,
+)
 from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
@@ -38,7 +42,7 @@ from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )
 from kili.presentation.client.helpers.filter_conversion import (
-    convert_step_in_to_step_id_in_filter,
+    extract_step_ids_from_project_steps,
 )
 from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
@@ -125,21 +129,30 @@ class LabelClientMethods(BaseClientMethods):
             validate_category_search_query(category_search)
 
         asset_step_id_in = None
-
         if (
             asset_status_in is not None
             or asset_step_name_in is not None
             or asset_step_status_in is not None
         ):
             project_use_cases = ProjectUseCases(self.kili_api_gateway)
-            asset_step_id_in = convert_step_in_to_step_id_in_filter(
-                project_steps=project_use_cases.get_project_steps(project_id),
-                asset_filter_kwargs={
+            (
+                project_steps,
+                project_workflow_version,
+            ) = project_use_cases.get_project_steps_and_version(project_id)
+            check_asset_workflow_arguments(
+                project_workflow_version=project_workflow_version,
+                asset_workflow_filters={
+                    "skipped": None,
                     "step_name_in": asset_step_name_in,
                     "step_status_in": asset_step_status_in,
                     "status_in": asset_status_in,
                 },
             )
+            if project_workflow_version == "V2" and asset_step_name_in is not None:
+                asset_step_id_in = extract_step_ids_from_project_steps(
+                    project_steps=project_steps,
+                    step_name_in=asset_step_name_in,
+                )
 
         filters = LabelFilters(
             project_id=ProjectId(project_id),
@@ -448,21 +461,30 @@ class LabelClientMethods(BaseClientMethods):
         options = QueryOptions(disable_tqdm, first, skip)
 
         asset_step_id_in = None
-
         if (
             asset_status_in is not None
             or asset_step_name_in is not None
             or asset_step_status_in is not None
         ):
             project_use_cases = ProjectUseCases(self.kili_api_gateway)
-            asset_step_id_in = convert_step_in_to_step_id_in_filter(
-                project_steps=project_use_cases.get_project_steps(project_id),
-                asset_filter_kwargs={
+            (
+                project_steps,
+                project_workflow_version,
+            ) = project_use_cases.get_project_steps_and_version(project_id)
+            check_asset_workflow_arguments(
+                project_workflow_version=project_workflow_version,
+                asset_workflow_filters={
+                    "skipped": None,
                     "step_name_in": asset_step_name_in,
                     "step_status_in": asset_step_status_in,
                     "status_in": asset_status_in,
                 },
             )
+            if project_workflow_version == "V2" and asset_step_name_in is not None:
+                asset_step_id_in = extract_step_ids_from_project_steps(
+                    project_steps=project_steps,
+                    step_name_in=asset_step_name_in,
+                )
 
         filters = LabelFilters(
             project_id=ProjectId(project_id),
@@ -1207,7 +1229,7 @@ class LabelClientMethods(BaseClientMethods):
         with_assets: bool = True,
         external_ids: Optional[List[str]] = None,
         annotation_modifier: Optional[CocoAnnotationModifier] = None,
-        asset_filter_kwargs: Optional[Dict[str, object]] = None,
+        asset_filter_kwargs: Optional[Dict[str, Any]] = None,
         normalized_coordinates: Optional[bool] = None,
         label_type_in: Optional[List[str]] = None,
         include_sent_back_labels: Optional[bool] = None,
@@ -1314,24 +1336,34 @@ class LabelClientMethods(BaseClientMethods):
             or asset_filter_kwargs.get("status_in") is not None
             or asset_filter_kwargs.get("skipped") is not None
         ):
-            project_use_cases = ProjectUseCases(self.kili_api_gateway)
-            project_steps = project_use_cases.get_project_steps(project_id)
-
+            skipped = asset_filter_kwargs.get("skipped")
+            status_in = asset_filter_kwargs.get("status_in")
             step_name_in = asset_filter_kwargs.get("step_name_in")
             step_status_in = asset_filter_kwargs.get("step_status_in")
-            status_in = asset_filter_kwargs.get("status_in")
-            skipped = asset_filter_kwargs.get("skipped")
-            if step_name_in is not None or step_status_in is not None or status_in is not None:
-                step_id_in = convert_step_in_to_step_id_in_filter(
-                    project_steps=project_steps, asset_filter_kwargs=asset_filter_kwargs
+
+            project_use_cases = ProjectUseCases(self.kili_api_gateway)
+            (
+                project_steps,
+                project_workflow_version,
+            ) = project_use_cases.get_project_steps_and_version(project_id)
+
+            check_asset_workflow_arguments(
+                project_workflow_version=project_workflow_version,
+                asset_workflow_filters={
+                    "skipped": skipped,
+                    "status_in": status_in,
+                    "step_name_in": step_name_in,
+                    "step_status_in": step_status_in,
+                },
+            )
+
+            if project_workflow_version == "V2" and step_name_in is not None:
+                step_id_in = extract_step_ids_from_project_steps(
+                    project_steps=project_steps,
+                    step_name_in=step_name_in,
                 )
                 asset_filter_kwargs.pop("step_name_in", None)
                 asset_filter_kwargs["step_id_in"] = step_id_in
-            elif skipped is not None and len(project_steps) != 0:
-                warnings.warn(
-                    "Filter skipped given : only use filter step_status_in with the SKIPPED step status instead for this project",
-                    stacklevel=1,
-                )
 
         try:
             return export_labels(
