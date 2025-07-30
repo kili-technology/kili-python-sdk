@@ -7,11 +7,11 @@ on:
           "This workflow will create a draft release and a tag.
           This workflow assumes the bump commit has already been pushed to the release branch.
           Use 'Create bump commit on release branch' workflow before using this workflow.
-          Only use this workflow once all commits have been cherry-picked!
-          Enter the release branch version release/X.XXX.0:"
+          Only use this workflow once all commits have been merged.
+          Enter the release branch version release/XX.Y.0:"
         required: true
         type: string
-        default: "X.XXX.0"
+        default: "XX.Y.0"
       checkAgainstLatestRelease:
         description: >
           "Check that the release version is greater than the latest release on github.
