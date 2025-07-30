@@ -153,3 +153,10 @@ def get_annotations_partial_query(
             {annotation_fragment}
             {inline_fragments}
     """
+
+
+GQL_COPY_LABELS = """
+  mutation CopyLabels($data: CopyLabelsInput!) {
+    copyLabels(data: $data)
+  }
+"""
