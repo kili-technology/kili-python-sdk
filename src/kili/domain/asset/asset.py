@@ -1,8 +1,9 @@
 """Asset domain."""
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, NewType, Optional
+from typing import TYPE_CHECKING, Literal, NewType, Optional, TypedDict
 
+from kili.domain.project import WorkflowVersion
 from kili.domain.types import ListOrTuple
 
 if TYPE_CHECKING:
@@ -63,3 +64,51 @@ class AssetFilters:
     status_in: Optional[ListOrTuple[AssetStatus]] = None
     step_id_in: Optional[ListOrTuple[str]] = None
     step_status_in: Optional[ListOrTuple[StatusInStep]] = None
+
+
+class AssetWorkflowFilters(TypedDict):
+    """Asset filters relative to worklow."""
+
+    skipped: Optional[bool]
+    status_in: Optional[ListOrTuple[AssetStatus]]
+    step_name_in: Optional[ListOrTuple[str]]
+    step_status_in: Optional[ListOrTuple[StatusInStep]]
+
+
+def get_asset_default_fields(
+    project_workflow_version: WorkflowVersion,
+) -> ListOrTuple[str]:
+    """Get asset default fields for depending on the project workflow version."""
+    if project_workflow_version == "V1":
+        return (
+            "content",
+            "createdAt",
+            "externalId",
+            "id",
+            "isHoneypot",
+            "jsonMetadata",
+            "labels.author.id",
+            "labels.author.email",
+            "labels.createdAt",
+            "labels.id",
+            "labels.jsonResponse",
+            "skipped",
+            "status",
+        )
+
+    return (
+        "content",
+        "createdAt",
+        "externalId",
+        "id",
+        "isHoneypot",
+        "jsonMetadata",
+        "labels.author.id",
+        "labels.author.email",
+        "labels.createdAt",
+        "labels.id",
+        "labels.jsonResponse",
+        "skipped",
+        "currentStep.name",
+        "currentStep.status",
+    )

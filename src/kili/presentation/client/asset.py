@@ -23,7 +23,9 @@ from kili.domain.asset.asset import (
     AssetId,
     AssetStatus,
     StatusInStep,
+    get_asset_default_fields,
 )
+from kili.domain.asset.helpers import check_asset_workflow_arguments
 from kili.domain.issue import IssueStatus, IssueType
 from kili.domain.label import LabelType
 from kili.domain.project import ProjectId
@@ -32,7 +34,7 @@ from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )
 from kili.presentation.client.helpers.filter_conversion import (
-    convert_step_in_to_step_id_in_filter,
+    extract_step_ids_from_project_steps,
 )
 from kili.use_cases.asset import AssetUseCases
 from kili.use_cases.project.project import ProjectUseCases
@@ -55,21 +57,7 @@ class AssetClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         skip: int = 0,
-        fields: ListOrTuple[str] = (
-            "content",
-            "createdAt",
-            "externalId",
-            "id",
-            "isHoneypot",
-            "jsonMetadata",
-            "labels.author.id",
-            "labels.author.email",
-            "labels.createdAt",
-            "labels.id",
-            "labels.jsonResponse",
-            "skipped",
-            "status",
-        ),
+        fields: Optional[ListOrTuple[str]] = None,
         asset_id_in: Optional[List[str]] = None,
         asset_id_not_in: Optional[List[str]] = None,
         consensus_mark_gt: Optional[float] = None,
@@ -135,21 +123,7 @@ class AssetClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         skip: int = 0,
-        fields: ListOrTuple[str] = (
-            "content",
-            "createdAt",
-            "externalId",
-            "id",
-            "isHoneypot",
-            "jsonMetadata",
-            "labels.author.id",
-            "labels.author.email",
-            "labels.createdAt",
-            "labels.id",
-            "labels.jsonResponse",
-            "skipped",
-            "status",
-        ),
+        fields: Optional[ListOrTuple[str]] = None,
         asset_id_in: Optional[List[str]] = None,
         asset_id_not_in: Optional[List[str]] = None,
         consensus_mark_gt: Optional[float] = None,
@@ -215,21 +189,7 @@ class AssetClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         skip: int = 0,
-        fields: ListOrTuple[str] = (
-            "content",
-            "createdAt",
-            "externalId",
-            "id",
-            "isHoneypot",
-            "jsonMetadata",
-            "labels.author.id",
-            "labels.author.email",
-            "labels.createdAt",
-            "labels.id",
-            "labels.jsonResponse",
-            "skipped",
-            "status",
-        ),
+        fields: Optional[ListOrTuple[str]] = None,
         asset_id_in: Optional[List[str]] = None,
         asset_id_not_in: Optional[List[str]] = None,
         consensus_mark_gt: Optional[float] = None,
@@ -453,6 +413,24 @@ class AssetClientMethods(BaseClientMethods):
 
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
+        project_use_cases = ProjectUseCases(self.kili_api_gateway)
+        project_steps, project_workflow_version = project_use_cases.get_project_steps_and_version(
+            project_id
+        )
+        if fields is None:
+            fields = get_asset_default_fields(project_workflow_version=project_workflow_version)
+        elif project_workflow_version == "V1":
+            for invalid_field in filter(lambda f: f.startswith("currentStep."), fields):
+                warnings.warn(
+                    f"Field {invalid_field} requested : request 'status' field instead for this project",
+                    stacklevel=1,
+                )
+        elif "status" in fields:
+            warnings.warn(
+                "Field status requested : request 'currentStep.name' and 'currentStep.status' fields instead for this project",
+                stacklevel=1,
+            )
+
         step_id_in = None
         if (
             step_name_in is not None
@@ -460,24 +438,19 @@ class AssetClientMethods(BaseClientMethods):
             or status_in is not None
             or skipped is not None
         ):
-            project_use_cases = ProjectUseCases(self.kili_api_gateway)
-            project_steps = project_use_cases.get_project_steps(project_id)
-
-            if step_name_in is not None or step_status_in is not None or status_in is not None:
-                step_id_in = convert_step_in_to_step_id_in_filter(
+            check_asset_workflow_arguments(
+                project_workflow_version=project_workflow_version,
+                asset_workflow_filters={
+                    "skipped": skipped,
+                    "status_in": status_in,
+                    "step_name_in": step_name_in,
+                    "step_status_in": step_status_in,
+                },
+            )
+            if project_workflow_version == "V2" and step_name_in is not None:
+                step_id_in = extract_step_ids_from_project_steps(
                     project_steps=project_steps,
-                    fields=fields,
-                    asset_filter_kwargs={
-                        "step_name_in": step_name_in,
-                        "step_status_in": step_status_in,
-                        "status_in": status_in,
-                        "skipped": skipped,
-                    },
-                )
-            elif skipped is not None and len(project_steps) != 0:
-                warnings.warn(
-                    "Filter skipped given : only use filter step_status_in with the SKIPPED step status instead for this project",
-                    stacklevel=1,
+                    step_name_in=step_name_in,
                 )
 
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
@@ -722,17 +695,27 @@ class AssetClientMethods(BaseClientMethods):
                 )
 
         step_id_in = None
-
         if status_in is not None or step_name_in is not None or step_status_in is not None:
             project_use_cases = ProjectUseCases(self.kili_api_gateway)
-            step_id_in = convert_step_in_to_step_id_in_filter(
-                project_steps=project_use_cases.get_project_steps(project_id),
-                asset_filter_kwargs={
+            (
+                project_steps,
+                project_workflow_version,
+            ) = project_use_cases.get_project_steps_and_version(project_id)
+            check_asset_workflow_arguments(
+                project_workflow_version=project_workflow_version,
+                asset_workflow_filters={
+                    "skipped": skipped,
                     "step_name_in": step_name_in,
                     "step_status_in": step_status_in,
                     "status_in": status_in,
                 },
             )
+
+            if project_workflow_version == "V2" and step_name_in is not None:
+                step_id_in = extract_step_ids_from_project_steps(
+                    project_steps=project_steps,
+                    step_name_in=step_name_in,
+                )
 
         filters = AssetFilters(
             project_id=ProjectId(project_id),

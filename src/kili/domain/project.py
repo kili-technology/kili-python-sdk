@@ -15,6 +15,7 @@ ProjectId = NewType("ProjectId", str)
 InputType = Literal[
     "IMAGE", "GEOSPATIAL", "PDF", "TEXT", "VIDEO", "LLM_RLHF", "LLM_INSTR_FOLLOWING", "LLM_STATIC"
 ]
+WorkflowVersion = Literal["V1", "V2"]
 
 
 @dataclass(frozen=True)
