@@ -9,7 +9,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 from kili.domain.project import ProjectId
 from kili.exceptions import NotFound
 
-from .mappers import project_input_mapper, step_data_mapper
+from .mappers import project_input_mapper
 from .operations import (
     GQL_GET_STEPS,
     get_update_project_workflow_mutation,
@@ -44,7 +44,7 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
 
     def get_steps(
         self,
-        project_id: ProjectId,
+        project_id: str,
     ) -> List[Dict]:
         """Get steps in a project workflow."""
         variables = {"where": {"id": project_id}, "first": 1, "skip": 0}
@@ -60,6 +60,5 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
             raise NotFound(
                 f"project ID: {project_id}. The workflow v2 is not activated on this project."
             )
-        steps_mapper = step_data_mapper(steps)
 
-        return [step for step in steps_mapper if step.get("isActivated") is True]
+        return [step for step in steps if step.get("isActivated") is True]

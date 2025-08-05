@@ -2,13 +2,14 @@
 
 import itertools
 import logging
+import warnings
 from typing import TYPE_CHECKING, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.project.types import CopyProjectInput
 from kili.domain.asset import AssetFilters
 from kili.domain.label import LabelFilters
-from kili.domain.project import ProjectId
+from kili.domain.project import InputTypeEnum, ProjectId
 
 if TYPE_CHECKING:
     from kili.client import Kili
@@ -22,9 +23,13 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         "description",
         "id",
         "dataConnections.id",
+        "inputType",
+        "jsonInterface",
+        "workflowVersion",
     )
 
     def __init__(self, kili: "Kili") -> None:
+        """Simple initialization."""
         self.disable_tqdm = False
         self.kili = kili
 
@@ -62,6 +67,15 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         if src_project["dataConnections"] and copy_assets:
             raise NotImplementedError("Copying projects with cloud storage is not supported.")
 
+        if src_project["inputType"] in [
+            InputTypeEnum.LLM_INSTR_FOLLOWING,
+            InputTypeEnum.LLM_RLHF,
+            InputTypeEnum.LLM_STATIC,
+        ]:
+            raise NotImplementedError(
+                f"Copying projects with input type {src_project['inputType']} is not supported."
+            )
+
         logger.info("Copying new project...")
 
         new_project_id = self.kili.kili_api_gateway.copy_project(
@@ -72,7 +86,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             ),
         )
 
-        logger.info(f"Created new project {new_project_id}")
+        logger.info("Created new project %s", new_project_id)
 
         self.kili.update_properties_in_project(
             project_id=new_project_id,
@@ -84,7 +98,18 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
         if copy_labels:
             logger.info("Copying labels...")
-            self._copy_labels(from_project_id, new_project_id)
+            if src_project["workflowVersion"] == "V2":
+                self._copy_labels(from_project_id=from_project_id, new_project_id=new_project_id)
+            else:
+                warnings.warn(
+                    "Warning: "
+                    "copying a project of an old workflow mode may cause problems in asset status and assignation. "
+                    "Consider creating a new project instead.",
+                    DeprecationWarning,
+                )
+                self._copy_labels_legacy(
+                    from_project_id=from_project_id, new_project_id=new_project_id
+                )
 
         return new_project_id
 
@@ -100,8 +125,58 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             i += 1
         return new_title
 
-    # pylint: disable=too-many-locals
     def _copy_labels(self, from_project_id: str, new_project_id: str) -> None:
+        """Method to copy labels from the source project to the new project : applicable for WFV2."""
+        nb_labels_to_copy = self.kili.kili_api_gateway.count_labels(
+            LabelFilters(project_id=ProjectId(from_project_id))
+        )
+
+        if nb_labels_to_copy == 0:
+            return
+
+        assets_src_project = self.kili.kili_api_gateway.list_assets(
+            AssetFilters(project_id=ProjectId(from_project_id)),
+            ["id", "externalId", "labels.id"],
+            QueryOptions(disable_tqdm=True),
+        )
+
+        assets_dst_project = self.kili.kili_api_gateway.list_assets(
+            AssetFilters(project_id=ProjectId(new_project_id)),
+            ["id", "externalId"],
+            QueryOptions(disable_tqdm=True),
+        )
+
+        # Iterate on assets of the source project
+        # to copy labels to the new projectq
+        assets_src_project_list = [
+            asset
+            for asset in assets_src_project
+            if "labels" in asset and asset["labels"] and len(asset["labels"]) > 0
+        ]
+        assets_dst_project_map = {asset["externalId"]: asset["id"] for asset in assets_dst_project}
+
+        for src_asset in assets_src_project_list:
+            src_asset_id = src_asset["id"]
+            dst_asset_id = assets_dst_project_map.get(src_asset["externalId"])
+            if not dst_asset_id:
+                raise ValueError(
+                    f"Asset with externalId {src_asset['externalId']} not found in new project {new_project_id}."
+                )
+
+            self.kili.kili_api_gateway.copy_labels(
+                src_asset_id=src_asset_id,
+                dst_asset_id=dst_asset_id,
+                project_id=new_project_id,
+            )
+
+    # pylint: disable=too-many-locals
+    def _copy_labels_legacy(self, from_project_id: str, new_project_id: str) -> None:
+        """Legacy mlethod to copy labels from the source project to the new project : applicable for WFV1.
+
+        !!! warning
+            This method is deprecated and will be removed in the next major release.
+            Asset with send back labels are not supported (status wise) and asset assignation is not supported.
+        """
         assets_new_project = self.kili.kili_api_gateway.list_assets(
             AssetFilters(project_id=ProjectId(new_project_id)),
             ["id", "externalId"],
