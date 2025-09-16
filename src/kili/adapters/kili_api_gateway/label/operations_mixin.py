@@ -58,6 +58,7 @@ class LabelOperationMixin(BaseOperationMixin):
                 self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
             )
             if project_info["inputType"] in {
+                "GEOSPATIAL",
                 "VIDEO",
                 "LLM_RLHF",
                 "LLM_INSTR_FOLLOWING",
