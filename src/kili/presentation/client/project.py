@@ -348,6 +348,7 @@ class ProjectClientMethods(BaseClientMethods):
                 Currently, possible types are: `string`, `number`
             metadata_properties: Properties of the project metadata.
                 Should be a `dict` of metadata fields name as keys and metadata properties as values.
+                These are necessary for asset filtering
                 Each property is a dict with the following keys:
                     - `type`: Type of the metadata. Currently, possible types are: `string`, `number`, `date`
                     - `filterable`: If `True`, the metadata can be used as filters in project queue
@@ -361,8 +362,10 @@ class ProjectClientMethods(BaseClientMethods):
                 else an error message.
 
         !!! example "Change Metadata Properties"
-            Metadata fields are by default interpreted as `string` types and have default properties.
-            To change the properties of a metadata field, you can use the `update_properties_in_project`
+            The metadata properties of the project have to be defined to allow for application filters on
+            metadata. It's needed to know how to interpret the values (string, number or dates).
+
+            To define the properties of a metadata field, you can use the `update_properties_in_project`
             function with the `metadata_properties` argument. `metadata_properties` is given as a dict
             of metadata field names as keys and metadata properties as values.
 
@@ -392,7 +395,9 @@ class ProjectClientMethods(BaseClientMethods):
             )
             ```
 
-            Not providing a property or providing an unsupported one will use the default values:
+            If you don't define all values for a given key when setting the metadata properties default
+            values will be used :Not providing a property or providing an unsupported one will use the
+            default values:
             ```
             filterable: True
             type: 'string'
