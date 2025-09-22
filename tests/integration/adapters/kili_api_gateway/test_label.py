@@ -140,12 +140,11 @@ def test_given_kili_gateway_when_adding_labels_then_it_calls_proper_resolver(
                 "labelsData": [
                     {
                         "assetId": "fake_asset_id",
-                        "jsonResponse": r'{"CLASSIF_JOB": {}}',
-                        "secondsToLabel": 42,
-                        "modelName": "fake_model_name",
-                        "reviewedLabel": None,
                         "authorId": "some_author_id",
                         "clientVersion": None,
+                        "jsonResponse": r'{"CLASSIF_JOB": {}}',
+                        "modelName": "fake_model_name",
+                        "secondsToLabel": 42,
                     }
                 ],
             },
@@ -168,11 +167,11 @@ def test_given_kili_gateway_when_adding_labels_by_batch_then_it_calls_proper_res
             labels_data=[
                 AppendLabelData(
                     asset_id=AssetId(f"fake_asset_id_{i}"),
-                    json_response={"CLASSIF_JOB": {}},
                     author_id=UserId("some_author_id"),
                     client_version=None,
-                    seconds_to_label=42,
+                    json_response={"CLASSIF_JOB": {}},
                     model_name="fake_model_name",
+                    seconds_to_label=42,
                 )
                 for i in range(101)
             ],
@@ -196,7 +195,6 @@ def test_given_kili_gateway_when_adding_labels_by_batch_then_it_calls_proper_res
                         "jsonResponse": r'{"CLASSIF_JOB": {}}',
                         "secondsToLabel": 42,
                         "modelName": "fake_model_name",
-                        "reviewedLabel": None,
                         "authorId": "some_author_id",
                         "clientVersion": None,
                     }
