@@ -40,7 +40,6 @@ def test_when_create_project_it_works(kili_api_gateway: KiliAPIGateway):
         title="test",
         description="description",
         project_id=None,
-        project_type=None,
         compliance_tags=None,
         from_demo_project=None,
     )
@@ -60,12 +59,11 @@ def test_when_create_project_without_inputType_or_jsonInterface_it_throw_an_erro
     # Then
     with pytest.raises(
         ValueError,
-        match="Arguments `input_type` and `json_interface` must be set\n                if no `project_id` is providen.",
+        match="Arguments `input_type` and `json_interface` must be set if neither `from_demo_project` nor `project_id` is provided",
     ):
         project_use_cases.create_project(
             title="test",
             description="description",
-            project_type=None,
             compliance_tags=None,
             from_demo_project=None,
         )
@@ -91,7 +89,6 @@ def test_when_create_project_with_project_id_it_works(kili_api_gateway: KiliAPIG
         title="test",
         description="description",
         project_id=ProjectId("fake_project_id"),
-        project_type=None,
         compliance_tags=None,
         from_demo_project=None,
     )
@@ -129,7 +126,6 @@ def test_when_create_project_with_project_id_it_throw_an_error_if_tags_do_not_be
             title="test",
             description="description",
             project_id=ProjectId("fake_project_id"),
-            project_type=None,
             compliance_tags=None,
             from_demo_project=None,
         )

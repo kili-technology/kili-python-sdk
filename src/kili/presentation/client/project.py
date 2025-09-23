@@ -15,11 +15,10 @@ from typing import (
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.enums import DemoProjectType, ProjectType
+from kili.core.enums import DemoProjectType
 from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
-from kili.exceptions import IncompatibleArgumentsError
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )
@@ -43,7 +42,6 @@ class ProjectClientMethods(BaseClientMethods):
         input_type: Optional[InputType] = None,
         json_interface: Optional[Dict] = None,
         project_id: Optional[ProjectId] = None,
-        project_type: Optional[ProjectType] = None,
         tags: Optional[ListOrTuple[str]] = None,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
         from_demo_project: Optional[DemoProjectType] = None,
@@ -56,7 +54,6 @@ class ProjectClientMethods(BaseClientMethods):
             title: Title of the project.
             description: Description of the project.
             project_id: Identifier of the project to copy.
-            project_type: Will be deprecated soon, use from_demo_project instead.
             tags: Tags to add to the project. The tags must already exist in the organization.
             compliance_tags: Compliance tags of the project.
                 Compliance tags are used to categorize projects based on the sensitivity of
@@ -92,25 +89,12 @@ class ProjectClientMethods(BaseClientMethods):
             For more detailed examples on how to create projects,
                 see [the recipe](https://docs.kili-technology.com/recipes/creating-a-project).
         """
-        if project_type is not None:
-            warnings.warn(
-                "Parameter project_type will be soon deprecated, please use from_demo_project instead.",
-                DeprecationWarning,
-                stacklevel=1,
-            )
-
-        if project_type is not None and from_demo_project is not None:
-            raise IncompatibleArgumentsError(
-                "Either provide project_type or from_demo_project. Not both at the same time."
-            )
-
         project_id = ProjectUseCases(self.kili_api_gateway).create_project(
             input_type=input_type,
             json_interface=json_interface,
             title=title,
             description=description,
             project_id=project_id,
-            project_type=project_type,
             compliance_tags=compliance_tags,
             from_demo_project=from_demo_project,
         )

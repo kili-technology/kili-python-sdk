@@ -11,7 +11,7 @@ from tenacity.wait import wait_fixed
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.project.mappers import project_data_mapper
 from kili.adapters.kili_api_gateway.project.types import ProjectDataKiliAPIGatewayInput
-from kili.core.enums import DemoProjectType, ProjectType
+from kili.core.enums import DemoProjectType
 from kili.domain.project import (
     ComplianceTag,
     InputType,
@@ -28,12 +28,10 @@ from kili.use_cases.base import BaseUseCases
 class ProjectUseCases(BaseUseCases):
     """Project use cases."""
 
-    # pylint: disable=too-many-arguments, too-many-locals
     def create_project(
         self,
         title: str,
         description: str,
-        project_type: Optional[ProjectType],
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
         from_demo_project: Optional[DemoProjectType],
         project_id: Optional[ProjectId] = None,
@@ -53,7 +51,6 @@ class ProjectUseCases(BaseUseCases):
                 json_interface=project_copied["jsonInterface"],
                 title=title,
                 description=description,
-                project_type=project_type,
                 compliance_tags=compliance_tags,
                 from_demo_project=from_demo_project,
             )
@@ -71,10 +68,10 @@ class ProjectUseCases(BaseUseCases):
                         f"Tag {tag['id']} doesn't belong to your organization and was not copied."
                     )
                 self._kili_api_gateway.check_tag(project_id=new_project_id, tag_id=tag["id"])
-        elif input_type is None or json_interface is None:
+        elif from_demo_project is None and (input_type is None or json_interface is None):
             raise ValueError(
-                """Arguments `input_type` and `json_interface` must be set
-                if no `project_id` is providen."""
+                "Arguments `input_type` and `json_interface` must be set if neither "
+                "`from_demo_project` nor `project_id` is provided."
             )
         else:
             new_project_id = self._kili_api_gateway.create_project(
@@ -82,7 +79,6 @@ class ProjectUseCases(BaseUseCases):
                 json_interface=json_interface,
                 title=title,
                 description=description,
-                project_type=project_type,
                 compliance_tags=compliance_tags,
                 from_demo_project=from_demo_project,
             )
