@@ -193,7 +193,6 @@ class ProjectUseCases(BaseUseCases):
             use_honeypot=use_honeypot,
             archived=None,
             author=None,
-            rules=None,
         )
 
         fields = tuple(

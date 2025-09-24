@@ -27,7 +27,6 @@ class ProjectDataKiliAPIGatewayInput:
     metadata_types: Optional[Dict]
     metadata_properties: Optional[Dict]
     min_consensus_size: Optional[int]
-    rules: Optional[str]
     review_coverage: Optional[int]
     should_auto_assign: Optional[bool]
     should_relaunch_kpi_computation: Optional[bool]

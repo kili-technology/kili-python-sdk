@@ -62,7 +62,6 @@ def test_when_updating_project_then_it_returns_updated_project(mocker: pytest_mo
                 "instructions": None,
                 "jsonInterface": None,
                 "minConsensusSize": None,
-                "rules": None,
                 "reviewCoverage": 42,
                 "shouldAutoAssign": None,
                 "shouldRelaunchKpiComputation": None,
