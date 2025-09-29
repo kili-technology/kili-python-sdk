@@ -24,11 +24,10 @@ def test_when_creating_project_then_it_returns_project_id(mocker: pytest_mock.Mo
         {
             "data": {
                 "description": "",
+                "fromDemoProject": None,
                 "inputType": "IMAGE",
                 "jsonInterface": "{}",
-                "projectType": None,
                 "title": "fake_title",
-                "fromDemoProject": None,
             }
         },
     )
@@ -63,7 +62,6 @@ def test_when_updating_project_then_it_returns_updated_project(mocker: pytest_mo
                 "instructions": None,
                 "jsonInterface": None,
                 "minConsensusSize": None,
-                "rules": None,
                 "reviewCoverage": 42,
                 "shouldAutoAssign": None,
                 "shouldRelaunchKpiComputation": None,

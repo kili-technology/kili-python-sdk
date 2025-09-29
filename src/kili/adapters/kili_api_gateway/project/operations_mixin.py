@@ -14,7 +14,7 @@ from kili.adapters.kili_api_gateway.project.formatters import (
     load_project_json_fields,
 )
 from kili.adapters.kili_api_gateway.project.operations import get_projects_query
-from kili.core.enums import DemoProjectType, ProjectType
+from kili.core.enums import DemoProjectType
 from kili.domain.project import ComplianceTag, InputType, ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
 
@@ -39,11 +39,10 @@ class ProjectOperationMixin(BaseOperationMixin):
     # pylint: disable=too-many-arguments
     def create_project(
         self,
-        input_type: InputType,
-        json_interface: Dict,
+        input_type: Optional[InputType],
+        json_interface: Optional[Dict],
         title: str,
         description: str,
-        project_type: Optional[ProjectType],
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
         from_demo_project: Optional[DemoProjectType],
     ) -> ProjectId:
@@ -54,7 +53,6 @@ class ProjectOperationMixin(BaseOperationMixin):
                 "fromDemoProject": from_demo_project,
                 "inputType": input_type,
                 "jsonInterface": json.dumps(json_interface),
-                "projectType": project_type,
                 "title": title,
             }
         }

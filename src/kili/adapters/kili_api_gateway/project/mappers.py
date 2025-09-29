@@ -43,7 +43,6 @@ def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> Dict:
         "instructions": data.instructions,
         "jsonInterface": data.json_interface,
         "minConsensusSize": data.min_consensus_size,
-        "rules": data.rules,
         "reviewCoverage": data.review_coverage,
         "shouldAutoAssign": data.should_auto_assign,
         "shouldRelaunchKpiComputation": data.should_relaunch_kpi_computation,
