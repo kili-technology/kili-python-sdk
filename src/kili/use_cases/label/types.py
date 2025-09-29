@@ -12,10 +12,11 @@ from kili.domain.user import UserId
 class LabelToCreateUseCaseInput:
     """Data about one label to create."""
 
-    asset_id: Optional[AssetId]
     asset_external_id: Optional[AssetExternalId]
-    label_type: LabelType
-    json_response: Dict
+    asset_id: Optional[AssetId]
     author_id: Optional[UserId]
-    seconds_to_label: Optional[float]
+    json_response: Dict
+    label_type: LabelType
     model_name: Optional[str]
+    referenced_label_id: Optional[str]
+    seconds_to_label: Optional[float]

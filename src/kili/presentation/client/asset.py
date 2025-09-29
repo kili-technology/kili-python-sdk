@@ -170,7 +170,7 @@ class AssetClientMethods(BaseClientMethods):
         label_honeypot_mark_gte: Optional[float] = None,
         label_honeypot_mark_lte: Optional[float] = None,
         issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
-        issue_status: Optional[Literal["OPEN", "SOLVED"]] = None,
+        issue_status: Optional[IssueStatus] = None,
         external_id_strictly_in: Optional[List[str]] = None,
         external_id_in: Optional[List[str]] = None,
         label_output_format: Literal["dict", "parsed_label"] = "dict",

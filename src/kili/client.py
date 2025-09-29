@@ -86,6 +86,9 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     ) -> None:
         """Initialize Kili client.
 
+        This client provides access to methods through mixin inheritance.
+        For the domain-based API, use `from kili.client_domain import Kili` instead.
+
         Args:
             api_key: User API key generated
                 from https://cloud.kili-technology.com/label/my-account/api-key.
@@ -116,10 +119,8 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             from kili.client import Kili
 
             kili = Kili()
-
-            kili.assets()  # list your assets
-            kili.labels()  # list your labels
-            kili.projects()  # list your projects
+            kili.assets()
+            kili.projects()
             ```
         """
         api_key = api_key or os.getenv("KILI_API_KEY")

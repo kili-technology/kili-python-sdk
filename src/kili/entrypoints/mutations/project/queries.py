@@ -60,6 +60,15 @@ mutation(
 """
 
 
+GQL_UPDATE_PROPERTIES_IN_PROJECT_USER = f"""
+mutation UpdatePropertiesInRole($data: RoleData!, $where: ProjectUserWhere!) {{
+  updatePropertiesInRole(data: $data, where: $where) {{
+    {ROLE_FRAGMENT}
+  }}
+}}
+"""
+
+
 GQL_UPDATE_PROPERTIES_IN_ROLE = f"""
 mutation(
     $roleID: ID!
