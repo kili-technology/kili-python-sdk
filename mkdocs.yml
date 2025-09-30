@@ -123,7 +123,7 @@ theme:
   name: "material"
   palette:
     scheme: kili
-  logo: assets/kili_logo.png
+  logo: assets/kili_logo_resized.webp
   favicon: assets/kili_favicon.ico
   language: en
   font:

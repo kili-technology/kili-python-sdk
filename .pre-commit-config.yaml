@@ -48,7 +48,7 @@ repos:
         always_run: false
         pass_filenames: true
         require_serial: true
-        additional_dependencies: [click, nbconvert]
+        additional_dependencies: [click, nbconvert, pillow, urllib3]
       - id: detect-kili-api-key
         name: Detect Kili API key
         language: python

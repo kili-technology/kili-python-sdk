@@ -222,7 +222,7 @@ Now, let's place some assets in the review queue. The method will return a proje
 kili.add_to_review(project_id=project_id, external_ids=["4.jpg"])
 ```
 
-For more information on asset statuses, refer to our [documentation](https://docs.kili-technology.com/docs/asset-lifecycle).
+For more information on asset statuses, refer to our [documentation](https://docs.kili-technology.com/docs/multi-steps-review#asset-steps-and-statuses).
 
 ### Sending an asset back to the labeling queue
 
@@ -240,7 +240,7 @@ kili.send_back_to_queue(project_id=project_id, external_ids=["4.jpg"])
 
 
 
-For more information on asset statuses, refer to our [documentation](https://docs.kili-technology.com/docs/asset-lifecycle).
+For more information on asset statuses, refer to our [documentation](https://docs.kili-technology.com/docs/multi-steps-review#asset-steps-and-statuses).
 
 ## Cleanup
 

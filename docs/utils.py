@@ -14,15 +14,18 @@ import base64
 import re
 import shutil
 from binascii import a2b_base64
+from io import BytesIO
 from itertools import groupby
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Dict, Optional, Sequence
 
 import click
+import urllib3
 from nbconvert import MarkdownExporter
 from nbconvert.preprocessors.base import Preprocessor
 from nbconvert.preprocessors.tagremove import TagRemovePreprocessor
+from PIL import Image
 
 IGNORED_TUTORIALS = [
     "plugins_library",
@@ -102,12 +105,20 @@ def embed_images_in_markdown(markdown: str, images: Dict[str, bytes], notebook_d
         elif Path(notebook_dir / img_content).is_file():
             with open(Path(notebook_dir / img_content), "rb") as file:
                 img_bytes = file.read()
+        elif img_content.startswith("http"):
+            img_bytes = urllib3.PoolManager().request("GET", img_content).data
         else:
             raise ValueError(f"Image {img_content} not found.")
 
-        extension = img_content.split(".")[-1]
+        img = Image.open(BytesIO(img_bytes))
+        temp = BytesIO()
+        img.save(temp, "webp", optimize=True, quality=75)
+        img_bytes = temp.getvalue()
+        original_extension = img_content.split(".")[-1]
+        new_img_text = img_text.replace(original_extension, "webp")
+
         encoded_img = base64.b64encode(img_bytes).decode("utf-8")
-        after = f"![{img_text}](data:image/{extension};base64,{encoded_img})"
+        after = f"![{new_img_text}](data:image/webp;base64,{encoded_img})"
         markdown = markdown.replace(f"![{img_text}]({img_content})", after)
     return markdown
 
