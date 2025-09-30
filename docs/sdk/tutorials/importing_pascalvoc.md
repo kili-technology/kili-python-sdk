@@ -32,7 +32,7 @@ from kili.client import Kili
 
 ## Download Pascal VOC format
 
-The images and annotations for the full dataset can be found [here](http://host.robots.ox.ac.uk/pascal/VOC/).
+The images and annotations come from the Oxford's PASCAL Visual Object Classes Challenge.
 
 For this tutorial we will use a subset from the validation set from 2012.
 

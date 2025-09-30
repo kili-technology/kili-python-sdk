@@ -240,7 +240,7 @@ You can export your project data from the Kili UI (see [documentation](https://d
 
 The [`.export_labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.export_labels) method enables the export of a full project. It does the following preprocessing:
 
-* Only fetches the labels of types `"DEFAULT"` and `"REVIEW"` (see the [label types explanations](https://docs.kili-technology.com/docs/asset-lifecycle#label-types-and-definitions-throughout-an-asset-lifecycle)).
+* Only fetches the labels of types `"DEFAULT"` and `"REVIEW"` (see the [label types explanations](https://docs.kili-technology.com/reference/label-types)).
 * If specified, selects a subset of asset ids.
 * Exports labels to one of the standard formats (only available for a restricted set of ML tasks).
 * Using various method arguments, you can decide:

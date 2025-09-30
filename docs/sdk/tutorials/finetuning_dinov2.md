@@ -695,7 +695,7 @@ The pre-annotations will be helpful for the labelers to label the assets, since 
 
 The inference labels will be used to evaluate the quality of the model against labelers.
 
-You can learn more about the different kinds of labels in the [Kili documentation](https://docs.kili-technology.com/docs/asset-lifecycle).
+You can learn more about the different kinds of labels in the [Kili documentation](https://docs.kili-technology.com/reference/label-types).
 
 
 ```python
