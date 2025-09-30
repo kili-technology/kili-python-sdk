@@ -1,6 +1,6 @@
 # Getting started with the Kili Python SDK
 
-<img src="assets/Kili_Core_Illustration_Interact.png" alt="Kili Character" align="right" style="height:400px;"/>
+<img src="assets/Kili_Core_Illustration_Interact_resized.webp" alt="Kili Character" align="right" style="height:400px;"/>
 
 ## What is Kili?
 
