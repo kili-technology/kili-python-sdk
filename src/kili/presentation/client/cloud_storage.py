@@ -42,7 +42,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         project_id: Optional[str] = None,
         fields: ListOrTuple[str] = (
             "id",
-            "lastChecked",
+            "lastCheck",
             "numberOfAssets",
             "selectedFolders",
             "projectId",
@@ -63,7 +63,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         project_id: Optional[str] = None,
         fields: ListOrTuple[str] = (
             "id",
-            "lastChecked",
+            "lastCheck",
             "numberOfAssets",
             "selectedFolders",
             "projectId",
@@ -84,7 +84,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         project_id: Optional[str] = None,
         fields: ListOrTuple[str] = (
             "id",
-            "lastChecked",
+            "lastCheck",
             "numberOfAssets",
             "selectedFolders",
             "projectId",
@@ -114,7 +114,7 @@ class CloudStorageClientMethods(BaseClientMethods):
 
         Examples:
             >>> kili.cloud_storage_connections(project_id="789465123")
-            [{'id': '123456789', 'lastChecked': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'selectedFolders': ['folder1', 'folder2'], 'projectId': '789465123'}]
+            [{'id': '123456789', 'lastCheck': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'selectedFolders': ['folder1', 'folder2'], 'projectId': '789465123'}]
         """
         if (
             cloud_storage_connection_id is None

@@ -2,7 +2,6 @@
 
 import logging
 import time
-from datetime import datetime
 from logging import Logger
 from typing import Dict, Generator, List, Optional
 
@@ -96,8 +95,6 @@ class CloudStorageUseCases(BaseUseCases):
                 exclude=exclude,
                 include=include,
                 integration_id=data_integration_id,
-                is_checking=False,
-                last_checked=datetime.now(),
                 prefix=prefix,
                 project_id=project_id,
                 selected_folders=selected_folders,

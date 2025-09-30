@@ -1,7 +1,6 @@
 """Types for the Cloud storage related Kili API gateway functions."""
 
 from dataclasses import dataclass
-from datetime import datetime
 from typing import List, Optional
 
 from kili.domain.cloud_storage import (
@@ -20,8 +19,6 @@ class AddDataConnectionKiliAPIGatewayInput:
     exclude: Optional[List[str]]
     include: Optional[List[str]]
     integration_id: DataIntegrationId
-    is_checking: bool
-    last_checked: datetime
     prefix: Optional[str]
     project_id: ProjectId
     selected_folders: Optional[List[str]]
