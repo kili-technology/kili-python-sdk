@@ -16,7 +16,7 @@ def get_current_user_query(fragment: str) -> str:
     """Return the GraphQL current user query."""
     return f"""
       query me {{
-          data: me {{
+          data: viewer {{
               {fragment}
           }}
       }}

@@ -43,7 +43,6 @@ def test_given_kili_gateway_when_querying_users_list_it_calls_proper_resolver(
         {
             "where": {
                 "activated": None,
-                "apiKey": None,
                 "email": None,
                 "id": "fake_user_id",
                 "idIn": None,
@@ -72,7 +71,6 @@ def test_given_kili_gateway_when_querying_count_users_it_calls_proper_resolver(
         {
             "where": {
                 "activated": None,
-                "apiKey": None,
                 "email": None,
                 "id": "fake_user_id",
                 "idIn": None,
@@ -163,7 +161,6 @@ def test_given_kili_gateway_when_updating_user_it_calls_proper_resolver(
             },
             "where": {
                 "activated": None,
-                "apiKey": None,
                 "email": None,
                 "id": "fake_user_id",
                 "idIn": None,

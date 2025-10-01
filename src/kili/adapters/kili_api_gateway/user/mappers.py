@@ -11,7 +11,6 @@ def user_where_mapper(filters: UserFilter) -> Dict:
     """Build the GraphQL UserWhere variable to be sent in an operation."""
     return {
         "activated": filters.activated,
-        "apiKey": filters.api_key,
         "email": filters.email,
         "id": filters.id,
         "idIn": filters.id_in,
