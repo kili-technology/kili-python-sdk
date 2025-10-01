@@ -627,15 +627,3 @@ class IntegrationsNamespace(DomainNamespace):
                 ) from e
             # Re-raise other exceptions as-is
             raise
-
-    def _refresh_implementation(self) -> None:
-        """Override the base refresh implementation for integrations-specific logic.
-
-        This method can be extended to perform integrations-specific refresh operations
-        such as clearing cached integration data or revalidating cloud storage credentials.
-        """
-        # Future implementation could include:
-        # - Clearing integration-specific caches
-        # - Revalidating cloud storage credentials
-        # - Refreshing integration status information
-        # - Updating platform capability checks

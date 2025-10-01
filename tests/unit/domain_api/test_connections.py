@@ -182,8 +182,3 @@ class TestConnectionsNamespace:
         repr_str = repr(connections_namespace)
         assert "ConnectionsNamespace" in repr_str
         assert "connections" in repr_str
-
-    def test_refresh_functionality(self, connections_namespace):
-        """Test refresh functionality."""
-        # Should not raise any errors
-        connections_namespace.refresh()

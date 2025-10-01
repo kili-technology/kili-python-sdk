@@ -141,44 +141,6 @@ class TestDomainNamespaceCaching:
         result3 = domain_namespace.cached_operation("different")
         assert result3 != result1
 
-    def test_cache_clearing(self, domain_namespace):
-        """Test that cache clearing works correctly."""
-        # Get initial cached value
-        initial_result = domain_namespace.cached_operation("test")
-
-        # Modify internal state
-        domain_namespace._test_operation_count = 100
-
-        # Cache should still return old value
-        cached_result = domain_namespace.cached_operation("test")
-        assert cached_result == initial_result
-
-        # Clear caches and call again
-        domain_namespace._clear_lru_caches()
-        new_result = domain_namespace.cached_operation("test")
-
-        # Should now reflect new state
-        assert new_result != initial_result
-        assert "100" in new_result
-
-    def test_refresh_clears_caches(self, domain_namespace):
-        """Test that refresh() clears LRU caches."""
-        # Get initial cached value
-        initial_result = domain_namespace.cached_operation("test")
-
-        # Modify internal state
-        domain_namespace._test_operation_count = 200
-
-        # Call refresh
-        domain_namespace.refresh()
-
-        # Get new result
-        new_result = domain_namespace.cached_operation("test")
-
-        # Should reflect new state
-        assert new_result != initial_result
-        assert "200" in new_result
-
 
 class TestDomainNamespaceMemoryManagement:
     """Tests for memory management and performance."""

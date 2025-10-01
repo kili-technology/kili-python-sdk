@@ -6,7 +6,6 @@ SDK methods into logical namespaces for better developer experience.
 
 from .assets import AssetsNamespace
 from .base import DomainNamespace
-from .cloud_storage import CloudStorageNamespace
 from .connections import ConnectionsNamespace
 from .integrations import IntegrationsNamespace
 from .issues import IssuesNamespace
@@ -21,7 +20,6 @@ from .users import UsersNamespace
 __all__ = [
     "DomainNamespace",
     "AssetsNamespace",
-    "CloudStorageNamespace",
     "ConnectionsNamespace",
     "IntegrationsNamespace",
     "IssuesNamespace",

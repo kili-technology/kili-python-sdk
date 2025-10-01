@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from kili.client import Kili
+from kili.client_domain import Kili
 
 
 class TestLazyNamespaceIntegration:
@@ -14,18 +14,14 @@ class TestLazyNamespaceIntegration:
     @pytest.fixture()
     def mock_kili_client(self):
         """Create a mock Kili client for integration testing."""
-        with patch.multiple(
-            "kili.client",
-            is_api_key_valid=lambda *args, **kwargs: True,
-        ):
-            # Mock the environment variable to skip checks
-            with patch.dict("os.environ", {"KILI_SDK_SKIP_CHECKS": "true"}):
-                # Mock the required components
-                with patch("kili.client.HttpClient"), patch("kili.client.GraphQLClient"), patch(
-                    "kili.client.KiliAPIGateway"
-                ):
-                    kili = Kili(api_key="test_key")
-                    yield kili
+        # Mock the environment variable to skip checks
+        with patch.dict("os.environ", {"KILI_SDK_SKIP_CHECKS": "true"}):
+            # Mock the required components in kili.client (where they're actually used)
+            with patch("kili.client.HttpClient"), patch("kili.client.GraphQLClient"), patch(
+                "kili.client.KiliAPIGateway"
+            ):
+                kili = Kili(api_key="test_key")
+                yield kili
 
     def test_real_world_usage_pattern(self, mock_kili_client):
         """Test a realistic usage pattern of the lazy namespace loading."""
@@ -36,22 +32,22 @@ class TestLazyNamespaceIntegration:
         initial_dict_items = len(kili.__dict__)
 
         # User works with assets
-        assets_ns = kili.assets_ns
+        assets_ns = kili.assets
         assert assets_ns.domain_name == "assets"
 
         # Only assets namespace should be instantiated
         assert len(kili.__dict__) == initial_dict_items + 1
 
         # User then works with projects
-        projects_ns = kili.projects_ns
+        projects_ns = kili.projects
         assert projects_ns.domain_name == "projects"
 
         # Now both namespaces should be instantiated
         assert len(kili.__dict__) == initial_dict_items + 2
 
         # Accessing same namespaces again should return cached instances
-        assets_ns_2 = kili.assets_ns
-        projects_ns_2 = kili.projects_ns
+        assets_ns_2 = kili.assets
+        projects_ns_2 = kili.projects
 
         assert assets_ns is assets_ns_2
         assert projects_ns is projects_ns_2
@@ -67,12 +63,12 @@ class TestLazyNamespaceIntegration:
         # out of all available ones
 
         # Use only assets and labels
-        assets_ns = kili.assets_ns
-        labels_ns = kili.labels_ns
+        assets_ns = kili.assets
+        labels_ns = kili.labels
 
         used_namespaces = {
-            "assets_ns": assets_ns,
-            "labels_ns": labels_ns,
+            "assets": assets_ns,
+            "labels": labels_ns,
         }
 
         # Verify these are instantiated
@@ -82,13 +78,12 @@ class TestLazyNamespaceIntegration:
 
         # Verify other namespaces are NOT instantiated
         unused_namespaces = [
-            "projects_ns",
-            "users_ns",
-            "organizations_ns",
-            "issues_ns",
-            "notifications_ns",
-            "tags_ns",
-            "cloud_storage_ns",
+            "projects",
+            "users",
+            "organizations",
+            "issues",
+            "notifications",
+            "tags",
         ]
 
         for ns_name in unused_namespaces:
@@ -99,21 +94,18 @@ class TestLazyNamespaceIntegration:
         kili = mock_kili_client
 
         # Get a namespace
-        assets_ns = kili.assets_ns
+        assets_ns = kili.assets
 
         # Test that it has the expected properties and methods
         assert hasattr(assets_ns, "gateway")
         assert hasattr(assets_ns, "client")
         assert hasattr(assets_ns, "domain_name")
-        assert hasattr(assets_ns, "refresh")
 
         # Test that the namespace can access its dependencies
-        assert assets_ns.client is kili
+        # Note: namespace.client points to the legacy client, not the domain client
+        assert assets_ns.client is kili.legacy_client
         assert assets_ns.gateway is not None
         assert assets_ns.domain_name == "assets"
-
-        # Test refresh functionality
-        assets_ns.refresh()  # Should not raise any errors
 
     def test_all_namespaces_load_correctly(self, mock_kili_client):
         """Test that all namespaces can be loaded and work correctly."""
@@ -121,15 +113,14 @@ class TestLazyNamespaceIntegration:
 
         # Define all available namespaces
         all_namespaces = [
-            ("assets_ns", "assets"),
-            ("labels_ns", "labels"),
-            ("projects_ns", "projects"),
-            ("users_ns", "users"),
-            ("organizations_ns", "organizations"),
-            ("issues_ns", "issues"),
-            ("notifications_ns", "notifications"),
-            ("tags_ns", "tags"),
-            ("cloud_storage_ns", "cloud_storage"),
+            ("assets", "assets"),
+            ("labels", "labels"),
+            ("projects", "projects"),
+            ("users", "users"),
+            ("organizations", "organizations"),
+            ("issues", "issues"),
+            ("notifications", "notifications"),
+            ("tags", "tags"),
         ]
 
         loaded_namespaces = []
@@ -141,12 +132,22 @@ class TestLazyNamespaceIntegration:
 
             # Verify basic properties
             assert namespace.domain_name == expected_domain
-            assert namespace.client is kili
+            # Note: namespace.client points to the legacy client, not the domain client
+            assert namespace.client is kili.legacy_client
             assert hasattr(namespace, "gateway")
-            assert hasattr(namespace, "refresh")
 
         # Verify all namespaces are now cached
-        assert len([key for key in kili.__dict__.keys() if key.endswith("_ns")]) == len(
+        namespace_names = [
+            "assets",
+            "labels",
+            "projects",
+            "users",
+            "organizations",
+            "issues",
+            "notifications",
+            "tags",
+        ]
+        assert len([key for key in kili.__dict__.keys() if key in namespace_names]) == len(
             all_namespaces
         )
 
@@ -173,12 +174,12 @@ class TestLazyNamespaceIntegration:
 
         # Measure time to access first namespace
         start_time = time.time()
-        assets_ns = kili.assets_ns
+        assets_ns = kili.assets
         first_access_time = time.time() - start_time
 
         # Measure time to access same namespace again (cached)
         start_time = time.time()
-        assets_ns_cached = kili.assets_ns
+        assets_ns_cached = kili.assets
         cached_access_time = time.time() - start_time
 
         # Verify we get the same instance
@@ -187,51 +188,19 @@ class TestLazyNamespaceIntegration:
         # Cached access should be faster (though the difference might be small in tests)
         assert cached_access_time <= first_access_time
 
-    def test_backward_compatibility(self, mock_kili_client):
-        """Test that the lazy loading doesn't break existing patterns."""
-        kili = mock_kili_client
-
-        # The new namespace properties should not interfere with existing functionality
-        # Verify that the client still has all its existing attributes
-        expected_attributes = [
-            "api_key",
-            "api_endpoint",
-            "verify",
-            "client_name",
-            "http_client",
-            "graphql_client",
-            "kili_api_gateway",
-            "internal",
-            "llm",
-            "events",
-        ]
-
-        for attr in expected_attributes:
-            assert hasattr(kili, attr), f"Missing expected attribute: {attr}"
-
-        # Verify that the client is still an instance of the expected mixins
-        from kili.presentation.client.asset import AssetClientMethods
-        from kili.presentation.client.label import LabelClientMethods
-        from kili.presentation.client.project import ProjectClientMethods
-
-        assert isinstance(kili, AssetClientMethods)
-        assert isinstance(kili, LabelClientMethods)
-        assert isinstance(kili, ProjectClientMethods)
-
     def test_namespace_domain_names_are_consistent(self, mock_kili_client):
         """Test that namespace domain names are consistent and meaningful."""
         kili = mock_kili_client
 
         expected_mappings = {
-            "assets_ns": "assets",
-            "labels_ns": "labels",
-            "projects_ns": "projects",
-            "users_ns": "users",
-            "organizations_ns": "organizations",
-            "issues_ns": "issues",
-            "notifications_ns": "notifications",
-            "tags_ns": "tags",
-            "cloud_storage_ns": "cloud_storage",
+            "assets": "assets",
+            "labels": "labels",
+            "projects": "projects",
+            "users": "users",
+            "organizations": "organizations",
+            "issues": "issues",
+            "notifications": "notifications",
+            "tags": "tags",
         }
 
         for ns_attr, expected_domain in expected_mappings.items():

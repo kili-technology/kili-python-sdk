@@ -25,7 +25,7 @@ from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
 
 if TYPE_CHECKING:
-    from kili.client import Kili
+    from kili.client import Kili as KiliLegacy
 
 
 class AnonymizationNamespace:
@@ -510,7 +510,7 @@ class ProjectsNamespace(DomainNamespace):
     operations on anonymization, users, workflow, and versions.
     """
 
-    def __init__(self, client: "Kili", gateway) -> None:
+    def __init__(self, client: "KiliLegacy", gateway) -> None:
         """Initialize the projects namespace.
 
         Args:

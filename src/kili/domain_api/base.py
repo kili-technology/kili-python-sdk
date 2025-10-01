@@ -6,13 +6,12 @@ domain-specific namespaces.
 """
 
 import weakref
-from functools import lru_cache
-from typing import TYPE_CHECKING, Any, Optional, TypeVar
+from typing import TYPE_CHECKING, Optional, TypeVar
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 
 if TYPE_CHECKING:
-    from kili.client import Kili
+    from kili.client import Kili as KiliLegacy
 
 T = TypeVar("T", bound="DomainNamespace")
 
@@ -25,7 +24,6 @@ class DomainNamespace:
 
     - Memory efficiency through __slots__
     - Weak references to prevent circular references
-    - LRU caching for frequently accessed operations
 
     All domain namespaces (assets, labels, projects, etc.) should inherit from this class.
     """
@@ -39,7 +37,7 @@ class DomainNamespace:
 
     def __init__(
         self,
-        client: "Kili",
+        client: "KiliLegacy",
         gateway: KiliAPIGateway,
         domain_name: Optional[str] = None,
     ) -> None:
@@ -51,12 +49,12 @@ class DomainNamespace:
             domain_name: Optional domain name for debugging/logging purposes
         """
         # Use weak reference to prevent circular references between client and namespaces
-        self._client_ref: "weakref.ReferenceType[Kili]" = weakref.ref(client)
+        self._client_ref: "weakref.ReferenceType[KiliLegacy]" = weakref.ref(client)
         self._gateway = gateway
         self._domain_name = domain_name or self.__class__.__name__.lower()
 
     @property
-    def client(self) -> "Kili":
+    def client(self) -> "KiliLegacy":
         """Get the Kili client instance.
 
         Returns:
@@ -90,47 +88,6 @@ class DomainNamespace:
             The domain name string
         """
         return self._domain_name
-
-    def refresh(self) -> None:
-        """Refresh the gateway connection and clear any cached data.
-
-        This method should be called to synchronize with the gateway state
-        and ensure fresh data is retrieved on subsequent operations.
-        """
-        # Clear LRU caches for this instance
-        self._clear_lru_caches()
-
-        # Subclasses can override this to perform additional refresh operations
-        self._refresh_implementation()
-
-    def _clear_lru_caches(self) -> None:
-        """Clear all LRU caches for this instance."""
-        # Find and clear all lru_cache decorated methods
-        for attr_name in dir(self):
-            attr = getattr(self, attr_name)
-            if hasattr(attr, "cache_clear"):
-                attr.cache_clear()
-
-    def _refresh_implementation(self) -> None:
-        """Override this method in subclasses for domain-specific refresh logic."""
-
-    @lru_cache(maxsize=128)
-    def _cached_gateway_operation(self, operation_name: str, cache_key: str) -> Any:
-        """Perform a cached gateway operation.
-
-        This is a template method that subclasses can use for caching
-        frequently accessed gateway operations.
-
-        Args:
-            operation_name: Name of the gateway operation
-            cache_key: Unique key for caching this operation
-
-        Returns:
-            The result of the gateway operation
-        """
-        # This is a placeholder - subclasses should override with specific logic
-        # pylint: disable=unused-argument
-        return None
 
     def __repr__(self) -> str:
         """Return a string representation of the namespace."""

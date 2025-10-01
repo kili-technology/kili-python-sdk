@@ -79,11 +79,6 @@ class TestDomainNamespaceSimple:
         with pytest.raises(ReferenceError):
             _ = namespace.client
 
-    def test_refresh_functionality(self, domain_namespace):
-        """Test basic refresh functionality."""
-        # Should not raise any errors
-        domain_namespace.refresh()
-
     def test_repr_functionality(self, domain_namespace):
         """Test string representation."""
         repr_str = repr(domain_namespace)

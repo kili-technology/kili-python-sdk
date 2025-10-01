@@ -31,7 +31,7 @@ from kili.services.export.types import CocoAnnotationModifier, LabelFormat, Spli
 from kili.utils.labels.parsing import ParsedLabel
 
 if TYPE_CHECKING:
-    from kili.client import Kili
+    from kili.client import Kili as KiliLegacy
 
 
 class PredictionsNamespace:
@@ -520,7 +520,7 @@ class LabelsNamespace(DomainNamespace):
     inferences, honeypots, and events.
     """
 
-    def __init__(self, client: "Kili", gateway) -> None:
+    def __init__(self, client: "KiliLegacy", gateway) -> None:
         """Initialize the labels namespace.
 
         Args:
