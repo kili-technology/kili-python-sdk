@@ -316,6 +316,8 @@ class GraphQLClient:
         self, document: DocumentNode, variables: Optional[Dict], **kwargs
     ) -> Dict[str, Any]:
         _limiter.try_acquire("GraphQLClient.execute")
+        log_context = LogContext()
+        log_context.set_client_name(self.client_name)
         with _execute_lock:
             res = self._gql_client.execute(
                 document=document,
@@ -323,7 +325,7 @@ class GraphQLClient:
                 extra_args={
                     "headers": {
                         **(self._gql_transport.headers or {}),
-                        **LogContext(),
+                        **log_context,
                     }
                 },
                 **kwargs,

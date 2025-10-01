@@ -84,9 +84,9 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         client_name: GraphQLClientName = GraphQLClientName.SDK,
         graphql_client_params: Optional[Dict[str, object]] = None,
     ) -> None:
-        """Initialize Kili client (legacy mode).
+        """Initialize Kili client.
 
-        This client provides access to legacy methods through mixin inheritance.
+        This client provides access to methods through mixin inheritance.
         For the domain-based API, use `from kili.client_domain import Kili` instead.
 
         Args:
@@ -118,10 +118,9 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             ```python
             from kili.client import Kili
 
-            # Legacy API with methods
             kili = Kili()
-            kili.assets()  # legacy method
-            kili.projects()  # legacy method
+            kili.assets()
+            kili.projects()
             ```
         """
         api_key = api_key or os.getenv("KILI_API_KEY")

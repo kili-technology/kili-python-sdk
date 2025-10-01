@@ -41,13 +41,11 @@ class Kili:
 
     legacy_client: KiliLegacy
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         api_key: Optional[str] = None,
         api_endpoint: Optional[str] = None,
         verify: Optional[Union[bool, str]] = None,
-        client_name: GraphQLClientName = GraphQLClientName.SDK,
         graphql_client_params: Optional[Dict[str, object]] = None,
     ) -> None:
         """Initialize Kili client (domain mode).
@@ -73,8 +71,6 @@ class Kili:
                 certificates, which will make your application vulnerable to
                 man-in-the-middle (MitM) attacks. Setting verify to ``False``
                 may be useful during local development or testing.
-            client_name: For internal use only.
-                Define the name of the graphQL client whith which graphQL calls will be sent.
             graphql_client_params: Parameters to pass to the graphQL client.
 
         Returns:
@@ -90,11 +86,15 @@ class Kili:
             kili.projects.list()  # domain methods
             ```
         """
+        warnings.warn(
+            "Client domain api is still a work in progress. Method names and return type will evolve.",
+            stacklevel=1,
+        )
         self.legacy_client = KiliLegacy(
             api_key,
             api_endpoint,
             verify,
-            client_name,
+            GraphQLClientName.SDK_DOMAIN,
             graphql_client_params,
         )
 

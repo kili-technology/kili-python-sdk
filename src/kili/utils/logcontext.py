@@ -32,6 +32,10 @@ class LogContext(Dict[str, str], metaclass=Singleton):
         self["kili-client-platform-version"] = platform.version()
         self["kili-client-platform-name"] = platform.system()
 
+    def set_client_name(self, name: GraphQLClientName):
+        """Change the client name to match current client."""
+        self["kili-client-name"] = name.value
+
 
 def for_all_methods(decorator: Callable, exclude: List[str]):
     """Class Decorator to decorate all the method with a decorator passed as argument."""
