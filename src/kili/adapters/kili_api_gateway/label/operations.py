@@ -74,7 +74,6 @@ mutation(
 def get_annotations_partial_query(
     annotation_fragment: str,
     classification_annotation_fragment: str,
-    ranking_annotation_fragment: str,
     comparison_annotation_fragment: str,
     transcription_annotation_fragment: str,
     video_annotation_fragment: str,
@@ -90,13 +89,6 @@ def get_annotations_partial_query(
         inline_fragments += f"""
             ... on ClassificationAnnotation {{
                 {classification_annotation_fragment}
-            }}
-        """
-
-    if ranking_annotation_fragment.strip():
-        inline_fragments += f"""
-            ... on RankingAnnotation {{
-                {ranking_annotation_fragment}
             }}
         """
 

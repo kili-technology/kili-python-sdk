@@ -48,24 +48,6 @@ class RankingOrderValue(TypedDict):
     elements: List[str]
 
 
-class RankingAnnotationValue(TypedDict):
-    """Ranking annotation value."""
-
-    orders: List[RankingOrderValue]
-
-
-class RankingAnnotation(TypedDict):
-    """Ranking annotation."""
-
-    # pylint: disable=unused-private-member
-    __typename: Literal["RankingAnnotation"]
-    id: AnnotationId
-    labelId: LabelId
-    job: JobName
-    path: List[List[str]]
-    annotationValue: RankingAnnotationValue
-
-
 class TranscriptionAnnotationValue(TypedDict):
     """Transcription annotation value."""
 
@@ -190,13 +172,11 @@ VideoAnnotation = Union[
 ClassicAnnotation = Union[
     ClassificationAnnotation,
     ObjectDetectionAnnotation,
-    RankingAnnotation,
     TranscriptionAnnotation,
 ]
 
 Annotation = Union[
     ClassificationAnnotation,
-    RankingAnnotation,
     TranscriptionAnnotation,
     VideoAnnotation,
 ]
