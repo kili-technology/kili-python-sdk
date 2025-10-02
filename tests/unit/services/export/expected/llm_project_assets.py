@@ -24,13 +24,6 @@ llm_project_asset = {
         "isSentBackToQueue": False,
         "jsonResponse": {
             "CLASSIFICATION_JOB": {"categories": [{"name": "Choice 1"}]},
-            "RANKING_JOB": {
-                "orders": [
-                    {"__typename": "RankingOrderValue", "elements": ["Response 5"], "rank": 1},
-                    {"__typename": "RankingOrderValue", "elements": ["Response 2"], "rank": 2},
-                    {"__typename": "RankingOrderValue", "elements": ["Response 3"], "rank": 3},
-                ]
-            },
             "TRANSCRIPTION_JOB": {"text": "Test Transcription"},
         },
         "labelType": "DEFAULT",

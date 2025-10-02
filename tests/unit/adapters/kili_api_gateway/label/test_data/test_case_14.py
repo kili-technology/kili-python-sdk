@@ -13,13 +13,6 @@ json_interface = {
             "required": 0,
             "isChild": False,
         },
-        "RANKING_JOB": {
-            "content": {"input": "select"},
-            "instruction": "Ranking Select",
-            "mlTask": "RANKING",
-            "required": 0,
-            "isChild": False,
-        },
         "TRANSCRIPTION_JOB": {
             "content": {"input": "textField"},
             "instruction": "Transcription Text",
@@ -31,23 +24,6 @@ json_interface = {
 }
 
 annotations = [
-    {
-        "id": "4eb1c8e2-05fd-42ae-aa17-7c18a803c682",
-        "job": "RANKING_JOB",
-        "path": [],
-        "labelId": "clr53q1as0208kjba8jwcavcx",
-        "annotationValue": {
-            "id": "4eb1c8e2-05fd-42ae-aa17-7c18a803c682",
-            "isPrediction": False,
-            "orders": [
-                {"elements": ["Response 5"], "rank": 1, "__typename": "RankingOrderValue"},
-                {"elements": ["Response 3"], "rank": 3, "__typename": "RankingOrderValue"},
-                {"elements": ["Response 2"], "rank": 2, "__typename": "RankingOrderValue"},
-            ],
-            "__typename": "RankingAnnotationValue",
-        },
-        "__typename": "RankingAnnotation",
-    },
     {
         "id": "8be13b44-dfb5-4456-83b4-710b902f2fa3",
         "job": "CLASSIFICATION_JOB",
@@ -118,13 +94,6 @@ assets = [
 
 
 expected_json_resp = {
-    "RANKING_JOB": {
-        "orders": [
-            {"elements": ["Response 5"], "rank": 1, "__typename": "RankingOrderValue"},
-            {"elements": ["Response 2"], "rank": 2, "__typename": "RankingOrderValue"},
-            {"elements": ["Response 3"], "rank": 3, "__typename": "RankingOrderValue"},
-        ]
-    },
     "CLASSIFICATION_JOB": {"categories": [{"name": "Choice 1"}]},
     "TRANSCRIPTION_JOB": {"text": "Test Transcription"},
 }

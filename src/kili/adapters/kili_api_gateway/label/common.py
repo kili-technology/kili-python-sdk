@@ -42,12 +42,6 @@ def get_annotation_fragment():
         classification_annotation_fragment=fragment_builder(
             ("annotationValue.categories", "chatItemId")
         ),
-        ranking_annotation_fragment=fragment_builder(
-            (
-                "annotationValue.orders.elements",
-                "annotationValue.orders.rank",
-            )
-        ),
         comparison_annotation_fragment=fragment_builder(
             (
                 "annotationValue.choice.code",
