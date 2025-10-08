@@ -27,6 +27,8 @@ from kili.domain.asset.asset import StatusInStep
 from kili.domain.label import LabelType
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
+from kili.domain_v2.label import LabelExportResponse, LabelView, validate_label
+from kili.domain_v2.project import IdListResponse, IdResponse
 from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
 from kili.utils.labels.parsing import ParsedLabel
 
@@ -56,7 +58,7 @@ class PredictionsNamespace:
         asset_id_array: Optional[List[str]] = None,
         disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
-    ) -> Dict[Literal["id"], str]:
+    ) -> IdResponse:
         """Create predictions for specific assets.
 
         Args:
@@ -71,10 +73,20 @@ class PredictionsNamespace:
                 the same model name on the targeted assets.
 
         Returns:
-            A dictionary with the project `id`.
+            An IdResponse object containing the project ID.
+
+        Example:
+            >>> response = kili.labels.predictions.create(
+            ...     project_id="project_123",
+            ...     external_id_array=["asset_1"],
+            ...     json_response_array=[{"categories": [{"name": "CAR"}]}],
+            ...     model_name="my_model"
+            ... )
+            >>> print(response.id)
+            'project_123'
         """
         # Call the client method directly to bypass namespace routing
-        return self._parent.client.create_predictions(
+        result = self._parent.client.create_predictions(
             project_id=project_id,
             external_id_array=external_id_array,
             model_name_array=model_name_array,
@@ -84,6 +96,7 @@ class PredictionsNamespace:
             disable_tqdm=disable_tqdm,
             overwrite=overwrite,
         )
+        return IdResponse(result)
 
     @overload
     def list(
@@ -117,7 +130,7 @@ class PredictionsNamespace:
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[LabelView, None, None]:
         ...
 
     @overload
@@ -152,7 +165,7 @@ class PredictionsNamespace:
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[LabelView]:
         ...
 
     @typechecked
@@ -187,7 +200,7 @@ class PredictionsNamespace:
         category_search: Optional[str] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[LabelView]:
         """Get prediction labels from a project based on a set of criteria.
 
         This method is equivalent to the `labels()` method, but it only returns labels of type "PREDICTION".
@@ -216,10 +229,10 @@ class PredictionsNamespace:
             category_search: Query to filter labels based on the content of their jsonResponse
 
         Returns:
-            An iterable of labels.
+            An iterable of LabelView objects.
         """
         # Call the client method directly to bypass namespace routing
-        return self._parent.client.predictions(
+        results = self._parent.client.predictions(
             project_id=project_id,
             asset_id=asset_id,
             asset_status_in=asset_status_in,
@@ -242,6 +255,11 @@ class PredictionsNamespace:
             category_search=category_search,
             as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
         )
+
+        # Wrap each dict result with LabelView
+        if as_generator:
+            return (LabelView(validate_label(item)) for item in results)
+        return [LabelView(validate_label(item)) for item in results]
 
 
 class InferencesNamespace:
@@ -287,7 +305,7 @@ class InferencesNamespace:
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[LabelView, None, None]:
         ...
 
     @overload
@@ -322,7 +340,7 @@ class InferencesNamespace:
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[LabelView]:
         ...
 
     @typechecked
@@ -357,7 +375,7 @@ class InferencesNamespace:
         category_search: Optional[str] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[LabelView]:
         """Get inference labels from a project based on a set of criteria.
 
         This method is equivalent to the `labels()` method, but it only returns labels of type "INFERENCE".
@@ -386,10 +404,10 @@ class InferencesNamespace:
             category_search: Query to filter labels based on the content of their jsonResponse
 
         Returns:
-            An iterable of inference labels.
+            An iterable of LabelView objects.
         """
         # Call the client method directly to bypass namespace routing
-        return self._parent.client.inferences(
+        results = self._parent.client.inferences(
             project_id=project_id,
             asset_id=asset_id,
             asset_status_in=asset_status_in,
@@ -413,6 +431,11 @@ class InferencesNamespace:
             as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
         )
 
+        # Wrap each dict result with LabelView
+        if as_generator:
+            return (LabelView(validate_label(item)) for item in results)
+        return [LabelView(validate_label(item)) for item in results]
+
 
 class HoneypotsNamespace:
     """Nested namespace for honeypot-related operations."""
@@ -432,7 +455,7 @@ class HoneypotsNamespace:
         asset_external_id: Optional[str] = None,
         asset_id: Optional[str] = None,
         project_id: Optional[str] = None,
-    ) -> Dict:
+    ) -> LabelView:
         """Create honeypot for an asset.
 
         Uses the given `json_response` to create a `REVIEW` label.
@@ -449,15 +472,26 @@ class HoneypotsNamespace:
                 Either provide `asset_id` or `asset_external_id` and `project_id`.
 
         Returns:
-            A dictionary-like object representing the created label.
+            A LabelView object representing the created honeypot label.
+
+        Example:
+            >>> label = kili.labels.honeypots.create(
+            ...     asset_id="asset_123",
+            ...     json_response={"categories": [{"name": "CORRECT_ANSWER"}]}
+            ... )
+            >>> print(label.id)
+            'label_456'
+            >>> print(label.label_type)
+            'REVIEW'
         """
         # Call the client method directly to bypass namespace routing
-        return self._parent.client.create_honeypot(
+        result = self._parent.client.create_honeypot(
             json_response=json_response,
             asset_external_id=asset_external_id,
             asset_id=asset_id,
             project_id=project_id,
         )
+        return LabelView(validate_label(result))
 
 
 class EventsNamespace:
@@ -602,7 +636,7 @@ class LabelsNamespace(DomainNamespace):
         output_format: Literal["dict"] = "dict",
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[LabelView, None, None]:
         ...
 
     @overload
@@ -642,7 +676,7 @@ class LabelsNamespace(DomainNamespace):
         output_format: Literal["dict"] = "dict",
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[LabelView]:
         ...
 
     @overload
@@ -762,7 +796,7 @@ class LabelsNamespace(DomainNamespace):
         output_format: Literal["dict", "parsed_label"] = "dict",
         *,
         as_generator: bool = False,
-    ) -> Iterable[Union[Dict, ParsedLabel]]:
+    ) -> Iterable[Union[LabelView, ParsedLabel]]:
         """Get a label list or a label generator from a project based on a set of criteria.
 
         Args:
@@ -790,14 +824,14 @@ class LabelsNamespace(DomainNamespace):
             disable_tqdm: If `True`, the progress bar will be disabled.
             as_generator: If `True`, a generator on the labels is returned.
             category_search: Query to filter labels based on the content of their jsonResponse.
-            output_format: If `dict`, the output is an iterable of Python dictionaries.
+            output_format: If `dict`, the output is an iterable of LabelView objects.
                 If `parsed_label`, the output is an iterable of parsed labels objects.
 
         Returns:
-            An iterable of labels.
+            An iterable of labels (LabelView for dict format, ParsedLabel for parsed_label format).
         """
         # Use super() to bypass namespace routing and call the legacy method directly
-        return self.client.labels(
+        results = self.client.labels(
             project_id=project_id,
             asset_id=asset_id,
             asset_status_in=asset_status_in,
@@ -823,6 +857,16 @@ class LabelsNamespace(DomainNamespace):
             output_format=output_format,  # pyright: ignore[reportGeneralTypeIssues]
             as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
         )
+
+        # Wrap dict results with LabelView, keep ParsedLabel unchanged
+        if output_format == "parsed_label":
+            # Return ParsedLabel objects as-is
+            return results
+
+        # Wrap dict results with LabelView
+        if as_generator:
+            return (LabelView(validate_label(item)) for item in results)
+        return [LabelView(validate_label(item)) for item in results]
 
     @typechecked
     def count(
@@ -908,7 +952,7 @@ class LabelsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
         step_name: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> IdListResponse:
         """Create labels to assets.
 
         Args:
@@ -929,10 +973,22 @@ class LabelsNamespace(DomainNamespace):
                 The label_type must match accordingly.
 
         Returns:
-            A list of dictionaries with the label ids.
+            An IdListResponse containing the created label IDs.
+
+        Example:
+            >>> response = kili.labels.create(
+            ...     asset_id_array=["asset_1", "asset_2"],
+            ...     json_response_array=[
+            ...         {"categories": [{"name": "CAR"}]},
+            ...         {"categories": [{"name": "TRUCK"}]}
+            ...     ],
+            ...     project_id="project_123"
+            ... )
+            >>> print(response.ids)
+            ['label_1', 'label_2']
         """
         # Use super() to bypass namespace routing and call the legacy method directly
-        return self.client.append_labels(
+        result = self.client.append_labels(
             asset_id_array=asset_id_array,
             json_response_array=json_response_array,
             author_id_array=author_id_array,
@@ -945,6 +1001,7 @@ class LabelsNamespace(DomainNamespace):
             overwrite=overwrite,
             step_name=step_name,
         )
+        return IdListResponse(result)
 
     @typechecked
     def delete(
@@ -982,13 +1039,13 @@ class LabelsNamespace(DomainNamespace):
         normalized_coordinates: Optional[bool] = None,
         label_type_in: Optional[List[str]] = None,
         include_sent_back_labels: Optional[bool] = None,
-    ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
+    ) -> Optional[LabelExportResponse]:
         """Export the project labels with the requested format into the requested output path.
 
         Args:
             project_id: Identifier of the project.
             filename: Relative or full path of the archive that will contain
-                the exported data.
+                the exported data. If None, returns export data in memory.
             fmt: Format of the exported labels.
             asset_ids: Optional list of the assets internal IDs from which to export the labels.
             layout: Layout of the exported files. "split" means there is one folder
@@ -1012,10 +1069,28 @@ class LabelsNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that have been sent back.
 
         Returns:
-            Export information or None if export failed.
+            A LabelExportResponse object containing export information if filename is None,
+            otherwise None (data is saved to file).
+
+        Example:
+            >>> # Export to file
+            >>> kili.labels.export(
+            ...     project_id="project_123",
+            ...     filename="export.zip",
+            ...     fmt="kili"
+            ... )
+            >>>
+            >>> # Export to memory
+            >>> export_result = kili.labels.export(
+            ...     project_id="project_123",
+            ...     filename=None,
+            ...     fmt="kili"
+            ... )
+            >>> if export_result:
+            ...     print(len(export_result.export_info))
         """
         # Use super() to bypass namespace routing and call the legacy method directly
-        return self.client.export_labels(
+        result = self.client.export_labels(
             project_id=project_id,
             filename=filename,
             fmt=fmt,
@@ -1031,6 +1106,9 @@ class LabelsNamespace(DomainNamespace):
             label_type_in=label_type_in,
             include_sent_back_labels=include_sent_back_labels,
         )
+        if result is None:
+            return None
+        return LabelExportResponse(result)
 
     @typechecked
     def append(
@@ -1046,7 +1124,7 @@ class LabelsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
         step_name: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> IdListResponse:
         """Append labels to assets.
 
         This is an alias for the `create` method to maintain compatibility.
@@ -1069,7 +1147,16 @@ class LabelsNamespace(DomainNamespace):
                 The label_type must match accordingly.
 
         Returns:
-            A list of dictionaries with the label ids.
+            An IdListResponse containing the created label IDs.
+
+        Example:
+            >>> response = kili.labels.append(
+            ...     asset_id_array=["asset_1"],
+            ...     json_response_array=[{"categories": [{"name": "CAR"}]}],
+            ...     project_id="project_123"
+            ... )
+            >>> print(response.ids)
+            ['label_1']
         """
         return self.create(
             asset_id_array=asset_id_array,

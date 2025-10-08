@@ -1,13 +1,15 @@
 """Users domain namespace for the Kili Python SDK."""
 
 import re
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from typing import Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
 from kili.core.enums import OrganizationRole
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
+from kili.domain_v2.project import IdResponse
+from kili.domain_v2.user import UserView, validate_user
 from kili.presentation.client.user import UserClientMethods
 
 
@@ -76,7 +78,7 @@ class UsersNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[UserView, None, None]:
         ...
 
     @overload
@@ -91,7 +93,7 @@ class UsersNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[UserView]:
         ...
 
     @typechecked
@@ -106,7 +108,7 @@ class UsersNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[UserView]:
         """Get a generator or a list of users given a set of criteria.
 
         Args:
@@ -136,7 +138,7 @@ class UsersNamespace(DomainNamespace):
             ... )
         """
         # Access the legacy method directly by calling it from the mixin class
-        return UserClientMethods.users(
+        result = UserClientMethods.users(
             self.client,
             api_key=api_key,
             email=email,
@@ -147,6 +149,20 @@ class UsersNamespace(DomainNamespace):
             disable_tqdm=disable_tqdm,
             as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
         )
+
+        # Wrap results with UserView
+        if as_generator:
+            # Create intermediate generator - iter() makes result explicitly iterable
+            def _wrap_generator() -> Generator[UserView, None, None]:
+                result_iter = iter(result)
+                for item in result_iter:
+                    yield UserView(validate_user(item))
+
+            return _wrap_generator()
+
+        # Convert to list - list() makes result explicitly iterable
+        result_list = list(result)
+        return [UserView(validate_user(item)) for item in result_list]
 
     @typechecked
     def count(
@@ -188,7 +204,7 @@ class UsersNamespace(DomainNamespace):
         organization_role: OrganizationRole,
         firstname: Optional[str] = None,
         lastname: Optional[str] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> IdResponse:
         """Add a user to your organization.
 
         Args:
@@ -199,7 +215,7 @@ class UsersNamespace(DomainNamespace):
             lastname: Last name of the new user.
 
         Returns:
-            A dictionary with the id of the new user.
+            An IdResponse with the id of the new user.
 
         Raises:
             ValueError: If email format is invalid or password is weak.
@@ -213,6 +229,7 @@ class UsersNamespace(DomainNamespace):
             ...     firstname="John",
             ...     lastname="Doe"
             ... )
+            >>> print(result.id)
 
             >>> # Create a regular user
             >>> result = kili.users.create(
@@ -220,6 +237,7 @@ class UsersNamespace(DomainNamespace):
             ...     password="userpassword123",
             ...     organization_role=OrganizationRole.USER
             ... )
+            >>> print(result.id)
         """
         # Validate email format
         if not self._is_valid_email(email):
@@ -231,7 +249,7 @@ class UsersNamespace(DomainNamespace):
                 "Password must be at least 8 characters long and contain at least one letter and one number"
             )
 
-        return UserClientMethods.create_user(
+        result = UserClientMethods.create_user(
             self.client,
             email=email,
             password=password,
@@ -239,6 +257,7 @@ class UsersNamespace(DomainNamespace):
             firstname=firstname,
             lastname=lastname,
         )
+        return IdResponse(result)
 
     @typechecked
     def update(
@@ -249,7 +268,7 @@ class UsersNamespace(DomainNamespace):
         organization_id: Optional[str] = None,
         organization_role: Optional[OrganizationRole] = None,
         activated: Optional[bool] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> IdResponse:
         """Update the properties of a user.
 
         Args:
@@ -262,7 +281,7 @@ class UsersNamespace(DomainNamespace):
             activated: In case we want to deactivate a user, but keep it.
 
         Returns:
-            A dict with the user id.
+            An IdResponse with the user id.
 
         Raises:
             ValueError: If email format is invalid.
@@ -274,24 +293,27 @@ class UsersNamespace(DomainNamespace):
             ...     firstname="UpdatedFirstName",
             ...     lastname="UpdatedLastName"
             ... )
+            >>> print(result.id)
 
             >>> # Change user role
             >>> result = kili.users.update(
             ...     email="user@example.com",
             ...     organization_role=OrganizationRole.ADMIN
             ... )
+            >>> print(result.id)
 
             >>> # Deactivate user
             >>> result = kili.users.update(
             ...     email="user@example.com",
             ...     activated=False
             ... )
+            >>> print(result.id)
         """
         # Validate email format
         if not self._is_valid_email(email):
             raise ValueError(f"Invalid email format: {email}")
 
-        return UserClientMethods.update_properties_in_user(
+        result = UserClientMethods.update_properties_in_user(
             self.client,
             email=email,
             firstname=firstname,
@@ -300,11 +322,12 @@ class UsersNamespace(DomainNamespace):
             organization_role=organization_role,
             activated=activated,
         )
+        return IdResponse(result)
 
     @typechecked
     def update_password(
         self, email: str, old_password: str, new_password_1: str, new_password_2: str
-    ) -> Dict[Literal["id"], str]:
+    ) -> IdResponse:
         """Allow to modify the password that you use to connect to Kili.
 
         This resolver only works for on-premise installations without Auth0.
@@ -317,7 +340,7 @@ class UsersNamespace(DomainNamespace):
             new_password_2: A confirmation field for the new password
 
         Returns:
-            A dict with the user id.
+            An IdResponse with the user id.
 
         Raises:
             ValueError: If validation fails for email, password confirmation,
@@ -333,18 +356,20 @@ class UsersNamespace(DomainNamespace):
             ...     new_password_1="newpassword456",
             ...     new_password_2="newpassword456"
             ... )
+            >>> print(result.id)
         """
         # Enhanced security validation
         self._validate_password_update_request(email, old_password, new_password_1, new_password_2)
 
         try:
-            return UserClientMethods.update_password(
+            result = UserClientMethods.update_password(
                 self.client,
                 email=email,
                 old_password=old_password,
                 new_password_1=new_password_1,
                 new_password_2=new_password_2,
             )
+            return IdResponse(result)
         except Exception as e:
             # Enhanced error handling for authentication failures
             if "authentication" in str(e).lower() or "password" in str(e).lower():

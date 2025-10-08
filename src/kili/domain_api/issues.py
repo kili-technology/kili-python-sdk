@@ -5,7 +5,7 @@ including creation, querying, status management, and lifecycle operations.
 """
 
 from itertools import repeat
-from typing import Any, Dict, Generator, List, Literal, Optional, Union, overload
+from typing import Generator, List, Literal, Optional, Union, overload
 
 from typeguard import typechecked
 
@@ -15,6 +15,8 @@ from kili.domain.label import LabelId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
+from kili.domain_v2.issue import IssueView, validate_issue
+from kili.domain_v2.project import IdListResponse, StatusResponse
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
     disable_tqdm_if_as_generator,
@@ -87,7 +89,7 @@ class IssuesNamespace(DomainNamespace):
         status: Optional[IssueStatus] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[IssueView, None, None]:
         ...
 
     @overload
@@ -110,7 +112,7 @@ class IssuesNamespace(DomainNamespace):
         status: Optional[IssueStatus] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[IssueView]:
         ...
 
     @typechecked
@@ -133,7 +135,7 @@ class IssuesNamespace(DomainNamespace):
         status: Optional[IssueStatus] = None,
         *,
         as_generator: bool = False,
-    ) -> Union[Generator[Dict, None, None], List[Dict]]:
+    ) -> Union[Generator[IssueView, None, None], List[IssueView]]:
         """Get a generator or a list of issues that match a set of criteria.
 
         !!! Info "Issues or Questions"
@@ -156,7 +158,7 @@ class IssuesNamespace(DomainNamespace):
             as_generator: If `True`, a generator on the issues is returned.
 
         Returns:
-            An iterable of issues objects represented as `dict`.
+            An iterable of IssueView objects.
 
         Raises:
             ValueError: If both `asset_id` and `asset_id_in` are provided.
@@ -199,9 +201,12 @@ class IssuesNamespace(DomainNamespace):
         issue_use_cases = IssueUseCases(self.gateway)
         issues_gen = issue_use_cases.list_issues(filters=filters, fields=fields, options=options)
 
+        # Wrap each issue dict with IssueView
+        issues_view_gen = (IssueView(validate_issue(issue)) for issue in issues_gen)
+
         if as_generator:
-            return issues_gen
-        return list(issues_gen)
+            return issues_view_gen
+        return list(issues_view_gen)
 
     @typechecked
     def count(
@@ -262,7 +267,7 @@ class IssuesNamespace(DomainNamespace):
         label_id_array: List[str],
         object_mid_array: Optional[List[Optional[str]]] = None,
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> IdListResponse:
         """Create issues for the specified labels.
 
         Args:
@@ -272,7 +277,8 @@ class IssuesNamespace(DomainNamespace):
             text_array: List of texts to associate to the issues.
 
         Returns:
-            A list of dictionaries with the `id` key of the created issues.
+            IdListResponse object containing the created issue IDs.
+            Access the IDs with `.ids` property.
 
         Raises:
             ValueError: If the input arrays have different sizes.
@@ -284,6 +290,7 @@ class IssuesNamespace(DomainNamespace):
             ...     label_id_array=["label_123", "label_456"],
             ...     text_array=["Issue with annotation", "Quality concern"]
             ... )
+            >>> print(result.ids)  # ['issue_1', 'issue_2']
 
             >>> # Create issues with object associations
             >>> result = kili.issues.create(
@@ -292,6 +299,7 @@ class IssuesNamespace(DomainNamespace):
             ...     object_mid_array=["obj_mid_789"],
             ...     text_array=["Object-specific issue"]
             ... )
+            >>> issue_ids = result.ids  # Access created issue IDs
         """
         assert_all_arrays_have_same_size([label_id_array, object_mid_array, text_array])
 
@@ -306,10 +314,11 @@ class IssuesNamespace(DomainNamespace):
 
         issue_use_cases = IssueUseCases(self.gateway)
         issue_ids = issue_use_cases.create_issues(project_id=ProjectId(project_id), issues=issues)
-        return [{"id": issue_id} for issue_id in issue_ids]
+        results = [{"id": issue_id} for issue_id in issue_ids]
+        return IdListResponse(results)
 
     @typechecked
-    def cancel(self, issue_ids: List[str]) -> List[Dict[str, Any]]:
+    def cancel(self, issue_ids: List[str]) -> List[StatusResponse]:
         """Cancel issues by setting their status to CANCELLED.
 
         This method provides a more intuitive interface than the generic `update_issue_status`
@@ -320,19 +329,24 @@ class IssuesNamespace(DomainNamespace):
             issue_ids: List of issue IDs to cancel.
 
         Returns:
-            List of dictionaries with the results of the status updates.
+            List of StatusResponse objects containing the results of the status updates.
+            Each response has `.id`, `.status`, `.success`, and `.error` properties.
 
         Raises:
             ValueError: If any issue ID is invalid or status transition is not allowed.
 
         Examples:
             >>> # Cancel single issue
-            >>> result = kili.issues.cancel(issue_ids=["issue_123"])
+            >>> results = kili.issues.cancel(issue_ids=["issue_123"])
+            >>> for result in results:
+            ...     print(f"Issue {result.id}: {'success' if result.success else result.error}")
 
             >>> # Cancel multiple issues
-            >>> result = kili.issues.cancel(
+            >>> results = kili.issues.cancel(
             ...     issue_ids=["issue_123", "issue_456", "issue_789"]
             ... )
+            >>> successful = [r.id for r in results if r.success]
+            >>> failed = [r.id for r in results if not r.success]
         """
         issue_use_cases = IssueUseCases(self.gateway)
         results = []
@@ -348,10 +362,10 @@ class IssuesNamespace(DomainNamespace):
                     {"id": issue_id, "status": "CANCELLED", "success": False, "error": str(e)}
                 )
 
-        return results
+        return [StatusResponse(r) for r in results]
 
     @typechecked
-    def open(self, issue_ids: List[str]) -> List[Dict[str, Any]]:
+    def open(self, issue_ids: List[str]) -> List[StatusResponse]:
         """Open issues by setting their status to OPEN.
 
         This method provides a more intuitive interface than the generic `update_issue_status`
@@ -362,19 +376,24 @@ class IssuesNamespace(DomainNamespace):
             issue_ids: List of issue IDs to open.
 
         Returns:
-            List of dictionaries with the results of the status updates.
+            List of StatusResponse objects containing the results of the status updates.
+            Each response has `.id`, `.status`, `.success`, and `.error` properties.
 
         Raises:
             ValueError: If any issue ID is invalid or status transition is not allowed.
 
         Examples:
             >>> # Open single issue
-            >>> result = kili.issues.open(issue_ids=["issue_123"])
+            >>> results = kili.issues.open(issue_ids=["issue_123"])
+            >>> for result in results:
+            ...     if result.success:
+            ...         print(f"Successfully opened issue {result.id}")
 
             >>> # Reopen multiple issues
-            >>> result = kili.issues.open(
+            >>> results = kili.issues.open(
             ...     issue_ids=["issue_123", "issue_456", "issue_789"]
             ... )
+            >>> print(f"Opened {sum(1 for r in results if r.success)} issues")
         """
         issue_use_cases = IssueUseCases(self.gateway)
         results = []
@@ -390,10 +409,10 @@ class IssuesNamespace(DomainNamespace):
                     {"id": issue_id, "status": "OPEN", "success": False, "error": str(e)}
                 )
 
-        return results
+        return [StatusResponse(r) for r in results]
 
     @typechecked
-    def solve(self, issue_ids: List[str]) -> List[Dict[str, Any]]:
+    def solve(self, issue_ids: List[str]) -> List[StatusResponse]:
         """Solve issues by setting their status to SOLVED.
 
         This method provides a more intuitive interface than the generic `update_issue_status`
@@ -404,19 +423,25 @@ class IssuesNamespace(DomainNamespace):
             issue_ids: List of issue IDs to solve.
 
         Returns:
-            List of dictionaries with the results of the status updates.
+            List of StatusResponse objects containing the results of the status updates.
+            Each response has `.id`, `.status`, `.success`, and `.error` properties.
 
         Raises:
             ValueError: If any issue ID is invalid or status transition is not allowed.
 
         Examples:
             >>> # Solve single issue
-            >>> result = kili.issues.solve(issue_ids=["issue_123"])
+            >>> results = kili.issues.solve(issue_ids=["issue_123"])
+            >>> if results[0].success:
+            ...     print(f"Issue {results[0].id} resolved successfully")
 
             >>> # Solve multiple issues
-            >>> result = kili.issues.solve(
+            >>> results = kili.issues.solve(
             ...     issue_ids=["issue_123", "issue_456", "issue_789"]
             ... )
+            >>> errors = [(r.id, r.error) for r in results if not r.success]
+            >>> if errors:
+            ...     print(f"Failed to solve: {errors}")
         """
         issue_use_cases = IssueUseCases(self.gateway)
         results = []
@@ -432,7 +457,7 @@ class IssuesNamespace(DomainNamespace):
                     {"id": issue_id, "status": "SOLVED", "success": False, "error": str(e)}
                 )
 
-        return results
+        return [StatusResponse(r) for r in results]
 
     def _validate_status_transition(
         self, issue_id: str, current_status: IssueStatus, new_status: IssueStatus

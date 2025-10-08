@@ -1,12 +1,13 @@
 """Integrations domain namespace for the Kili Python SDK."""
 
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from typing import Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
 from kili.domain.cloud_storage import DataIntegrationPlatform, DataIntegrationStatus
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
+from kili.domain_v2.integration import IntegrationView, validate_integration
 from kili.presentation.client.cloud_storage import CloudStorageClientMethods
 
 
@@ -81,7 +82,7 @@ class IntegrationsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[IntegrationView, None, None]:
         ...
 
     @overload
@@ -98,7 +99,7 @@ class IntegrationsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[IntegrationView]:
         ...
 
     @typechecked
@@ -115,7 +116,7 @@ class IntegrationsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[IntegrationView]:
         """Get a generator or a list of cloud storage integrations that match a set of criteria.
 
         This method provides a simplified interface for querying cloud storage integrations,
@@ -176,7 +177,7 @@ class IntegrationsNamespace(DomainNamespace):
             ... )
         """
         # Access the legacy method directly by calling it from the mixin class
-        return CloudStorageClientMethods.cloud_storage_integrations(
+        result = CloudStorageClientMethods.cloud_storage_integrations(
             self.client,
             cloud_storage_integration_id=integration_id,
             name=name,
@@ -189,6 +190,20 @@ class IntegrationsNamespace(DomainNamespace):
             disable_tqdm=disable_tqdm,
             as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
         )
+
+        # Wrap results with IntegrationView
+        if as_generator:
+            # Create intermediate generator - iter() makes result explicitly iterable
+            def _wrap_generator() -> Generator[IntegrationView, None, None]:
+                result_iter = iter(result)
+                for item in result_iter:
+                    yield IntegrationView(validate_integration(item))
+
+            return _wrap_generator()
+
+        # Convert to list - list() makes result explicitly iterable
+        result_list = list(result)
+        return [IntegrationView(validate_integration(item)) for item in result_list]
 
     @typechecked
     def count(
@@ -269,7 +284,7 @@ class IntegrationsNamespace(DomainNamespace):
         s3_region: Optional[str] = None,
         s3_secret_key: Optional[str] = None,
         s3_session_token: Optional[str] = None,
-    ) -> Dict:
+    ) -> IntegrationView:
         """Create a new cloud storage integration.
 
         This method creates a new integration with external cloud storage providers,
@@ -303,7 +318,7 @@ class IntegrationsNamespace(DomainNamespace):
             s3_session_token: S3 session token for temporary credentials.
 
         Returns:
-            A dictionary containing the created integration information.
+            An IntegrationView with the created integration information.
 
         Raises:
             ValueError: If required parameters for the specified platform are missing.
@@ -348,8 +363,11 @@ class IntegrationsNamespace(DomainNamespace):
             ...     allowed_paths=["/datasets", "/models"]
             ... )
 
-            >>> # Access the integration ID
-            >>> integration_id = result["id"]
+            >>> # Access integration properties
+            >>> integration_id = result.id
+            >>> integration_name = result.name
+            >>> integration_platform = result.platform
+            >>> integration_status = result.status
         """
         # Validate input parameters
         if not name or not name.strip():
@@ -370,7 +388,7 @@ class IntegrationsNamespace(DomainNamespace):
 
         # Access the legacy method directly by calling it from the mixin class
         try:
-            return CloudStorageClientMethods.create_cloud_storage_integration(
+            result = CloudStorageClientMethods.create_cloud_storage_integration(
                 self.client,
                 platform=platform,
                 name=name,
@@ -394,6 +412,7 @@ class IntegrationsNamespace(DomainNamespace):
                 s3_secret_key=s3_secret_key,
                 s3_session_token=s3_session_token,
             )
+            return IntegrationView(validate_integration(result))
         except Exception as e:
             # Enhanced error handling for creation failures
             if "credential" in str(e).lower() or "authentication" in str(e).lower():
@@ -443,7 +462,7 @@ class IntegrationsNamespace(DomainNamespace):
         s3_region: Optional[str] = None,
         s3_secret_key: Optional[str] = None,
         s3_session_token: Optional[str] = None,
-    ) -> Dict:
+    ) -> IntegrationView:
         """Update an existing cloud storage integration.
 
         This method allows you to modify the configuration of an existing cloud storage
@@ -476,7 +495,7 @@ class IntegrationsNamespace(DomainNamespace):
             s3_session_token: S3 session token for temporary credentials.
 
         Returns:
-            A dictionary containing the updated integration information.
+            An IntegrationView with the updated integration information.
 
         Raises:
             ValueError: If integration_id is invalid or empty.
@@ -510,6 +529,12 @@ class IntegrationsNamespace(DomainNamespace):
             ...     integration_id="integration_123",
             ...     azure_sas_token="sv=2020-08-04&ss=bfqt&srt=sco&sp=rwdlacupx&se=..."
             ... )
+
+            >>> # Access updated integration properties
+            >>> integration_id = result.id
+            >>> integration_name = result.name
+            >>> integration_platform = result.platform
+            >>> integration_status = result.status
         """
         # Validate input parameters
         if not integration_id or not integration_id.strip():
@@ -517,7 +542,7 @@ class IntegrationsNamespace(DomainNamespace):
 
         # Access the legacy method directly by calling it from the mixin class
         try:
-            return CloudStorageClientMethods.update_cloud_storage_integration(
+            result = CloudStorageClientMethods.update_cloud_storage_integration(
                 self.client,
                 cloud_storage_integration_id=integration_id,
                 allowed_paths=allowed_paths,
@@ -543,6 +568,7 @@ class IntegrationsNamespace(DomainNamespace):
                 s3_session_token=s3_session_token,
                 status=status,
             )
+            return IntegrationView(validate_integration(result))
         except Exception as e:
             # Enhanced error handling for update failures
             if "not found" in str(e).lower():

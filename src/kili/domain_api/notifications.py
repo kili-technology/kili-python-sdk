@@ -1,6 +1,6 @@
 """Notifications domain namespace for the Kili Python SDK."""
 
-from typing import Dict, Generator, List, Literal, Optional, Union, overload
+from typing import Generator, List, Literal, Optional, Union, overload
 
 from typeguard import typechecked
 
@@ -9,6 +9,7 @@ from kili.domain.notification import NotificationFilter, NotificationId
 from kili.domain.types import ListOrTuple
 from kili.domain.user import UserFilter, UserId
 from kili.domain_api.base import DomainNamespace
+from kili.domain_v2.notification import NotificationView, validate_notification
 from kili.entrypoints.mutations.notification.queries import (
     GQL_CREATE_NOTIFICATION,
     GQL_UPDATE_PROPERTIES_IN_NOTIFICATION,
@@ -79,7 +80,7 @@ class NotificationsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[NotificationView, None, None]:
         ...
 
     @overload
@@ -94,7 +95,7 @@ class NotificationsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[NotificationView]:
         ...
 
     @typechecked
@@ -109,7 +110,7 @@ class NotificationsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Union[List[Dict], Generator[Dict, None, None]]:
+    ) -> Union[List[NotificationView], Generator[NotificationView, None, None]]:
         """List notifications matching the specified criteria.
 
         Args:
@@ -167,8 +168,8 @@ class NotificationsNamespace(DomainNamespace):
         )
 
         if as_generator:
-            return notifications_gen
-        return list(notifications_gen)
+            return (NotificationView(validate_notification(item)) for item in notifications_gen)
+        return [NotificationView(validate_notification(item)) for item in notifications_gen]
 
     @typechecked
     def count(
@@ -214,7 +215,7 @@ class NotificationsNamespace(DomainNamespace):
         status: str,
         url: str,
         user_id: str,
-    ) -> Dict:
+    ) -> NotificationView:
         """Create a new notification.
 
         This method is currently only available for Kili administrators.
@@ -226,16 +227,22 @@ class NotificationsNamespace(DomainNamespace):
             user_id: The ID of the user who should receive the notification.
 
         Returns:
-            A result dictionary indicating if the creation was successful.
+            A NotificationView with the created notification information.
 
         Examples:
             >>> # Create an info notification
-            >>> result = kili.notifications.create(
+            >>> notification = kili.notifications.create(
             ...     message="Your project export is ready",
             ...     status="info",
             ...     url="/project/123/export",
             ...     user_id="user_456"
             ... )
+            >>> print(notification.id)
+            'notif_789'
+            >>> print(notification.message)
+            'Your project export is ready'
+            >>> print(notification.status)
+            'info'
         """
         # Access the mutations directly from the gateway's GraphQL client
         # This follows the pattern used in other domain namespaces
@@ -250,8 +257,8 @@ class NotificationsNamespace(DomainNamespace):
         }
 
         result = self.gateway.graphql_client.execute(GQL_CREATE_NOTIFICATION, variables)
-        # Format result following the pattern from base operations
-        return result.get("data", {})
+        notification_data = result["data"]["data"]
+        return NotificationView(validate_notification(notification_data))
 
     @typechecked
     def update(
@@ -262,7 +269,7 @@ class NotificationsNamespace(DomainNamespace):
         url: Optional[str] = None,
         progress: Optional[int] = None,
         task_id: Optional[str] = None,
-    ) -> Dict:
+    ) -> NotificationView:
         """Update an existing notification.
 
         This method is currently only available for Kili administrators.
@@ -276,24 +283,30 @@ class NotificationsNamespace(DomainNamespace):
             task_id: Associated task ID for the notification.
 
         Returns:
-            A result dictionary indicating if the update was successful.
+            A NotificationView with the updated notification information.
 
         Examples:
             >>> # Mark notification as seen
-            >>> result = kili.notifications.update(
+            >>> notification = kili.notifications.update(
             ...     notification_id="notif_123",
             ...     has_been_seen=True
             ... )
+            >>> print(notification.has_been_seen)
+            True
 
             >>> # Update notification status and URL
-            >>> result = kili.notifications.update(
+            >>> notification = kili.notifications.update(
             ...     notification_id="notif_123",
             ...     status="completed",
             ...     url="/project/123/results"
             ... )
+            >>> print(notification.status)
+            'completed'
+            >>> print(notification.url)
+            '/project/123/results'
 
             >>> # Update progress for a long-running task
-            >>> result = kili.notifications.update(
+            >>> notification = kili.notifications.update(
             ...     notification_id="notif_123",
             ...     progress=75
             ... )
@@ -310,5 +323,5 @@ class NotificationsNamespace(DomainNamespace):
         result = self.gateway.graphql_client.execute(
             GQL_UPDATE_PROPERTIES_IN_NOTIFICATION, variables
         )
-        # Format result following the pattern from base operations
-        return result.get("data", {})
+        notification_data = result["data"]["data"]
+        return NotificationView(validate_notification(notification_data))

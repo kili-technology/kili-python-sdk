@@ -1,11 +1,13 @@
 """Connections domain namespace for the Kili Python SDK."""
 
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from typing import Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
+from kili.domain_v2.connection import ConnectionView, validate_connection
+from kili.domain_v2.project import IdResponse
 from kili.presentation.client.cloud_storage import CloudStorageClientMethods
 
 
@@ -69,7 +71,7 @@ class ConnectionsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[ConnectionView, None, None]:
         ...
 
     @overload
@@ -90,7 +92,7 @@ class ConnectionsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[ConnectionView]:
         ...
 
     @typechecked
@@ -111,7 +113,7 @@ class ConnectionsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[ConnectionView]:
         """Get a generator or a list of cloud storage connections that match a set of criteria.
 
         This method provides a simplified interface for querying cloud storage connections,
@@ -169,7 +171,7 @@ class ConnectionsNamespace(DomainNamespace):
             ... )
         """
         # Access the legacy method directly by calling it from the mixin class
-        return CloudStorageClientMethods.cloud_storage_connections(
+        result = CloudStorageClientMethods.cloud_storage_connections(
             self.client,
             cloud_storage_connection_id=connection_id,
             cloud_storage_integration_id=cloud_storage_integration_id,
@@ -181,6 +183,20 @@ class ConnectionsNamespace(DomainNamespace):
             as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
         )
 
+        # Wrap results with ConnectionView
+        if as_generator:
+            # Create intermediate generator - iter() makes result explicitly iterable
+            def _wrap_generator() -> Generator[ConnectionView, None, None]:
+                result_iter = iter(result)
+                for item in result_iter:
+                    yield ConnectionView(validate_connection(item))
+
+            return _wrap_generator()
+
+        # Convert to list - list() makes result explicitly iterable
+        result_list = list(result)
+        return [ConnectionView(validate_connection(item)) for item in result_list]
+
     @typechecked
     def add(
         self,
@@ -190,7 +206,7 @@ class ConnectionsNamespace(DomainNamespace):
         prefix: Optional[str] = None,
         include: Optional[List[str]] = None,
         exclude: Optional[List[str]] = None,
-    ) -> Dict:
+    ) -> ConnectionView:
         """Connect a cloud storage integration to a project.
 
         This method creates a new connection between a cloud storage integration and a project,
@@ -211,7 +227,7 @@ class ConnectionsNamespace(DomainNamespace):
                 Files matching any of these patterns will be excluded.
 
         Returns:
-            A dictionary containing the ID of the created connection.
+            A ConnectionView object representing the newly created connection.
 
         Raises:
             ValueError: If project_id or cloud_storage_integration_id are invalid.
@@ -220,20 +236,20 @@ class ConnectionsNamespace(DomainNamespace):
 
         Examples:
             >>> # Basic connection setup
-            >>> result = kili.connections.add(
+            >>> connection = kili.connections.add(
             ...     project_id="project_123",
             ...     cloud_storage_integration_id="integration_456"
             ... )
 
             >>> # Connect with path prefix filter
-            >>> result = kili.connections.add(
+            >>> connection = kili.connections.add(
             ...     project_id="project_123",
             ...     cloud_storage_integration_id="integration_456",
             ...     prefix="datasets/training/"
             ... )
 
             >>> # Connect with include/exclude patterns
-            >>> result = kili.connections.add(
+            >>> connection = kili.connections.add(
             ...     project_id="project_123",
             ...     cloud_storage_integration_id="integration_456",
             ...     include=["*.jpg", "*.png", "*.jpeg"],
@@ -241,7 +257,7 @@ class ConnectionsNamespace(DomainNamespace):
             ... )
 
             >>> # Advanced filtering combination
-            >>> result = kili.connections.add(
+            >>> connection = kili.connections.add(
             ...     project_id="project_123",
             ...     cloud_storage_integration_id="integration_456",
             ...     prefix="data/images/",
@@ -249,8 +265,10 @@ class ConnectionsNamespace(DomainNamespace):
             ...     exclude=["*/thumbnails/*"]
             ... )
 
-            >>> # Access the connection ID
-            >>> connection_id = result["id"]
+            >>> # Access connection properties
+            >>> connection_id = connection.id
+            >>> num_assets = connection.number_of_assets
+            >>> project = connection.project_id
         """
         # Validate input parameters
         if not project_id or not project_id.strip():
@@ -261,7 +279,7 @@ class ConnectionsNamespace(DomainNamespace):
 
         # Access the legacy method directly by calling it from the mixin class
         try:
-            return CloudStorageClientMethods.add_cloud_storage_connection(
+            result = CloudStorageClientMethods.add_cloud_storage_connection(
                 self.client,
                 project_id=project_id,
                 cloud_storage_integration_id=cloud_storage_integration_id,
@@ -270,6 +288,7 @@ class ConnectionsNamespace(DomainNamespace):
                 include=include,
                 exclude=exclude,
             )
+            return ConnectionView(validate_connection(result))
         except Exception as e:
             # Enhance error messaging for connection failures
             if "not found" in str(e).lower():
@@ -293,7 +312,7 @@ class ConnectionsNamespace(DomainNamespace):
         connection_id: str,
         delete_extraneous_files: bool = False,
         dry_run: bool = False,
-    ) -> Dict:
+    ) -> IdResponse:
         """Synchronize a cloud storage connection.
 
         This method synchronizes the specified cloud storage connection by computing
@@ -308,8 +327,7 @@ class ConnectionsNamespace(DomainNamespace):
                 Useful for previewing what changes would be made before applying them.
 
         Returns:
-            A dictionary containing connection information after synchronization,
-            including the number of assets and project ID.
+            An IdResponse object containing the connection ID after synchronization.
 
         Raises:
             ValueError: If connection_id is invalid or empty.
@@ -333,9 +351,8 @@ class ConnectionsNamespace(DomainNamespace):
             ...     dry_run=False
             ... )
 
-            >>> # Check results
-            >>> assets_count = result["numberOfAssets"]
-            >>> project_id = result["projectId"]
+            >>> # Access the connection ID
+            >>> connection_id = result.id
         """
         # Validate input parameters
         if not connection_id or not connection_id.strip():
@@ -343,12 +360,13 @@ class ConnectionsNamespace(DomainNamespace):
 
         # Access the legacy method directly by calling it from the mixin class
         try:
-            return CloudStorageClientMethods.synchronize_cloud_storage_connection(
+            result = CloudStorageClientMethods.synchronize_cloud_storage_connection(
                 self.client,
                 cloud_storage_connection_id=connection_id,
                 delete_extraneous_files=delete_extraneous_files,
                 dry_run=dry_run,
             )
+            return IdResponse(result)
         except Exception as e:
             # Enhanced error handling for synchronization failures
             if "not found" in str(e).lower():

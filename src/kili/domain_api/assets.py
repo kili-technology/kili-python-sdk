@@ -9,7 +9,6 @@ from typing import (
     Dict,
     Generator,
     List,
-    Literal,
     Optional,
     Union,
     cast,
@@ -30,6 +29,15 @@ from kili.domain.asset.helpers import check_asset_workflow_arguments
 from kili.domain.project import ProjectId, ProjectStep, WorkflowVersion
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
+from kili.domain_v2.asset import (
+    AssetCreateResponse,
+    AssetView,
+    WorkflowStepResponse,
+    validate_asset,
+    validate_asset_create_response,
+    validate_workflow_step_response,
+)
+from kili.domain_v2.project import IdListResponse, IdResponse
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
 )
@@ -72,7 +80,7 @@ class WorkflowStepNamespace:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[WorkflowStepResponse]:
         """Send assets back to queue (invalidate current step).
 
         This method sends assets back to the queue, effectively invalidating their
@@ -84,19 +92,23 @@ class WorkflowStepNamespace:
             project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
-            A dict object with the project `id` and the `asset_ids` of assets moved to queue.
+            A response object with the project `id` and the `asset_ids` of assets moved to queue.
+            Returns None if no assets have changed status.
             An error message if mutation failed.
 
         Examples:
-            >>> kili.assets.workflow.step.invalidate(
+            >>> result = kili.assets.workflow.step.invalidate(
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"]
                 )
+            >>> print(result.id)  # Project ID
+            >>> print(result.asset_ids)  # List of invalidated asset IDs
         """
-        return self._assets_namespace.client.send_back_to_queue(
+        result = self._assets_namespace.client.send_back_to_queue(
             asset_ids=asset_ids,
             external_ids=external_ids,
             project_id=project_id,
         )
+        return WorkflowStepResponse(validate_workflow_step_response(result)) if result else None
 
     @typechecked
     def next(
@@ -104,7 +116,7 @@ class WorkflowStepNamespace:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[WorkflowStepResponse]:
         """Move assets to the next workflow step (typically review).
 
         This method moves assets to the next step in the workflow, typically
@@ -116,20 +128,23 @@ class WorkflowStepNamespace:
             project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
-            A dict object with the project `id` and the `asset_ids` of assets moved to review.
-            `None` if no assets have changed status (already had `TO_REVIEW` status for example).
+            A response object with the project `id` and the `asset_ids` of assets moved to review.
+            Returns None if no assets have changed status (already had `TO_REVIEW` status for example).
             An error message if mutation failed.
 
         Examples:
-            >>> kili.assets.workflow.step.next(
+            >>> result = kili.assets.workflow.step.next(
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"]
                 )
+            >>> print(result.id)  # Project ID
+            >>> print(result.asset_ids)  # List of assets moved to review
         """
-        return self._assets_namespace.client.add_to_review(
+        result = self._assets_namespace.client.add_to_review(
             asset_ids=asset_ids,
             external_ids=external_ids,
             project_id=project_id,
         )
+        return WorkflowStepResponse(validate_workflow_step_response(result)) if result else None
 
 
 class WorkflowNamespace:
@@ -159,7 +174,7 @@ class WorkflowNamespace:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> IdListResponse:
         """Assign a list of assets to a list of labelers.
 
         Args:
@@ -169,21 +184,23 @@ class WorkflowNamespace:
             to_be_labeled_by_array: The array of list of labelers to assign per labelers (list of userIds).
 
         Returns:
-            A list of dictionaries with the asset ids.
+            A response object containing the list of assigned asset IDs.
 
         Examples:
-            >>> kili.assets.workflow.assign(
+            >>> result = kili.assets.workflow.assign(
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                     to_be_labeled_by_array=[['cm3yja6kv0i698697gcil9rtk','cm3yja6kv0i000000gcil9rtk'],
                                             ['cm3yja6kv0i698697gcil9rtk']]
                 )
+            >>> print(result.ids)  # List of assigned asset IDs
         """
-        return self._assets_namespace.client.assign_assets_to_labelers(
+        result = self._assets_namespace.client.assign_assets_to_labelers(
             asset_ids=asset_ids,
             external_ids=external_ids,
             project_id=project_id,
             to_be_labeled_by_array=to_be_labeled_by_array,
         )
+        return IdListResponse(result)
 
 
 class ExternalIdsNamespace:
@@ -204,7 +221,7 @@ class ExternalIdsNamespace:
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> IdListResponse:
         """Update the external IDs of one or more assets.
 
         Args:
@@ -214,20 +231,22 @@ class ExternalIdsNamespace:
             project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
-            A list of dictionaries with the asset ids.
+            A response object containing the list of updated asset IDs.
 
         Examples:
-            >>> kili.assets.external_ids.update(
+            >>> result = kili.assets.external_ids.update(
                     new_external_ids=["asset1", "asset2"],
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
                 )
+            >>> print(result.ids)  # List of updated asset IDs
         """
-        return self._assets_namespace.client.change_asset_external_ids(
+        result = self._assets_namespace.client.change_asset_external_ids(
             new_external_ids=new_external_ids,
             asset_ids=asset_ids,
             external_ids=external_ids,
             project_id=project_id,
         )
+        return IdListResponse(result)
 
 
 class MetadataNamespace:
@@ -248,7 +267,7 @@ class MetadataNamespace:
         project_id: str,
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> IdListResponse:
         """Add metadata to assets without overriding existing metadata.
 
         Args:
@@ -259,10 +278,10 @@ class MetadataNamespace:
             external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
 
         Returns:
-            A list of dictionaries with the asset ids.
+            A response object containing the list of modified asset IDs.
 
         Examples:
-            >>> kili.assets.metadata.add(
+            >>> result = kili.assets.metadata.add(
                     json_metadata=[
                         {"key1": "value1", "key2": "value2"},
                         {"key3": "value3"}
@@ -270,13 +289,15 @@ class MetadataNamespace:
                     project_id="cm92to3cx012u7l0w6kij9qvx",
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"]
                 )
+            >>> print(result.ids)  # List of modified asset IDs
         """
-        return self._assets_namespace.client.add_metadata(
+        result = self._assets_namespace.client.add_metadata(
             json_metadata=json_metadata,
             project_id=project_id,
             asset_ids=asset_ids,
             external_ids=external_ids,
         )
+        return IdListResponse(result)
 
     @typechecked
     def set(
@@ -285,7 +306,7 @@ class MetadataNamespace:
         project_id: str,
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> IdListResponse:
         """Set metadata on assets, replacing any existing metadata.
 
         Args:
@@ -296,10 +317,10 @@ class MetadataNamespace:
             external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
 
         Returns:
-            A list of dictionaries with the asset ids.
+            A response object containing the list of modified asset IDs.
 
         Examples:
-            >>> kili.assets.metadata.set(
+            >>> result = kili.assets.metadata.set(
                     json_metadata=[
                         {"key1": "value1", "key2": "value2"},
                         {"key3": "value3"}
@@ -307,13 +328,15 @@ class MetadataNamespace:
                     project_id="cm92to3cx012u7l0w6kij9qvx",
                     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"]
                 )
+            >>> print(result.ids)  # List of modified asset IDs
         """
-        return self._assets_namespace.client.set_metadata(
+        result = self._assets_namespace.client.set_metadata(
             json_metadata=json_metadata,
             project_id=project_id,
             asset_ids=asset_ids,
             external_ids=external_ids,
         )
+        return IdListResponse(result)
 
 
 class AssetsNamespace(DomainNamespace):
@@ -551,7 +574,7 @@ class AssetsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         as_generator: bool = True,
         **kwargs,
-    ) -> Union[Generator[Dict, None, None], List[Dict], "pd.DataFrame"]:
+    ) -> Union[Generator[AssetView, None, None], List[AssetView], "pd.DataFrame"]:
         """List assets from a project.
 
         Args:
@@ -645,7 +668,7 @@ class AssetsNamespace(DomainNamespace):
         )
 
         if as_generator:
-            return assets_gen
+            return (AssetView(validate_asset(item)) for item in assets_gen)
 
         assets_list = list(assets_gen)
 
@@ -659,7 +682,7 @@ class AssetsNamespace(DomainNamespace):
                     "pandas not available, returning list instead", ImportWarning, stacklevel=2
                 )
 
-        return assets_list
+        return [AssetView(validate_asset(item)) for item in assets_list]
 
     @typechecked
     def count(
@@ -706,7 +729,7 @@ class AssetsNamespace(DomainNamespace):
         from_csv: Optional[str] = None,
         csv_separator: str = ",",
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> AssetCreateResponse:
         """Create assets in a project.
 
         Args:
@@ -724,7 +747,7 @@ class AssetsNamespace(DomainNamespace):
             **kwargs: Additional arguments
 
         Returns:
-            A dictionary with project id and list of created asset ids
+            A response object with project id and list of created asset ids.
 
         Examples:
             >>> # Create image assets
@@ -732,6 +755,8 @@ class AssetsNamespace(DomainNamespace):
             ...     project_id="my_project",
             ...     content_array=["https://example.com/image.png"]
             ... )
+            >>> print(result.id)  # Project ID
+            >>> print(result.asset_ids)  # List of created asset IDs
 
             >>> # Create assets with metadata
             >>> result = kili.assets.create(
@@ -741,7 +766,7 @@ class AssetsNamespace(DomainNamespace):
             ... )
         """
         # Call the legacy method directly through the client
-        return self.client.append_many_to_dataset(
+        result = self.client.append_many_to_dataset(
             project_id=project_id,
             content_array=content_array,
             multi_layer_content_array=multi_layer_content_array,
@@ -755,6 +780,7 @@ class AssetsNamespace(DomainNamespace):
             csv_separator=csv_separator,
             **kwargs,
         )
+        return AssetCreateResponse(validate_asset_create_response(cast(Dict[str, Any], result)))
 
     @typechecked
     def delete(
@@ -762,7 +788,7 @@ class AssetsNamespace(DomainNamespace):
         asset_ids: Optional[List[str]] = None,
         external_ids: Optional[List[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[Dict[Literal["id"], str]]:
+    ) -> Optional[IdResponse]:
         """Delete assets from a project.
 
         Args:
@@ -771,13 +797,14 @@ class AssetsNamespace(DomainNamespace):
             project_id: The project ID. Only required if `external_ids` argument is provided
 
         Returns:
-            A dict object with the project `id`
+            A response object with the project `id`, or None if no deletion occurred.
 
         Examples:
             >>> # Delete assets by internal IDs
             >>> result = kili.assets.delete(
             ...     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"]
             ... )
+            >>> print(result.id)  # Project ID
 
             >>> # Delete assets by external IDs
             >>> result = kili.assets.delete(
@@ -786,11 +813,12 @@ class AssetsNamespace(DomainNamespace):
             ... )
         """
         # Call the legacy method directly through the client
-        return self.client.delete_many_from_dataset(
+        result = self.client.delete_many_from_dataset(
             asset_ids=asset_ids,
             external_ids=external_ids,
             project_id=project_id,
         )
+        return IdResponse(result) if result else None
 
     @typechecked
     def update(
@@ -807,7 +835,7 @@ class AssetsNamespace(DomainNamespace):
         is_used_for_consensus_array: Optional[List[bool]] = None,
         is_honeypot_array: Optional[List[bool]] = None,
         **kwargs,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> IdListResponse:
         """Update the properties of one or more assets.
 
         Args:
@@ -825,7 +853,7 @@ class AssetsNamespace(DomainNamespace):
             **kwargs: Additional update parameters
 
         Returns:
-            A list of dictionaries with the asset ids
+            A response object containing the list of updated asset IDs.
 
         Examples:
             >>> # Update asset priorities and metadata
@@ -834,6 +862,7 @@ class AssetsNamespace(DomainNamespace):
             ...     priorities=[1],
             ...     json_metadatas=[{"updated": True}]
             ... )
+            >>> print(result.ids)  # List of updated asset IDs
 
             >>> # Update honeypot settings
             >>> result = kili.assets.update(
@@ -843,7 +872,7 @@ class AssetsNamespace(DomainNamespace):
             ... )
         """
         # Call the legacy method directly through the client
-        return self.client.update_properties_in_assets(
+        result = self.client.update_properties_in_assets(
             asset_ids=asset_ids,
             external_ids=external_ids,
             project_id=project_id,
@@ -857,3 +886,4 @@ class AssetsNamespace(DomainNamespace):
             is_honeypot_array=is_honeypot_array,
             **kwargs,
         )
+        return IdListResponse(result)

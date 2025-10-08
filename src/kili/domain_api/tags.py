@@ -1,6 +1,6 @@
 """Tags domain namespace for the Kili Python SDK."""
 
-from typing import Dict, List, Literal, Optional
+from typing import List, Optional, cast
 
 from typeguard import typechecked
 
@@ -8,6 +8,8 @@ from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
+from kili.domain_v2.project import IdListResponse, IdResponse
+from kili.domain_v2.tag import TagView, validate_tag
 from kili.use_cases.tag import TagUseCases
 
 
@@ -69,7 +71,7 @@ class TagsNamespace(DomainNamespace):
         self,
         project_id: Optional[str] = None,
         fields: Optional[ListOrTuple[str]] = None,
-    ) -> List[Dict]:
+    ) -> List[TagView]:
         """List tags from the organization or a specific project.
 
         Args:
@@ -95,18 +97,19 @@ class TagsNamespace(DomainNamespace):
             fields = ("id", "organizationId", "label", "checkedForProjects")
 
         tag_use_cases = TagUseCases(self.gateway)
-        return (
+        result = (
             tag_use_cases.get_tags_of_organization(fields=fields)
             if project_id is None
             else tag_use_cases.get_tags_of_project(project_id=ProjectId(project_id), fields=fields)
         )
+        return [TagView(validate_tag(item)) for item in result]
 
     @typechecked
     def create(
         self,
         name: str,
         color: Optional[str] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> IdResponse:
         """Create a new tag in the organization.
 
         This operation is organization-wide.
@@ -117,17 +120,19 @@ class TagsNamespace(DomainNamespace):
             color: Color of the tag to create. If not provided, a default color will be used.
 
         Returns:
-            Dictionary with the ID of the created tag.
+            An IdResponse with the ID of the created tag.
 
         Examples:
             >>> # Create a simple tag
             >>> result = kili.tags.create(name="reviewed")
+            >>> print(result.id)
 
             >>> # Create a tag with a specific color
             >>> result = kili.tags.create(name="important", color="#ff0000")
         """
         tag_use_cases = TagUseCases(self.gateway)
-        return tag_use_cases.create_tag(name, color)
+        result = tag_use_cases.create_tag(name, color)
+        return IdResponse(result)
 
     @typechecked
     def update(
@@ -135,7 +140,7 @@ class TagsNamespace(DomainNamespace):
         new_name: str,
         tag_name: Optional[str] = None,
         tag_id: Optional[str] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> IdResponse:
         """Update an existing tag.
 
         This operation is organization-wide.
@@ -147,7 +152,7 @@ class TagsNamespace(DomainNamespace):
             new_name: New name for the tag.
 
         Returns:
-            Dictionary with the ID of the updated tag.
+            An IdResponse with the ID of the updated tag.
 
         Raises:
             ValueError: If neither tag_name nor tag_id is provided.
@@ -155,6 +160,7 @@ class TagsNamespace(DomainNamespace):
         Examples:
             >>> # Update tag by name
             >>> result = kili.tags.update(new_name="new_name", tag_name="old_name")
+            >>> print(result.id)
 
             >>> # Update tag by ID (more precise)
             >>> result = kili.tags.update(new_name="new_name", tag_id="tag_id_123")
@@ -165,17 +171,18 @@ class TagsNamespace(DomainNamespace):
         tag_use_cases = TagUseCases(self.gateway)
         if tag_id is None:
             # tag_name is guaranteed to be not None here due to validation above
-            resolved_tag_id = tag_use_cases.get_tag_ids_from_labels(labels=[tag_name])[0]  # type: ignore[list-item]
+            resolved_tag_id = tag_use_cases.get_tag_ids_from_labels(labels=[cast(str, tag_name)])[0]
         else:
             resolved_tag_id = TagId(tag_id)
 
-        return {
+        result = {
             "id": str(
                 tag_use_cases.update_tag(
                     tag_id=resolved_tag_id, new_tag_name=new_name
                 ).updated_tag_id
             )
         }
+        return IdResponse(result)
 
     @typechecked
     def delete(
@@ -212,7 +219,7 @@ class TagsNamespace(DomainNamespace):
         tag_use_cases = TagUseCases(self.gateway)
         if tag_id is None:
             # tag_name is guaranteed to be not None here due to validation above
-            resolved_tag_id = tag_use_cases.get_tag_ids_from_labels(labels=[tag_name])[0]  # type: ignore[list-item]
+            resolved_tag_id = tag_use_cases.get_tag_ids_from_labels(labels=[cast(str, tag_name)])[0]
         else:
             resolved_tag_id = TagId(tag_id)
 
@@ -225,7 +232,7 @@ class TagsNamespace(DomainNamespace):
         tags: Optional[ListOrTuple[str]] = None,
         tag_ids: Optional[ListOrTuple[str]] = None,
         disable_tqdm: Optional[bool] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> IdListResponse:
         """Assign tags to a project.
 
         This method replaces the legacy tag_project method with a more intuitive name.
@@ -238,7 +245,7 @@ class TagsNamespace(DomainNamespace):
             disable_tqdm: Whether to disable the progress bar.
 
         Returns:
-            List of dictionaries with the assigned tag IDs.
+            An IdListResponse with the assigned tag IDs.
 
         Raises:
             ValueError: If neither tags nor tag_ids is provided.
@@ -249,6 +256,7 @@ class TagsNamespace(DomainNamespace):
             ...     project_id="my_project",
             ...     tags=["important", "reviewed"]
             ... )
+            >>> print(result.ids)
 
             >>> # Assign tags by ID
             >>> result = kili.tags.assign(
@@ -263,7 +271,9 @@ class TagsNamespace(DomainNamespace):
 
         if tag_ids is None:
             # tags is guaranteed to be not None here due to validation above
-            resolved_tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)  # type: ignore[arg-type]
+            resolved_tag_ids = tag_use_cases.get_tag_ids_from_labels(
+                labels=cast(ListOrTuple[str], tags)
+            )
         else:
             resolved_tag_ids = [TagId(tag_id) for tag_id in tag_ids]
 
@@ -273,7 +283,8 @@ class TagsNamespace(DomainNamespace):
             disable_tqdm=disable_tqdm,
         )
 
-        return [{"id": str(tag_id)} for tag_id in assigned_tag_ids]
+        results = [{"id": str(tag_id)} for tag_id in assigned_tag_ids]
+        return IdListResponse(results)
 
     @typechecked
     def unassign(
@@ -283,7 +294,7 @@ class TagsNamespace(DomainNamespace):
         tag_ids: Optional[ListOrTuple[str]] = None,
         all: Optional[bool] = None,  # pylint: disable=redefined-builtin
         disable_tqdm: Optional[bool] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> IdListResponse:
         """Remove tags from a project.
 
         This method replaces the legacy untag_project method with a more intuitive name.
@@ -296,7 +307,7 @@ class TagsNamespace(DomainNamespace):
             disable_tqdm: Whether to disable the progress bar.
 
         Returns:
-            List of dictionaries with the unassigned tag IDs.
+            An IdListResponse with the unassigned tag IDs.
 
         Raises:
             ValueError: If exactly one of tags, tag_ids, or all must be provided.
@@ -307,6 +318,7 @@ class TagsNamespace(DomainNamespace):
             ...     project_id="my_project",
             ...     tags=["old_tag", "obsolete"]
             ... )
+            >>> print(result.ids)
 
             >>> # Remove specific tags by ID
             >>> result = kili.tags.unassign(
@@ -346,4 +358,5 @@ class TagsNamespace(DomainNamespace):
             disable_tqdm=disable_tqdm,
         )
 
-        return [{"id": str(tag_id)} for tag_id in unassigned_tag_ids]
+        results = [{"id": str(tag_id)} for tag_id in unassigned_tag_ids]
+        return IdListResponse(results)

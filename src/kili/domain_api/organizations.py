@@ -1,12 +1,18 @@
 """Organizations domain namespace for the Kili Python SDK."""
 
 from datetime import datetime
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from typing import Generator, Iterable, List, Literal, Optional, overload
 
 from typeguard import typechecked
 
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
+from kili.domain_v2.organization import (
+    OrganizationMetricsView,
+    OrganizationView,
+    validate_organization,
+    validate_organization_metrics,
+)
 from kili.presentation.client.organization import OrganizationClientMethods
 
 
@@ -61,7 +67,7 @@ class OrganizationsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[OrganizationView, None, None]:
         ...
 
     @overload
@@ -75,7 +81,7 @@ class OrganizationsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[OrganizationView]:
         ...
 
     @typechecked
@@ -89,7 +95,7 @@ class OrganizationsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[OrganizationView]:
         """Get a generator or a list of organizations that match a set of criteria.
 
         Args:
@@ -128,7 +134,7 @@ class OrganizationsNamespace(DomainNamespace):
             ... )
         """
         # Access the legacy method directly by calling it from the mixin class
-        return OrganizationClientMethods.organizations(
+        result = OrganizationClientMethods.organizations(
             self.client,
             email=email,
             organization_id=organization_id,
@@ -138,6 +144,20 @@ class OrganizationsNamespace(DomainNamespace):
             disable_tqdm=disable_tqdm,
             as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
         )
+
+        # Wrap results with OrganizationView
+        if as_generator:
+            # Create intermediate generator - iter() makes result explicitly iterable
+            def _wrap_generator() -> Generator[OrganizationView, None, None]:
+                result_iter = iter(result)
+                for item in result_iter:
+                    yield OrganizationView(validate_organization(item))
+
+            return _wrap_generator()
+
+        # Convert to list - list() makes result explicitly iterable
+        result_list = list(result)
+        return [OrganizationView(validate_organization(item)) for item in result_list]
 
     @typechecked
     def count(
@@ -182,7 +202,7 @@ class OrganizationsNamespace(DomainNamespace):
             "numberOfHours",
             "numberOfLabeledAssets",
         ),
-    ) -> Dict:
+    ) -> OrganizationMetricsView:
         """Get organization metrics and analytics.
 
         This method provides access to organization-level analytics including
@@ -198,7 +218,7 @@ class OrganizationsNamespace(DomainNamespace):
                 - numberOfLabeledAssets: Total number of labeled assets
 
         Returns:
-            A dictionary containing the requested metrics of the organization.
+            A view object containing the requested metrics of the organization.
 
         Examples:
             >>> # Get default metrics for organization
@@ -219,14 +239,16 @@ class OrganizationsNamespace(DomainNamespace):
             ... )
 
             >>> # Access specific metric values
-            >>> annotations_count = metrics["numberOfAnnotations"]
-            >>> hours_spent = metrics["numberOfHours"]
+            >>> annotations_count = metrics.number_of_annotations
+            >>> hours_spent = metrics.number_of_hours
+            >>> labeled_assets = metrics.number_of_labeled_assets
         """
         # Access the legacy method directly by calling it from the mixin class
-        return OrganizationClientMethods.organization_metrics(
+        result = OrganizationClientMethods.organization_metrics(
             self.client,
             organization_id=organization_id,
             start_date=start_date,
             end_date=end_date,
             fields=fields,
         )
+        return OrganizationMetricsView(validate_organization_metrics(result))

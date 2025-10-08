@@ -58,7 +58,9 @@ class TestConnectionsNamespace:
             disable_tqdm=None,
             as_generator=False,
         )
-        assert result == [{"id": "conn_123", "projectId": "proj_456"}]
+        assert len(result) == 1
+        assert result[0].id == "conn_123"
+        assert result[0].project_id == "proj_456"
 
     def test_list_parameter_validation(self, connections_namespace):
         """Test that list validates required parameters."""
@@ -92,7 +94,8 @@ class TestConnectionsNamespace:
             include=None,
             exclude=None,
         )
-        assert result == {"id": "conn_789"}
+        # Check the result is a ConnectionView with correct ID
+        assert result.id == "conn_789"
 
     def test_add_input_validation(self, connections_namespace):
         """Test that add() validates input parameters."""
@@ -132,7 +135,7 @@ class TestConnectionsNamespace:
     )
     def test_sync_calls_legacy_method(self, mock_legacy_method, connections_namespace):
         """Test that sync() calls the legacy synchronize_cloud_storage_connection method."""
-        mock_legacy_method.return_value = {"numberOfAssets": 42, "projectId": "proj_123"}
+        mock_legacy_method.return_value = {"id": "conn_789"}
 
         result = connections_namespace.sync(connection_id="conn_789", dry_run=True)
 
@@ -142,7 +145,8 @@ class TestConnectionsNamespace:
             delete_extraneous_files=False,
             dry_run=True,
         )
-        assert result == {"numberOfAssets": 42, "projectId": "proj_123"}
+        # Check the result is an IdResponse with correct ID
+        assert result.id == "conn_789"
 
     def test_sync_input_validation(self, connections_namespace):
         """Test that sync() validates input parameters."""

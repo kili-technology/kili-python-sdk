@@ -123,7 +123,7 @@ class TestAssetsNamespaceCoreOperations:
             assert hasattr(result, "__iter__")
             assets_list = list(result)
             assert len(assets_list) == 2
-            assert assets_list[0]["id"] == "asset1"
+            assert assets_list[0].id == "asset1"
 
             mock_asset_use_cases.assert_called_once_with(assets_namespace.gateway)
             mock_project_use_cases.assert_called_once_with(assets_namespace.gateway)
@@ -151,7 +151,7 @@ class TestAssetsNamespaceCoreOperations:
 
             assert isinstance(result, list)
             assert len(result) == 2
-            assert result[0]["id"] == "asset1"
+            assert result[0].id == "asset1"
 
     def test_count_assets(self, assets_namespace):
         """Test count method."""
@@ -283,7 +283,8 @@ class TestAssetsNamespaceCoreOperations:
             external_id_array=["ext1"],
         )
 
-        assert result == expected_result
+        assert result.id == "project_123"
+        assert result.asset_ids == ["asset1", "asset2"]
         mock_client.append_many_to_dataset.assert_called_once_with(
             project_id="project_123",
             content_array=["https://example.com/image.png"],
@@ -305,7 +306,7 @@ class TestAssetsNamespaceCoreOperations:
 
         result = assets_namespace.delete(asset_ids=["asset1", "asset2"])
 
-        assert result == expected_result
+        assert result.id == "project_123"
         mock_client.delete_many_from_dataset.assert_called_once_with(
             asset_ids=["asset1", "asset2"], external_ids=None, project_id=None
         )
@@ -321,7 +322,7 @@ class TestAssetsNamespaceCoreOperations:
             json_metadatas=[{"key": "value1"}, {"key": "value2"}],
         )
 
-        assert result == expected_result
+        assert result.ids == ["asset1", "asset2"]
         mock_client.update_properties_in_assets.assert_called_once_with(
             asset_ids=["asset1", "asset2"],
             external_ids=None,
@@ -383,7 +384,7 @@ class TestWorkflowNamespace:
             asset_ids=["asset1", "asset2"], to_be_labeled_by_array=[["user1"], ["user2"]]
         )
 
-        assert result == expected_result
+        assert result.ids == ["asset1", "asset2"]
         mock_client.assign_assets_to_labelers.assert_called_once_with(
             asset_ids=["asset1", "asset2"],
             external_ids=None,
@@ -430,7 +431,8 @@ class TestWorkflowStepNamespace:
 
         result = workflow_step_namespace.invalidate(asset_ids=["asset1", "asset2"])
 
-        assert result == expected_result
+        assert result.id == "project_123"
+        assert result.asset_ids == ["asset1", "asset2"]
         mock_client.send_back_to_queue.assert_called_once_with(
             asset_ids=["asset1", "asset2"], external_ids=None, project_id=None
         )
@@ -442,7 +444,8 @@ class TestWorkflowStepNamespace:
 
         result = workflow_step_namespace.next(asset_ids=["asset1", "asset2"])
 
-        assert result == expected_result
+        assert result.id == "project_123"
+        assert result.asset_ids == ["asset1", "asset2"]
         mock_client.add_to_review.assert_called_once_with(
             asset_ids=["asset1", "asset2"], external_ids=None, project_id=None
         )
@@ -487,7 +490,7 @@ class TestExternalIdsNamespace:
             new_external_ids=["new_ext1", "new_ext2"], asset_ids=["asset1", "asset2"]
         )
 
-        assert result == expected_result
+        assert result.ids == ["asset1", "asset2"]
         mock_client.change_asset_external_ids.assert_called_once_with(
             new_external_ids=["new_ext1", "new_ext2"],
             asset_ids=["asset1", "asset2"],
@@ -538,7 +541,7 @@ class TestMetadataNamespace:
             asset_ids=["asset1", "asset2"],
         )
 
-        assert result == expected_result
+        assert result.ids == ["asset1", "asset2"]
         mock_client.add_metadata.assert_called_once_with(
             json_metadata=[{"key1": "value1"}, {"key2": "value2"}],
             project_id="project_123",
@@ -557,7 +560,7 @@ class TestMetadataNamespace:
             asset_ids=["asset1", "asset2"],
         )
 
-        assert result == expected_result
+        assert result.ids == ["asset1", "asset2"]
         mock_client.set_metadata.assert_called_once_with(
             json_metadata=[{"key1": "value1"}, {"key2": "value2"}],
             project_id="project_123",

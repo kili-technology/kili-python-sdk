@@ -2,7 +2,7 @@
 
 import json
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from typeguard import typechecked
 from typing_extensions import LiteralString
@@ -15,6 +15,7 @@ from kili.core.graphql.operations.plugin.queries import (
 )
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
+from kili.domain_v2.plugin import PluginView, validate_plugin
 from kili.services.plugins import (
     PluginUploader,
     WebhookUploader,
@@ -230,7 +231,7 @@ class PluginsNamespace(DomainNamespace):
     def list(
         self,
         fields: ListOrTuple[str] = ("name", "projectIds", "id", "createdAt", "updatedAt"),
-    ) -> List[Dict]:
+    ) -> List[PluginView]:
         """List all plugins from your organization.
 
         Args:
@@ -254,9 +255,10 @@ class PluginsNamespace(DomainNamespace):
             ...     'organizationId', 'archived'
             ... ])
         """
-        return PluginQuery(self.gateway.graphql_client, self.gateway.http_client).list(
+        result = PluginQuery(self.gateway.graphql_client, self.gateway.http_client).list(
             fields=fields
         )
+        return [PluginView(validate_plugin(item)) for item in result]
 
     @typechecked
     def status(

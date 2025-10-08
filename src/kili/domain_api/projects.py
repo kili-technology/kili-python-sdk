@@ -7,7 +7,6 @@ including lifecycle management, user management, workflow configuration, and ver
 from functools import cached_property
 from typing import (
     TYPE_CHECKING,
-    Any,
     Dict,
     Generator,
     Iterable,
@@ -23,6 +22,17 @@ from kili.core.enums import DemoProjectType
 from kili.domain.project import ComplianceTag, InputType, WorkflowStepCreate, WorkflowStepUpdate
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
+from kili.domain_v2.project import (
+    IdResponse,
+    ProjectRoleView,
+    ProjectVersionView,
+    ProjectView,
+    WorkflowStepView,
+    validate_project,
+    validate_project_role,
+    validate_project_version,
+    validate_workflow_step,
+)
 
 if TYPE_CHECKING:
     from kili.client import Kili as KiliLegacy
@@ -40,7 +50,7 @@ class AnonymizationNamespace:
         self._parent = parent
 
     @typechecked
-    def update(self, project_id: str, should_anonymize: bool = True) -> Dict[Literal["id"], str]:
+    def update(self, project_id: str, should_anonymize: bool = True) -> IdResponse:
         """Anonymize the project for the labelers and reviewers.
 
         Args:
@@ -48,16 +58,16 @@ class AnonymizationNamespace:
             should_anonymize: The value to be applied. Defaults to `True`.
 
         Returns:
-            A dict with the id of the project which indicates if the mutation was successful,
-                or an error message.
+            An IdResponse with the project id indicating if the mutation was successful.
 
         Examples:
             >>> projects.anonymization.update(project_id=project_id)
             >>> projects.anonymization.update(project_id=project_id, should_anonymize=False)
         """
-        return self._parent.client.update_project_anonymization(
+        result = self._parent.client.update_project_anonymization(
             project_id=project_id, should_anonymize=should_anonymize
         )
+        return IdResponse(result)
 
 
 class UsersNamespace:
@@ -77,7 +87,7 @@ class UsersNamespace:
         project_id: str,
         email: str,
         role: Literal["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"] = "LABELER",
-    ) -> Dict:
+    ) -> ProjectRoleView:
         """Add a user to a project.
 
         If the user does not exist in your organization, he/she is invited and added
@@ -91,29 +101,31 @@ class UsersNamespace:
             role: The role of the user.
 
         Returns:
-            A dictionary with the project user information.
+            A ProjectRoleView with the project user information.
 
         Examples:
             >>> projects.users.add(project_id=project_id, email='john@doe.com')
         """
-        return self._parent.client.append_to_roles(
+        result = self._parent.client.append_to_roles(
             project_id=project_id, user_email=email, role=role
         )
+        return ProjectRoleView(validate_project_role(result))
 
     @typechecked
-    def remove(self, role_id: str) -> Dict[Literal["id"], str]:
+    def remove(self, role_id: str) -> IdResponse:
         """Remove users by their role_id.
 
         Args:
             role_id: Identifier of the project user (not the ID of the user)
 
         Returns:
-            A dict with the project id.
+            An IdResponse with the project id.
         """
-        return self._parent.client.delete_from_roles(role_id=role_id)
+        result = self._parent.client.delete_from_roles(role_id=role_id)
+        return IdResponse(result)
 
     @typechecked
-    def update(self, role_id: str, project_id: str, user_id: str, role: str) -> Dict:
+    def update(self, role_id: str, project_id: str, user_id: str, role: str) -> ProjectRoleView:
         """Update properties of a role.
 
         To be able to change someone's role, you must be either of:
@@ -129,11 +141,12 @@ class UsersNamespace:
                 Possible choices are: `ADMIN`, `TEAM_MANAGER`, `REVIEWER`, `LABELER`
 
         Returns:
-            A dictionary with the project user information.
+            A ProjectRoleView with the project user information.
         """
-        return self._parent.client.update_properties_in_role(
+        result = self._parent.client.update_properties_in_role(
             role_id=role_id, project_id=project_id, user_id=user_id, role=role
         )
+        return ProjectRoleView(validate_project_role(result))
 
     @overload
     def list(
@@ -159,7 +172,7 @@ class UsersNamespace:
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[ProjectRoleView, None, None]:
         ...
 
     @overload
@@ -186,7 +199,7 @@ class UsersNamespace:
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[ProjectRoleView]:
         ...
 
     @typechecked
@@ -213,7 +226,7 @@ class UsersNamespace:
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[ProjectRoleView]:
         """Get project users from projects that match a set of criteria.
 
         Args:
@@ -257,18 +270,20 @@ class UsersNamespace:
             as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
         )
 
-        # Extract roles from projects
+        # Extract roles from projects and wrap with ProjectRoleView
         if as_generator:
 
             def users_generator():
                 for project in projects:
-                    yield from project.get("roles", [])
+                    for role in project.get("roles", []):
+                        yield ProjectRoleView(validate_project_role(role))
 
             return users_generator()
 
         users = []
         for project in projects:
-            users.extend(project.get("roles", []))
+            for role in project.get("roles", []):
+                users.append(ProjectRoleView(validate_project_role(role)))
         return users
 
     @typechecked
@@ -331,7 +346,7 @@ class WorkflowStepsNamespace:
         self._parent = parent
 
     @typechecked
-    def list(self, project_id: str) -> List[Dict[str, Any]]:
+    def list(self, project_id: str) -> List[WorkflowStepView]:
         """Get steps in a project workflow.
 
         Args:
@@ -340,7 +355,8 @@ class WorkflowStepsNamespace:
         Returns:
             A list with the steps of the project workflow.
         """
-        return self._parent._parent.client.get_steps(project_id=project_id)  # pylint: disable=protected-access
+        steps = self._parent._parent.client.get_steps(project_id=project_id)  # pylint: disable=protected-access
+        return [WorkflowStepView(validate_workflow_step(step)) for step in steps]
 
 
 class WorkflowNamespace:
@@ -371,7 +387,7 @@ class WorkflowNamespace:
         create_steps: Optional[List[WorkflowStepCreate]] = None,
         update_steps: Optional[List[WorkflowStepUpdate]] = None,
         delete_steps: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
+    ) -> IdResponse:
         """Update properties of a project workflow.
 
         Args:
@@ -384,16 +400,16 @@ class WorkflowNamespace:
             delete_steps: List of step IDs to delete from the project workflow.
 
         Returns:
-            A dict with the changed properties which indicates if the mutation was successful,
-                else an error message.
+            An IdResponse with the project id indicating if the mutation was successful.
         """
-        return self._parent.client.update_project_workflow(
+        result = self._parent.client.update_project_workflow(
             project_id=project_id,
             enforce_step_separation=enforce_step_separation,
             create_steps=create_steps,
             update_steps=update_steps,
             delete_steps=delete_steps,
         )
+        return IdResponse(result)
 
 
 class VersionsNamespace:
@@ -417,7 +433,7 @@ class VersionsNamespace:
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[ProjectVersionView, None, None]:
         ...
 
     @overload
@@ -430,7 +446,7 @@ class VersionsNamespace:
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[ProjectVersionView]:
         ...
 
     @typechecked
@@ -443,7 +459,7 @@ class VersionsNamespace:
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[ProjectVersionView]:
         """Get a generator or a list of project versions respecting a set of criteria.
 
         Args:
@@ -456,9 +472,9 @@ class VersionsNamespace:
             as_generator: If `True`, a generator on the project versions is returned.
 
         Returns:
-            An iterable of dictionaries containing the project versions information.
+            An iterable of project version views.
         """
-        return self._parent.client.project_version(
+        results = self._parent.client.project_version(
             project_id=project_id,
             first=first,
             skip=skip,
@@ -466,6 +482,11 @@ class VersionsNamespace:
             disable_tqdm=disable_tqdm,
             as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
         )
+
+        # Wrap results with ProjectVersionView
+        if as_generator:
+            return (ProjectVersionView(validate_project_version(item)) for item in results)
+        return [ProjectVersionView(validate_project_version(item)) for item in results]
 
     @typechecked
     def count(self, project_id: str) -> int:
@@ -480,7 +501,7 @@ class VersionsNamespace:
         return self._parent.client.count_project_versions(project_id=project_id)
 
     @typechecked
-    def update(self, project_version_id: str, content: Optional[str]) -> Dict:
+    def update(self, project_version_id: str, content: Optional[str]) -> ProjectVersionView:
         """Update properties of a project version.
 
         Args:
@@ -488,7 +509,7 @@ class VersionsNamespace:
             content: Link to download the project version
 
         Returns:
-            A dictionary containing the updated project version.
+            A ProjectVersionView containing the updated project version.
 
         Examples:
             >>> projects.versions.update(
@@ -496,9 +517,10 @@ class VersionsNamespace:
                     content='test'
                 )
         """
-        return self._parent.client.update_properties_in_project_version(
+        result = self._parent.client.update_properties_in_project_version(
             project_version_id=project_version_id, content=content
         )
+        return ProjectVersionView(validate_project_version(result))
 
 
 class ProjectsNamespace(DomainNamespace):
@@ -586,7 +608,7 @@ class ProjectsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[ProjectView, None, None]:
         ...
 
     @overload
@@ -620,7 +642,7 @@ class ProjectsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> List[ProjectView]:
         ...
 
     @typechecked
@@ -654,7 +676,7 @@ class ProjectsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[ProjectView]:
         """Get a generator or a list of projects that match a set of criteria.
 
         Args:
@@ -685,7 +707,7 @@ class ProjectsNamespace(DomainNamespace):
             >>> # List all my projects
             >>> projects.list()
         """
-        return self.client.projects(
+        results = self.client.projects(
             project_id=project_id,
             search_query=search_query,
             should_relaunch_kpi_computation=should_relaunch_kpi_computation,
@@ -702,6 +724,11 @@ class ProjectsNamespace(DomainNamespace):
             disable_tqdm=disable_tqdm,
             as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
         )
+
+        # Wrap results with ProjectView
+        if as_generator:
+            return (ProjectView(validate_project(item)) for item in results)
+        return [ProjectView(validate_project(item)) for item in results]
 
     @typechecked
     def count(
@@ -755,7 +782,7 @@ class ProjectsNamespace(DomainNamespace):
         tags: Optional[ListOrTuple[str]] = None,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
         from_demo_project: Optional[DemoProjectType] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> IdResponse:
         """Create a project.
 
         Args:
@@ -772,12 +799,12 @@ class ProjectsNamespace(DomainNamespace):
             from_demo_project: Demo project type to create from.
 
         Returns:
-            A dict with the id of the created project.
+            An IdResponse with the id of the created project.
 
         Examples:
             >>> projects.create(input_type='IMAGE', json_interface=json_interface, title='Example')
         """
-        return self.client.create_project(
+        result = self.client.create_project(
             title=title,
             description=description,
             input_type=input_type,
@@ -787,6 +814,7 @@ class ProjectsNamespace(DomainNamespace):
             compliance_tags=compliance_tags,
             from_demo_project=from_demo_project,
         )
+        return IdResponse(result)
 
     @typechecked
     def update(
@@ -811,7 +839,7 @@ class ProjectsNamespace(DomainNamespace):
         metadata_properties: Optional[dict] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
         should_auto_assign: Optional[bool] = None,
-    ) -> Dict[str, Any]:
+    ) -> IdResponse:
         """Update properties of a project.
 
         Args:
@@ -843,10 +871,9 @@ class ProjectsNamespace(DomainNamespace):
             should_auto_assign: If `True`, assets are automatically assigned to users when they start annotating.
 
         Returns:
-            A dict with the changed properties which indicates if the mutation was successful,
-                else an error message.
+            An IdResponse with the project id indicating if the mutation was successful.
         """
-        return self.client.update_properties_in_project(
+        result = self.client.update_properties_in_project(
             project_id=project_id,
             can_navigate_between_assets=can_navigate_between_assets,
             can_skip_asset=can_skip_asset,
@@ -868,30 +895,33 @@ class ProjectsNamespace(DomainNamespace):
             seconds_to_label_before_auto_assign=seconds_to_label_before_auto_assign,
             should_auto_assign=should_auto_assign,
         )
+        return IdResponse(result)
 
     @typechecked
-    def archive(self, project_id: str) -> Dict[Literal["id"], str]:
+    def archive(self, project_id: str) -> IdResponse:
         """Archive a project.
 
         Args:
             project_id: Identifier of the project.
 
         Returns:
-            A dict with the id of the project.
+            An IdResponse with the id of the project.
         """
-        return self.client.archive_project(project_id=project_id)
+        result = self.client.archive_project(project_id=project_id)
+        return IdResponse(result)
 
     @typechecked
-    def unarchive(self, project_id: str) -> Dict[Literal["id"], str]:
+    def unarchive(self, project_id: str) -> IdResponse:
         """Unarchive a project.
 
         Args:
             project_id: Identifier of the project
 
         Returns:
-            A dict with the id of the project.
+            An IdResponse with the id of the project.
         """
-        return self.client.unarchive_project(project_id=project_id)
+        result = self.client.unarchive_project(project_id=project_id)
+        return IdResponse(result)
 
     @typechecked
     def copy(
@@ -940,13 +970,15 @@ class ProjectsNamespace(DomainNamespace):
         )
 
     @typechecked
-    def delete(self, project_id: str) -> str:
+    def delete(self, project_id: str) -> IdResponse:
         """Delete a project permanently.
 
         Args:
             project_id: Identifier of the project
 
         Returns:
-            A string with the deleted project id.
+            An IdResponse with the deleted project id.
         """
-        return self.client.delete_project(project_id=project_id)
+        result = self.client.delete_project(project_id=project_id)
+        # delete_project returns a string ID, so wrap it in a dict
+        return IdResponse({"id": result})

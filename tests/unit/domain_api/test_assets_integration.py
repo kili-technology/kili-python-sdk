@@ -79,17 +79,17 @@ class TestAssetsNamespaceIntegration:
 
         # Test workflow assign
         result = assets_ns.workflow.assign(asset_ids=["asset1"], to_be_labeled_by_array=[["user1"]])
-        assert result[0]["id"] == "asset1"
+        assert result.ids[0] == "asset1"
         mock_kili_client.legacy_client.assign_assets_to_labelers.assert_called_once()
 
         # Test workflow step invalidate
         result = assets_ns.workflow.step.invalidate(asset_ids=["asset1"])
-        assert result["id"] == "project_123"
+        assert result.id == "project_123"
         mock_kili_client.legacy_client.send_back_to_queue.assert_called_once()
 
         # Test workflow step next
         result = assets_ns.workflow.step.next(asset_ids=["asset1"])
-        assert result["id"] == "project_123"
+        assert result.id == "project_123"
         mock_kili_client.legacy_client.add_to_review.assert_called_once()
 
     def test_metadata_operations_delegation(self, mock_kili_client):
@@ -104,14 +104,14 @@ class TestAssetsNamespaceIntegration:
         result = assets_ns.metadata.add(
             json_metadata=[{"key": "value"}], project_id="project_123", asset_ids=["asset1"]
         )
-        assert result[0]["id"] == "asset1"
+        assert result.ids[0] == "asset1"
         mock_kili_client.legacy_client.add_metadata.assert_called_once()
 
         # Test metadata set
         result = assets_ns.metadata.set(
             json_metadata=[{"key": "value"}], project_id="project_123", asset_ids=["asset1"]
         )
-        assert result[0]["id"] == "asset1"
+        assert result.ids[0] == "asset1"
         mock_kili_client.legacy_client.set_metadata.assert_called_once()
 
     def test_external_ids_operations_delegation(self, mock_kili_client):
@@ -125,7 +125,7 @@ class TestAssetsNamespaceIntegration:
 
         # Test external IDs update
         result = assets_ns.external_ids.update(new_external_ids=["new_ext1"], asset_ids=["asset1"])
-        assert result[0]["id"] == "asset1"
+        assert result.ids[0] == "asset1"
         mock_kili_client.legacy_client.change_asset_external_ids.assert_called_once()
 
     @patch("kili.domain_api.assets.AssetUseCases")
@@ -144,7 +144,7 @@ class TestAssetsNamespaceIntegration:
         result_gen = assets_ns.list(project_id="project_123")
         assets_list = list(result_gen)
         assert len(assets_list) == 1
-        assert assets_list[0]["id"] == "asset1"
+        assert assets_list[0].id == "asset1"
 
         # Test count assets
         count = assets_ns.count(project_id="project_123")
