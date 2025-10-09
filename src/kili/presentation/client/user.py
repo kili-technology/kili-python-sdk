@@ -25,7 +25,6 @@ class UserClientMethods(BaseClientMethods):
     @overload
     def users(
         self,
-        api_key: Optional[str] = None,
         email: Optional[str] = None,
         organization_id: Optional[str] = None,
         fields: ListOrTuple[str] = ("email", "id", "firstname", "lastname"),
@@ -40,7 +39,6 @@ class UserClientMethods(BaseClientMethods):
     @overload
     def users(
         self,
-        api_key: Optional[str] = None,
         email: Optional[str] = None,
         organization_id: Optional[str] = None,
         fields: ListOrTuple[str] = ("email", "id", "firstname", "lastname"),
@@ -55,7 +53,6 @@ class UserClientMethods(BaseClientMethods):
     @typechecked
     def users(
         self,
-        api_key: Optional[str] = None,
         email: Optional[str] = None,
         organization_id: Optional[str] = None,
         fields: ListOrTuple[str] = ("email", "id", "firstname", "lastname"),
@@ -69,7 +66,6 @@ class UserClientMethods(BaseClientMethods):
         """Get a generator or a list of users given a set of criteria.
 
         Args:
-            api_key: Query an user by its API Key
             email: Email of the user
             organization_id: Identifier of the user's organization
             fields: All the fields to request among the possible fields for the users.
@@ -94,7 +90,6 @@ class UserClientMethods(BaseClientMethods):
 
         users_gen = UserUseCases(self.kili_api_gateway).list_users(
             filters=UserFilter(
-                api_key=api_key,
                 email=email,
                 organization_id=OrganizationId(organization_id) if organization_id else None,
                 activated=None,
@@ -113,14 +108,12 @@ class UserClientMethods(BaseClientMethods):
     def count_users(
         self,
         organization_id: Optional[str] = None,
-        api_key: Optional[str] = None,
         email: Optional[str] = None,
     ) -> int:
         """Get user count based on a set of constraints.
 
         Args:
             organization_id: Identifier of the user's organization.
-            api_key: Filter by API Key.
             email: Filter by email.
 
         Returns:
@@ -128,7 +121,6 @@ class UserClientMethods(BaseClientMethods):
         """
         return UserUseCases(self.kili_api_gateway).count_users(
             UserFilter(
-                api_key=api_key,
                 email=email,
                 organization_id=OrganizationId(organization_id) if organization_id else None,
                 activated=None,
@@ -191,7 +183,6 @@ class UserClientMethods(BaseClientMethods):
             user_filter=UserFilter(
                 email=email,
                 activated=None,
-                api_key=None,
                 id=None,
                 id_in=None,
                 organization_id=None,
@@ -227,7 +218,6 @@ class UserClientMethods(BaseClientMethods):
             user_filter=UserFilter(
                 email=email,
                 activated=None,
-                api_key=None,
                 id=None,
                 id_in=None,
                 organization_id=None,
