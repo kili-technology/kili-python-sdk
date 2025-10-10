@@ -164,7 +164,12 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         """Stringify the metadata."""
         json_metadata = asset.get("json_metadata", {})
         if not isinstance(json_metadata, str):
-            json_metadata = dumps(json_metadata)
+            try:
+                json_metadata = dumps(json_metadata, allow_nan=False)
+            except (ValueError, TypeError) as e:
+                raise ValueError(
+                    f"Invalid json_metadata: cannot be serialized to valid JSON ({e})"
+                ) from e
         return {**asset, "json_metadata": json_metadata}
 
     @staticmethod
