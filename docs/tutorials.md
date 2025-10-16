@@ -19,7 +19,7 @@ Because videos and Rich Text assets may be more complex to import, we’ve creat
 - For video assets, refer to [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_video_assets/).
 - For rich text assets, see [here](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/import_text_assets).
 - For PDF assets, see [here](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_pdf_assets).
-- For Geosat multi-layer assets, see [here](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_multilayer_geosat_assets).
+- For Geospatial multi-layer assets, see [here](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_multilayer_geospatial_assets).
 - For LLM Static, see [here](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/llm_static/).
 
 ## Importing labels
