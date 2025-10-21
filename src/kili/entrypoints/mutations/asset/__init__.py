@@ -71,7 +71,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 - For an `LLM_RLHF` project, the content can be dicts with the keys `prompt` and `completions`,
                 paths to local json files or URLs to json files.
             multi_layer_content_array: List containing multiple lists of paths.
-                Each path correspond to a layer of a geosat asset. Should be used only for `IMAGE` projects.
+                Each path correspond to a layer of a geospatial asset. Should be used only for `IMAGE` and `GEOSPATIAL` projects.
             external_id_array: List of external ids given to identify the assets.
                 If None, random identifiers are created.
             id_array: Disabled parameter. Do not use.
