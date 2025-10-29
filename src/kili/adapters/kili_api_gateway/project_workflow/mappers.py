@@ -2,8 +2,6 @@
 
 from typing import Dict, Union
 
-from cuid import cuid
-
 from kili.domain.project import WorkflowStepCreate, WorkflowStepUpdate
 
 from .types import ProjectWorkflowDataKiliAPIGatewayInput
@@ -28,7 +26,7 @@ def project_input_mapper(data: ProjectWorkflowDataKiliAPIGatewayInput) -> Dict:
 def update_step_mapper(data: Union[WorkflowStepCreate, WorkflowStepUpdate]) -> Dict:
     """Build the GraphQL create StepData variable to be sent in an operation."""
     step = {
-        "id": data["id"] if "id" in data else cuid(),
+        "id": data["id"] if "id" in data else None,
         "name": data["name"] if "name" in data else None,
         "consensusCoverage": data["consensus_coverage"] if "consensus_coverage" in data else None,
         "numberOfExpectedLabelsForConsensus": data["number_of_expected_labels_for_consensus"]
