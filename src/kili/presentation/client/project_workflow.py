@@ -31,7 +31,7 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
                 ensuring independent review and labeling processes
             create_steps: List of steps to create in the project workflow.
             update_steps: List of steps to update in the project workflow.
-            delete_steps: List of step IDs to delete from the project workflow.
+            delete_steps: List of step IDs or names to delete from the project workflow.
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
