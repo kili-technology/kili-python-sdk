@@ -46,12 +46,13 @@ def update_label_data_mapper(data: UpdateLabelData) -> Dict:
 def append_label_data_mapper(data: AppendLabelData) -> Dict:
     """Map AppendLabelData to GraphQL AppendLabelData input."""
     return {
-        "authorID": data.author_id,
         "assetID": data.asset_id,
+        "authorID": data.author_id,
         "clientVersion": data.client_version,
         "jsonResponse": json.dumps(data.json_response),
-        "secondsToLabel": data.seconds_to_label,
         "modelName": data.model_name,
+        "referencedLabelId": data.referenced_label_id,
+        "secondsToLabel": data.seconds_to_label,
     }
 
 

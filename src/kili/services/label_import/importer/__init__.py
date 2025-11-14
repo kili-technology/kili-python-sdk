@@ -108,6 +108,7 @@ class AbstractLabelImporter(ABC):
                 author_id=label.get("author_id"),
                 asset_external_id=None,
                 label_type=label_type,
+                referenced_label_id=None,
             )
             for label in labels
         ]

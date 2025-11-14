@@ -124,6 +124,7 @@ class LabelUseCases(BaseUseCases):
                 json_response=label.json_response,
                 model_name=label.model_name,
                 client_version=None,
+                referenced_label_id=label.referenced_label_id,
             )
             for label, asset_id in zip(labels, asset_id_array)
         ]

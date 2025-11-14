@@ -442,6 +442,9 @@ class ProjectClientMethods(BaseClientMethods):
         updated_at_lte: Optional[str] = None,
         archived: Optional[bool] = None,
         deleted: Optional[bool] = None,
+        organization_id: Optional[str] = None,
+        starred: Optional[bool] = None,
+        tags_in: Optional[ListOrTuple[str]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count the number of projects with a search_query.
@@ -459,6 +462,10 @@ class ProjectClientMethods(BaseClientMethods):
             archived: If `True`, only archived projects are returned, if `False`, only active projects are returned.
                 None disable this filter.
             deleted: If `True` all projects are counted (including deleted ones).
+            organization_id: Filter projects by organization identifier.
+            starred: If `True`, only starred projects are returned, if `False`, only non-starred projects are returned.
+                None disable this filter.
+            tags_in: Returned projects should have at least one tag that belongs to that list, if given.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -466,6 +473,9 @@ class ProjectClientMethods(BaseClientMethods):
         Returns:
             The number of projects with the parameters provided
         """
+        tag_ids = (
+            TagUseCases(self.kili_api_gateway).get_tag_ids_from_labels(tags_in) if tags_in else None
+        )
         return ProjectUseCases(self.kili_api_gateway).count_projects(
             ProjectFilters(
                 id=ProjectId(project_id) if project_id else None,
@@ -475,5 +485,8 @@ class ProjectClientMethods(BaseClientMethods):
                 updated_at_lte=updated_at_lte,
                 archived=archived,
                 deleted=deleted,
+                organization_id=organization_id,
+                starred=starred,
+                tag_ids=tag_ids,
             )
         )

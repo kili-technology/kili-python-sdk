@@ -3,6 +3,7 @@
 from typing import Dict, Literal, Optional
 
 from typeguard import typechecked
+from typing_extensions import deprecated
 
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.exceptions import MutationError
@@ -15,6 +16,7 @@ from .queries import (
     GQL_PROJECT_DELETE_ASYNCHRONOUSLY,
     GQL_PROJECT_UPDATE_ANONYMIZATION,
     GQL_UPDATE_PROPERTIES_IN_PROJECT,
+    GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
     GQL_UPDATE_PROPERTIES_IN_ROLE,
 )
 
@@ -66,6 +68,40 @@ class MutationsProject(BaseOperationEntrypointMixin):
         )
 
     @typechecked
+    def update_properties_in_project_user(
+        self,
+        project_id: str,
+        user_email: str,
+        role: Literal["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"],
+    ) -> Dict:
+        """Update properties of a role.
+
+        !!! info
+            To be able to change someone's role, you must be either of:
+
+            - an admin of the project
+            - a team manager of the project
+            - an admin of the organization
+
+        Args:
+            project_id: Identifier of the project
+            user_email: The email of the user with updated role
+            role: The new role.
+                Possible choices are: `ADMIN`, `TEAM_MANAGER`, `REVIEWER`, `LABELER`
+
+        Returns:
+            A dictionary with the project user information.
+        """
+        variables = {
+            "data": {
+                "role": role,
+            },
+            "where": {"project": {"id": project_id}, "user": {"email": user_email}},
+        }
+        result = self.graphql_client.execute(GQL_UPDATE_PROPERTIES_IN_PROJECT_USER, variables)
+        return self.format_result("data", result)
+
+    @deprecated("use update_properties_in_project_user instead")
     def update_properties_in_role(
         self, role_id: str, project_id: str, user_id: str, role: str
     ) -> Dict:
@@ -98,16 +134,32 @@ class MutationsProject(BaseOperationEntrypointMixin):
         return self.format_result("data", result)
 
     @typechecked
-    def delete_from_roles(self, role_id: str) -> Dict[Literal["id"], str]:
+    def delete_from_roles(
+        self,
+        role_id: Optional[str] = None,
+        user_email: Optional[str] = None,
+        project_id: Optional[str] = None,
+    ) -> Dict[Literal["id"], str]:
         """Delete users by their role_id.
 
         Args:
-            role_id: Identifier of the project user (not the ID of the user)
+            role_id: Identifier of the project user (not the ID of the user).
+                If not provided, user_email and project_id must be provided.
+            user_email: The email of the user to remove. Required if role_id is not provided.
+            project_id: Identifier of the project. Required if role_id is not provided.
 
         Returns:
             A dict with the project id.
         """
-        variables = {"where": {"id": role_id}}
+        variables = None
+        if role_id:
+            variables = {"where": {"id": role_id}}
+        else:
+            if user_email is None or project_id is None:
+                raise ValueError(
+                    "If role_id is not provided, you must provide user_email and project_id."
+                )
+            variables = {"where": {"project": {"id": project_id}, "user": {"email": user_email}}}
         result = self.graphql_client.execute(GQL_DELETE_FROM_ROLES, variables)
         return self.format_result("data", result)
 

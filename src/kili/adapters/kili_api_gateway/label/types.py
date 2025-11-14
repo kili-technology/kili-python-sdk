@@ -22,12 +22,13 @@ class UpdateLabelData:
 class AppendLabelData:
     """AppendLabelData data."""
 
-    author_id: Optional[UserId]
     asset_id: AssetId
+    author_id: Optional[UserId]
     client_version: Optional[int]
     json_response: Dict
-    seconds_to_label: Optional[float]
     model_name: Optional[str]
+    referenced_label_id: Optional[str]
+    seconds_to_label: Optional[float]
 
 
 @dataclass

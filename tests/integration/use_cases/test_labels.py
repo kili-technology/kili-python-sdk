@@ -34,6 +34,7 @@ def test_import_default_labels_with_asset_id(kili_api_gateway: KiliAPIGateway):
             author_id=None,
             seconds_to_label=None,
             model_name=model_name,
+            referenced_label_id=None,
         ),
         LabelToCreateUseCaseInput(
             asset_id=AssetId("asset_id_2"),
@@ -43,6 +44,7 @@ def test_import_default_labels_with_asset_id(kili_api_gateway: KiliAPIGateway):
             author_id=None,
             seconds_to_label=None,
             model_name=model_name,
+            referenced_label_id=None,
         ),
     ]
 
@@ -70,6 +72,7 @@ def test_import_default_labels_with_asset_id(kili_api_gateway: KiliAPIGateway):
                     model_name=None,
                     seconds_to_label=None,
                     client_version=None,
+                    referenced_label_id=None,
                 ),
                 AppendLabelData(
                     asset_id=AssetId("asset_id_2"),
@@ -78,6 +81,7 @@ def test_import_default_labels_with_asset_id(kili_api_gateway: KiliAPIGateway):
                     model_name=None,
                     seconds_to_label=None,
                     client_version=None,
+                    referenced_label_id=None,
                 ),
             ],
         ),
@@ -109,6 +113,7 @@ def test_import_default_labels_with_external_id(kili_api_gateway: KiliAPIGateway
             author_id=None,
             seconds_to_label=None,
             model_name=model_name,
+            referenced_label_id=None,
         ),
         LabelToCreateUseCaseInput(
             asset_id=None,
@@ -118,6 +123,7 @@ def test_import_default_labels_with_external_id(kili_api_gateway: KiliAPIGateway
             author_id=None,
             seconds_to_label=None,
             model_name=model_name,
+            referenced_label_id=None,
         ),
     ]
 
@@ -145,6 +151,7 @@ def test_import_default_labels_with_external_id(kili_api_gateway: KiliAPIGateway
                     model_name=None,
                     seconds_to_label=None,
                     client_version=None,
+                    referenced_label_id=None,
                 ),
                 AppendLabelData(
                     asset_id=AssetId("asset_id_2"),
@@ -153,6 +160,7 @@ def test_import_default_labels_with_external_id(kili_api_gateway: KiliAPIGateway
                     model_name=None,
                     seconds_to_label=None,
                     client_version=None,
+                    referenced_label_id=None,
                 ),
             ],
         ),
@@ -178,6 +186,7 @@ def test_import_labels_with_optional_params(kili_api_gateway: KiliAPIGateway):
             author_id=author_id,
             seconds_to_label=seconds_to_label,
             model_name=model_name,
+            referenced_label_id=None,
         ),
     ]
 
@@ -205,6 +214,7 @@ def test_import_labels_with_optional_params(kili_api_gateway: KiliAPIGateway):
                     model_name=None,
                     seconds_to_label=seconds_to_label,
                     client_version=None,
+                    referenced_label_id=None,
                 ),
             ],
         ),
@@ -236,6 +246,7 @@ def test_import_predictions(kili_api_gateway: KiliAPIGateway):
             author_id=None,
             seconds_to_label=None,
             model_name=model_name,
+            referenced_label_id=None,
         ),
         LabelToCreateUseCaseInput(
             asset_id=None,
@@ -245,6 +256,7 @@ def test_import_predictions(kili_api_gateway: KiliAPIGateway):
             author_id=None,
             seconds_to_label=None,
             model_name=model_name,
+            referenced_label_id=None,
         ),
     ]
 
@@ -272,6 +284,7 @@ def test_import_predictions(kili_api_gateway: KiliAPIGateway):
                     model_name=model_name,
                     seconds_to_label=None,
                     client_version=None,
+                    referenced_label_id=None,
                 ),
                 AppendLabelData(
                     asset_id=AssetId("asset_id_2"),
@@ -280,6 +293,7 @@ def test_import_predictions(kili_api_gateway: KiliAPIGateway):
                     model_name=model_name,
                     seconds_to_label=None,
                     client_version=None,
+                    referenced_label_id=None,
                 ),
             ],
         ),
@@ -311,6 +325,7 @@ def test_import_predictions_with_overwriting(kili_api_gateway: KiliAPIGateway):
             author_id=None,
             seconds_to_label=None,
             model_name=model_name,
+            referenced_label_id=None,
         ),
     ]
 
@@ -338,6 +353,7 @@ def test_import_predictions_with_overwriting(kili_api_gateway: KiliAPIGateway):
                     model_name=model_name,
                     seconds_to_label=None,
                     client_version=None,
+                    referenced_label_id=None,
                 ),
             ],
         ),
@@ -361,6 +377,7 @@ def test_import_predictions_without_giving_model_name(kili_api_gateway: KiliAPIG
             author_id=None,
             seconds_to_label=None,
             model_name=model_name,
+            referenced_label_id=None,
         ),
     ]
 

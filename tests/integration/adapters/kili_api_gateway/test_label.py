@@ -122,6 +122,7 @@ def test_given_kili_gateway_when_adding_labels_then_it_calls_proper_resolver(
                     client_version=None,
                     seconds_to_label=42,
                     model_name="fake_model_name",
+                    referenced_label_id=None,
                 )
             ],
         ),
@@ -172,6 +173,7 @@ def test_given_kili_gateway_when_adding_labels_by_batch_then_it_calls_proper_res
                     json_response={"CLASSIF_JOB": {}},
                     model_name="fake_model_name",
                     seconds_to_label=42,
+                    referenced_label_id=None,
                 )
                 for i in range(101)
             ],

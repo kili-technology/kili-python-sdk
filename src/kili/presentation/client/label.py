@@ -899,16 +899,17 @@ class LabelClientMethods(BaseClientMethods):
     @typechecked
     def append_labels(
         self,
-        asset_id_array: Optional[List[str]] = None,
-        json_response_array: ListOrTuple[Dict] = (),
-        author_id_array: Optional[List[str]] = None,
-        seconds_to_label_array: Optional[List[int]] = None,
-        model_name: Optional[str] = None,
-        label_type: LabelType = "DEFAULT",
-        project_id: Optional[str] = None,
         asset_external_id_array: Optional[List[str]] = None,
+        asset_id_array: Optional[List[str]] = None,
+        author_id_array: Optional[List[str]] = None,
         disable_tqdm: Optional[bool] = None,
+        json_response_array: ListOrTuple[Dict] = (),
+        label_type: LabelType = "DEFAULT",
+        model_name: Optional[str] = None,
         overwrite: bool = False,
+        project_id: Optional[str] = None,
+        reviewed_label_id_array: Optional[List[str]] = None,
+        seconds_to_label_array: Optional[List[int]] = None,
         step_name: Optional[str] = None,
     ) -> List[Dict[Literal["id"], str]]:
         """Append labels to assets.
@@ -927,6 +928,8 @@ class LabelClientMethods(BaseClientMethods):
             overwrite: when uploading prediction or inference labels, if True,
                 it will overwrite existing labels with the same model name
                 and of the same label type, on the targeted assets.
+            reviewed_label_id_array: list of IDs of labels being reviewed.
+                Only useful when uploading REVIEW labels.
             step_name: Name of the step to which the labels belong.
                 The label_type must match accordingly.
 
@@ -961,6 +964,7 @@ class LabelClientMethods(BaseClientMethods):
                 json_response_array,
                 asset_external_id_array,
                 asset_id_array,
+                reviewed_label_id_array,
             ]
         )
 
@@ -973,13 +977,22 @@ class LabelClientMethods(BaseClientMethods):
                 author_id=UserId(author_id) if author_id else None,
                 label_type=label_type,
                 model_name=model_name,
+                referenced_label_id=reviewed_label_id,
             )
-            for (asset_id, asset_external_id, json_response, seconds_to_label, author_id) in zip(
+            for (
+                asset_id,
+                asset_external_id,
+                json_response,
+                seconds_to_label,
+                author_id,
+                reviewed_label_id,
+            ) in zip(
                 asset_id_array or repeat(None),
                 asset_external_id_array or repeat(None),
                 json_response_array,
                 seconds_to_label_array or repeat(None),
                 author_id_array or repeat(None),
+                reviewed_label_id_array or repeat(None),
             )
         ]
 
@@ -1069,6 +1082,7 @@ class LabelClientMethods(BaseClientMethods):
                 model_name=model_name,
                 seconds_to_label=None,
                 author_id=None,
+                referenced_label_id=None,
             )
             for (asset_id, asset_external_id, json_response) in zip(
                 asset_id_array or repeat(None, nb_labels_to_add),
