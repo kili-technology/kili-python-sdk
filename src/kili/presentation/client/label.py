@@ -899,18 +899,18 @@ class LabelClientMethods(BaseClientMethods):
     @typechecked
     def append_labels(
         self,
-        asset_external_id_array: Optional[List[str]] = None,
         asset_id_array: Optional[List[str]] = None,
-        author_id_array: Optional[List[str]] = None,
-        disable_tqdm: Optional[bool] = None,
         json_response_array: ListOrTuple[Dict] = (),
-        label_type: LabelType = "DEFAULT",
-        model_name: Optional[str] = None,
-        overwrite: bool = False,
-        project_id: Optional[str] = None,
-        reviewed_label_id_array: Optional[List[str]] = None,
+        author_id_array: Optional[List[str]] = None,
         seconds_to_label_array: Optional[List[int]] = None,
+        model_name: Optional[str] = None,
+        label_type: LabelType = "DEFAULT",
+        project_id: Optional[str] = None,
+        asset_external_id_array: Optional[List[str]] = None,
+        disable_tqdm: Optional[bool] = None,
+        overwrite: bool = False,
         step_name: Optional[str] = None,
+        reviewed_label_id_array: Optional[List[str]] = None,
     ) -> List[Dict[Literal["id"], str]]:
         """Append labels to assets.
 
