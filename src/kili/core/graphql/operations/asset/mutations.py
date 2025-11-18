@@ -27,3 +27,17 @@ mutation(
   }
 }
 """
+
+GQL_SET_ASSET_CONSENSUS = """
+mutation setAssetConsensus(
+    $assetId: ID!,
+    $projectId: ID!,
+    $isConsensus: Boolean!
+  ) {
+  data: setAssetConsensus(
+    assetId: $assetId,
+    projectId: $projectId,
+    isConsensus: $isConsensus
+  )
+}
+"""
