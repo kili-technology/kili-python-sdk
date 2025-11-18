@@ -35,7 +35,7 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
 
-      - name: Create PR with the bump commit
+      - name: Add the bump commit
         run: |
           git fetch --quiet
 
@@ -47,5 +47,35 @@ jobs:
           echo "New version (bump_version): $new_version"
 
           git push
+        env:
+          GH_TOKEN: ${{ github.token }} # needed for gh cli
+
+      - name: create draft release
+        run: |
+          curl https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/.github/scripts/utils.sh --output utils.sh
+          source ./utils.sh   # to get the bump_version function
+
+          # Get release version
+          release_version=$(get_sdk_version_from_pyproject_toml)
+          echo "Release version: $release_version"
+
+          # tag and push the tag
+          # -f to overwrite the tag if it already exists
+          # -a to create an annotated tag
+          git fetch --quiet
+          git tag -f -a $release_version -m "Release $release_version"
+          git push origin $release_version
+
+          # create draft release
+          link_to_draft=$(gh release create $release_version --draft --title "Release $release_version" --generate-notes --notes-start-tag $latest_release)
+          echo "Link to draft release: $link_to_draft"
+
+          # filter the result to get the link
+          # will match any string that starts with https:// and contains any number of characters that are not spaces.
+          link_to_draft=$(echo "$link_to_draft" | grep -o 'https://[^ ]*')
+          echo "Link to draft release: $link_to_draft"
+
+          echo "LINK_TO_DRAFT=$link_to_draft" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$release_version" >> $GITHUB_ENV
         env:
           GH_TOKEN: ${{ github.token }} # needed for gh cli
