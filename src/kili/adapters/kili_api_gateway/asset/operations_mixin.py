@@ -25,6 +25,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 )
 from kili.adapters.kili_api_gateway.label.common import get_annotation_fragment
 from kili.adapters.kili_api_gateway.project.common import get_project
+from kili.core.graphql.operations.asset.mutations import GQL_SET_ASSET_CONSENSUS
 from kili.domain.asset import AssetFilters
 from kili.domain.types import ListOrTuple
 
@@ -166,3 +167,13 @@ class AssetOperationMixin(BaseOperationMixin):
         count_result = self.graphql_client.execute(GQL_COUNT_ASSET_ANNOTATIONS, payload)
         count: int = count_result["data"]
         return count
+
+    def set_asset_consensus(self, asset_id: str, project_id: str, is_consensus: bool) -> bool:
+        """Set consensus on an asset."""
+        payload = {
+            "assetId": asset_id,
+            "projectId": project_id,
+            "isConsensus": is_consensus,
+        }
+        result = self.graphql_client.execute(GQL_SET_ASSET_CONSENSUS, payload)
+        return result["data"]

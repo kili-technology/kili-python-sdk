@@ -763,3 +763,12 @@ class AssetClientMethods(BaseClientMethods):
         )
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
         return asset_use_cases.count_assets(filters)
+
+    @typechecked
+    def set_asset_consensus(
+        self,
+        asset_id: str,
+        project_id: str,
+        is_consensus: bool,
+    ) -> bool:
+        return self.kili_api_gateway.set_asset_consensus(asset_id, project_id, is_consensus)
