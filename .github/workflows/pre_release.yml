@@ -1,23 +1,30 @@
 name: Pre-release - Bump version & draft release
+
 on:
   workflow_dispatch:
     inputs:
       target_branch:
         description: >
           "This workflow will create a commit to bump version on a branch.
-          Enter the target branch: main for Saas, or release/XX.Y for a LTS version: "
+          Enter the target branch: main for SaaS, or release/XX.Y for an LTS version: "
         required: true
         type: string
         default: "main"
+
+permissions:
+  contents: write
 
 jobs:
   pre_release:
     runs-on: ubuntu-latest
     name: Bump version & draft release
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout target branch
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.target_branch}}
+          ref: ${{ github.event.inputs.target_branch }}
+          token: ${{ secrets.RELEASE_BOT_PAT }}   # <<< service PAT
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,49 +39,63 @@ jobs:
 
       - name: Set git identity
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name "kili-release-bot"
+          git config user.email "kili-release-bot@users.noreply.github.com"
 
       - name: Add the bump commit
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_BOT_PAT }}
+        shell: bash
         run: |
+          set -euo pipefail
+
           git fetch --quiet
 
           curl https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/.github/scripts/utils.sh --output utils.sh
-          source ./utils.sh   # to get the bump_version function
+          source ./utils.sh   # exposes bump_version
 
-          # create bump commit
+          # create bump commit (major / minor / patch)
           new_version=$(bump_version commit patch)
           echo "New version (bump_version): $new_version"
 
-          git push
+          # Push back to the same branch explicitly
+          git push origin HEAD:${{ github.event.inputs.target_branch }}
+
+      - name: Create tag and draft release
         env:
-          GH_TOKEN: ${{ github.token }} # needed for gh cli
-
-      - name: create draft release
+          GH_TOKEN: ${{ secrets.RELEASE_BOT_PAT }}   # used by gh CLI
+        shell: bash
         run: |
-          curl https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/.github/scripts/utils.sh --output utils.sh
-          source ./utils.sh   # to get the get_sdk_version_from_pyproject_toml function
+          set -euo pipefail
 
-          # Get release version
+          curl https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/.github/scripts/utils.sh --output utils.sh
+          source ./utils.sh
+
+          # Get release version from pyproject.toml (now bumped)
           release_version=$(get_sdk_version_from_pyproject_toml)
           echo "Release version: $release_version"
 
-          # tag and push the tag
-          # -a to create an annotated tag
-          git fetch --quiet
-          git tag -a $release_version -m "Release $release_version"
-          git push origin $release_version
+          # Get last release tag for release notes range
+          latest_release=$(get_last_release_tag_github)
+          echo "Latest release tag: $latest_release"
 
-          # create draft release
-          link_to_draft=$(gh release create $release_version --draft --title "Release $release_version" --generate-notes --notes-start-tag $latest_release)
-          echo "Link to draft release: $link_to_draft"
+          git fetch --tags --quiet
 
-          # filter the result to get the link
-          # will match any string that starts with https:// and contains any number of characters that are not spaces.
+          # Create annotated tag on this commit & push it
+          git tag -a "$release_version" -m "Release $release_version"
+          git push origin "$release_version"
+
+          # Create draft release
+          link_to_draft=$(gh release create "$release_version" \
+            --draft \
+            --title "Release $release_version" \
+            --generate-notes \
+            --notes-start-tag "$latest_release")
+
+          # Extract URL from gh output
           link_to_draft=$(echo "$link_to_draft" | grep -o 'https://[^ ]*')
+
           echo "Link to draft release: $link_to_draft"
 
-          echo "LINK_TO_DRAFT=$link_to_draft" >> $GITHUB_ENV
-          echo "RELEASE_VERSION=$release_version" >> $GITHUB_ENV
-        env:
-          GH_TOKEN: ${{ github.token }} # needed for gh cli
+          echo "LINK_TO_DRAFT=$link_to_draft" >> "$GITHUB_ENV"
+          echo "RELEASE_VERSION=$release_version" >> "$GITHUB_ENV"
