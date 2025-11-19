@@ -765,10 +765,37 @@ class AssetClientMethods(BaseClientMethods):
         return asset_use_cases.count_assets(filters)
 
     @typechecked
-    def set_asset_consensus(
+    def update_asset_consensus(
         self,
         asset_id: str,
         project_id: str,
         is_consensus: bool,
     ) -> bool:
-        return self.kili_api_gateway.set_asset_consensus(asset_id, project_id, is_consensus)
+        """Activate or deactivate consensus on an asset.
+
+        Args:
+            asset_id: The internal asset ID to modify.
+            project_id: The project ID.
+            is_consensus: Whether to activate (True) or deactivate (False) consensus on the asset.
+
+        Returns:
+            The consensus value that was set (True if consensus was activated, False if deactivated).
+
+        Examples:
+            >>> # Activate consensus on an asset
+            >>> result = kili.update_asset_consensus(
+            ...     asset_id="ckg22d81r0jrg0885unmuswj8",
+            ...     project_id="my_project",
+            ...     is_consensus=True
+            ... )
+            >>> # result is True
+
+            >>> # Deactivate consensus on an asset
+            >>> result = kili.update_asset_consensus(
+            ...     asset_id="ckg22d81r0jrg0885unmuswj8",
+            ...     project_id="my_project",
+            ...     is_consensus=False
+            ... )
+            >>> # result is False
+        """
+        return self.kili_api_gateway.update_asset_consensus(asset_id, project_id, is_consensus)
