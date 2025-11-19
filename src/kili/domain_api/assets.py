@@ -264,6 +264,7 @@ class AssetsNamespace(DomainNamespace):
     - move_to_next_step(): Move assets to the next workflow step
     - assign(): Assign assets to labelers
     - update_priority(): Update asset priorities
+    - add_consensus(): Activate or deactivate consensus on an asset
 
     Examples:
         >>> kili = Kili()
@@ -2172,4 +2173,45 @@ class AssetsNamespace(DomainNamespace):
             project_id=project_id,
             priorities=priorities if priorities is not None else [],
             **kwargs,
+        )
+
+    @typechecked
+    def add_consensus(
+        self,
+        *,
+        asset_id: str,
+        project_id: str,
+        is_consensus: bool,
+    ) -> bool:
+        """Activate or deactivate consensus on an asset.
+
+        Args:
+            asset_id: The internal asset ID to modify.
+            project_id: The project ID.
+            is_consensus: Whether to activate (True) or deactivate (False) consensus on the asset.
+
+        Returns:
+            The consensus value that was set (True if consensus was activated, False if deactivated).
+
+        Examples:
+            >>> # Activate consensus on an asset
+            >>> result = kili.assets.add_consensus(
+            ...     asset_id="ckg22d81r0jrg0885unmuswj8",
+            ...     project_id="my_project",
+            ...     is_consensus=True
+            ... )
+            >>> # result is True
+
+            >>> # Deactivate consensus on an asset
+            >>> result = kili.assets.add_consensus(
+            ...     asset_id="ckg22d81r0jrg0885unmuswj8",
+            ...     project_id="my_project",
+            ...     is_consensus=False
+            ... )
+            >>> # result is False
+        """
+        return self._client.set_asset_consensus(
+            asset_id=asset_id,
+            project_id=project_id,
+            is_consensus=is_consensus,
         )
