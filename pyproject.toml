@@ -81,7 +81,7 @@ dev = [
   # profiling
   "pyinstrument",
   # dead code detection
-  "vulture==2.11",
+  "vulture==2.14",
   "dead==1.5.2",
   # optional dependencies
   "kili-formats[all] == 0.2.10",
