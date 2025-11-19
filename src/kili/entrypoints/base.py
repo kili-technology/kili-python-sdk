@@ -1,7 +1,7 @@
 """Base class for entrypoints dealing with GraphQL operations."""
 
 import abc
-from typing import Optional, TypeVar, cast
+from typing import Any, Optional, TypeVar, cast, overload
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
@@ -24,7 +24,13 @@ class BaseOperationEntrypointMixin(abc.ABC):
     http_client: HttpClient
     kili_api_gateway: KiliAPIGateway
 
-    def format_result(self, name: str, result: dict, object_: Optional[type[T]] = None) -> T:
+    @overload
+    def format_result(self, name: str, result: dict, object_: None = None) -> Any: ...
+
+    @overload
+    def format_result(self, name: str, result: dict, object_: type[T]) -> T: ...
+
+    def format_result(self, name: str, result: dict, object_: Optional[type[T]] = None) -> Any:
         """Format the result of a graphQL query.
 
         FIXME: this should not be used at that level.

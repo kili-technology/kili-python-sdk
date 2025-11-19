@@ -108,19 +108,23 @@ class LabelUseCases(BaseUseCases):
 
         asset_id_array = [label.asset_id for label in labels]
         if any(asset_id is None for asset_id in asset_id_array):
-            external_id_array = [label.asset_external_id for label in labels]
+            external_id_array = [
+                ext_id
+                for label in labels
+                if (ext_id := label.asset_external_id) is not None
+            ]
             asset_id_array = AssetUseCasesUtils(
                 self._kili_api_gateway
             ).get_asset_ids_or_throw_error(
                 asset_ids=None,
-                external_ids=external_id_array,  # pyright: ignore[reportGeneralTypeIssues]
+                external_ids=external_id_array,
                 project_id=project_id,
             )
 
         labels_to_add = [
             AppendLabelData(
                 author_id=label.author_id,
-                asset_id=asset_id,  # pyright: ignore[reportGeneralTypeIssues]
+                asset_id=asset_id,
                 seconds_to_label=label.seconds_to_label,
                 json_response=label.json_response,
                 model_name=label.model_name,
@@ -128,6 +132,7 @@ class LabelUseCases(BaseUseCases):
                 referenced_label_id=label.referenced_label_id,
             )
             for label, asset_id in zip(labels, asset_id_array, strict=False)
+            if asset_id is not None
         ]
 
         data = AppendManyLabelsData(

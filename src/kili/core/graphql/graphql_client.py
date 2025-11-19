@@ -5,7 +5,7 @@ import os
 import threading
 import time
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, cast
 from urllib.parse import urlparse
 
 import graphql
@@ -192,7 +192,9 @@ class GraphQLClient:
             fetch_schema_from_transport=True,
             introspection_args=self._get_introspection_args(),
         ) as session:
-            return print_schema(session.client.schema)  # pyright: ignore[reportGeneralTypeIssues]
+            if session.client.schema is None:
+                raise ValueError("Failed to fetch GraphQL schema from endpoint")
+            return print_schema(session.client.schema)
 
     def _cache_graphql_schema(self, graphql_schema_path: Path, schema_str: str) -> None:
         """Cache the graphql schema on disk."""
@@ -255,7 +257,7 @@ class GraphQLClient:
             variables: the payload of the query
             kwargs: additional arguments to pass to the GraphQL client
         """
-        document = query if isinstance(query, DocumentNode) else gql(query)
+        document = query if isinstance(query, DocumentNode) else cast(DocumentNode, gql(query))
         variables = self._remove_nullable_inputs(variables) if variables else None
 
         should_retry = kwargs.pop("retry", True)
@@ -332,7 +334,7 @@ class GraphQLClient:
             )
             transport = self._gql_client.transport
             if transport:
-                headers = transport.response_headers  # pyright: ignore[reportGeneralTypeIssues]
+                headers = getattr(transport, "response_headers", None)
                 returned_complexity = int(headers.get("x-complexity", 0)) if headers else 0
                 self.complexity_consumed += returned_complexity
             return res

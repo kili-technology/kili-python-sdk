@@ -64,18 +64,21 @@ class TagClientMethods(BaseClientMethods):
         """
         tag_use_cases = TagUseCases(self.kili_api_gateway)
 
+        resolved_tag_ids: ListOrTuple[TagId]
         if tag_ids is None:
             if tags is None:
                 raise ValueError("Either `tags` or `tag_ids` must be provided.")
-            tag_ids = tag_use_cases.get_tag_ids_from_labels(
-                labels=tags  # pyright: ignore[reportGeneralTypeIssues]
-            )
+            resolved_tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
+        else:
+            from kili.domain.tag import TagId as TagIdType
+
+            resolved_tag_ids = [TagIdType(tid) for tid in tag_ids]
 
         return [
             {"id": str(tag_id)}
             for tag_id in tag_use_cases.tag_project(
                 project_id=ProjectId(project_id),
-                tag_ids=tag_ids,  # pyright: ignore[reportGeneralTypeIssues]
+                tag_ids=resolved_tag_ids,
                 disable_tqdm=disable_tqdm,
             )
         ]
@@ -110,13 +113,12 @@ class TagClientMethods(BaseClientMethods):
 
         tag_use_cases = TagUseCases(self.kili_api_gateway)
 
+        resolved_tag_ids: ListOrTuple[TagId]
         if tag_ids is None:
             if tags is not None:
-                tag_ids = tag_use_cases.get_tag_ids_from_labels(
-                    labels=tags  # pyright: ignore[reportGeneralTypeIssues]
-                )
+                resolved_tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
             elif all is not None:
-                tag_ids = [
+                resolved_tag_ids = [
                     tag["id"]
                     for tag in tag_use_cases.get_tags_of_project(
                         project_id=ProjectId(project_id), fields=("id",)
@@ -124,12 +126,16 @@ class TagClientMethods(BaseClientMethods):
                 ]
             else:
                 raise ValueError("Either `tags` or `tag_ids` or `all` must be provided.")
+        else:
+            from kili.domain.tag import TagId as TagIdType
+
+            resolved_tag_ids = [TagIdType(tid) for tid in tag_ids]
 
         return [
             {"id": str(tag_id)}
             for tag_id in tag_use_cases.untag_project(
                 project_id=ProjectId(project_id),
-                tag_ids=tag_ids,  # pyright: ignore[reportGeneralTypeIssues]
+                tag_ids=resolved_tag_ids,
                 disable_tqdm=disable_tqdm,
             )
         ]

@@ -287,7 +287,7 @@ def _remove_duplicate_points(coords):
 def _process_marker_records(point_records, category_name, from_epsg, json_response, job_name):
     """Process point records for marker job type."""
     for point_record in point_records:
-        point = _transform_geometry(point_record, from_epsg)
+        point = cast("Point", _transform_geometry(point_record, from_epsg))
 
         annotation = {
             "point": {"x": point.x, "y": point.y},

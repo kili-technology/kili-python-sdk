@@ -2,7 +2,10 @@
 
 import json
 from datetime import datetime
-from typing import Optional
+from typing import TYPE_CHECKING, Optional, cast
+
+if TYPE_CHECKING:
+    from kili.client import Kili
 
 from typeguard import typechecked
 
@@ -108,7 +111,7 @@ class QueriesPlugins(BaseOperationEntrypointMixin):
             >>> kili.get_plugin_status(plugin_name="my_plugin_name")
         """
         return PluginUploader(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            cast("Kili", self),
             "",
             plugin_name,
             verbose,

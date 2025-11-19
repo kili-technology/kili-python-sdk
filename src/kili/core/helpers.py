@@ -9,7 +9,7 @@ import re
 import warnings
 from collections.abc import Callable
 from json import dumps, loads
-from typing import Any, Optional, TypeVar, Union, get_args, get_origin
+from typing import Any, Optional, TypeVar, Union, cast, get_args, get_origin, overload
 
 import pyparsing as pp
 import requests
@@ -22,9 +22,21 @@ from kili.log.logging import logger
 T = TypeVar("T")
 
 
+@overload
+def format_result(
+    name: str, result: dict, object_: None, http_client: HttpClient
+) -> Any: ...
+
+
+@overload
+def format_result(
+    name: str, result: dict, object_: type[T], http_client: HttpClient
+) -> T: ...
+
+
 def format_result(
     name: str, result: dict, object_: Optional[type[T]], http_client: HttpClient
-) -> T:
+) -> Any:
     """Formats the result of the GraphQL queries.
 
     Args:
@@ -35,15 +47,17 @@ def format_result(
     """
     formatted_json = format_json(result[name], http_client)
     if object_ is None:
-        return formatted_json  # pyright: ignore[reportGeneralTypeIssues]
+        return formatted_json
     if isinstance(formatted_json, list):
         if get_origin(object_) is list:
             obj = get_args(object_)[0]
-            return [obj(element) for element in formatted_json]  # pyright: ignore[reportGeneralTypeIssues]
+            return [obj(element) for element in formatted_json]
         # the legacy "orm" objects fall into this category.
-        return [object_(element) for element in formatted_json]  # pyright: ignore[reportGeneralTypeIssues]
+        # Call the class constructor to instantiate objects
+        return [cast(Any, object_)(element) for element in formatted_json]
 
-    return object_(formatted_json)
+    # Call the class constructor to instantiate the object
+    return cast(Any, object_)(formatted_json)
 
 
 def get_mime_type(path: str):

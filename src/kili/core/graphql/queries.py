@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Generator
-from typing import Optional, TypeVar
+from typing import Any, Optional, TypeVar, overload
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -163,6 +163,12 @@ class GraphQLQuery(ABC):
                     if len(rows) < first:
                         break
 
-    def format_result(self, name: str, result: dict, object_: Optional[type[T]] = None) -> T:
+    @overload
+    def format_result(self, name: str, result: dict, object_: None = None) -> Any: ...
+
+    @overload
+    def format_result(self, name: str, result: dict, object_: type[T]) -> T: ...
+
+    def format_result(self, name: str, result: dict, object_: Optional[type[T]] = None) -> Any:
         """Format the result of a graphQL query."""
         return format_result(name, result, object_, self.http_client)
