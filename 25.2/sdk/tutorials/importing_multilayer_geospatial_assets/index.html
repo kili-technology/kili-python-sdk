@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/25.2/sdk/tutorials/importing_multilayer_geosat_assets/">
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/25.2/sdk/tutorials/importing_multilayer_geospatial_assets/">
       
       
         <link rel="prev" href="../import_text_assets/">
@@ -19,19 +19,22 @@
         <link rel="next" href="../llm_static/">
       
       
+        
+      
+      
       <link rel="icon" href="../../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.21">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
     
     
       
-        <title>Multi-Layer Geosatellite Assets - Python SDK</title>
+        <title>Multi-Layer Geospatial Assets - Python SDK</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.2a3383ac.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.618322db.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -72,7 +75,6 @@
 
     
     
-    
   </head>
   
   
@@ -90,7 +92,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#how-to-import-multi-layer-geosat-assets-to-a-kili-project" class="md-skip">
+        <a href="#importing-multi-layer-geospatial-images-into-a-kili-project" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +112,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../../.." title="Python SDK" class="md-header__button md-logo" aria-label="Python SDK" data-md-component="logo">
       
-  <img src="../../../assets/kili_logo.png" alt="logo">
+  <img src="../../../assets/kili_logo_resized.webp" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -127,7 +129,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Multi-Layer Geosatellite Assets
+              Multi-Layer Geospatial Assets
             
           </span>
         </div>
@@ -184,7 +186,7 @@
         <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     Kili Python SDK
@@ -330,7 +332,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../../.." title="Python SDK" class="md-nav__button md-logo" aria-label="Python SDK" data-md-component="logo">
       
-  <img src="../../../assets/kili_logo.png" alt="logo">
+  <img src="../../../assets/kili_logo_resized.webp" alt="logo">
 
     </a>
     Python SDK
@@ -340,7 +342,7 @@
       <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     Kili Python SDK
@@ -376,9 +378,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Python SDK
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -387,7 +394,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_1">
             <span class="md-nav__icon md-icon"></span>
-            Python SDK
+            
+  
+    Python SDK
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -403,9 +414,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Getting Started
+  
+
     
   </span>
+  
   
 
       </a>
@@ -426,9 +442,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Tutorials
+  
+
     
   </span>
+  
   
 
       </a>
@@ -463,9 +484,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Reference
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -474,7 +500,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_1_3">
             <span class="md-nav__icon md-icon"></span>
-            Reference
+            
+  
+    Reference
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -490,9 +520,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Asset
+  
+
     
   </span>
+  
   
 
       </a>
@@ -513,9 +548,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Cloud Storage
+  
+
     
   </span>
+  
   
 
       </a>
@@ -536,9 +576,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Event
+  
+
     
   </span>
+  
   
 
       </a>
@@ -559,9 +604,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Issue
+  
+
     
   </span>
+  
   
 
       </a>
@@ -582,9 +632,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Label
+  
+
     
   </span>
+  
   
 
       </a>
@@ -605,9 +660,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Label Utils
+  
+
     
   </span>
+  
   
 
       </a>
@@ -628,9 +688,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Label Parsing
+  
+
     
   </span>
+  
   
 
       </a>
@@ -651,9 +716,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     LLM
+  
+
     
   </span>
+  
   
 
       </a>
@@ -674,9 +744,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Notification
+  
+
     
   </span>
+  
   
 
       </a>
@@ -697,9 +772,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Organization
+  
+
     
   </span>
+  
   
 
       </a>
@@ -720,9 +800,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Plugins
+  
+
     
   </span>
+  
   
 
       </a>
@@ -743,9 +828,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Project
+  
+
     
   </span>
+  
   
 
       </a>
@@ -766,9 +856,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Project User
+  
+
     
   </span>
+  
   
 
       </a>
@@ -789,9 +884,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Project Version
+  
+
     
   </span>
+  
   
 
       </a>
@@ -812,9 +912,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Project Workflow
+  
+
     
   </span>
+  
   
 
       </a>
@@ -835,9 +940,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Tag
+  
+
     
   </span>
+  
   
 
       </a>
@@ -858,9 +968,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     User
+  
+
     
   </span>
+  
   
 
       </a>
@@ -910,9 +1025,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Command Line Interface
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -921,7 +1041,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            Command Line Interface
+            
+  
+    Command Line Interface
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -937,9 +1061,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Getting Started
+  
+
     
   </span>
+  
   
 
       </a>
@@ -960,9 +1089,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Reference
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1009,9 +1143,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Tutorials
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1020,7 +1159,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            Tutorials
+            
+  
+    Tutorials
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1036,9 +1179,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Tutorials
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1059,9 +1207,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Basic Project Setup
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1098,9 +1251,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Importing Assets
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1109,7 +1267,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_3">
             <span class="md-nav__icon md-icon"></span>
-            Importing Assets
+            
+  
+    Importing Assets
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1125,9 +1287,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Importing Assets
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1148,9 +1315,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Video Assets
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1171,9 +1343,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     PDF Assets
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1194,9 +1371,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Rich Text Assets
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1226,9 +1408,14 @@
   
   
   <span class="md-ellipsis">
-    Multi-Layer Geosatellite Assets
+    
+  
+    Multi-Layer Geospatial Assets
+  
+
     
   </span>
+  
   
 
           <span class="md-nav__icon md-icon"></span>
@@ -1239,9 +1426,14 @@
   
   
   <span class="md-ellipsis">
-    Multi-Layer Geosatellite Assets
+    
+  
+    Multi-Layer Geospatial Assets
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1264,7 +1456,9 @@
         <li class="md-nav__item">
   <a href="#setting-up-a-kili-image-project-to-work-with" class="md-nav__link">
     <span class="md-ellipsis">
-      Setting up a Kili image project to work with
+      
+        Setting up a Kili image project to work with
+      
     </span>
   </a>
   
@@ -1274,7 +1468,9 @@
           <li class="md-nav__item">
   <a href="#installing-and-instantiating-kili" class="md-nav__link">
     <span class="md-ellipsis">
-      Installing and instantiating Kili
+      
+        Installing and instantiating Kili
+      
     </span>
   </a>
   
@@ -1283,7 +1479,9 @@
           <li class="md-nav__item">
   <a href="#creating-an-image-kili-project" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating an image Kili project
+      
+        Creating an image Kili project
+      
     </span>
   </a>
   
@@ -1297,7 +1495,9 @@
         <li class="md-nav__item">
   <a href="#importing-your-assets" class="md-nav__link">
     <span class="md-ellipsis">
-      Importing your assets
+      
+        Importing your assets
+      
     </span>
   </a>
   
@@ -1307,7 +1507,9 @@
           <li class="md-nav__item">
   <a href="#download-geotiff-file-examples" class="md-nav__link">
     <span class="md-ellipsis">
-      Download geotiff file examples
+      
+        Download geotiff file examples
+      
     </span>
   </a>
   
@@ -1316,7 +1518,9 @@
           <li class="md-nav__item">
   <a href="#add-multi-layer-assets-to-your-project" class="md-nav__link">
     <span class="md-ellipsis">
-      Add Multi-Layer assets to your project
+      
+        Add Multi-Layer assets to your project
+      
     </span>
   </a>
   
@@ -1330,7 +1534,9 @@
         <li class="md-nav__item">
   <a href="#cleanup" class="md-nav__link">
     <span class="md-ellipsis">
-      Cleanup
+      
+        Cleanup
+      
     </span>
   </a>
   
@@ -1357,9 +1563,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     LLM Static Assets
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1402,9 +1613,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Importing Labels
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1413,7 +1629,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_4">
             <span class="md-nav__icon md-icon"></span>
-            Importing Labels
+            
+  
+    Importing Labels
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1429,9 +1649,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Importing Labels
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1452,9 +1677,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     OpenAI NER Pre-annotations
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1475,9 +1705,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     OCR Pre-annotations
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1498,9 +1733,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Segmentation Pre-annotations
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1521,9 +1761,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Inference Labels
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1544,9 +1789,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     DINOv2 Classification Pre-annotations
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1567,9 +1817,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Import labels from shapefiles (GIS)
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1590,9 +1845,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Import labels from GeoJSON (GIS)
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1635,9 +1895,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Converting Labels
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1646,7 +1911,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_5">
             <span class="md-nav__icon md-icon"></span>
-            Converting Labels
+            
+  
+    Converting Labels
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1662,9 +1931,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     DICOM
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1685,9 +1959,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Tagtog
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1708,9 +1987,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     COCO
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1731,9 +2015,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     PascalVOC
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1762,9 +2051,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Managing Workflows
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1799,9 +2093,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Exporting Project Data
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1810,7 +2109,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_7">
             <span class="md-nav__icon md-icon"></span>
-            Exporting Project Data
+            
+  
+    Exporting Project Data
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1826,9 +2129,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Exporting a Project
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1849,9 +2157,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Parsing Labels
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1880,9 +2193,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     LLM Dynamic Projects
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1917,9 +2235,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Setting Up Plugins
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1928,7 +2251,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_9">
             <span class="md-nav__icon md-icon"></span>
-            Setting Up Plugins
+            
+  
+    Setting Up Plugins
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1944,9 +2271,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Developing Plugins
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1967,9 +2299,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Plugin Example - Programmatic QA
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1990,9 +2327,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Plugins Library
+  
+
     
   </span>
+  
   
 
       </a>
@@ -2013,9 +2355,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Webhooks
+  
+
     
   </span>
+  
   
 
       </a>
@@ -2058,9 +2405,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Integrations
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -2069,7 +2421,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_10">
             <span class="md-nav__icon md-icon"></span>
-            Integrations
+            
+  
+    Integrations
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2085,9 +2441,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Vertex AI AutoML
+  
+
     
   </span>
+  
   
 
       </a>
@@ -2123,9 +2484,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Product Documentation
+  
+
     
   </span>
+  
   
 
       </a>
@@ -2145,9 +2511,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     API Documentation
+  
+
     
   </span>
+  
   
 
       </a>
@@ -2184,7 +2555,9 @@
         <li class="md-nav__item">
   <a href="#setting-up-a-kili-image-project-to-work-with" class="md-nav__link">
     <span class="md-ellipsis">
-      Setting up a Kili image project to work with
+      
+        Setting up a Kili image project to work with
+      
     </span>
   </a>
   
@@ -2194,7 +2567,9 @@
           <li class="md-nav__item">
   <a href="#installing-and-instantiating-kili" class="md-nav__link">
     <span class="md-ellipsis">
-      Installing and instantiating Kili
+      
+        Installing and instantiating Kili
+      
     </span>
   </a>
   
@@ -2203,7 +2578,9 @@
           <li class="md-nav__item">
   <a href="#creating-an-image-kili-project" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating an image Kili project
+      
+        Creating an image Kili project
+      
     </span>
   </a>
   
@@ -2217,7 +2594,9 @@
         <li class="md-nav__item">
   <a href="#importing-your-assets" class="md-nav__link">
     <span class="md-ellipsis">
-      Importing your assets
+      
+        Importing your assets
+      
     </span>
   </a>
   
@@ -2227,7 +2606,9 @@
           <li class="md-nav__item">
   <a href="#download-geotiff-file-examples" class="md-nav__link">
     <span class="md-ellipsis">
-      Download geotiff file examples
+      
+        Download geotiff file examples
+      
     </span>
   </a>
   
@@ -2236,7 +2617,9 @@
           <li class="md-nav__item">
   <a href="#add-multi-layer-assets-to-your-project" class="md-nav__link">
     <span class="md-ellipsis">
-      Add Multi-Layer assets to your project
+      
+        Add Multi-Layer assets to your project
+      
     </span>
   </a>
   
@@ -2250,7 +2633,9 @@
         <li class="md-nav__item">
   <a href="#cleanup" class="md-nav__link">
     <span class="md-ellipsis">
-      Cleanup
+      
+        Cleanup
+      
     </span>
   </a>
   
@@ -2266,6 +2651,7 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
@@ -2273,9 +2659,9 @@
 
 
 <!-- FILE AUTO GENERATED BY docs/utils.py DO NOT EDIT DIRECTLY -->
-<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/main/recipes/importing_multilayer_geosat_assets.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
-<h1 id="how-to-import-multi-layer-geosat-assets-to-a-kili-project">How to import multi-layer geosat assets to a Kili project</h1>
-<p>In this tutorial, we will learn how to import multi-layer geosat assets to your project.</p>
+<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/main/recipes/importing_multilayer_geospatial_assets.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<h1 id="importing-multi-layer-geospatial-images-into-a-kili-project">Importing Multi-Layer Geospatial Images into a Kili Project</h1>
+<p>In this tutorial, we will learn how to import multi-layer geospatial assets to your project.</p>
 <p>Here are the steps that we will follow:</p>
 <ol>
 <li>Setting up an image project.</li>
@@ -2326,7 +2712,7 @@
 <span class="p">}</span>
 
 <span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Importing multi-layer Geosatellite asset&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Importing multi-layer Geospatial asset&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project Description&quot;</span><span class="p">,</span>
     <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">interface</span><span class="p">,</span>
@@ -2334,19 +2720,19 @@
 </code></pre></div>
 <h2 id="importing-your-assets">Importing your assets</h2>
 <h3 id="download-geotiff-file-examples">Download geotiff file examples</h3>
-<p>Before adding assets you need to download our geotiff examples and add them in a geosat folder, created in the same folder as where you run your python script. It is mandatory to use local files and not urls for geosatellite files.</p>
+<p>Before adding assets you need to download our geotiff examples and add them in a geospatial folder, created in the same folder as where you run your python script. It is mandatory to use local files and not urls for geospatial files.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
 
-<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;geosat&quot;</span><span class="p">):</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;geosat&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;geospatial&quot;</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;geospatial&quot;</span><span class="p">)</span>
 <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/geosat/a.tiff&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;geosat/a.tiff&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/geospatial/a.tiff&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;geospatial/a.tiff&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/geosat/b.tiff&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;geosat/b.tiff&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/geospatial/b.tiff&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;geospatial/b.tiff&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="add-multi-layer-assets-to-your-project">Add Multi-Layer assets to your project</h3>
@@ -2356,12 +2742,12 @@
 <span class="n">multi_layer_content_array</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;geosat/a.tiff&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;geospatial/a.tiff&quot;</span><span class="p">,</span>
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Layer 1&quot;</span><span class="p">,</span>
             <span class="s2">&quot;isBaseLayer&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="p">{</span>
-            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;geosat/b.tiff&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;geospatial/b.tiff&quot;</span><span class="p">,</span>
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Layer 2&quot;</span><span class="p">,</span>
             <span class="s2">&quot;isBaseLayer&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
@@ -2395,7 +2781,7 @@
 <p>In this example 4 arguments are used for the <code>append_many_to_dataset</code> function :</p>
 <ol>
 <li><code>project_id</code>: the id of the project to which you want to add the asset</li>
-<li><code>multi_layer_content_array</code>: it is a list of dictionnaries representing the layers created from geosatellite files like GEOTIFFS. For each GEOTIFF you have to set the <code>path</code> to the GEOTIFF, the <code>name</code> that will be used in kili for the layer and the boolean <code>isBaseLayer</code> to define if it's a base layer (only one visible at a time) or an overlay layer (a layer that will be displayed on top of the base layer). This last one is optional and by default if no parameter is set, we consider it is a base layer.</li>
+<li><code>multi_layer_content_array</code>: it is a list of dictionnaries representing the layers created from geospatial files like GEOTIFFS. For each GEOTIFF you have to set the <code>path</code> to the GEOTIFF, the <code>name</code> that will be used in kili for the layer and the boolean <code>isBaseLayer</code> to define if it's a base layer (only one visible at a time) or an overlay layer (a layer that will be displayed on top of the base layer). This last one is optional and by default if no parameter is set, we consider it is a base layer.</li>
 <li><code>json_metadata_array</code>: This one contains the processing parameters that will be used when processing the files. 3 parameters can be set there :<ol>
 <li><code>epsg</code>: This one defines the projection (<a href="https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset">https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset</a>) to which we will reproject the dataset. Our frontend supports only two projections : <code>EPSG:4326</code> and <code>EPSG:3857</code>. If this parameter is not set we will keep the projection of the initial file if it is one of these two, else we will reproject it by default to <code>EPSG:3857</code>. By default, we advise to not set this parameter but if you need to use your GEOTIFFS with some tile server (as with openstreetmap here) you will need to reproject it to the same EPSG as the one used by the tile server as our application supports only one EPSG for the whole asset. For your information most of the well known tile server (openstreetmap, googlemaps, etc) are using <code>EPSG:3857</code>.</li>
 <li><code>maxZoom</code> and <code>minZoom</code>: these defines limits of zoom for your GEOTIFF files. This is especially useful for files that will be tiled by our server (file size &gt; 30MB). By default we generate all the zooms until the one of the original file but if you want to limit to specific zoom levels you can constrain them with these parameters.</li>
@@ -2457,10 +2843,11 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
       
