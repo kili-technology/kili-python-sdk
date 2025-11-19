@@ -192,7 +192,11 @@ class GraphQLClient:
             fetch_schema_from_transport=True,
             introspection_args=self._get_introspection_args(),
         ) as session:
-            return print_schema(session.client.schema)  # pyright: ignore[reportGeneralTypeIssues]
+            schema = session.client.schema
+            if schema is None:
+                msg = "Failed to fetch GraphQL schema"
+                raise RuntimeError(msg)
+            return print_schema(schema)
 
     def _cache_graphql_schema(self, graphql_schema_path: Path, schema_str: str) -> None:
         """Cache the graphql schema on disk."""
@@ -332,7 +336,7 @@ class GraphQLClient:
             )
             transport = self._gql_client.transport
             if transport:
-                headers = transport.response_headers  # pyright: ignore[reportGeneralTypeIssues]
+                headers = transport.response_headers  # type: ignore[attr-defined]
                 returned_complexity = int(headers.get("x-complexity", 0)) if headers else 0
                 self.complexity_consumed += returned_complexity
             return res

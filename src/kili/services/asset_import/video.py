@@ -40,9 +40,9 @@ class VideoMixin:
     def get_video_processing_parameters(asset: AssetLike):
         """Base method for adding video processing parameters."""
         json_metadata = asset.get("json_metadata", {})
-        return json_metadata.get(  # pyright: ignore[reportGeneralTypeIssues]
-            "processingParameters", {}
-        )
+        if isinstance(json_metadata, dict):
+            return json_metadata.get("processingParameters", {})
+        return {}
 
     @staticmethod
     def map_frame_urls_to_index(asset: AssetLike):

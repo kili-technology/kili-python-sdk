@@ -72,7 +72,7 @@ dev = [
   # linting
   "pre-commit >= 3.3.0, < 4.0.0",
   "pylint == 4.0.3",
-  "pyright ==1.1.347",
+  "pyright ==1.1.407",
   # notebooks tests
   "nbformat",
   "nbconvert",
@@ -132,7 +132,7 @@ yolo = [
 ]
 
 [tool.pyright]
-exclude = ["**/__pycache__", ".github/scripts/upload_test_stats_datadog.py"]
+exclude = ["**/__pycache__", ".github/scripts/upload_test_stats_datadog.py", "tests/**"]
 pythonVersion = "3.10"
 typeCheckingMode = "basic"
 

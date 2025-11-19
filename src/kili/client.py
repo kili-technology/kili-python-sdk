@@ -166,7 +166,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             client_name=client_name,
             verify=self.verify,
             http_client=self.http_client,
-            **(graphql_client_params or {}),  # pyright: ignore[reportGeneralTypeIssues]
+            **(graphql_client_params or {}),  # type: ignore[arg-type]
         )
         self.kili_api_gateway = KiliAPIGateway(self.graphql_client, self.http_client)
         self.internal = InternalClientMethods(self.kili_api_gateway)

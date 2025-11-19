@@ -1,6 +1,6 @@
 """Asset mutations."""
 import warnings
-from typing import Any, Literal, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Literal, Optional, Union, cast
 
 from tenacity import retry
 from tenacity.retry import retry_if_exception_type
@@ -29,6 +29,9 @@ from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv
 from kili.utils.assets import PageResolution
 from kili.utils.logcontext import for_all_methods, log_call
+
+if TYPE_CHECKING:
+    from kili.client import Kili
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -195,7 +198,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             if value is not None:
                 assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
         created_asset_ids = import_assets(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            cast("Kili", self),
             project_id=ProjectId(project_id),
             assets=assets,
             disable_tqdm=disable_tqdm,

@@ -286,8 +286,17 @@ def _remove_duplicate_points(coords):
 
 def _process_marker_records(point_records, category_name, from_epsg, json_response, job_name):
     """Process point records for marker job type."""
+    try:
+        from shapely.geometry import Point  # pylint: disable=import-outside-toplevel
+    except ImportError as e:
+        raise ImportError("Install with `pip install kili[gis]` to use GIS features.") from e
+
     for point_record in point_records:
         point = _transform_geometry(point_record, from_epsg)
+
+        if not isinstance(point, Point):
+            msg = f"Expected Point geometry, got {type(point)}"
+            raise TypeError(msg)
 
         annotation = {
             "point": {"x": point.x, "y": point.y},

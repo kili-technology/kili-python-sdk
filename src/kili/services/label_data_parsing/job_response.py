@@ -1,7 +1,7 @@
 """Classes for job response parsing."""
 
 from datetime import datetime
-from typing import Optional, cast
+from typing import Any, Optional, cast
 
 from kili_formats.types import Job
 from typeguard import typechecked
@@ -132,8 +132,8 @@ class JobPayload:
     def children(self, children: dict) -> None:
         """Sets the children jobs of the job."""
         job_names_to_parse = get_children_job_names(
-            json_interface=self._project_info["jsonInterface"],
-            job_interface=self._job_interface,  # type: ignore
+            json_interface=cast(dict[Any, Any], self._project_info["jsonInterface"]),
+            job_interface=cast(dict[Any, Any], self._job_interface),
         )
         parsed_children_job = json_response_module.ParsedJobs(
             project_info=self._project_info,

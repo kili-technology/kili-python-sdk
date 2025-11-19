@@ -1,6 +1,9 @@
 """Project mutations."""
 
-from typing import Literal, Optional
+from typing import TYPE_CHECKING, Literal, Optional, cast
+
+if TYPE_CHECKING:
+    from kili.client import Kili
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -253,7 +256,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
                 "The 'copy_json_interface' and 'copy_quality_settings' arguments are deprecated."
             )
 
-        return ProjectCopier(self).copy_project(  # pyright: ignore[reportGeneralTypeIssues]
+        return ProjectCopier(cast("Kili", self)).copy_project(
             from_project_id,
             title,
             description,
