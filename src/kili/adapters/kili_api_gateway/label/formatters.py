@@ -1,12 +1,11 @@
 """Formatters for labels retrieved from Kili API."""
 
 import json
-from typing import Dict
 
 from kili.domain.types import ListOrTuple
 
 
-def load_label_json_fields(label: Dict, fields: ListOrTuple[str]) -> Dict:
+def load_label_json_fields(label: dict, fields: ListOrTuple[str]) -> dict:
     """Load json fields of a label."""
     if "jsonResponse" in fields:
         try:

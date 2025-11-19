@@ -86,14 +86,12 @@ We recommend using a modern IDE like VScode to get type hints and autocompletion
 
 
 ```python
-from typing import Dict
-
 import numpy as np
 
 from kili.plugins import PluginCore
 
 
-def custom_function(label: Dict):
+def custom_function(label: dict):
     label_id = label.get("id")
     print(f"My custom function for review of label with id {label_id}")
 
@@ -113,11 +111,11 @@ class PluginHandler(PluginCore):
                 text_array=["Random issue generated for this label"],
             )
 
-    def on_review(self, label: Dict, asset_id: str) -> None:
+    def on_review(self, label: dict, asset_id: str) -> None:
         """Dedicated handler for Review action"""
         custom_function(label)
 
-    def on_submit(self, label: Dict, asset_id: str) -> None:
+    def on_submit(self, label: dict, asset_id: str) -> None:
         """Dedicated handler for Submit action"""
         print("On submit called")
 

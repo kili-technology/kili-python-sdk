@@ -1,9 +1,7 @@
-from typing import Dict, List
-
 from kili.domain.project import ProjectFilters
 
 
-def projects(filters: ProjectFilters, *args, **kwargs) -> List[Dict]:
+def projects(filters: ProjectFilters, *args, **kwargs) -> list[dict]:
     project_id = filters.id
 
     if project_id == "yolo!":

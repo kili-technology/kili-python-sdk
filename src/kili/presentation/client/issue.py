@@ -1,8 +1,9 @@
 # pylint: disable=too-many-arguments
 """Client presentation methods for issues."""
 
+from collections.abc import Generator, Iterable
 from itertools import repeat
-from typing import Any, Dict, Generator, Iterable, List, Literal, Optional, overload
+from typing import Any, Literal, Optional, overload
 
 from typeguard import typechecked
 
@@ -30,10 +31,10 @@ class IssueClientMethods(BaseClientMethods):
     def create_issues(
         self,
         project_id: str,
-        label_id_array: List[str],
-        object_mid_array: Optional[List[Optional[str]]] = None,
-        text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+        label_id_array: list[str],
+        object_mid_array: Optional[list[Optional[str]]] = None,
+        text_array: Optional[list[Optional[str]]] = None,
+    ) -> list[dict[Literal["id"], str]]:
         """Create an issue.
 
         Args:
@@ -52,6 +53,7 @@ class IssueClientMethods(BaseClientMethods):
                 label_id_array,
                 object_mid_array or repeat(None),
                 text_array or repeat(None),
+                strict=False,
             )
         ]
         issue_service = IssueUseCases(self.kili_api_gateway)
@@ -63,7 +65,7 @@ class IssueClientMethods(BaseClientMethods):
         self,
         project_id: str,
         asset_id: Optional[str] = None,
-        asset_id_in: Optional[List[str]] = None,
+        asset_id_in: Optional[list[str]] = None,
         issue_type: Optional[IssueType] = None,
         status: Optional[IssueStatus] = None,
     ) -> int:
@@ -109,12 +111,12 @@ class IssueClientMethods(BaseClientMethods):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         asset_id: Optional[str] = None,
-        asset_id_in: Optional[List[str]] = None,
+        asset_id_in: Optional[list[str]] = None,
         issue_type: Optional[IssueType] = None,
         status: Optional[IssueStatus] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -132,12 +134,12 @@ class IssueClientMethods(BaseClientMethods):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         asset_id: Optional[str] = None,
-        asset_id_in: Optional[List[str]] = None,
+        asset_id_in: Optional[list[str]] = None,
         issue_type: Optional[IssueType] = None,
         status: Optional[IssueStatus] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -155,12 +157,12 @@ class IssueClientMethods(BaseClientMethods):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         asset_id: Optional[str] = None,
-        asset_id_in: Optional[List[str]] = None,
+        asset_id_in: Optional[list[str]] = None,
         issue_type: Optional[IssueType] = None,
         status: Optional[IssueStatus] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of issues that match a set of criteria.
 
@@ -210,7 +212,7 @@ class IssueClientMethods(BaseClientMethods):
             return issues_gen
         return list(issues_gen)
 
-    def update_issue_status(self, issue_id: str, status: IssueStatus) -> Dict[str, Any]:
+    def update_issue_status(self, issue_id: str, status: IssueStatus) -> dict[str, Any]:
         """Update the status of an issue.
 
         Args:

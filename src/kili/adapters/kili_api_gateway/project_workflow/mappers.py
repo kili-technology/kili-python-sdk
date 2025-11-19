@@ -1,13 +1,13 @@
 """GraphQL payload data mappers for project operations."""
 
-from typing import Dict, Union
+from typing import Union
 
 from kili.domain.project import WorkflowStepCreate, WorkflowStepUpdate
 
 from .types import ProjectWorkflowDataKiliAPIGatewayInput
 
 
-def project_input_mapper(data: ProjectWorkflowDataKiliAPIGatewayInput) -> Dict:
+def project_input_mapper(data: ProjectWorkflowDataKiliAPIGatewayInput) -> dict:
     """Build the GraphQL ProjectWorfklowData variable to be sent in an operation."""
     return {
         "enforceStepSeparation": data.enforce_step_separation,
@@ -23,7 +23,7 @@ def project_input_mapper(data: ProjectWorkflowDataKiliAPIGatewayInput) -> Dict:
     }
 
 
-def update_step_mapper(data: Union[WorkflowStepCreate, WorkflowStepUpdate]) -> Dict:
+def update_step_mapper(data: Union[WorkflowStepCreate, WorkflowStepUpdate]) -> dict:
     """Build the GraphQL create StepData variable to be sent in an operation."""
     step = {
         "id": data["id"] if "id" in data else None,

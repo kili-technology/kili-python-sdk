@@ -1,5 +1,4 @@
 import json
-from typing import Dict
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import PaginatedGraphQLQuery, QueryOptions
@@ -54,4 +53,4 @@ def test_given_projects_when_i_query_them_then_it_works(
 
     # Then
     assert len(projects) == 2
-    assert all(isinstance(proj["jsonInterface"], Dict) for proj in projects)
+    assert all(isinstance(proj["jsonInterface"], dict) for proj in projects)

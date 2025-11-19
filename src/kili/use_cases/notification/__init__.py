@@ -1,6 +1,6 @@
 """Notification use cases."""
 
-from typing import Dict, Generator
+from collections.abc import Generator
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.notification import NotificationFilter
@@ -13,7 +13,7 @@ class NotificationUseCases(BaseUseCases):
 
     def list_notifications(
         self, filters: NotificationFilter, fields: ListOrTuple[str], options: QueryOptions
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List notifications."""
         return self._kili_api_gateway.list_notifications(
             filters=filters, fields=fields, options=options

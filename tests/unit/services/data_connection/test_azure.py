@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 import pytest
 
 from kili.use_cases.cloud_storage.azure import AzureBucket
@@ -47,7 +45,7 @@ from kili.use_cases.cloud_storage.azure import AzureBucket
         ),
     ],
 )
-def test_azure_get_tree(mocker, blob_names: List[str], expected_tree: Dict):
+def test_azure_get_tree(mocker, blob_names: list[str], expected_tree: dict):
     mocker.patch.object(AzureBucket, "__init__", return_value=None)
     azure_client = AzureBucket(sas_token="", connection_url="")
     azure_client.storage_bucket = mocker.MagicMock(

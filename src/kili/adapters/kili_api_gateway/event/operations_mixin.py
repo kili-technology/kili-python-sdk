@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Api Keys related operations."""
 
-from typing import List, Optional, cast
+from typing import Optional, cast
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.event.mappers import (
@@ -34,7 +34,7 @@ class EventOperationMixin(BaseOperationMixin):
         filters: EventFilters,
         options: QueryOptions,
         fields: Optional[ListOrTuple[str]] = None,
-    ) -> List[EventDict]:
+    ) -> list[EventDict]:
         """List events with given options."""
         fragment = fragment_builder(fields or DEFAULT_EVENT_FIELDS)
         query = get_events_query(fragment)

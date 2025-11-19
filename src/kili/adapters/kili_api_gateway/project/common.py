@@ -1,5 +1,4 @@
 """Project gateway common."""
-from typing import Dict
 
 from kili.adapters.kili_api_gateway.helpers.queries import (
     fragment_builder,
@@ -16,7 +15,7 @@ from kili.exceptions import NotFound
 
 def get_project(
     graphql_client: GraphQLClient, project_id: ProjectId, fields: ListOrTuple[str]
-) -> Dict:
+) -> dict:
     """Get project."""
     fragment = fragment_builder(fields)
     query = get_projects_query(fragment)

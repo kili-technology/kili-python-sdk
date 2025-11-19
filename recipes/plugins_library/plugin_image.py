@@ -1,11 +1,11 @@
 """My custom plugin for bills."""
 
-from typing import Dict, List, Optional
+from typing import Optional
 
 from kili.plugins import PluginCore
 
 
-def check_rules_on_label(label: Dict) -> List[Optional[str]]:
+def check_rules_on_label(label: dict) -> list[Optional[str]]:
     # custom methods
     print("Custom method - checking number of bboxes")
 
@@ -22,7 +22,7 @@ def check_rules_on_label(label: Dict) -> List[Optional[str]]:
 class PluginHandler(PluginCore):
     """Custom plugin instance."""
 
-    def on_submit(self, label: Dict, asset_id: str) -> None:
+    def on_submit(self, label: dict, asset_id: str) -> None:
         """Dedicated handler for Submit action."""
         self.logger.info("On submit called")
 

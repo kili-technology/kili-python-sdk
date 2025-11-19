@@ -2,7 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
 
 from kili_formats import convert_from_kili_to_yolo_format
 from kili_formats.media.video import cut_video
@@ -81,13 +80,13 @@ class YoloExporter(AbstractExporter):
             for tool in job["tools"]  # pyright: ignore[reportGeneralTypeIssues]
         )
 
-    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
+    def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
         """Yolo specific process and save."""
         if self.split_option == "merged":
             return self._process_and_save_merge(assets, output_filename)
         return self._process_and_save_split(assets, output_filename)
 
-    def _process_and_save_split(self, assets: List[Dict], output_filename: Path) -> None:
+    def _process_and_save_split(self, assets: list[dict], output_filename: Path) -> None:
         self.logger.info("Exporting to yolo format split...")
 
         self._write_jobs_labels_into_split_folders(
@@ -101,7 +100,7 @@ class YoloExporter(AbstractExporter):
 
         self.logger.warning(output_filename)
 
-    def _process_and_save_merge(self, assets: List[Dict], output_filename: Path) -> None:
+    def _process_and_save_merge(self, assets: list[dict], output_filename: Path) -> None:
         self.logger.info("Exporting to yolo format merged...")
 
         labels_folder = self.base_folder / "labels"
@@ -120,8 +119,8 @@ class YoloExporter(AbstractExporter):
 
     def _write_labels_into_single_folder(
         self,
-        assets: List[Dict],
-        categories_id: Dict[str, JobCategory],
+        assets: list[dict],
+        categories_id: dict[str, JobCategory],
         labels_folder: Path,
         images_folder: Path,
         base_folder: Path,
@@ -155,8 +154,8 @@ class YoloExporter(AbstractExporter):
 
     def _write_jobs_labels_into_split_folders(
         self,
-        assets: List[Dict],
-        categories_by_job: Dict[str, Dict[str, JobCategory]],
+        assets: list[dict],
+        categories_by_job: dict[str, dict[str, JobCategory]],
         root_folder: Path,
         images_folder: Path,
     ) -> None:
@@ -174,10 +173,10 @@ class YoloExporter(AbstractExporter):
                 base_folder,
             )
 
-    def _get_merged_categories(self, json_interface: Dict) -> Dict[str, JobCategory]:
+    def _get_merged_categories(self, json_interface: dict) -> dict[str, JobCategory]:
         """Return a dictionary of JobCategory instances by category full name."""
         cat_number = 0
-        merged_categories_id: Dict[str, JobCategory] = {}
+        merged_categories_id: dict[str, JobCategory] = {}
         for job_id, job in json_interface.get("jobs", {}).items():
             if not self._is_job_compatible(job):
                 continue
@@ -190,14 +189,14 @@ class YoloExporter(AbstractExporter):
 
         return merged_categories_id
 
-    def _get_categories_by_job(self, json_interface: Dict) -> Dict[str, Dict[str, JobCategory]]:
+    def _get_categories_by_job(self, json_interface: dict) -> dict[str, dict[str, JobCategory]]:
         """Return a dictionary of JobCategory instances by category full name and job id."""
-        categories_by_job: Dict[str, Dict[str, JobCategory]] = {}
+        categories_by_job: dict[str, dict[str, JobCategory]] = {}
         for job_id, job in json_interface.get("jobs", {}).items():
             if not self._is_job_compatible(job):
                 continue
 
-            categories: Dict[str, JobCategory] = {}
+            categories: dict[str, JobCategory] = {}
             for cat_id, category in enumerate(job.get("content", {}).get("categories", {})):
                 categories[get_category_full_name(job_id, category)] = JobCategory(
                     category_name=category, id=cat_id, job_id=job_id
@@ -239,9 +238,9 @@ class _LabelFrames:
         return _LabelFrames(frames, number_of_frames, is_frame_group, asset["externalId"])
 
     def __init__(
-        self, frames: Dict[int, Dict], number_frames: int, is_frame_group: bool, external_id: str
+        self, frames: dict[int, dict], number_frames: int, is_frame_group: bool, external_id: str
     ) -> None:
-        self.frames: Dict[int, Dict] = frames
+        self.frames: dict[int, dict] = frames
         self.number_frames: int = number_frames
         self.is_frame_group: bool = is_frame_group
         self.external_id: str = external_id
@@ -261,14 +260,14 @@ def get_category_full_name(job_id: str, category_name: str):
 
 
 def _process_asset(
-    asset: Dict,
+    asset: dict,
     images_folder: Path,
     labels_folder: Path,
-    category_ids: Dict[str, JobCategory],
+    category_ids: dict[str, JobCategory],
     content_repository: AbstractContentRepository,
     with_assets: bool,
     project_input_type: str,
-) -> Tuple[List[Tuple[str, str, str]], List[str]]:
+) -> tuple[list[tuple[str, str, str]], list[str]]:
     # pylint: disable=too-many-locals, too-many-arguments
     """Process an asset for all job_ids of category_ids."""
     asset_remote_content = []
@@ -335,7 +334,7 @@ def _process_asset(
 
 def _write_class_file(
     folder: Path,
-    category_ids: Dict[str, JobCategory],
+    category_ids: dict[str, JobCategory],
     label_format: LabelFormat,
     layout: SplitOption,
 ):
@@ -371,8 +370,8 @@ def _write_class_file(
 
 
 def _get_frame_labels(
-    frame: Dict, job_ids: Set[str], category_ids: Dict[str, JobCategory]
-) -> List[Tuple]:
+    frame: dict, job_ids: set[str], category_ids: dict[str, JobCategory]
+) -> list[tuple]:
     annotations = []
     for job_id in job_ids:
         job_annotations = convert_from_kili_to_yolo_format(
@@ -397,7 +396,7 @@ def _write_content_frame_to_file(
             fout.write(block)
 
 
-def _write_labels_to_file(labels_folder: Path, filename: str, annotations: List[Tuple]) -> None:
+def _write_labels_to_file(labels_folder: Path, filename: str, annotations: list[tuple]) -> None:
     file_path = labels_folder / f"{_remove_image_extension(filename)}.txt"
     file_path.parent.mkdir(parents=True, exist_ok=True)
     with file_path.open("wb") as fout:

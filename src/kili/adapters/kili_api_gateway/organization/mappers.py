@@ -1,7 +1,6 @@
 """Mappers for Organization API calls."""
 
 import json
-from typing import Dict
 
 from kili.domain.organization import (
     OrganizationFilters,
@@ -12,14 +11,14 @@ from kili.domain.organization import (
 )
 
 
-def map_create_organization_data(data: OrganizationToCreateInput) -> Dict:
+def map_create_organization_data(data: OrganizationToCreateInput) -> dict:
     """Build the GraphQL OrganizationData variable to be sent in an operation."""
     return {
         "name": data.name,
     }
 
 
-def map_list_organizations_where(filters: OrganizationFilters) -> Dict:
+def map_list_organizations_where(filters: OrganizationFilters) -> dict:
     """Build the GraphQL OrganizationWhere variable to be sent in an operation."""
     return {
         "id": filters.organization_id,
@@ -29,12 +28,12 @@ def map_list_organizations_where(filters: OrganizationFilters) -> Dict:
     }
 
 
-def map_update_organization_where(organization_id: OrganizationId) -> Dict:
+def map_update_organization_where(organization_id: OrganizationId) -> dict:
     """Build the GraphQL OrganizationData variable to be sent in an operation."""
     return {"id": organization_id}
 
 
-def map_update_organization_data(organization_data: OrganizationToUpdateInput) -> Dict:
+def map_update_organization_data(organization_data: OrganizationToUpdateInput) -> dict:
     """Build the GraphQL OrganizationData variable to be sent in an operation."""
     license_str = None if not organization_data.license else json.dumps(organization_data.license)
     data = {}
@@ -45,7 +44,7 @@ def map_update_organization_data(organization_data: OrganizationToUpdateInput) -
     return data
 
 
-def map_organization_metrics_where(filters: OrganizationMetricsFilters) -> Dict:
+def map_organization_metrics_where(filters: OrganizationMetricsFilters) -> dict:
     """Build the GraphQL OrganizationMetricsWhere variable to be sent in an operation."""
     date_string_fmt = "%Y-%m-%dT%H:%M:%SZ"
     return {

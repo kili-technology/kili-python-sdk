@@ -3,7 +3,6 @@
 import csv
 import os
 from pathlib import Path
-from typing import List
 from unittest.mock import ANY, patch
 
 import pytest
@@ -327,7 +326,7 @@ def test_describe_project(mocker: pytest_mock.MockerFixture):
 )
 def test_import(
     case_name: str,
-    files: List[str],
+    files: list[str],
     options,
     expected_service_payload,
     flags,
@@ -418,7 +417,7 @@ def test_import(
         ),
     ],
 )
-def test_export(name: str, test_case: List[str], mocker: pytest_mock.MockerFixture):
+def test_export(name: str, test_case: list[str], mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
     mocker.patch.object(KiliAPIGateway, "get_project", side_effect=mocked_get_project)
     mocker.patch.object(KiliAPIGateway, "list_projects", side_effect=mocked_list_projects)

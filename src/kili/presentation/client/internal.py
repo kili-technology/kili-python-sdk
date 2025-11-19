@@ -1,6 +1,7 @@
 """Module for methods that are for internal use by Kili Technology only."""
 
-from typing import Dict, Iterable, Optional
+from collections.abc import Iterable
+from typing import Optional
 
 from typeguard import typechecked
 
@@ -74,7 +75,7 @@ class InternalClientMethods(InternalOrganizationClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         """Get a generator or a list of API keys that match a set of constraints.
 
         WARNING: This method is for internal use only.

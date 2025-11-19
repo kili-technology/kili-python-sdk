@@ -1,5 +1,4 @@
 """Label gateway common."""
-from typing import Dict
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.asset.formatters import load_asset_json_fields
@@ -19,7 +18,7 @@ def get_asset(
     http_client: HttpClient,
     asset_id: AssetId,
     fields: ListOrTuple[str],
-) -> Dict:
+) -> dict:
     """Get asset."""
     fragment = fragment_builder(fields)
     query = get_assets_query(fragment)

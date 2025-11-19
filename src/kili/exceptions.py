@@ -1,6 +1,6 @@
 """Exceptions of the package."""
 
-from typing import Dict, List, Optional
+from typing import Optional
 
 
 class GraphQLError(Exception):
@@ -10,9 +10,9 @@ class GraphQLError(Exception):
         self.error = error
         self.context = context
 
-        if isinstance(error, List):
+        if isinstance(error, list):
             error = error[0]
-        if isinstance(error, Dict) and "message" in error:
+        if isinstance(error, dict) and "message" in error:
             error_msg = error["message"]
         else:
             error_msg = str(error)

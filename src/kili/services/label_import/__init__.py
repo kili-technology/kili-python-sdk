@@ -1,7 +1,7 @@
 """Label import service."""
 
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional, Type, cast
+from typing import TYPE_CHECKING, Optional, cast
 
 from kili.domain.project import ProjectId
 from kili.exceptions import NotFound
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 def import_labels_from_files(  # pylint: disable=too-many-arguments
     kili: "Kili",
-    labels_files: List[str],
+    labels_files: list[str],
     meta_file_path: Optional[str],
     project_id: ProjectId,
     input_format: str,
@@ -46,7 +46,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
             f"Target job {target_job_name} has not been found in the project JSON interface"
         )
 
-    label_importer_class: Optional[Type[AbstractLabelImporter]] = None
+    label_importer_class: Optional[type[AbstractLabelImporter]] = None
     if input_format in ["yolo_v4", "yolo_v5", "yolo_v7"]:
         label_importer_class = YoloLabelImporter
     elif input_format in ["raw", "kili"]:

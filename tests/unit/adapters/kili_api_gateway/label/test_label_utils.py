@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 import pytest
 from kili_formats.tool.annotations_to_json_response import (
     _classic_annotations_to_json_response,
@@ -136,9 +134,9 @@ from .test_data import (
 )
 def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
     test_case_name: str,
-    annotations: List[VideoAnnotation],
-    expected_json_resp: Dict,
-    json_interface: Dict,
+    annotations: list[VideoAnnotation],
+    expected_json_resp: dict,
+    json_interface: dict,
 ):
     # Given
     _ = annotations
@@ -168,7 +166,7 @@ def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
                     compare_json(resp[key], expected[key])
         elif isinstance(resp, list) and isinstance(expected, list):
             assert len(resp) == len(expected)
-            for r, e in zip(resp, expected):
+            for r, e in zip(resp, expected, strict=False):
                 compare_json(r, e)
         else:
             assert resp == expected
@@ -193,8 +191,8 @@ def test_given_video_label_annotations_when_converting_to_json_resp_it_works(
 )
 def test_given_classic_label_annotations_when_converting_to_json_resp_it_works(
     test_case_name: str,
-    annotations: List[ClassicAnnotation],
-    expected_json_resp: Dict,
+    annotations: list[ClassicAnnotation],
+    expected_json_resp: dict,
 ):
     # Given
     _ = annotations
@@ -326,10 +324,10 @@ def test_given_two_keypoint_annotations_when_interpolate_then_it_works(
     ],
 )
 def test_given_two_bboxes_on_different_frames_when_generating_intermediate_bboxes_it_works(
-    bbox_start: List[Vertice],
-    bbox_end: List[Vertice],
+    bbox_start: list[Vertice],
+    bbox_end: list[Vertice],
     weight: float,
-    expected_bbox: List[Vertice],
+    expected_bbox: list[Vertice],
 ):
     # Given
 
@@ -339,6 +337,8 @@ def test_given_two_bboxes_on_different_frames_when_generating_intermediate_bboxe
     )
 
     # Then
-    for vertice_interpolated, vertice_expected in zip(interpolated_bbox, expected_bbox):
+    for vertice_interpolated, vertice_expected in zip(
+        interpolated_bbox, expected_bbox, strict=False
+    ):
         assert vertice_interpolated["x"] == pytest.approx(vertice_expected["x"], 1e-3)
         assert vertice_interpolated["y"] == pytest.approx(vertice_expected["y"], 1e-3)

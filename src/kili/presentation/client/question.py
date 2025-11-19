@@ -1,7 +1,7 @@
 """Client presentation methods for questions."""
 
 from itertools import repeat
-from typing import Dict, List, Literal, Optional
+from typing import Literal, Optional
 
 from typeguard import typechecked
 
@@ -23,7 +23,7 @@ class QuestionClientMethods(BaseClientMethods):
         text_array: ListOrTuple[Optional[str]],
         asset_id_array: Optional[ListOrTuple[str]] = None,
         asset_external_id_array: Optional[ListOrTuple[str]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> list[dict[Literal["id"], str]]:
         """Create questions.
 
         Args:
@@ -42,7 +42,10 @@ class QuestionClientMethods(BaseClientMethods):
                 asset_external_id=AssetExternalId(asset_external_id) if asset_external_id else None,
             )
             for (text, asset_id, asset_external_id) in zip(
-                text_array, asset_id_array or repeat(None), asset_external_id_array or repeat(None)
+                text_array,
+                asset_id_array or repeat(None),
+                asset_external_id_array or repeat(None),
+                strict=False,
             )
         ]
         question_ids = QuestionUseCases(self.kili_api_gateway).create_questions(

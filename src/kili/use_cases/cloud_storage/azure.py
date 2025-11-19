@@ -2,7 +2,7 @@
 
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
 from urllib.parse import urlparse
 
 from azure.storage.blob import BlobServiceClient
@@ -11,8 +11,8 @@ from kili.domain.project import InputType
 
 
 def get_blob_paths_azure_data_connection_with_service_credentials(
-    data_connection: Dict, data_integration: Dict, input_type: InputType
-) -> Tuple[List[str], List[str], List[str]]:
+    data_connection: dict, data_integration: dict, input_type: InputType
+) -> tuple[list[str], list[str], list[str]]:
     """Get the blob paths for an Azure data connection using service credentials."""
     if not (data_integration["azureSASToken"] and data_integration["azureConnectionURL"]):
         raise ValueError(
@@ -52,7 +52,7 @@ class AzureBucket:
     @staticmethod
     def _split_connection_url_into_storage_account_and_container_name(
         connection_url: str,
-    ) -> Tuple[str, str]:
+    ) -> tuple[str, str]:
         """Split the connection url into storage account and container name."""
         split_value = ".blob.core.windows.net"
         url_connection = urlparse(connection_url)
@@ -62,7 +62,7 @@ class AzureBucket:
         container_name = url_connection.path.lstrip("/")
         return storage_account, container_name
 
-    def get_blob_paths_as_tree(self) -> Dict:
+    def get_blob_paths_as_tree(self) -> dict:
         """Get a tree representation of the Azure bucket.
 
         Folder structure is represented as a dictionary.
@@ -98,11 +98,11 @@ class AzureBucket:
     def get_blob_paths_azure_data_connection_with_service_credentials(
         self,
         input_type: InputType,
-        selected_folders: Optional[List[str]] = None,
+        selected_folders: Optional[list[str]] = None,
         prefix: Optional[str] = None,
-        include: Optional[List[str]] = None,
-        exclude: Optional[List[str]] = None,
-    ) -> Tuple[List[str], List[str], List[str]]:
+        include: Optional[list[str]] = None,
+        exclude: Optional[list[str]] = None,
+    ) -> tuple[list[str], list[str], list[str]]:
         """Get the blob paths for an Azure data connection using service credentials."""
         blob_paths = []
         content_types = []
@@ -115,7 +115,7 @@ class AzureBucket:
 
             if (
                 prefix is None
-                and isinstance(selected_folders, List)
+                and isinstance(selected_folders, list)
                 and not any(
                     blob.name.startswith(selected_folder) for selected_folder in selected_folders
                 )

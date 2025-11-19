@@ -3,7 +3,7 @@
 import ast
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 from zipfile import ZipFile
 
 from typing_extensions import LiteralString
@@ -45,7 +45,7 @@ POSSIBLE_HANDLERS = {
 
 
 def check_file_mime_type(
-    path: Path, compatible_mime_extensions: List[str], verbose: bool = True
+    path: Path, compatible_mime_extensions: list[str], verbose: bool = True
 ) -> bool:
     """Returns true if the mime type of the file corresponds to one of compatible_mime_extensions."""
     mime_type = get_mime_type(path.as_posix())
@@ -74,7 +74,7 @@ def check_file_is_txt(path: Path, verbose: bool = True) -> bool:
     return check_file_mime_type(path, mime_extensions_for_txt_files, verbose)
 
 
-def check_file_contains_handler(path: Path) -> Tuple[bool, Optional[List[str]], bool]:
+def check_file_contains_handler(path: Path) -> tuple[bool, Optional[list[str]], bool]:
     """Test if the file is a python file with the right content.
 
     Return true if the file contain PluginHandler Class.
@@ -109,8 +109,8 @@ class WebhookUploader:
         plugin_name: str,
         header: Optional[str],
         verbose: bool,
-        handler_types: Optional[List[str]],
-        event_matcher: Optional[List[str]],
+        handler_types: Optional[list[str]],
+        event_matcher: Optional[list[str]],
     ) -> None:
         self.kili = kili
         self.webhook_url = webhook_url
@@ -160,7 +160,7 @@ class PluginUploader:
         plugin_name: Optional[str],
         verbose: bool,
         http_client: HttpClient,
-        event_matcher: Optional[List[str]],
+        event_matcher: Optional[list[str]],
     ) -> None:
         self.kili = kili
         self.plugin_path = Path(plugin_path)
@@ -180,7 +180,7 @@ class PluginUploader:
         self.verbose = verbose
         self.handler_types = None
 
-    def _retrieve_plugin_src(self) -> List[Path]:
+    def _retrieve_plugin_src(self) -> list[Path]:
         """Retrieve script from plugin_path and execute it to prevent an upload with indentation errors."""
         if self.plugin_path.is_dir():
             file_path = self.plugin_path / "main.py"

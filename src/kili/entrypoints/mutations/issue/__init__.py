@@ -1,6 +1,6 @@
 """Issue mutations."""
 
-from typing import Dict, Optional
+from typing import Optional
 
 from typeguard import typechecked
 
@@ -35,7 +35,7 @@ class MutationsIssue(BaseOperationEntrypointMixin):
         object_mid: Optional[str] = None,
         text: Optional[str] = None,
         type_: IssueType = "ISSUE",
-    ) -> Dict:
+    ) -> dict:
         """Create an issue.
 
         !!! danger "Deprecated"

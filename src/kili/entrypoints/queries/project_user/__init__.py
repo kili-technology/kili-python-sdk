@@ -1,13 +1,9 @@
 """Project user queries."""
 
+from collections.abc import Generator, Iterable, Sequence
 from typing import (
-    Dict,
-    Generator,
-    Iterable,
-    List,
     Literal,
     Optional,
-    Sequence,
     overload,
 )
 
@@ -57,7 +53,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -85,7 +81,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -113,7 +109,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Return project users (possibly with their KPIs) that match a set of criteria.
 

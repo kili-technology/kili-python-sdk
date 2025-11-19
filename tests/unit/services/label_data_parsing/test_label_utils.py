@@ -1,5 +1,4 @@
 import json
-from typing import List
 
 from typing_extensions import assert_type
 
@@ -249,7 +248,7 @@ def test_parse_labels_classification_to_dict_classif_with_bbox():
         json.loads(label_modified_as_str) for label_modified_as_str in labels_modified_as_str
     ]
 
-    for original_label, parsed_label in zip(labels, labels_modified):
+    for original_label, parsed_label in zip(labels, labels_modified, strict=False):
         assert original_label == parsed_label
 
 
@@ -269,9 +268,9 @@ def test_integration_of_label_parsing_in_kili_labels(kili_api_gateway: KiliAPIGa
 
     labels = kili.labels(project_id="project_id", output_format="parsed_label")
 
-    assert_type(labels, List[ParsedLabel])
+    assert_type(labels, list[ParsedLabel])
 
-    assert isinstance(labels, List)
+    assert isinstance(labels, list)
     assert all(isinstance(labl, ParsedLabel) for labl in labels)  # pylint: disable=not-an-iterable
     assert len(labels) == 1
     assert labels[0].jobs["JOB_0"].text == "some text abc"  # pylint: disable=unsubscriptable-object

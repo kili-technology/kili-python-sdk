@@ -1,7 +1,7 @@
 """Question use cases."""
 
 from dataclasses import dataclass
-from typing import List, Optional, cast
+from typing import Optional, cast
 
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.domain.asset import AssetExternalId, AssetId
@@ -26,8 +26,8 @@ class QuestionUseCases(BaseUseCases):
     def create_questions(
         self,
         project_id: ProjectId,
-        questions: List[QuestionToCreateUseCaseInput],
-    ) -> List[QuestionId]:
+        questions: list[QuestionToCreateUseCaseInput],
+    ) -> list[QuestionId]:
         """Create questions."""
         if questions[0].asset_id is not None:
             # we assume that if 1 question asset Id is not None, all there others are too
@@ -50,7 +50,7 @@ class QuestionUseCases(BaseUseCases):
                 object_mid=None,
                 label_id=None,
             )
-            for (asset_id, question) in zip(asset_ids, questions)
+            for (asset_id, question) in zip(asset_ids, questions, strict=False)
         ]
         return [
             QuestionId(str(id_))

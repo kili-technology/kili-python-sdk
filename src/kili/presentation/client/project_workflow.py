@@ -1,6 +1,6 @@
 """Client presentation methods for project workflow."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from typeguard import typechecked
 
@@ -18,10 +18,10 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
         self,
         project_id: str,
         enforce_step_separation: Optional[bool] = None,
-        create_steps: Optional[List[WorkflowStepCreate]] = None,
-        update_steps: Optional[List[WorkflowStepUpdate]] = None,
-        delete_steps: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
+        create_steps: Optional[list[WorkflowStepCreate]] = None,
+        update_steps: Optional[list[WorkflowStepUpdate]] = None,
+        delete_steps: Optional[list[str]] = None,
+    ) -> dict[str, Any]:
         """Update properties of a project workflow.
 
         Args:
@@ -49,7 +49,7 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
     def get_steps(
         self,
         project_id: str,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get steps in a project workflow.
 
         Args:

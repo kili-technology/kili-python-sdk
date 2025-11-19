@@ -1,10 +1,8 @@
 """Utility functions to enrich GeoJSON features with Kili properties."""
 
-from typing import Dict
-
 
 # pylint: disable=too-many-statements,too-many-branches
-def enrich_geojson_with_kili_properties(feature_collection: Dict, json_interface: Dict) -> Dict:
+def enrich_geojson_with_kili_properties(feature_collection: dict, json_interface: dict) -> dict:
     """Enrich GeoJSON features with kili properties when missing.
 
     Args:
@@ -106,8 +104,8 @@ def enrich_geojson_with_kili_properties(feature_collection: Dict, json_interface
 
 # pylint: disable=too-many-branches
 def enrich_geojson_with_specific_mapping(
-    feature_collection: Dict, json_interface: Dict, target_job_name: str, target_category_name: str
-) -> Dict:
+    feature_collection: dict, json_interface: dict, target_job_name: str, target_category_name: str
+) -> dict:
     """Enrich GeoJSON features with specific job and category mapping.
 
     Args:

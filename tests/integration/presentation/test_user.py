@@ -1,4 +1,4 @@
-from typing import Dict, Generator, List
+from collections.abc import Generator
 
 import pytest
 from typeguard import check_type
@@ -11,10 +11,10 @@ from kili.use_cases.user import UserUseCases
 @pytest.mark.parametrize(
     ("args", "kwargs", "expected_return_type"),
     [
-        ((), {}, List[Dict]),
-        ((), {"as_generator": True}, Generator[Dict, None, None]),
-        ((), {"as_generator": False}, List[Dict]),
-        ((), {"email": "test@kili.com", "as_generator": False}, List[Dict]),
+        ((), {}, list[dict]),
+        ((), {"as_generator": True}, Generator[dict, None, None]),
+        ((), {"as_generator": False}, list[dict]),
+        ((), {"email": "test@kili.com", "as_generator": False}, list[dict]),
     ],
 )
 def test_given_users_query_when_i_call_it_i_get_correct_return_type(

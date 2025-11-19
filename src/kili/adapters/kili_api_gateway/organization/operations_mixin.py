@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Organization related operations."""
 
-from typing import Dict, Generator
+from collections.abc import Generator
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -39,7 +39,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
     def create_organization(
         self,
         organization: OrganizationToCreateInput,
-    ) -> Dict:
+    ) -> dict:
         """Send a GraphQL request calling createOrganization resolver."""
         payload = {"data": map_create_organization_data(organization)}
         fragment = fragment_builder(["id"])
@@ -53,7 +53,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
         fields: ListOrTuple[str],
         description: str,
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Send a series of GraphQL request calling organizations resolver."""
         fragment = fragment_builder(fields)
         query = get_list_organizations_query(fragment)
@@ -72,7 +72,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
 
     def get_organization_metrics(
         self, filters: OrganizationMetricsFilters, fields: ListOrTuple[str]
-    ) -> Dict:
+    ) -> dict:
         """Send a GraphQL request calling organizationMetrics resolver."""
         where = map_organization_metrics_where(filters=filters)
         payload = {"where": where}
@@ -84,7 +84,7 @@ class OrganizationOperationMixin(BaseOperationMixin):
         self,
         organization_id: OrganizationId,
         organization_data: OrganizationToUpdateInput,
-    ) -> Dict:
+    ) -> dict:
         """Send a GraphQL request calling updateOrganization resolver."""
         data = map_update_organization_data(organization_data)
         where = map_update_organization_where(organization_id)

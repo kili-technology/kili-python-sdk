@@ -1,7 +1,8 @@
 """Project use cases."""
 
 import json
-from typing import Dict, Generator, List, Optional, Tuple
+from collections.abc import Generator
+from typing import Optional
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -36,7 +37,7 @@ class ProjectUseCases(BaseUseCases):
         from_demo_project: Optional[DemoProjectType],
         project_id: Optional[ProjectId] = None,
         input_type: Optional[InputType] = None,
-        json_interface: Optional[Dict] = None,
+        json_interface: Optional[dict] = None,
     ) -> ProjectId:
         """Create or copy a project if project_id is set."""
         if project_id is not None:
@@ -100,7 +101,7 @@ class ProjectUseCases(BaseUseCases):
         project_filters: ProjectFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Return a generator of projects that match the filter."""
         return self._kili_api_gateway.list_projects(project_filters, fields, options=options)
 
@@ -122,17 +123,17 @@ class ProjectUseCases(BaseUseCases):
         honeypot_mark: Optional[float] = None,
         instructions: Optional[str] = None,
         input_type: Optional[InputType] = None,
-        json_interface: Optional[Dict] = None,
+        json_interface: Optional[dict] = None,
         min_consensus_size: Optional[int] = None,
         review_coverage: Optional[int] = None,
         should_relaunch_kpi_computation: Optional[bool] = None,
         title: Optional[str] = None,
         use_honeypot: Optional[bool] = None,
-        metadata_types: Optional[Dict] = None,
-        metadata_properties: Optional[Dict] = None,
+        metadata_types: Optional[dict] = None,
+        metadata_properties: Optional[dict] = None,
         should_auto_assign: Optional[bool] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
-    ) -> Dict[str, object]:
+    ) -> dict[str, object]:
         """Update properties in a project."""
         if consensus_tot_coverage is not None and not 0 <= consensus_tot_coverage <= 100:
             raise ValueError(
@@ -206,7 +207,7 @@ class ProjectUseCases(BaseUseCases):
     def get_project_steps_and_version(
         self,
         project_id: str,
-    ) -> Tuple[List[ProjectStep], WorkflowVersion]:
+    ) -> tuple[list[ProjectStep], WorkflowVersion]:
         """Get and return project steps and version."""
         project = self._kili_api_gateway.get_project(
             project_id=ProjectId(project_id), fields=["steps.id", "steps.name", "workflowVersion"]

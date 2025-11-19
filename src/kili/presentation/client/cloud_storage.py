@@ -1,7 +1,8 @@
 """Client presentation methods for cloud storage."""
 
 import logging
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from collections.abc import Generator, Iterable
+from typing import Literal, Optional, overload
 
 from typeguard import typechecked
 
@@ -52,7 +53,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -73,7 +74,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -94,7 +95,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of cloud storage connections that match a set of criteria.
 
@@ -171,7 +172,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -188,7 +189,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -205,7 +206,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of cloud storage integrations that match a set of criteria.
 
@@ -295,11 +296,11 @@ class CloudStorageClientMethods(BaseClientMethods):
         self,
         project_id: str,
         cloud_storage_integration_id: str,
-        selected_folders: Optional[List[str]] = None,
+        selected_folders: Optional[list[str]] = None,
         prefix: Optional[str] = None,
-        include: Optional[List[str]] = None,
-        exclude: Optional[List[str]] = None,
-    ) -> Dict:
+        include: Optional[list[str]] = None,
+        exclude: Optional[list[str]] = None,
+    ) -> dict:
         """Connect a cloud storage to a project. More details about parameters
         can be found in the [documentation](https://docs.kili-technology.com/docs/filtering-assets-from-cloud-storage).
 
@@ -339,7 +340,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         cloud_storage_connection_id: str,
         delete_extraneous_files: bool = False,
         dry_run: bool = False,
-    ) -> Dict:
+    ) -> dict:
         """Synchronize a cloud storage connection.
 
         This method will compute differences between the cloud storage connection and the project,
@@ -385,8 +386,8 @@ class CloudStorageClientMethods(BaseClientMethods):
             "platform",
             "allowedPaths",
         ),
-        allowed_paths: Optional[List[str]] = None,
-        allowed_projects: Optional[List[str]] = None,
+        allowed_paths: Optional[list[str]] = None,
+        allowed_projects: Optional[list[str]] = None,
         aws_access_point_arn: Optional[str] = None,
         aws_role_arn: Optional[str] = None,
         aws_role_external_id: Optional[str] = None,
@@ -403,7 +404,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         s3_region: Optional[str] = None,
         s3_secret_key: Optional[str] = None,
         s3_session_token: Optional[str] = None,
-    ) -> Dict:
+    ) -> dict:
         # pylint: disable=line-too-long
         """Create a cloud storage integration.
 
@@ -461,8 +462,8 @@ class CloudStorageClientMethods(BaseClientMethods):
     def update_cloud_storage_integration(
         self,
         cloud_storage_integration_id: str,
-        allowed_paths: Optional[List[str]] = None,
-        allowed_projects: Optional[List[str]] = None,
+        allowed_paths: Optional[list[str]] = None,
+        allowed_projects: Optional[list[str]] = None,
         aws_access_point_arn: Optional[str] = None,
         aws_role_arn: Optional[str] = None,
         aws_role_external_id: Optional[str] = None,
@@ -483,7 +484,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         s3_region: Optional[str] = None,
         s3_secret_key: Optional[str] = None,
         s3_session_token: Optional[str] = None,
-    ) -> Dict:
+    ) -> dict:
         """Update cloud storage data integration.
 
         Args:

@@ -1,6 +1,6 @@
 """GraphQL payload data mappers for api keys operations."""
 
-from typing import Dict, List, Optional
+from typing import Optional
 
 from kili_formats.types import ChatItemRole, Conversation
 
@@ -17,14 +17,14 @@ from kili.domain.llm import (
 )
 
 
-def model_where_wrapper(filter: OrganizationModelFilters) -> Dict:
+def model_where_wrapper(filter: OrganizationModelFilters) -> dict:
     """Build the GraphQL ProjectMapperWhere variable to be sent in an operation."""
     return {
         "organizationId": filter.organization_id,
     }
 
 
-def project_model_where_mapper(filter: ProjectModelFilters) -> Dict:
+def project_model_where_mapper(filter: ProjectModelFilters) -> dict:
     """Build the GraphQL ProjectMapperWhere variable to be sent in an operation."""
     return {
         "projectId": filter.project_id,
@@ -32,7 +32,7 @@ def project_model_where_mapper(filter: ProjectModelFilters) -> Dict:
     }
 
 
-def map_create_model_input(data: ModelToCreateInput) -> Dict:
+def map_create_model_input(data: ModelToCreateInput) -> dict:
     """Build the GraphQL ModelInput variable to be sent in an operation."""
     if data.type == ModelType.AZURE_OPEN_AI and isinstance(
         data.credentials, AzureOpenAICredentials
@@ -57,7 +57,7 @@ def map_create_model_input(data: ModelToCreateInput) -> Dict:
     }
 
 
-def map_update_model_input(data: ModelToUpdateInput) -> Dict:
+def map_update_model_input(data: ModelToUpdateInput) -> dict:
     """Build the GraphQL UpdateModelInput variable to be sent in an operation."""
     input_dict = {}
     if data.name is not None:
@@ -82,7 +82,7 @@ def map_update_model_input(data: ModelToUpdateInput) -> Dict:
     return input_dict
 
 
-def map_create_project_model_input(data: ProjectModelToCreateInput) -> Dict:
+def map_create_project_model_input(data: ProjectModelToCreateInput) -> dict:
     """Build the GraphQL ModelInput variable to be sent in an operation."""
     return {
         "projectId": data.project_id,
@@ -91,7 +91,7 @@ def map_create_project_model_input(data: ProjectModelToCreateInput) -> Dict:
     }
 
 
-def map_update_project_model_input(data: ProjectModelToUpdateInput) -> Dict:
+def map_update_project_model_input(data: ProjectModelToUpdateInput) -> dict:
     """Build the GraphQL UpdateProjectModelInput variable to be sent in an operation."""
     input_dict = {}
     if data.configuration is not None:
@@ -99,21 +99,21 @@ def map_update_project_model_input(data: ProjectModelToUpdateInput) -> Dict:
     return input_dict
 
 
-def map_delete_model_input(model_id: str) -> Dict:
+def map_delete_model_input(model_id: str) -> dict:
     """Map the input for the GraphQL deleteModel mutation."""
     return {
         "deleteModelId": model_id,
     }
 
 
-def map_delete_project_model_input(project_model_id: str) -> Dict:
+def map_delete_project_model_input(project_model_id: str) -> dict:
     """Map the input for the GraphQL deleteProjectModel mutation."""
     return {
         "deleteProjectModelId": project_model_id,
     }
 
 
-def map_create_llm_asset_input(data: Dict) -> Dict:
+def map_create_llm_asset_input(data: dict) -> dict:
     """Map the input for the createLLMAsset mutation."""
     result = {
         "authorId": data["author_id"],
@@ -125,25 +125,25 @@ def map_create_llm_asset_input(data: Dict) -> Dict:
     return result
 
 
-def map_project_where(project_id: str) -> Dict:
+def map_project_where(project_id: str) -> dict:
     """Map the 'where' parameter for mutations that require a ProjectWhere."""
     return {"id": project_id}
 
 
 def map_create_chat_item_input(
     label_id: str, prompt: str, role: ChatItemRole, parent_id: Optional[str] = None
-) -> Dict:
+) -> dict:
     """Map the input for the createChatItem mutation."""
     return {"content": prompt, "role": role.value, "labelId": label_id, "parentId": parent_id}
 
 
 def map_import_conversations_input(
-    conversations: List[Conversation],
-) -> Dict[str, List[Conversation]]:
+    conversations: list[Conversation],
+) -> dict[str, list[Conversation]]:
     """Map the input for the importConversations mutation."""
     return {"conversations": conversations}
 
 
-def map_asset_where(asset_id: str) -> Dict:
+def map_asset_where(asset_id: str) -> dict:
     """Map the 'where' parameter for the createChatItem mutation."""
     return {"id": asset_id}

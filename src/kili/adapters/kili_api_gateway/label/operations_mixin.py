@@ -1,7 +1,8 @@
 """Mixin extending Kili API Gateway class with label related operations."""
 
 import json
-from typing import Dict, Generator, List, Optional
+from collections.abc import Generator
+from typing import Optional
 
 from kili_formats.tool.annotations_to_json_response import AnnotationsToJsonResponseConverter
 
@@ -49,7 +50,7 @@ class LabelOperationMixin(BaseOperationMixin):
         filters: LabelFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List labels."""
         if "jsonResponse" in fields:
             if "labelOf" not in fields:
@@ -78,7 +79,7 @@ class LabelOperationMixin(BaseOperationMixin):
 
     def list_labels_split(
         self, filters: LabelFilters, fields: ListOrTuple[str], options: QueryOptions, project_info
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List labels."""
         if project_info["inputType"] == "VIDEO":
             options = QueryOptions(
@@ -124,9 +125,9 @@ class LabelOperationMixin(BaseOperationMixin):
 
     def delete_labels(
         self, ids: ListOrTuple[LabelId], disable_tqdm: Optional[bool]
-    ) -> List[LabelId]:
+    ) -> list[LabelId]:
         """Delete labels."""
-        delete_label_ids: List[LabelId] = []
+        delete_label_ids: list[LabelId] = []
 
         with tqdm(total=len(ids), desc="Deleting labels", disable=disable_tqdm) as pbar:
             for batch_of_label_ids in batcher(ids, batch_size=MUTATION_BATCH_SIZE):
@@ -144,14 +145,14 @@ class LabelOperationMixin(BaseOperationMixin):
         fields: ListOrTuple[str],
         disable_tqdm: Optional[bool],
         project_id: Optional[ProjectId],
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Append many labels."""
         nb_labels_to_add = len(data.labels_data)
 
         fragment = fragment_builder(fields)
         query = get_append_many_labels_mutation(fragment=fragment)
 
-        added_labels: List[Dict] = []
+        added_labels: list[dict] = []
         with tqdm(total=nb_labels_to_add, desc="Adding labels", disable=disable_tqdm) as pbar:
             for batch_of_label_data in batcher(data.labels_data, batch_size=MUTATION_BATCH_SIZE):
                 variables = {
@@ -179,7 +180,7 @@ class LabelOperationMixin(BaseOperationMixin):
 
     def append_to_labels(
         self, data: AppendToLabelsData, asset_id: AssetId, fields: ListOrTuple[str]
-    ) -> Dict:
+    ) -> dict:
         """Append to labels."""
         fragment = fragment_builder(fields)
         query = get_append_to_labels_mutation(fragment)
@@ -191,8 +192,8 @@ class LabelOperationMixin(BaseOperationMixin):
         return result["data"]
 
     def create_honeypot_label(
-        self, json_response: Dict, asset_id: AssetId, fields: ListOrTuple[str]
-    ) -> Dict:
+        self, json_response: dict, asset_id: AssetId, fields: ListOrTuple[str]
+    ) -> dict:
         """Create honeypot label."""
         fragment = fragment_builder(fields)
         query = get_create_honeypot_mutation(fragment)

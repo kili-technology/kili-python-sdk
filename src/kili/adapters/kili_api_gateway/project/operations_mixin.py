@@ -1,7 +1,8 @@
 """Mixin extending Kili API Gateway class with Projects related operations."""
 
 import json
-from typing import Dict, Generator, Optional
+from collections.abc import Generator
+from typing import Optional
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -32,7 +33,7 @@ from .types import CopyProjectInput, ProjectDataKiliAPIGatewayInput
 class ProjectOperationMixin(BaseOperationMixin):
     """Mixin extending Kili API Gateway class with Projects related operations."""
 
-    def get_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> Dict:
+    def get_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> dict:
         """Get project."""
         return get_project(self.graphql_client, project_id, fields)
 
@@ -40,7 +41,7 @@ class ProjectOperationMixin(BaseOperationMixin):
     def create_project(
         self,
         input_type: Optional[InputType],
-        json_interface: Optional[Dict],
+        json_interface: Optional[dict],
         title: str,
         description: str,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
@@ -68,7 +69,7 @@ class ProjectOperationMixin(BaseOperationMixin):
         project_filters: ProjectFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Return a generator of projects that match the filter."""
         fragment = fragment_builder(fields)
         query = get_projects_query(fragment)
@@ -92,7 +93,7 @@ class ProjectOperationMixin(BaseOperationMixin):
         project_id: ProjectId,
         project_data: ProjectDataKiliAPIGatewayInput,
         fields: ListOrTuple[str],
-    ) -> Dict:
+    ) -> dict:
         """Update properties in a project."""
         fragment = fragment_builder(fields)
         mutation = get_update_properties_in_project_mutation(fragment)

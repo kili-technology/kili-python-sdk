@@ -1,10 +1,8 @@
-from typing import Dict
-
 from kili_formats.types import JobCategory
 
 job_category_a: JobCategory = JobCategory(category_name="OBJECT_A", id=0, job_id="JOB_0")
 job_category_b: JobCategory = JobCategory(category_name="OBJECT_B", id=1, job_id="JOB_0")
-category_ids: Dict[str, JobCategory] = {
+category_ids: dict[str, JobCategory] = {
     "JOB_0__OBJECT_A": job_category_a,
     "JOB_0__OBJECT_B": job_category_b,
 }

@@ -1,6 +1,7 @@
 """Module for the "categories" key parsing of a job response."""
 
-from typing import Any, Dict, Iterator, List, Optional
+from collections.abc import Iterator
+from typing import Any, Optional
 
 from typeguard import typechecked
 
@@ -14,7 +15,7 @@ from .utils import get_children_job_names
 class Category:
     """Class for Category parsing."""
 
-    def __init__(self, category_json: Dict, project_info: Project, job_name: str) -> None:
+    def __init__(self, category_json: dict, project_info: Project, job_name: str) -> None:
         """Class for Category parsing.
 
         Args:
@@ -41,7 +42,7 @@ class Category:
         """Return the string representation of the category."""
         return repr(self._json_data)
 
-    def as_dict(self) -> Dict:
+    def as_dict(self) -> dict:
         """Return the parsed category as a dict."""
         ret = {"name": self._json_data["name"]}
         if "confidence" in self._json_data:
@@ -49,7 +50,7 @@ class Category:
         if "children" in self._json_data:
             ret["children"] = (
                 self._json_data["children"].to_dict()
-                if not isinstance(self._json_data["children"], Dict)
+                if not isinstance(self._json_data["children"], dict)
                 else self._json_data["children"]
             )
         return ret
@@ -162,7 +163,7 @@ class Category:
 
     @children.setter
     @typechecked
-    def children(self, children: Dict) -> None:
+    def children(self, children: dict) -> None:
         """Set the children jobs of the classification job."""
         job_names_to_parse = get_children_job_names(
             json_interface=self._project_info["jsonInterface"],
@@ -180,7 +181,7 @@ class CategoryList:
     """Class for the categories list parsing."""
 
     def __init__(
-        self, categories_list: List[Dict[str, Any]], project_info: Project, job_name: str
+        self, categories_list: list[dict[str, Any]], project_info: Project, job_name: str
     ) -> None:
         """Class for the categories list parsing.
 
@@ -189,7 +190,7 @@ class CategoryList:
             project_info: Information about the project.
             job_name: Name of the job.
         """
-        self._categories_list: List[Category] = []
+        self._categories_list: list[Category] = []
         self._project_info = project_info
         self._job_name = job_name
 
@@ -227,10 +228,10 @@ class CategoryList:
         self,
         name: str,
         confidence: Optional[float] = None,
-        children: Optional[Dict] = None,
+        children: Optional[dict] = None,
     ) -> None:
         """Add a category object to the CategoryList object."""
-        category_dict: Dict[str, object] = {"name": name}
+        category_dict: dict[str, object] = {"name": name}
         if confidence is not None:
             category_dict["confidence"] = confidence
         if children is not None:
@@ -265,6 +266,6 @@ class CategoryList:
         """Return the string representation of the categories list."""
         return repr(self.as_list())
 
-    def as_list(self) -> List[Dict]:
+    def as_list(self) -> list[dict]:
         """Return the list of categories as a list of dicts."""
         return [category.as_dict() for category in self._categories_list]

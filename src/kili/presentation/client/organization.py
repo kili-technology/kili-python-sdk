@@ -1,7 +1,8 @@
 """Organization client methods."""
 
+from collections.abc import Generator, Iterable
 from datetime import datetime
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from typing import Literal, Optional, overload
 
 import pytz
 from typeguard import typechecked
@@ -28,7 +29,7 @@ class InternalOrganizationClientMethods(BaseClientMethods):
     def create_organization(
         self,
         name: str,
-    ) -> Dict:
+    ) -> dict:
         """Create an organization.
 
         WARNING: This method is for internal use only.
@@ -55,7 +56,7 @@ class InternalOrganizationClientMethods(BaseClientMethods):
         organization_id: str,
         name: Optional[str] = None,
         license: Optional[dict] = None,  # noqa: A002
-    ) -> Dict:
+    ) -> dict:
         """Modify an organization.
 
         WARNING: This method is for internal use only.
@@ -91,7 +92,7 @@ class OrganizationClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -105,7 +106,7 @@ class OrganizationClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -119,7 +120,7 @@ class OrganizationClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of organizations that match a set of criteria.
 
@@ -184,7 +185,7 @@ class OrganizationClientMethods(BaseClientMethods):
             "numberOfHours",
             "numberOfLabeledAssets",
         ),
-    ) -> Dict:
+    ) -> dict:
         """Get organization metrics.
 
         Args:

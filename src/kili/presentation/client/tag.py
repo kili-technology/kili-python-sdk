@@ -1,6 +1,6 @@
 """Client presentation methods for tags."""
 
-from typing import Dict, List, Literal, Optional
+from typing import Literal, Optional
 
 from typeguard import typechecked
 
@@ -22,7 +22,7 @@ class TagClientMethods(BaseClientMethods):
         self,
         project_id: Optional[str] = None,
         fields: ListOrTuple[str] = ("id", "organizationId", "label", "checkedForProjects"),
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get tags.
 
         Args:
@@ -49,7 +49,7 @@ class TagClientMethods(BaseClientMethods):
         tags: Optional[ListOrTuple[str]] = None,
         tag_ids: Optional[ListOrTuple[str]] = None,
         disable_tqdm: Optional[bool] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> list[dict[Literal["id"], str]]:
         """Link tags to a project.
 
         Args:
@@ -89,7 +89,7 @@ class TagClientMethods(BaseClientMethods):
         tag_ids: Optional[ListOrTuple[str]] = None,
         all: Optional[bool] = None,  # pylint: disable=redefined-builtin
         disable_tqdm: Optional[bool] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> list[dict[Literal["id"], str]]:
         """Remove tags from a project.
 
         Args:
@@ -134,7 +134,7 @@ class TagClientMethods(BaseClientMethods):
             )
         ]
 
-    def update_tag(self, tag_name: str, new_tag_name: str) -> Dict[Literal["id"], str]:
+    def update_tag(self, tag_name: str, new_tag_name: str) -> dict[Literal["id"], str]:
         """Update a tag.
 
         This operation is organization-wide.
@@ -177,7 +177,7 @@ class TagClientMethods(BaseClientMethods):
             tag_id = tag_use_cases.get_tag_ids_from_labels(labels=(tag_name,))[0]
         return tag_use_cases.delete_tag(tag_id=TagId(tag_id))
 
-    def create_tag(self, name: str, color: Optional[str] = None) -> Dict[Literal["id"], str]:
+    def create_tag(self, name: str, color: Optional[str] = None) -> dict[Literal["id"], str]:
         """Create a tag.
 
         This operation is organization-wide.

@@ -5,7 +5,7 @@ import os
 import threading
 import time
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 from urllib.parse import urlparse
 
 import graphql
@@ -123,7 +123,7 @@ class GraphQLClient:
 
         self._gql_client = self._initizalize_graphql_client()
 
-    def _get_headers(self) -> Dict[str, str]:
+    def _get_headers(self) -> dict[str, str]:
         """Get the headers."""
         return {
             "Authorization": f"X-API-Key: {self.api_key}",
@@ -134,7 +134,7 @@ class GraphQLClient:
         }
 
     @staticmethod
-    def _get_introspection_args() -> Dict[str, bool]:
+    def _get_introspection_args() -> dict[str, bool]:
         """Get the introspection arguments."""
         return {
             "descriptions": True,  # descriptions for the schema, types, fields, and arguments
@@ -237,7 +237,7 @@ class GraphQLClient:
         return None
 
     @classmethod
-    def _remove_nullable_inputs(cls, variables: Dict) -> Dict:
+    def _remove_nullable_inputs(cls, variables: dict) -> dict:
         """Remove nullable inputs from the variables."""
         for key in ("data", "where", "project", "asset", "label", "issue"):
             if key in variables and isinstance(variables[key], dict):
@@ -246,8 +246,8 @@ class GraphQLClient:
         return {k: v for k, v in variables.items() if v is not None}
 
     def execute(
-        self, query: Union[str, DocumentNode], variables: Optional[Dict] = None, **kwargs
-    ) -> Dict[str, Any]:
+        self, query: Union[str, DocumentNode], variables: Optional[dict] = None, **kwargs
+    ) -> dict[str, Any]:
         """Execute a query.
 
         Args:
@@ -308,13 +308,13 @@ class GraphQLClient:
         wait=wait_exponential(multiplier=0.5, min=1, max=10),
     )
     def _execute_with_retries(
-        self, document: DocumentNode, variables: Optional[Dict], **kwargs
-    ) -> Dict[str, Any]:
+        self, document: DocumentNode, variables: Optional[dict], **kwargs
+    ) -> dict[str, Any]:
         return self._raw_execute(document, variables, **kwargs)
 
     def _raw_execute(
-        self, document: DocumentNode, variables: Optional[Dict], **kwargs
-    ) -> Dict[str, Any]:
+        self, document: DocumentNode, variables: Optional[dict], **kwargs
+    ) -> dict[str, Any]:
         _limiter.try_acquire("GraphQLClient.execute")
         log_context = LogContext()
         log_context.set_client_name(self.client_name)

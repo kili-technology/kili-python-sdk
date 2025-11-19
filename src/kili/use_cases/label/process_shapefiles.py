@@ -6,7 +6,7 @@ a JSON response for geospatial annotations.
 """
 
 import struct
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Optional, Union, cast
 
 from cuid import cuid
 
@@ -47,7 +47,7 @@ def _read_point_record(file_handle) -> "Point":
     return Point(x, y)
 
 
-def _read_polyline_record(file_handle) -> List["LineString"]:
+def _read_polyline_record(file_handle) -> list["LineString"]:
     """Reads a Polyline (type 3) record from the shapefile."""
     # Skip the bounding box (4 doubles = 32 bytes)
     file_handle.read(32)
@@ -77,7 +77,7 @@ def _read_polyline_record(file_handle) -> List["LineString"]:
     return polylines
 
 
-def _read_polygon_record(file_handle) -> List["Polygon"]:
+def _read_polygon_record(file_handle) -> list["Polygon"]:
     """Reads a Polygon (type 5) record from the shapefile."""
     # Skip the bounding box (4 doubles = 32 bytes)
     file_handle.read(32)
@@ -137,7 +137,7 @@ def _read_polygon_record(file_handle) -> List["Polygon"]:
 
 def read_shape_record(
     file_handle,
-) -> Optional[Tuple[int, Union["Point", List["LineString"], List["Polygon"]]]]:
+) -> Optional[tuple[int, Union["Point", list["LineString"], list["Polygon"]]]]:
     """Reads a single shape record from the shapefile.
 
     Returns a tuple (shape_type, geometry) where geometry depends on shape_type.
@@ -171,7 +171,7 @@ def read_shape_record(
 
 def _read_shapefile(
     filename: str,
-) -> Tuple[List["Point"], List[List["LineString"]], List[List["Polygon"]]]:
+) -> tuple[list["Point"], list[list["LineString"]], list[list["Polygon"]]]:
     """Reads a shapefile and extracts geometries."""
     points = []
     polyline_records = []
@@ -218,12 +218,12 @@ def _transform_geometry(
 
 
 def get_json_response_from_shapefiles(
-    shapefile_paths: List[str],
-    job_names: List[str],
-    category_names: List[str],
-    json_interface: Dict,
-    from_epsgs: Optional[List[int]] = None,
-) -> Dict:
+    shapefile_paths: list[str],
+    job_names: list[str],
+    category_names: list[str],
+    json_interface: dict,
+    from_epsgs: Optional[list[int]] = None,
+) -> dict:
     """Process multiple shapefiles and convert them to a JSON response.
 
     Args:
