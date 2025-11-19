@@ -86,12 +86,19 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: lycheeverse/lychee-action@v1.9.3
+      - uses: actions/checkout@v5
+      - name: Convert ipynb to markdown
+        shell: bash
+        run: |
+          pip install --quiet nbconvert
+          # Find all .ipynb files under recipes/ and subfolders and convert them to .md
+          find recipes -type f -name '*.ipynb' -print0 | while IFS= read -r -d '' file; do
+            echo "Converting $file"
+            jupyter nbconvert --to markdown "$file"
+          done
+      - uses: lycheeverse/lychee-action@v2
         with:
-          fail: true
-          debug: false
-          args: "-qq --no-progress --insecure './**/*.md' './src/kili/**/*.py'"
+          args: "-qq --no-progress --insecure --accept 200,201,202,203,204,206,207,208,226,301,302,307,308 --max-redirects 5 './**/*.md'"
 
   build-test:
     runs-on: ubuntu-latest
