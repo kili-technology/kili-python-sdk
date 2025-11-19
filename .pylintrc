@@ -99,10 +99,6 @@ recursive=no
 # source root.
 source-roots=
 
-# When enabled, pylint would attempt to guess common misconfiguration and emit
-# user-friendly hints instead of false-positive error messages.
-suggestion-mode=yes
-
 # Allow loading of arbitrary C extensions. Extensions are imported into the
 # active Python interpreter and may run arbitrary code.
 unsafe-load-any-extension=no
@@ -437,6 +433,7 @@ disable=raw-checker-failed,
         too-few-public-methods,
         too-many-ancestors,
         too-many-arguments,
+        too-many-positional-arguments,
         too-many-instance-attributes,
         too-many-locals,
         fixme,

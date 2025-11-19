@@ -14,12 +14,12 @@ if TYPE_CHECKING:
     from shapely.geometry import LinearRing, LineString, Point, Polygon
     from shapely.ops import transform
 
-SHAPELY_INSTALLED = True
+shapely_installed = True
 try:
     from shapely.geometry import LinearRing, LineString, Point, Polygon
     from shapely.ops import transform
 except ImportError:
-    SHAPELY_INSTALLED = False
+    shapely_installed = False
 
 
 def _read_shapefile_header(file_handle):
@@ -236,7 +236,7 @@ def get_json_response_from_shapefiles(
     if len(shapefile_paths) != len(job_names) or len(shapefile_paths) != len(category_names):
         raise ValueError("Shapefile paths, job names, and category names must have the same length")
 
-    if not SHAPELY_INSTALLED:
+    if not shapely_installed:
         raise ImportError("Install with `pip install kili[gis]` to use GIS features.")
 
     json_response = {}

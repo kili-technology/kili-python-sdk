@@ -16,7 +16,7 @@ import requests
 import tenacity
 
 from kili.adapters.http_client import HttpClient
-from kili.core.constants import mime_extensions_for_IV2
+from kili.core.constants import MIME_EXTENSIONS_FOR_IV2
 from kili.log.logging import logger
 
 T = TypeVar("T")
@@ -288,15 +288,15 @@ def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
     """Returns true if the mime type of the file corresponds to the allowed mime types of the project."""
     mime_type = get_mime_type(path.lower())
 
-    if not (mime_extensions_for_IV2[input_type] and mime_type):
+    if not (MIME_EXTENSIONS_FOR_IV2[input_type] and mime_type):
         return False
 
-    correct_mime_type = mime_type in mime_extensions_for_IV2[input_type]
+    correct_mime_type = mime_type in MIME_EXTENSIONS_FOR_IV2[input_type]
     if not correct_mime_type and raise_error:
         raise ValueError(
             f"File mime type for {path} is {mime_type} and does not correspond "
             "to the type of the project. "
-            f"File mime type should be one of {mime_extensions_for_IV2[input_type]}"
+            f"File mime type should be one of {MIME_EXTENSIONS_FOR_IV2[input_type]}"
         )
     return correct_mime_type
 
