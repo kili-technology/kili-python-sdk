@@ -168,8 +168,8 @@ class AssetOperationMixin(BaseOperationMixin):
         count: int = count_result["data"]
         return count
 
-    def set_asset_consensus(self, asset_id: str, project_id: str, is_consensus: bool) -> bool:
-        """Set consensus on an asset."""
+    def update_asset_consensus(self, asset_id: str, project_id: str, is_consensus: bool) -> bool:
+        """Update consensus on an asset."""
         payload = {
             "assetId": asset_id,
             "projectId": project_id,

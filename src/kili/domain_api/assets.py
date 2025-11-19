@@ -2184,7 +2184,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         )
 
     @typechecked
-    def add_consensus(
+    def update_consensus(
         self,
         *,
         asset_id: str,
@@ -2203,7 +2203,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
 
         Examples:
             >>> # Activate consensus on an asset
-            >>> result = kili.assets.add_consensus(
+            >>> result = kili.assets.update_consensus(
             ...     asset_id="ckg22d81r0jrg0885unmuswj8",
             ...     project_id="my_project",
             ...     is_consensus=True
@@ -2211,14 +2211,14 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             >>> # result is True
 
             >>> # Deactivate consensus on an asset
-            >>> result = kili.assets.add_consensus(
+            >>> result = kili.assets.update_consensus(
             ...     asset_id="ckg22d81r0jrg0885unmuswj8",
             ...     project_id="my_project",
             ...     is_consensus=False
             ... )
             >>> # result is False
         """
-        return self._client.set_asset_consensus(
+        return self._client.update_asset_consensus(
             asset_id=asset_id,
             project_id=project_id,
             is_consensus=is_consensus,
