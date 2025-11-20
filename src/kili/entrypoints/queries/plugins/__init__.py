@@ -4,9 +4,6 @@ import json
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional, cast
 
-if TYPE_CHECKING:
-    from kili.client import Kili
-
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -19,6 +16,9 @@ from kili.domain.types import ListOrTuple
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.services.plugins import PluginUploader
 from kili.utils.logcontext import for_all_methods, log_call
+
+if TYPE_CHECKING:
+    from kili.client import Kili
 
 
 @for_all_methods(log_call, exclude=["__init__"])

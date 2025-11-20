@@ -15,9 +15,6 @@ from typing import (
     overload,
 )
 
-if TYPE_CHECKING:
-    from kili.client import Kili
-
 from kili_formats.format.geojson import geojson_feature_collection_to_kili_json_response
 from typeguard import typechecked
 
@@ -63,6 +60,8 @@ from .base import BaseClientMethods
 
 if TYPE_CHECKING:
     import pandas as pd
+
+    from kili.client import Kili
 
 
 @for_all_methods(log_call, exclude=["__init__"])

@@ -2,9 +2,6 @@
 
 from typing import TYPE_CHECKING, Literal, Optional, cast
 
-if TYPE_CHECKING:
-    from kili.client import Kili
-
 from typeguard import typechecked
 from typing_extensions import deprecated
 
@@ -22,6 +19,9 @@ from .queries import (
     GQL_UPDATE_PROPERTIES_IN_PROJECT_USER,
     GQL_UPDATE_PROPERTIES_IN_ROLE,
 )
+
+if TYPE_CHECKING:
+    from kili.client import Kili
 
 
 @for_all_methods(log_call, exclude=["__init__"])
