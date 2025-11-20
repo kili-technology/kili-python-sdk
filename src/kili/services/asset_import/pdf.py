@@ -1,6 +1,5 @@
 """Functions to import assets into a PDF project."""
 
-
 from kili.domain.project import InputType
 
 from .base import BaseAbstractAssetImporter, BatchParams, ContentBatchImporter

@@ -18,7 +18,7 @@ from tests.fakes.fake_data import (
 
 
 def test__convert_from_kili_to_voc_format():
-    parameters = {"filename": f'{asset_image_1_with_0_rotation["externalId"]}.xml'}
+    parameters = {"filename": f"{asset_image_1_with_0_rotation['externalId']}.xml"}
     annotations = convert_from_kili_to_voc_format(
         response=asset_image_1_with_0_rotation["latestLabel"]["jsonResponse"],
         width=1920,
@@ -31,7 +31,7 @@ def test__convert_from_kili_to_voc_format():
     ).read_text(encoding="utf-8")
     assert annotations == expected_annotations
 
-    parameters = {"filename": f'{asset_image_1_with_90_rotation["externalId"]}.xml'}
+    parameters = {"filename": f"{asset_image_1_with_90_rotation['externalId']}.xml"}
     annotations = convert_from_kili_to_voc_format(
         response=asset_image_1_with_90_rotation["latestLabel"]["jsonResponse"],
         width=1920,
@@ -44,7 +44,7 @@ def test__convert_from_kili_to_voc_format():
     ).read_text(encoding="utf-8")
     assert annotations == expected_annotations
 
-    parameters = {"filename": f'{asset_image_1_with_180_rotation["externalId"]}.xml'}
+    parameters = {"filename": f"{asset_image_1_with_180_rotation['externalId']}.xml"}
     annotations = convert_from_kili_to_voc_format(
         response=asset_image_1_with_180_rotation["latestLabel"]["jsonResponse"],
         width=1920,
@@ -57,7 +57,7 @@ def test__convert_from_kili_to_voc_format():
     ).read_text(encoding="utf-8")
     assert annotations == expected_annotations
 
-    parameters = {"filename": f'{asset_image_1_with_270_rotation["externalId"]}.xml'}
+    parameters = {"filename": f"{asset_image_1_with_270_rotation['externalId']}.xml"}
     annotations = convert_from_kili_to_voc_format(
         response=asset_image_1_with_270_rotation["latestLabel"]["jsonResponse"],
         width=1920,
@@ -72,7 +72,7 @@ def test__convert_from_kili_to_voc_format():
 
 
 def test__convert_from_kili_to_voc_format_no_annotation():
-    parameters = {"filename": f'{asset_image_1["externalId"]}.xml'}
+    parameters = {"filename": f"{asset_image_1['externalId']}.xml"}
     annotations = convert_from_kili_to_voc_format(
         response=asset_image_1_without_annotation,
         width=1920,

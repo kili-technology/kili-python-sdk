@@ -85,15 +85,13 @@ class ParsedLabel(dict):
 @overload
 def parse_labels(
     labels: list[dict], json_interface: dict, input_type: InputType
-) -> list[ParsedLabel]:
-    ...
+) -> list[ParsedLabel]: ...
 
 
 @overload
 def parse_labels(
     labels: Generator[dict, None, None], json_interface: dict, input_type: InputType
-) -> Generator[ParsedLabel, None, None]:
-    ...
+) -> Generator[ParsedLabel, None, None]: ...
 
 
 def parse_labels(

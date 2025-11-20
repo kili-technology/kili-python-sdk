@@ -116,8 +116,7 @@ class IssueClientMethods(BaseClientMethods):
         status: Optional[IssueStatus] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[dict, None, None]:
-        ...
+    ) -> Generator[dict, None, None]: ...
 
     @overload
     def issues(
@@ -139,8 +138,7 @@ class IssueClientMethods(BaseClientMethods):
         status: Optional[IssueStatus] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> list[dict]:
-        ...
+    ) -> list[dict]: ...
 
     @typechecked
     def issues(

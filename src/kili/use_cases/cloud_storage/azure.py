@@ -17,7 +17,7 @@ def get_blob_paths_azure_data_connection_with_service_credentials(
     if not (data_integration["azureSASToken"] and data_integration["azureConnectionURL"]):
         raise ValueError(
             f"Cannot retrieve blob paths for data connection {data_connection['id']} with data"
-            f" integration {data_integration['id']}. Need to provide \"azureSASToken\" and"
+            f' integration {data_integration["id"]}. Need to provide "azureSASToken" and'
             f' "azureConnectionURL" in data integration: {data_integration}'
         )
 

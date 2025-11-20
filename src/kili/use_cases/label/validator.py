@@ -1,6 +1,5 @@
 """Validator for import of labels."""
 
-
 from typeguard import typechecked
 
 from .types import LabelToCreateUseCaseInput

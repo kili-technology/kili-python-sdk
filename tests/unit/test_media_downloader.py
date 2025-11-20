@@ -128,10 +128,10 @@ def test_download_single_asset_jsoncontent(input_asset):
         frames = [
             filename
             for filename in os.listdir(tmp_dir)
-            if filename.startswith(f'{input_asset["externalId"]}_')
+            if filename.startswith(f"{input_asset['externalId']}_")
         ]
         assert len(frames) == 130
-        assert sorted(frames)[0] == f'{input_asset["externalId"]}_001.jpg'
+        assert sorted(frames)[0] == f"{input_asset['externalId']}_001.jpg"
         assert output_asset["externalId"] == input_asset["externalId"]
 
 

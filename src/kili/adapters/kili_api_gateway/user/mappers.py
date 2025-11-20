@@ -1,6 +1,5 @@
 """GraphQL payload data mappers for user operations."""
 
-
 from kili.domain.user import UserFilter
 
 from .types import CreateUserDataKiliGatewayInput, UserDataKiliGatewayInput

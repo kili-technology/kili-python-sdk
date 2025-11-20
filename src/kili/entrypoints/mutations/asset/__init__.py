@@ -1,4 +1,5 @@
 """Asset mutations."""
+
 import warnings
 from typing import TYPE_CHECKING, Any, Literal, Optional, Union, cast
 

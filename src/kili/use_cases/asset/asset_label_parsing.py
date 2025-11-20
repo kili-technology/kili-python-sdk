@@ -1,6 +1,5 @@
 """Parsing of the labels of an asset."""
 
-
 from kili.services.label_data_parsing.types import Project as LabelParsingProject
 from kili.utils.labels.parsing import ParsedLabel, parse_labels
 

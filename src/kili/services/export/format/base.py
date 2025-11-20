@@ -152,7 +152,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             fout.write(f"- Project name: {self.project['title']}\n".encode())
             fout.write(f"- Project identifier: {self.project['id']}\n".encode())
             fout.write(f"- Project description: {self.project.get('description', '')}\n".encode())
-            fout.write(f'- Export date: {datetime.now().strftime(r"%Y%m%d-%H%M%S")}\n'.encode())
+            fout.write(f"- Export date: {datetime.now().strftime(r'%Y%m%d-%H%M%S')}\n".encode())
             fout.write(f"- Exported format: {self.label_format}\n".encode())
             fout.write(f"- Exported labels: {self.export_type}\n".encode())
 

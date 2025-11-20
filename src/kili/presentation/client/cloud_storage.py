@@ -53,8 +53,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[dict, None, None]:
-        ...
+    ) -> Generator[dict, None, None]: ...
 
     @overload
     def cloud_storage_connections(
@@ -74,8 +73,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> list[dict]:
-        ...
+    ) -> list[dict]: ...
 
     @typechecked
     def cloud_storage_connections(
@@ -172,8 +170,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[dict, None, None]:
-        ...
+    ) -> Generator[dict, None, None]: ...
 
     @overload
     def cloud_storage_integrations(
@@ -189,8 +186,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> list[dict]:
-        ...
+    ) -> list[dict]: ...
 
     @typechecked
     def cloud_storage_integrations(

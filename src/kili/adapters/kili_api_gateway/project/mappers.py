@@ -1,6 +1,5 @@
 """GraphQL payload data mappers for project operations."""
 
-
 from kili.domain.project import ProjectFilters
 
 from .types import ProjectDataKiliAPIGatewayInput

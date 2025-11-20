@@ -20,7 +20,7 @@ class GraphQLError(Exception):
         if batch_number is None:
             super().__init__(f'GraphQL error: "{error_msg}"')
         else:
-            super().__init__(f'GraphQL error at index {100*batch_number}: {error_msg}"')
+            super().__init__(f'GraphQL error at index {100 * batch_number}: {error_msg}"')
 
 
 class NotFound(Exception):

@@ -111,8 +111,7 @@ class AssetClientMethods(BaseClientMethods):
         step_status_in: Optional[list[StatusInStep]] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[dict, None, None]:
-        ...
+    ) -> Generator[dict, None, None]: ...
 
     @overload
     def assets(
@@ -177,8 +176,7 @@ class AssetClientMethods(BaseClientMethods):
         step_status_in: Optional[list[StatusInStep]] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> list[dict]:
-        ...
+    ) -> list[dict]: ...
 
     @typechecked
     def assets(

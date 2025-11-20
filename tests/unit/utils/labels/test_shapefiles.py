@@ -391,9 +391,9 @@ def test_polygon_multipart_with_holes_shapefile():
             second_polygon_mid = mid
 
     first_polygon = next(a for a in annotations if a["mid"] == first_polygon_mid)
-    assert (
-        len(first_polygon["boundingPoly"]) == 2
-    ), "First polygon should have an exterior and a hole"
+    assert len(first_polygon["boundingPoly"]) == 2, (
+        "First polygon should have an exterior and a hole"
+    )
 
     expected_first_polygon_exterior = [
         {"x": 10.066352118869245, "y": 54.30541031990684},
@@ -533,12 +533,12 @@ def test_polygon_multipart_with_holes_shapefile():
         (p for p in second_polygon_parts if len(p["boundingPoly"]) == 1), None
     )
 
-    assert (
-        second_polygon_part_with_hole is not None
-    ), "Second polygon should have a part with a hole"
-    assert (
-        second_polygon_part_without_hole is not None
-    ), "Second polygon should have a part without a hole"
+    assert second_polygon_part_with_hole is not None, (
+        "Second polygon should have a part with a hole"
+    )
+    assert second_polygon_part_without_hole is not None, (
+        "Second polygon should have a part without a hole"
+    )
 
     expected_second_polygon_part1_exterior = [
         {"x": 9.743281514512121, "y": 54.327336022364776},

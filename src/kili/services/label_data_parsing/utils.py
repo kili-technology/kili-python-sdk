@@ -3,7 +3,9 @@
 from typing import Any
 
 
-def get_children_job_names(json_interface: dict[Any, Any], job_interface: dict[Any, Any]) -> list[str]:
+def get_children_job_names(
+    json_interface: dict[Any, Any], job_interface: dict[Any, Any]
+) -> list[str]:
     """Returns the list of children job names of a parent job interface."""
     children_job_names = []
 

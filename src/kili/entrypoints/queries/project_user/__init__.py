@@ -53,8 +53,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[dict, None, None]:
-        ...
+    ) -> Generator[dict, None, None]: ...
 
     @overload
     def project_users(
@@ -81,8 +80,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> list[dict]:
-        ...
+    ) -> list[dict]: ...
 
     @typechecked
     def project_users(

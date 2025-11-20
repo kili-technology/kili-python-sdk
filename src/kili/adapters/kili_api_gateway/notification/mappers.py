@@ -1,6 +1,5 @@
 """Mappers for notification API calls."""
 
-
 from kili.adapters.kili_api_gateway.user.mappers import user_where_mapper
 from kili.domain.notification import NotificationFilter
 

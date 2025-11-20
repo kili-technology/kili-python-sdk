@@ -1,6 +1,5 @@
 """Types for the Coco export."""
 
-
 from typing_extensions import TypedDict
 
 

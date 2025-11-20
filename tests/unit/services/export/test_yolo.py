@@ -126,19 +126,19 @@ def test_process_asset_for_job_frame_not_served_by_kili():
         assert nb_files == 4
 
         for i in range(nb_files):
-            assert (labels_folder / f"video_1_{i+1}.txt").is_file()
+            assert (labels_folder / f"video_1_{i + 1}.txt").is_file()
 
         expected_content = [
             [
                 "video_1",
                 "https://storage.googleapis.com/label-public-staging/video1/video1.mp4",
-                f"video_1_{i+1}.txt",
+                f"video_1_{i + 1}.txt",
             ]
             for i in range(4)
         ]
         assert asset_remote_content == expected_content
 
-        expected_video_filenames = [f"video_1_{i+1}" for i in range(4)]
+        expected_video_filenames = [f"video_1_{i + 1}" for i in range(4)]
         assert len(video_filenames) == 4
         assert video_filenames == expected_video_filenames
 

@@ -1,6 +1,5 @@
 """Common arguments and options for the CLI."""
 
-
 import click
 
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}

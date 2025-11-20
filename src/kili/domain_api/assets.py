@@ -459,8 +459,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @overload
     def create_image(
@@ -473,8 +472,7 @@ class AssetsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @typechecked
     def create_image(
@@ -557,8 +555,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @overload
     def create_layered_image(
@@ -571,8 +568,7 @@ class AssetsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @typechecked
     def create_layered_image(
@@ -656,8 +652,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @overload
     def create_video_native(
@@ -671,8 +666,7 @@ class AssetsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @typechecked
     def create_video_native(
@@ -749,9 +743,9 @@ class AssetsNamespace(DomainNamespace):
                 json_metadata_array = [{} for _ in processing_parameters_array]
             for i, params in enumerate(processing_parameters_array):
                 if i < len(json_metadata_array):
-                    json_metadata_array[i][
-                        "processingParameters"
-                    ] = _prepare_video_processing_parameters(params, use_native_video=True)
+                    json_metadata_array[i]["processingParameters"] = (
+                        _prepare_video_processing_parameters(params, use_native_video=True)
+                    )
 
         # Call the legacy method directly through the client
         return self._client.append_many_to_dataset(
@@ -775,8 +769,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @overload
     def create_video_frame(
@@ -790,8 +783,7 @@ class AssetsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @typechecked
     def create_video_frame(
@@ -870,9 +862,9 @@ class AssetsNamespace(DomainNamespace):
                 json_metadata_array = [{} for _ in processing_parameters_array]
             for i, params in enumerate(processing_parameters_array):
                 if i < len(json_metadata_array):
-                    json_metadata_array[i][
-                        "processingParameters"
-                    ] = _prepare_video_processing_parameters(params, use_native_video=False)
+                    json_metadata_array[i]["processingParameters"] = (
+                        _prepare_video_processing_parameters(params, use_native_video=False)
+                    )
 
         # Call the legacy method directly through the client
         return self._client.append_many_to_dataset(
@@ -895,8 +887,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @overload
     def create_geospatial(
@@ -909,8 +900,7 @@ class AssetsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @typechecked
     def create_geospatial(
@@ -1017,8 +1007,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @overload
     def create_pdf(
@@ -1031,8 +1020,7 @@ class AssetsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @typechecked
     def create_pdf(
@@ -1115,8 +1103,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @overload
     def create_text(
@@ -1129,8 +1116,7 @@ class AssetsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @typechecked
     def create_text(
@@ -1213,8 +1199,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @overload
     def create_rich_text(
@@ -1227,8 +1212,7 @@ class AssetsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        ...
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]: ...
 
     @typechecked
     def create_rich_text(
@@ -1312,8 +1296,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         asset_id: str,
         project_id: str = "",
-    ) -> Optional[dict[Literal["id"], str]]:
-        ...
+    ) -> Optional[dict[Literal["id"], str]]: ...
 
     @overload
     def delete(
@@ -1321,8 +1304,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         asset_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[Literal["id"], str]]:
-        ...
+    ) -> Optional[dict[Literal["id"], str]]: ...
 
     @overload
     def delete(
@@ -1330,8 +1312,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         external_id: str,
         project_id: str = "",
-    ) -> Optional[dict[Literal["id"], str]]:
-        ...
+    ) -> Optional[dict[Literal["id"], str]]: ...
 
     @overload
     def delete(
@@ -1339,8 +1320,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         external_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[Literal["id"], str]]:
-        ...
+    ) -> Optional[dict[Literal["id"], str]]: ...
 
     @typechecked
     def delete(
@@ -1400,8 +1380,7 @@ class AssetsNamespace(DomainNamespace):
         processing_parameter: Union[dict, str],
         project_id: str = "",
         **kwargs,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def update_processing_parameter(
@@ -1411,8 +1390,7 @@ class AssetsNamespace(DomainNamespace):
         processing_parameters: List[Union[dict, str]],
         project_id: str = "",
         **kwargs,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def update_processing_parameter(
@@ -1422,8 +1400,7 @@ class AssetsNamespace(DomainNamespace):
         processing_parameter: Union[dict, str],
         project_id: str = "",
         **kwargs,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def update_processing_parameter(
@@ -1433,8 +1410,7 @@ class AssetsNamespace(DomainNamespace):
         processing_parameters: List[Union[dict, str]],
         project_id: str = "",
         **kwargs,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @typechecked
     def update_processing_parameter(
@@ -1519,8 +1495,7 @@ class AssetsNamespace(DomainNamespace):
         new_external_id: str,
         asset_id: str,
         project_id: str = "",
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def update_external_id(
@@ -1529,8 +1504,7 @@ class AssetsNamespace(DomainNamespace):
         new_external_ids: List[str],
         asset_ids: List[str],
         project_id: str = "",
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def update_external_id(
@@ -1539,8 +1513,7 @@ class AssetsNamespace(DomainNamespace):
         new_external_id: str,
         external_id: str,
         project_id: str = "",
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def update_external_id(
@@ -1549,8 +1522,7 @@ class AssetsNamespace(DomainNamespace):
         new_external_ids: List[str],
         external_ids: List[str],
         project_id: str = "",
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @typechecked
     def update_external_id(
@@ -1615,8 +1587,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: dict[str, Union[str, int, float]],
         project_id: str,
         asset_id: str,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def add_metadata(
@@ -1625,8 +1596,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: List[dict[str, Union[str, int, float]]],
         project_id: str,
         asset_ids: List[str],
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def add_metadata(
@@ -1635,8 +1605,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: dict[str, Union[str, int, float]],
         project_id: str,
         external_id: str,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def add_metadata(
@@ -1645,8 +1614,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: List[dict[str, Union[str, int, float]]],
         project_id: str,
         external_ids: List[str],
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @typechecked
     def add_metadata(
@@ -1715,8 +1683,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: dict[str, Union[str, int, float]],
         project_id: str,
         asset_id: str,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def set_metadata(
@@ -1725,8 +1692,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: List[dict[str, Union[str, int, float]]],
         project_id: str,
         asset_ids: List[str],
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def set_metadata(
@@ -1735,8 +1701,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: dict[str, Union[str, int, float]],
         project_id: str,
         external_id: str,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def set_metadata(
@@ -1745,8 +1710,7 @@ class AssetsNamespace(DomainNamespace):
         json_metadata: List[dict[str, Union[str, int, float]]],
         project_id: str,
         external_ids: List[str],
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @typechecked
     def set_metadata(
@@ -1814,8 +1778,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         external_id: str,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
-        ...
+    ) -> Optional[dict[str, Any]]: ...
 
     @overload
     def invalidate(
@@ -1823,8 +1786,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         external_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
-        ...
+    ) -> Optional[dict[str, Any]]: ...
 
     @overload
     def invalidate(
@@ -1832,8 +1794,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         asset_id: str,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
-        ...
+    ) -> Optional[dict[str, Any]]: ...
 
     @overload
     def invalidate(
@@ -1841,8 +1802,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         asset_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
-        ...
+    ) -> Optional[dict[str, Any]]: ...
 
     @typechecked
     def invalidate(
@@ -1897,8 +1857,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         asset_id: str,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
-        ...
+    ) -> Optional[dict[str, Any]]: ...
 
     @overload
     def move_to_next_step(
@@ -1906,8 +1865,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         asset_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
-        ...
+    ) -> Optional[dict[str, Any]]: ...
 
     @overload
     def move_to_next_step(
@@ -1915,8 +1873,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         external_id: str,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
-        ...
+    ) -> Optional[dict[str, Any]]: ...
 
     @overload
     def move_to_next_step(
@@ -1924,8 +1881,7 @@ class AssetsNamespace(DomainNamespace):
         *,
         external_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
-        ...
+    ) -> Optional[dict[str, Any]]: ...
 
     @typechecked
     def move_to_next_step(
@@ -1982,8 +1938,7 @@ class AssetsNamespace(DomainNamespace):
         to_be_labeled_by: List[str],
         asset_id: str,
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
-        ...
+    ) -> List[dict[str, Any]]: ...
 
     @overload
     def assign(
@@ -1992,8 +1947,7 @@ class AssetsNamespace(DomainNamespace):
         to_be_labeled_by_array: List[List[str]],
         asset_ids: List[str],
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
-        ...
+    ) -> List[dict[str, Any]]: ...
 
     @overload
     def assign(
@@ -2002,8 +1956,7 @@ class AssetsNamespace(DomainNamespace):
         to_be_labeled_by: List[str],
         external_id: str,
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
-        ...
+    ) -> List[dict[str, Any]]: ...
 
     @overload
     def assign(
@@ -2012,8 +1965,7 @@ class AssetsNamespace(DomainNamespace):
         to_be_labeled_by_array: List[List[str]],
         external_ids: List[str],
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
-        ...
+    ) -> List[dict[str, Any]]: ...
 
     @typechecked
     def assign(
@@ -2080,8 +2032,7 @@ class AssetsNamespace(DomainNamespace):
         priority: int,
         project_id: str = "",
         **kwargs,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def update_priority(
@@ -2091,8 +2042,7 @@ class AssetsNamespace(DomainNamespace):
         priorities: List[int],
         project_id: str = "",
         **kwargs,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def update_priority(
@@ -2102,8 +2052,7 @@ class AssetsNamespace(DomainNamespace):
         priority: int,
         project_id: str = "",
         **kwargs,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def update_priority(
@@ -2113,8 +2062,7 @@ class AssetsNamespace(DomainNamespace):
         priorities: List[int],
         project_id: str = "",
         **kwargs,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @typechecked
     def update_priority(

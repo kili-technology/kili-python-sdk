@@ -1,6 +1,5 @@
 """GraphQL payload data mappers for api keys operations."""
 
-
 from kili.domain.event import EventFilters, QueryOptions
 
 

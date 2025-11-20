@@ -267,8 +267,7 @@ class IssuesNamespace(DomainNamespace):
         label_id: str,
         object_mid: Optional[str] = None,
         text: Optional[str] = None,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @overload
     def create(
@@ -278,8 +277,7 @@ class IssuesNamespace(DomainNamespace):
         label_id_array: List[str],
         object_mid_array: Optional[List[Optional[str]]] = None,
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[dict[Literal["id"], str]]:
-        ...
+    ) -> List[dict[Literal["id"], str]]: ...
 
     @typechecked
     def create(
@@ -353,12 +351,10 @@ class IssuesNamespace(DomainNamespace):
         return [{"id": issue_id} for issue_id in issue_ids]
 
     @overload
-    def cancel(self, *, issue_id: str) -> List[dict[str, Any]]:
-        ...
+    def cancel(self, *, issue_id: str) -> List[dict[str, Any]]: ...
 
     @overload
-    def cancel(self, *, issue_ids: List[str]) -> List[dict[str, Any]]:
-        ...
+    def cancel(self, *, issue_ids: List[str]) -> List[dict[str, Any]]: ...
 
     @typechecked
     def cancel(
@@ -417,12 +413,10 @@ class IssuesNamespace(DomainNamespace):
         return results
 
     @overload
-    def open(self, *, issue_id: str) -> List[dict[str, Any]]:
-        ...
+    def open(self, *, issue_id: str) -> List[dict[str, Any]]: ...
 
     @overload
-    def open(self, *, issue_ids: List[str]) -> List[dict[str, Any]]:
-        ...
+    def open(self, *, issue_ids: List[str]) -> List[dict[str, Any]]: ...
 
     @typechecked
     def open(
@@ -479,12 +473,10 @@ class IssuesNamespace(DomainNamespace):
         return results
 
     @overload
-    def solve(self, *, issue_id: str) -> List[dict[str, Any]]:
-        ...
+    def solve(self, *, issue_id: str) -> List[dict[str, Any]]: ...
 
     @overload
-    def solve(self, *, issue_ids: List[str]) -> List[dict[str, Any]]:
-        ...
+    def solve(self, *, issue_ids: List[str]) -> List[dict[str, Any]]: ...
 
     @typechecked
     def solve(
