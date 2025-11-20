@@ -69,7 +69,7 @@ class AssetFilters:
     step_status_not_in: Optional[ListOrTuple[StatusInStep]] = None
 
 
-class AssetWorkflowFilters(TypedDict):
+class AssetWorkflowFilters(TypedDict, total=False):
     """Asset filters relative to worklow."""
 
     skipped: Optional[bool]

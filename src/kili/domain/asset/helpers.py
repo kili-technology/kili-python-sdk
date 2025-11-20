@@ -48,7 +48,8 @@ def check_asset_workflow_arguments(
             )
         if step_status_not_in is not None and status_not_in is not None:
             raise ValueError(
-                "Filters step_status_not_in and status_not_in both given : only use filter step_status_not_in for this project."
+                "Filters step_status_not_in and status_not_in both given : "
+                "only use filter step_status_not_in for this project."
             )
         if step_name_in is not None and status_in is not None:
             raise ValueError(
@@ -65,7 +66,8 @@ def check_asset_workflow_arguments(
             )
         if status_not_in is not None:
             warnings.warn(
-                "Filter status_not_in given : use filters step_status_not_in and step_name_not_in instead for this project.",
+                "Filter status_not_in given : use filters step_status_not_in and "
+                "step_name_not_in instead for this project.",
                 stacklevel=1,
             )
         if skipped is not None:

@@ -43,6 +43,55 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
+def _warn_deprecated_gt_lt_args(
+    consensus_mark_gt: Optional[float],
+    consensus_mark_lt: Optional[float],
+    honeypot_mark_gt: Optional[float],
+    honeypot_mark_lt: Optional[float],
+    label_consensus_mark_gt: Optional[float],
+    label_consensus_mark_lt: Optional[float],
+    label_created_at_gt: Optional[str],
+    label_created_at_lt: Optional[str],
+    label_honeypot_mark_gt: Optional[float],
+    label_honeypot_mark_lt: Optional[float],
+) -> None:
+    """Warn about deprecated _gt and _lt arguments."""
+    for arg_name, arg_value in zip(
+        (
+            "consensus_mark_gt",
+            "consensus_mark_lt",
+            "honeypot_mark_gt",
+            "honeypot_mark_lt",
+            "label_consensus_mark_gt",
+            "label_consensus_mark_lt",
+            "label_created_at_gt",
+            "label_created_at_lt",
+            "label_honeypot_mark_gt",
+            "label_honeypot_mark_lt",
+        ),
+        (
+            consensus_mark_gt,
+            consensus_mark_lt,
+            honeypot_mark_gt,
+            honeypot_mark_lt,
+            label_consensus_mark_gt,
+            label_consensus_mark_lt,
+            label_created_at_gt,
+            label_created_at_lt,
+            label_honeypot_mark_gt,
+            label_honeypot_mark_lt,
+        ),
+        strict=False,
+    ):
+        if arg_value:
+            warnings.warn(
+                f"'{arg_name}' is deprecated, please use"
+                f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+
 @for_all_methods(log_call, exclude=["__init__"])
 class AssetClientMethods(BaseClientMethods):
     """Methods attached to the Kili client, to run actions on assets."""
@@ -391,40 +440,18 @@ class AssetClientMethods(BaseClientMethods):
                 stacklevel=1,
             )
 
-        for arg_name, arg_value in zip(
-            (
-                "consensus_mark_gt",
-                "consensus_mark_lt",
-                "honeypot_mark_gt",
-                "honeypot_mark_lt",
-                "label_consensus_mark_gt",
-                "label_consensus_mark_lt",
-                "label_created_at_gt",
-                "label_created_at_lt",
-                "label_honeypot_mark_gt",
-                "label_honeypot_mark_lt",
-            ),
-            (
-                consensus_mark_gt,
-                consensus_mark_lt,
-                honeypot_mark_gt,
-                honeypot_mark_lt,
-                label_consensus_mark_gt,
-                label_consensus_mark_lt,
-                label_created_at_gt,
-                label_created_at_lt,
-                label_honeypot_mark_gt,
-                label_honeypot_mark_lt,
-            ),
-            strict=False,
-        ):
-            if arg_value:
-                warnings.warn(
-                    f"'{arg_name}' is deprecated, please use"
-                    f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead.",
-                    DeprecationWarning,
-                    stacklevel=1,
-                )
+        _warn_deprecated_gt_lt_args(
+            consensus_mark_gt=consensus_mark_gt,
+            consensus_mark_lt=consensus_mark_lt,
+            honeypot_mark_gt=honeypot_mark_gt,
+            honeypot_mark_lt=honeypot_mark_lt,
+            label_consensus_mark_gt=label_consensus_mark_gt,
+            label_consensus_mark_lt=label_consensus_mark_lt,
+            label_created_at_gt=label_created_at_gt,
+            label_created_at_lt=label_created_at_lt,
+            label_honeypot_mark_gt=label_honeypot_mark_gt,
+            label_honeypot_mark_lt=label_honeypot_mark_lt,
+        )
 
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
@@ -448,15 +475,15 @@ class AssetClientMethods(BaseClientMethods):
 
         step_id_in = None
         step_id_not_in = None
-        if (
-            step_name_in is not None
-            or step_name_not_in is not None
-            or step_status_in is not None
+        has_step_filters = step_name_in is not None or step_name_not_in is not None
+        has_status_filters = (
+            step_status_in is not None
             or step_status_not_in is not None
             or status_in is not None
             or status_not_in is not None
             or skipped is not None
-        ):
+        )
+        if has_step_filters or has_status_filters:
             check_asset_workflow_arguments(
                 project_workflow_version=project_workflow_version,
                 asset_workflow_filters={
@@ -701,51 +728,29 @@ class AssetClientMethods(BaseClientMethods):
                 stacklevel=1,
             )
 
-        for arg_name, arg_value in zip(
-            (
-                "consensus_mark_gt",
-                "consensus_mark_lt",
-                "honeypot_mark_gt",
-                "honeypot_mark_lt",
-                "label_consensus_mark_gt",
-                "label_consensus_mark_lt",
-                "label_created_at_gt",
-                "label_created_at_lt",
-                "label_honeypot_mark_gt",
-                "label_honeypot_mark_lt",
-            ),
-            (
-                consensus_mark_gt,
-                consensus_mark_lt,
-                honeypot_mark_gt,
-                honeypot_mark_lt,
-                label_consensus_mark_gt,
-                label_consensus_mark_lt,
-                label_created_at_gt,
-                label_created_at_lt,
-                label_honeypot_mark_gt,
-                label_honeypot_mark_lt,
-            ),
-            strict=False,
-        ):
-            if arg_value:
-                warnings.warn(
-                    f"'{arg_name}' is deprecated, please use"
-                    f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead.",
-                    DeprecationWarning,
-                    stacklevel=1,
-                )
+        _warn_deprecated_gt_lt_args(
+            consensus_mark_gt=consensus_mark_gt,
+            consensus_mark_lt=consensus_mark_lt,
+            honeypot_mark_gt=honeypot_mark_gt,
+            honeypot_mark_lt=honeypot_mark_lt,
+            label_consensus_mark_gt=label_consensus_mark_gt,
+            label_consensus_mark_lt=label_consensus_mark_lt,
+            label_created_at_gt=label_created_at_gt,
+            label_created_at_lt=label_created_at_lt,
+            label_honeypot_mark_gt=label_honeypot_mark_gt,
+            label_honeypot_mark_lt=label_honeypot_mark_lt,
+        )
 
         step_id_in = None
         step_id_not_in = None
-        if (
+        has_step_filters = step_name_in is not None or step_name_not_in is not None
+        has_status_filters = (
             status_in is not None
             or status_not_in is not None
-            or step_name_in is not None
-            or step_name_not_in is not None
             or step_status_in is not None
             or step_status_not_in is not None
-        ):
+        )
+        if has_step_filters or has_status_filters:
             project_use_cases = ProjectUseCases(self.kili_api_gateway)
             (
                 project_steps,
