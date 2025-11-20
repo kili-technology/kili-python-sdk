@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Asset related operations."""
 
-from typing import Dict, Generator, List
+from collections.abc import Generator
 
 from kili_formats.tool.annotations_to_json_response import (
     AnnotationsToJsonResponseConverter,
@@ -43,7 +43,7 @@ class AssetOperationMixin(BaseOperationMixin):
         filters: AssetFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List assets with given options."""
         if "labels.jsonResponse" in fields or "latestLabel.jsonResponse" in fields:
             # Check if we can get the jsonResponse of if we need to rebuild it.
@@ -79,7 +79,7 @@ class AssetOperationMixin(BaseOperationMixin):
 
     def list_assets_split(
         self, filters: AssetFilters, fields: ListOrTuple[str], options: QueryOptions, project_info
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List assets with given options."""
         nb_annotations = self.count_assets_annotations(filters)
         assets_batch_max_amount = 10 if project_info["inputType"] == "VIDEO" else 50
@@ -142,7 +142,7 @@ class AssetOperationMixin(BaseOperationMixin):
         count: int = count_result["data"]
         return count
 
-    def create_upload_bucket_signed_urls(self, file_paths: List[str]) -> List[str]:
+    def create_upload_bucket_signed_urls(self, file_paths: list[str]) -> list[str]:
         """Send a GraphQL request calling createUploadBucketSignedUrls resolver."""
         payload = {
             "filePaths": file_paths,

@@ -3,7 +3,6 @@
 import csv
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -20,7 +19,7 @@ from tests.unit.services.import_labels import fakes
 from tests.unit.services.import_labels.test_cases_from_files import TEST_CASES
 
 
-def _generate_label_file(yolo_rows: List[List], filename: str):
+def _generate_label_file(yolo_rows: list[list], filename: str):
     # newline="" to disable universal newlines translation (bug fix for windows)
     with Path(filename).open("w", newline="", encoding="utf-8") as y_f:
         wrt = csv.writer(y_f, delimiter=" ")

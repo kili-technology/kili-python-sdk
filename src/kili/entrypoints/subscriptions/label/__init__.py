@@ -1,6 +1,6 @@
 """Label subscription."""
 
-from typing import Callable
+from collections.abc import Callable
 
 from typeguard import typechecked
 

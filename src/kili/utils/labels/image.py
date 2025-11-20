@@ -1,6 +1,6 @@
 """Helpers to create boundingPoly polygon and semantic annotations."""
 
-from typing import Dict, List, Tuple, Union
+from typing import Union
 
 try:
     import cv2  # type: ignore
@@ -14,7 +14,7 @@ except ModuleNotFoundError as err:
 
 def _opencv_contour_to_normalized_vertices(
     contour: np.ndarray, img_width: Union[int, float], img_height: Union[int, float]
-) -> List[Dict[str, float]]:
+) -> list[dict[str, float]]:
     contour_points = []
     for point in contour:
         point = point[0]
@@ -26,7 +26,7 @@ def _opencv_contour_to_normalized_vertices(
 
 def mask_to_normalized_vertices(
     image: np.ndarray,
-) -> Tuple[List[List[Dict[str, float]]], np.ndarray]:
+) -> tuple[list[list[dict[str, float]]], np.ndarray]:
     # pylint: disable=line-too-long
     """Converts a binary mask to a list of normalized vertices using OpenCV [cv2.findContours](https://docs.opencv.org/4.7.0/d3/dc0/group__imgproc__shape.html#gadf1ad6a0b82947fa1fe3c3d497f260e0).
 
@@ -92,7 +92,7 @@ def mask_to_normalized_vertices(
 
 
 def normalized_vertices_to_mask(
-    normalized_vertices: List[Dict[str, float]], img_width: int, img_height: int
+    normalized_vertices: list[dict[str, float]], img_width: int, img_height: int
 ) -> np.ndarray:
     # pylint: disable=line-too-long
     """Converts a Kili label with normalized vertices to a binary mask.

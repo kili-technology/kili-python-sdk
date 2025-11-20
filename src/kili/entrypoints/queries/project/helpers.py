@@ -1,7 +1,5 @@
 """Helpers for the project queries."""
 
-from typing import List, Tuple
-
 
 def get_project_url(project_id: str, api_endpoint: str):
     """Get the project url from the project id and the api_endpoint.
@@ -14,7 +12,7 @@ def get_project_url(project_id: str, api_endpoint: str):
     return domain + f"/label/projects/{project_id}/"
 
 
-def get_project_metadata(project: dict, api_endpoint: str) -> List[Tuple]:
+def get_project_metadata(project: dict, api_endpoint: str) -> list[tuple]:
     """Get project metadata.
 
     Args:
@@ -31,7 +29,7 @@ def get_project_metadata(project: dict, api_endpoint: str) -> List[Tuple]:
     ]
 
 
-def get_project_metrics(project: dict) -> Tuple[List[Tuple], List[Tuple]]:
+def get_project_metrics(project: dict) -> tuple[list[tuple], list[tuple]]:
     """Get project metrics.
 
     Args:

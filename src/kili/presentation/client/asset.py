@@ -1,12 +1,9 @@
 """Client presentation methods for assets."""
 
 import warnings
+from collections.abc import Generator, Iterable
 from typing import (
     TYPE_CHECKING,
-    Dict,
-    Generator,
-    Iterable,
-    List,
     Literal,
     Optional,
     Union,
@@ -58,17 +55,17 @@ class AssetClientMethods(BaseClientMethods):
         asset_id: Optional[str] = None,
         skip: int = 0,
         fields: Optional[ListOrTuple[str]] = None,
-        asset_id_in: Optional[List[str]] = None,
-        asset_id_not_in: Optional[List[str]] = None,
+        asset_id_in: Optional[list[str]] = None,
+        asset_id_not_in: Optional[list[str]] = None,
         consensus_mark_gt: Optional[float] = None,
         consensus_mark_lt: Optional[float] = None,
         disable_tqdm: Optional[bool] = None,
-        external_id_contains: Optional[List[str]] = None,
+        external_id_contains: Optional[list[str]] = None,
         first: Optional[int] = None,
         format: Optional[str] = None,
         honeypot_mark_gt: Optional[float] = None,
         honeypot_mark_lt: Optional[float] = None,
-        label_author_in: Optional[List[str]] = None,
+        label_author_in: Optional[list[str]] = None,
         label_consensus_mark_gt: Optional[float] = None,
         label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
@@ -76,7 +73,7 @@ class AssetClientMethods(BaseClientMethods):
         label_created_at_lt: Optional[str] = None,
         label_honeypot_mark_gt: Optional[float] = None,
         label_honeypot_mark_lt: Optional[float] = None,
-        label_type_in: Optional[List[LabelType]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
@@ -105,16 +102,16 @@ class AssetClientMethods(BaseClientMethods):
         label_honeypot_mark_lte: Optional[float] = None,
         issue_type: Optional[IssueType] = None,
         issue_status: Optional[IssueStatus] = None,
-        external_id_strictly_in: Optional[List[str]] = None,
-        external_id_in: Optional[List[str]] = None,
+        external_id_strictly_in: Optional[list[str]] = None,
+        external_id_in: Optional[list[str]] = None,
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         skipped: Optional[bool] = None,
-        status_in: Optional[List[AssetStatus]] = None,
-        step_name_in: Optional[List[str]] = None,
-        step_status_in: Optional[List[StatusInStep]] = None,
+        status_in: Optional[list[AssetStatus]] = None,
+        step_name_in: Optional[list[str]] = None,
+        step_status_in: Optional[list[StatusInStep]] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -124,17 +121,17 @@ class AssetClientMethods(BaseClientMethods):
         asset_id: Optional[str] = None,
         skip: int = 0,
         fields: Optional[ListOrTuple[str]] = None,
-        asset_id_in: Optional[List[str]] = None,
-        asset_id_not_in: Optional[List[str]] = None,
+        asset_id_in: Optional[list[str]] = None,
+        asset_id_not_in: Optional[list[str]] = None,
         consensus_mark_gt: Optional[float] = None,
         consensus_mark_lt: Optional[float] = None,
         disable_tqdm: Optional[bool] = None,
-        external_id_contains: Optional[List[str]] = None,
+        external_id_contains: Optional[list[str]] = None,
         first: Optional[int] = None,
         format: Optional[str] = None,
         honeypot_mark_gt: Optional[float] = None,
         honeypot_mark_lt: Optional[float] = None,
-        label_author_in: Optional[List[str]] = None,
+        label_author_in: Optional[list[str]] = None,
         label_consensus_mark_gt: Optional[float] = None,
         label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
@@ -142,7 +139,7 @@ class AssetClientMethods(BaseClientMethods):
         label_created_at_lt: Optional[str] = None,
         label_honeypot_mark_gt: Optional[float] = None,
         label_honeypot_mark_lt: Optional[float] = None,
-        label_type_in: Optional[List[LabelType]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
@@ -171,16 +168,16 @@ class AssetClientMethods(BaseClientMethods):
         label_honeypot_mark_lte: Optional[float] = None,
         issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
         issue_status: Optional[IssueStatus] = None,
-        external_id_strictly_in: Optional[List[str]] = None,
-        external_id_in: Optional[List[str]] = None,
+        external_id_strictly_in: Optional[list[str]] = None,
+        external_id_in: Optional[list[str]] = None,
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         skipped: Optional[bool] = None,
-        status_in: Optional[List[AssetStatus]] = None,
-        step_name_in: Optional[List[str]] = None,
-        step_status_in: Optional[List[StatusInStep]] = None,
+        status_in: Optional[list[AssetStatus]] = None,
+        step_name_in: Optional[list[str]] = None,
+        step_status_in: Optional[list[StatusInStep]] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -190,17 +187,17 @@ class AssetClientMethods(BaseClientMethods):
         asset_id: Optional[str] = None,
         skip: int = 0,
         fields: Optional[ListOrTuple[str]] = None,
-        asset_id_in: Optional[List[str]] = None,
-        asset_id_not_in: Optional[List[str]] = None,
+        asset_id_in: Optional[list[str]] = None,
+        asset_id_not_in: Optional[list[str]] = None,
         consensus_mark_gt: Optional[float] = None,
         consensus_mark_lt: Optional[float] = None,
         disable_tqdm: Optional[bool] = None,
-        external_id_contains: Optional[List[str]] = None,
+        external_id_contains: Optional[list[str]] = None,
         first: Optional[int] = None,
         format: Optional[str] = None,
         honeypot_mark_gt: Optional[float] = None,
         honeypot_mark_lt: Optional[float] = None,
-        label_author_in: Optional[List[str]] = None,
+        label_author_in: Optional[list[str]] = None,
         label_consensus_mark_gt: Optional[float] = None,
         label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
@@ -208,7 +205,7 @@ class AssetClientMethods(BaseClientMethods):
         label_created_at_lt: Optional[str] = None,
         label_honeypot_mark_gt: Optional[float] = None,
         label_honeypot_mark_lt: Optional[float] = None,
-        label_type_in: Optional[List[LabelType]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
@@ -237,16 +234,16 @@ class AssetClientMethods(BaseClientMethods):
         label_honeypot_mark_lte: Optional[float] = None,
         issue_type: Optional[Literal["QUESTION", "ISSUE"]] = None,
         issue_status: Optional[Literal["CANCELLED", "OPEN", "SOLVED"]] = None,
-        external_id_strictly_in: Optional[List[str]] = None,
-        external_id_in: Optional[List[str]] = None,
+        external_id_strictly_in: Optional[list[str]] = None,
+        external_id_in: Optional[list[str]] = None,
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         skipped: Optional[bool] = None,
-        status_in: Optional[List[AssetStatus]] = None,
-        step_name_in: Optional[List[str]] = None,
-        step_status_in: Optional[List[StatusInStep]] = None,
+        status_in: Optional[list[AssetStatus]] = None,
+        step_name_in: Optional[list[str]] = None,
+        step_status_in: Optional[list[StatusInStep]] = None,
         *,
         as_generator: bool = False,
-    ) -> Union[Iterable[Dict], "pd.DataFrame"]:
+    ) -> Union[Iterable[dict], "pd.DataFrame"]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
@@ -402,6 +399,7 @@ class AssetClientMethods(BaseClientMethods):
                 label_honeypot_mark_gt,
                 label_honeypot_mark_lt,
             ),
+            strict=False,
         ):
             if arg_value:
                 warnings.warn(
@@ -457,16 +455,16 @@ class AssetClientMethods(BaseClientMethods):
         filters = AssetFilters(
             project_id=ProjectId(project_id),
             asset_id=AssetId(asset_id) if asset_id else None,
-            asset_id_in=cast(List[AssetId], asset_id_in) if asset_id_in else None,
-            asset_id_not_in=cast(List[AssetId], asset_id_not_in) if asset_id_not_in else None,
+            asset_id_in=cast(list[AssetId], asset_id_in) if asset_id_in else None,
+            asset_id_not_in=cast(list[AssetId], asset_id_not_in) if asset_id_not_in else None,
             consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
             consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
             external_id_strictly_in=(
-                cast(List[AssetExternalId], external_id_strictly_in or external_id_contains)
+                cast(list[AssetExternalId], external_id_strictly_in or external_id_contains)
                 if external_id_strictly_in or external_id_contains
                 else None
             ),
-            external_id_in=cast(List[AssetExternalId], external_id_in) if external_id_in else None,
+            external_id_in=cast(list[AssetExternalId], external_id_in) if external_id_in else None,
             honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
             honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
             inference_mark_gte=inference_mark_gte,
@@ -523,17 +521,17 @@ class AssetClientMethods(BaseClientMethods):
         self,
         project_id: str,
         asset_id: Optional[str] = None,
-        asset_id_in: Optional[List[str]] = None,
-        asset_id_not_in: Optional[List[str]] = None,
-        external_id_contains: Optional[List[str]] = None,
+        asset_id_in: Optional[list[str]] = None,
+        asset_id_not_in: Optional[list[str]] = None,
+        external_id_contains: Optional[list[str]] = None,
         metadata_where: Optional[dict] = None,
-        status_in: Optional[List[AssetStatus]] = None,
+        status_in: Optional[list[AssetStatus]] = None,
         consensus_mark_gt: Optional[float] = None,
         consensus_mark_lt: Optional[float] = None,
         honeypot_mark_gt: Optional[float] = None,
         honeypot_mark_lt: Optional[float] = None,
-        label_type_in: Optional[List[LabelType]] = None,
-        label_author_in: Optional[List[str]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
+        label_author_in: Optional[list[str]] = None,
         label_consensus_mark_gt: Optional[float] = None,
         label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
@@ -567,10 +565,10 @@ class AssetClientMethods(BaseClientMethods):
         label_honeypot_mark_lte: Optional[float] = None,
         issue_type: Optional[IssueType] = None,
         issue_status: Optional[IssueStatus] = None,
-        external_id_strictly_in: Optional[List[str]] = None,
-        external_id_in: Optional[List[str]] = None,
-        step_name_in: Optional[List[str]] = None,
-        step_status_in: Optional[List[StatusInStep]] = None,
+        external_id_strictly_in: Optional[list[str]] = None,
+        external_id_in: Optional[list[str]] = None,
+        step_name_in: Optional[list[str]] = None,
+        step_status_in: Optional[list[StatusInStep]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count and return the number of assets with the given constraints.
@@ -685,6 +683,7 @@ class AssetClientMethods(BaseClientMethods):
                 label_honeypot_mark_gt,
                 label_honeypot_mark_lt,
             ),
+            strict=False,
         ):
             if arg_value:
                 warnings.warn(
@@ -720,16 +719,16 @@ class AssetClientMethods(BaseClientMethods):
         filters = AssetFilters(
             project_id=ProjectId(project_id),
             asset_id=AssetId(asset_id) if asset_id else None,
-            asset_id_in=cast(List[AssetId], asset_id_in) if asset_id_in else None,
-            asset_id_not_in=cast(List[AssetId], asset_id_not_in) if asset_id_not_in else None,
+            asset_id_in=cast(list[AssetId], asset_id_in) if asset_id_in else None,
+            asset_id_not_in=cast(list[AssetId], asset_id_not_in) if asset_id_not_in else None,
             consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
             consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
             external_id_strictly_in=(
-                cast(List[AssetExternalId], external_id_strictly_in or external_id_contains)
+                cast(list[AssetExternalId], external_id_strictly_in or external_id_contains)
                 if external_id_strictly_in or external_id_contains
                 else None
             ),
-            external_id_in=cast(List[AssetExternalId], external_id_in) if external_id_in else None,
+            external_id_in=cast(list[AssetExternalId], external_id_in) if external_id_in else None,
             honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
             honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
             inference_mark_gte=inference_mark_gte,

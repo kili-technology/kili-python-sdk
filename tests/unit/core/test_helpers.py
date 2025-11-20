@@ -1,7 +1,6 @@
 import json
 import time
 import warnings
-from typing import Dict
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
@@ -65,7 +64,7 @@ def test_format_result_formatted_json_is_list():
     }
     ret = format_result("data", result, object_=None, http_client=MagicMock())
     assert isinstance(ret, list)
-    assert isinstance(ret[0], Dict)
+    assert isinstance(ret[0], dict)
 
 
 def test_format_result_legacy_orm_objects():
@@ -74,7 +73,7 @@ def test_format_result_legacy_orm_objects():
     ret = format_result("data", result, None, http_client=MagicMock())
     assert len(ret) == 1
     assert isinstance(ret, list)
-    assert isinstance(ret[0], Dict)
+    assert isinstance(ret[0], dict)
 
 
 def test_format_result_with_type_conversion_int():

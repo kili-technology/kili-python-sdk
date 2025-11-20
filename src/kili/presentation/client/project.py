@@ -1,11 +1,8 @@
 """Client presentation methods for projects."""
 import warnings
+from collections.abc import Generator, Iterable
 from typing import (
     Any,
-    Dict,
-    Generator,
-    Iterable,
-    List,
     Literal,
     Optional,
     cast,
@@ -40,12 +37,12 @@ class ProjectClientMethods(BaseClientMethods):
         title: str,
         description: str = "",
         input_type: Optional[InputType] = None,
-        json_interface: Optional[Dict] = None,
+        json_interface: Optional[dict] = None,
         project_id: Optional[ProjectId] = None,
         tags: Optional[ListOrTuple[str]] = None,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
         from_demo_project: Optional[DemoProjectType] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Create a project.
 
         Args:
@@ -140,7 +137,7 @@ class ProjectClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -175,7 +172,7 @@ class ProjectClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -210,7 +207,7 @@ class ProjectClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of projects that match a set of criteria.
 
@@ -298,7 +295,7 @@ class ProjectClientMethods(BaseClientMethods):
         metadata_properties: Optional[dict] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
         should_auto_assign: Optional[bool] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Update properties of a project.
 
         Args:

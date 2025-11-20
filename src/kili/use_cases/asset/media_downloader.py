@@ -1,11 +1,12 @@
 """Helpers for the asset queries."""
 
 import warnings
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from mimetypes import guess_extension
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
@@ -31,7 +32,7 @@ def get_download_assets_function(
     fields: ListOrTuple[str],
     project_id: ProjectId,
     local_media_dir: Optional[str],
-) -> Tuple[Optional[Callable], ListOrTuple[str]]:
+) -> tuple[Optional[Callable], ListOrTuple[str]]:
     """Get the function to be called after each batch of asset query.
 
     The function is either None or MediaDownloader.download_assets().
@@ -96,7 +97,7 @@ class MediaDownloader:
             else Path.home() / ".cache" / "kili" / "projects" / self.project_id / "assets"
         )
 
-    def download_assets(self, assets: List[Dict]) -> List[Dict]:
+    def download_assets(self, assets: list[dict]) -> list[dict]:
         """Download assets media in local."""
         if len(assets) == 0:
             return assets
@@ -123,7 +124,7 @@ class MediaDownloader:
 
         return assets
 
-    def download_single_asset(self, asset: Dict) -> Dict[str, Any]:
+    def download_single_asset(self, asset: dict) -> dict[str, Any]:
         """Download single asset on disk and modify asset attributes."""
         if "ocrMetadata" in asset and str(asset["ocrMetadata"]).startswith("http"):
             response = self.http_client.get(asset["ocrMetadata"], timeout=20)
@@ -234,7 +235,7 @@ def download_file(
     return str(local_path)
 
 
-def assert_required_fields_existence(assets: List[Dict]) -> None:
+def assert_required_fields_existence(assets: list[dict]) -> None:
     """Check if all fields are available to download assets."""
     required_fields = ["content", "externalId"]
     for field in required_fields:

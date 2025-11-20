@@ -4,8 +4,9 @@ This module provides a comprehensive interface for issue-related operations
 including creation, querying, status management, and lifecycle operations.
 """
 
+from collections.abc import Generator
 from itertools import repeat
-from typing import Any, Dict, Generator, List, Literal, Optional, TypedDict, overload
+from typing import Any, List, Literal, Optional, TypedDict, overload
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -33,7 +34,7 @@ class IssueFilter(TypedDict, total=False):
     """
 
     asset_id: Optional[str]
-    asset_id_in: Optional[List[str]]
+    asset_id_in: Optional[list[str]]
     status: Optional[IssueStatus]
 
 
@@ -120,7 +121,7 @@ class IssuesNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[IssueFilter] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get a list of issues that match a set of criteria.
 
         !!! Info "Issues vs Questions"
@@ -156,7 +157,7 @@ class IssuesNamespace(DomainNamespace):
             ...     filter={"status": "OPEN"}
             ... )
         """
-        filter_kwargs: Dict[str, Any] = dict(filter or {})
+        filter_kwargs: dict[str, Any] = dict(filter or {})
         # Force issue_type to ISSUE
         filter_kwargs["issue_type"] = "ISSUE"
         return self._client.issues(
@@ -184,7 +185,7 @@ class IssuesNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[IssueFilter] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Get a generator of issues that match a set of criteria.
 
         !!! Info "Issues vs Questions"
@@ -216,7 +217,7 @@ class IssuesNamespace(DomainNamespace):
             ... ):
             ...     print(issue["id"])
         """
-        filter_kwargs: Dict[str, Any] = dict(filter or {})
+        filter_kwargs: dict[str, Any] = dict(filter or {})
         # Force issue_type to ISSUE
         filter_kwargs["issue_type"] = "ISSUE"
         return self._client.issues(
@@ -250,7 +251,7 @@ class IssuesNamespace(DomainNamespace):
             ...     filter={"asset_id_in": ["asset_1", "asset_2"], "status": "OPEN"}
             ... )
         """
-        filter_kwargs: Dict[str, Any] = dict(filter or {})
+        filter_kwargs: dict[str, Any] = dict(filter or {})
         # Force issue_type to ISSUE
         filter_kwargs["issue_type"] = "ISSUE"
         return self._client.count_issues(
@@ -266,7 +267,7 @@ class IssuesNamespace(DomainNamespace):
         label_id: str,
         object_mid: Optional[str] = None,
         text: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -277,7 +278,7 @@ class IssuesNamespace(DomainNamespace):
         label_id_array: List[str],
         object_mid_array: Optional[List[Optional[str]]] = None,
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -291,7 +292,7 @@ class IssuesNamespace(DomainNamespace):
         object_mid_array: Optional[List[Optional[str]]] = None,
         text: Optional[str] = None,
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Create issues for the specified labels.
 
         Args:
@@ -343,6 +344,7 @@ class IssuesNamespace(DomainNamespace):
                 label_id_array,
                 object_mid_array or repeat(None),
                 text_array or repeat(None),
+                strict=False,
             )
         ]
 
@@ -351,11 +353,11 @@ class IssuesNamespace(DomainNamespace):
         return [{"id": issue_id} for issue_id in issue_ids]
 
     @overload
-    def cancel(self, *, issue_id: str) -> List[Dict[str, Any]]:
+    def cancel(self, *, issue_id: str) -> List[dict[str, Any]]:
         ...
 
     @overload
-    def cancel(self, *, issue_ids: List[str]) -> List[Dict[str, Any]]:
+    def cancel(self, *, issue_ids: List[str]) -> List[dict[str, Any]]:
         ...
 
     @typechecked
@@ -364,7 +366,7 @@ class IssuesNamespace(DomainNamespace):
         *,
         issue_id: Optional[str] = None,
         issue_ids: Optional[List[str]] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> List[dict[str, Any]]:
         """Cancel issues by setting their status to CANCELLED.
 
         This method provides a more intuitive interface than the generic `update_issue_status`
@@ -415,11 +417,11 @@ class IssuesNamespace(DomainNamespace):
         return results
 
     @overload
-    def open(self, *, issue_id: str) -> List[Dict[str, Any]]:
+    def open(self, *, issue_id: str) -> List[dict[str, Any]]:
         ...
 
     @overload
-    def open(self, *, issue_ids: List[str]) -> List[Dict[str, Any]]:
+    def open(self, *, issue_ids: List[str]) -> List[dict[str, Any]]:
         ...
 
     @typechecked
@@ -428,7 +430,7 @@ class IssuesNamespace(DomainNamespace):
         *,
         issue_id: Optional[str] = None,
         issue_ids: Optional[List[str]] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> List[dict[str, Any]]:
         """Open issues by setting their status to OPEN.
 
         This method provides a more intuitive interface than the generic `update_issue_status`
@@ -477,11 +479,11 @@ class IssuesNamespace(DomainNamespace):
         return results
 
     @overload
-    def solve(self, *, issue_id: str) -> List[Dict[str, Any]]:
+    def solve(self, *, issue_id: str) -> List[dict[str, Any]]:
         ...
 
     @overload
-    def solve(self, *, issue_ids: List[str]) -> List[Dict[str, Any]]:
+    def solve(self, *, issue_ids: List[str]) -> List[dict[str, Any]]:
         ...
 
     @typechecked
@@ -490,7 +492,7 @@ class IssuesNamespace(DomainNamespace):
         *,
         issue_id: Optional[str] = None,
         issue_ids: Optional[List[str]] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> List[dict[str, Any]]:
         """Solve issues by setting their status to SOLVED.
 
         This method provides a more intuitive interface than the generic `update_issue_status`

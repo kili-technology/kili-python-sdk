@@ -35,7 +35,7 @@ import json
 import mimetypes
 import random
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
 import requests
 from google.cloud import aiplatform, storage
@@ -139,7 +139,7 @@ When importing data to a Vertex AI Datset, the images must already be stored on 
 
 
 ```python
-def upload_assets_to_bucket(assets: List[dict], bucket_name: str, bucket_dataset_dir: str):
+def upload_assets_to_bucket(assets: list[dict], bucket_name: str, bucket_dataset_dir: str):
     bucket = storage_client.get_bucket(bucket_name)
     for asset in tqdm(assets, desc="uploading assets to bucket"):
         image_bucket_path = f"{bucket_dataset_dir}/images/{Path(asset['content']).name}"
@@ -230,7 +230,7 @@ This jsonl file then needs to be imported to the Google Cloud Storage bucket and
 
 ```python
 def generate_and_upload_inputs_to_bucket(
-    assets: List[dict], bucket_name: str, bucket_dataset_dir: str
+    assets: list[dict], bucket_name: str, bucket_dataset_dir: str
 ):
     output_jsonl_file = "inputs.jsonl"
     bucket = storage_client.get_bucket(bucket_name)
@@ -273,7 +273,7 @@ def create_and_import_dataset_image_sample(
     project: str,
     location: str,
     display_name: str,
-    src_uris: Union[str, List[str]],
+    src_uris: Union[str, list[str]],
     import_schema_uri: str,
     sync: bool = True,
 ):
@@ -470,7 +470,7 @@ upload_assets_to_bucket(unlabeled_assets, bucket_name, bucket_dataset_dir)
 
 
 ```python
-def upload_test_source_to_bucket(assets: List[dict], bucket_name: str, bucket_dataset_dir: str):
+def upload_test_source_to_bucket(assets: list[dict], bucket_name: str, bucket_dataset_dir: str):
     output_jsonl_file = "batch_inference_inputs.jsonl"
     bucket = storage_client.get_bucket(bucket_name)
     with open(output_jsonl_file, "w") as output_file:
@@ -696,6 +696,7 @@ def vertex_to_kili(json_output):
         json_output["prediction"]["displayNames"],
         json_output["prediction"]["bboxes"],
         json_output["prediction"]["confidence"],
+        strict=False,
     ):
         bounding_poly = [
             {"x": bbox[0], "y": bbox[3]},

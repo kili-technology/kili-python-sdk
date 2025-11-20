@@ -1,9 +1,7 @@
 """Service for exporting kili objects."""
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Type, Union
-
-from typing_extensions import get_args
+from typing import TYPE_CHECKING, Optional, Union, get_args
 
 from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
@@ -24,7 +22,7 @@ if TYPE_CHECKING:
 
 def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     kili: "Kili",
-    asset_ids: Optional[List[AssetId]],
+    asset_ids: Optional[list[AssetId]],
     project_id: ProjectId,
     export_type: ExportType,
     label_format: LabelFormat,
@@ -35,11 +33,11 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     log_level: LogLevel,
     with_assets: bool,
     annotation_modifier: Optional[CocoAnnotationModifier],
-    asset_filter_kwargs: Optional[Dict[str, object]],
+    asset_filter_kwargs: Optional[dict[str, object]],
     normalized_coordinates: Optional[bool],
-    label_type_in: Optional[List[str]],
+    label_type_in: Optional[list[str]],
     include_sent_back_labels: Optional[bool],
-) -> Optional[List[Dict[str, Union[List[str], str]]]]:
+) -> Optional[list[dict[str, Union[list[str], str]]]]:
     """Export the selected assets into the required format, and save it into a file archive."""
     kili.kili_api_gateway.get_project(project_id, ["id"])
 
@@ -68,7 +66,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     content_repository = SDKContentRepository(kili.api_endpoint, http_client=kili.http_client)
 
     if label_format in get_args(LabelFormat):
-        format_exporter_selector_mapping: Dict[str, Type[AbstractExporter]] = {
+        format_exporter_selector_mapping: dict[str, type[AbstractExporter]] = {
             "raw": KiliExporter,
             "kili": KiliExporter,
             "coco": CocoExporter,

@@ -1,7 +1,7 @@
 """Issue domain."""
 
 from dataclasses import dataclass
-from typing import List, Literal, NewType, Optional
+from typing import Literal, NewType, Optional
 
 from kili.domain.project import ProjectId
 
@@ -16,6 +16,6 @@ class IssueFilters:
 
     project_id: ProjectId
     asset_id: Optional[str] = None
-    asset_id_in: Optional[List[str]] = None
+    asset_id_in: Optional[list[str]] = None
     issue_type: Optional[IssueType] = None
     status: Optional[IssueStatus] = None

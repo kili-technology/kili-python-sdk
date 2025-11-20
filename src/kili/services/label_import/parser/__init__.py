@@ -4,7 +4,7 @@ import csv
 import json
 from abc import abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
 from kili.services.label_import.types import Classes
 
@@ -17,14 +17,14 @@ class AbstractLabelParser:  # pylint: disable=too-few-public-methods
         self.target_job = target_job
 
     @abstractmethod
-    def parse(self, label_file: Path) -> Dict[str, Any]:
+    def parse(self, label_file: Path) -> dict[str, Any]:
         """Parses a label file."""
 
 
 class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-methods
     """Yolo label parser."""
 
-    def parse(self, label_file: Path) -> Dict[str, Any]:
+    def parse(self, label_file: Path) -> dict[str, Any]:
         """Parses a Yolo label file."""
         annotations = []
         assert self.classes_by_id
@@ -52,7 +52,7 @@ class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-me
         return {self.target_job: {"annotations": annotations}}
 
     @staticmethod
-    def _parse(row) -> Tuple[List[List[float]], int, Optional[float]]:
+    def _parse(row) -> tuple[list[list[float]], int, Optional[float]]:
         try:
             class_id, x, y, width, height, proba = row
         except ValueError:
@@ -78,6 +78,6 @@ class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-me
 class KiliRawLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-methods
     """Kili raw label parser."""
 
-    def parse(self, label_file: Path) -> Dict[str, Any]:
+    def parse(self, label_file: Path) -> dict[str, Any]:
         with label_file.open("r", encoding="utf-8") as l_f:
             return json.load(l_f)

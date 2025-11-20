@@ -1,14 +1,13 @@
 """Module for common argument validators across client methods."""
 
-from typing import List
 
 from kili.domain.project import ProjectStep
 
 
 def extract_step_ids_from_project_steps(
-    project_steps: List[ProjectStep],
-    step_name_in: List[str],
-) -> List[str]:
+    project_steps: list[ProjectStep],
+    step_name_in: list[str],
+) -> list[str]:
     """Extract step ids from project steps."""
     matching_steps = [step for step in project_steps if step["name"] in step_name_in]
 

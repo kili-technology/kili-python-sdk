@@ -1,7 +1,7 @@
 """Mixin extending Kili API Gateway class with Api Keys related operations."""
 
+from collections.abc import Generator
 from datetime import datetime
-from typing import Dict, Generator
 
 from kili.adapters.kili_api_gateway.api_key.mappers import api_key_where_mapper
 from kili.adapters.kili_api_gateway.api_key.operations import (
@@ -28,7 +28,7 @@ class ApiKeyOperationMixin(BaseOperationMixin):
         filters: ApiKeyFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List assets with given options."""
         fragment = fragment_builder(fields)
         query = get_api_keys_query(fragment)

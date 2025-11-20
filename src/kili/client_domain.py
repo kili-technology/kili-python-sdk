@@ -3,7 +3,7 @@
 import logging
 import warnings
 from functools import cached_property
-from typing import TYPE_CHECKING, Dict, Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from kili.client import Kili as KiliLegacy
 from kili.core.graphql.graphql_client import GraphQLClientName
@@ -46,7 +46,7 @@ class Kili:
         api_key: Optional[str] = None,
         api_endpoint: Optional[str] = None,
         verify: Optional[Union[bool, str]] = None,
-        graphql_client_params: Optional[Dict[str, object]] = None,
+        graphql_client_params: Optional[dict[str, object]] = None,
     ) -> None:
         """Initialize Kili client (domain mode).
 

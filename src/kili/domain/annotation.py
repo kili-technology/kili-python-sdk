@@ -1,6 +1,6 @@
 """Annotation domain."""
 
-from typing import List, Literal, NewType, Optional, TypedDict, Union
+from typing import Literal, NewType, Optional, TypedDict, Union
 
 from .label import LabelId
 from .ontology import JobName
@@ -20,13 +20,13 @@ class Vertice(TypedDict):
 class ObjectDetectionAnnotationValue(TypedDict):
     """Object detection annotation value."""
 
-    vertices: List[List[List[Vertice]]]
+    vertices: list[list[list[Vertice]]]
 
 
 class ClassificationAnnotationValue(TypedDict):
     """Classification annotation value."""
 
-    categories: List[str]
+    categories: list[str]
 
 
 class ClassificationAnnotation(TypedDict):
@@ -37,7 +37,7 @@ class ClassificationAnnotation(TypedDict):
     id: AnnotationId
     labelId: LabelId
     job: JobName
-    path: List[List[str]]
+    path: list[list[str]]
     annotationValue: ClassificationAnnotationValue
 
 
@@ -45,7 +45,7 @@ class RankingOrderValue(TypedDict):
     """Ranking order value."""
 
     rank: int
-    elements: List[str]
+    elements: list[str]
 
 
 class TranscriptionAnnotationValue(TypedDict):
@@ -62,17 +62,8 @@ class TranscriptionAnnotation(TypedDict):
     id: AnnotationId
     labelId: LabelId
     job: JobName
-    path: List[List[str]]
+    path: list[list[str]]
     annotationValue: TranscriptionAnnotationValue
-
-
-class Annotation(TypedDict):
-    """Annotation."""
-
-    id: AnnotationId
-    labelId: LabelId
-    job: JobName
-    path: List[List[str]]
 
 
 class ObjectDetectionAnnotation(TypedDict):
@@ -83,7 +74,7 @@ class ObjectDetectionAnnotation(TypedDict):
     id: AnnotationId
     labelId: LabelId
     job: JobName
-    path: List[List[str]]
+    path: list[list[str]]
     annotationValue: ObjectDetectionAnnotationValue
     name: Optional[str]
     mid: str
@@ -129,9 +120,9 @@ class VideoObjectDetectionAnnotation(TypedDict):
     id: AnnotationId
     labelId: LabelId
     job: JobName
-    path: List[List[str]]
-    frames: List[FrameInterval]
-    keyAnnotations: List[VideoObjectDetectionKeyAnnotation]
+    path: list[list[str]]
+    frames: list[FrameInterval]
+    keyAnnotations: list[VideoObjectDetectionKeyAnnotation]
     name: Optional[str]
     mid: str
     category: str
@@ -145,9 +136,9 @@ class VideoClassificationAnnotation(TypedDict):
     id: AnnotationId
     labelId: LabelId
     job: JobName
-    path: List[List[str]]
-    frames: List[FrameInterval]
-    keyAnnotations: List[VideoClassificationKeyAnnotation]
+    path: list[list[str]]
+    frames: list[FrameInterval]
+    keyAnnotations: list[VideoClassificationKeyAnnotation]
 
 
 class VideoTranscriptionAnnotation(TypedDict):
@@ -158,9 +149,9 @@ class VideoTranscriptionAnnotation(TypedDict):
     id: AnnotationId
     labelId: LabelId
     job: JobName
-    path: List[List[str]]
-    frames: List[FrameInterval]
-    keyAnnotations: List[VideoTranscriptionKeyAnnotation]
+    path: list[list[str]]
+    frames: list[FrameInterval]
+    keyAnnotations: list[VideoTranscriptionKeyAnnotation]
 
 
 VideoAnnotation = Union[

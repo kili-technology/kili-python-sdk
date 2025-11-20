@@ -2,7 +2,7 @@
 
 # pylint: disable=too-many-lines
 import warnings
-from typing import Dict, List, Optional, Union, cast
+from typing import Optional, Union, cast
 
 from kili_formats.types import ChatItem, ChatItemRole, Conversation
 
@@ -43,7 +43,7 @@ class LlmClientMethods:
     def import_conversations(
         self,
         project_id: str,
-        conversations: List[Conversation],
+        conversations: list[Conversation],
     ):
         """Import conversations into a LLM Static project.
 
@@ -76,14 +76,14 @@ class LlmClientMethods:
         self,
         project_id: str,
         disable_tqdm: Optional[bool] = False,
-        asset_ids: Optional[List[str]] = None,
-        external_ids: Optional[List[str]] = None,
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
         include_sent_back_labels: Optional[bool] = False,
-        label_type_in: Optional[List[LabelType]] = None,
-        status_in: Optional[List[AssetStatus]] = None,
-        step_name_in: Optional[List[str]] = None,
-        step_status_in: Optional[List[StatusInStep]] = None,
-    ) -> Optional[Union[List[Conversation], List[Dict[str, Union[List[str], str]]]]]:
+        label_type_in: Optional[list[LabelType]] = None,
+        status_in: Optional[list[AssetStatus]] = None,
+        step_name_in: Optional[list[str]] = None,
+        step_status_in: Optional[list[StatusInStep]] = None,
+    ) -> Optional[Union[list[Conversation], list[dict[str, Union[list[str], str]]]]]:
         """Returns an export of llm conversations with valid labels.
 
         Args:
@@ -110,7 +110,7 @@ class LlmClientMethods:
 
         if external_ids is not None and asset_ids is None:
             id_map = AssetUseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
-                asset_external_ids=cast(List[AssetExternalId], external_ids),
+                asset_external_ids=cast(list[AssetExternalId], external_ids),
                 project_id=ProjectId(project_id),
             )
             resolved_asset_ids = [id_map[AssetExternalId(i)] for i in external_ids]
@@ -219,7 +219,7 @@ class LlmClientMethods:
         )
         return self.kili_api_gateway.create_model(model=model_input)
 
-    def models(self, organization_id: str, fields: Optional[List[str]] = None) -> List[ModelDict]:
+    def models(self, organization_id: str, fields: Optional[list[str]] = None) -> list[ModelDict]:
         """List models in an organization.
 
         Args:
@@ -239,7 +239,7 @@ class LlmClientMethods:
 
         return list(self.kili_api_gateway.list_models(filters=converted_filters, fields=fields))
 
-    def model(self, model_id: str, fields: Optional[List[str]] = None) -> ModelDict:
+    def model(self, model_id: str, fields: Optional[list[str]] = None) -> ModelDict:
         """Retrieve a specific model.
 
         Args:
@@ -353,8 +353,8 @@ class LlmClientMethods:
         return self.kili_api_gateway.create_project_model(project_model=project_model_input)
 
     def project_models(
-        self, project_id: str, filters: Optional[Dict] = None, fields: Optional[List[str]] = None
-    ) -> List[ProjectModelDict]:
+        self, project_id: str, filters: Optional[dict] = None, fields: Optional[list[str]] = None
+    ) -> list[ProjectModelDict]:
         """List models associated with a project.
 
         Args:
@@ -420,7 +420,7 @@ class LlmClientMethods:
         """
         return self.kili_api_gateway.delete_project_model(project_model_id)
 
-    def list_chat_items(self, asset_id: str) -> List[ChatItem]:
+    def list_chat_items(self, asset_id: str) -> list[ChatItem]:
         """List chat items associated with an asset.
 
         Args:
@@ -436,7 +436,7 @@ class LlmClientMethods:
 
     def create_conversation(
         self, project_id: str, initial_prompt: str, system_prompt: Optional[str] = None
-    ) -> List[ChatItem]:
+    ) -> list[ChatItem]:
         """Create a new conversation in an LLM project starting with a user's prompt.
 
         This method initiates a new conversation in the specified project by:

@@ -7,7 +7,7 @@ import shutil
 from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, NamedTuple, Optional, Tuple, Union
+from typing import TYPE_CHECKING, NamedTuple, Optional, Union
 
 from kili_formats.types import Job
 
@@ -36,7 +36,7 @@ if TYPE_CHECKING:
 class ExportParams(NamedTuple):
     """Contains all parameters that change the result of the export."""
 
-    assets_ids: Optional[List[AssetId]]
+    assets_ids: Optional[list[AssetId]]
     export_type: ExportType
     project_id: ProjectId
     label_format: LabelFormat
@@ -45,13 +45,13 @@ class ExportParams(NamedTuple):
     output_file: Optional[Path]
     with_assets: bool
     annotation_modifier: Optional[CocoAnnotationModifier]
-    asset_filter_kwargs: Optional[Dict[str, object]]
+    asset_filter_kwargs: Optional[dict[str, object]]
     normalized_coordinates: Optional[bool]
-    label_type_in: Optional[List[str]]
+    label_type_in: Optional[list[str]]
     include_sent_back_labels: Optional[bool]
 
 
-def reverse_rotation_vertices(normalized_vertices, rotation_angle) -> List[Dict]:
+def reverse_rotation_vertices(normalized_vertices, rotation_angle) -> list[dict]:
     """Allows to retrieve vertices without rotation."""
     vertices_before_rotate = []
     for vertice in normalized_vertices:
@@ -84,7 +84,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     ) -> None:
         """Initialize the exporter."""
         self.project_id: ProjectId = export_params.project_id
-        self.assets_ids: Optional[List[AssetId]] = export_params.assets_ids
+        self.assets_ids: Optional[list[AssetId]] = export_params.assets_ids
         self.export_type: ExportType = export_params.export_type
         self.label_format: LabelFormat = export_params.label_format
         self.single_file: bool = export_params.single_file
@@ -119,7 +119,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """Check if the export label format is compatible with the job."""
 
     @property
-    def compatible_jobs(self) -> Tuple[str, ...]:
+    def compatible_jobs(self) -> tuple[str, ...]:
         """Get all job names compatible with the export format."""
         return tuple(
             job_name
@@ -128,10 +128,10 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         )
 
     @abstractmethod
-    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
+    def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
         """Converts the asset and save them into an archive file."""
 
-    def process(self, assets: List[Dict]) -> List[Dict[str, Union[List[str], str]]]:
+    def process(self, assets: list[dict]) -> list[dict[str, Union[list[str], str]]]:
         """Converts the asset."""
         raise ValueError("Output file is required for this export format.")
 
@@ -157,7 +157,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             fout.write(f"- Exported labels: {self.export_type}\n".encode())
 
     @staticmethod
-    def write_video_metadata_file(video_metadata: Dict, base_folder: Path) -> None:
+    def write_video_metadata_file(video_metadata: dict, base_folder: Path) -> None:
         """Write video metadata file."""
         video_metadata_json = json.dumps(video_metadata, sort_keys=True, indent=4)
         if video_metadata_json is not None:
@@ -165,7 +165,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 output_file.write(video_metadata_json.encode("utf-8"))
 
     @staticmethod
-    def write_remote_content_file(remote_content: List[str], images_folder: Path) -> None:
+    def write_remote_content_file(remote_content: list[str], images_folder: Path) -> None:
         """Write remote content file."""
         remote_content_header = ["external id", "url", "label file"]
         # newline="" to disable universal newlines translation (bug fix for windows)
@@ -176,7 +176,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
     def export_project(
         self,
-    ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
+    ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export a project to a json.
 
         Return the name of the exported archive file.
@@ -226,7 +226,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         project = self.kili.kili_api_gateway.get_project(self.project_id, ["dataConnections.id"])
         return bool(project["dataConnections"])
 
-    def _check_geotiff_export_compatibility(self, assets: List[Dict]) -> None:
+    def _check_geotiff_export_compatibility(self, assets: list[dict]) -> None:
         # pylint: disable=line-too-long
         """Check if one of the assets is a geotiff asset, and if the export params are compatible.
 
@@ -269,7 +269,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return self.base_folder / "images"
 
     @staticmethod
-    def _filter_out_autosave_labels(assets: List[Dict]) -> List[Dict]:
+    def _filter_out_autosave_labels(assets: list[dict]) -> list[dict]:
         """Removes AUTOSAVE labels from exports."""
         clean_assets = []
         for asset in assets:
@@ -281,7 +281,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         return clean_assets
 
     @staticmethod
-    def _format_json_response(label: Dict) -> Dict:
+    def _format_json_response(label: dict) -> dict:
         """Format the label JSON response in the requested format."""
         formatted_json_response = label["jsonResponse"]
         json_response = {}
@@ -293,7 +293,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         label["jsonResponse"] = json_response
         return label
 
-    def preprocess_assets(self, assets: List[Dict]) -> List[Dict]:
+    def preprocess_assets(self, assets: list[dict]) -> list[dict]:
         """Format labels in the requested format, and filter out autosave labels."""
         include_sent_back_labels = self.include_sent_back_labels
         assets_in_format = []

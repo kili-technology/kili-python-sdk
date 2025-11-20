@@ -4,7 +4,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from itertools import repeat
-from typing import List, Optional
+from typing import Optional
 
 from kili.core.helpers import get_mime_type, is_url
 from kili.domain.project import InputType
@@ -50,7 +50,7 @@ class VideoMixin:
         json_content = asset.get("json_content")
         assert json_content
         json_content_index = range(len(json_content))
-        json_content = dict(zip(json_content_index, json_content))
+        json_content = dict(zip(json_content_index, json_content, strict=False))
         return AssetLike(
             **{**asset, "json_content": json_content}  # pyright: ignore[reportGeneralTypeIssues]
         )
@@ -67,7 +67,7 @@ class VideoContentBatchImporter(ContentBatchImporter, VideoMixin):
         return AssetLike(**{**asset, "json_metadata": json_metadata})  # type: ignore
 
     def import_batch(
-        self, assets: List[AssetLike], verify: bool, input_type: Optional[InputType] = None
+        self, assets: list[AssetLike], verify: bool, input_type: Optional[InputType] = None
     ):
         """Import a batch of video assets from content into Kili."""
         assets = self.loop_on_batch(self.add_video_processing_parameters)(assets)
@@ -85,7 +85,7 @@ class FrameBatchImporter(JsonContentBatchImporter, VideoMixin):
         return AssetLike(**{**asset, "json_metadata": json_metadata})  # type: ignore
 
     def import_batch(
-        self, assets: List[AssetLike], verify: bool, input_type: Optional[InputType] = None
+        self, assets: list[AssetLike], verify: bool, input_type: Optional[InputType] = None
     ):
         """Import a batch of video assets from frames."""
         assets = self.add_ids(assets)
@@ -159,7 +159,7 @@ class VideoDataImporter(BaseAbstractAssetImporter):
             return VideoDataType.HOSTED_FILE
         return VideoDataType.LOCAL_FILE
 
-    def import_assets(self, assets: List[AssetLike], input_type: InputType):
+    def import_assets(self, assets: list[AssetLike], input_type: InputType):
         """Import video assets into Kili."""
         self._check_upload_is_allowed(assets)
         data_type = self.get_data_type(assets)

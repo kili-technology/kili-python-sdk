@@ -1,13 +1,12 @@
 """Method to import assets from a csv file."""
 
 import csv
-from typing import List, Tuple
 
 
-def get_text_assets_from_csv(from_csv: str, csv_separator: str) -> Tuple[List[str], List[str]]:
+def get_text_assets_from_csv(from_csv: str, csv_separator: str) -> tuple[list[str], list[str]]:
     """Get text assets from a csv file."""
-    content_array: List[str] = []
-    external_id_array: List[str] = []
+    content_array: list[str] = []
+    external_id_array: list[str] = []
 
     with open(from_csv, newline="", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=csv_separator)

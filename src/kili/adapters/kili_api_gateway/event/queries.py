@@ -1,6 +1,7 @@
 """GraphQL module."""
 
-from typing import Any, Dict, Generator
+from collections.abc import Generator
+from typing import Any
 
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.event import QueryOptions
@@ -19,10 +20,10 @@ class PaginatedGraphQLQuery:
     def execute_query_from_paginated_call(
         self,
         query: str,
-        where: Dict[str, Any],
-        pagination: Dict[str, Any],
+        where: dict[str, Any],
+        pagination: dict[str, Any],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Build a row generator from paginated query calls with the first and skip pattern.
 
         Args:

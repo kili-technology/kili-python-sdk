@@ -5,10 +5,9 @@ This module provides a comprehensive interface for label-related operations
 including creation, querying, management, and event handling.
 """
 
+from collections.abc import Generator
 from typing import (
     TYPE_CHECKING,
-    Dict,
-    Generator,
     List,
     Literal,
     Optional,
@@ -57,22 +56,22 @@ class LabelFilter(TypedDict, total=False):
         user_id: Identifier of the user.
     """
 
-    asset_external_id_in: Optional[List[str]]
-    asset_external_id_strictly_in: Optional[List[str]]
+    asset_external_id_in: Optional[list[str]]
+    asset_external_id_strictly_in: Optional[list[str]]
     asset_id: Optional[str]
-    asset_status_in: Optional[List[AssetStatus]]
-    asset_step_name_in: Optional[List[str]]
-    asset_step_status_in: Optional[List[StatusInStep]]
-    author_in: Optional[List[str]]
+    asset_status_in: Optional[list[AssetStatus]]
+    asset_step_name_in: Optional[list[str]]
+    asset_step_status_in: Optional[list[StatusInStep]]
+    author_in: Optional[list[str]]
     category_search: Optional[str]
     created_at_gte: Optional[str]
     created_at_lte: Optional[str]
     created_at: Optional[str]
     honeypot_mark_gte: Optional[float]
     honeypot_mark_lte: Optional[float]
-    id_contains: Optional[List[str]]
+    id_contains: Optional[list[str]]
     label_id: Optional[str]
-    type_in: Optional[List[LabelType]]
+    type_in: Optional[list[LabelType]]
     user_id: Optional[str]
 
 
@@ -133,7 +132,7 @@ class LabelsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         output_format: Literal["dict"] = "dict",
         filter: Optional[LabelFilter] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @overload
@@ -177,7 +176,7 @@ class LabelsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         output_format: Literal["dict", "parsed_label"] = "dict",
         filter: Optional[LabelFilter] = None,
-    ) -> Union[List[Dict], List[ParsedLabel]]:
+    ) -> Union[List[dict], List[ParsedLabel]]:
         """Get a label list from a project based on a set of criteria.
 
         Args:
@@ -242,7 +241,7 @@ class LabelsNamespace(DomainNamespace):
         skip: int = 0,
         output_format: Literal["dict"] = "dict",
         filter: Optional[LabelFilter] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -284,7 +283,7 @@ class LabelsNamespace(DomainNamespace):
         skip: int = 0,
         output_format: Literal["dict", "parsed_label"] = "dict",
         filter: Optional[LabelFilter] = None,
-    ) -> Union[Generator[Dict, None, None], Generator[ParsedLabel, None, None]]:
+    ) -> Union[Generator[dict, None, None], Generator[ParsedLabel, None, None]]:
         """Get a label generator from a project based on a set of criteria.
 
         Args:
@@ -365,8 +364,8 @@ class LabelsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         external_id_array: Optional[List[str]] = None,
         external_id: Optional[str] = None,
-        json_response_array: Optional[ListOrTuple[Dict]] = None,
-        json_response: Optional[Dict] = None,
+        json_response_array: Optional[ListOrTuple[dict]] = None,
+        json_response: Optional[dict] = None,
         label_type: LabelType = "DEFAULT",
         model_name: Optional[str] = None,
         overwrite: bool = False,
@@ -374,7 +373,7 @@ class LabelsNamespace(DomainNamespace):
         reviewed_label_id_array: Optional[List[str]],
         reviewed_label_id: Optional[str],
         step_name: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Create labels to assets.
 
         Args:
@@ -426,9 +425,9 @@ class LabelsNamespace(DomainNamespace):
         self,
         *,
         asset_id: str,
-        json_response: Dict,
+        json_response: dict,
         project_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -436,10 +435,10 @@ class LabelsNamespace(DomainNamespace):
         self,
         *,
         asset_id_array: List[str],
-        json_response_array: ListOrTuple[Dict],
+        json_response_array: ListOrTuple[dict],
         disable_tqdm: Optional[bool] = None,
         project_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -447,9 +446,9 @@ class LabelsNamespace(DomainNamespace):
         self,
         *,
         external_id: str,
-        json_response: Dict,
+        json_response: dict,
         project_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -457,10 +456,10 @@ class LabelsNamespace(DomainNamespace):
         self,
         *,
         external_id_array: List[str],
-        json_response_array: ListOrTuple[Dict],
+        json_response_array: ListOrTuple[dict],
         disable_tqdm: Optional[bool] = None,
         project_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -472,10 +471,10 @@ class LabelsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         external_id_array: Optional[List[str]] = None,
         external_id: Optional[str] = None,
-        json_response_array: Optional[ListOrTuple[Dict]] = None,
-        json_response: Optional[Dict] = None,
+        json_response_array: Optional[ListOrTuple[dict]] = None,
+        json_response: Optional[dict] = None,
         project_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Create DEFAULT labels to assets.
 
         Args:
@@ -511,12 +510,12 @@ class LabelsNamespace(DomainNamespace):
         self,
         *,
         asset_id: str,
-        json_response: Dict,
+        json_response: dict,
         reviewed_label_id: str,
         project_id: str,
         model_name: Optional[str] = None,
         step_name: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -524,13 +523,13 @@ class LabelsNamespace(DomainNamespace):
         self,
         *,
         asset_id_array: List[str],
-        json_response_array: ListOrTuple[Dict],
+        json_response_array: ListOrTuple[dict],
         disable_tqdm: Optional[bool] = None,
         model_name: Optional[str] = None,
         project_id: str,
         reviewed_label_id_array: List[str],
         step_name: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -538,12 +537,12 @@ class LabelsNamespace(DomainNamespace):
         self,
         *,
         external_id: str,
-        json_response: Dict,
+        json_response: dict,
         model_name: Optional[str] = None,
         project_id: str,
         reviewed_label_id: str,
         step_name: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -551,13 +550,13 @@ class LabelsNamespace(DomainNamespace):
         self,
         *,
         external_id_array: List[str],
-        json_response_array: ListOrTuple[Dict],
+        json_response_array: ListOrTuple[dict],
         disable_tqdm: Optional[bool] = None,
         model_name: Optional[str] = None,
         project_id: str,
         reviewed_label_id_array: List[str],
         step_name: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -569,14 +568,14 @@ class LabelsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         external_id_array: Optional[List[str]] = None,
         external_id: Optional[str] = None,
-        json_response_array: Optional[ListOrTuple[Dict]] = None,
-        json_response: Optional[Dict] = None,
+        json_response_array: Optional[ListOrTuple[dict]] = None,
+        json_response: Optional[dict] = None,
         model_name: Optional[str] = None,
         project_id: str,
         reviewed_label_id_array: Optional[List[str]] = None,
         reviewed_label_id: Optional[str] = None,
         step_name: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Create REVIEW labels to assets.
 
         Args:
@@ -617,11 +616,11 @@ class LabelsNamespace(DomainNamespace):
         self,
         *,
         asset_id: str,
-        json_response: Dict,
+        json_response: dict,
         model_name: str,
         overwrite: Optional[bool] = False,
         project_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -630,11 +629,11 @@ class LabelsNamespace(DomainNamespace):
         *,
         asset_id_array: List[str],
         disable_tqdm: Optional[bool] = None,
-        json_response_array: ListOrTuple[Dict],
+        json_response_array: ListOrTuple[dict],
         model_name: str,
         overwrite: Optional[bool] = False,
         project_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -642,11 +641,11 @@ class LabelsNamespace(DomainNamespace):
         self,
         *,
         external_id: str,
-        json_response: Dict,
+        json_response: dict,
         model_name: str,
         overwrite: Optional[bool] = False,
         project_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -655,11 +654,11 @@ class LabelsNamespace(DomainNamespace):
         *,
         disable_tqdm: Optional[bool] = None,
         external_id_array: List[str],
-        json_response_array: ListOrTuple[Dict],
+        json_response_array: ListOrTuple[dict],
         model_name: str,
         overwrite: Optional[bool] = False,
         project_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -671,12 +670,12 @@ class LabelsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         external_id_array: Optional[List[str]] = None,
         external_id: Optional[str] = None,
-        json_response_array: Optional[ListOrTuple[Dict]] = None,
-        json_response: Optional[Dict] = None,
+        json_response_array: Optional[ListOrTuple[dict]] = None,
+        json_response: Optional[dict] = None,
         model_name: str,
         overwrite: Optional[bool] = False,
         project_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Create INFERENCE labels to assets.
 
         Args:
@@ -1071,7 +1070,7 @@ class LabelsNamespace(DomainNamespace):
         json_response: dict,
         model_name: str,
         overwrite: bool = False,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         ...
 
     @overload
@@ -1084,7 +1083,7 @@ class LabelsNamespace(DomainNamespace):
         model_name: str,
         disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         ...
 
     @overload
@@ -1096,7 +1095,7 @@ class LabelsNamespace(DomainNamespace):
         json_response: dict,
         model_name: str,
         overwrite: bool = False,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         ...
 
     @overload
@@ -1109,7 +1108,7 @@ class LabelsNamespace(DomainNamespace):
         model_name: str,
         disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         ...
 
     @typechecked
@@ -1126,7 +1125,7 @@ class LabelsNamespace(DomainNamespace):
         asset_id_array: Optional[List[str]] = None,
         disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Create prediction for specific assets.
 
         Args:

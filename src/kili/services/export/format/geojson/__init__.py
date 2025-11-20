@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-from typing import Dict, List
 
 from kili_formats.format.geojson import convert_from_kili_to_geojson_format
 from kili_formats.types import Job, JobTool
@@ -64,7 +63,7 @@ class GeoJsonExporter(AbstractExporter):
             for tool in job["tools"]  # pyright: ignore[reportGeneralTypeIssues]
         )
 
-    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
+    def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
         self.logger.info("Exporting to GeoJson format")
 
         labels_folder = self.base_folder / "labels"
@@ -91,7 +90,7 @@ class GeoJsonExporter(AbstractExporter):
         self.logger.warning(output_filename)
 
 
-def _process_asset(asset: Dict, labels_folder: Path) -> None:
+def _process_asset(asset: dict, labels_folder: Path) -> None:
     geojson_feature_collection = convert_from_kili_to_geojson_format(
         asset["latestLabel"]["jsonResponse"]
     )

@@ -1,6 +1,7 @@
 """Client presentation methods for users."""
 
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from collections.abc import Generator, Iterable
+from typing import Literal, Optional, overload
 
 from typeguard import typechecked
 
@@ -33,7 +34,7 @@ class UserClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -47,7 +48,7 @@ class UserClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -61,7 +62,7 @@ class UserClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of users given a set of criteria.
 
@@ -137,7 +138,7 @@ class UserClientMethods(BaseClientMethods):
         organization_role: OrganizationRole,
         firstname: Optional[str] = None,
         lastname: Optional[str] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Add a user to your organization.
 
         Args:
@@ -162,7 +163,7 @@ class UserClientMethods(BaseClientMethods):
     @typechecked
     def update_password(
         self, email: str, old_password: str, new_password_1: str, new_password_2: str
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Allow to modify the password that you use to connect to Kili.
 
         This resolver only works for on-premise installations without Auth0.
@@ -199,7 +200,7 @@ class UserClientMethods(BaseClientMethods):
         organization_id: Optional[str] = None,
         organization_role: Optional[OrganizationRole] = None,
         activated: Optional[bool] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Update the properties of a user.
 
         Args:

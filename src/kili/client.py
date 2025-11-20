@@ -5,7 +5,7 @@ import logging
 import os
 import sys
 import warnings
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 from kili.adapters.authentification import is_api_key_valid
 from kili.adapters.http_client import HttpClient
@@ -82,7 +82,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         api_endpoint: Optional[str] = None,
         verify: Optional[Union[bool, str]] = None,
         client_name: GraphQLClientName = GraphQLClientName.SDK,
-        graphql_client_params: Optional[Dict[str, object]] = None,
+        graphql_client_params: Optional[dict[str, object]] = None,
     ) -> None:
         """Initialize Kili client.
 

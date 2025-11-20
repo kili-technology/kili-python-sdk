@@ -1,7 +1,7 @@
 """Module for common argument validators across client methods."""
 
 import warnings
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from kili.domain.types import ListOrTuple
 
@@ -21,7 +21,7 @@ def disable_tqdm_if_as_generator(
 
 
 def assert_all_arrays_have_same_size(
-    arrays: List[Optional[ListOrTuple[Any]]], raise_error: bool = True
+    arrays: list[Optional[ListOrTuple[Any]]], raise_error: bool = True
 ) -> bool:
     """Assert that all given arrays have the same size if they are not None."""
     sizes_arrays = {len(array) for array in arrays if array is not None}

@@ -1,6 +1,7 @@
 """Project version queries."""
 
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from collections.abc import Generator, Iterable
+from typing import Literal, Optional, overload
 
 from typeguard import typechecked
 
@@ -33,7 +34,7 @@ class QueriesProjectVersion(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -46,7 +47,7 @@ class QueriesProjectVersion(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -59,7 +60,7 @@ class QueriesProjectVersion(BaseOperationEntrypointMixin):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         """Get a generator or a list of project versions respecting a set of criteria.
 
         Args:

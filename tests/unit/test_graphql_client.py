@@ -1,6 +1,5 @@
 import os
 from time import time
-from typing import Dict
 
 import pytest
 import pytest_mock
@@ -290,7 +289,7 @@ def test_given_gql_client_when_the_server_returns_flagsmith_error_then_it_retrie
         ),
     ],
 )
-def test_given_variables_when_i_remove_null_values_then_it_works(variables: Dict, expected: Dict):
+def test_given_variables_when_i_remove_null_values_then_it_works(variables: dict, expected: dict):
     # Given
     _ = variables
 

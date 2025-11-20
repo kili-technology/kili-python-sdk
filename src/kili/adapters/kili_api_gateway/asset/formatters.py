@@ -1,14 +1,13 @@
 """Formatters for assets retrieved from Kili API."""
 
 import json
-from typing import Dict
 
 from kili.adapters.http_client import HttpClient
 from kili.core.helpers import get_response_json, is_url, log_raise_for_status
 from kili.domain.types import ListOrTuple
 
 
-def load_json_from_link(link: str, http_client: HttpClient) -> Dict:
+def load_json_from_link(link: str, http_client: HttpClient) -> dict:
     """Load json from link."""
     if link == "" or not is_url(link):
         return {}
@@ -18,7 +17,7 @@ def load_json_from_link(link: str, http_client: HttpClient) -> Dict:
     return get_response_json(response)
 
 
-def load_asset_json_fields(asset: Dict, fields: ListOrTuple[str], http_client: HttpClient) -> Dict:
+def load_asset_json_fields(asset: dict, fields: ListOrTuple[str], http_client: HttpClient) -> dict:
     """Load json fields of an asset."""
     if "jsonMetadata" in fields:
         try:

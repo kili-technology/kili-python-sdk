@@ -4,17 +4,13 @@ This module provides a comprehensive interface for project-related operations
 including lifecycle management, user management, workflow configuration, and versioning.
 """
 
+from collections.abc import Generator, Iterable, Sequence
 from functools import cached_property
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Generator,
-    Iterable,
-    List,
     Literal,
     Optional,
-    Sequence,
     TypedDict,
 )
 
@@ -96,7 +92,7 @@ class UsersNamespace:
         project_id: str,
         email: str,
         role: Literal["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"] = "LABELER",
-    ) -> Dict:
+    ) -> dict:
         """Add a user to a project.
 
         If the user does not exist in your organization, he/she is invited and added
@@ -118,7 +114,7 @@ class UsersNamespace:
         return self._client.append_to_roles(project_id=project_id, user_email=email, role=role)
 
     @typechecked
-    def remove(self, project_id: str, email: str) -> Dict[Literal["id"], str]:
+    def remove(self, project_id: str, email: str) -> dict[Literal["id"], str]:
         """Remove rights for an user to access a project.
 
         Args:
@@ -136,7 +132,7 @@ class UsersNamespace:
         project_id: str,
         user_email: str,
         role: Literal["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"] = "LABELER",
-    ) -> Dict:
+    ) -> dict:
         """Update properties of a role.
 
         To be able to change someone's role, you must be either of:
@@ -173,7 +169,7 @@ class UsersNamespace:
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[ProjectUserFilter] = None,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         """Get project users from a project."""
         filter_kwargs = filter or {}
         return self._client.project_users(
@@ -201,7 +197,7 @@ class UsersNamespace:
         first: Optional[int] = None,
         skip: int = 0,
         filter: Optional[ProjectUserFilter] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Get project users from a project."""
         filter_kwargs = filter or {}
         return self._client.project_users(
@@ -249,10 +245,10 @@ class WorkflowNamespace:
         self,
         project_id: str,
         enforce_step_separation: Optional[bool] = None,
-        create_steps: Optional[List[WorkflowStepCreate]] = None,
-        update_steps: Optional[List[WorkflowStepUpdate]] = None,
-        delete_steps: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
+        create_steps: Optional[list[WorkflowStepCreate]] = None,
+        update_steps: Optional[list[WorkflowStepUpdate]] = None,
+        delete_steps: Optional[list[str]] = None,
+    ) -> dict[str, Any]:
         """Update properties of a project workflow.
 
         Args:
@@ -277,7 +273,7 @@ class WorkflowNamespace:
         )
 
     @typechecked
-    def list(self, project_id: str) -> List[Dict[str, Any]]:
+    def list(self, project_id: str) -> list[dict[str, Any]]:
         """Get steps in a project workflow.
 
         Args:
@@ -366,7 +362,7 @@ class ProjectsNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[ProjectFilter] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get a list of projects that match a set of criteria.
 
         Args:
@@ -417,7 +413,7 @@ class ProjectsNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[ProjectFilter] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Get a generator of projects that match a set of criteria.
 
         Args:
@@ -474,12 +470,12 @@ class ProjectsNamespace(DomainNamespace):
         title: str,
         description: str = "",
         input_type: Optional[InputType] = None,
-        json_interface: Optional[Dict] = None,
+        json_interface: Optional[dict] = None,
         project_id: Optional[str] = None,
         tags: Optional[ListOrTuple[str]] = None,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
         from_demo_project: Optional[DemoProjectType] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Create a project.
 
         Args:
@@ -519,7 +515,7 @@ class ProjectsNamespace(DomainNamespace):
         description: Optional[str] = None,
         title: Optional[str] = None,
         instructions: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Update basic information of a project.
 
         Args:
@@ -551,7 +547,7 @@ class ProjectsNamespace(DomainNamespace):
         self,
         project_id: str,
         json_interface: Optional[dict] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Update the interface configuration of a project.
 
         Args:
@@ -580,7 +576,7 @@ class ProjectsNamespace(DomainNamespace):
         can_navigate_between_assets: Optional[bool] = None,
         can_skip_asset: Optional[bool] = None,
         should_auto_assign: Optional[bool] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Update workflow and assignment settings of a project.
 
         Args:
@@ -613,7 +609,7 @@ class ProjectsNamespace(DomainNamespace):
         self,
         project_id: str,
         metadata_properties: Optional[dict] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Update metadata properties of a project.
 
         Args:
@@ -641,7 +637,7 @@ class ProjectsNamespace(DomainNamespace):
         project_id: str,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
         should_anonymize: Optional[bool] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Update privacy and compliance settings of a project.
 
         Args:
@@ -674,7 +670,7 @@ class ProjectsNamespace(DomainNamespace):
         )
 
     @typechecked
-    def archive(self, project_id: str) -> Dict[Literal["id"], str]:
+    def archive(self, project_id: str) -> dict[Literal["id"], str]:
         """Archive a project.
 
         Args:
@@ -686,7 +682,7 @@ class ProjectsNamespace(DomainNamespace):
         return self._client.archive_project(project_id=project_id)
 
     @typechecked
-    def unarchive(self, project_id: str) -> Dict[Literal["id"], str]:
+    def unarchive(self, project_id: str) -> dict[Literal["id"], str]:
         """Unarchive a project.
 
         Args:

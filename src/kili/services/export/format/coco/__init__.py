@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Optional
 
 from kili_formats import convert_from_kili_to_coco_format
 from kili_formats.types import Job, JobTool
@@ -48,7 +48,7 @@ class CocoExporter(AbstractExporter):
         """Export images folder."""
         return self.base_folder / DATA_SUBDIR
 
-    def process_and_save(self, assets: List[Dict], output_filename: Path):
+    def process_and_save(self, assets: list[dict], output_filename: Path):
         """Extract formatted annotations from labels."""
         clean_assets = self.preprocess_assets(assets)
         try:
@@ -64,7 +64,7 @@ class CocoExporter(AbstractExporter):
 
     def _save_assets_export(
         self,
-        assets: List[Dict],
+        assets: list[dict],
         output_directory: Path,
         annotation_modifier: Optional[CocoAnnotationModifier],
     ):

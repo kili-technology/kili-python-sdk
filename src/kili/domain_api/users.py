@@ -1,7 +1,8 @@
 """Users domain namespace for the Kili Python SDK."""
 
 import re
-from typing import Dict, Generator, List, Literal, Optional, TypedDict
+from collections.abc import Generator
+from typing import Literal, Optional, TypedDict
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -105,7 +106,7 @@ class UsersNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[UserFilter] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get a list of users given a set of criteria.
 
         Args:
@@ -147,7 +148,7 @@ class UsersNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[UserFilter] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Get a generator of users given a set of criteria.
 
         Args:
@@ -211,7 +212,7 @@ class UsersNamespace(DomainNamespace):
         organization_role: OrganizationRole,
         firstname: Optional[str] = None,
         lastname: Optional[str] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Add a user to your organization.
 
         Args:
@@ -271,7 +272,7 @@ class UsersNamespace(DomainNamespace):
         organization_id: Optional[str] = None,
         organization_role: Optional[OrganizationRole] = None,
         activated: Optional[bool] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Update the properties of a user.
 
         Args:
@@ -325,7 +326,7 @@ class UsersNamespace(DomainNamespace):
     @typechecked
     def update_password(
         self, email: str, old_password: str, new_password_1: str, new_password_2: str
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Allow to modify the password that you use to connect to Kili.
 
         This resolver only works for on-premise installations without Auth0.

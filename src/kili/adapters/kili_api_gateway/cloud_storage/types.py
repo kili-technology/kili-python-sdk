@@ -1,7 +1,7 @@
 """Types for the Cloud storage related Kili API gateway functions."""
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Optional
 
 from kili.domain.cloud_storage import (
     DataIntegrationId,
@@ -16,29 +16,29 @@ from kili.domain.project import ProjectId
 class AddDataConnectionKiliAPIGatewayInput:
     """Add data connection input data for Kili API Gateway."""
 
-    exclude: Optional[List[str]]
-    include: Optional[List[str]]
+    exclude: Optional[list[str]]
+    include: Optional[list[str]]
     integration_id: DataIntegrationId
     prefix: Optional[str]
     project_id: ProjectId
-    selected_folders: Optional[List[str]]
+    selected_folders: Optional[list[str]]
 
 
 @dataclass
 class DataConnectionComputeDifferencesKiliAPIGatewayInput:
     """Data connection compute differences input data for Kili API Gateway."""
 
-    blob_paths: List[str]
-    warnings: List[str]
-    content_types: List[str]
+    blob_paths: list[str]
+    warnings: list[str]
+    content_types: list[str]
 
 
 @dataclass
 class DataIntegrationData:
     """Data integration input data."""
 
-    allowed_paths: Optional[List[str]]
-    allowed_projects: Optional[List[str]]
+    allowed_paths: Optional[list[str]]
+    allowed_projects: Optional[list[str]]
     aws_access_point_arn: Optional[str]
     aws_role_arn: Optional[str]
     aws_role_external_id: Optional[str]

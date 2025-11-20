@@ -2,7 +2,8 @@
 
 import functools
 from collections import defaultdict
-from typing import Dict, Iterator, List, Literal, Optional, Sequence, Union
+from collections.abc import Iterator, Sequence
+from typing import Literal, Optional, Union
 
 from typeguard import typechecked
 
@@ -22,7 +23,7 @@ class _BaseAnnotation:
     It is used as a base class for the common properties of all types of annotations.
     """
 
-    def __init__(self, annotation_json: Dict, project_info: Project, job_name: str) -> None:
+    def __init__(self, annotation_json: dict, project_info: Project, job_name: str) -> None:
         """Class for Annotation parsing.
 
         Args:
@@ -38,20 +39,20 @@ class _BaseAnnotation:
         self._job_interface = project_info["jsonInterface"][job_name]  # type: ignore
 
         # cast lists to objects
-        if "categories" in self._json_data and isinstance(self._json_data["categories"], List):
+        if "categories" in self._json_data and isinstance(self._json_data["categories"], list):
             self._json_data["categories"] = category_module.CategoryList(
                 categories_list=self._json_data["categories"],
                 project_info=self._project_info,
                 job_name=self._job_name,
             )
-        if "boundingPoly" in self._json_data and isinstance(self._json_data["boundingPoly"], List):
+        if "boundingPoly" in self._json_data and isinstance(self._json_data["boundingPoly"], list):
             self._json_data["boundingPoly"] = BoundingPolyList(
                 bounding_poly_list=self._json_data["boundingPoly"],
                 project_info=self._project_info,
                 job_name=self._job_name,
                 type_of_tool=self._json_data.get("type"),
             )
-        if "points" in self._json_data and isinstance(self._json_data["points"], List):
+        if "points" in self._json_data and isinstance(self._json_data["points"], list):
             self._json_data["points"] = [
                 PoseEstimationPointAnnotation(
                     project_info=self._project_info, job_name=self._job_name, annotation_json=point
@@ -67,7 +68,7 @@ class _BaseAnnotation:
     def __repr__(self) -> str:
         return repr(self._json_data)
 
-    def as_dict(self) -> Dict:
+    def as_dict(self) -> dict:
         """Return the parsed annotation as a dict."""
         ret = {
             k: v
@@ -77,13 +78,13 @@ class _BaseAnnotation:
         if "categories" in self._json_data:
             ret["categories"] = (
                 self._json_data["categories"]
-                if isinstance(self._json_data["categories"], List)
+                if isinstance(self._json_data["categories"], list)
                 else self._json_data["categories"].as_list()
             )
         if "boundingPoly" in self._json_data:
             ret["boundingPoly"] = (
                 self._json_data["boundingPoly"]
-                if isinstance(self._json_data["boundingPoly"], List)
+                if isinstance(self._json_data["boundingPoly"], list)
                 else self._json_data["boundingPoly"].as_list()
             )
         if "points" in self._json_data:
@@ -91,7 +92,7 @@ class _BaseAnnotation:
         if "children" in self._json_data:
             ret["children"] = (
                 self._json_data["children"].to_dict()
-                if not isinstance(self._json_data["children"], Dict)
+                if not isinstance(self._json_data["children"], dict)
                 else self._json_data["children"]
             )
         return ret
@@ -150,7 +151,7 @@ class _BaseAnnotation:
 
     @children.setter
     @typechecked
-    def children(self, children: Dict) -> None:
+    def children(self, children: dict) -> None:
         """Set the children jobs of the annotation job."""
         job_names_to_parse = get_children_job_names(
             json_interface=self._project_info["jsonInterface"],
@@ -262,13 +263,13 @@ class PolyLineAnnotation(_BaseAnnotationWithTool):
         return ("vector", "polyline")
 
     @property
-    def polyline(self) -> List[NormalizedVertex]:
+    def polyline(self) -> list[NormalizedVertex]:
         """Returns the polyline of a polyline detection job."""
         return self._json_data["polyline"]
 
     @polyline.setter
     @typechecked
-    def polyline(self, polyline: List[NormalizedVertex]) -> None:
+    def polyline(self, polyline: list[NormalizedVertex]) -> None:
         """Set the polyline of a polyline detection job."""
         self._json_data["polyline"] = polyline
 
@@ -304,7 +305,7 @@ class EntityInPdfAnnotation(_BaseNamedEntityRecognitionAnnotation, _BaseAnnotati
     @property
     def polys(
         self,
-    ) -> List[Dict[Literal["normalizedVertices"], List[List[NormalizedVertex]]]]:
+    ) -> list[dict[Literal["normalizedVertices"], list[list[NormalizedVertex]]]]:
         """Return the coordinates from the different rectangles in the annotation.
 
         An annotation can have several rectangles (for example if the annotation covers more than one line).
@@ -312,7 +313,7 @@ class EntityInPdfAnnotation(_BaseNamedEntityRecognitionAnnotation, _BaseAnnotati
         return self._json_data["polys"]
 
     @property
-    def page_number_array(self) -> List[int]:
+    def page_number_array(self) -> list[int]:
         """Return the pages where the annotation appears."""
         return self._json_data["pageNumberArray"]
 
@@ -332,9 +333,9 @@ class _Base2DAnnotation(_BaseAnnotationWithTool, _BaseAnnotationWithBoundingPoly
 
     def add_bounding_poly(
         self,
-        bounding_poly_dict: Dict[
+        bounding_poly_dict: dict[
             Literal["normalizedVertices"],
-            Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
+            Union[list[NormalizedVertex], list[list[NormalizedVertex]]],
         ],
     ) -> None:
         """Add a bounding polygon to the boundingPoly list."""
@@ -407,7 +408,7 @@ class PoseEstimationAnnotation(_BaseAnnotationWithTool):
         return self._json_data["kind"]
 
     @property
-    def points(self) -> List["PoseEstimationPointAnnotation"]:
+    def points(self) -> list["PoseEstimationPointAnnotation"]:
         """Returns the list of the points composing the object."""
         return self._json_data["points"]
 
@@ -416,7 +417,7 @@ class PoseEstimationPointAnnotation(PointAnnotation):
     """Class for parsing a point object of a job response for pose estimation jobs."""
 
     @property
-    def point(self) -> Dict[Literal["x", "y"], float]:
+    def point(self) -> dict[Literal["x", "y"], float]:
         """Returns the coordinates of the point."""
         return self._json_data["point"]
 
@@ -444,24 +445,24 @@ class EntityRelationAnnotation(_BaseAnnotation):
         return "NAMED_ENTITIES_RELATION"
 
     @property
-    def start_entities(self) -> List[Dict[Literal["mid"], str]]:
+    def start_entities(self) -> list[dict[Literal["mid"], str]]:
         """Returns the list of the start entities composing the relation."""
         return self._json_data["startEntities"]
 
     @start_entities.setter
     @typechecked
-    def start_entities(self, start_entities: List[Dict[Literal["mid"], str]]) -> None:
+    def start_entities(self, start_entities: list[dict[Literal["mid"], str]]) -> None:
         """Set the list of the start entities composing the relation."""
         self._json_data["startEntities"] = start_entities
 
     @property
-    def end_entities(self) -> List[Dict[Literal["mid"], str]]:
+    def end_entities(self) -> list[dict[Literal["mid"], str]]:
         """Returns the list of the end entities composing the relation."""
         return self._json_data["endEntities"]
 
     @end_entities.setter
     @typechecked
-    def end_entities(self, end_entities: List[Dict[Literal["mid"], str]]) -> None:
+    def end_entities(self, end_entities: list[dict[Literal["mid"], str]]) -> None:
         """Set the list of the end entities composing the relation."""
         self._json_data["endEntities"] = end_entities
 
@@ -474,24 +475,24 @@ class ObjectRelationAnnotation(_BaseAnnotation):
         return "OBJECT_RELATION"
 
     @property
-    def start_objects(self) -> List[Dict[Literal["mid"], str]]:
+    def start_objects(self) -> list[dict[Literal["mid"], str]]:
         """Returns the list of the start objects composing the relation."""
         return self._json_data["startObjects"]
 
     @start_objects.setter
     @typechecked
-    def start_objects(self, start_objects: List[Dict[Literal["mid"], str]]) -> None:
+    def start_objects(self, start_objects: list[dict[Literal["mid"], str]]) -> None:
         """Set the list of the start objects composing the relation."""
         self._json_data["startObjects"] = start_objects
 
     @property
-    def end_objects(self) -> List[Dict[Literal["mid"], str]]:
+    def end_objects(self) -> list[dict[Literal["mid"], str]]:
         """Returns the list of the end objects composing the relation."""
         return self._json_data["endObjects"]
 
     @end_objects.setter
     @typechecked
-    def end_objects(self, end_objects: List[Dict[Literal["mid"], str]]) -> None:
+    def end_objects(self, end_objects: list[dict[Literal["mid"], str]]) -> None:
         """Set the list of the end objects composing the relation."""
         self._json_data["endObjects"] = end_objects
 
@@ -536,7 +537,7 @@ class Annotation(
     Contains all attributes that can be found in a job response.
     """
 
-    def __init__(self, json_data: Dict, project_info: Project, job_name: str) -> None:
+    def __init__(self, json_data: dict, project_info: Project, job_name: str) -> None:
         """Initialize an Annotation object.
 
         This class is used to parse the "annotations" key of a job response.
@@ -577,7 +578,7 @@ class Annotation(
 class AnnotationList:
     """Class for the annotations list parsing."""
 
-    def __init__(self, annotations_list: List[Dict], project_info: Project, job_name: str) -> None:
+    def __init__(self, annotations_list: list[dict], project_info: Project, job_name: str) -> None:
         """Class for the annotations list parsing.
 
         Args:
@@ -589,7 +590,7 @@ class AnnotationList:
         self._job_name = job_name
         self._job_interface = self._project_info["jsonInterface"][self._job_name]  # type: ignore
 
-        self._annotations_list: List[Annotation] = []
+        self._annotations_list: list[Annotation] = []
 
         for annotation_dict in annotations_list:
             self.add_annotation(annotation_dict)
@@ -616,7 +617,7 @@ class AnnotationList:
                 )
 
     @typechecked
-    def add_annotation(self, annotation_dict: Dict) -> None:
+    def add_annotation(self, annotation_dict: dict) -> None:
         """Add an annotation object to the AnnotationList object."""
         annotation = Annotation(
             json_data=annotation_dict, project_info=self._project_info, job_name=self._job_name
@@ -645,6 +646,6 @@ class AnnotationList:
         """Return the string representation of the annotations list."""
         return repr(self.as_list())
 
-    def as_list(self) -> List[Dict]:
+    def as_list(self) -> list[dict]:
         """Return the list of categories as a list of dicts."""
         return [annotation.as_dict() for annotation in self._annotations_list]

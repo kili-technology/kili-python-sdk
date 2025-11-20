@@ -1,6 +1,6 @@
 """Tags domain namespace for the Kili Python SDK."""
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypedDict, Union
+from typing import TYPE_CHECKING, Any, Optional, TypedDict, Union
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -29,25 +29,25 @@ class ExportAssetFilter(TypedDict, total=False):
     consensus_mark_lte: Optional[float]
     created_at_gte: Optional[str]
     created_at_lte: Optional[str]
-    external_id_in: Optional[List[str]]
-    external_id_strictly_in: Optional[List[str]]
+    external_id_in: Optional[list[str]]
+    external_id_strictly_in: Optional[list[str]]
     honeypot_mark_gte: Optional[float]
     honeypot_mark_lte: Optional[float]
     inference_mark_gte: Optional[float]
     inference_mark_lte: Optional[float]
     issue_status: Optional[IssueStatus]
     issue_type: Optional[IssueType]
-    label_author_in: Optional[List[str]]
+    label_author_in: Optional[list[str]]
     label_category_search: Optional[str]
     label_labeler_in: Optional[ListOrTuple[str]]
     label_labeler_not_in: Optional[ListOrTuple[str]]
     label_reviewer_in: Optional[ListOrTuple[str]]
     label_reviewer_not_in: Optional[ListOrTuple[str]]
-    metadata_where: Optional[Dict[str, Any]]
+    metadata_where: Optional[dict[str, Any]]
     skipped: Optional[bool]
-    status_in: Optional[List[AssetStatus]]
-    step_name_in: Optional[List[str]]
-    step_status_in: Optional[List[StatusInStep]]
+    status_in: Optional[list[AssetStatus]]
+    step_name_in: Optional[list[str]]
+    step_status_in: Optional[list[StatusInStep]]
 
 
 class ExportNamespace(DomainNamespace):
@@ -91,7 +91,7 @@ class ExportNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = False,
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
-        label_type_in: Optional[List[LabelType]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
         single_file: Optional[bool] = False,
     ):
         """Export project labels in Kili native format.
@@ -139,7 +139,7 @@ class ExportNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = False,
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
-        label_type_in: Optional[List[LabelType]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
         layout: SplitOption = "split",
     ):
         """Export project labels in COCO format.
@@ -190,7 +190,7 @@ class ExportNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = False,
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
-        label_type_in: Optional[List[LabelType]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
     ):
         """Export project labels in YOLO v4 format.
 
@@ -238,7 +238,7 @@ class ExportNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = False,
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
-        label_type_in: Optional[List[LabelType]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
     ):
         """Export project labels in YOLO v5 format.
 
@@ -286,7 +286,7 @@ class ExportNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = False,
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
-        label_type_in: Optional[List[LabelType]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
     ):
         """Export project labels in YOLO v7 format.
 
@@ -334,7 +334,7 @@ class ExportNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = False,
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
-        label_type_in: Optional[List[LabelType]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
     ):
         """Export project labels in YOLO v8 format.
 
@@ -381,7 +381,7 @@ class ExportNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = False,
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
-        label_type_in: Optional[List[LabelType]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
     ):
         """Export project labels in Pascal VOC format.
 
@@ -426,7 +426,7 @@ class ExportNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = False,
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
-        label_type_in: Optional[List[LabelType]] = None,
+        label_type_in: Optional[list[LabelType]] = None,
     ):
         """Export project labels in GeoJSON format.
 
@@ -524,13 +524,13 @@ class ExportNamespace(DomainNamespace):
         filter: Optional[ExportAssetFilter] = None,
         fmt: LabelFormat,
         include_sent_back_labels: Optional[bool] = None,
-        label_type_in: Optional[List[LabelType]],
+        label_type_in: Optional[list[LabelType]],
         layout: SplitOption = "split",
         normalized_coordinates: Optional[bool] = None,
         project_id: str,
         single_file: bool = False,
         with_assets: Optional[bool] = True,
-    ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
+    ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export the project labels with the requested format into the requested output path.
 
         Args:

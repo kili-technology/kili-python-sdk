@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 
 from typing_extensions import TypedDict
 
@@ -123,5 +123,5 @@ class ProjectModelDict(TypedDict):
     """Dict that represents a ProjectModel."""
 
     id: str
-    configuration: Dict[str, Any]
+    configuration: dict[str, Any]
     model: ModelDict

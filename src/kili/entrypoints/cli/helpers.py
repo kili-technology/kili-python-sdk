@@ -2,7 +2,8 @@
 
 import csv
 import warnings
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any, Optional
 
 from kili.adapters.http_client import HttpClient
 from kili.client import Kili
@@ -15,7 +16,7 @@ def get_kili_client(api_key: Optional[str], api_endpoint: Optional[str]):
 
 
 def dict_type_check(
-    dict_: Dict[str, Any],
+    dict_: dict[str, Any],
     type_check: Callable[[str, str, Optional[HttpClient]], str],
     http_client: Optional[HttpClient],
 ):
@@ -34,8 +35,8 @@ def dict_type_check(
 
 def collect_from_csv(
     csv_path: str,
-    required_columns: List[str],
-    optional_columns: List[str],
+    required_columns: list[str],
+    optional_columns: list[str],
     type_check_function: Callable[[str, str, Optional[HttpClient]], str],
     http_client: Optional[HttpClient] = None,
 ):

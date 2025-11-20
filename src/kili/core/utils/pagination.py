@@ -1,8 +1,9 @@
 """Pagination utils."""
 
+from collections.abc import Callable, Generator, Iterable
 from itertools import islice
 from time import sleep
-from typing import Any, Callable, Dict, Generator, Iterable, List, Optional, TypeVar
+from typing import Any, Optional, TypeVar
 
 from kili.core.constants import MUTATION_BATCH_SIZE
 from kili.domain.types import ListOrTuple
@@ -10,9 +11,9 @@ from kili.exceptions import GraphQLError
 
 
 def batch_object_builder(
-    properties_to_batch: Dict[str, ListOrTuple[Any]],
+    properties_to_batch: dict[str, ListOrTuple[Any]],
     batch_size: int = MUTATION_BATCH_SIZE,
-) -> Generator[Dict[str, Any], None, None]:
+) -> Generator[dict[str, Any], None, None]:
     """Generate a paginated iterator for several variables.
 
     Args:
@@ -34,7 +35,8 @@ def batch_object_builder(
         for k, v in properties_to_batch.items()
     }
     batch_object_iterator = (
-        dict(zip(batched_properties, t)) for t in zip(*batched_properties.values())
+        dict(zip(batched_properties, t, strict=False))
+        for t in zip(*batched_properties.values(), strict=False)
     )
     yield from batch_object_iterator
 
@@ -42,12 +44,12 @@ def batch_object_builder(
 # pylint: disable=missing-type-doc
 def mutate_from_paginated_call(
     kili,
-    properties_to_batch: Dict[str, ListOrTuple[Any]],
+    properties_to_batch: dict[str, ListOrTuple[Any]],
     generate_variables: Callable,
     request: str,
     batch_size: int = MUTATION_BATCH_SIZE,
     last_batch_callback: Optional[Callable] = None,
-) -> List:
+) -> list:
     """Run a mutation by making paginated calls.
 
     Args:
@@ -95,7 +97,7 @@ def mutate_from_paginated_call(
 T = TypeVar("T")
 
 
-def batcher(iterable: Iterable[T], batch_size: int) -> Generator[List[T], None, None]:
+def batcher(iterable: Iterable[T], batch_size: int) -> Generator[list[T], None, None]:
     """Break iterable into sub-iterables with batch_size elements each.
 
     The last yielded list will have fewer than n elements if the

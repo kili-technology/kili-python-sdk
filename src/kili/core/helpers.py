@@ -7,23 +7,23 @@ import mimetypes
 import os
 import re
 import warnings
+from collections.abc import Callable
 from json import dumps, loads
-from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
+from typing import Any, Optional, TypeVar, Union, get_args, get_origin
 
 import pyparsing as pp
 import requests
 import tenacity
-from typing_extensions import get_args, get_origin
 
 from kili.adapters.http_client import HttpClient
-from kili.core.constants import mime_extensions_for_IV2
+from kili.core.constants import MIME_EXTENSIONS_FOR_IV2
 from kili.log.logging import logger
 
 T = TypeVar("T")
 
 
 def format_result(
-    name: str, result: dict, object_: Optional[Type[T]], http_client: HttpClient
+    name: str, result: dict, object_: Optional[type[T]], http_client: HttpClient
 ) -> T:
     """Formats the result of the GraphQL queries.
 
@@ -73,7 +73,7 @@ def is_url(path: object):
     return isinstance(path, str) and re.match(r"^(http://|https://)", path.lower())
 
 
-def __format_json_dict(result: Dict, http_client: HttpClient) -> Dict:
+def __format_json_dict(result: dict, http_client: HttpClient) -> dict:
     """Parse a dictionary inside the result of a graphQL query to format json fields.
 
     If json fields (i.e "jsonInterface", "jsonMetadata" and "jsonResponse")
@@ -128,7 +128,7 @@ def format_json(
 def deprecate(
     msg: Optional[str] = None,
     removed_in: Optional[str] = None,
-    type_: Type[Warning] = DeprecationWarning,
+    type_: type[Warning] = DeprecationWarning,
 ):
     """Decorator factory that tag a deprecated function.
 
@@ -181,7 +181,7 @@ def format_metadata(metadata: object):
     )
 
 
-def convert_to_list_of_none(array: List, length: int) -> List:
+def convert_to_list_of_none(array: list, length: int) -> list:
     """Turns a value in a list of length length.
 
     Args:
@@ -243,8 +243,8 @@ def validate_category_search_query(query: str):
 
 
 def get_file_paths_to_upload(
-    files: List[str], file_check_function: Optional[Callable] = None, verbose: bool = False
-) -> List[str]:
+    files: list[str], file_check_function: Optional[Callable] = None, verbose: bool = False
+) -> list[str]:
     """Get a list of paths for the files to upload given a list of files or folder paths.
 
     Args:
@@ -288,15 +288,15 @@ def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
     """Returns true if the mime type of the file corresponds to the allowed mime types of the project."""
     mime_type = get_mime_type(path.lower())
 
-    if not (mime_extensions_for_IV2[input_type] and mime_type):
+    if not (MIME_EXTENSIONS_FOR_IV2[input_type] and mime_type):
         return False
 
-    correct_mime_type = mime_type in mime_extensions_for_IV2[input_type]
+    correct_mime_type = mime_type in MIME_EXTENSIONS_FOR_IV2[input_type]
     if not correct_mime_type and raise_error:
         raise ValueError(
             f"File mime type for {path} is {mime_type} and does not correspond "
             "to the type of the project. "
-            f"File mime type should be one of {mime_extensions_for_IV2[input_type]}"
+            f"File mime type should be one of {MIME_EXTENSIONS_FOR_IV2[input_type]}"
         )
     return correct_mime_type
 
@@ -334,7 +334,7 @@ def is_empty_list_with_warning(method_name: str, argument_name: str, argument_va
 
     Returns True if the list is empty, False otherwise
     """
-    if isinstance(argument_value, List) and len(argument_value) == 0:
+    if isinstance(argument_value, list) and len(argument_value) == 0:
         warnings.warn(
             f"Method '{method_name}' did nothing because the following argument"
             f" is empty: {argument_name}.",

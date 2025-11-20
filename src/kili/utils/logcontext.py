@@ -3,8 +3,8 @@
 import functools
 import platform
 import uuid
+from collections.abc import Callable
 from datetime import datetime, timezone
-from typing import Callable, Dict, List
 
 from kili import __version__
 from kili.core.graphql.clientnames import GraphQLClientName
@@ -21,7 +21,7 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-class LogContext(Dict[str, str], metaclass=Singleton):
+class LogContext(dict[str, str], metaclass=Singleton):
     """Dict-like singleton that holds the data for the log context, to be passed to the request headers."""
 
     def __init__(self) -> None:
@@ -37,7 +37,7 @@ class LogContext(Dict[str, str], metaclass=Singleton):
         self["kili-client-name"] = name.value
 
 
-def for_all_methods(decorator: Callable, exclude: List[str]):
+def for_all_methods(decorator: Callable, exclude: list[str]):
     """Class Decorator to decorate all the method with a decorator passed as argument."""
 
     def decorate(cls):

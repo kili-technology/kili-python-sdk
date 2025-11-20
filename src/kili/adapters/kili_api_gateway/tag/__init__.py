@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Tags related operations."""
 
-from typing import Dict, List, Optional
+from typing import Optional
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
@@ -23,14 +23,14 @@ from .types import UpdateTagReturnData
 class TagOperationMixin(BaseOperationMixin):
     """GraphQL Mixin extending GraphQL Gateway class with Tags related operations."""
 
-    def list_tags_by_org(self, fields: ListOrTuple[str]) -> List[Dict]:
+    def list_tags_by_org(self, fields: ListOrTuple[str]) -> list[dict]:
         """Send a GraphQL request calling listTagsByOrg resolver."""
         fragment = fragment_builder(fields=fields)
         query = get_list_tags_by_org_query(fragment)
         result = self.graphql_client.execute(query)
         return result["data"]
 
-    def list_tags_by_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> List[Dict]:
+    def list_tags_by_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> list[dict]:
         """Send a GraphQL request calling listTagsByProject resolver."""
         fragment = fragment_builder(fields=fields)
         query = get_list_tags_by_project_query(fragment)
@@ -69,7 +69,7 @@ class TagOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(GQL_DELETE_TAG, variables)
         return result["data"]
 
-    def create_tag(self, label: str, color: Optional[str] = None) -> Dict:
+    def create_tag(self, label: str, color: Optional[str] = None) -> dict:
         """Send a GraphQL request calling createTag resolver."""
         variables = {"data": {"label": label, "color": color}}
         result = self.graphql_client.execute(GQL_CREATE_TAG, variables)

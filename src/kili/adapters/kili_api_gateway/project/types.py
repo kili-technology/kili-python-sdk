@@ -1,7 +1,7 @@
 """Types for the Project-related Kili API gateway functions."""
 
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Optional
 
 from kili.domain.project import ComplianceTag, InputType
 from kili.domain.types import ListOrTuple
@@ -24,8 +24,8 @@ class ProjectDataKiliAPIGatewayInput:
     input_type: Optional[InputType]
     instructions: Optional[str]
     json_interface: Optional[str]
-    metadata_types: Optional[Dict]
-    metadata_properties: Optional[Dict]
+    metadata_types: Optional[dict]
+    metadata_properties: Optional[dict]
     min_consensus_size: Optional[int]
     review_coverage: Optional[int]
     should_auto_assign: Optional[bool]
