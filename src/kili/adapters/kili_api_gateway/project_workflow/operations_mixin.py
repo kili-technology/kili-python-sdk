@@ -56,4 +56,4 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
                 f"project ID: {project_id}. The workflow v2 is not activated on this project."
             )
 
-        return [step for step in steps if step.get("isActivated") is True]
+        return steps
