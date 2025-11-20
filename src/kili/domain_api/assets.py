@@ -87,8 +87,11 @@ class AssetFilter(TypedDict, total=False):
     metadata_where: Optional[dict[str, Any]]
     skipped: Optional[bool]
     status_in: Optional[list[AssetStatus]]
+    status_not_in: Optional[list[AssetStatus]]
     step_name_in: Optional[list[str]]
+    step_name_not_in: Optional[list[str]]
     step_status_in: Optional[list[StatusInStep]]
+    step_status_not_in: Optional[list[StatusInStep]]
     updated_at_gte: Optional[str]
     updated_at_lte: Optional[str]
 
