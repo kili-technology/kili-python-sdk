@@ -8,7 +8,9 @@ a JSON response for geospatial annotations.
 import struct
 from typing import TYPE_CHECKING, Optional, Union, cast
 
-from cuid import cuid
+from cuid2 import cuid_wrapper
+
+cuid = cuid_wrapper()
 
 if TYPE_CHECKING:
     from shapely.geometry import LinearRing, LineString, Point, Polygon
