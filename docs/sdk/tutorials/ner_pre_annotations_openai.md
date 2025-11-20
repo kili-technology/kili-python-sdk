@@ -413,9 +413,9 @@ for datapoint, sentence_annotations in zip(dataset, openai_answers, strict=False
         sentence_annotations_cat = sentence_annotations[category]
         for content in sentence_annotations_cat:
             begin_offset = full_sentence.find(content)
-            assert begin_offset != -1, (
-                f"Cannot find offset of '{content}' in sentence '{full_sentence}'"
-            )
+            assert (
+                begin_offset != -1
+            ), f"Cannot find offset of '{content}' in sentence '{full_sentence}'"
             annotation = {
                 "categories": [{"name": category}],
                 "beginOffset": begin_offset,
