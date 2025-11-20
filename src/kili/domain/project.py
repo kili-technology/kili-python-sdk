@@ -41,7 +41,7 @@ class WorkflowStepCreate(TypedDict, total=False):
 class WorkflowStepUpdate(TypedDict, total=False):
     """Project workflow step."""
 
-    id: Optional[str]
+    id: Required[str]
     name: Optional[str]
     consensus_coverage: Optional[int]
     number_of_expected_labels_for_consensus: Optional[int]
