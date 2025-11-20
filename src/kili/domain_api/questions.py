@@ -260,7 +260,8 @@ class QuestionsNamespace(DomainNamespace):
         project_id: str,
         asset_id: str,
         text: Optional[str] = None,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create(
@@ -269,7 +270,8 @@ class QuestionsNamespace(DomainNamespace):
         project_id: str,
         asset_external_id: str,
         text: Optional[str] = None,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create(
@@ -278,7 +280,8 @@ class QuestionsNamespace(DomainNamespace):
         project_id: str,
         asset_id_array: List[str],
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create(
@@ -287,7 +290,8 @@ class QuestionsNamespace(DomainNamespace):
         project_id: str,
         asset_external_id_array: List[str],
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @typechecked
     def create(
@@ -349,9 +353,9 @@ class QuestionsNamespace(DomainNamespace):
             text_array = [text]
 
         assert_all_arrays_have_same_size([asset_id_array, asset_external_id_array, text_array])
-        assert asset_id_array is not None or asset_external_id_array is not None, (
-            "Either asset_id_array or asset_external_id_array must be provided"
-        )
+        assert (
+            asset_id_array is not None or asset_external_id_array is not None
+        ), "Either asset_id_array or asset_external_id_array must be provided"
 
         questions = [
             QuestionToCreateUseCaseInput(
@@ -376,10 +380,12 @@ class QuestionsNamespace(DomainNamespace):
         return [{"id": question_id} for question_id in question_ids]
 
     @overload
-    def cancel(self, *, question_id: str) -> List[dict[str, Any]]: ...
+    def cancel(self, *, question_id: str) -> List[dict[str, Any]]:
+        ...
 
     @overload
-    def cancel(self, *, question_ids: List[str]) -> List[dict[str, Any]]: ...
+    def cancel(self, *, question_ids: List[str]) -> List[dict[str, Any]]:
+        ...
 
     @typechecked
     def cancel(
@@ -443,10 +449,12 @@ class QuestionsNamespace(DomainNamespace):
         return results
 
     @overload
-    def open(self, *, question_id: str) -> List[dict[str, Any]]: ...
+    def open(self, *, question_id: str) -> List[dict[str, Any]]:
+        ...
 
     @overload
-    def open(self, *, question_ids: List[str]) -> List[dict[str, Any]]: ...
+    def open(self, *, question_ids: List[str]) -> List[dict[str, Any]]:
+        ...
 
     @typechecked
     def open(
@@ -505,10 +513,12 @@ class QuestionsNamespace(DomainNamespace):
         return results
 
     @overload
-    def solve(self, *, question_id: str) -> List[dict[str, Any]]: ...
+    def solve(self, *, question_id: str) -> List[dict[str, Any]]:
+        ...
 
     @overload
-    def solve(self, *, question_ids: List[str]) -> List[dict[str, Any]]: ...
+    def solve(self, *, question_ids: List[str]) -> List[dict[str, Any]]:
+        ...
 
     @typechecked
     def solve(

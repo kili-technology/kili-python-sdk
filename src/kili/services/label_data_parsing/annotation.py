@@ -326,9 +326,9 @@ class _Base2DAnnotation(_BaseAnnotationWithTool, _BaseAnnotationWithBoundingPoly
         return "OBJECT_DETECTION"
 
     @staticmethod
-    def _get_compatible_type_of_tools() -> Sequence[
-        Literal["rectangle", "polygon", "semantic", "polyline", "vector"]
-    ]:
+    def _get_compatible_type_of_tools() -> (
+        Sequence[Literal["rectangle", "polygon", "semantic", "polyline", "vector"]]
+    ):
         return ("rectangle", "polygon", "semantic", "polyline", "vector")
 
     def add_bounding_poly(

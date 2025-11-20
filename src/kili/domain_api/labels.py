@@ -132,7 +132,8 @@ class LabelsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         output_format: Literal["dict"] = "dict",
         filter: Optional[LabelFilter] = None,
-    ) -> list[dict]: ...
+    ) -> list[dict]:
+        ...
 
     @overload
     def list(
@@ -153,7 +154,8 @@ class LabelsNamespace(DomainNamespace):
         disable_tqdm: Optional[bool] = None,
         output_format: Literal["parsed_label"] = "parsed_label",
         filter: Optional[LabelFilter] = None,
-    ) -> List[ParsedLabel]: ...
+    ) -> List[ParsedLabel]:
+        ...
 
     @typechecked
     def list(
@@ -239,7 +241,8 @@ class LabelsNamespace(DomainNamespace):
         skip: int = 0,
         output_format: Literal["dict"] = "dict",
         filter: Optional[LabelFilter] = None,
-    ) -> Generator[dict, None, None]: ...
+    ) -> Generator[dict, None, None]:
+        ...
 
     @overload
     def list_as_generator(
@@ -259,7 +262,8 @@ class LabelsNamespace(DomainNamespace):
         skip: int = 0,
         output_format: Literal["parsed_label"] = "parsed_label",
         filter: Optional[LabelFilter] = None,
-    ) -> Generator[ParsedLabel, None, None]: ...
+    ) -> Generator[ParsedLabel, None, None]:
+        ...
 
     @typechecked
     def list_as_generator(
@@ -423,7 +427,8 @@ class LabelsNamespace(DomainNamespace):
         asset_id: str,
         json_response: dict,
         project_id: str,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create_default(
@@ -433,7 +438,8 @@ class LabelsNamespace(DomainNamespace):
         json_response_array: ListOrTuple[dict],
         disable_tqdm: Optional[bool] = None,
         project_id: str,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create_default(
@@ -442,7 +448,8 @@ class LabelsNamespace(DomainNamespace):
         external_id: str,
         json_response: dict,
         project_id: str,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create_default(
@@ -452,7 +459,8 @@ class LabelsNamespace(DomainNamespace):
         json_response_array: ListOrTuple[dict],
         disable_tqdm: Optional[bool] = None,
         project_id: str,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @typechecked
     def create_default(
@@ -507,7 +515,8 @@ class LabelsNamespace(DomainNamespace):
         project_id: str,
         model_name: Optional[str] = None,
         step_name: Optional[str] = None,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create_review(
@@ -520,7 +529,8 @@ class LabelsNamespace(DomainNamespace):
         project_id: str,
         reviewed_label_id_array: List[str],
         step_name: Optional[str] = None,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create_review(
@@ -532,7 +542,8 @@ class LabelsNamespace(DomainNamespace):
         project_id: str,
         reviewed_label_id: str,
         step_name: Optional[str] = None,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create_review(
@@ -545,7 +556,8 @@ class LabelsNamespace(DomainNamespace):
         project_id: str,
         reviewed_label_id_array: List[str],
         step_name: Optional[str] = None,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @typechecked
     def create_review(
@@ -608,7 +620,8 @@ class LabelsNamespace(DomainNamespace):
         model_name: str,
         overwrite: Optional[bool] = False,
         project_id: str,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create_inference(
@@ -620,7 +633,8 @@ class LabelsNamespace(DomainNamespace):
         model_name: str,
         overwrite: Optional[bool] = False,
         project_id: str,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create_inference(
@@ -631,7 +645,8 @@ class LabelsNamespace(DomainNamespace):
         model_name: str,
         overwrite: Optional[bool] = False,
         project_id: str,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @overload
     def create_inference(
@@ -643,7 +658,8 @@ class LabelsNamespace(DomainNamespace):
         model_name: str,
         overwrite: Optional[bool] = False,
         project_id: str,
-    ) -> List[dict[Literal["id"], str]]: ...
+    ) -> List[dict[Literal["id"], str]]:
+        ...
 
     @typechecked
     def create_inference(
@@ -700,7 +716,8 @@ class LabelsNamespace(DomainNamespace):
         *,
         id: str,
         disable_tqdm: Optional[bool] = None,
-    ) -> List[str]: ...
+    ) -> List[str]:
+        ...
 
     @overload
     def delete(
@@ -708,7 +725,8 @@ class LabelsNamespace(DomainNamespace):
         *,
         ids: ListOrTuple[str],
         disable_tqdm: Optional[bool] = None,
-    ) -> List[str]: ...
+    ) -> List[str]:
+        ...
 
     @typechecked
     def delete(
@@ -1052,7 +1070,8 @@ class LabelsNamespace(DomainNamespace):
         json_response: dict,
         model_name: str,
         overwrite: bool = False,
-    ) -> dict[Literal["id"], str]: ...
+    ) -> dict[Literal["id"], str]:
+        ...
 
     @overload
     def create_prediction(
@@ -1064,7 +1083,8 @@ class LabelsNamespace(DomainNamespace):
         model_name: str,
         disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
-    ) -> dict[Literal["id"], str]: ...
+    ) -> dict[Literal["id"], str]:
+        ...
 
     @overload
     def create_prediction(
@@ -1075,7 +1095,8 @@ class LabelsNamespace(DomainNamespace):
         json_response: dict,
         model_name: str,
         overwrite: bool = False,
-    ) -> dict[Literal["id"], str]: ...
+    ) -> dict[Literal["id"], str]:
+        ...
 
     @overload
     def create_prediction(
@@ -1087,7 +1108,8 @@ class LabelsNamespace(DomainNamespace):
         model_name: str,
         disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
-    ) -> dict[Literal["id"], str]: ...
+    ) -> dict[Literal["id"], str]:
+        ...
 
     @typechecked
     def create_prediction(

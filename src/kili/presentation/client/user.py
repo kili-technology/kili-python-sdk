@@ -34,7 +34,8 @@ class UserClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[dict, None, None]: ...
+    ) -> Generator[dict, None, None]:
+        ...
 
     @overload
     def users(
@@ -47,7 +48,8 @@ class UserClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> list[dict]: ...
+    ) -> list[dict]:
+        ...
 
     @typechecked
     def users(
