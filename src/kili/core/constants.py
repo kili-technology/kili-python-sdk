@@ -1,6 +1,5 @@
 """This script lists package constants."""
 
-
 mime_extensions = {
     "Audio": "audio/x-flac,audio/mpeg,video/mp4",
     "Csv": "text/csv",

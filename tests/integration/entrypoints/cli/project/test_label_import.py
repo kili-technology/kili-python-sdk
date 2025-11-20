@@ -180,9 +180,12 @@ def test_import_labels_yolo(name: str, test_case: dict, mocker: pytest_mock.Mock
 
     _ = name
     runner = CliRunner()
-    with runner.isolated_filesystem(), patch(
-        "kili.services.label_import.import_labels_from_files"
-    ) as mocked_import_labels_service:
+    with (
+        runner.isolated_filesystem(),
+        patch(
+            "kili.services.label_import.import_labels_from_files"
+        ) as mocked_import_labels_service,
+    ):
         arguments = test_case["files"]
         for k, v in test_case["options"].items():
             arguments.append("--" + k)

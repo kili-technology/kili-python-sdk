@@ -24,11 +24,14 @@ class TestAssetsNamespaceIntegration:
     @pytest.fixture()
     def mock_kili_client(self, mock_graphql_client, mock_http_client):
         """Create a mock Kili client with proper structure."""
-        with patch("kili.client.GraphQLClient"), patch("kili.client.HttpClient"), patch(
-            "kili.client.KiliAPIGateway"
-        ) as mock_gateway_class, patch("kili.client.ApiKeyUseCases"), patch(
-            "kili.client.is_api_key_valid"
-        ), patch.dict("os.environ", {"KILI_SDK_SKIP_CHECKS": "1"}):
+        with (
+            patch("kili.client.GraphQLClient"),
+            patch("kili.client.HttpClient"),
+            patch("kili.client.KiliAPIGateway") as mock_gateway_class,
+            patch("kili.client.ApiKeyUseCases"),
+            patch("kili.client.is_api_key_valid"),
+            patch.dict("os.environ", {"KILI_SDK_SKIP_CHECKS": "1"}),
+        ):
             mock_gateway = MagicMock(spec=KiliAPIGateway)
             mock_gateway_class.return_value = mock_gateway
             mock_gateway.get_project.return_value = {

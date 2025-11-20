@@ -1,6 +1,5 @@
 """Module for common argument validators across client methods."""
 
-
 from kili.domain.project import ProjectStep
 
 

@@ -1,4 +1,5 @@
 """Notification mutations."""
+
 from typing import Optional, Union
 
 from typeguard import typechecked

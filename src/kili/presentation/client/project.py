@@ -1,4 +1,5 @@
 """Client presentation methods for projects."""
+
 import warnings
 from collections.abc import Generator, Iterable
 from typing import (

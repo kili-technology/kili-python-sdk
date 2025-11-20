@@ -649,15 +649,13 @@ expected_export = [
                 "role": "USER",
             },
             {
-                "content": " I'm doing well, thank you! How about you? How "
-                "can I assist you today?",
+                "content": " I'm doing well, thank you! How about you? How can I assist you today?",
                 "externalId": "cm5wnv6ax01gvp30w2q9ba29v",
                 "modelName": "AI21-Jamba-1-5-Large-ykxca",
                 "role": "ASSISTANT",
             },
             {
-                "content": " I'm doing well, thank you! How about you? How "
-                "can I assist you today?",
+                "content": " I'm doing well, thank you! How about you? How can I assist you today?",
                 "externalId": "cm5wnv6b501gwp30w764fegsi",
                 "modelName": "AI21-Jamba-1-5-Large-ykxca",
                 "role": "ASSISTANT",

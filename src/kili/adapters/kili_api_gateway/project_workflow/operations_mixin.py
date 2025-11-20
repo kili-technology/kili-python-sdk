@@ -1,6 +1,5 @@
 """Mixin extending Kili API Gateway class with Projects related operations."""
 
-
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
     fragment_builder,

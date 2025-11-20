@@ -1,6 +1,5 @@
 """GraphQL payload data mappers for cloud storage operations."""
 
-
 from kili.adapters.kili_api_gateway.cloud_storage.types import DataIntegrationData
 from kili.domain.cloud_storage import DataConnectionFilters, DataIntegrationFilters
 

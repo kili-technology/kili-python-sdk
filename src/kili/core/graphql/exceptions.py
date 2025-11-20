@@ -1,4 +1,5 @@
 """Helper functions to extract context from GraphQL error messages."""
+
 import ast
 from typing import Optional
 

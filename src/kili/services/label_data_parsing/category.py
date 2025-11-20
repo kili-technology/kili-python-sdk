@@ -1,7 +1,7 @@
 """Module for the "categories" key parsing of a job response."""
 
 from collections.abc import Iterator
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 from typeguard import typechecked
 
@@ -166,8 +166,8 @@ class Category:
     def children(self, children: dict) -> None:
         """Set the children jobs of the classification job."""
         job_names_to_parse = get_children_job_names(
-            json_interface=self._project_info["jsonInterface"],
-            job_interface=self._job_interface,  # pyright: ignore [reportGeneralTypeIssues]
+            json_interface=cast(dict[Any, Any], self._project_info["jsonInterface"]),
+            job_interface=cast(dict[Any, Any], self._job_interface),
         )
         parsed_children_job = json_response_module.ParsedJobs(
             project_info=self._project_info,

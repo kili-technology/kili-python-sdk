@@ -17,7 +17,7 @@ def get_blob_paths_azure_data_connection_with_service_credentials(
     if not (data_integration["azureSASToken"] and data_integration["azureConnectionURL"]):
         raise ValueError(
             f"Cannot retrieve blob paths for data connection {data_connection['id']} with data"
-            f" integration {data_integration['id']}. Need to provide \"azureSASToken\" and"
+            f' integration {data_integration["id"]}. Need to provide "azureSASToken" and'
             f' "azureConnectionURL" in data integration: {data_integration}'
         )
 
@@ -128,16 +128,18 @@ class AzureBucket:
             if len(exclude) > 0 and any(re.match(pattern, blob.name) for pattern in exclude):
                 continue
 
-            has_content_type_field = (
-                hasattr(blob, "content_settings")
+            content_type = (
+                blob.content_settings.content_type
+                if hasattr(blob, "content_settings")
                 and hasattr(blob.content_settings, "content_type")
-                and isinstance(blob.content_settings.content_type, str)
+                else None
             )
-            if not has_content_type_field:
+
+            if not isinstance(content_type, str):
                 warnings.add("Objects with missing content-type were ignored")
 
             elif not self._is_content_type_compatible_with_input_type(
-                blob.content_settings.content_type,  # pyright: ignore[reportGeneralTypeIssues]
+                content_type,
                 input_type,
             ):
                 warnings.add(
@@ -146,7 +148,7 @@ class AzureBucket:
 
             else:
                 blob_paths.append(blob.name)
-                content_types.append(blob.content_settings.content_type)
+                content_types.append(content_type)
 
         return blob_paths, list(warnings), content_types
 

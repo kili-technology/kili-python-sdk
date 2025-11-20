@@ -26,7 +26,6 @@ def get_project(
 
     if len(projects) == 0:
         raise NotFound(
-            f"project ID: {project_id}. The project does not exist or you do not have access"
-            " to it."
+            f"project ID: {project_id}. The project does not exist or you do not have access to it."
         )
     return load_project_json_fields(projects[0], fields)

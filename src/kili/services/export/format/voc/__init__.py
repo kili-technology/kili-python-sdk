@@ -106,7 +106,7 @@ def _process_asset(
             raise FileNotFoundError(f"Could not find frames or video for asset {asset}")
 
         for frame_id, json_response in asset["latestLabel"]["jsonResponse"].items():
-            frame_name = f'{asset["externalId"]}_{str(int(frame_id)+1).zfill(leading_zeros)}'
+            frame_name = f"{asset['externalId']}_{str(int(frame_id) + 1).zfill(leading_zeros)}"
             parameters = {"filename": f"{frame_name}{frame_ext}"}
             annotations = convert_from_kili_to_voc_format(
                 json_response, width, height, parameters, valid_jobs
@@ -126,7 +126,7 @@ def _process_asset(
         annotations = convert_from_kili_to_voc_format(
             json_response, width, height, parameters, valid_jobs
         )
-        xml_filename = f'{asset["externalId"]}.xml'
+        xml_filename = f"{asset['externalId']}.xml"
         filepath = labels_folder / xml_filename
         filepath.parent.mkdir(parents=True, exist_ok=True)
         with open(filepath, "wb") as fout:

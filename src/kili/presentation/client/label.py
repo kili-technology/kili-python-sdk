@@ -61,6 +61,8 @@ from .base import BaseClientMethods
 if TYPE_CHECKING:
     import pandas as pd
 
+    from kili.client import Kili
+
 
 @for_all_methods(log_call, exclude=["__init__"])
 class LabelClientMethods(BaseClientMethods):
@@ -674,6 +676,31 @@ class LabelClientMethods(BaseClientMethods):
         Examples:
             >>> kili.predictions(project_id=project_id) # returns a list of prediction labels of a project
         """
+        if as_generator:
+            return self.labels(
+                project_id=project_id,
+                asset_id=asset_id,
+                asset_status_in=asset_status_in,
+                asset_external_id_in=asset_external_id_in,
+                asset_step_name_in=asset_step_name_in,
+                asset_step_status_in=asset_step_status_in,
+                author_in=author_in,
+                created_at=created_at,
+                created_at_gte=created_at_gte,
+                created_at_lte=created_at_lte,
+                fields=fields,
+                first=first,
+                honeypot_mark_gte=honeypot_mark_gte,
+                honeypot_mark_lte=honeypot_mark_lte,
+                id_contains=id_contains,
+                label_id=label_id,
+                skip=skip,
+                type_in=["PREDICTION"],
+                user_id=user_id,
+                disable_tqdm=disable_tqdm,
+                category_search=category_search,
+                as_generator=True,
+            )
         return self.labels(
             project_id=project_id,
             asset_id=asset_id,
@@ -696,7 +723,7 @@ class LabelClientMethods(BaseClientMethods):
             user_id=user_id,
             disable_tqdm=disable_tqdm,
             category_search=category_search,
-            as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
+            as_generator=False,
         )
 
     @overload
@@ -842,6 +869,31 @@ class LabelClientMethods(BaseClientMethods):
         Examples:
             >>> kili.inferences(project_id=project_id) # returns a list of inference labels of a project
         """
+        if as_generator:
+            return self.labels(
+                project_id=project_id,
+                asset_id=asset_id,
+                asset_status_in=asset_status_in,
+                asset_external_id_in=asset_external_id_in,
+                asset_step_name_in=asset_step_name_in,
+                asset_step_status_in=asset_step_status_in,
+                author_in=author_in,
+                created_at=created_at,
+                created_at_gte=created_at_gte,
+                created_at_lte=created_at_lte,
+                fields=fields,
+                first=first,
+                honeypot_mark_gte=honeypot_mark_gte,
+                honeypot_mark_lte=honeypot_mark_lte,
+                id_contains=id_contains,
+                label_id=label_id,
+                skip=skip,
+                type_in=["INFERENCE"],
+                user_id=user_id,
+                disable_tqdm=disable_tqdm,
+                category_search=category_search,
+                as_generator=True,
+            )
         return self.labels(
             project_id=project_id,
             asset_id=asset_id,
@@ -864,7 +916,7 @@ class LabelClientMethods(BaseClientMethods):
             user_id=user_id,
             disable_tqdm=disable_tqdm,
             category_search=category_search,
-            as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
+            as_generator=False,
         )
 
     @typechecked
@@ -1197,11 +1249,15 @@ class LabelClientMethods(BaseClientMethods):
                 cast(list[AssetExternalId], [label_asset_external_id]), ProjectId(project_id)
             )[AssetExternalId(label_asset_external_id)]
 
+        if label_asset_id is None:
+            msg = "Either label_asset_id or label_asset_external_id must be provided"
+            raise ValueError(msg)
+
         return LabelUseCases(self.kili_api_gateway).append_to_labels(
             author_id=UserId(author_id) if author_id else None,
             json_response=json_response,
             label_type=label_type,
-            asset_id=AssetId(label_asset_id),  # pyright: ignore[reportGeneralTypeIssues]
+            asset_id=AssetId(label_asset_id),
             seconds_to_label=seconds_to_label,
             fields=("id",),
         )
@@ -1380,7 +1436,7 @@ class LabelClientMethods(BaseClientMethods):
 
         try:
             return export_labels(
-                self,  # pyright: ignore[reportGeneralTypeIssues]
+                cast("Kili", self),
                 asset_ids=resolved_asset_ids,
                 project_id=ProjectId(project_id),
                 export_type="latest",

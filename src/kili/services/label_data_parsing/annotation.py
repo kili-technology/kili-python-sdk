@@ -3,7 +3,7 @@
 import functools
 from collections import defaultdict
 from collections.abc import Iterator, Sequence
-from typing import Literal, Optional, Union
+from typing import Any, Literal, Optional, Union, cast
 
 from typeguard import typechecked
 
@@ -154,8 +154,8 @@ class _BaseAnnotation:
     def children(self, children: dict) -> None:
         """Set the children jobs of the annotation job."""
         job_names_to_parse = get_children_job_names(
-            json_interface=self._project_info["jsonInterface"],
-            job_interface=self._job_interface,  # type: ignore
+            json_interface=cast(dict[Any, Any], self._project_info["jsonInterface"]),
+            job_interface=cast(dict[Any, Any], self._job_interface),
         )
         parsed_children_job = json_response_module.ParsedJobs(
             project_info=self._project_info,
