@@ -32,7 +32,6 @@ def update_step_mapper(data: Union[WorkflowStepCreate, WorkflowStepUpdate]) -> d
         "numberOfExpectedLabelsForConsensus": data["number_of_expected_labels_for_consensus"]
         if "number_of_expected_labels_for_consensus" in data
         else None,
-        "order": data["order"] if "order" in data else None,
         "stepCoverage": data["step_coverage"] if "step_coverage" in data else None,
         "type": data["type"] if "type" in data else None,
         "assignees": data["assignees"] if "assignees" in data else None,
