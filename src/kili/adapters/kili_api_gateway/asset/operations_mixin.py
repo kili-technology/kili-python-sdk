@@ -168,12 +168,25 @@ class AssetOperationMixin(BaseOperationMixin):
         count: int = count_result["data"]
         return count
 
-    def update_asset_consensus(self, asset_id: str, project_id: str, is_consensus: bool) -> bool:
+    def update_asset_consensus(
+        self,
+        project_id: str,
+        is_consensus: bool,
+        asset_id: str | None = None,
+        external_id: str | None = None,
+    ) -> bool:
         """Update consensus on an asset."""
+        if asset_id is None and external_id is None:
+            raise ValueError("At least one of asset_id or external_id must be provided")
+
         payload = {
-            "assetId": asset_id,
             "projectId": project_id,
             "isConsensus": is_consensus,
         }
+        if asset_id is not None:
+            payload["assetId"] = asset_id
+        if external_id is not None:
+            payload["externalId"] = external_id
+
         result = self.graphql_client.execute(GQL_SET_ASSET_CONSENSUS, payload)
         return result["data"]
