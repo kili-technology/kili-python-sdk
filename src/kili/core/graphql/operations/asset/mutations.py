@@ -30,12 +30,14 @@ mutation(
 
 GQL_SET_ASSET_CONSENSUS = """
 mutation setAssetConsensus(
-    $assetId: ID!,
+    $assetId: ID,
+    $externalId: String,
     $projectId: ID!,
     $isConsensus: Boolean!
   ) {
   data: setAssetConsensus(
     assetId: $assetId,
+    externalId: $externalId,
     projectId: $projectId,
     isConsensus: $isConsensus
   )
