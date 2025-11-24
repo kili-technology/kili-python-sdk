@@ -156,7 +156,6 @@ class AssetClientMethods(BaseClientMethods):
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         skipped: Optional[bool] = None,
         status_in: Optional[list[AssetStatus]] = None,
-        status_not_in: Optional[list[AssetStatus]] = None,
         step_name_in: Optional[list[str]] = None,
         step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
@@ -225,7 +224,6 @@ class AssetClientMethods(BaseClientMethods):
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         skipped: Optional[bool] = None,
         status_in: Optional[list[AssetStatus]] = None,
-        status_not_in: Optional[list[AssetStatus]] = None,
         step_name_in: Optional[list[str]] = None,
         step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
@@ -294,7 +292,6 @@ class AssetClientMethods(BaseClientMethods):
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         skipped: Optional[bool] = None,
         status_in: Optional[list[AssetStatus]] = None,
-        status_not_in: Optional[list[AssetStatus]] = None,
         step_name_in: Optional[list[str]] = None,
         step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
@@ -366,9 +363,6 @@ class AssetClientMethods(BaseClientMethods):
             skipped: Returned assets should be skipped
                 Only applicable if the project is in WorkflowV1 (legacy).
             status_in: Returned assets should have a status that belongs to that list, if given.
-                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
-                Only applicable if the project is in the WorkflowV1 (legacy).
-            status_not_in: Returned assets should have a status that does not belong to that list, if given.
                 Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
                 Only applicable if the project is in the WorkflowV1 (legacy).
             step_name_in: Returned assets are in the step whose name belong to that list, if given.
@@ -480,7 +474,6 @@ class AssetClientMethods(BaseClientMethods):
             step_status_in is not None
             or step_status_not_in is not None
             or status_in is not None
-            or status_not_in is not None
             or skipped is not None
         )
         if has_step_filters or has_status_filters:
@@ -489,7 +482,6 @@ class AssetClientMethods(BaseClientMethods):
                 asset_workflow_filters={
                     "skipped": skipped,
                     "status_in": status_in,
-                    "status_not_in": status_not_in,
                     "step_name_in": step_name_in,
                     "step_name_not_in": step_name_not_in,
                     "step_status_in": step_status_in,
@@ -554,7 +546,6 @@ class AssetClientMethods(BaseClientMethods):
             step_id_not_in=step_id_not_in,
             step_status_in=step_status_in,
             step_status_not_in=step_status_not_in,
-            status_not_in=status_not_in,
         )
         assets_gen = asset_use_cases.list_assets(
             filters,
@@ -630,7 +621,6 @@ class AssetClientMethods(BaseClientMethods):
         step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
         step_status_not_in: Optional[list[StatusInStep]] = None,
-        status_not_in: Optional[list[AssetStatus]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count and return the number of assets with the given constraints.
@@ -697,9 +687,6 @@ class AssetClientMethods(BaseClientMethods):
             step_status_not_in: Returned assets have the status of their step that does not belong to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
                 Only applicable if the project is in WorkflowV2.
-            status_not_in: Returned assets should have a status that does not belong to that list, if given.
-                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
-                Only applicable if the project is in WorkflowV1 (legacy).
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -745,10 +732,7 @@ class AssetClientMethods(BaseClientMethods):
         step_id_not_in = None
         has_step_filters = step_name_in is not None or step_name_not_in is not None
         has_status_filters = (
-            status_in is not None
-            or status_not_in is not None
-            or step_status_in is not None
-            or step_status_not_in is not None
+            status_in is not None or step_status_in is not None or step_status_not_in is not None
         )
         if has_step_filters or has_status_filters:
             project_use_cases = ProjectUseCases(self.kili_api_gateway)
@@ -765,7 +749,6 @@ class AssetClientMethods(BaseClientMethods):
                     "step_status_in": step_status_in,
                     "step_status_not_in": step_status_not_in,
                     "status_in": status_in,
-                    "status_not_in": status_not_in,
                 },
             )
 
@@ -826,7 +809,6 @@ class AssetClientMethods(BaseClientMethods):
             step_id_not_in=step_id_not_in,
             step_status_in=step_status_in,
             step_status_not_in=step_status_not_in,
-            status_not_in=status_not_in,
         )
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
         return asset_use_cases.count_assets(filters)

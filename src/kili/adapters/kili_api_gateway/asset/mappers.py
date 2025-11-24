@@ -28,7 +28,6 @@ def asset_where_mapper(filters: AssetFilters):
         "externalIdStrictlyIn": filters.external_id_strictly_in,
         "externalIdIn": filters.external_id_in,
         "statusIn": filters.status_in,
-        "statusNotIn": filters.status_not_in,
         "consensusMarkGte": filters.consensus_mark_gte,
         "consensusMarkLte": filters.consensus_mark_lte,
         "honeypotMarkGte": filters.honeypot_mark_gte,
