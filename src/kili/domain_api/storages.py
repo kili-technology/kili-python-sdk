@@ -1,5 +1,5 @@
 """Storages domain namespace for the Kili Python SDK."""
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-public-methods
 
 from collections.abc import Generator
 from functools import cached_property

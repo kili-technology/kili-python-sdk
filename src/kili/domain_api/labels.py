@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-public-methods
 """Labels domain namespace for the Kili Python SDK.
 
 This module provides a comprehensive interface for label-related operations

@@ -3,6 +3,7 @@
 This module provides a comprehensive interface for question-related operations
 including creation, querying, status management, and lifecycle operations.
 """
+# pylint: disable=too-many-public-methods
 
 from collections.abc import Generator
 from itertools import repeat
