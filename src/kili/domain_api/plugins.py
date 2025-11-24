@@ -1,4 +1,5 @@
 """Plugins domain namespace for the Kili Python SDK."""
+# pylint: disable=too-many-public-methods
 
 from datetime import datetime
 from typing import List, Optional

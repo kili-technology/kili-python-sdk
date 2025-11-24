@@ -1,4 +1,5 @@
 """Tags domain namespace for the Kili Python SDK."""
+# pylint: disable=too-many-public-methods
 
 from typing import List, Literal, Optional
 
