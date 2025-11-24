@@ -29,6 +29,7 @@ class TestAssetsNamespace:
         client.add_metadata = MagicMock()
         client.set_metadata = MagicMock()
         client.skip_or_unskip = MagicMock()
+        client.update_asset_consensus = MagicMock()
         return client
 
     @pytest.fixture()
@@ -231,6 +232,60 @@ class TestAssetsNamespaceCoreOperations:
         assert result == expected_result
         mock_client.delete_many_from_dataset.assert_called_once_with(
             asset_ids=["asset1", "asset2"], external_ids=None, project_id=""
+        )
+
+    def test_update_consensus_with_asset_id(self, assets_namespace, mock_client):
+        """Test update_consensus method with asset_id."""
+        mock_client.update_asset_consensus.return_value = True
+
+        result = assets_namespace.update_consensus(
+            project_id="project_123",
+            asset_id="asset1",
+            is_consensus=True,
+        )
+
+        assert result is True
+        mock_client.update_asset_consensus.assert_called_once_with(
+            project_id="project_123",
+            is_consensus=True,
+            asset_id="asset1",
+            external_id=None,
+        )
+
+    def test_update_consensus_with_external_id(self, assets_namespace, mock_client):
+        """Test update_consensus method with external_id."""
+        mock_client.update_asset_consensus.return_value = True
+
+        result = assets_namespace.update_consensus(
+            project_id="project_123",
+            external_id="ext_asset1",
+            is_consensus=True,
+        )
+
+        assert result is True
+        mock_client.update_asset_consensus.assert_called_once_with(
+            project_id="project_123",
+            is_consensus=True,
+            asset_id=None,
+            external_id="ext_asset1",
+        )
+
+    def test_update_consensus_deactivate(self, assets_namespace, mock_client):
+        """Test update_consensus method to deactivate consensus."""
+        mock_client.update_asset_consensus.return_value = False
+
+        result = assets_namespace.update_consensus(
+            project_id="project_123",
+            asset_id="asset1",
+            is_consensus=False,
+        )
+
+        assert result is False
+        mock_client.update_asset_consensus.assert_called_once_with(
+            project_id="project_123",
+            is_consensus=False,
+            asset_id="asset1",
+            external_id=None,
         )
 
 
