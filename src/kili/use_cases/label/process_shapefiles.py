@@ -289,10 +289,13 @@ def _remove_duplicate_points(coords):
 def _process_marker_records(point_records, category_name, from_epsg, json_response, job_name):
     """Process point records for marker job type."""
     for point_record in point_records:
-        point = _transform_geometry(point_record, from_epsg)
+        geometry = _transform_geometry(point_record, from_epsg)
+        # For marker jobs, the geometry should always be a Point
+        if not isinstance(geometry, Point):
+            raise TypeError(f"Expected Point geometry for marker job, got {type(geometry)}")
 
         annotation = {
-            "point": {"x": point.x, "y": point.y},
+            "point": {"x": geometry.x, "y": geometry.y},
             "categories": [{"name": category_name}],
             "type": "marker",
             "mid": cuid(),

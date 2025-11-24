@@ -253,7 +253,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
                 "The 'copy_json_interface' and 'copy_quality_settings' arguments are deprecated."
             )
 
-        return ProjectCopier(self).copy_project(  # pyright: ignore[reportGeneralTypeIssues]
+        return ProjectCopier(self).copy_project(  # pyright: ignore[reportArgumentType]
             from_project_id,
             title,
             description,

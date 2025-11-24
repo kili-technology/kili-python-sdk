@@ -167,7 +167,7 @@ class Category:
         """Set the children jobs of the classification job."""
         job_names_to_parse = get_children_job_names(
             json_interface=self._project_info["jsonInterface"],
-            job_interface=self._job_interface,  # pyright: ignore [reportGeneralTypeIssues]
+            job_interface=self._job_interface,
         )
         parsed_children_job = json_response_module.ParsedJobs(
             project_info=self._project_info,
