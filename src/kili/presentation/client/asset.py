@@ -763,3 +763,62 @@ class AssetClientMethods(BaseClientMethods):
         )
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
         return asset_use_cases.count_assets(filters)
+
+    @typechecked
+    def update_asset_consensus(
+        self,
+        project_id: str,
+        is_consensus: bool,
+        asset_id: Optional[str] = None,
+        external_id: Optional[str] = None,
+    ) -> bool:
+        """Activate or deactivate consensus on an asset.
+
+        Args:
+            project_id: The project ID.
+            is_consensus: Whether to activate (True) or deactivate (False) consensus on the asset.
+            asset_id: The internal asset ID to modify. Either asset_id or external_id must be provided.
+            external_id: The external ID of the asset to modify. Either asset_id or external_id must be provided.
+
+        Returns:
+            The consensus value that was set (True if consensus was activated, False if deactivated).
+
+        Raises:
+            ValueError: If neither asset_id nor external_id is provided.
+
+        Examples:
+            >>> # Activate consensus on an asset using asset_id
+            >>> result = kili.update_asset_consensus(
+            ...     project_id="my_project",
+            ...     is_consensus=True,
+            ...     asset_id="ckg22d81r0jrg0885unmuswj8"
+            ... )
+            >>> # result is True
+
+            >>> # Activate consensus on an asset using external_id
+            >>> result = kili.update_asset_consensus(
+            ...     project_id="my_project",
+            ...     is_consensus=True,
+            ...     external_id="my_asset_001"
+            ... )
+            >>> # result is True
+
+            >>> # Deactivate consensus on an asset
+            >>> result = kili.update_asset_consensus(
+            ...     project_id="my_project",
+            ...     is_consensus=False,
+            ...     asset_id="ckg22d81r0jrg0885unmuswj8"
+            ... )
+            >>> # result is False
+        """
+        if asset_id is None and external_id is None:
+            raise ValueError(
+                "At least one of asset_id or external_id must be provided to update_asset_consensus"
+            )
+
+        return self.kili_api_gateway.update_asset_consensus(
+            project_id=project_id,
+            is_consensus=is_consensus,
+            asset_id=asset_id,
+            external_id=external_id,
+        )
