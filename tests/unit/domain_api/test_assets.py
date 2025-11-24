@@ -28,6 +28,7 @@ class TestAssetsNamespace:
         client.change_asset_external_ids = MagicMock()
         client.add_metadata = MagicMock()
         client.set_metadata = MagicMock()
+        client.skip_or_unskip = MagicMock()
         return client
 
     @pytest.fixture()
