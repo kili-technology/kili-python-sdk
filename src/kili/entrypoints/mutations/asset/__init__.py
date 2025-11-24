@@ -21,6 +21,8 @@ from kili.entrypoints.mutations.asset.queries import (
     GQL_ASSIGN_ASSETS,
     GQL_DELETE_MANY_FROM_DATASET,
     GQL_SEND_BACK_ASSETS_TO_QUEUE,
+    GQL_SKIP_ASSET,
+    GQL_UNSKIP_ASSET,
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
 )
 from kili.entrypoints.mutations.exceptions import MutationError
@@ -860,3 +862,39 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             )
             result["asset_ids"] = [asset["id"] for asset in assets_in_queue]
         return result
+
+    def skip_or_unskip(
+        self,
+        action: Literal["skip", "unskip"],
+        asset_id: str,
+        project_id: str,
+        reason: Optional[str] = None,
+    ) -> str:
+        """Skip or unskip an asset.
+
+        Args:
+            action: The action you want to do. Either skip or unskip.
+            asset_id: ID of the asset you want to skip or unskip.
+            project_id: The project ID.
+            reason: The reason why you skip an asset. Only required if the action is `skip`.
+
+        Returns:
+            The asset ID of the asset modified. An error message if mutation failed.
+
+        Examples:
+            >>> kili.skip_or_unskip(
+            action="skip",
+            asset_id="ckg22d81s0jrh0885pdxfd03n",
+            project_id="ckg22d81r0jrg0885unmuswj8",
+            reason="Test"
+            )
+        """
+        if action == "skip":
+            if reason is None:
+                raise MissingArgumentError("You must provide a reason to skip an asset")
+            payload = {"reason": reason, "where": {"id": asset_id, "project": {"id": project_id}}}
+            self.graphql_client.execute(GQL_SKIP_ASSET, payload)
+        else:
+            payload = {"projectId": project_id, "assetId": asset_id}
+            self.graphql_client.execute(GQL_UNSKIP_ASSET, payload)
+        return asset_id
