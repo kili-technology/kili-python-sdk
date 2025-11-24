@@ -53,3 +53,17 @@ mutation($where: AssetWhere!) {{
   }}
 }}
 """
+
+GQL_SKIP_ASSET = """
+mutation SkipAsset($reason: String!, $where: AssetWhere!) {
+  skipAsset(reason: $reason, where: $where) {
+    id
+  }
+}
+"""
+
+GQL_UNSKIP_ASSET = """
+mutation UnskipAsset($projectId: ID!, $assetId: ID!) {
+  unskipAsset(projectId: $projectId, assetId: $assetId)
+}
+"""

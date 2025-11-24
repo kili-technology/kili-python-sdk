@@ -240,7 +240,7 @@ def _prepare_video_processing_parameters(
     return transformed
 
 
-class AssetsNamespace(DomainNamespace):
+class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-methods
     """Assets domain namespace providing asset-related operations.
 
     This namespace provides access to all asset-related functionality
@@ -265,6 +265,8 @@ class AssetsNamespace(DomainNamespace):
     - move_to_next_step(): Move assets to the next workflow step
     - assign(): Assign assets to labelers
     - update_priority(): Update asset priorities
+    - skip(): Skip an asset
+    - unskip(): Unskip an asset
 
     Examples:
         >>> kili = Kili()
@@ -1807,6 +1809,64 @@ class AssetsNamespace(DomainNamespace):
             project_id=project_id,
             asset_ids=asset_ids,
             external_ids=external_ids,
+        )
+
+    @typechecked
+    def skip(
+        self,
+        *,
+        asset_id: str,
+        project_id: str,
+        reason: str,
+    ) -> str:
+        """Skip an asset.
+
+        Args:
+            asset_id: ID of the asset you want to skip.
+            project_id: The project ID.
+            reason: The reason why you skip an asset.
+
+        Returns:
+            The asset ID of the asset skipped. An error message if mutation failed.
+
+        Examples:
+            >>> kili.assets.skip(
+                project_id="ckg22d81r0jrg0885unmuswj8",
+                asset_id="ckg22d81s0jrh0885pdxfd03n",
+                reason="Test"
+                )
+        """
+        return self._client.skip_or_unskip(
+            action="skip",
+            asset_id=asset_id,
+            project_id=project_id,
+            reason=reason,
+        )
+
+    @typechecked
+    def unskip(
+        self,
+        *,
+        asset_id: str,
+        project_id: str,
+    ) -> str:
+        """Unskip an asset.
+
+        Args:
+            asset_id: ID of the asset you want to unskip.
+            project_id: The project ID.
+
+        Returns:
+            The asset ID of the asset unskipped. An error message if mutation failed.
+
+        Examples:
+            >>> kili.assets.unskip(
+                asset_id="ckg22d81s0jrh0885pdxfd03n"
+                project_id="ckg22d81r0jrg0885unmuswj8"
+            )
+        """
+        return self._client.skip_or_unskip(
+            action="unskip", asset_id=asset_id, project_id=project_id
         )
 
     @overload
