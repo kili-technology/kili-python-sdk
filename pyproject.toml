@@ -44,7 +44,7 @@ dependencies = [
   "filelock >= 3.0.0, < 4.0.0",
   "pip-system-certs >= 4.0.0, < 5.0.0; platform_system=='Windows'",
   "pyrate-limiter >= 3, < 4",
-  "kili-formats == 0.2.10"
+  "kili-formats == 1.0.0"
 ]
 urls = { homepage = "https://github.com/kili-technology/kili-python-sdk" }
 
@@ -84,7 +84,7 @@ dev = [
   "vulture==2.11",
   "dead==1.5.2",
   # optional dependencies
-  "kili-formats[all] == 0.2.10",
+  "kili-formats[all] == 1.0.0",
   "opencv-python >= 4.0.0, < 5.0.0",
   "azure-storage-blob >= 12.0.0, < 13.0.0",
   # optional dependencies gis
@@ -100,7 +100,7 @@ dev = [
 all = [
   # aggregate all optional deps without dev
   "azure-storage-blob >= 12.0.0, < 13.0.0",
-  "kili-formats[all] == 0.2.10",
+  "kili-formats[all] == 1.0.0",
   "opencv-python >= 4.0.0, < 5.0.0",
   "Pillow >=9.0.0, <11.0.0",
   "pyproj == 3.7.1",
@@ -113,7 +113,7 @@ cli = [
   "tabulate >= 0.9.0, < 0.10.0"
 ]
 coco = [
-  "kili-formats[coco] == 0.2.10"
+  "kili-formats[coco] == 1.0.0"
 ]
 gis = [
   "pyproj == 3.7.1",
@@ -121,12 +121,12 @@ gis = [
 ]
 image = [
   "Pillow >=9.0.0, <11.0.0",
-  "kili-formats[image] == 0.2.10"
+  "kili-formats[image] == 1.0.0"
 ]
 image-utils = ["opencv-python >= 4.0.0, < 5.0.0"]
 
 video = [
-  "kili-formats[video] == 0.2.10"
+  "kili-formats[video] == 1.0.0"
 ]
 yolo = [
   "pyyaml >= 6.0, < 7.0"
