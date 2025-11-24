@@ -1,7 +1,11 @@
 """Set of utils for label data parsing service module."""
 
+from typing import Union
 
-def get_children_job_names(json_interface: dict, job_interface: dict) -> list[str]:
+from kili_formats.types import Job
+
+
+def get_children_job_names(json_interface: dict, job_interface: Union[Job, dict]) -> list[str]:
     """Returns the list of children job names of a parent job interface."""
     children_job_names = []
 

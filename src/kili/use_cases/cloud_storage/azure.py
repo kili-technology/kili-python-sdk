@@ -136,17 +136,19 @@ class AzureBucket:
             if not has_content_type_field:
                 warnings.add("Objects with missing content-type were ignored")
 
-            elif not self._is_content_type_compatible_with_input_type(
-                blob.content_settings.content_type,  # pyright: ignore[reportGeneralTypeIssues]
-                input_type,
-            ):
-                warnings.add(
-                    "Objects with unsupported content-type for this type of project were ignored"
-                )
-
             else:
-                blob_paths.append(blob.name)
-                content_types.append(blob.content_settings.content_type)
+                content_type = blob.content_settings.content_type
+                assert isinstance(content_type, str)  # Help type checker understand
+                if not self._is_content_type_compatible_with_input_type(
+                    content_type,
+                    input_type,
+                ):
+                    warnings.add(
+                        "Objects with unsupported content-type for this type of project were ignored"
+                    )
+                else:
+                    blob_paths.append(blob.name)
+                    content_types.append(content_type)
 
         return blob_paths, list(warnings), content_types
 

@@ -5,7 +5,8 @@ import logging
 import os
 import sys
 import warnings
-from typing import Optional, Union
+from pathlib import Path
+from typing import Optional, TypedDict, Union
 
 from kili.adapters.authentification import is_api_key_valid
 from kili.adapters.http_client import HttpClient
@@ -38,6 +39,13 @@ from kili.presentation.client.user import UserClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
+
+
+class GraphQLClientParams(TypedDict, total=False):
+    """Parameters for GraphQLClient initialization."""
+
+    enable_schema_caching: bool
+    graphql_schema_cache_dir: Optional[Union[str, Path]]
 
 
 class FilterPoolFullWarning(logging.Filter):
@@ -82,7 +90,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         api_endpoint: Optional[str] = None,
         verify: Optional[Union[bool, str]] = None,
         client_name: GraphQLClientName = GraphQLClientName.SDK,
-        graphql_client_params: Optional[dict[str, object]] = None,
+        graphql_client_params: Optional[GraphQLClientParams] = None,
     ) -> None:
         """Initialize Kili client.
 
@@ -166,7 +174,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             client_name=client_name,
             verify=self.verify,
             http_client=self.http_client,
-            **(graphql_client_params or {}),  # pyright: ignore[reportGeneralTypeIssues]
+            **(graphql_client_params or {}),
         )
         self.kili_api_gateway = KiliAPIGateway(self.graphql_client, self.http_client)
         self.internal = InternalClientMethods(self.kili_api_gateway)

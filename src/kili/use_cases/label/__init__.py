@@ -2,7 +2,7 @@
 
 from collections.abc import Generator
 from functools import partial
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Literal, Optional, cast
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.label.types import (
@@ -106,28 +106,37 @@ class LabelUseCases(BaseUseCases):
         """Append labels."""
         check_input_labels(labels)
 
-        asset_id_array = [label.asset_id for label in labels]
-        if any(asset_id is None for asset_id in asset_id_array):
-            external_id_array = [label.asset_external_id for label in labels]
-            asset_id_array = AssetUseCasesUtils(
+        asset_id_array_maybe_none = [label.asset_id for label in labels]
+        resolved_asset_ids: ListOrTuple[AssetId]
+        if any(asset_id is None for asset_id in asset_id_array_maybe_none):
+            external_id_array: list[AssetExternalId] = []
+            for label in labels:
+                if label.asset_external_id is None:
+                    raise ValueError("Either specify all externalId or all assetId")
+                external_id_array.append(label.asset_external_id)
+
+            resolved_asset_ids = AssetUseCasesUtils(
                 self._kili_api_gateway
             ).get_asset_ids_or_throw_error(
                 asset_ids=None,
-                external_ids=external_id_array,  # pyright: ignore[reportGeneralTypeIssues]
+                external_ids=external_id_array,
                 project_id=project_id,
             )
+        else:
+            # All asset_ids are non-None, safe to cast
+            resolved_asset_ids = cast(list[AssetId], asset_id_array_maybe_none)
 
         labels_to_add = [
             AppendLabelData(
                 author_id=label.author_id,
-                asset_id=asset_id,  # pyright: ignore[reportGeneralTypeIssues]
+                asset_id=asset_id,
                 seconds_to_label=label.seconds_to_label,
                 json_response=label.json_response,
                 model_name=label.model_name,
                 client_version=None,
                 referenced_label_id=label.referenced_label_id,
             )
-            for label, asset_id in zip(labels, asset_id_array, strict=False)
+            for label, asset_id in zip(labels, resolved_asset_ids, strict=False)
         ]
 
         data = AppendManyLabelsData(

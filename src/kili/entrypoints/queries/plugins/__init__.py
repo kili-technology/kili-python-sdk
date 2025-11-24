@@ -108,7 +108,7 @@ class QueriesPlugins(BaseOperationEntrypointMixin):
             >>> kili.get_plugin_status(plugin_name="my_plugin_name")
         """
         return PluginUploader(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            self,  # pyright: ignore[reportArgumentType]
             "",
             plugin_name,
             verbose,

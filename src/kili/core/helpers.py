@@ -35,15 +35,15 @@ def format_result(
     """
     formatted_json = format_json(result[name], http_client)
     if object_ is None:
-        return formatted_json  # pyright: ignore[reportGeneralTypeIssues]
+        return formatted_json  # pyright: ignore[reportReturnType]
     if isinstance(formatted_json, list):
         if get_origin(object_) is list:
             obj = get_args(object_)[0]
-            return [obj(element) for element in formatted_json]  # pyright: ignore[reportGeneralTypeIssues]
+            return [obj(element) for element in formatted_json]  # pyright: ignore[reportReturnType]
         # the legacy "orm" objects fall into this category.
-        return [object_(element) for element in formatted_json]  # pyright: ignore[reportGeneralTypeIssues]
+        return [object_(element) for element in formatted_json]  # pyright: ignore[reportReturnType,reportCallIssue]
 
-    return object_(formatted_json)
+    return object_(formatted_json)  # pyright: ignore[reportCallIssue]
 
 
 def get_mime_type(path: str):

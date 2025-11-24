@@ -57,7 +57,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             raise TypeError('"plugin_path is nullish, please provide a value')
 
         return PluginUploader(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            self,  # pyright: ignore[reportArgumentType]
             plugin_path,
             plugin_name,
             verbose,
@@ -106,7 +106,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             >>> kili.create_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
         """
         return WebhookUploader(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            self,  # pyright: ignore[reportArgumentType]
             webhook_url,
             plugin_name,
             header,
@@ -148,7 +148,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             >>> kili.update_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
         """
         return WebhookUploader(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            self,  # pyright: ignore[reportArgumentType]
             new_webhook_url,
             plugin_name,
             new_header,
@@ -246,7 +246,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             raise TypeError('"plugin_name is nullish, please provide a value')
 
         return PluginUploader(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            self,  # pyright: ignore[reportArgumentType]
             plugin_path,
             plugin_name,
             verbose,

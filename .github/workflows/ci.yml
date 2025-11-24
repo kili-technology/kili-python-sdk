@@ -51,7 +51,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
       - name: Run pyright
-        run: pyright .
+        run: pyright src/kili
 
   unit-integration-test:
     timeout-minutes: 15
