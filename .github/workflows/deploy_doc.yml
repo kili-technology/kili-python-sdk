@@ -29,8 +29,8 @@ jobs:
               echo "Last version: $last_version"
 
               IFS=. read -r major minor patch <<< "$last_version"
-              last_minor_version="$major.$minor.0"
-              echo "REF=release/$last_minor_version" >> $GITHUB_ENV
+              branch_name="release/$major.$minor"
+              echo "REF=$branch_name" >> $GITHUB_ENV
           fi
 
       - uses: actions/checkout@v4
