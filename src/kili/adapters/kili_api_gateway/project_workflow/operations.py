@@ -20,7 +20,6 @@ query getSteps($where: ProjectWhere!, $first: PageSize!, $skip: Int!) {
             id
             name
             type
-            isActivated
         }
     }
 }
