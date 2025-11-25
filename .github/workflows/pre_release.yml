@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout target branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.target_branch }}
           token: ${{ secrets.RELEASE_BOT_PAT }}   # <<< service PAT
