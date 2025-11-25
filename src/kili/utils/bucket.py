@@ -5,7 +5,7 @@ import os
 from typing import Union
 from urllib.parse import parse_qs, urlparse
 
-from cuid2 import cuid_wrapper
+import cuid
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
@@ -14,12 +14,10 @@ from kili.adapters.http_client import HttpClient
 
 MAX_NUMBER_SIGNED_URLS_TO_FETCH = 30
 
-_cuid_generator = cuid_wrapper()
-
 
 def generate_unique_id() -> str:
     """Generate a unique id."""
-    return _cuid_generator()
+    return cuid.cuid()
 
 
 # pylint: disable=missing-type-doc
