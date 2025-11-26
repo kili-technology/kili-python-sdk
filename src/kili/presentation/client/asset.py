@@ -43,6 +43,55 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
+def _warn_deprecated_gt_lt_args(
+    consensus_mark_gt: Optional[float],
+    consensus_mark_lt: Optional[float],
+    honeypot_mark_gt: Optional[float],
+    honeypot_mark_lt: Optional[float],
+    label_consensus_mark_gt: Optional[float],
+    label_consensus_mark_lt: Optional[float],
+    label_created_at_gt: Optional[str],
+    label_created_at_lt: Optional[str],
+    label_honeypot_mark_gt: Optional[float],
+    label_honeypot_mark_lt: Optional[float],
+) -> None:
+    """Warn about deprecated _gt and _lt arguments."""
+    for arg_name, arg_value in zip(
+        (
+            "consensus_mark_gt",
+            "consensus_mark_lt",
+            "honeypot_mark_gt",
+            "honeypot_mark_lt",
+            "label_consensus_mark_gt",
+            "label_consensus_mark_lt",
+            "label_created_at_gt",
+            "label_created_at_lt",
+            "label_honeypot_mark_gt",
+            "label_honeypot_mark_lt",
+        ),
+        (
+            consensus_mark_gt,
+            consensus_mark_lt,
+            honeypot_mark_gt,
+            honeypot_mark_lt,
+            label_consensus_mark_gt,
+            label_consensus_mark_lt,
+            label_created_at_gt,
+            label_created_at_lt,
+            label_honeypot_mark_gt,
+            label_honeypot_mark_lt,
+        ),
+        strict=False,
+    ):
+        if arg_value:
+            warnings.warn(
+                f"'{arg_name}' is deprecated, please use"
+                f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+
 @for_all_methods(log_call, exclude=["__init__"])
 class AssetClientMethods(BaseClientMethods):
     """Methods attached to the Kili client, to run actions on assets."""
@@ -108,7 +157,9 @@ class AssetClientMethods(BaseClientMethods):
         skipped: Optional[bool] = None,
         status_in: Optional[list[AssetStatus]] = None,
         step_name_in: Optional[list[str]] = None,
+        step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
+        step_status_not_in: Optional[list[StatusInStep]] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[dict, None, None]:
@@ -174,7 +225,9 @@ class AssetClientMethods(BaseClientMethods):
         skipped: Optional[bool] = None,
         status_in: Optional[list[AssetStatus]] = None,
         step_name_in: Optional[list[str]] = None,
+        step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
+        step_status_not_in: Optional[list[StatusInStep]] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> list[dict]:
@@ -240,7 +293,9 @@ class AssetClientMethods(BaseClientMethods):
         skipped: Optional[bool] = None,
         status_in: Optional[list[AssetStatus]] = None,
         step_name_in: Optional[list[str]] = None,
+        step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
+        step_status_not_in: Optional[list[StatusInStep]] = None,
         *,
         as_generator: bool = False,
     ) -> Union[Iterable[dict], "pd.DataFrame"]:
@@ -312,7 +367,12 @@ class AssetClientMethods(BaseClientMethods):
                 Only applicable if the project is in the WorkflowV1 (legacy).
             step_name_in: Returned assets are in the step whose name belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
+            step_name_not_in: Returned assets are in the step whose name does not belong to that list, if given.
+                Only applicable if the project is in WorkflowV2.
             step_status_in: Returned assets have the status in their step that belongs to that list, if given.
+                Only applicable if the project is in WorkflowV2.
+            step_status_not_in: Returned assets have the status in their step that does not belong to that list, if given.
+                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
                 Only applicable if the project is in WorkflowV2.
 
         !!! info "Dates format"
@@ -374,40 +434,18 @@ class AssetClientMethods(BaseClientMethods):
                 stacklevel=1,
             )
 
-        for arg_name, arg_value in zip(
-            (
-                "consensus_mark_gt",
-                "consensus_mark_lt",
-                "honeypot_mark_gt",
-                "honeypot_mark_lt",
-                "label_consensus_mark_gt",
-                "label_consensus_mark_lt",
-                "label_created_at_gt",
-                "label_created_at_lt",
-                "label_honeypot_mark_gt",
-                "label_honeypot_mark_lt",
-            ),
-            (
-                consensus_mark_gt,
-                consensus_mark_lt,
-                honeypot_mark_gt,
-                honeypot_mark_lt,
-                label_consensus_mark_gt,
-                label_consensus_mark_lt,
-                label_created_at_gt,
-                label_created_at_lt,
-                label_honeypot_mark_gt,
-                label_honeypot_mark_lt,
-            ),
-            strict=False,
-        ):
-            if arg_value:
-                warnings.warn(
-                    f"'{arg_name}' is deprecated, please use"
-                    f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead.",
-                    DeprecationWarning,
-                    stacklevel=1,
-                )
+        _warn_deprecated_gt_lt_args(
+            consensus_mark_gt=consensus_mark_gt,
+            consensus_mark_lt=consensus_mark_lt,
+            honeypot_mark_gt=honeypot_mark_gt,
+            honeypot_mark_lt=honeypot_mark_lt,
+            label_consensus_mark_gt=label_consensus_mark_gt,
+            label_consensus_mark_lt=label_consensus_mark_lt,
+            label_created_at_gt=label_created_at_gt,
+            label_created_at_lt=label_created_at_lt,
+            label_honeypot_mark_gt=label_honeypot_mark_gt,
+            label_honeypot_mark_lt=label_honeypot_mark_lt,
+        )
 
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
@@ -430,25 +468,35 @@ class AssetClientMethods(BaseClientMethods):
             )
 
         step_id_in = None
-        if (
-            step_name_in is not None
-            or step_status_in is not None
+        step_id_not_in = None
+        has_step_filters = step_name_in is not None or step_name_not_in is not None
+        has_status_filters = (
+            step_status_in is not None
+            or step_status_not_in is not None
             or status_in is not None
             or skipped is not None
-        ):
+        )
+        if has_step_filters or has_status_filters:
             check_asset_workflow_arguments(
                 project_workflow_version=project_workflow_version,
                 asset_workflow_filters={
                     "skipped": skipped,
                     "status_in": status_in,
                     "step_name_in": step_name_in,
+                    "step_name_not_in": step_name_not_in,
                     "step_status_in": step_status_in,
+                    "step_status_not_in": step_status_not_in,
                 },
             )
             if project_workflow_version == "V2" and step_name_in is not None:
                 step_id_in = extract_step_ids_from_project_steps(
                     project_steps=project_steps,
                     step_name_in=step_name_in,
+                )
+            if project_workflow_version == "V2" and step_name_not_in is not None:
+                step_id_not_in = extract_step_ids_from_project_steps(
+                    project_steps=project_steps,
+                    step_name_in=step_name_not_in,
                 )
 
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
@@ -495,7 +543,9 @@ class AssetClientMethods(BaseClientMethods):
             issue_status=issue_status,
             issue_type=issue_type,
             step_id_in=step_id_in,
+            step_id_not_in=step_id_not_in,
             step_status_in=step_status_in,
+            step_status_not_in=step_status_not_in,
         )
         assets_gen = asset_use_cases.list_assets(
             filters,
@@ -568,7 +618,9 @@ class AssetClientMethods(BaseClientMethods):
         external_id_strictly_in: Optional[list[str]] = None,
         external_id_in: Optional[list[str]] = None,
         step_name_in: Optional[list[str]] = None,
+        step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
+        step_status_not_in: Optional[list[StatusInStep]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count and return the number of assets with the given constraints.
@@ -627,7 +679,12 @@ class AssetClientMethods(BaseClientMethods):
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
             step_name_in: Returned assets are in a step whose name belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
+            step_name_not_in: Returned assets are in a step whose name does not belong to that list, if given.
+                Only applicable if the project is in WorkflowV2.
             step_status_in: Returned assets have the status of their step that belongs to that list, if given.
+                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2.
+            step_status_not_in: Returned assets have the status of their step that does not belong to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
                 Only applicable if the project is in WorkflowV2.
 
@@ -658,43 +715,26 @@ class AssetClientMethods(BaseClientMethods):
                 stacklevel=1,
             )
 
-        for arg_name, arg_value in zip(
-            (
-                "consensus_mark_gt",
-                "consensus_mark_lt",
-                "honeypot_mark_gt",
-                "honeypot_mark_lt",
-                "label_consensus_mark_gt",
-                "label_consensus_mark_lt",
-                "label_created_at_gt",
-                "label_created_at_lt",
-                "label_honeypot_mark_gt",
-                "label_honeypot_mark_lt",
-            ),
-            (
-                consensus_mark_gt,
-                consensus_mark_lt,
-                honeypot_mark_gt,
-                honeypot_mark_lt,
-                label_consensus_mark_gt,
-                label_consensus_mark_lt,
-                label_created_at_gt,
-                label_created_at_lt,
-                label_honeypot_mark_gt,
-                label_honeypot_mark_lt,
-            ),
-            strict=False,
-        ):
-            if arg_value:
-                warnings.warn(
-                    f"'{arg_name}' is deprecated, please use"
-                    f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead.",
-                    DeprecationWarning,
-                    stacklevel=1,
-                )
+        _warn_deprecated_gt_lt_args(
+            consensus_mark_gt=consensus_mark_gt,
+            consensus_mark_lt=consensus_mark_lt,
+            honeypot_mark_gt=honeypot_mark_gt,
+            honeypot_mark_lt=honeypot_mark_lt,
+            label_consensus_mark_gt=label_consensus_mark_gt,
+            label_consensus_mark_lt=label_consensus_mark_lt,
+            label_created_at_gt=label_created_at_gt,
+            label_created_at_lt=label_created_at_lt,
+            label_honeypot_mark_gt=label_honeypot_mark_gt,
+            label_honeypot_mark_lt=label_honeypot_mark_lt,
+        )
 
         step_id_in = None
-        if status_in is not None or step_name_in is not None or step_status_in is not None:
+        step_id_not_in = None
+        has_step_filters = step_name_in is not None or step_name_not_in is not None
+        has_status_filters = (
+            status_in is not None or step_status_in is not None or step_status_not_in is not None
+        )
+        if has_step_filters or has_status_filters:
             project_use_cases = ProjectUseCases(self.kili_api_gateway)
             (
                 project_steps,
@@ -705,7 +745,9 @@ class AssetClientMethods(BaseClientMethods):
                 asset_workflow_filters={
                     "skipped": skipped,
                     "step_name_in": step_name_in,
+                    "step_name_not_in": step_name_not_in,
                     "step_status_in": step_status_in,
+                    "step_status_not_in": step_status_not_in,
                     "status_in": status_in,
                 },
             )
@@ -714,6 +756,11 @@ class AssetClientMethods(BaseClientMethods):
                 step_id_in = extract_step_ids_from_project_steps(
                     project_steps=project_steps,
                     step_name_in=step_name_in,
+                )
+            if project_workflow_version == "V2" and step_name_not_in is not None:
+                step_id_not_in = extract_step_ids_from_project_steps(
+                    project_steps=project_steps,
+                    step_name_in=step_name_not_in,
                 )
 
         filters = AssetFilters(
@@ -759,7 +806,9 @@ class AssetClientMethods(BaseClientMethods):
             issue_status=issue_status,
             issue_type=issue_type,
             step_id_in=step_id_in,
+            step_id_not_in=step_id_not_in,
             step_status_in=step_status_in,
+            step_status_not_in=step_status_not_in,
         )
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
         return asset_use_cases.count_assets(filters)
