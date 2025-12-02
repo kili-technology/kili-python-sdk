@@ -3,6 +3,7 @@
 This module provides a comprehensive interface for project-related operations
 including lifecycle management, user management, workflow configuration, and versioning.
 """
+# pylint: disable=too-many-public-methods
 
 from collections.abc import Generator, Iterable, Sequence
 from functools import cached_property

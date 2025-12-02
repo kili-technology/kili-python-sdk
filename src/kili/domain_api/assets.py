@@ -1,5 +1,5 @@
 """Assets domain namespace for the Kili Python SDK."""
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-public-methods
 
 import warnings
 from collections.abc import Generator
@@ -266,6 +266,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     - update_priority(): Update asset priorities
     - skip(): Skip an asset
     - unskip(): Unskip an asset
+    - add_consensus(): Activate or deactivate consensus on an asset
 
     Examples:
         >>> kili = Kili()
@@ -2232,4 +2233,79 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             project_id=project_id,
             priorities=priorities if priorities is not None else [],
             **kwargs,
+        )
+
+    @overload
+    def update_consensus(
+        self,
+        *,
+        asset_id: str,
+        project_id: str,
+        is_consensus: bool,
+    ) -> bool:
+        ...
+
+    @overload
+    def update_consensus(
+        self,
+        *,
+        external_id: str,
+        project_id: str,
+        is_consensus: bool,
+    ) -> bool:
+        ...
+
+    @typechecked
+    def update_consensus(
+        self,
+        *,
+        project_id: str,
+        is_consensus: bool,
+        asset_id: Optional[str] = None,
+        external_id: Optional[str] = None,
+    ) -> bool:
+        """Activate or deactivate consensus on an asset.
+
+        Args:
+            project_id: The project ID.
+            is_consensus: Whether to activate (True) or deactivate (False) consensus on the asset.
+            asset_id: The internal asset ID to modify. Either asset_id or external_id must be provided.
+            external_id: The external ID of the asset to modify. Either asset_id or external_id must be provided.
+
+        Returns:
+            The consensus value that was set (True if consensus was activated, False if deactivated).
+
+        Raises:
+            ValueError: If neither asset_id nor external_id is provided.
+
+        Examples:
+            >>> # Activate consensus on an asset using asset_id
+            >>> result = kili.assets.update_consensus(
+            ...     project_id="my_project",
+            ...     is_consensus=True,
+            ...     asset_id="ckg22d81r0jrg0885unmuswj8"
+            ... )
+            >>> # result is True
+
+            >>> # Activate consensus on an asset using external_id
+            >>> result = kili.assets.update_consensus(
+            ...     project_id="my_project",
+            ...     is_consensus=True,
+            ...     external_id="my_asset_001"
+            ... )
+            >>> # result is True
+
+            >>> # Deactivate consensus on an asset
+            >>> result = kili.assets.update_consensus(
+            ...     project_id="my_project",
+            ...     is_consensus=False,
+            ...     asset_id="ckg22d81r0jrg0885unmuswj8"
+            ... )
+            >>> # result is False
+        """
+        return self._client.update_asset_consensus(
+            project_id=project_id,
+            is_consensus=is_consensus,
+            asset_id=asset_id,
+            external_id=external_id,
         )
