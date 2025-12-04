@@ -65,5 +65,7 @@ def asset_where_mapper(filters: AssetFilters):
             "status": filters.issue_status,
         },
         "stepIdIn": filters.step_id_in,
+        "stepIdNotIn": filters.step_id_not_in,
         "stepStatusIn": filters.step_status_in,
+        "stepStatusNotIn": filters.step_status_not_in,
     }

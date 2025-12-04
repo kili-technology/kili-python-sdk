@@ -111,6 +111,57 @@ class TestAssetsNamespaceCoreOperations:
         assert call_kwargs["project_id"] == "project_123"
         assert call_kwargs["as_generator"] is False
 
+    def test_list_assets_with_step_status_not_in_filter(self, assets_namespace):
+        """Test list method with step_status_not_in filter."""
+        # Mock the legacy client method
+        assets_namespace._client.assets.return_value = [
+            {"id": "asset1", "externalId": "ext1"},
+        ]
+
+        result = assets_namespace.list(
+            project_id="project_123", filter={"step_status_not_in": ["DONE", "SKIPPED"]}
+        )
+
+        # Verify the legacy method was called with the filter
+        assets_namespace._client.assets.assert_called_once()
+        call_kwargs = assets_namespace._client.assets.call_args[1]
+        assert call_kwargs["step_status_not_in"] == ["DONE", "SKIPPED"]
+
+    def test_list_assets_with_step_name_not_in_filter(self, assets_namespace):
+        """Test list method with step_name_not_in filter."""
+        # Mock the legacy client method
+        assets_namespace._client.assets.return_value = [
+            {"id": "asset1", "externalId": "ext1"},
+        ]
+
+        result = assets_namespace.list(
+            project_id="project_123", filter={"step_name_not_in": ["Review", "QA"]}
+        )
+
+        # Verify the legacy method was called with the filter
+        assets_namespace._client.assets.assert_called_once()
+        call_kwargs = assets_namespace._client.assets.call_args[1]
+        assert call_kwargs["step_name_not_in"] == ["Review", "QA"]
+
+    def test_count_assets_with_step_filters_not_in(self, assets_namespace):
+        """Test count method with step_status_not_in and step_name_not_in filters."""
+        # Mock the legacy client method
+        assets_namespace._client.count_assets.return_value = 15
+
+        result = assets_namespace.count(
+            project_id="project_123",
+            filter={"step_status_not_in": ["DONE"], "step_name_not_in": ["Final Review"]},
+        )
+
+        # Verify the result
+        assert result == 15
+
+        # Verify the legacy method was called with both filters
+        assets_namespace._client.count_assets.assert_called_once()
+        call_kwargs = assets_namespace._client.count_assets.call_args[1]
+        assert call_kwargs["step_status_not_in"] == ["DONE"]
+        assert call_kwargs["step_name_not_in"] == ["Final Review"]
+
     def test_count_assets(self, assets_namespace):
         """Test count method."""
         # Mock the legacy client method
