@@ -81,8 +81,11 @@ class GeoJsonExporter(AbstractExporter):
                 " will be exported."
             )
 
+        # Get json_interface for GIS-friendly property names
+        json_interface = self.project.get("jsonInterface")
+
         for asset in tqdm(geotiff_assets, disable=self.disable_tqdm):
-            _process_asset(asset, labels_folder)
+            _process_asset(asset, labels_folder, json_interface, flatten_properties=True)
 
         self.create_readme_kili_file(self.export_root_folder)
         self.make_archive(self.export_root_folder, output_filename)
@@ -90,11 +93,16 @@ class GeoJsonExporter(AbstractExporter):
         self.logger.warning(output_filename)
 
 
-def _process_asset(asset: dict, labels_folder: Path) -> None:
+def _process_asset(
+    asset: dict,
+    labels_folder: Path,
+    json_interface: dict | None = None,
+    flatten_properties: bool = False,
+) -> None:
     geojson_feature_collection = convert_from_kili_to_geojson_format(
-        asset["latestLabel"]["jsonResponse"]
+        asset["latestLabel"]["jsonResponse"], json_interface, flatten_properties
     )
-    filepath = labels_folder / f'{asset["externalId"]}.geojson'
+    filepath = labels_folder / f"{asset['externalId']}.geojson"
     filepath.parent.mkdir(parents=True, exist_ok=True)
     with open(filepath, "w", encoding="utf-8") as file:
         json.dump(geojson_feature_collection, file)
