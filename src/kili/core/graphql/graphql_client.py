@@ -4,6 +4,7 @@ import logging
 import os
 import threading
 import time
+import warnings
 from pathlib import Path
 from typing import Any, Optional, Union
 from urllib.parse import urlparse
@@ -325,6 +326,7 @@ class GraphQLClient:
             res = self._gql_client.execute(
                 document=document,
                 variable_values=variables,
+                get_execution_result=True,
                 extra_args={
                     "headers": {
                         **(self._gql_transport.headers or {}),
@@ -333,9 +335,24 @@ class GraphQLClient:
                 },
                 **kwargs,
             )
+
+            extensions = getattr(res, "extensions", None)
+            if isinstance(extensions, dict):
+                for item in extensions.get("deprecations") or []:
+                    warnings.warn(
+                        f"[Kili SDK] Deprecated GraphQL field used: "
+                        f"{item.get('path')} – {item.get('reason')}"
+                    )
+
             transport = self._gql_client.transport
             if transport:
                 headers = transport.response_headers  # pyright: ignore[reportAttributeAccessIssue]
                 returned_complexity = int(headers.get("x-complexity", 0)) if headers else 0
                 self.complexity_consumed += returned_complexity
-            return res
+
+            if res.data is None:
+                raise kili.exceptions.GraphQLError(
+                    error="GraphQL response contains no data",
+                )
+
+            return res.data
