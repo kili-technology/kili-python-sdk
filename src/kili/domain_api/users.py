@@ -35,6 +35,7 @@ class UsersNamespace(DomainNamespace):
     The namespace provides the following main operations:
     - list(): Query and list users
     - count(): Count users matching filters
+    - me(): Get the current user
     - create(): Create new users
     - update(): Update user properties
     - update_password(): Update user password with enhanced security validation
@@ -204,6 +205,23 @@ class UsersNamespace(DomainNamespace):
         """
         filter_kwargs = filter or {}
         return self._client.count_users(**filter_kwargs)
+
+    @typechecked
+    def me(self, fields: ListOrTuple[str] = ("email", "id", "firstname", "lastname")) -> dict:
+        """Get the current user.
+
+        Args:
+            fields: All the fields to request among the possible fields for the users.
+                See the documentation for all possible fields.
+
+        Returns:
+            A dict with the user fields chosen.
+
+        Examples:
+            >>> # Get the current user
+            >>> user = kili.users.me(fields=['id', 'email'])
+        """
+        return self._client.get_current_user(fields)
 
     @typechecked
     def create(

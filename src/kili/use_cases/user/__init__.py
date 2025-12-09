@@ -30,6 +30,10 @@ class UserUseCases(BaseUseCases):
         """Count users."""
         return self._kili_api_gateway.count_users(user_filters=filters)
 
+    def get_current_user(self, fields: ListOrTuple[str]):
+        """Get the current user."""
+        return self._kili_api_gateway.get_current_user(fields)
+
     def create_user(
         self,
         email: str,
