@@ -15,12 +15,14 @@ geojson_project_asset = {
             },
             "id": "20230713142445256-28071",
             "properties": {
+                "class": "BBox A",
+                "BBox job": "BBox A",
                 "kili": {
+                    "type": "rectangle",
                     "categories": [{"name": "B_BOX_A"}],
                     "children": {},
                     "job": "BBOX_DETECTION_JOB",
-                    "type": "rectangle",
-                }
+                },
             },
             "type": "Feature",
         },
@@ -39,12 +41,14 @@ geojson_project_asset = {
             },
             "id": "20230713142448596-95775",
             "properties": {
+                "class": "BBox A",
+                "BBox job": "BBox A",
                 "kili": {
+                    "type": "rectangle",
                     "categories": [{"name": "B_BOX_A"}],
                     "children": {},
                     "job": "BBOX_DETECTION_JOB",
-                    "type": "rectangle",
-                }
+                },
             },
             "type": "Feature",
         },
@@ -52,12 +56,14 @@ geojson_project_asset = {
             "geometry": {"coordinates": [4.398223125643078, 52.24806039693592], "type": "Point"},
             "id": "20230713142454008-23856",
             "properties": {
+                "class": "Point A",
+                "Point job": "Point A",
                 "kili": {
+                    "type": "marker",
                     "categories": [{"name": "POINT_A"}],
                     "children": {},
                     "job": "POINT_DETECTION_JOB",
-                    "type": "marker",
-                }
+                },
             },
             "type": "Feature",
         },
@@ -65,12 +71,14 @@ geojson_project_asset = {
             "geometry": {"coordinates": [4.3710296361584255, 52.241662846365564], "type": "Point"},
             "id": "20230713142503281-53174",
             "properties": {
+                "class": "Point A",
+                "Point job": "Point A",
                 "kili": {
+                    "type": "marker",
                     "categories": [{"name": "POINT_A"}],
                     "children": {},
                     "job": "POINT_DETECTION_JOB",
-                    "type": "marker",
-                }
+                },
             },
             "type": "Feature",
         },
@@ -78,12 +86,14 @@ geojson_project_asset = {
             "geometry": {"coordinates": [4.344001960634017, 52.24602952843428], "type": "Point"},
             "id": "20230713142504544-36453",
             "properties": {
+                "class": "Point A",
+                "Point job": "Point A",
                 "kili": {
+                    "type": "marker",
                     "categories": [{"name": "POINT_A"}],
                     "children": {},
                     "job": "POINT_DETECTION_JOB",
-                    "type": "marker",
-                }
+                },
             },
             "type": "Feature",
         },
@@ -107,12 +117,14 @@ geojson_project_asset = {
             },
             "id": "20230713142514505-569",
             "properties": {
+                "class": "Polygon A",
+                "Polygon job": "Polygon A",
                 "kili": {
+                    "type": "polygon",
                     "categories": [{"name": "POLYGON_A"}],
                     "children": {},
                     "job": "POLYGON_DETECTION_JOB",
-                    "type": "polygon",
-                }
+                },
             },
             "type": "Feature",
         },
@@ -131,12 +143,14 @@ geojson_project_asset = {
             },
             "id": "20230713142520574-39224",
             "properties": {
+                "class": "Polygon A",
+                "Polygon job": "Polygon A",
                 "kili": {
+                    "type": "polygon",
                     "categories": [{"name": "POLYGON_A"}],
                     "children": {},
                     "job": "POLYGON_DETECTION_JOB",
-                    "type": "polygon",
-                }
+                },
             },
             "type": "Feature",
         },
@@ -165,12 +179,14 @@ geojson_project_asset = {
             },
             "id": "20230713142557676-43208",
             "properties": {
+                "class": "Line A",
+                "Line job": "Line A",
                 "kili": {
+                    "type": "polyline",
                     "categories": [{"name": "LINE_A"}],
                     "children": {},
                     "job": "LINE_DETECTION_JOB",
-                    "type": "polyline",
-                }
+                },
             },
             "type": "Feature",
         },
@@ -188,12 +204,14 @@ geojson_project_asset = {
             },
             "id": "20230713142603466-75106",
             "properties": {
+                "class": "Line A",
+                "Line job": "Line A",
                 "kili": {
+                    "type": "polyline",
                     "categories": [{"name": "LINE_A"}],
                     "children": {},
                     "job": "LINE_DETECTION_JOB",
-                    "type": "polyline",
-                }
+                },
             },
             "type": "Feature",
         },
@@ -917,12 +935,14 @@ geojson_project_asset = {
             },
             "id": "20230713142654407-69669",
             "properties": {
+                "class": "Segmentation A",
+                "Segmentation job": "Segmentation A",
                 "kili": {
+                    "type": "semantic",
                     "categories": [{"name": "SEGMENTATION_A"}],
                     "children": {},
                     "job": "SEGMENTATION_JOB",
-                    "type": "semantic",
-                }
+                },
             },
             "type": "Feature",
         },
