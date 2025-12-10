@@ -692,6 +692,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kili.entrypoints.mutations.asset.__init__.MutationsAsset.skip_or_unskip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        skip_or_unskip()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.entrypoints.mutations.asset.__init__.MutationsAsset.update_properties_in_assets" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2688,6 +2699,17 @@
     <span class="md-ellipsis">
       
         set_metadata()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.entrypoints.mutations.asset.__init__.MutationsAsset.skip_or_unskip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        skip_or_unskip()
       
     </span>
   </a>
@@ -5726,6 +5748,42 @@ Only applicable if the project is in WorkflowV2.</p></td>
             <span class="p">)</span>
             <span class="n">result</span><span class="p">[</span><span class="s2">&quot;asset_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_in_queue</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">skip_or_unskip</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;skip&quot;</span><span class="p">,</span> <span class="s2">&quot;unskip&quot;</span><span class="p">],</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">reason</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Skip or unskip an asset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            action: The action you want to do. Either skip or unskip.</span>
+<span class="sd">            asset_id: ID of the asset you want to skip or unskip.</span>
+<span class="sd">            project_id: The project ID.</span>
+<span class="sd">            reason: The reason why you skip an asset. Only required if the action is `skip`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The asset ID of the asset modified. An error message if mutation failed.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.skip_or_unskip(</span>
+<span class="sd">            action=&quot;skip&quot;,</span>
+<span class="sd">            asset_id=&quot;ckg22d81s0jrh0885pdxfd03n&quot;,</span>
+<span class="sd">            project_id=&quot;ckg22d81r0jrg0885unmuswj8&quot;,</span>
+<span class="sd">            reason=&quot;Test&quot;</span>
+<span class="sd">            )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;skip&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">MissingArgumentError</span><span class="p">(</span><span class="s2">&quot;You must provide a reason to skip an asset&quot;</span><span class="p">)</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;reason&quot;</span><span class="p">:</span> <span class="n">reason</span><span class="p">,</span> <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span> <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}}}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_SKIP_ASSET</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;projectId&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;assetId&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UNSKIP_ASSET</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">asset_id</span>
 </code></pre></div>
         </details>
 
@@ -7183,6 +7241,126 @@ Each dictionary contains key/value pairs to be set as the asset's metadata.</p><
         <span class="n">asset_ids</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">resolved_asset_ids</span><span class="p">),</span>
         <span class="n">json_metadatas</span><span class="o">=</span><span class="n">json_metadatas</span><span class="p">,</span>
     <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kili.entrypoints.mutations.asset.__init__.MutationsAsset.skip_or_unskip" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">skip_or_unskip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Skip or unskip an asset.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>action</code></td>
+        <td><code>Literal[&#39;skip&#39;, &#39;unskip&#39;]</code></td>
+        <td><p>The action you want to do. Either skip or unskip.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>asset_id</code></td>
+        <td><code>str</code></td>
+        <td><p>ID of the asset you want to skip or unskip.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>The project ID.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>reason</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>The reason why you skip an asset. Only required if the action is <code>skip</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>str</code></td>
+      <td><p>The asset ID of the asset modified. An error message if mutation failed.</p></td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">skip_or_unskip</span><span class="p">(</span>
+<span class="n">action</span><span class="o">=</span><span class="s2">&quot;skip&quot;</span><span class="p">,</span>
+<span class="n">asset_id</span><span class="o">=</span><span class="s2">&quot;ckg22d81s0jrh0885pdxfd03n&quot;</span><span class="p">,</span>
+<span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;ckg22d81r0jrg0885unmuswj8&quot;</span><span class="p">,</span>
+<span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/entrypoints/mutations/asset/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">skip_or_unskip</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;skip&quot;</span><span class="p">,</span> <span class="s2">&quot;unskip&quot;</span><span class="p">],</span>
+    <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">reason</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Skip or unskip an asset.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        action: The action you want to do. Either skip or unskip.</span>
+<span class="sd">        asset_id: ID of the asset you want to skip or unskip.</span>
+<span class="sd">        project_id: The project ID.</span>
+<span class="sd">        reason: The reason why you skip an asset. Only required if the action is `skip`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The asset ID of the asset modified. An error message if mutation failed.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.skip_or_unskip(</span>
+<span class="sd">        action=&quot;skip&quot;,</span>
+<span class="sd">        asset_id=&quot;ckg22d81s0jrh0885pdxfd03n&quot;,</span>
+<span class="sd">        project_id=&quot;ckg22d81r0jrg0885unmuswj8&quot;,</span>
+<span class="sd">        reason=&quot;Test&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;skip&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">reason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MissingArgumentError</span><span class="p">(</span><span class="s2">&quot;You must provide a reason to skip an asset&quot;</span><span class="p">)</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;reason&quot;</span><span class="p">:</span> <span class="n">reason</span><span class="p">,</span> <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">,</span> <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}}}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_SKIP_ASSET</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;projectId&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;assetId&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UNSKIP_ASSET</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">asset_id</span>
 </code></pre></div>
         </details>
     </div>
