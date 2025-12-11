@@ -230,3 +230,19 @@ class UserClientMethods(BaseClientMethods):
             activated=activated,
             fields=("id",),
         )
+
+    @typechecked
+    def get_current_user(
+        self, fields: ListOrTuple[str] = ("email", "id", "firstname", "lastname")
+    ) -> dict:
+        # pylint: disable=line-too-long
+        """Get the current user.
+
+        Args:
+            fields: All the fields to request among the possible fields for the users.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/user) for all possible fields.
+
+        Returns:
+            A dict with the user fields chosen.
+        """
+        return UserUseCases(self.kili_api_gateway).get_current_user(fields)
