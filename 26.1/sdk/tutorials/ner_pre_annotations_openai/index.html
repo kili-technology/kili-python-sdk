@@ -1,0 +1,3146 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Kili Python SDK">
+      
+      
+      
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/26.1/sdk/tutorials/ner_pre_annotations_openai/">
+      
+      
+        <link rel="prev" href="../importing_labels/">
+      
+      
+        <link rel="next" href="../ocr_pre_annotations/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/kili_favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>OpenAI NER Pre-annotations - Python SDK</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Archia:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Archia";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-HRVEXSEWL0"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-HRVEXSEWL0",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-HRVEXSEWL0",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="kili" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-to-import-openai-ner-pre-annotations" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Python SDK" class="md-header__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../../assets/kili_logo_resized.webp" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Python SDK
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              OpenAI NER Pre-annotations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../.." class="md-tabs__link">
+          
+  
+  
+  Python SDK
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cli/" class="md-tabs__link">
+          
+  
+  
+  Command Line Interface
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../tutorials/" class="md-tabs__link">
+          
+  
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://docs.kili-technology.com/docs/introduction-to-kili-technology" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Product Documentation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://api-docs.kili-technology.com/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Documentation
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Python SDK" class="md-nav__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../../assets/kili_logo_resized.webp" alt="logo">
+
+    </a>
+    Python SDK
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python SDK
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python SDK
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../asset/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asset
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud_storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../event/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Event
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Issue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label_utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Utils
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label_parsing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Parsing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../organization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Organization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_user/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project User
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_version/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Version
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tag
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command Line Interface
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Command Line Interface
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_project_setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Project Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Assets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Importing Assets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_assets_and_metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_video_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Video Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_pdf_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PDF Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import_text_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rich Text Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_multilayer_geospatial_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Layer Geospatial Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../llm_static/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Static Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Labels
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Importing Labels
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_labels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Labels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenAI NER Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenAI NER Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-preparation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data preparation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connect-with-chatgpt-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connect with ChatGPT API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompt design
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-the-pre-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create the pre-annotations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#import-dataset-and-pre-annotations-to-kili" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Import dataset and pre-annotations to Kili
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-annotations-quality-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-annotations quality evaluation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ocr_pre_annotations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OCR Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pixel_level_masks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference_labels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inference Labels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finetuning_dinov2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DINOv2 Classification Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import_labels_from_shapefiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Import labels from shapefiles (GIS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import_labels_from_geojson/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Import labels from GeoJSON (GIS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Converting Labels
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Converting Labels
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../medical_imaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DICOM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_coco/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COCO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_pascalvoc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PascalVOC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../set_up_workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Managing Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting Project Data
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Exporting Project Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../export_a_kili_project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../label_parsing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parsing Labels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../llm_dynamic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Dynamic Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setting Up Plugins
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Setting Up Plugins
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developing Plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin Example - Programmatic QA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins Library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../webhooks_example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integrations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integrations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vertex_ai_automl_od/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vertex AI AutoML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://docs.kili-technology.com/docs/introduction-to-kili-technology" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Product Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://api-docs.kili-technology.com/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-preparation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data preparation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connect-with-chatgpt-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connect with ChatGPT API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompt design
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-the-pre-annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create the pre-annotations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#import-dataset-and-pre-annotations-to-kili" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Import dataset and pre-annotations to Kili
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-annotations-quality-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-annotations quality evaluation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<!-- FILE AUTO GENERATED BY docs/utils.py DO NOT EDIT DIRECTLY -->
+<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/main/recipes/ner_pre_annotations_openai.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<h1 id="how-to-import-openai-ner-pre-annotations">How to import OpenAI NER pre-annotations</h1>
+<p>This tutorial explains how to use a powerful OpenAI Large Language Model (LLM) to generate pre-annotations, which will then be imported into a Named Entity Recognition (NER) Kili project.</p>
+<p>Nowadays, LLMs are capable of performing many NLP tasks, including NER, without being explicitly trained on them, which is known as zero-shot learning.</p>
+<p>By using a well-designed prompt, we can generate high-quality pre-annotations for the NER task, as demonstrated in the pre-annotations quality evaluation section of this tutorial.</p>
+<p>Throughout this tutorial, we will thus:</p>
+<ul>
+<li>Load a dataset CoNLL2003 from the HuggingFace datasets library.</li>
+<li>Learn how to use the OpenAI API to generate pre-annotations.</li>
+<li>Import data and labels into a NER project on Kili.</li>
+<li>Evaluate the quality of the generated pre-annotations.</li>
+</ul>
+<h2 id="setup">Setup</h2>
+<p>Let's start this tutorial by installing the packages we will need later on.</p>
+<div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">kili</span> <span class="n">datasets</span> <span class="n">evaluate</span> <span class="n">ipywidgets</span> <span class="n">openai</span> <span class="n">scikit</span><span class="o">-</span><span class="n">learn</span> <span class="n">numpy</span> <span class="n">rich</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">getpass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">openai</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+</code></pre></div>
+<h2 id="data-preparation">Data preparation</h2>
+<p>In this tutorial, we will use the CoNLL2003 dataset from the Hugging Face repository. This dataset contains more than 10,000 sentences annotated with named entities.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+</code></pre></div>
+<p>To speed up the process, we will use a limited number of samples. We will also remove sentences that do not contain enough words.</p>
+<div class="highlight"><pre><span></span><code><span class="n">MAX_DATAPOINTS</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">MIN_NB_TOKENS_PER_SENTENCE</span> <span class="o">=</span> <span class="mi">9</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;conll2003&quot;</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">datapoint</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">MIN_NB_TOKENS_PER_SENTENCE</span>
+<span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">MAX_DATAPOINTS</span><span class="p">))</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+</code></pre></div>
+<pre><code>Dataset({
+    features: ['id', 'tokens', 'pos_tags', 'chunk_tags', 'ner_tags'],
+    num_rows: 20
+})
+</code></pre>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</code></pre></div>
+<pre><code>{'id': '0', 'tokens': ['EU', 'rejects', 'German', 'call', 'to', 'boycott', 'British', 'lamb', '.'], 'pos_tags': [22, 42, 16, 21, 35, 37, 16, 21, 7], 'chunk_tags': [11, 21, 11, 12, 21, 22, 11, 12, 0], 'ner_tags': [3, 0, 7, 0, 0, 0, 7, 0, 0]}
+{'id': '3', 'tokens': ['The', 'European', 'Commission', 'said', 'on', 'Thursday', 'it', 'disagreed', 'with', 'German', 'advice', 'to', 'consumers', 'to', 'shun', 'British', 'lamb', 'until', 'scientists', 'determine', 'whether', 'mad', 'cow', 'disease', 'can', 'be', 'transmitted', 'to', 'sheep', '.'], 'pos_tags': [12, 22, 22, 38, 15, 22, 28, 38, 15, 16, 21, 35, 24, 35, 37, 16, 21, 15, 24, 41, 15, 16, 21, 21, 20, 37, 40, 35, 21, 7], 'chunk_tags': [11, 12, 12, 21, 13, 11, 11, 21, 13, 11, 12, 13, 11, 21, 22, 11, 12, 17, 11, 21, 17, 11, 12, 12, 21, 22, 22, 13, 11, 0], 'ner_tags': [0, 3, 4, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+{'id': '4', 'tokens': ['Germany', "'s", 'representative', 'to', 'the', 'European', 'Union', "'s", 'veterinary', 'committee', 'Werner', 'Zwingmann', 'said', 'on', 'Wednesday', 'consumers', 'should', 'buy', 'sheepmeat', 'from', 'countries', 'other', 'than', 'Britain', 'until', 'the', 'scientific', 'advice', 'was', 'clearer', '.'], 'pos_tags': [22, 27, 21, 35, 12, 22, 22, 27, 16, 21, 22, 22, 38, 15, 22, 24, 20, 37, 21, 15, 24, 16, 15, 22, 15, 12, 16, 21, 38, 17, 7], 'chunk_tags': [11, 11, 12, 13, 11, 12, 12, 11, 12, 12, 12, 12, 21, 13, 11, 12, 21, 22, 11, 13, 11, 1, 13, 11, 17, 11, 12, 12, 21, 1, 0], 'ner_tags': [5, 0, 0, 0, 0, 3, 4, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0]}
+</code></pre>
+<p>Here is the meaning of each feature in the dataset:</p>
+<ul>
+<li><strong>id</strong>: A unique identifier for each token in a sentence.</li>
+<li><strong>tokens</strong>: The tokens (words or punctuation marks) in a sentence.</li>
+<li><strong>pos_tags</strong>: Part-of-speech tags for each token in the sentence. Part-of-speech tagging is the process of assigning a tag to each word in a sentence that indicates its part of speech (e.g., noun, verb, adjective, etc.).</li>
+<li><strong>chunk_tags</strong>: Chunking tags for each token in the sentence. Chunking is the process of grouping words into meaningful phrases based on their syntactic structure.</li>
+<li><strong>ner_tags</strong>: Named Entity Recognition (NER) tags for each token in the sentence. NER is the task of identifying named entities in text and classifying them into pre-defined categories such as person, organization, location, etc.</li>
+</ul>
+<p>The sentences are split into tokens. We can regroup the tokens for later use:</p>
+<div class="highlight"><pre><span></span><code><span class="n">fix_joined_tokens_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot; .&quot;</span><span class="p">:</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;( &quot;</span><span class="p">:</span> <span class="s2">&quot;(&quot;</span><span class="p">,</span> <span class="s2">&quot; )&quot;</span><span class="p">:</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot; &#39;s &quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;s &quot;</span><span class="p">,</span> <span class="s2">&quot;s &#39; &quot;</span><span class="p">:</span> <span class="s2">&quot;s&#39; &quot;</span><span class="p">}</span>
+
+<span class="n">sentence_column</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">datapoint</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+    <span class="n">sentence</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">before</span><span class="p">,</span> <span class="n">after</span> <span class="ow">in</span> <span class="n">fix_joined_tokens_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">sentence</span> <span class="o">=</span> <span class="n">sentence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="p">)</span>
+    <span class="n">sentence_column</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;sentence&quot;</span><span class="p">,</span> <span class="n">sentence_column</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div>
+<pre><code>{'id': '0', 'tokens': ['EU', 'rejects', 'German', 'call', 'to', 'boycott', 'British', 'lamb', '.'], 'pos_tags': [22, 42, 16, 21, 35, 37, 16, 21, 7], 'chunk_tags': [11, 21, 11, 12, 21, 22, 11, 12, 0], 'ner_tags': [3, 0, 7, 0, 0, 0, 7, 0, 0], 'sentence': 'EU rejects German call to boycott British lamb.'}
+</code></pre>
+<div class="highlight"><pre><span></span><code><span class="n">NER_TAGS_ONTOLOGY</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;O&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;B-PERSON&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;I-PERSON&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;B-ORGANIZATION&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;I-ORGANIZATION&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">&quot;B-LOCATION&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;I-LOCATION&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">&quot;B-MISCELLANEOUS&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s2">&quot;I-MISCELLANEOUS&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>NER_TAGS_ONTOLOGY</code> is a dictionary that maps the named entity tags in the CoNLL2003 dataset to integer labels. Here is the meaning of each key-value pair in the dictionary:</p>
+<ul>
+<li><strong>O</strong>: Represents the tag "O" which means that the token is not part of a named entity.</li>
+<li><strong>B-PERSON</strong>: Represents the beginning of a person.</li>
+<li><strong>I-PERSON</strong>: Represents a token inside a person.</li>
+<li><strong>B-ORGANIZATION</strong>: Represents the beginning of an organization.</li>
+<li><strong>I-ORGANIZATION</strong>: Represents a token inside an organization.</li>
+<li><strong>B-LOCATION</strong>: Represents the beginning of a location.</li>
+<li><strong>I-LOCATION</strong>: Represents a token inside a location.</li>
+<li><strong>B-MISCELLANEOUS</strong>: Represents the beginning of a miscellaneous.</li>
+<li><strong>I-MISCELLANEOUS</strong>: Represents a token inside a miscellaneous.</li>
+</ul>
+<p>During the training of a NER model, the entity names will be converted to integer labels using such a dictionary.</p>
+<h2 id="connect-with-chatgpt-api">Connect with ChatGPT API</h2>
+<p>Let's use the OpenAI API to get the pre-annotations for our dataset.</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="s2">&quot;OPENAI_API_KEY&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+    <span class="n">OPENAI_API_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OPENAI_API_KEY&quot;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">OPENAI_API_KEY</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s2">&quot;Please enter your OpenAI API key: &quot;</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">openai</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">OPENAI_API_KEY</span>
+</code></pre></div>
+<p>We can now define the parameters that will be used during the query to OpenAI model:</p>
+<ul>
+<li><strong>model</strong>: the model that will be used to generate the pre-annotations. The full list is available under this <a href="https://platform.openai.com/docs/models/overview">link</a>.</li>
+<li><strong>temperature</strong>: the temperature of the model. The higher the temperature, the more random the text. The lower the temperature, the more likely it is to predict the next word. The default value is 0.7. It should be between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.</li>
+<li><strong>max_tokens</strong>: the maximum number of tokens to generate. The default value is 64. It should be between 1 and 4096, depending on the model.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">openai_query_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;text-davinci-003&quot;</span><span class="p">,</span> <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ask_openai</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">openai_query_params</span><span class="o">=</span><span class="n">openai_query_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">Completion</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">openai_query_params</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
+</code></pre></div>
+<p>Let's test the API with a simple prompt:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">ask_openai</span><span class="p">(</span><span class="s2">&quot;Hello, are you here?&quot;</span><span class="p">))</span>
+</code></pre></div>
+<pre><code>Yes, I am here. How can I help you?
+</code></pre>
+<h2 id="prompt-design">Prompt design</h2>
+<p>To get pre-annotations for our dataset, we need to create a prompt that tells the model what to do:</p>
+<div class="highlight"><pre><span></span><code><span class="n">base_prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;In the sentence below, give me the list of:</span>
+<span class="s2">- organization named entity</span>
+<span class="s2">- location named entity</span>
+<span class="s2">- person named entity</span>
+<span class="s2">- miscellaneous named entity.</span>
+<span class="s2">Format the output in json with the following keys:</span>
+<span class="s2">- ORGANIZATION for organization named entity</span>
+<span class="s2">- LOCATION for location named entity</span>
+<span class="s2">- PERSON for person named entity</span>
+<span class="s2">- MISCELLANEOUS for miscellaneous named entity.</span>
+<span class="s2">Sentence below:</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</code></pre></div>
+<p>Let's see if the model understands the prompt well on a simple example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">test_sentence</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;Elon Musk is the CEO of Tesla and SpaceX. He was born in South Africa and now lives in the&quot;</span>
+    <span class="s2">&quot; USA. He is one of the founders of OpenAI.&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">ask_openai</span><span class="p">(</span><span class="n">base_prompt</span> <span class="o">+</span> <span class="n">test_sentence</span><span class="p">))</span>
+</code></pre></div>
+<pre><code>{
+  "ORGANIZATION": ["Tesla", "SpaceX", "OpenAI"],
+  "LOCATION": ["South Africa", "USA"],
+  "PERSON": ["Elon Musk"],
+  "MISCELLANEOUS": []
+}
+</code></pre>
+<p>Looks really good! Let's now process all sentences in our dataset with the previous prompt.</p>
+<h2 id="create-the-pre-annotations">Create the pre-annotations</h2>
+<p>In the code below, we will use the OpenAI API to get the pre-annotations for each sentence in our dataset.</p>
+<div class="highlight"><pre><span></span><code><span class="n">openai_answers</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">datapoint</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+    <span class="n">sentence</span> <span class="o">=</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;sentence&quot;</span><span class="p">]</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">ask_openai</span><span class="p">(</span><span class="n">base_prompt</span> <span class="o">+</span> <span class="n">sentence</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">answer_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrong json formatting:</span><span class="se">\n</span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">answer_json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ORGANIZATION&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;LOCATION&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;PERSON&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;MISCELLANEOUS&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">openai_answers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">answer_json</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">openai_answers</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+</code></pre></div>
+<pre><code>[{'ORGANIZATION': ['EU', 'German'], 'LOCATION': ['British'], 'PERSON': [], 'MISCELLANEOUS': ['lamb']}, {'ORGANIZATION': ['European Commission'], 'LOCATION': ['German', 'British'], 'PERSON': [], 'MISCELLANEOUS': ['mad cow disease']}, {'ORGANIZATION': ["European Union's veterinary committee"], 'LOCATION': ['Germany', 'Britain'], 'PERSON': ['Werner Zwingmann'], 'MISCELLANEOUS': []}]
+</code></pre>
+<p>We need to sanitize the json to make sure that the values are of type list:</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">openai_answers</span><span class="p">):</span>
+    <span class="n">json_dict</span> <span class="o">=</span> <span class="n">openai_answers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">]]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown value type &#39;</span><span class="si">{</span><span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39; for value &#39;</span><span class="si">{</span><span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</code></pre></div>
+<h2 id="import-dataset-and-pre-annotations-to-kili">Import dataset and pre-annotations to Kili</h2>
+<p>Now that we have both the data and the pre-annotations, we can import them to a Kili project.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
+    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Below, we define the ontology (json interface) of the project. We define the 4 classes as well as their corresponding colors:</p>
+<div class="highlight"><pre><span></span><code><span class="n">COLORS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#1f77b4&quot;</span><span class="p">,</span> <span class="s2">&quot;#ff7f0e&quot;</span><span class="p">,</span> <span class="s2">&quot;#2ca02c&quot;</span><span class="p">,</span> <span class="s2">&quot;#d62728&quot;</span><span class="p">]</span>
+
+<span class="n">ENTITY_TYPES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="s2">&quot;Person&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;ORGANIZATION&quot;</span><span class="p">,</span> <span class="s2">&quot;Organization&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;LOCATION&quot;</span><span class="p">,</span> <span class="s2">&quot;Location&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;MISCELLANEOUS&quot;</span><span class="p">,</span> <span class="s2">&quot;Miscellaneous&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">ENTITY_TYPES_WITH_COLORS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">entity_type</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">entity_type</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">entity_type</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ENTITY_TYPES</span><span class="p">,</span> <span class="n">COLORS</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ENTITY_TYPES_WITH_COLORS</span><span class="p">)</span>
+</code></pre></div>
+<pre><code>[('PERSON', 'Person', '#1f77b4'), ('ORGANIZATION', 'Organization', '#ff7f0e'), ('LOCATION', 'Location', '#2ca02c'), ('MISCELLANEOUS', 'Miscellaneous', '#d62728')]
+</code></pre>
+<div class="highlight"><pre><span></span><code><span class="n">json_interface</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;NAMED_ENTITIES_RECOGNITION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;NAMED_ENTITIES_RECOGNITION&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name_pretty</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">color</span><span class="p">}</span>
+                    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">name_pretty</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">ENTITY_TYPES_WITH_COLORS</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Let's now create the project with its ontology:</p>
+<div class="highlight"><pre><span></span><code><span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: CoNLL Named Entity Recognition with OpenAI pre-annotations&quot;</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;TEXT&quot;</span><span class="p">,</span>
+    <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+</code></pre></div>
+<p>We now import the sentences to the project:</p>
+<div class="highlight"><pre><span></span><code><span class="n">external_id_array</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">content_array</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">datapoint</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+    <span class="n">sentence</span> <span class="o">=</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;sentence&quot;</span><span class="p">]</span>
+    <span class="n">content_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+    <span class="n">external_id_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">content_array</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+</code></pre></div>
+<pre><code>['EU rejects German call to boycott British lamb.', 'The European Commission said on Thursday it disagreed with German advice to consumers to shun British lamb until scientists determine whether mad cow disease can be transmitted to sheep.', "Germany's representative to the European Union's veterinary committee Werner Zwingmann said on Wednesday consumers should buy sheepmeat from countries other than Britain until the scientific advice was clearer."]
+['0', '3', '4']
+</code></pre>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="n">content_array</span><span class="p">,</span> <span class="n">external_id_array</span><span class="o">=</span><span class="n">external_id_array</span>
+<span class="p">)</span>
+</code></pre></div>
+<pre><code>{'id': 'clf14l26401or0jv4e0d7d9ge'}
+</code></pre>
+<p>If you go to the project page, you should be able to see your assets:</p>
+<p><img alt="image.webp" src="data:image/webp;base64,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" /></p>
+<p>And on the labeling interface, you will see the sentence and the ontology:</p>
+<p><img alt="image.webp" src="data:image/webp;base64,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" /></p>
+<p>We can finally import our OpenAI-generated pre-annotations!</p>
+<div class="highlight"><pre><span></span><code><span class="n">json_response_array</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">datapoint</span><span class="p">,</span> <span class="n">sentence_annotations</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">openai_answers</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">full_sentence</span> <span class="o">=</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;sentence&quot;</span><span class="p">]</span>
+    <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of annotations for the sentence</span>
+    <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">ENTITY_TYPES</span><span class="p">:</span>
+        <span class="n">sentence_annotations_cat</span> <span class="o">=</span> <span class="n">sentence_annotations</span><span class="p">[</span><span class="n">category</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">sentence_annotations_cat</span><span class="p">:</span>
+            <span class="n">begin_offset</span> <span class="o">=</span> <span class="n">full_sentence</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">begin_offset</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Cannot find offset of &#39;</span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s2">&#39; in sentence &#39;</span><span class="si">{</span><span class="n">full_sentence</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="n">annotation</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">category</span><span class="p">}],</span>
+                <span class="s2">&quot;beginOffset&quot;</span><span class="p">:</span> <span class="n">begin_offset</span><span class="p">,</span>
+                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+
+    <span class="n">json_resp</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;NAMED_ENTITIES_RECOGNITION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">}}</span>
+    <span class="n">json_response_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">json_resp</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">json_response_array</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div>
+<pre><code>{'NAMED_ENTITIES_RECOGNITION_JOB': {'annotations': [{'categories': [{'name': 'ORGANIZATION'}], 'beginOffset': 0, 'content': 'EU'}, {'categories': [{'name': 'ORGANIZATION'}], 'beginOffset': 11, 'content': 'German'}, {'categories': [{'name': 'LOCATION'}], 'beginOffset': 34, 'content': 'British'}, {'categories': [{'name': 'MISCELLANEOUS'}], 'beginOffset': 42, 'content': 'lamb'}]}}
+</code></pre>
+<p>We then import the annotations using the <code>kili.create_predictions()</code> method:</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">create_predictions</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="p">,</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="n">external_id_array</span><span class="p">,</span>
+    <span class="n">json_response_array</span><span class="o">=</span><span class="n">json_response_array</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="n">openai_query_params</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>
+<pre><code>{'id': 'clf14l26401or0jv4e0d7d9ge'}
+</code></pre>
+<p>In the main project page, you should now be able to see that the assets have been pre-annotated with the model you chose before:</p>
+<p><img alt="image.webp" src="data:image/webp;base64,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" /></p>
+<p>On the labeling interface for a specific asset, you can see the pre-annotations:</p>
+<p><img alt="image.webp" src="data:image/webp;base64,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" /></p>
+<p>Great! We have successfully pre-annotated our dataset. Looks like this solution has the potential to save us a lot of time in future projects.</p>
+<h2 id="pre-annotations-quality-evaluation">Pre-annotations quality evaluation</h2>
+<p>Because OpenAI-generated pre-annotations are not perfect, it would be great to have a way to measure the model's accuracy.</p>
+<p>Since our dataset CoNLL2003 has been annotated, we can easily evaluate the quality of the pre-annotations generated by OpenAI.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_sentence_annotations</span><span class="p">(</span><span class="n">sentence_annotations</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maps a token to its NER tag (B-ORGANIZATION, I-ORGANIZATION, etc.) class value.&quot;&quot;&quot;</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">ENTITY_TYPES</span><span class="p">:</span>
+        <span class="n">sentence_annotations_cat</span> <span class="o">=</span> <span class="n">sentence_annotations</span><span class="p">[</span><span class="n">category</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">sentence_annotations_cat</span><span class="p">:</span>
+            <span class="n">content_split</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">content_split</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ret</span><span class="p">[</span><span class="n">token</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NER_TAGS_ONTOLOGY</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;B-</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ret</span><span class="p">[</span><span class="n">token</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NER_TAGS_ONTOLOGY</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;I-</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+
+<span class="n">references</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">datapoint</span><span class="p">,</span> <span class="n">sentence_annotations</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">openai_answers</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">references</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;ner_tags&quot;</span><span class="p">])</span>
+
+    <span class="n">sentence_annotations</span> <span class="o">=</span> <span class="n">format_sentence_annotations</span><span class="p">(</span><span class="n">sentence_annotations</span><span class="p">)</span>
+    <span class="n">ner_tags_predicted</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">sentence_annotations</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentence_annotations</span><span class="p">[</span><span class="n">token</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ner_tags_predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentence_annotations</span><span class="p">[</span><span class="n">token</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">del</span> <span class="n">sentence_annotations</span><span class="p">[</span><span class="n">token</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ner_tags_predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NER_TAGS_ONTOLOGY</span><span class="p">[</span><span class="s2">&quot;O&quot;</span><span class="p">])</span>
+    <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ner_tags_predicted</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;tokens&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">references</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">NER_TAGS_ONTOLOGY</span><span class="p">)</span>
+</code></pre></div>
+<pre><code>['EU', 'rejects', 'German', 'call', 'to', 'boycott', 'British', 'lamb', '.']
+[3, 0, 7, 0, 0, 0, 7, 0, 0]
+[3, 0, 3, 0, 0, 0, 5, 7, 0]
+{'O': 0, 'B-PERSON': 1, 'I-PERSON': 2, 'B-ORGANIZATION': 3, 'I-ORGANIZATION': 4, 'B-LOCATION': 5, 'I-LOCATION': 6, 'B-MISCELLANEOUS': 7, 'I-MISCELLANEOUS': 8}
+</code></pre>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">flatten_list</span><span class="p">(</span><span class="n">list_</span><span class="p">):</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">list_</span><span class="p">:</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sublist</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+
+<span class="n">references</span> <span class="o">=</span> <span class="n">flatten_list</span><span class="p">(</span><span class="n">references</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">flatten_list</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="n">references</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">references</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">f1_score</span>
+</code></pre></div>
+<p>We will use the F1 score to report the results.</p>
+<div class="highlight"><pre><span></span><code><span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Results&quot;</span><span class="p">)</span>
+
+<span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Class&quot;</span><span class="p">)</span>
+<span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;F1&quot;</span><span class="p">)</span>
+<span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Nb samples&quot;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">class_value</span> <span class="ow">in</span> <span class="n">NER_TAGS_ONTOLOGY</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">references</span> <span class="o">==</span> <span class="n">class_value</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">predictions</span> <span class="o">==</span> <span class="n">class_value</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+        <span class="n">class_name</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">y_true</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">end_section</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="c1"># Group tokens regardless of their positions in the entities</span>
+<span class="n">NER_TAGS_ONTOLOGY_GROUPED</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;PERSON&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="s2">&quot;ORGANIZATION&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="s2">&quot;LOCATION&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="s2">&quot;MISCELLANEOUS&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="k">for</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">class_values</span> <span class="ow">in</span> <span class="n">NER_TAGS_ONTOLOGY_GROUPED</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">references</span> <span class="o">==</span> <span class="n">class_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">references</span> <span class="o">==</span> <span class="n">class_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">predictions</span> <span class="o">==</span> <span class="n">class_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">predictions</span> <span class="o">==</span> <span class="n">class_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+        <span class="n">class_name</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">y_true</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold green&quot;</span><span class="p">,</span>
+        <span class="n">end_section</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+    <span class="s2">&quot;All&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f1_score</span><span class="p">(</span><span class="n">references</span><span class="p">,</span><span class="w"> </span><span class="n">predictions</span><span class="p">,</span><span class="w"> </span><span class="n">average</span><span class="o">=</span><span class="s1">&#39;weighted&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">references</span><span class="p">)</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold bright_red&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+<span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+</code></pre></div>
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-style: italic">                 Results                  </span>
+┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> Class           </span>┃<span style="font-weight: bold"> F1      </span>┃<span style="font-weight: bold"> Nb samples </span>┃
+┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━┩
+│ O               │   93.4% │    468     │
+├─────────────────┼─────────┼────────────┤
+│ B-PERSON        │   90.9% │     12     │
+├─────────────────┼─────────┼────────────┤
+│ I-PERSON        │  100.0% │     10     │
+├─────────────────┼─────────┼────────────┤
+│ B-ORGANIZATION  │   58.8% │     12     │
+├─────────────────┼─────────┼────────────┤
+│ I-ORGANIZATION  │   44.4% │      8     │
+├─────────────────┼─────────┼────────────┤
+│ B-LOCATION      │   71.4% │     14     │
+├─────────────────┼─────────┼────────────┤
+│ I-LOCATION      │    0.0% │      0     │
+├─────────────────┼─────────┼────────────┤
+│ B-MISCELLANEOUS │   10.3% │     15     │
+├─────────────────┼─────────┼────────────┤
+│ I-MISCELLANEOUS │   31.2% │      5     │
+├─────────────────┼─────────┼────────────┤
+│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold"> PERSON          </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   95.2% </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">     22     </span>│
+├─────────────────┼─────────┼────────────┤
+│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold"> ORGANIZATION    </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   53.8% </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">     20     </span>│
+├─────────────────┼─────────┼────────────┤
+│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold"> LOCATION        </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   71.4% </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">     14     </span>│
+├─────────────────┼─────────┼────────────┤
+│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold"> MISCELLANEOUS   </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">   19.7% </span>│<span style="color: #008000; text-decoration-color: #008000; font-weight: bold">     20     </span>│
+├─────────────────┼─────────┼────────────┤
+│<span style="color: #ff0000; text-decoration-color: #ff0000; font-weight: bold"> All             </span>│<span style="color: #ff0000; text-decoration-color: #ff0000; font-weight: bold">   88.6% </span>│<span style="color: #ff0000; text-decoration-color: #ff0000; font-weight: bold">    544     </span>│
+└─────────────────┴─────────┴────────────┘
+</pre>
+
+<p>Quite good!</p>
+<p>As we can see, the pre-annotations are not perfect, but the LLM seems to be able to generate pre-annotations that are good enough to help us speed up the labelling process in future projects.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>In this tutorial, we have seen how to use the OpenAI API to generate pre-annotations for a dataset. We have also seen how to import the data and the pre-annotations to a Kili project, and how to evaluate the quality of these pre-annotations.</p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+      
+        <script src="../../../extra_javascript/katex.js"></script>
+      
+    
+  </body>
+</html>

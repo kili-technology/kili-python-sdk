@@ -1,0 +1,3011 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Kili Python SDK">
+      
+      
+      
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/26.1/sdk/tutorials/inference_labels/">
+      
+      
+        <link rel="prev" href="../pixel_level_masks/">
+      
+      
+        <link rel="next" href="../finetuning_dinov2/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/kili_favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Inference Labels - Python SDK</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Archia:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Archia";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-HRVEXSEWL0"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-HRVEXSEWL0",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-HRVEXSEWL0",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="kili" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-to-import-inference-labels" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Python SDK" class="md-header__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../../assets/kili_logo_resized.webp" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Python SDK
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Inference Labels
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../.." class="md-tabs__link">
+          
+  
+  
+  Python SDK
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cli/" class="md-tabs__link">
+          
+  
+  
+  Command Line Interface
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../tutorials/" class="md-tabs__link">
+          
+  
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://docs.kili-technology.com/docs/introduction-to-kili-technology" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Product Documentation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://api-docs.kili-technology.com/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Documentation
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Python SDK" class="md-nav__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../../assets/kili_logo_resized.webp" alt="logo">
+
+    </a>
+    Python SDK
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python SDK
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python SDK
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../asset/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asset
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud_storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../event/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Event
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Issue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label_utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Utils
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label_parsing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Parsing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../organization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Organization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_user/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project User
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_version/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Version
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tag
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command Line Interface
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Command Line Interface
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_project_setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Project Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Assets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Importing Assets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_assets_and_metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_video_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Video Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_pdf_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PDF Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import_text_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rich Text Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_multilayer_geospatial_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Layer Geospatial Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../llm_static/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Static Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Labels
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Importing Labels
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_labels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Labels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ner_pre_annotations_openai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenAI NER Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ocr_pre_annotations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OCR Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pixel_level_masks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inference Labels
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inference Labels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agreement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agreement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-cases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use cases
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#in-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        In practice
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="In practice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-case-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use case 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-case-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use case 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finetuning_dinov2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DINOv2 Classification Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import_labels_from_shapefiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Import labels from shapefiles (GIS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import_labels_from_geojson/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Import labels from GeoJSON (GIS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Converting Labels
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Converting Labels
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../medical_imaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DICOM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_coco/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COCO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_pascalvoc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PascalVOC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../set_up_workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Managing Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting Project Data
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Exporting Project Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../export_a_kili_project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../label_parsing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parsing Labels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../llm_dynamic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Dynamic Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setting Up Plugins
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Setting Up Plugins
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developing Plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin Example - Programmatic QA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins Library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../webhooks_example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integrations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integrations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vertex_ai_automl_od/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vertex AI AutoML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://docs.kili-technology.com/docs/introduction-to-kili-technology" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Product Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://api-docs.kili-technology.com/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agreement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agreement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-cases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use cases
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#in-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        In practice
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="In practice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-case-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use case 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-case-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use case 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<!-- FILE AUTO GENERATED BY docs/utils.py DO NOT EDIT DIRECTLY -->
+<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/main/recipes/inference_labels.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<h1 id="how-to-import-inference-labels">How to import inference labels</h1>
+<p>In this tutorial, we will walk through the process of using Kili to evaluate the performance of a machine learning model in production.</p>
+<p>We will learn how to push model-generated labels to Kili and how to visualize their quality.</p>
+<div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">kili</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
+    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="context">Context</h2>
+<h3 id="agreement">Agreement</h3>
+<p>Let's say you have a trained machine learning model <span class="arithmatex">\(m\)</span>, which can, given data <span class="arithmatex">\(x\)</span>, output a prediction (i.e., an inference label): <span class="arithmatex">\(\hat{y} = m(x)\)</span>.</p>
+<p>What you will probably want to do is monitor the quality of such predictions, as the model evolves.
+Kili allows you to better monitor and iterate on your model, thanks to the concept of agreement.
+An agreement is a quantitative measure of similarity between two different labels.
+In Kili, there are three main features derived from agreement:</p>
+<ul>
+<li><a href="https://docs.kili-technology.com/docs/consensus-overview"><strong>Consensus</strong></a>, which is the agreement between two labelers.</li>
+<li><a href="https://docs.kili-technology.com/docs/honeypot-overview"><strong>Honeypot</strong></a>, which is the agreement between a "super human annotator" and a labeler.</li>
+<li><strong>Inference</strong>, which is the agreement between a model-generated label and a human.</li>
+</ul>
+<p>Those numbers can be monitored from the <a href="https://docs.kili-technology.com/docs/queue-page">queue page</a> or the <a href="https://docs.kili-technology.com/docs/analytics-page">analytics page</a>. You can find how the agreement is computed <a href="https://docs.kili-technology.com/docs/calculation-rules-for-quality-metrics">here</a>.</p>
+<p>In this tutorial, we will put an emphasis on <strong>Inference</strong>.</p>
+<h3 id="use-cases">Use cases</h3>
+<p>We identify two main use cases for the use of <strong>inference</strong> labels.</p>
+<p>The first use case is when you have a model in production.
+When it receives assets, it automatically feeds a Kili project with both the asset and the predicted label.
+You also have human workforce whose job is to monitor the quality of the model.
+They manually label a portion of the data after it had been pre-labeled by the model.
+When a human submits a label, the inference score (model vs. human) for that label is automatically computed.
+Low inference scores can indicate either a model performing badly on some kind of data, or a disagreement between humans and the model.
+This can help you to:</p>
+<ul>
+<li>Detect data drift.</li>
+<li>Identify data on which the model needs improvement.</li>
+</ul>
+<p>The second use case is when you used Kili to label data and you have the first iteration of your model.
+You can now use a part of the labeled dataset as testing data, and quickly get test scores.
+Of course, you could use your own metrics (rather than our own definition of agreement), but using Kili lets you quickly filter and indentify the assets where your model differs the most from the ground truth.</p>
+<ul>
+<li>When you push an inference-type label to an asset, the inference score is automatically computed for the most recent label added to this asset.</li>
+<li>You can filter on low inference score, to understand why your model is failing, and how to fix it (getting more data, splitting or merging categories, etc.).</li>
+</ul>
+<p>With Kili, you can quickly iterate on the data used to train your model, to get a better model faster.</p>
+<h2 id="in-practice">In practice</h2>
+<h3 id="use-case-1">Use case 1</h3>
+<p>We start by creating a project and defining a model which, given an asset input <span class="arithmatex">\(x\)</span>, returns a category (random in our example):</p>
+<div class="highlight"><pre><span></span><code><span class="n">json_interface</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;RED&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Red&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;BLACK&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Black&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;WHITE&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;White&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;GREY&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Grey&quot;</span><span class="p">},</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Color&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">project_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Project demo inference&quot;</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">,</span>
+    <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
+<span class="p">)[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+</code></pre></div>
+<p>Then we can simulate that our model is in production.
+Each time it receives an asset, we upload it to Kili along with the predicted label.</p>
+<div class="highlight"><pre><span></span><code><span class="n">stream_of_assets</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg&quot;</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/grey_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;grey_car.jpg&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/white_car.jpg&quot;</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;white_car.jpg&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/red_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;red_car.jpg&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>We import the assets into the Kili project:</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>We simulate some model predictions:</p>
+<div class="highlight"><pre><span></span><code><span class="n">predictions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;WHITE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;grey_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;GREY&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;white_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;RED&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;red_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;BLACK&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>And we upload those predictions to Kili:</p>
+<div class="highlight"><pre><span></span><code><span class="n">predicted_categories</span> <span class="o">=</span> <span class="p">[</span><span class="n">predictions</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">]</span>
+<span class="n">inference_labels</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">predicted_category</span><span class="p">}]}}</span>
+    <span class="k">for</span> <span class="n">predicted_category</span> <span class="ow">in</span> <span class="n">predicted_categories</span>
+<span class="p">]</span>
+
+<span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
+    <span class="n">json_response_array</span><span class="o">=</span><span class="n">inference_labels</span><span class="p">,</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">,</span>  <span class="c1"># We import model-generated labels as &quot;INFERENCE&quot; labels</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;my_model&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Then, human labelers can annotate a subsample of the assets pushed to Kili.</p>
+<p>Note: you can automatically <a href="https://docs.kili-technology.com/docs/queue-prioritization">prioritize assets</a> to be reviewed by a human by using the model's certainty score. When the model is unsure of its predictions, this may indicate wrong labels.</p>
+<div class="highlight"><pre><span></span><code><span class="n">ground_truths</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;BLACK&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;grey_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;GREY&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;white_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;WHITE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;red_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;RED&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">human_labels</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">ground_truths</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]]}]}}</span>
+    <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span>
+<span class="p">]</span>
+<span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">json_response_array</span><span class="o">=</span><span class="n">human_labels</span><span class="p">,</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Note: that the inference metric could appear as None at the beginning (as those calculs can be complex we choose to do it in a separate way and so the return could be delayed). Just wait a bit before trigger the fetch of the labels.</p>
+<p>You can now fetch the agreement between the human and the model, for human labels:</p>
+<div class="highlight"><pre><span></span><code><span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;inferenceMark&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;labelOf.id&quot;</span><span class="p">],</span> <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+</code></pre></div>
+<pre><code>[{'labelOf': {'id': 'cleoicx8s0000h8vzn0qu3mpz'}, 'inferenceMark': 0.5, 'id': 'cleoicz3b02eg0jx8cub2c6q6'}, {'labelOf': {'id': 'cleoicx8s0001h8vzh742in5x'}, 'inferenceMark': 1, 'id': 'cleoicz3b02eh0jx8fe1iap2a'}, {'labelOf': {'id': 'cleoicx8s0002h8vz0jhz2co8'}, 'inferenceMark': 0.5, 'id': 'cleoicz3b02ei0jx8bi4ifnkw'}, {'labelOf': {'id': 'cleoicx8s0003h8vzbiaawl1j'}, 'inferenceMark': 0.5, 'id': 'cleoicz3b02ej0jx86n5c2m0a'}]
+</code></pre>
+<p>This allows you to identify problems:</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+    <span class="c1"># this label has disagreement between human and model</span>
+    <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;inferenceMark&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">asset_id</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;labelOf&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="c1"># get the model-generated label</span>
+        <span class="n">inference_label</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
+            <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">],</span>
+            <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+            <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># get the human-made label</span>
+        <span class="n">human_label</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">label_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+            <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">inference_category</span> <span class="o">=</span> <span class="n">inference_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">human_category</span> <span class="o">=</span> <span class="n">human_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The model predicted </span><span class="si">{</span><span class="n">inference_category</span><span class="si">}</span><span class="s2"> but the human predicted </span><span class="si">{</span><span class="n">human_category</span><span class="si">}</span><span class="s2"> for&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; asset with id </span><span class="si">{</span><span class="n">asset_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+</code></pre></div>
+<pre><code>The model predicted WHITE but the human predicted BLACK for asset with id cleoicx8s0000h8vzn0qu3mpz.
+The model predicted RED but the human predicted WHITE for asset with id cleoicx8s0002h8vz0jhz2co8.
+The model predicted BLACK but the human predicted RED for asset with id cleoicx8s0003h8vzbiaawl1j.
+</code></pre>
+<p>You can also find the assets with most disagreement directly from the interface with the "Human/Model IoU" filter.</p>
+<p>Low IoU indicates low agreement:</p>
+<p><img alt="image.webp" src="data:image/webp;base64,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" /></p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">delete_project</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="use-case-2">Use case 2</h3>
+<p>We can invert the previous use case.</p>
+<p>We start with a human-labeled dataset and we insert model predictions to it, to simulate testing our model on test data.</p>
+<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Project demo inference 2&quot;</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">,</span>
+    <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
+<span class="p">)[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">labeled_assets</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg&quot;</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/grey_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;grey_car.jpg&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/white_car.jpg&quot;</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;white_car.jpg&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/red_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;red_car.jpg&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><code>ground_truths</code> represents labels made by human annotators:</p>
+<div class="highlight"><pre><span></span><code><span class="n">ground_truths</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;BLACK&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;grey_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;GREY&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;white_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;WHITE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;red_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;RED&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Now, we import the human labels:</p>
+<div class="highlight"><pre><span></span><code><span class="n">human_labels</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">ground_truths</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]]}]}}</span>
+    <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span>
+<span class="p">]</span>
+
+<span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">json_response_array</span><span class="o">=</span><span class="n">human_labels</span><span class="p">,</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>We take 80% of the training data and use it to train a model.</p>
+<p>We can then run the trained model against the remaining 20% of the labeled assets, and upload predictions to Kili:</p>
+<div class="highlight"><pre><span></span><code><span class="n">test_labels</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">predictions</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]]}]}}</span>
+    <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span>
+<span class="p">]</span>
+<span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">json_response_array</span><span class="o">=</span><span class="n">test_labels</span><span class="p">,</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;my_model&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;inferenceMark&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;labelOf.id&quot;</span><span class="p">],</span> <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+</code></pre></div>
+<pre><code>[{'labelOf': {'id': 'cleoid2lk0004h8vzyqb6bfp5'}, 'inferenceMark': 0.5, 'id': 'cleoid3m802fg0jx831mhak3l'}, {'labelOf': {'id': 'cleoid2lk0005h8vzmodn4ce8'}, 'inferenceMark': 1, 'id': 'cleoid3m802fh0jx893nia1og'}, {'labelOf': {'id': 'cleoid2lk0006h8vza2xtc6h5'}, 'inferenceMark': 0.5, 'id': 'cleoid3m802fi0jx861b52nd5'}, {'labelOf': {'id': 'cleoid2lk0007h8vzkp2yodiu'}, 'inferenceMark': 0.5, 'id': 'cleoid3m802fj0jx8g5xj0lt2'}]
+</code></pre>
+<p>We can now print out a list of disagreements between human and machine labels:</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;inferenceMark&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">inference_label</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+                <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+                <span class="n">asset_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;labelOf&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">],</span>
+                <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+                <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">human_label</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+                <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+                <span class="n">label_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+                <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">inference_category</span> <span class="o">=</span> <span class="n">inference_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">human_category</span> <span class="o">=</span> <span class="n">human_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The human predicted </span><span class="si">{</span><span class="n">human_category</span><span class="si">}</span><span class="s2"> but the model predicted </span><span class="si">{</span><span class="n">inference_category</span><span class="si">}</span><span class="s2"> for&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; asset with id </span><span class="si">{</span><span class="n">asset_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+</code></pre></div>
+<pre><code>The human predicted BLACK but the model predicted WHITE for asset with id cleoicx8s0003h8vzbiaawl1j.
+The human predicted WHITE but the model predicted RED for asset with id cleoicx8s0003h8vzbiaawl1j.
+The human predicted RED but the model predicted BLACK for asset with id cleoicx8s0003h8vzbiaawl1j.
+</code></pre>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">delete_project</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="conclusion">Conclusion</h2>
+<p>Congratulations! You can now upload your own inference labels to your Kili project 🚀.</p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+      
+        <script src="../../../extra_javascript/katex.js"></script>
+      
+    
+  </body>
+</html>

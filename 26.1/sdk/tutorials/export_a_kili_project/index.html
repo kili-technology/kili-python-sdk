@@ -1,0 +1,3272 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Kili Python SDK">
+      
+      
+      
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/26.1/sdk/tutorials/export_a_kili_project/">
+      
+      
+        <link rel="prev" href="../set_up_workflows/">
+      
+      
+        <link rel="next" href="../label_parsing/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/kili_favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Exporting a Project - Python SDK</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Archia:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Archia";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-HRVEXSEWL0"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-HRVEXSEWL0",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-HRVEXSEWL0",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="kili" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-to-export-data-from-a-kili-project" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Python SDK" class="md-header__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../../assets/kili_logo_resized.webp" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Python SDK
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Exporting a Project
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../.." class="md-tabs__link">
+          
+  
+  
+  Python SDK
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../cli/" class="md-tabs__link">
+          
+  
+  
+  Command Line Interface
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../tutorials/" class="md-tabs__link">
+          
+  
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://docs.kili-technology.com/docs/introduction-to-kili-technology" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Product Documentation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://api-docs.kili-technology.com/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Documentation
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Python SDK" class="md-nav__button md-logo" aria-label="Python SDK" data-md-component="logo">
+      
+  <img src="../../../assets/kili_logo_resized.webp" alt="logo">
+
+    </a>
+    Python SDK
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kili-technology/kili-python-sdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Kili Python SDK
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python SDK
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python SDK
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../asset/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asset
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud_storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../event/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Event
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Issue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label_utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Utils
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../label_parsing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Label Parsing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../organization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Organization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_user/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project User
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_version/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Version
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tag
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command Line Interface
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Command Line Interface
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_project_setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Project Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Assets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Importing Assets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_assets_and_metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_video_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Video Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_pdf_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PDF Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import_text_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rich Text Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_multilayer_geospatial_assets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Layer Geospatial Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../llm_static/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Static Assets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Labels
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Importing Labels
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_labels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Importing Labels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ner_pre_annotations_openai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenAI NER Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ocr_pre_annotations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OCR Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pixel_level_masks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Segmentation Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference_labels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inference Labels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../finetuning_dinov2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DINOv2 Classification Pre-annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import_labels_from_shapefiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Import labels from shapefiles (GIS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import_labels_from_geojson/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Import labels from GeoJSON (GIS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Converting Labels
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Converting Labels
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../medical_imaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DICOM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_coco/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COCO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../importing_pascalvoc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PascalVOC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../set_up_workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Managing Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting Project Data
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Exporting Project Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting a Project
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#outline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preliminary-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preliminary steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-assets-and-labels-one-by-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporting assets and labels one by one
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exporting assets and labels one by one">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exporting-the-latest-labels-per-asset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporting the latest labels per asset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering-specific-labels-per-asset-through-the-method-filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering specific labels per asset through the method filters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering-specific-labels-per-asset-through-the-label-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering specific labels per asset through the label properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering-the-latest-label-per-annotator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering the latest label per annotator
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-a-whole-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporting a whole project
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exporting a whole project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-export_labels-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The .export_labels method
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili-format-one-file-per-asset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kili format, one file per asset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili-format-one-file-for-the-whole-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kili format, one file for the whole project
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yolo-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YOLO formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coco-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COCO format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cleanup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../label_parsing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parsing Labels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../llm_dynamic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Dynamic Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setting Up Plugins
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Setting Up Plugins
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developing Plugins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin Example - Programmatic QA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins_library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins Library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../webhooks_example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Webhooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integrations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integrations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vertex_ai_automl_od/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vertex AI AutoML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://docs.kili-technology.com/docs/introduction-to-kili-technology" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Product Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://api-docs.kili-technology.com/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#outline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preliminary-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preliminary steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-assets-and-labels-one-by-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporting assets and labels one by one
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exporting assets and labels one by one">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exporting-the-latest-labels-per-asset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporting the latest labels per asset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering-specific-labels-per-asset-through-the-method-filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering specific labels per asset through the method filters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering-specific-labels-per-asset-through-the-label-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering specific labels per asset through the label properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering-the-latest-label-per-annotator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering the latest label per annotator
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-a-whole-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporting a whole project
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exporting a whole project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-export_labels-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The .export_labels method
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili-format-one-file-per-asset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kili format, one file per asset
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kili-format-one-file-for-the-whole-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kili format, one file for the whole project
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yolo-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YOLO formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coco-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COCO format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cleanup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<!-- FILE AUTO GENERATED BY docs/utils.py DO NOT EDIT DIRECTLY -->
+<p><a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/main/recipes/export_a_kili_project.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<h1 id="how-to-export-data-from-a-kili-project">How to export data from a Kili project</h1>
+<h2 id="outline">Outline</h2>
+<p>This tutorial explains the multiple ways to export a Kili project. It describes:</p>
+<ul>
+<li>Methods to export the labels one by one, after filtering</li>
+<li>The solutions for performing a full-project export</li>
+</ul>
+<p>The methods are illustrated with code snippets.</p>
+<h2 id="export-methods">Export methods</h2>
+<p>With Kili, once you have annotated enough assets, you can export the data programmatically to train a machine learning algorithm with it. There are several ways to do it:</p>
+<ul>
+<li>Fetch the assets and/or the labels one by one using <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.queries.asset.__init__.QueriesAsset.assets"><code>.assets</code></a> or <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.labels"><code>.labels</code></a>, perform the data transformation yourself and then write the data to one or several output files.</li>
+<li>Export the whole project as a dataset. To do that, use the <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.export_labels"><code>.export_labels</code></a> method that creates an archive containing the labels in your chosen format.</li>
+</ul>
+<h2 id="preliminary-steps">Preliminary steps</h2>
+<p>1) Fetch the project ID from the Kili UI (in Settings / Admin):</p>
+<p><img alt="image.webp" src="data:image/webp;base64,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" /></p>
+<p>2) Ensure that your Kili API key has been set as an environment variable:
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">KILI_API_KEY</span><span class="o">=</span>&lt;YOUR_API_KEY&gt;
+</code></pre></div></p>
+<p>3) If Kili has not been installed yet, install Kili.</p>
+<div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">pip</span> <span class="n">install</span>  <span class="n">kili</span>
+</code></pre></div>
+<p>4) Import packages and instantiate <code>Kili</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
+
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
+    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="exporting-assets-and-labels-one-by-one">Exporting assets and labels one by one</h2>
+<p>To retrieve all assets of a project one by one, perform the following steps:</p>
+<h3 id="exporting-the-latest-labels-per-asset">Exporting the latest labels per asset</h3>
+<p>First, fetch the assets:</p>
+<div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
+    <span class="n">your_project_id</span><span class="p">,</span>
+    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">,</span> <span class="s2">&quot;latestLabel.jsonResponse&quot;</span><span class="p">],</span>
+    <span class="n">label_output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Now if you print an asset, you will see that you can access its <code>latestLabel</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">assets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div>
+<pre><code>{'latestLabel': {'jsonResponse': {'JOB_0': {'annotations': [{'categories': [{'name': 'OBJECT_A'}], 'mid': '20230111125258113-44528', 'type': 'rectangle', 'boundingPoly': [{'normalizedVertices': [{'x': 0.6101435505380516, 'y': 0.7689773770786136}, {'x': 0.6101435505380516, 'y': 0.39426226491370664}, {'x': 0.8962087421313937, 'y': 0.39426226491370664}, {'x': 0.8962087421313937, 'y': 0.7689773770786136}]}], 'polyline': [], 'children': {}}]}}}, 'externalId': 'car_1'}
+</code></pre>
+<p>You can now get your label, and write the category name into a text file for example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;latestLabel&quot;</span><span class="p">]:</span>  <span class="c1"># check if asset has annotations</span>
+        <span class="n">class_</span> <span class="o">=</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;latestLabel&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">class_</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="filtering-specific-labels-per-asset-through-the-method-filters">Filtering specific labels per asset through the method filters</h3>
+<p>You can specify label filters directly in the <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.queries.asset.__init__.QueriesAsset.assets"><code>.assets</code></a> and the <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.labels"><code>.labels</code></a> methods. The available filters are listed in the arguments list
+for each one of these methods.</p>
+<p>When done, you can write the conversion code to get the data in the format that you need.</p>
+<p><strong>Get only the assets with a consensus mark above 0.5:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
+    <span class="n">your_project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;consensusMark&quot;</span><span class="p">],</span> <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="mf">0.5</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">assets</span><span class="p">)</span>
+<span class="c1"># + asset conversion code</span>
+</code></pre></div>
+<pre><code>[{'externalId': 'car_1', 'id': 'clcyuykzd0000bgvze2z3wk81', 'consensusMark': 0.6504290982818591}]
+</code></pre>
+<p><strong>Get all the labels with a honeypot mark above 0.1:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+    <span class="n">your_project_id</span><span class="p">,</span>
+    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;labelOf.externalId&quot;</span><span class="p">,</span> <span class="s2">&quot;honeypotMark&quot;</span><span class="p">,</span> <span class="s2">&quot;author.email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">],</span>
+    <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="c1"># + label conversion code</span>
+</code></pre></div>
+<pre><code>[{'labelOf': {'externalId': 'car_1'}, 'author': {'email': 'john.doe@kili-technology.com'}, 'honeypotMark': 0.16527040499137607, 'id': 'clcyuynri2fnl0krf0d7pgabo'}, {'labelOf': {'externalId': 'car_1'}, 'author': {'email': 'john.smith@kili-technology.com'}, 'honeypotMark': 0.20754115450190522, 'id': 'clcyuynri2fnm0krfhx934jee'}]
+</code></pre>
+<p><strong>Get all the labels added by a specific project member:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+    <span class="n">your_project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;labelOf.externalId&quot;</span><span class="p">,</span> <span class="s2">&quot;author.email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">user_id</span><span class="o">=</span><span class="n">john_doe_id</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="c1"># + label conversion code</span>
+</code></pre></div>
+<pre><code>[{'labelOf': {'externalId': 'car_1'}, 'author': {'email': 'john.doe@kili-technology.com'}, 'id': 'clcyuynri2fnl0krf0d7pgabo'}]
+</code></pre>
+<p>This code will return a list of labels authored by John Doe.</p>
+<p>You can also use the <code>author_in</code> parameter to filter by name directly.</p>
+<h3 id="filtering-specific-labels-per-asset-through-the-label-properties">Filtering specific labels per asset through the label properties</h3>
+<p>You can also look for specific labels, for example the last "review" status label per user, and dump the result into a json file. You can use the field <code>"labels.isLatestReviewLabelForUser"</code> to check if the label is the latest per user.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
+    <span class="n">your_project_id</span><span class="p">,</span>
+    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">,</span> <span class="s2">&quot;labels.jsonResponse&quot;</span><span class="p">,</span> <span class="s2">&quot;labels.isLatestReviewLabelForUser&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]:</span>  <span class="c1"># check if asset has annotations</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;isLatestReviewLabelForUser&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;JOB_0&quot;</span> <span class="ow">in</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">]:</span>
+                <span class="n">annotation</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">]</span>
+                <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">annotation</span><span class="p">))</span>
+                <span class="k">break</span>  <span class="c1"># once we find a latest label done by a reviewer, we move on to the next asset.</span>
+</code></pre></div>
+<h3 id="filtering-the-latest-label-per-annotator">Filtering the latest label per annotator</h3>
+<p>When working on a project with <a href="https://docs.kili-technology.com/docs/consensus-overview">consensus</a> enabled, it can be useful to export the latest label made by each annotator:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
+    <span class="n">your_project_id</span><span class="p">,</span>
+    <span class="n">fields</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;externalId&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;labels.author.email&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;labels.createdAt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;labels.labelType&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;labels.jsonResponse&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]:</span>
+        <span class="n">latest_label_by_user</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;labelType&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span>
+                <span class="n">latest_label_by_user</span><span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">][</span><span class="s2">&quot;email&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">latest_label_per_user</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">email</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;createdAt&quot;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">email</span><span class="p">,</span> <span class="n">labels</span> <span class="ow">in</span> <span class="n">latest_label_by_user</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">with</span> <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">latest_label_per_user</span><span class="p">))</span>
+</code></pre></div>
+<h2 id="exporting-a-whole-project">Exporting a whole project</h2>
+<p>You can export your project data from the Kili UI (see <a href="https://docs.kili-technology.com/docs/exporting-project-data">documentation</a>), but Kili SDK also enables you to export your labels and assets into several export formats.</p>
+<h3 id="available-formats">Available formats</h3>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>UI</th>
+<th>Python Client</th>
+<th>Command Line Interface</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kili (raw)</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>YOLO V4</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>YOLO V5</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>YOLO V7</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>YOLO V8</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Pascal VOC</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>COCO</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>GeoJSON</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-export_labels-method">The <code>.export_labels</code> method</h3>
+<p>The <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.export_labels"><code>.export_labels</code></a> method enables the export of a full project. It does the following preprocessing:</p>
+<ul>
+<li>Only fetches the labels of types <code>"DEFAULT"</code> and <code>"REVIEW"</code> (see the <a href="https://docs.kili-technology.com/reference/label-types">label types explanations</a>).</li>
+<li>If specified, selects a subset of asset ids.</li>
+<li>Exports labels to one of the standard formats (only available for a restricted set of ML tasks).</li>
+<li>Using various method arguments, you can decide:<ul>
+<li>Whether or not to include the assets in the export</li>
+<li>Whether to export just the latest label or all the labels</li>
+<li>Whether to create one folder for all the jobs or one folder per job</li>
+<li>Whether or not to export the label-related data into one single file</li>
+</ul>
+</li>
+</ul>
+<p>Note that some formats are by default single-file, while others use many files:</p>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Single file</th>
+<th>Multiple files</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kili</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Yolo</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Pascal VOC</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>COCO</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<p>For all the formats, in the output archive, a <code>README.kili.txt</code> file is also created. Here is an example of its contents:
+<div class="highlight"><pre><span></span><code>Exported Labels from KILI
+=========================
+
+- Project name: Awesome annotation project
+- Project identifier: abcdefghijklmnop
+- Project description: This project contains labels, most of which are awesome.
+- Export date: 20221125-093324
+- Exported format: kili
+- Exported labels: latest
+</code></pre></div></p>
+<h3 id="kili-format-one-file-per-asset">Kili format, one file per asset</h3>
+<p>The following code snippet exports the whole asset payload and the associated labels, with one json file per asset, into the <code>/tmp/export.zip</code> folder.</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">your_project_id</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;/tmp/export.zip&quot;</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;kili&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<pre><code>Fetching assets...
+/tmp/export.zip
+</code></pre>
+<h3 id="kili-format-one-file-for-the-whole-project">Kili format, one file for the whole project</h3>
+<p>This code snippet exports the whole asset payload and the associated labels as one file for the whole project, into the <code>/tmp/export.zip</code> folder.</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">your_project_id</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;/tmp/export.zip&quot;</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;kili&quot;</span><span class="p">,</span>
+    <span class="n">single_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<pre><code>Fetching assets...
+/tmp/export.zip
+</code></pre>
+<h3 id="yolo-formats">YOLO formats</h3>
+<p>When you have at least one object etection job, you can also export to one of the following YOLO formats: <code>"yolo_v4"</code>, <code>"yolo_v5"</code>, <code>"yolo_v7"</code> or <code>"yolo_v8"</code>.
+The difference between each format is the structure of the metadata YAML file, which specifies the object classes.
+In all the cases, one file per asset is produced, containing the last created <code>DEFAULT</code> or <code>REVIEW</code> label.</p>
+<p>For bouding boxes, each YOLO label has the following shape:</p>
+<div class="highlight"><pre><span></span><code>2        0.25 0.67 0.26 0.34
+^        ^    ^    ^    ^
+class    x    y    w    h
+</code></pre></div>
+<p>where:</p>
+<ul>
+<li><code>class</code> is the class index in the classes list contained in the YOLO metadata file.</li>
+<li><code>x</code> is the x-coordinate relative to the image width (between 0.0 and 1.0) of the center of the bounding box.</li>
+<li><code>y</code> is the y-coordinate relative to the image height (between 0.0 and 1.0) of the center of the bounding box.</li>
+<li><code>w</code> is the width relative to the image width (between 0.0 and 1.0) of the bounding box.</li>
+<li><code>h</code> is the height relative to the image height (between 0.0 and 1.0) of the bounding box.</li>
+</ul>
+<p>For polygons or segmentations, each YOLO label has the following shape:</p>
+<div class="highlight"><pre><span></span><code>2        0.25 0.67 0.26 0.34 0.4 0.5 0.6 0.7  ...
+^        ^    ^    ^    ^    ^   ^   ^   ^
+class    x1   y1   x2   y2   x3  y3  x4  y4   ...
+</code></pre></div>
+<p>where:</p>
+<ul>
+<li><code>class</code> is the class index in the classes list contained in the YOLO metadata file.</li>
+<li><code>xi</code> is the x-coordinate relative to the image width (between 0.0 and 1.0) of the i-th point of the polygon.</li>
+<li><code>yi</code> is the y-coordinate relative to the image height (between 0.0 and 1.0) of the i-th point of the polygon.</li>
+</ul>
+<p>Here is an example of a YOLO annotation over an image:</p>
+<p><img alt="image.webp" src="data:image/webp;base64,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" /></p>
+<p>Here is how to export to YOLO (in this example, YOLOv5):</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">your_project_id</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;/tmp/export.zip&quot;</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;yolo_v5&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<pre><code>Fetching assets...
+/tmp/export.zip
+</code></pre>
+<p>Note that a standard YOLO file format must also include:</p>
+<ul>
+<li>The path root to the assets</li>
+<li>The <code>train</code>, <code>val</code> and <code>test</code> subfolders</li>
+</ul>
+<p>Placing specific data in specific folders is the decision of an ML engineer or a Data scientist, so we are not providing a code snippet here.</p>
+<h3 id="coco-format">COCO format</h3>
+<p>To export your data into the COCO format, run the following code:</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">your_project_id</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;/tmp/export.zip&quot;</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;coco&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<pre><code>Fetching assets...
+Convert to coco format: 1it [00:00, 54.94it/s]
+/tmp/export.zip
+</code></pre>
+<p>This will create an archive containing both:</p>
+<ul>
+<li>The COCO annotation file</li>
+<li>The <code>data/</code> folder with all the assets</li>
+</ul>
+<h2 id="cleanup">Cleanup</h2>
+<p>We can remove the project that we created:</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">delete_project</span><span class="p">(</span><span class="n">your_project_id</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="summary">Summary</h2>
+<p>In this tutorial, we have seen several ways to export labels from a Kili project:</p>
+<ul>
+<li>Using <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.queries.asset.__init__.QueriesAsset.assets"><code>.assets</code></a> and <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.labels"><code>.labels</code></a> and their filtering arguments, a subset of assets or labels can be selected and then exported.</li>
+<li>Using <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.export_labels"><code>.export_labels</code></a>, the whole project can be exported into a standard output format.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+      
+        <script src="../../../extra_javascript/katex.js"></script>
+      
+    
+  </body>
+</html>
