@@ -322,20 +322,39 @@ class GraphQLClient:
         log_context = LogContext()
         log_context.set_client_name(self.client_name)
         with _execute_lock:
-            res = self._gql_client.execute(
-                document=document,
-                variable_values=variables,
-                extra_args={
-                    "headers": {
-                        **(self._gql_transport.headers or {}),
-                        **log_context,
-                    }
-                },
-                **kwargs,
-            )
-            transport = self._gql_client.transport
-            if transport:
-                headers = transport.response_headers  # pyright: ignore[reportAttributeAccessIssue]
-                returned_complexity = int(headers.get("x-complexity", 0)) if headers else 0
-                self.complexity_consumed += returned_complexity
-            return res
+            with self._gql_client as session:
+                transport = session.transport
+
+                res = transport.execute(
+                    document=document,
+                    variable_values=variables,
+                    extra_args={
+                        "headers": {
+                            **(self._gql_transport.headers or {}),
+                            **log_context,
+                        }
+                    },
+                    **kwargs,
+                )
+
+                deprecated = (
+                    res.extensions.get("deprecatedFieldsUsed", [])
+                    if hasattr(res, "extensions")
+                    else []
+                )
+
+                if deprecated:
+                    for item in deprecated:
+                        path = item.get("path")
+                        reason = item.get("reason")
+                        logging.warning(
+                            f"[Kili SDK] Deprecated GraphQL field used: {path} – {reason}"
+                        )
+
+                headers = getattr(transport, "response_headers", None)
+                if headers:
+                    returned_complexity = int(headers.get("x-complexity", 0))
+                    self.complexity_consumed += returned_complexity
+
+                return res.data
+
