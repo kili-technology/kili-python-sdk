@@ -5,11 +5,8 @@ on:
       branch:
         description: "Deploy doc of which branch?"
         required: false
-        type: choice
-        default: "latest release branch"
-        options:
-          - main
-          - latest release branch
+        type: string
+        default: "main"
   workflow_call: # called from publish.yml
     secrets:
       SLACK_WEBHOOK_URL_PYTHON_SDK:
@@ -22,15 +19,23 @@ jobs:
     steps:
       - name: set checkout branch
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.branch }}" == "main" ]]; then
-              echo "REF=main" >> $GITHUB_ENV
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+              echo "REF=${{ github.event.inputs.branch }}" >> $GITHUB_ENV
           else
-              last_version=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
+              release_payload=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest")
+              last_version=$(echo "$release_payload" | jq -r .tag_name)
               echo "Last version: $last_version"
 
-              IFS=. read -r major minor patch <<< "$last_version"
-              last_minor_version="$major.$minor.0"
-              echo "REF=release/$last_minor_version" >> $GITHUB_ENV
+              release_branch=$(echo "$release_payload" | jq -r .target_commitish)
+              echo "Release branch: $release_branch"
+              sanitized_version=${last_version#v}
+              major_minor=$(echo "$sanitized_version" | awk -F. '{print $1 "." $2}')
+
+              if [[ "$release_branch" == "main" ]]; then
+                  echo "REF=main" >> $GITHUB_ENV
+              else
+                  echo "REF=release/$major_minor" >> $GITHUB_ENV
+              fi
           fi
 
       - uses: actions/checkout@v4
