@@ -284,7 +284,6 @@ class ProjectClientMethods(BaseClientMethods):
         description: Optional[str] = None,
         honeypot_mark: Optional[float] = None,
         instructions: Optional[str] = None,
-        input_type: Optional[InputType] = None,
         json_interface: Optional[dict] = None,
         min_consensus_size: Optional[int] = None,
         review_coverage: Optional[int] = None,
@@ -313,7 +312,6 @@ class ProjectClientMethods(BaseClientMethods):
             description: Description of the project.
             honeypot_mark: Should be between 0 and 1
             instructions: Instructions of the project.
-            input_type: Currently, one of `IMAGE`, `PDF`, `TEXT` or `VIDEO`.
             json_interface: The json parameters of the project, see Edit your interface.
             min_consensus_size: Should be between 1 and 10
                 Number of people that will annotate the same asset, for consensus computation.
@@ -415,7 +413,6 @@ class ProjectClientMethods(BaseClientMethods):
             description=description,
             honeypot_mark=honeypot_mark,
             instructions=instructions,
-            input_type=input_type,
             json_interface=json_interface,
             min_consensus_size=min_consensus_size,
             review_coverage=review_coverage,

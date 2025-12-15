@@ -38,7 +38,6 @@ def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> dict:
         "canNavigateBetweenAssets": data.can_navigate_between_assets,
         "canSkipAsset": data.can_skip_asset,
         "honeypotMark": data.honeypot_mark,
-        "inputType": data.input_type,
         "instructions": data.instructions,
         "jsonInterface": data.json_interface,
         "minConsensusSize": data.min_consensus_size,
