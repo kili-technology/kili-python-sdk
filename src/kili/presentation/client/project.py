@@ -1,4 +1,5 @@
 """Client presentation methods for projects."""
+
 import warnings
 from collections.abc import Generator, Iterable
 from typing import (
@@ -284,6 +285,7 @@ class ProjectClientMethods(BaseClientMethods):
         description: Optional[str] = None,
         honeypot_mark: Optional[float] = None,
         instructions: Optional[str] = None,
+        input_type: Optional[InputType] = None,
         json_interface: Optional[dict] = None,
         min_consensus_size: Optional[int] = None,
         review_coverage: Optional[int] = None,
@@ -312,6 +314,7 @@ class ProjectClientMethods(BaseClientMethods):
             description: Description of the project.
             honeypot_mark: Should be between 0 and 1
             instructions: Instructions of the project.
+            input_type: DEPRECATED. Currently, one of `IMAGE`, `PDF`, `TEXT` or `VIDEO`.
             json_interface: The json parameters of the project, see Edit your interface.
             min_consensus_size: Should be between 1 and 10
                 Number of people that will annotate the same asset, for consensus computation.
@@ -386,6 +389,10 @@ class ProjectClientMethods(BaseClientMethods):
 
         !!! note "Deprecated: Change Metadata Types"
             The `metadata_types` parameter is deprecated. Please use `metadata_properties` instead.
+
+        !!! note "Deprecated: Input Type"
+            The `input_type` parameter is deprecated. The input type of a project cannot be changed after
+            its creation.
         """
         if seconds_to_label_before_auto_assign is not None:
             warnings.warn(
@@ -399,6 +406,14 @@ class ProjectClientMethods(BaseClientMethods):
             warnings.warn(
                 "metadata_types is going to be deprecated. Please use"
                 " `metadata_properties` field instead to configure metadata properties.",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
+        if input_type is not None:
+            warnings.warn(
+                "input_type is deprecated. The input type of a project cannot be"
+                " changed after its creation.",
                 DeprecationWarning,
                 stacklevel=1,
             )
