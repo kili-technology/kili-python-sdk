@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from kili.domain.project import ComplianceTag, InputType
+from kili.domain.project import ComplianceTag
 from kili.domain.types import ListOrTuple
 
 
@@ -21,7 +21,6 @@ class ProjectDataKiliAPIGatewayInput:
     can_navigate_between_assets: Optional[bool]
     can_skip_asset: Optional[bool]
     honeypot_mark: Optional[float]
-    input_type: Optional[InputType]
     instructions: Optional[str]
     json_interface: Optional[str]
     metadata_types: Optional[dict]
