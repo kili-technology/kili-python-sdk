@@ -11,6 +11,7 @@ from typing import Optional, TypedDict, Union
 from kili.adapters.authentification import is_api_key_valid
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
+from kili.core.config_loader import load_config_from_file
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.issue import MutationsIssue
@@ -91,6 +92,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         verify: Optional[Union[bool, str]] = None,
         client_name: GraphQLClientName = GraphQLClientName.SDK,
         graphql_client_params: Optional[GraphQLClientParams] = None,
+        disable_tqdm: bool | None = None,
     ) -> None:
         """Initialize Kili client.
 
@@ -118,6 +120,10 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             client_name: For internal use only.
                 Define the name of the graphQL client whith which graphQL calls will be sent.
             graphql_client_params: Parameters to pass to the graphQL client.
+            disable_tqdm: Global setting to disable progress bars (tqdm) for all operations.
+                Can be overridden by individual function calls.
+                Default to `KILI_DISABLE_TQDM` environment variable.
+                If not passed, default to `disable_tqdm` in config file or False.
 
         Returns:
             Instance of the Kili client.
@@ -130,8 +136,15 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             kili.assets()
             kili.projects()
             ```
+
+            Disable progress bars globally:
+            ```python
+            kili = Kili(disable_tqdm=True)
+            ```
         """
-        api_key = api_key or os.getenv("KILI_API_KEY")
+        config_file = load_config_from_file()
+
+        api_key = api_key or os.getenv("KILI_API_KEY") or config_file.get("api_key")
 
         if not api_key and sys.stdin.isatty():
             api_key = getpass.getpass(
@@ -139,24 +152,41 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             )
 
         if api_endpoint is None:
-            api_endpoint = os.getenv(
-                "KILI_API_ENDPOINT",
-                "https://cloud.kili-technology.com/api/label/v2/graphql",
+            api_endpoint = (
+                os.getenv("KILI_API_ENDPOINT")
+                or config_file.get("api_endpoint")
+                or "https://cloud.kili-technology.com/api/label/v2/graphql"
             )
+
+        if verify is None:
+            verify_env = os.getenv("KILI_VERIFY")
+            if verify_env is not None:
+                verify = verify_env.lower() in ("true", "1", "yes")
+            elif "verify_ssl" in config_file:
+                verify = config_file["verify_ssl"]
+            else:
+                verify = True
+
+        # Load disable_tqdm from env or config if not explicitly provided
+        if disable_tqdm is None:
+            disable_tqdm_env = os.getenv("KILI_DISABLE_TQDM")
+            if disable_tqdm_env is not None:
+                disable_tqdm = disable_tqdm_env.lower() in ("true", "1", "yes")
+            elif "disable_tqdm" in config_file:
+                disable_tqdm = config_file["disable_tqdm"]
+            # Otherwise keep as None to let individual functions use their own defaults
+
+        assert api_endpoint is not None
+        assert verify is not None
 
         if not api_key:
             raise AuthenticationFailed(api_key, api_endpoint)
-
-        if verify is None:
-            verify = os.getenv(
-                "KILI_VERIFY",
-                "True",
-            ).lower() in ("true", "1", "yes")
 
         self.api_key = api_key
         self.api_endpoint = api_endpoint
         self.verify = verify
         self.client_name = client_name
+        self.disable_tqdm = disable_tqdm
         self.http_client = HttpClient(kili_endpoint=api_endpoint, verify=verify, api_key=api_key)
         skip_checks = os.getenv("KILI_SDK_SKIP_CHECKS") is not None
         if not skip_checks and not is_api_key_valid(

@@ -1,0 +1,6 @@
+{
+  "api_key": "your-api-key-here",
+  "api_endpoint": "https://cloud.kili-technology.com/api/label/v2/graphql",
+  "verify_ssl": true,
+  "disable_tqdm": false
+}
