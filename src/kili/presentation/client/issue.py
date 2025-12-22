@@ -15,6 +15,7 @@ from kili.domain.types import ListOrTuple
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
     disable_tqdm_if_as_generator,
+    resolve_disable_tqdm,
 )
 from kili.use_cases.issue import IssueUseCases
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
@@ -195,6 +196,7 @@ class IssueClientMethods(BaseClientMethods):
                 "You cannot provide both `asset_id` and `asset_id_in` at the same time."
             )
 
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm=disable_tqdm, first=first, skip=skip)
         issues_gen = IssueUseCases(self.kili_api_gateway).list_issues(

@@ -8,7 +8,7 @@ from kili.core.config_loader import load_config_from_file
 
 def test_load_config_from_file_in_cwd():
     with tempfile.TemporaryDirectory() as tmpdir:
-        config_path = Path(tmpdir) / "sdk-config.json"
+        config_path = Path(tmpdir) / "kili-sdk-config.json"
         config_data = {"api_key": "test_key", "api_endpoint": "https://test.com"}
         config_path.write_text(json.dumps(config_data))
 
@@ -23,7 +23,7 @@ def test_load_config_from_file_in_cwd():
 
 def test_load_config_from_file_in_home():
     with tempfile.TemporaryDirectory() as tmpdir:
-        config_path = Path(tmpdir) / "sdk-config.json"
+        config_path = Path(tmpdir) / "kili-sdk-config.json"
         config_data = {"api_key": "home_key"}
         config_path.write_text(json.dumps(config_data))
 
@@ -39,7 +39,7 @@ def test_load_config_from_file_not_found():
 
 def test_load_config_from_file_invalid_json():
     with tempfile.TemporaryDirectory() as tmpdir:
-        config_path = Path(tmpdir) / "sdk-config.json"
+        config_path = Path(tmpdir) / "kili-sdk-config.json"
         config_path.write_text("invalid json {")
 
         config = load_config_from_file(search_paths=[Path(tmpdir)])
@@ -49,8 +49,8 @@ def test_load_config_from_file_invalid_json():
 def test_load_config_from_file_priority():
     with tempfile.TemporaryDirectory() as tmpdir1:
         with tempfile.TemporaryDirectory() as tmpdir2:
-            config_path1 = Path(tmpdir1) / "sdk-config.json"
-            config_path2 = Path(tmpdir2) / "sdk-config.json"
+            config_path1 = Path(tmpdir1) / "kili-sdk-config.json"
+            config_path2 = Path(tmpdir2) / "kili-sdk-config.json"
 
             config_data1 = {"api_key": "first_key"}
             config_data2 = {"api_key": "second_key"}

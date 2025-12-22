@@ -29,6 +29,7 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
+    resolve_disable_tqdm,
 )
 from kili.presentation.client.helpers.filter_conversion import (
     extract_step_ids_from_project_steps,
@@ -498,6 +499,9 @@ class AssetClientMethods(BaseClientMethods):
                     project_steps=project_steps,
                     step_name_in=step_name_not_in,
                 )
+
+        # Resolve disable_tqdm: function parameter > client global setting > function default
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
 
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
         filters = AssetFilters(

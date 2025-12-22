@@ -17,6 +17,7 @@ from kili.domain.organization import (
 )
 from kili.domain.types import ListOrTuple
 from kili.presentation.client.base import BaseClientMethods
+from kili.presentation.client.helpers.common_validators import resolve_disable_tqdm
 from kili.use_cases.organization.use_cases import OrganizationUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -141,6 +142,7 @@ class OrganizationClientMethods(BaseClientMethods):
             >>> kili.organizations(organization_id=organization_id, fields=['users.email'])
             [{'users': [{'email': 'john@doe.com'}]}]
         """
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         organization_use_cases = OrganizationUseCases(self.kili_api_gateway)
         organization_gen = organization_use_cases.list_organizations(
             OrganizationFilters(

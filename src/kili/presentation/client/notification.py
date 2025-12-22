@@ -11,6 +11,7 @@ from kili.domain.types import ListOrTuple
 from kili.domain.user import UserFilter, UserId
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
+    resolve_disable_tqdm,
 )
 from kili.use_cases.notification import NotificationUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -104,6 +105,7 @@ class NotificationClientMethods(BaseClientMethods):
         Returns:
             An iterable of notifications.
         """
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         filters = NotificationFilter(

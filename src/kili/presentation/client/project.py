@@ -19,6 +19,7 @@ from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
+    resolve_disable_tqdm,
 )
 from kili.use_cases.project.project import ProjectUseCases
 from kili.use_cases.tag import TagUseCases
@@ -247,6 +248,7 @@ class ProjectClientMethods(BaseClientMethods):
             TagUseCases(self.kili_api_gateway).get_tag_ids_from_labels(tags_in) if tags_in else None
         )
 
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
         projects_gen = ProjectUseCases(self.kili_api_gateway).list_projects(

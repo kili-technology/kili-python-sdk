@@ -26,7 +26,7 @@ def mock_http_operations():
 
 def test_config_priority_method_over_env(mock_http_operations):
     with tempfile.TemporaryDirectory() as tmpdir:
-        config_path = Path(tmpdir) / "sdk-config.json"
+        config_path = Path(tmpdir) / "kili-sdk-config.json"
         config_data = {"api_key": "file_key", "api_endpoint": "https://file.com"}
         config_path.write_text(json.dumps(config_data))
 
@@ -48,7 +48,7 @@ def test_config_priority_method_over_env(mock_http_operations):
 
 def test_config_priority_env_over_file(mock_http_operations):
     with tempfile.TemporaryDirectory() as tmpdir:
-        config_path = Path(tmpdir) / "sdk-config.json"
+        config_path = Path(tmpdir) / "kili-sdk-config.json"
         config_data = {"api_key": "file_key", "api_endpoint": "https://file.com"}
         config_path.write_text(json.dumps(config_data))
 
@@ -70,7 +70,7 @@ def test_config_priority_env_over_file(mock_http_operations):
 
 def test_config_file_used_when_no_env(mock_http_operations):
     with tempfile.TemporaryDirectory() as tmpdir:
-        config_path = Path(tmpdir) / "sdk-config.json"
+        config_path = Path(tmpdir) / "kili-sdk-config.json"
         config_data = {"api_key": "file_key", "api_endpoint": "https://file.com"}
         config_path.write_text(json.dumps(config_data))
 
@@ -90,7 +90,7 @@ def test_config_file_used_when_no_env(mock_http_operations):
 
 def test_config_verify_priority(mock_http_operations):
     with tempfile.TemporaryDirectory() as tmpdir:
-        config_path = Path(tmpdir) / "sdk-config.json"
+        config_path = Path(tmpdir) / "kili-sdk-config.json"
         config_data = {"api_key": "file_key", "verify_ssl": False}
         config_path.write_text(json.dumps(config_data))
 
@@ -110,7 +110,7 @@ def test_config_verify_priority(mock_http_operations):
 
 def test_config_verify_env_over_file(mock_http_operations):
     with tempfile.TemporaryDirectory() as tmpdir:
-        config_path = Path(tmpdir) / "sdk-config.json"
+        config_path = Path(tmpdir) / "kili-sdk-config.json"
         config_data = {"api_key": "file_key", "verify_ssl": True}
         config_path.write_text(json.dumps(config_data))
 
