@@ -94,6 +94,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = (
             "ACTIVATED",
             "ORG_ADMIN",
+            "ORG_SUSPENDED",
         ),
         fields: ListOrTuple[str] = (
             "activated",
@@ -143,6 +144,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             fields = [*fields, "status"]
 
         where = ProjectUserWhere(
+            deleted=False,
             project_id=project_id,
             email=email,
             _id=id,

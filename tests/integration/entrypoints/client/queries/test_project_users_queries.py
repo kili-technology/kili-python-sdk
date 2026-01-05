@@ -15,7 +15,7 @@ def test_project_users_query(mocker: pytest_mock.MockFixture):
     assert "query projectUsers" in query
     assert variables == {
         "where": {
-            "deleted": None,
+            "deleted": False,
             "id": None,
             "status": None,
             "activeInProject": None,
