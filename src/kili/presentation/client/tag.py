@@ -7,6 +7,7 @@ from typeguard import typechecked
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
+from kili.presentation.client.helpers.common_validators import resolve_disable_tqdm
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -72,6 +73,8 @@ class TagClientMethods(BaseClientMethods):
         else:
             resolved_tag_ids = [TagId(tag_id) for tag_id in tag_ids]
 
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
+
         return [
             {"id": str(tag_id)}
             for tag_id in tag_use_cases.tag_project(
@@ -126,6 +129,8 @@ class TagClientMethods(BaseClientMethods):
                 raise ValueError("Either `tags` or `tag_ids` or `all` must be provided.")
         else:
             resolved_tag_ids = [TagId(tag_id) for tag_id in tag_ids]
+
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
 
         return [
             {"id": str(tag_id)}

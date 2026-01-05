@@ -37,6 +37,7 @@ from kili.domain.user import UserFilter, UserId
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
     disable_tqdm_if_as_generator,
+    resolve_disable_tqdm,
 )
 from kili.presentation.client.helpers.filter_conversion import (
     extract_step_ids_from_project_steps,
@@ -454,6 +455,7 @@ class LabelClientMethods(BaseClientMethods):
         if category_search:
             validate_category_search_query(category_search)
 
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
 

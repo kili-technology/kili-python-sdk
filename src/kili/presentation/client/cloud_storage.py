@@ -20,6 +20,7 @@ from kili.domain.cloud_storage import (
 from kili.domain.types import ListOrTuple
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
+    resolve_disable_tqdm,
 )
 from kili.use_cases.cloud_storage import CloudStorageUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -127,6 +128,7 @@ class CloudStorageClientMethods(BaseClientMethods):
                 " project_id must be specified"
             )
 
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
         cloud_storage_use_cases = CloudStorageUseCases(self.kili_api_gateway)
@@ -230,6 +232,7 @@ class CloudStorageClientMethods(BaseClientMethods):
             >>> kili.cloud_storage_integrations()
             [{'name': 'My bucket', 'id': '123456789', 'platform': 'AWS', 'status': 'CONNECTED'}]
         """
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         data_integrations_gen = CloudStorageUseCases(self.kili_api_gateway).list_data_integrations(

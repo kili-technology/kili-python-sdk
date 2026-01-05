@@ -12,6 +12,7 @@ from kili.domain.types import ListOrTuple
 from kili.domain.user import UserFilter
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
+    resolve_disable_tqdm,
 )
 from kili.use_cases.user import UserUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -87,6 +88,7 @@ class UserClientMethods(BaseClientMethods):
             >>> kili.users(organization_id=organization_id)
             ```
         """
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
         users_gen = UserUseCases(self.kili_api_gateway).list_users(
