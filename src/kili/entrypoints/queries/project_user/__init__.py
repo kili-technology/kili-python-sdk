@@ -94,6 +94,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = (
             "ACTIVATED",
             "ORG_ADMIN",
+            "ORG_SUSPENDED",
         ),
         fields: ListOrTuple[str] = (
             "activated",
@@ -143,6 +144,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
             fields = [*fields, "status"]
 
         where = ProjectUserWhere(
+            deleted=False,
             project_id=project_id,
             email=email,
             _id=id,
@@ -176,6 +178,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         status_in: Optional[Sequence[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]]] = (
             "ACTIVATED",
             "ORG_ADMIN",
+            "ORG_SUSPENDED",
         ),
     ) -> int:
         """Count the number of projects and their users that match a set of criteria.
@@ -196,6 +199,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         """
         if status_in is None:
             where = ProjectUserWhere(
+                deleted=False,
                 project_id=project_id,
                 email=email,
                 _id=id,
@@ -206,6 +210,7 @@ class QueriesProjectUser(BaseOperationEntrypointMixin):
         count = 0
         for status in set(status_in):
             where = ProjectUserWhere(
+                deleted=False,
                 project_id=project_id,
                 email=email,
                 _id=id,

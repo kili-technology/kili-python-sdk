@@ -17,6 +17,7 @@ class ProjectUserWhere(BaseQueryWhere):
         organization_id: Optional[str] = None,
         status: Optional[Literal["ACTIVATED", "ORG_ADMIN", "ORG_SUSPENDED"]] = None,
         active_in_project: Optional[bool] = None,
+        deleted: Optional[bool] = None,
     ) -> None:
         self.project_id = project_id
         self.email = email
@@ -24,6 +25,7 @@ class ProjectUserWhere(BaseQueryWhere):
         self.organization_id = organization_id
         self.status = status
         self.active_in_project = active_in_project  # user not deleted and nbr of labeled assets > 0
+        self.deleted = deleted
         super().__init__()
 
     def graphql_where_builder(self):
@@ -32,6 +34,7 @@ class ProjectUserWhere(BaseQueryWhere):
             "id": self._id,
             "status": self.status,
             "activeInProject": self.active_in_project,
+            "deleted": self.deleted,
             "project": {
                 "id": self.project_id,
             },
