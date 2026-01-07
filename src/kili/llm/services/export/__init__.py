@@ -36,6 +36,7 @@ LABELS_NEEDED_FIELDS = [
     "isLatestLabelForUser",
     "isSentBackToQueue",
     "jsonResponse",  # This is needed to keep annotations
+    "jsonResponseUrl",
     "labelType",
     "modelName",
 ]
@@ -57,6 +58,7 @@ ASSET_STATIC_NEEDED_FIELDS = [
     "externalId",
     "jsonMetadata",
     "labels.jsonResponse",
+    "labels.jsonResponseUrl",
     "labels.author.id",
     "labels.author.email",
     "labels.author.firstname",

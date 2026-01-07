@@ -244,6 +244,7 @@ def test_given_project_with_new_annotations_when_calling_list_labels_it_converts
                         {
                             "id": "fake_label_id",
                             "jsonResponse": "{}",
+                            "jsonResponseUrl": None,
                             "annotations": test_case_1.annotations,
                             "assetId": "fake_asset_id",
                         }

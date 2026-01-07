@@ -52,6 +52,8 @@ class LabelOperationMixin(BaseOperationMixin):
         options: QueryOptions,
     ) -> Generator[dict, None, None]:
         """List labels."""
+        has_json_response_url = "jsonResponseUrl" in fields
+
         if "jsonResponse" in fields:
             if "labelOf" not in fields:
                 fields = [*list(fields), "assetId"]
@@ -65,7 +67,10 @@ class LabelOperationMixin(BaseOperationMixin):
                 "LLM_INSTR_FOLLOWING",
                 "LLM_STATIC",
             }:
-                yield from self.list_labels_split(filters, fields, options, project_info)
+                fetch_annotations = not has_json_response_url
+                yield from self.list_labels_split(
+                    filters, fields, options, project_info, fetch_annotations
+                )
                 return
 
         fragment = fragment_builder(fields)
@@ -74,11 +79,18 @@ class LabelOperationMixin(BaseOperationMixin):
         labels_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving labels", GQL_COUNT_LABELS
         )
-        labels_gen = (load_label_json_fields(label, fields) for label in labels_gen)
+        labels_gen = (
+            load_label_json_fields(label, fields, self.http_client) for label in labels_gen
+        )
         yield from labels_gen
 
     def list_labels_split(
-        self, filters: LabelFilters, fields: ListOrTuple[str], options: QueryOptions, project_info
+        self,
+        filters: LabelFilters,
+        fields: ListOrTuple[str],
+        options: QueryOptions,
+        project_info,
+        fetch_annotations: bool,
     ) -> Generator[dict, None, None]:
         """List labels."""
         if project_info["inputType"] == "VIDEO":
@@ -87,21 +99,28 @@ class LabelOperationMixin(BaseOperationMixin):
             )
 
         fragment = fragment_builder(fields)
-        inner_annotation_fragment = get_annotation_fragment()
-        full_fragment = f"""
-            {fragment}
-            annotations {{
-                {inner_annotation_fragment}
-            }}
-        """
+
+        if fetch_annotations:
+            inner_annotation_fragment = get_annotation_fragment()
+            full_fragment = f"""
+                {fragment}
+                annotations {{
+                    {inner_annotation_fragment}
+                }}
+            """
+        else:
+            full_fragment = fragment
+
         query = get_labels_query(full_fragment)
         where = label_where_mapper(filters)
         labels_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving labels", GQL_COUNT_LABELS
         )
-        labels_gen = (load_label_json_fields(label, fields) for label in labels_gen)
+        labels_gen = (
+            load_label_json_fields(label, fields, self.http_client) for label in labels_gen
+        )
 
-        if "jsonResponse" in fields:
+        if "jsonResponse" in fields and fetch_annotations:
             converter = AnnotationsToJsonResponseConverter(
                 json_interface=project_info["jsonInterface"],
                 project_input_type=project_info["inputType"],

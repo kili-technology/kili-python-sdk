@@ -858,6 +858,7 @@ def test_export_with_asset_filter_kwargs(mocker):
         "resolution.height",
         "resolution.width",
         "latestLabel.jsonResponse",
+        "latestLabel.jsonResponseUrl",
         "latestLabel.author.id",
         "latestLabel.author.email",
         "latestLabel.author.firstname",
