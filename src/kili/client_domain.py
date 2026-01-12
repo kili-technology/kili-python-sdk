@@ -48,6 +48,7 @@ class Kili:
         api_endpoint: Optional[str] = None,
         verify: Optional[Union[bool, str]] = None,
         graphql_client_params: Optional[GraphQLClientParams] = None,
+        disable_tqdm: bool | None = None,
     ) -> None:
         """Initialize Kili client (domain mode).
 
@@ -73,6 +74,10 @@ class Kili:
                 man-in-the-middle (MitM) attacks. Setting verify to ``False``
                 may be useful during local development or testing.
             graphql_client_params: Parameters to pass to the graphQL client.
+            disable_tqdm: Global setting to disable progress bars (tqdm) for all operations.
+                Can be overridden by individual function calls.
+                Default to `KILI_DISABLE_TQDM` environment variable.
+                If not passed, default to `disable_tqdm` in config file or False.
 
         Returns:
             Instance of the Kili client.
@@ -86,6 +91,11 @@ class Kili:
             kili.assets  # domain namespace (clean name)
             kili.projects.list()  # domain methods
             ```
+
+            Disable progress bars globally:
+            ```python
+            kili = Kili(disable_tqdm=True)
+            ```
         """
         warnings.warn(
             "Client domain api is still a work in progress. Method names and return type will evolve.",
@@ -97,6 +107,7 @@ class Kili:
             verify,
             GraphQLClientName.SDK_DOMAIN,
             graphql_client_params,
+            disable_tqdm,
         )
 
     # Domain API Namespaces - Lazy loaded properties

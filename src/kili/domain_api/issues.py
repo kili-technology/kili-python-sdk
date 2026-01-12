@@ -20,9 +20,11 @@ from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
+    resolve_disable_tqdm,
 )
 from kili.use_cases.issue import IssueUseCases
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
+from kili.utils import tqdm
 
 
 class IssueFilter(TypedDict, total=False):
@@ -367,6 +369,7 @@ class IssuesNamespace(DomainNamespace):
         *,
         issue_id: Optional[str] = None,
         issue_ids: Optional[List[str]] = None,
+        disable_tqdm: Optional[bool] = None,
     ) -> List[dict[str, Any]]:
         """Cancel issues by setting their status to CANCELLED.
 
@@ -377,6 +380,7 @@ class IssuesNamespace(DomainNamespace):
         Args:
             issue_id: Issue ID to cancel.
             issue_ids: List of issue IDs to cancel.
+            disable_tqdm: If `True`, the progress bar will be disabled.
 
         Returns:
             List of dictionaries with the results of the status updates.
@@ -399,21 +403,32 @@ class IssuesNamespace(DomainNamespace):
 
         assert issue_ids is not None, "issue_ids must be provided"
 
+        resolved_disable_tqdm = resolve_disable_tqdm(disable_tqdm, self._client.disable_tqdm)
+
         issue_use_cases = IssueUseCases(self._gateway)
         results = []
 
-        for issue_id_item in issue_ids:
-            try:
-                result = issue_use_cases.update_issue_status(
-                    issue_id=IssueId(issue_id_item), status="CANCELLED"
-                )
-                results.append(
-                    {"id": issue_id_item, "status": "CANCELLED", "success": True, **result}
-                )
-            except (ValueError, TypeError, RuntimeError) as e:
-                results.append(
-                    {"id": issue_id_item, "status": "CANCELLED", "success": False, "error": str(e)}
-                )
+        with tqdm.tqdm(
+            total=len(issue_ids), disable=resolved_disable_tqdm, desc="Cancelling issues"
+        ) as pbar:
+            for issue_id_item in issue_ids:
+                try:
+                    result = issue_use_cases.update_issue_status(
+                        issue_id=IssueId(issue_id_item), status="CANCELLED"
+                    )
+                    results.append(
+                        {"id": issue_id_item, "status": "CANCELLED", "success": True, **result}
+                    )
+                except (ValueError, TypeError, RuntimeError) as e:
+                    results.append(
+                        {
+                            "id": issue_id_item,
+                            "status": "CANCELLED",
+                            "success": False,
+                            "error": str(e),
+                        }
+                    )
+                pbar.update(1)
 
         return results
 
@@ -431,6 +446,7 @@ class IssuesNamespace(DomainNamespace):
         *,
         issue_id: Optional[str] = None,
         issue_ids: Optional[List[str]] = None,
+        disable_tqdm: Optional[bool] = None,
     ) -> List[dict[str, Any]]:
         """Open issues by setting their status to OPEN.
 
@@ -441,6 +457,7 @@ class IssuesNamespace(DomainNamespace):
         Args:
             issue_id: Issue ID to open.
             issue_ids: List of issue IDs to open.
+            disable_tqdm: If `True`, the progress bar will be disabled.
 
         Returns:
             List of dictionaries with the results of the status updates.
@@ -463,19 +480,27 @@ class IssuesNamespace(DomainNamespace):
 
         assert issue_ids is not None, "issue_ids must be provided"
 
+        resolved_disable_tqdm = resolve_disable_tqdm(disable_tqdm, self._client.disable_tqdm)
+
         issue_use_cases = IssueUseCases(self._gateway)
         results = []
 
-        for issue_id_item in issue_ids:
-            try:
-                result = issue_use_cases.update_issue_status(
-                    issue_id=IssueId(issue_id_item), status="OPEN"
-                )
-                results.append({"id": issue_id_item, "status": "OPEN", "success": True, **result})
-            except (ValueError, TypeError, RuntimeError) as e:
-                results.append(
-                    {"id": issue_id_item, "status": "OPEN", "success": False, "error": str(e)}
-                )
+        with tqdm.tqdm(
+            total=len(issue_ids), disable=resolved_disable_tqdm, desc="Opening issues"
+        ) as pbar:
+            for issue_id_item in issue_ids:
+                try:
+                    result = issue_use_cases.update_issue_status(
+                        issue_id=IssueId(issue_id_item), status="OPEN"
+                    )
+                    results.append(
+                        {"id": issue_id_item, "status": "OPEN", "success": True, **result}
+                    )
+                except (ValueError, TypeError, RuntimeError) as e:
+                    results.append(
+                        {"id": issue_id_item, "status": "OPEN", "success": False, "error": str(e)}
+                    )
+                pbar.update(1)
 
         return results
 
@@ -493,6 +518,7 @@ class IssuesNamespace(DomainNamespace):
         *,
         issue_id: Optional[str] = None,
         issue_ids: Optional[List[str]] = None,
+        disable_tqdm: Optional[bool] = None,
     ) -> List[dict[str, Any]]:
         """Solve issues by setting their status to SOLVED.
 
@@ -503,6 +529,7 @@ class IssuesNamespace(DomainNamespace):
         Args:
             issue_id: Issue ID to solve.
             issue_ids: List of issue IDs to solve.
+            disable_tqdm: If `True`, the progress bar will be disabled.
 
         Returns:
             List of dictionaries with the results of the status updates.
@@ -525,19 +552,27 @@ class IssuesNamespace(DomainNamespace):
 
         assert issue_ids is not None, "issue_ids must be provided"
 
+        resolved_disable_tqdm = resolve_disable_tqdm(disable_tqdm, self._client.disable_tqdm)
+
         issue_use_cases = IssueUseCases(self._gateway)
         results = []
 
-        for issue_id_item in issue_ids:
-            try:
-                result = issue_use_cases.update_issue_status(
-                    issue_id=IssueId(issue_id_item), status="SOLVED"
-                )
-                results.append({"id": issue_id_item, "status": "SOLVED", "success": True, **result})
-            except (ValueError, TypeError, RuntimeError) as e:
-                results.append(
-                    {"id": issue_id_item, "status": "SOLVED", "success": False, "error": str(e)}
-                )
+        with tqdm.tqdm(
+            total=len(issue_ids), disable=resolved_disable_tqdm, desc="Solving issues"
+        ) as pbar:
+            for issue_id_item in issue_ids:
+                try:
+                    result = issue_use_cases.update_issue_status(
+                        issue_id=IssueId(issue_id_item), status="SOLVED"
+                    )
+                    results.append(
+                        {"id": issue_id_item, "status": "SOLVED", "success": True, **result}
+                    )
+                except (ValueError, TypeError, RuntimeError) as e:
+                    results.append(
+                        {"id": issue_id_item, "status": "SOLVED", "success": False, "error": str(e)}
+                    )
+                pbar.update(1)
 
         return results
 
