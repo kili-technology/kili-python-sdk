@@ -67,17 +67,18 @@ class WebhooksNamespace:
                 - logPayload:
                     - runId: a unique identifier of the run for observability
                     - projectId: the Kili project the webhook is called on
-                - payload: the event produced, for example for `onSubmit` event:
+                - payload: the event produced, for example for `labels.created.submit` event:
                     - label: the label produced
                     - asset_id: the asset on which the label is produced
             plugin_name: Name of your plugin
             header: Authorization header to access the routes
             verbose: If false, minimal logs are displayed
-            handler_type: Action for which the webhook should be called.
-                Possible variants: `onSubmit`, `onReview`.
-            handler_types: List of actions for which the webhook should be called.
-                Possible variants: `onSubmit`, `onReview`.
-                By default, is [`onSubmit`, `onReview`].
+            handler_type: Deprecated. Use event_pattern or event_matcher instead.
+                Legacy action handler. Possible variants: `onCustomInterfaceClick`,
+                `onProjectUpdated`, `onSendBackToQueue`.
+            handler_types: Deprecated. Use event_matcher instead.
+                Legacy list of action handlers. Possible variants: `onCustomInterfaceClick`,
+                `onProjectUpdated`, `onSendBackToQueue`.
             event_pattern: Event pattern for which the webhook should be called.
             event_matcher: List of events for which the webhook should be called.
 
@@ -93,20 +94,18 @@ class WebhooksNamespace:
             ...     header='Bearer token123'
             ... )
 
-            >>> # Create webhook with single handler type
+            >>> # Create webhook with single event pattern
             >>> result = kili.plugins.webhooks.create(
             ...     webhook_url='https://my-webhook.com/api/kili',
             ...     plugin_name='custom webhook',
-            ...     handler_type='onSubmit',
-            ...     event_pattern='project.*'
+            ...     event_pattern='labels.created.submit'
             ... )
 
-            >>> # Create webhook with multiple handler types
+            >>> # Create webhook with multiple event matchers
             >>> result = kili.plugins.webhooks.create(
             ...     webhook_url='https://my-webhook.com/api/kili',
             ...     plugin_name='custom webhook',
-            ...     handler_types=['onSubmit', 'onReview'],
-            ...     event_matcher=['project.*', 'asset.*']
+            ...     event_matcher=['labels.created.submit', 'labels.created.review']
             ... )
         """
         # Convert singular to plural
@@ -141,11 +140,12 @@ class WebhooksNamespace:
             plugin_name: Name of your plugin
             new_header: Authorization header to access the routes
             verbose: If false, minimal logs are displayed
-            handler_type: Action for which the webhook should be called.
-                Possible variants: `onSubmit`, `onReview`.
-            handler_types: List of actions for which the webhook should be called.
-                Possible variants: `onSubmit`, `onReview`.
-                By default, is [`onSubmit`, `onReview`]
+            handler_type: Deprecated. Use event_pattern or event_matcher instead.
+                Legacy action handler. Possible variants: `onCustomInterfaceClick`,
+                `onProjectUpdated`, `onSendBackToQueue`.
+            handler_types: Deprecated. Use event_matcher instead.
+                Legacy list of action handlers. Possible variants: `onCustomInterfaceClick`,
+                `onProjectUpdated`, `onSendBackToQueue`.
             event_pattern: Event pattern for which the webhook should be called.
             event_matcher: List of events for which the webhook should be called.
 
@@ -161,20 +161,18 @@ class WebhooksNamespace:
             ...     new_header='Bearer new_token456'
             ... )
 
-            >>> # Update webhook with single handler
+            >>> # Update webhook with single event pattern
             >>> result = kili.plugins.webhooks.update(
             ...     new_webhook_url='https://updated-webhook.com/api',
             ...     plugin_name='my webhook',
-            ...     handler_type='onSubmit',
-            ...     event_pattern='asset.*'
+            ...     event_pattern='labels.created.submit'
             ... )
 
-            >>> # Update webhook with multiple event handlers
+            >>> # Update webhook with multiple event matchers
             >>> result = kili.plugins.webhooks.update(
             ...     new_webhook_url='https://updated-webhook.com/api',
             ...     plugin_name='my webhook',
-            ...     handler_types=['onSubmit', 'onReview'],
-            ...     event_matcher=['asset.*', 'label.*']
+            ...     event_matcher=['labels.created.submit', 'labels.created.review']
             ... )
         """
         # Convert singular to plural
@@ -497,14 +495,14 @@ class PluginsNamespace(DomainNamespace):
             >>> result = kili.plugins.create(
             ...     plugin_path="./my_plugin/",
             ...     plugin_name="custom_plugin_name",
-            ...     event_pattern="onSubmit"
+            ...     event_pattern="labels.created.submit"
             ... )
 
             >>> # Upload with custom name and multiple event matchers
             >>> result = kili.plugins.create(
             ...     plugin_path="./my_plugin/",
             ...     plugin_name="custom_plugin_name",
-            ...     event_matcher=["onSubmit", "onReview"]
+            ...     event_matcher=["labels.created.submit", "labels.created.review"]
             ... )
         """
         # Convert singular to plural

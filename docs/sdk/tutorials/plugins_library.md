@@ -27,7 +27,6 @@ Let's imagine a project where we want to process images and detect some objects.
 Let's imagine another project where we process invoices. The project has two jobs and several transcription tasks associated with them. One of the jobs is about payment information and must contain a proper IBAN number as well as currency. The IBAN must start with FR, and the currency should be one of: *EURO* or *DOLLAR*. Kili's interface customization options are powerful and flexible, but won't help us in this specific situation so we have to turn to Kili plugins for help. We'll set up our Kili plugin to check these two rules when labelers click *Submit*. If the annotations don't match our predefined rules, our QA bot will add issues to the asset and send the asset back to the labeling queue. At the end, our script will calculate labeling accuracy and insert the accuracy metric in the json_metadata of the asset. All that with no need to engage a human reviewer.
 
 - Plugin file: [`plugin_document.py`](https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/plugins_library/plugin_document.py){target=_blank}
-- End-to-end notebook showcasing this example: [`plugins_example_document.ipynb`](https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/plugins_example_document.ipynb){target=_blank}
 
 ### 2. Consensus resolution
 
