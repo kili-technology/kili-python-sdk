@@ -13,8 +13,8 @@ from kili.adapters.kili_api_gateway.asset.formatters import (
     JSON_RESPONSE_BATCH_SIZE,
     download_json_responses_parallel,
     load_asset_json_fields,
-    load_json_from_link,
 )
+from kili.adapters.kili_api_gateway.helpers.http_json import load_json_from_link
 
 
 class TestLoadJsonFromLink:
@@ -56,6 +56,7 @@ class TestDownloadJsonResponsesParallel:
 
     def test_download_single_json_response(self):
         """Test downloading a single JSON response."""
+        http_client = Mock()
         label = {"id": "label1", "jsonResponseUrl": "https://example.com/label1.json"}
         url_to_label_mapping = [("https://example.com/label1.json", label)]
 
@@ -65,7 +66,7 @@ class TestDownloadJsonResponsesParallel:
         ) as mock_download:
             mock_download.return_value = {"annotation": "data"}
 
-            download_json_responses_parallel(url_to_label_mapping)
+            download_json_responses_parallel(url_to_label_mapping, http_client)
 
             # Verify the JSON was downloaded and assigned
             assert label["jsonResponse"] == {"annotation": "data"}
@@ -75,6 +76,7 @@ class TestDownloadJsonResponsesParallel:
 
     def test_download_multiple_json_responses(self):
         """Test downloading multiple JSON responses in parallel."""
+        http_client = Mock()
         label1 = {"id": "label1", "jsonResponseUrl": "https://example.com/label1.json"}
         label2 = {"id": "label2", "jsonResponseUrl": "https://example.com/label2.json"}
         label3 = {"id": "label3", "jsonResponseUrl": "https://example.com/label3.json"}
@@ -86,7 +88,7 @@ class TestDownloadJsonResponsesParallel:
         ]
 
         # Create mock side effect for different URLs
-        async def mock_download(url):
+        async def mock_download(url, client):
             if "label1" in url:
                 return {"data": "label1"}
             elif "label2" in url:
@@ -99,7 +101,7 @@ class TestDownloadJsonResponsesParallel:
             "kili.adapters.kili_api_gateway.asset.formatters._download_json_response",
             side_effect=mock_download,
         ):
-            download_json_responses_parallel(url_to_label_mapping)
+            download_json_responses_parallel(url_to_label_mapping, http_client)
 
             # Verify all labels got their JSON
             assert label1["jsonResponse"] == {"data": "label1"}
@@ -113,10 +115,11 @@ class TestDownloadJsonResponsesParallel:
 
     def test_download_handles_request_exception(self):
         """Test that request exceptions are handled gracefully."""
+        http_client = Mock()
         label = {"id": "label1", "jsonResponseUrl": "https://example.com/label1.json"}
         url_to_label_mapping = [("https://example.com/label1.json", label)]
 
-        # Mock download to raise httpx.HTTPError
+        # Mock download to return empty dict on error
         with patch(
             "kili.adapters.kili_api_gateway.asset.formatters._download_json_response",
             new_callable=AsyncMock,
@@ -124,7 +127,7 @@ class TestDownloadJsonResponsesParallel:
             mock_download.return_value = {}  # Returns empty dict on error
 
             # Should not raise exception
-            download_json_responses_parallel(url_to_label_mapping)
+            download_json_responses_parallel(url_to_label_mapping, http_client)
 
             # Should set empty dict on error
             assert label["jsonResponse"] == {}
@@ -132,6 +135,7 @@ class TestDownloadJsonResponsesParallel:
 
     def test_download_handles_json_decode_error(self):
         """Test that JSON decode errors are handled gracefully."""
+        http_client = Mock()
         label = {"id": "label1", "jsonResponseUrl": "https://example.com/label1.json"}
         url_to_label_mapping = [("https://example.com/label1.json", label)]
 
@@ -143,7 +147,7 @@ class TestDownloadJsonResponsesParallel:
             mock_download.return_value = {}  # Returns empty dict on error
 
             # Should not raise exception
-            download_json_responses_parallel(url_to_label_mapping)
+            download_json_responses_parallel(url_to_label_mapping, http_client)
 
             # Should set empty dict on error
             assert label["jsonResponse"] == {}
@@ -151,6 +155,7 @@ class TestDownloadJsonResponsesParallel:
 
     def test_download_handles_timeout_error(self):
         """Test that timeout errors are handled gracefully."""
+        http_client = Mock()
         label = {"id": "label1", "jsonResponseUrl": "https://example.com/label1.json"}
         url_to_label_mapping = [("https://example.com/label1.json", label)]
 
@@ -162,7 +167,7 @@ class TestDownloadJsonResponsesParallel:
             mock_download.return_value = {}  # Returns empty dict on error
 
             # Should not raise exception
-            download_json_responses_parallel(url_to_label_mapping)
+            download_json_responses_parallel(url_to_label_mapping, http_client)
 
             # Should set empty dict on error
             assert label["jsonResponse"] == {}
@@ -170,6 +175,7 @@ class TestDownloadJsonResponsesParallel:
 
     def test_download_processes_in_batches(self):
         """Test that downloads are processed in batches of JSON_RESPONSE_BATCH_SIZE."""
+        http_client = Mock()
         # Create more labels than batch size
         num_labels = JSON_RESPONSE_BATCH_SIZE + 5
         labels = [
@@ -188,7 +194,7 @@ class TestDownloadJsonResponsesParallel:
             mock_download.return_value = {"data": "test"}
 
             # Call the function
-            download_json_responses_parallel(url_to_label_mapping)
+            download_json_responses_parallel(url_to_label_mapping, http_client)
 
             # Verify all labels got their JSON response
             for label in labels:
@@ -200,6 +206,7 @@ class TestDownloadJsonResponsesParallel:
 
     def test_download_mixed_success_and_failure(self):
         """Test downloading with some successes and some failures."""
+        http_client = Mock()
         label_success = {"id": "success", "jsonResponseUrl": "https://example.com/success.json"}
         label_fail = {"id": "fail", "jsonResponseUrl": "https://example.com/fail.json"}
 
@@ -209,7 +216,7 @@ class TestDownloadJsonResponsesParallel:
         ]
 
         # Create mock side effect for different URLs
-        async def mock_download(url):
+        async def mock_download(url, client):
             if "success" in url:
                 return {"status": "ok"}
             return {}  # Failure returns empty dict
@@ -218,7 +225,7 @@ class TestDownloadJsonResponsesParallel:
             "kili.adapters.kili_api_gateway.asset.formatters._download_json_response",
             side_effect=mock_download,
         ):
-            download_json_responses_parallel(url_to_label_mapping)
+            download_json_responses_parallel(url_to_label_mapping, http_client)
 
             # Success should have data
             assert label_success["jsonResponse"] == {"status": "ok"}
@@ -227,6 +234,30 @@ class TestDownloadJsonResponsesParallel:
             # Failure should have empty dict
             assert label_fail["jsonResponse"] == {}
             assert "jsonResponseUrl" not in label_fail
+
+    def test_download_in_existing_event_loop(self):
+        """Test that downloads work when called from within an existing event loop."""
+        import asyncio
+
+        http_client = Mock()
+        label = {"id": "label1", "jsonResponseUrl": "https://example.com/label1.json"}
+        url_to_label_mapping = [("https://example.com/label1.json", label)]
+
+        # Mock the http_client.get response
+        mock_response = Mock()
+        mock_response.json.return_value = {"data": "test"}
+        http_client.get.return_value = mock_response
+
+        # Run inside an existing event loop (simulating Jupyter/FastAPI)
+        async def run_in_loop():
+            download_json_responses_parallel(url_to_label_mapping, http_client)
+
+        asyncio.run(run_in_loop())
+
+        # Verify the JSON was downloaded (sequentially in this case)
+        assert label["jsonResponse"] == {"data": "test"}
+        assert "jsonResponseUrl" not in label
+        http_client.get.assert_called_once_with("https://example.com/label1.json", timeout=30)
 
 
 class TestLoadAssetJsonFields:
@@ -283,7 +314,7 @@ class TestLoadAssetJsonFields:
         fields = ["id", "labels.jsonResponse", "labels.jsonResponseUrl"]
 
         # Create mock side effect for different URLs
-        async def mock_download(url):
+        async def mock_download(url, client):
             if "label1" in url:
                 return {"data": "label1"}
             elif "label2" in url:
@@ -345,7 +376,7 @@ class TestLoadAssetJsonFields:
         ]
 
         # Create mock side effect for different URLs
-        async def mock_download(url):
+        async def mock_download(url, client):
             if "label1" in url:
                 return {"data": "label1"}
             elif "label2" in url:

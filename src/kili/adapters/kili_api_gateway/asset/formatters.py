@@ -2,11 +2,11 @@
 
 import asyncio
 import json
-import os
 
-import httpx
+import requests
 
 from kili.adapters.http_client import HttpClient
+from kili.adapters.kili_api_gateway.helpers.http_json import load_json_from_link
 from kili.core.helpers import is_url
 from kili.domain.types import ListOrTuple
 
@@ -14,50 +14,41 @@ from kili.domain.types import ListOrTuple
 JSON_RESPONSE_BATCH_SIZE = 10
 
 
-def load_json_from_link(link: str, http_client: HttpClient) -> dict:
-    """Load json from link (synchronous fallback for non-batch operations)."""
-    if link == "" or not is_url(link):
-        return {}
-
-    response = http_client.get(link, timeout=30)
-    response.raise_for_status()
-    return response.json()
-
-
-async def _download_json_response(url: str) -> dict:
+async def _download_json_response(url: str, http_client: HttpClient) -> dict:
     """Download and parse JSON response from a URL using asyncio.
 
     Args:
         url: URL to download the JSON response from
+        http_client: HttpClient instance with SSL verification already configured
 
     Returns:
         Parsed JSON response as a dictionary
     """
     try:
-        verify_env = os.getenv("KILI_VERIFY")
-        verify = verify_env.lower() in ("true", "1", "yes") if verify_env is not None else True
-
-        async with httpx.AsyncClient(verify=verify) as client:
-            response = await client.get(url, timeout=30.0)
-            response.raise_for_status()
-            return response.json()
-    except (httpx.HTTPError, json.JSONDecodeError):
+        # Run synchronous requests call in a thread
+        response = await asyncio.to_thread(http_client.get, url, timeout=30)
+        response.raise_for_status()
+        return response.json()
+    except (requests.RequestException, json.JSONDecodeError):
         # Return empty dict on error to ensure consistent response format
         return {}
 
 
-async def _download_json_responses_async(url_to_label_mapping: list[tuple[str, dict]]) -> None:
+async def _download_json_responses_async(
+    url_to_label_mapping: list[tuple[str, dict]], http_client: HttpClient
+) -> None:
     """Download JSON responses in parallel using asyncio.
 
     Args:
         url_to_label_mapping: List of tuples (url, label_dict) to download
+        http_client: HttpClient instance with SSL verification already configured
     """
     # Process in batches to limit concurrent connections
     for i in range(0, len(url_to_label_mapping), JSON_RESPONSE_BATCH_SIZE):
         batch = url_to_label_mapping[i : i + JSON_RESPONSE_BATCH_SIZE]
 
         # Download all URLs in the batch in parallel using asyncio.gather
-        download_tasks = [_download_json_response(url) for url, _ in batch]
+        download_tasks = [_download_json_response(url, http_client) for url, _ in batch]
         json_responses = await asyncio.gather(*download_tasks)
 
         # Assign the downloaded responses back to their labels and remove the URL
@@ -67,17 +58,37 @@ async def _download_json_responses_async(url_to_label_mapping: list[tuple[str, d
                 del label["jsonResponseUrl"]
 
 
-def download_json_responses_parallel(url_to_label_mapping: list[tuple[str, dict]]) -> None:
+def download_json_responses_parallel(
+    url_to_label_mapping: list[tuple[str, dict]], http_client: HttpClient
+) -> None:
     """Download JSON responses in parallel and assign to labels.
 
     Args:
         url_to_label_mapping: List of tuples (url, label_dict) to download
+        http_client: HttpClient instance with SSL verification already configured
     """
     if not url_to_label_mapping:
         return
 
-    # Run async downloads in a synchronous context
-    asyncio.run(_download_json_responses_async(url_to_label_mapping))
+    # Check if we're already in an event loop (e.g., Jupyter notebook, async web framework)
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        # No running loop, safe to use asyncio.run() for parallel downloads
+        asyncio.run(_download_json_responses_async(url_to_label_mapping, http_client))
+    else:
+        # Already in a loop - fall back to sequential downloads to avoid RuntimeError
+        # This happens in Jupyter notebooks, FastAPI, and other async contexts
+        for url, label in url_to_label_mapping:
+            try:
+                response = http_client.get(url, timeout=30)
+                response.raise_for_status()
+                label["jsonResponse"] = response.json()
+            except (requests.RequestException, json.JSONDecodeError):
+                label["jsonResponse"] = {}
+
+            if "jsonResponseUrl" in label:
+                del label["jsonResponseUrl"]
 
 
 def _parse_label_json_response(label: dict) -> None:
@@ -129,6 +140,6 @@ def load_asset_json_fields(asset: dict, fields: ListOrTuple[str], http_client: H
         _process_label_json_response(asset["latestLabel"], url_to_label_mapping)
 
     if url_to_label_mapping:
-        download_json_responses_parallel(url_to_label_mapping)
+        download_json_responses_parallel(url_to_label_mapping, http_client)
 
     return asset
