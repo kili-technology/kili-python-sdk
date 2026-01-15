@@ -6,7 +6,7 @@ a JSON response for geospatial annotations.
 """
 
 import struct
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Optional, Union, cast
 
 from cuid import cuid
 
@@ -14,12 +14,12 @@ if TYPE_CHECKING:
     from shapely.geometry import LinearRing, LineString, Point, Polygon
     from shapely.ops import transform
 
-SHAPELY_INSTALLED = True
+shapely_installed = True
 try:
     from shapely.geometry import LinearRing, LineString, Point, Polygon
     from shapely.ops import transform
 except ImportError:
-    SHAPELY_INSTALLED = False
+    shapely_installed = False
 
 
 def _read_shapefile_header(file_handle):
@@ -47,7 +47,7 @@ def _read_point_record(file_handle) -> "Point":
     return Point(x, y)
 
 
-def _read_polyline_record(file_handle) -> List["LineString"]:
+def _read_polyline_record(file_handle) -> list["LineString"]:
     """Reads a Polyline (type 3) record from the shapefile."""
     # Skip the bounding box (4 doubles = 32 bytes)
     file_handle.read(32)
@@ -77,7 +77,7 @@ def _read_polyline_record(file_handle) -> List["LineString"]:
     return polylines
 
 
-def _read_polygon_record(file_handle) -> List["Polygon"]:
+def _read_polygon_record(file_handle) -> list["Polygon"]:
     """Reads a Polygon (type 5) record from the shapefile."""
     # Skip the bounding box (4 doubles = 32 bytes)
     file_handle.read(32)
@@ -137,7 +137,7 @@ def _read_polygon_record(file_handle) -> List["Polygon"]:
 
 def read_shape_record(
     file_handle,
-) -> Optional[Tuple[int, Union["Point", List["LineString"], List["Polygon"]]]]:
+) -> Optional[tuple[int, Union["Point", list["LineString"], list["Polygon"]]]]:
     """Reads a single shape record from the shapefile.
 
     Returns a tuple (shape_type, geometry) where geometry depends on shape_type.
@@ -171,7 +171,7 @@ def read_shape_record(
 
 def _read_shapefile(
     filename: str,
-) -> Tuple[List["Point"], List[List["LineString"]], List[List["Polygon"]]]:
+) -> tuple[list["Point"], list[list["LineString"]], list[list["Polygon"]]]:
     """Reads a shapefile and extracts geometries."""
     points = []
     polyline_records = []
@@ -218,12 +218,12 @@ def _transform_geometry(
 
 
 def get_json_response_from_shapefiles(
-    shapefile_paths: List[str],
-    job_names: List[str],
-    category_names: List[str],
-    json_interface: Dict,
-    from_epsgs: Optional[List[int]] = None,
-) -> Dict:
+    shapefile_paths: list[str],
+    job_names: list[str],
+    category_names: list[str],
+    json_interface: dict,
+    from_epsgs: Optional[list[int]] = None,
+) -> dict:
     """Process multiple shapefiles and convert them to a JSON response.
 
     Args:
@@ -236,7 +236,7 @@ def get_json_response_from_shapefiles(
     if len(shapefile_paths) != len(job_names) or len(shapefile_paths) != len(category_names):
         raise ValueError("Shapefile paths, job names, and category names must have the same length")
 
-    if not SHAPELY_INSTALLED:
+    if not shapely_installed:
         raise ImportError("Install with `pip install kili[gis]` to use GIS features.")
 
     json_response = {}
@@ -287,10 +287,13 @@ def _remove_duplicate_points(coords):
 def _process_marker_records(point_records, category_name, from_epsg, json_response, job_name):
     """Process point records for marker job type."""
     for point_record in point_records:
-        point = _transform_geometry(point_record, from_epsg)
+        geometry = _transform_geometry(point_record, from_epsg)
+        # For marker jobs, the geometry should always be a Point
+        if not isinstance(geometry, Point):
+            raise TypeError(f"Expected Point geometry for marker job, got {type(geometry)}")
 
         annotation = {
-            "point": {"x": point.x, "y": point.y},
+            "point": {"x": geometry.x, "y": geometry.y},
             "categories": [{"name": category_name}],
             "type": "marker",
             "mid": cuid(),

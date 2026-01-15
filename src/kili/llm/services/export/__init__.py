@@ -1,6 +1,6 @@
 """Service for exporting kili objects."""
 
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 from kili_formats.types import Conversation
 
@@ -36,6 +36,7 @@ LABELS_NEEDED_FIELDS = [
     "isLatestLabelForUser",
     "isSentBackToQueue",
     "jsonResponse",  # This is needed to keep annotations
+    "jsonResponseUrl",
     "labelType",
     "modelName",
 ]
@@ -57,6 +58,7 @@ ASSET_STATIC_NEEDED_FIELDS = [
     "externalId",
     "jsonMetadata",
     "labels.jsonResponse",
+    "labels.jsonResponseUrl",
     "labels.author.id",
     "labels.author.email",
     "labels.author.firstname",
@@ -76,8 +78,8 @@ def export(  # pylint: disable=too-many-arguments, too-many-locals
     asset_filter: AssetFilters,
     disable_tqdm: Optional[bool],
     include_sent_back_labels: Optional[bool],
-    label_type_in: List[LabelType],
-) -> Union[List[Conversation], List[Dict[str, Union[List[str], str]]]]:
+    label_type_in: list[LabelType],
+) -> Union[list[Conversation], list[dict[str, Union[list[str], str]]]]:
     """Export the selected assets with their labels into the required format, and save it into a file archive."""
     project = kili_api_gateway.get_project(project_id, ["id", "inputType", "jsonInterface"])
     input_type = project["inputType"]
@@ -97,7 +99,7 @@ def export(  # pylint: disable=too-many-arguments, too-many-locals
     raise ValueError(f'Project Input type "{input_type}" cannot be used for llm exports.')
 
 
-def get_fields_to_fetch(input_type: str) -> List[str]:
+def get_fields_to_fetch(input_type: str) -> list[str]:
     """Return the fields to fetch depending on the export type."""
     if input_type == "LLM_RLHF":
         return ASSET_STATIC_NEEDED_FIELDS
@@ -105,8 +107,8 @@ def get_fields_to_fetch(input_type: str) -> List[str]:
 
 
 def preprocess_assets(
-    assets: List[Dict], include_sent_back_labels: bool, label_type_in: List[LabelType]
-) -> List[Dict]:
+    assets: list[dict], include_sent_back_labels: bool, label_type_in: list[LabelType]
+) -> list[dict]:
     """Format labels in the requested format, and filter out autosave labels."""
     assets_in_format = []
     for asset in assets:

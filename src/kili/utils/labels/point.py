@@ -1,14 +1,14 @@
 """Helpers to create point annotations."""
 
-from typing import Dict, Literal, Optional, Union
+from typing import Literal, Optional, Union
 
 
 def point_to_normalized_point(
-    point: Dict[str, Union[int, float]],
+    point: dict[str, Union[int, float]],
     img_width: Optional[Union[int, float]] = None,
     img_height: Optional[Union[int, float]] = None,
     origin_location: Literal["top_left", "bottom_left"] = "bottom_left",
-) -> Dict[Literal["x", "y"], float]:
+) -> dict[Literal["x", "y"], float]:
     # pylint: disable=line-too-long
     """Converts a 2D point to a Kili normalized vertex.
 
@@ -78,11 +78,11 @@ def point_to_normalized_point(
 
 
 def normalized_point_to_point(
-    point: Dict[str, float],
+    point: dict[str, float],
     img_width: Optional[Union[int, float]] = None,
     img_height: Optional[Union[int, float]] = None,
     origin_location: Literal["top_left", "bottom_left"] = "bottom_left",
-) -> Dict[Literal["x", "y"], float]:
+) -> dict[Literal["x", "y"], float]:
     # pylint: disable=line-too-long
     """Convert a Kili normalized vertex to a 2D point.
 

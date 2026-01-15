@@ -1,13 +1,12 @@
 """GraphQL payload data mappers for user operations."""
 
-from typing import Dict
 
 from kili.domain.user import UserFilter
 
 from .types import CreateUserDataKiliGatewayInput, UserDataKiliGatewayInput
 
 
-def user_where_mapper(filters: UserFilter) -> Dict:
+def user_where_mapper(filters: UserFilter) -> dict:
     """Build the GraphQL UserWhere variable to be sent in an operation."""
     return {
         "activated": filters.activated,
@@ -18,7 +17,7 @@ def user_where_mapper(filters: UserFilter) -> Dict:
     }
 
 
-def create_user_data_mapper(data: CreateUserDataKiliGatewayInput) -> Dict:
+def create_user_data_mapper(data: CreateUserDataKiliGatewayInput) -> dict:
     """Build the CreateUserDataKiliGatewayInput data variable to be sent in an operation."""
     return {
         "email": data.email.lower(),
@@ -29,7 +28,7 @@ def create_user_data_mapper(data: CreateUserDataKiliGatewayInput) -> Dict:
     }
 
 
-def update_user_data_mapper(data: UserDataKiliGatewayInput) -> Dict:
+def update_user_data_mapper(data: UserDataKiliGatewayInput) -> dict:
     """Build the UserDataKiliGatewayInput data variable to be sent in an operation."""
     return {
         "activated": data.activated,

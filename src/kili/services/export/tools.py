@@ -1,7 +1,7 @@
 """Set of common functions used by different export formats."""
 
 import warnings
-from typing import Dict, List, Optional
+from typing import Optional
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -35,6 +35,7 @@ COMMON_FIELDS = [
 DEFAULT_FIELDS = [
     *COMMON_FIELDS,
     "labels.jsonResponse",
+    "labels.jsonResponseUrl",
     "labels.author.id",
     "labels.author.email",
     "labels.author.firstname",
@@ -48,6 +49,7 @@ DEFAULT_FIELDS = [
 LATEST_LABEL_FIELDS = [
     *COMMON_FIELDS,
     "latestLabel.jsonResponse",
+    "latestLabel.jsonResponseUrl",
     "latestLabel.author.id",
     "latestLabel.author.email",
     "latestLabel.author.firstname",
@@ -60,7 +62,7 @@ LATEST_LABEL_FIELDS = [
 ]
 
 
-def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportType):
+def attach_name_to_assets_labels_author(assets: list[dict], export_type: ExportType):
     """Adds `name` field for author, by concatenating his/her first and last name."""
     for asset in assets:
         if export_type == "latest":
@@ -83,14 +85,14 @@ THRESHOLD_WARN_MANY_ASSETS = 1000
 def fetch_assets(
     kili,
     project_id: str,
-    asset_ids: Optional[List[AssetId]],
+    asset_ids: Optional[list[AssetId]],
     export_type: ExportType,
-    label_type_in: Optional[List[str]],
+    label_type_in: Optional[list[str]],
     disable_tqdm: Optional[bool],
     download_media: bool,
     local_media_dir: Optional[str],
-    asset_filter_kwargs: Optional[Dict[str, object]],
-) -> List[Dict]:
+    asset_filter_kwargs: Optional[dict[str, object]],
+) -> list[dict]:
     """Fetches assets.
 
     Fetches assets where ID are in asset_ids if the list has more than one element,
@@ -197,7 +199,7 @@ def fetch_assets(
             )
 
     if download_media_function is not None:
-        assets: List[Dict] = []
+        assets: list[dict] = []
         # TODO: modify download_media function so it can take a generator of assets
         for assets_batch in batcher(assets_gen, QUERY_BATCH_SIZE):
             assets.extend(download_media_function(assets_batch))
@@ -214,7 +216,7 @@ def get_fields_to_fetch(export_type: ExportType):
     return DEFAULT_FIELDS
 
 
-def is_geotiff_asset_with_lat_lon_coords(asset: Dict, http_client: HttpClient) -> bool:
+def is_geotiff_asset_with_lat_lon_coords(asset: dict, http_client: HttpClient) -> bool:
     """Check if asset is a geotiff with lat/lon coordinates."""
     if "jsonContent" not in asset:
         return False
@@ -228,9 +230,9 @@ def is_geotiff_asset_with_lat_lon_coords(asset: Dict, http_client: HttpClient) -
         json_content = asset["jsonContent"]
 
     return (
-        isinstance(json_content, List)
+        isinstance(json_content, list)
         and len(json_content) > 0
-        and isinstance(json_content[0], Dict)
+        and isinstance(json_content[0], dict)
         and json_content[0].get("useClassicCoordinates") is False
         and "epsg" in json_content[0]
         and json_content[0]["epsg"] != "TiledImage"

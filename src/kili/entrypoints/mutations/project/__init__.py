@@ -1,6 +1,6 @@
 """Project mutations."""
 
-from typing import Dict, Literal, Optional
+from typing import Literal, Optional
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -31,7 +31,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
         project_id: str,
         user_email: str,
         role: Literal["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"] = "LABELER",
-    ) -> Dict:
+    ) -> dict:
         """Add a user to a project.
 
         !!! info
@@ -73,7 +73,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
         project_id: str,
         user_email: str,
         role: Literal["ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER"],
-    ) -> Dict:
+    ) -> dict:
         """Update properties of a role.
 
         !!! info
@@ -104,7 +104,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
     @deprecated("use update_properties_in_project_user instead")
     def update_properties_in_role(
         self, role_id: str, project_id: str, user_id: str, role: str
-    ) -> Dict:
+    ) -> dict:
         """Update properties of a role.
 
         !!! info
@@ -139,7 +139,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
         role_id: Optional[str] = None,
         user_email: Optional[str] = None,
         project_id: Optional[str] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Delete users by their role_id.
 
         Args:
@@ -178,7 +178,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
         return self.format_result("data", result)
 
     @typechecked
-    def archive_project(self, project_id: str) -> Dict[Literal["id"], str]:
+    def archive_project(self, project_id: str) -> dict[Literal["id"], str]:
         """Archive a project.
 
         Args:
@@ -197,7 +197,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
         return self.format_result("data", result)
 
     @typechecked
-    def unarchive_project(self, project_id: str) -> Dict[Literal["id"], str]:
+    def unarchive_project(self, project_id: str) -> dict[Literal["id"], str]:
         """Unarchive a project.
 
         Args:
@@ -253,7 +253,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
                 "The 'copy_json_interface' and 'copy_quality_settings' arguments are deprecated."
             )
 
-        return ProjectCopier(self).copy_project(  # pyright: ignore[reportGeneralTypeIssues]
+        return ProjectCopier(self).copy_project(  # pyright: ignore[reportArgumentType]
             from_project_id,
             title,
             description,
@@ -266,7 +266,7 @@ class MutationsProject(BaseOperationEntrypointMixin):
     @typechecked
     def update_project_anonymization(
         self, project_id: str, should_anonymize: bool = True
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Anonymize the project for the labelers and reviewers.
 
         !!! info

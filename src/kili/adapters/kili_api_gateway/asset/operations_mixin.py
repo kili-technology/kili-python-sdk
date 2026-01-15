@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Asset related operations."""
 
-from typing import Dict, Generator, List
+from collections.abc import Generator
 
 from kili_formats.tool.annotations_to_json_response import (
     AnnotationsToJsonResponseConverter,
@@ -25,6 +25,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 )
 from kili.adapters.kili_api_gateway.label.common import get_annotation_fragment
 from kili.adapters.kili_api_gateway.project.common import get_project
+from kili.core.graphql.operations.asset.mutations import GQL_SET_ASSET_CONSENSUS
 from kili.domain.asset import AssetFilters
 from kili.domain.types import ListOrTuple
 
@@ -43,8 +44,11 @@ class AssetOperationMixin(BaseOperationMixin):
         filters: AssetFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List assets with given options."""
+        has_labels_url = "labels.jsonResponseUrl" in fields
+        has_latest_label_url = "latestLabel.jsonResponseUrl" in fields
+
         if "labels.jsonResponse" in fields or "latestLabel.jsonResponse" in fields:
             # Check if we can get the jsonResponse of if we need to rebuild it.
             project_info = get_project(
@@ -57,7 +61,10 @@ class AssetOperationMixin(BaseOperationMixin):
                 "LLM_STATIC",
                 "GEOSPATIAL",
             }:
-                yield from self.list_assets_split(filters, fields, options, project_info)
+                fetch_annotations = not (has_labels_url or has_latest_label_url)
+                yield from self.list_assets_split(
+                    filters, fields, options, project_info, fetch_annotations
+                )
                 return
 
         fragment = fragment_builder(fields)
@@ -78,8 +85,13 @@ class AssetOperationMixin(BaseOperationMixin):
         yield from assets_gen
 
     def list_assets_split(
-        self, filters: AssetFilters, fields: ListOrTuple[str], options: QueryOptions, project_info
-    ) -> Generator[Dict, None, None]:
+        self,
+        filters: AssetFilters,
+        fields: ListOrTuple[str],
+        options: QueryOptions,
+        project_info,
+        fetch_annotations: bool,
+    ) -> Generator[dict, None, None]:
         """List assets with given options."""
         nb_annotations = self.count_assets_annotations(filters)
         assets_batch_max_amount = 10 if project_info["inputType"] == "VIDEO" else 50
@@ -90,22 +102,23 @@ class AssetOperationMixin(BaseOperationMixin):
 
         options = QueryOptions(options.disable_tqdm, options.first, options.skip, batch_size)
 
-        inner_annotation_fragment = get_annotation_fragment()
-        annotation_fragment = f"""
-            annotations {{
-                {inner_annotation_fragment}
-            }}
-        """
-        # Ensure 'content', 'resolution', and 'jsonContent' are present in fields
-        required_fields = {"content", "jsonContent", "resolution.width", "resolution.height"}
-        fields = list(fields)
-        for field in required_fields:
-            if field not in fields:
-                fields.append(field)
+        static_fragments = {}
+        if fetch_annotations:
+            inner_annotation_fragment = get_annotation_fragment()
+            annotation_fragment = f"""
+                annotations {{
+                    {inner_annotation_fragment}
+                }}
+            """
+            static_fragments = {"labels": annotation_fragment, "latestLabel": annotation_fragment}
 
-        fragment = fragment_builder(
-            fields, {"labels": annotation_fragment, "latestLabel": annotation_fragment}
-        )
+            required_fields = {"content", "jsonContent", "resolution.width", "resolution.height"}
+            fields = list(fields)
+            for field in required_fields:
+                if field not in fields:
+                    fields.append(field)
+
+        fragment = fragment_builder(fields, static_fragments if static_fragments else None)
         query = get_assets_query(fragment)
         where = asset_where_mapper(filters)
         assets_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
@@ -114,25 +127,29 @@ class AssetOperationMixin(BaseOperationMixin):
         assets_gen = (
             load_asset_json_fields(asset, fields, self.http_client) for asset in assets_gen
         )
-        converter = AnnotationsToJsonResponseConverter(
-            json_interface=project_info["jsonInterface"],
-            project_input_type=project_info["inputType"],
-        )
-        is_requesting_annotations = any("annotations." in element for element in fields)
-        for asset in assets_gen:
-            if "latestLabel.jsonResponse" in fields and asset.get("latestLabel"):
-                converter.patch_label_json_response(
-                    asset, asset["latestLabel"], asset["latestLabel"]["annotations"]
-                )
-                if not is_requesting_annotations:
-                    asset["latestLabel"].pop("annotations")
 
-            if "labels.jsonResponse" in fields:
-                for label in asset.get("labels", []):
-                    converter.patch_label_json_response(asset, label, label["annotations"])
+        if fetch_annotations:
+            converter = AnnotationsToJsonResponseConverter(
+                json_interface=project_info["jsonInterface"],
+                project_input_type=project_info["inputType"],
+            )
+            is_requesting_annotations = any("annotations." in element for element in fields)
+            for asset in assets_gen:
+                if "latestLabel.jsonResponse" in fields and asset.get("latestLabel"):
+                    converter.patch_label_json_response(
+                        asset, asset["latestLabel"], asset["latestLabel"]["annotations"]
+                    )
                     if not is_requesting_annotations:
-                        label.pop("annotations")
-            yield asset
+                        asset["latestLabel"].pop("annotations")
+
+                if "labels.jsonResponse" in fields:
+                    for label in asset.get("labels", []):
+                        converter.patch_label_json_response(asset, label, label["annotations"])
+                        if not is_requesting_annotations:
+                            label.pop("annotations")
+                yield asset
+        else:
+            yield from assets_gen
 
     def count_assets(self, filters: AssetFilters) -> int:
         """Send a GraphQL request calling countIssues resolver."""
@@ -142,7 +159,7 @@ class AssetOperationMixin(BaseOperationMixin):
         count: int = count_result["data"]
         return count
 
-    def create_upload_bucket_signed_urls(self, file_paths: List[str]) -> List[str]:
+    def create_upload_bucket_signed_urls(self, file_paths: list[str]) -> list[str]:
         """Send a GraphQL request calling createUploadBucketSignedUrls resolver."""
         payload = {
             "filePaths": file_paths,
@@ -166,3 +183,26 @@ class AssetOperationMixin(BaseOperationMixin):
         count_result = self.graphql_client.execute(GQL_COUNT_ASSET_ANNOTATIONS, payload)
         count: int = count_result["data"]
         return count
+
+    def update_asset_consensus(
+        self,
+        project_id: str,
+        is_consensus: bool,
+        asset_id: str | None = None,
+        external_id: str | None = None,
+    ) -> bool:
+        """Update consensus on an asset."""
+        if asset_id is None and external_id is None:
+            raise ValueError("At least one of asset_id or external_id must be provided")
+
+        payload = {
+            "projectId": project_id,
+            "isConsensus": is_consensus,
+        }
+        if asset_id is not None:
+            payload["assetId"] = asset_id
+        if external_id is not None:
+            payload["externalId"] = external_id
+
+        result = self.graphql_client.execute(GQL_SET_ASSET_CONSENSUS, payload)
+        return result["data"]

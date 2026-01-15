@@ -2,13 +2,13 @@
 
 import inspect
 from functools import cached_property
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Any
 
 
-def get_available_methods(instance: "Any") -> List[str]:
+def get_available_methods(instance: "Any") -> list[str]:
     """Get list of public methods for any namespace instance.
 
     This utility function dynamically discovers all public callable methods

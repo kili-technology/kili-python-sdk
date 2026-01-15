@@ -1,6 +1,6 @@
 """Asset mutations."""
 import warnings
-from typing import Any, Dict, List, Literal, Optional, Union, cast
+from typing import Any, Literal, Optional, Union, cast
 
 from tenacity import retry
 from tenacity.retry import retry_if_exception_type
@@ -42,19 +42,19 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     def append_many_to_dataset(
         self,
         project_id: str,
-        content_array: Optional[Union[List[str], List[dict], List[List[dict]]]] = None,
-        multi_layer_content_array: Optional[List[List[dict]]] = None,
-        external_id_array: Optional[List[str]] = None,
-        id_array: Optional[List[str]] = None,
-        is_honeypot_array: Optional[List[bool]] = None,
-        status_array: Optional[List[str]] = None,
-        json_content_array: Optional[List[Union[List[Union[dict, str]], None]]] = None,
-        json_metadata_array: Optional[List[dict]] = None,
+        content_array: Optional[Union[list[str], list[dict], list[list[dict]]]] = None,
+        multi_layer_content_array: Optional[list[list[dict]]] = None,
+        external_id_array: Optional[list[str]] = None,
+        id_array: Optional[list[str]] = None,
+        is_honeypot_array: Optional[list[bool]] = None,
+        status_array: Optional[list[str]] = None,
+        json_content_array: Optional[list[Union[list[Union[dict, str]], None]]] = None,
+        json_metadata_array: Optional[list[dict]] = None,
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         from_csv: Optional[str] = None,
         csv_separator: str = ",",
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, list[str]]]:
         # pylint: disable=line-too-long
         """Append assets to a project.
 
@@ -197,7 +197,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             if value is not None:
                 assets = [{**assets[i], key: value[i]} for i in range(nb_data)]
         created_asset_ids = import_assets(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            self,  # pyright: ignore[reportArgumentType]
             project_id=ProjectId(project_id),
             assets=assets,
             disable_tqdm=disable_tqdm,
@@ -208,11 +208,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     @typechecked
     def assign_assets_to_labelers(
         self,
-        to_be_labeled_by_array: List[List[str]],
-        asset_ids: Optional[List[str]] = None,
-        external_ids: Optional[List[str]] = None,
+        to_be_labeled_by_array: list[list[str]],
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Assign a list of assets to a list of labelers.
 
         Args:
@@ -253,7 +253,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             raise MutationError("There must be as many assets as there are lists of labelers.")
 
         formated_results = []
-        for asset_id, to_be_labeled_by in zip(resolved_asset_ids, to_be_labeled_by_array):
+        for asset_id, to_be_labeled_by in zip(
+            resolved_asset_ids, to_be_labeled_by_array, strict=False
+        ):
             payload = {"userIds": to_be_labeled_by, "where": {"id": asset_id}}
             results = self.graphql_client.execute(GQL_ASSIGN_ASSETS, payload)
             formated_results.append(results)
@@ -262,24 +264,24 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     @typechecked
     def update_properties_in_assets(
         self,
-        asset_ids: Optional[List[str]] = None,
-        external_ids: Optional[List[str]] = None,
-        priorities: Optional[List[int]] = None,
-        json_metadatas: Optional[List[Union[dict, str]]] = None,
-        consensus_marks: Optional[List[float]] = None,
-        honeypot_marks: Optional[List[float]] = None,
-        to_be_labeled_by_array: Optional[List[List[str]]] = None,
-        contents: Optional[List[str]] = None,
-        json_contents: Optional[List[str]] = None,
-        status_array: Optional[List[str]] = None,
-        is_used_for_consensus_array: Optional[List[bool]] = None,
-        is_honeypot_array: Optional[List[bool]] = None,
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
+        priorities: Optional[list[int]] = None,
+        json_metadatas: Optional[list[Union[dict, str]]] = None,
+        consensus_marks: Optional[list[float]] = None,
+        honeypot_marks: Optional[list[float]] = None,
+        to_be_labeled_by_array: Optional[list[list[str]]] = None,
+        contents: Optional[list[str]] = None,
+        json_contents: Optional[list[str]] = None,
+        status_array: Optional[list[str]] = None,
+        is_used_for_consensus_array: Optional[list[bool]] = None,
+        is_honeypot_array: Optional[list[bool]] = None,
         project_id: Optional[str] = None,
-        resolution_array: Optional[List[Dict]] = None,
+        resolution_array: Optional[list[dict]] = None,
         page_resolutions_array: Optional[
-            Union[List[List[dict]], List[List[PageResolution]]]
+            Union[list[list[dict]], list[list[PageResolution]]]
         ] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> list[dict[Literal["id"], str]]:
         """Update the properties of one or more assets.
 
         Args:
@@ -379,7 +381,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
         properties_to_batch = process_update_properties_in_assets_parameters(
-            cast(List[str], resolved_asset_ids),
+            cast(list[str], resolved_asset_ids),
             priorities=priorities,
             json_metadatas=json_metadatas,
             consensus_marks=consensus_marks,
@@ -393,9 +395,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             page_resolutions_array=page_resolutions_array,
         )
 
-        def generate_variables(batch: Dict) -> Dict:
+        def generate_variables(batch: dict) -> dict:
             asset_ids = batch.pop("assetId")
-            data_array = [dict(zip(batch, t)) for t in zip(*batch.values())]  # type: ignore
+            data_array = [
+                dict(zip(batch, t, strict=False)) for t in zip(*batch.values(), strict=False)
+            ]  # type: ignore
             return {
                 "whereArray": [{"id": asset_id} for asset_id in asset_ids],
                 "dataArray": data_array,
@@ -413,11 +417,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     @typechecked
     def add_metadata(
         self,
-        json_metadata: List[Dict[str, Union[str, int, float]]],
+        json_metadata: list[dict[str, Union[str, int, float]]],
         project_id: str,
-        asset_ids: Optional[List[str]] = None,
-        external_ids: Optional[List[str]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
+    ) -> list[dict[Literal["id"], str]]:
         """Add metadata to assets without overriding existing metadata.
 
         Args:
@@ -461,8 +465,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         assets = self.kili_api_gateway.list_assets(
             AssetFilters(
                 project_id=ProjectId(project_id),
-                asset_id_in=cast(List[AssetId], asset_ids),
-                external_id_in=cast(List[AssetExternalId], external_ids),
+                asset_id_in=cast(list[AssetId], asset_ids),
+                external_id_in=cast(list[AssetExternalId], external_ids),
             ),
             ["id", "jsonMetadata"],
             QueryOptions(disable_tqdm=True),
@@ -480,18 +484,18 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             resolved_asset_ids.append(asset["id"])
 
         return self.update_properties_in_assets(
-            asset_ids=cast(List[str], resolved_asset_ids),
+            asset_ids=cast(list[str], resolved_asset_ids),
             json_metadatas=json_metadatas,
         )
 
     @typechecked
     def set_metadata(
         self,
-        json_metadata: List[Dict[str, Union[str, int, float]]],
+        json_metadata: list[dict[str, Union[str, int, float]]],
         project_id: str,
-        asset_ids: Optional[List[str]] = None,
-        external_ids: Optional[List[str]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
+    ) -> list[dict[Literal["id"], str]]:
         """Set metadata on assets, replacing any existing metadata.
 
         Args:
@@ -535,8 +539,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         assets = self.kili_api_gateway.list_assets(
             AssetFilters(
                 project_id=ProjectId(project_id),
-                asset_id_in=cast(List[AssetId], asset_ids),
-                external_id_in=cast(List[AssetExternalId], external_ids),
+                asset_id_in=cast(list[AssetId], asset_ids),
+                external_id_in=cast(list[AssetExternalId], external_ids),
             ),
             ["id", "jsonMetadata"],
             QueryOptions(disable_tqdm=True),
@@ -559,18 +563,18 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             resolved_asset_ids.append(asset["id"])
 
         return self.update_properties_in_assets(
-            asset_ids=cast(List[str], resolved_asset_ids),
+            asset_ids=cast(list[str], resolved_asset_ids),
             json_metadatas=json_metadatas,
         )
 
     @typechecked
     def change_asset_external_ids(
         self,
-        new_external_ids: List[str],
-        asset_ids: Optional[List[str]] = None,
-        external_ids: Optional[List[str]] = None,
+        new_external_ids: list[str],
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> list[dict[Literal["id"], str]]:
         """Update the external IDs of one or more assets.
 
         Args:
@@ -596,13 +600,15 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
         properties_to_batch = process_update_properties_in_assets_parameters(
-            asset_ids=cast(List[str], resolved_asset_ids),
+            asset_ids=cast(list[str], resolved_asset_ids),
             external_ids=new_external_ids,
         )
 
-        def generate_variables(batch: Dict) -> Dict:
+        def generate_variables(batch: dict) -> dict:
             asset_ids = batch.pop("assetId")
-            data_array = [dict(zip(batch, t)) for t in zip(*batch.values())]  # type: ignore
+            data_array = [
+                dict(zip(batch, t, strict=False)) for t in zip(*batch.values(), strict=False)
+            ]  # type: ignore
             return {
                 "whereArray": [{"id": asset_id} for asset_id in asset_ids],
                 "dataArray": data_array,
@@ -620,10 +626,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     @typechecked
     def delete_many_from_dataset(
         self,
-        asset_ids: Optional[List[str]] = None,
-        external_ids: Optional[List[str]] = None,
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[Dict[Literal["id"], str]]:
+    ) -> Optional[dict[Literal["id"], str]]:
         """Delete assets from a project.
 
         Args:
@@ -651,12 +657,12 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             retry=retry_if_exception_type(MutationError),
             reraise=True,
         )
-        def verify_last_batch(last_batch: Dict, results: List) -> None:
+        def verify_last_batch(last_batch: dict, results: list) -> None:
             """Check that all assets in the last batch have been deleted."""
             if project_id is not None:
                 project_id_ = project_id
             # in some case the results is [{'data': None}]
-            elif isinstance(results[0]["data"], Dict) and results[0]["data"].get("id"):
+            elif isinstance(results[0]["data"], dict) and results[0]["data"].get("id"):
                 project_id_ = results[0]["data"].get("id")
             else:
                 return
@@ -684,10 +690,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     @typechecked
     def add_to_review(
         self,
-        asset_ids: Optional[List[str]] = None,
-        external_ids: Optional[List[str]] = None,
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         """Add assets to review.
 
         !!! warning
@@ -728,12 +734,12 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             retry=retry_if_exception_type(MutationError),
             reraise=True,
         )
-        def verify_last_batch(last_batch: Dict, results: List) -> None:
+        def verify_last_batch(last_batch: dict, results: list) -> None:
             """Check that all assets in the last batch have been sent to review."""
             if project_id is not None:
                 project_id_ = project_id
             # in some case the results is [{'data': None}]
-            elif isinstance(results[0]["data"], Dict) and results[0]["data"].get("id"):
+            elif isinstance(results[0]["data"], dict) and results[0]["data"].get("id"):
                 project_id_ = results[0]["data"].get("id")
             else:
                 return
@@ -775,10 +781,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     @typechecked
     def send_back_to_queue(
         self,
-        asset_ids: Optional[List[str]] = None,
-        external_ids: Optional[List[str]] = None,
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         """Send assets back to queue.
 
         Args:
@@ -815,12 +821,12 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             retry=retry_if_exception_type(MutationError),
             reraise=True,
         )
-        def verify_last_batch(last_batch: Dict, results: List) -> None:
+        def verify_last_batch(last_batch: dict, results: list) -> None:
             """Check that all assets in the last batch have been sent back to queue."""
             if project_id is not None:
                 project_id_ = project_id
             # in some case the results is [{'data': None}]
-            elif isinstance(results[0]["data"], Dict) and results[0]["data"].get("id"):
+            elif isinstance(results[0]["data"], dict) and results[0]["data"].get("id"):
                 project_id_ = results[0]["data"].get("id")
             else:
                 return

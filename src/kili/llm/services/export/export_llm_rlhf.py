@@ -1,7 +1,7 @@
 """Handle LLM_RLHF project exports."""
 
 import logging
-from typing import Dict, List, Union
+from typing import Union
 
 from kili_formats import convert_from_kili_to_llm_rlhf_format
 
@@ -18,8 +18,8 @@ class LLMRLHFExporter:
         self.kili_api_gateway = kili_api_gateway
 
     def export(
-        self, assets: List[Dict], project_id: ProjectId, json_interface: Dict
-    ) -> List[Dict[str, Union[List[str], str]]]:
+        self, assets: list[dict], project_id: ProjectId, json_interface: dict
+    ) -> list[dict[str, Union[list[str], str]]]:
         """Assets are static, with n labels."""
         with TemporaryDirectory() as tmpdirname:
             assets = MediaDownloader(

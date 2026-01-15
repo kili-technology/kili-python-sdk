@@ -29,6 +29,7 @@ class TestAssetsNamespace:
         client.add_metadata = MagicMock()
         client.set_metadata = MagicMock()
         client.skip_or_unskip = MagicMock()
+        client.update_asset_consensus = MagicMock()
         return client
 
     @pytest.fixture()
@@ -109,6 +110,57 @@ class TestAssetsNamespaceCoreOperations:
         call_kwargs = assets_namespace._client.assets.call_args[1]
         assert call_kwargs["project_id"] == "project_123"
         assert call_kwargs["as_generator"] is False
+
+    def test_list_assets_with_step_status_not_in_filter(self, assets_namespace):
+        """Test list method with step_status_not_in filter."""
+        # Mock the legacy client method
+        assets_namespace._client.assets.return_value = [
+            {"id": "asset1", "externalId": "ext1"},
+        ]
+
+        result = assets_namespace.list(
+            project_id="project_123", filter={"step_status_not_in": ["DONE", "SKIPPED"]}
+        )
+
+        # Verify the legacy method was called with the filter
+        assets_namespace._client.assets.assert_called_once()
+        call_kwargs = assets_namespace._client.assets.call_args[1]
+        assert call_kwargs["step_status_not_in"] == ["DONE", "SKIPPED"]
+
+    def test_list_assets_with_step_name_not_in_filter(self, assets_namespace):
+        """Test list method with step_name_not_in filter."""
+        # Mock the legacy client method
+        assets_namespace._client.assets.return_value = [
+            {"id": "asset1", "externalId": "ext1"},
+        ]
+
+        result = assets_namespace.list(
+            project_id="project_123", filter={"step_name_not_in": ["Review", "QA"]}
+        )
+
+        # Verify the legacy method was called with the filter
+        assets_namespace._client.assets.assert_called_once()
+        call_kwargs = assets_namespace._client.assets.call_args[1]
+        assert call_kwargs["step_name_not_in"] == ["Review", "QA"]
+
+    def test_count_assets_with_step_filters_not_in(self, assets_namespace):
+        """Test count method with step_status_not_in and step_name_not_in filters."""
+        # Mock the legacy client method
+        assets_namespace._client.count_assets.return_value = 15
+
+        result = assets_namespace.count(
+            project_id="project_123",
+            filter={"step_status_not_in": ["DONE"], "step_name_not_in": ["Final Review"]},
+        )
+
+        # Verify the result
+        assert result == 15
+
+        # Verify the legacy method was called with both filters
+        assets_namespace._client.count_assets.assert_called_once()
+        call_kwargs = assets_namespace._client.count_assets.call_args[1]
+        assert call_kwargs["step_status_not_in"] == ["DONE"]
+        assert call_kwargs["step_name_not_in"] == ["Final Review"]
 
     def test_count_assets(self, assets_namespace):
         """Test count method."""
@@ -231,6 +283,60 @@ class TestAssetsNamespaceCoreOperations:
         assert result == expected_result
         mock_client.delete_many_from_dataset.assert_called_once_with(
             asset_ids=["asset1", "asset2"], external_ids=None, project_id=""
+        )
+
+    def test_update_consensus_with_asset_id(self, assets_namespace, mock_client):
+        """Test update_consensus method with asset_id."""
+        mock_client.update_asset_consensus.return_value = True
+
+        result = assets_namespace.update_consensus(
+            project_id="project_123",
+            asset_id="asset1",
+            is_consensus=True,
+        )
+
+        assert result is True
+        mock_client.update_asset_consensus.assert_called_once_with(
+            project_id="project_123",
+            is_consensus=True,
+            asset_id="asset1",
+            external_id=None,
+        )
+
+    def test_update_consensus_with_external_id(self, assets_namespace, mock_client):
+        """Test update_consensus method with external_id."""
+        mock_client.update_asset_consensus.return_value = True
+
+        result = assets_namespace.update_consensus(
+            project_id="project_123",
+            external_id="ext_asset1",
+            is_consensus=True,
+        )
+
+        assert result is True
+        mock_client.update_asset_consensus.assert_called_once_with(
+            project_id="project_123",
+            is_consensus=True,
+            asset_id=None,
+            external_id="ext_asset1",
+        )
+
+    def test_update_consensus_deactivate(self, assets_namespace, mock_client):
+        """Test update_consensus method to deactivate consensus."""
+        mock_client.update_asset_consensus.return_value = False
+
+        result = assets_namespace.update_consensus(
+            project_id="project_123",
+            asset_id="asset1",
+            is_consensus=False,
+        )
+
+        assert result is False
+        mock_client.update_asset_consensus.assert_called_once_with(
+            project_id="project_123",
+            is_consensus=False,
+            asset_id="asset1",
+            external_id=None,
         )
 
 

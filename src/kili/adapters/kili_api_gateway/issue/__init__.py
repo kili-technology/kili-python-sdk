@@ -1,6 +1,7 @@
 """Mixin extending Kili API Gateway class with Issue related operations."""
 
-from typing import Any, Dict, Generator, List
+from collections.abc import Generator
+from typing import Any
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -31,11 +32,11 @@ class IssueOperationMixin(BaseOperationMixin):
         self,
         project_id: ProjectId,
         type_: IssueType,
-        issues: List[IssueToCreateKiliAPIGatewayInput],
+        issues: list[IssueToCreateKiliAPIGatewayInput],
         description: str,
-    ) -> List[IssueId]:
+    ) -> list[IssueId]:
         """Send a GraphQL request calling createIssues resolver."""
-        created_issue_entities: List[IssueId] = []
+        created_issue_entities: list[IssueId] = []
         with tqdm.tqdm(total=len(issues), desc=description) as pbar:
             for issues_batch in batcher(issues, batch_size=MUTATION_BATCH_SIZE):
                 payload = {
@@ -68,7 +69,7 @@ class IssueOperationMixin(BaseOperationMixin):
 
     def list_issues(
         self, filters: IssueFilters, fields: ListOrTuple[str], options: QueryOptions
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Send a GraphQL request calling issues resolver."""
         fragment = fragment_builder(fields)
         query = get_issues_query(fragment)
@@ -77,7 +78,7 @@ class IssueOperationMixin(BaseOperationMixin):
             query, where, options, "Retrieving issues", GQL_COUNT_ISSUES
         )
 
-    def update_issue_status(self, issue_id: IssueId, status: IssueStatus) -> Dict[str, Any]:
+    def update_issue_status(self, issue_id: IssueId, status: IssueStatus) -> dict[str, Any]:
         """Update the status of an issue."""
         data = {"status": status}
         where = {"id": issue_id}

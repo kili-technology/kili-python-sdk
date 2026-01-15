@@ -1,7 +1,7 @@
 """Common code for the PASCAL VOC exporter."""
 
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Dict, List, Sequence
 
 from kili_formats import convert_from_kili_to_voc_format
 from kili_formats.media.image import get_frame_dimensions, get_image_dimensions
@@ -57,7 +57,7 @@ class VocExporter(AbstractExporter):
             return False
         return JobTool.RECTANGLE in job["tools"] and job["mlTask"] == JobMLTask.OBJECT_DETECTION
 
-    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
+    def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
         """Save the assets and annotations to a zip file in the Pascal VOC format."""
         self.logger.info("Exporting VOC format")
 
@@ -75,7 +75,7 @@ class VocExporter(AbstractExporter):
 
 # pylint: disable=too-many-locals
 def _process_asset(
-    asset: Dict, labels_folder: Path, project_input_type: str, valid_jobs: Sequence[str]
+    asset: dict, labels_folder: Path, project_input_type: str, valid_jobs: Sequence[str]
 ) -> None:
     """Process an asset."""
     if project_input_type == "VIDEO":

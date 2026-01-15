@@ -3,14 +3,11 @@
 # pylint: disable=too-many-lines
 import json
 import warnings
+from collections.abc import Generator, Iterable
 from itertools import repeat
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Generator,
-    Iterable,
-    List,
     Literal,
     Optional,
     Union,
@@ -40,6 +37,7 @@ from kili.domain.user import UserFilter, UserId
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
     disable_tqdm_if_as_generator,
+    resolve_disable_tqdm,
 )
 from kili.presentation.client.helpers.filter_conversion import (
     extract_step_ids_from_project_steps,
@@ -74,22 +72,22 @@ class LabelClientMethods(BaseClientMethods):
         self,
         project_id: str,
         asset_id: Optional[str] = None,
-        asset_status_in: Optional[List[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_external_id_strictly_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_status_in: Optional[list[AssetStatus]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_external_id_strictly_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
         label_id: Optional[str] = None,
-        type_in: Optional[List[LabelType]] = None,
+        type_in: Optional[list[LabelType]] = None,
         user_id: Optional[str] = None,
         category_search: Optional[str] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Get the number of labels for the given parameters.
@@ -179,7 +177,7 @@ class LabelClientMethods(BaseClientMethods):
             created_at_lte=created_at_lte,
             honeypot_mark_gte=honeypot_mark_gte,
             honeypot_mark_lte=honeypot_mark_lte,
-            id_in=cast(List[LabelId], id_contains) if id_contains else None,
+            id_in=cast(list[LabelId], id_contains) if id_contains else None,
             id=LabelId(label_id) if label_id else None,
             type_in=type_in,
             user=UserFilter(id=UserId(user_id)) if user_id else None,
@@ -198,11 +196,11 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_external_id_strictly_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_external_id_strictly_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
@@ -219,17 +217,17 @@ class LabelClientMethods(BaseClientMethods):
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
-        type_in: Optional[List[LabelType]] = None,
+        type_in: Optional[list[LabelType]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         output_format: Literal["dict"] = "dict",
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -238,11 +236,11 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_external_id_strictly_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_external_id_strictly_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
@@ -259,17 +257,17 @@ class LabelClientMethods(BaseClientMethods):
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
-        type_in: Optional[List[LabelType]] = None,
+        type_in: Optional[list[LabelType]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         output_format: Literal["dict"] = "dict",
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @overload
@@ -278,11 +276,11 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_external_id_strictly_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_external_id_strictly_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
@@ -299,17 +297,17 @@ class LabelClientMethods(BaseClientMethods):
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
-        type_in: Optional[List[LabelType]] = None,
+        type_in: Optional[list[LabelType]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         output_format: Literal["parsed_label"] = "parsed_label",
         *,
         as_generator: Literal[False] = False,
-    ) -> List[ParsedLabel]:
+    ) -> list[ParsedLabel]:
         ...
 
     @overload
@@ -318,11 +316,11 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_external_id_strictly_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_external_id_strictly_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
@@ -339,10 +337,10 @@ class LabelClientMethods(BaseClientMethods):
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
-        type_in: Optional[List[LabelType]] = None,
+        type_in: Optional[list[LabelType]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
@@ -358,11 +356,11 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_external_id_strictly_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_external_id_strictly_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
@@ -379,17 +377,17 @@ class LabelClientMethods(BaseClientMethods):
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
-        type_in: Optional[List[LabelType]] = None,
+        type_in: Optional[list[LabelType]] = None,
         user_id: Optional[str] = None,
         disable_tqdm: Optional[bool] = None,
         category_search: Optional[str] = None,
         output_format: Literal["dict", "parsed_label"] = "dict",
         *,
         as_generator: bool = False,
-    ) -> Iterable[Union[Dict, ParsedLabel]]:
+    ) -> Iterable[Union[dict, ParsedLabel]]:
         # pylint: disable=line-too-long
         """Get a label list or a label generator from a project based on a set of criteria.
 
@@ -457,6 +455,7 @@ class LabelClientMethods(BaseClientMethods):
         if category_search:
             validate_category_search_query(category_search)
 
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
 
@@ -511,7 +510,7 @@ class LabelClientMethods(BaseClientMethods):
             created_at_lte=created_at_lte,
             honeypot_mark_gte=honeypot_mark_gte,
             honeypot_mark_lte=honeypot_mark_lte,
-            id_in=cast(List[LabelId], id_contains) if id_contains else None,
+            id_in=cast(list[LabelId], id_contains) if id_contains else None,
             id=LabelId(label_id) if label_id else None,
             type_in=type_in,
             user=UserFilter(id=UserId(user_id)) if user_id else None,
@@ -540,10 +539,10 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
@@ -558,7 +557,7 @@ class LabelClientMethods(BaseClientMethods):
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
@@ -566,7 +565,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -575,10 +574,10 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
@@ -593,7 +592,7 @@ class LabelClientMethods(BaseClientMethods):
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
@@ -601,7 +600,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -610,10 +609,10 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
@@ -628,7 +627,7 @@ class LabelClientMethods(BaseClientMethods):
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
@@ -636,7 +635,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get prediction labels from a project based on a set of criteria.
 
@@ -677,6 +676,31 @@ class LabelClientMethods(BaseClientMethods):
         Examples:
             >>> kili.predictions(project_id=project_id) # returns a list of prediction labels of a project
         """
+        if as_generator:
+            return self.labels(
+                project_id=project_id,
+                asset_id=asset_id,
+                asset_status_in=asset_status_in,
+                asset_external_id_in=asset_external_id_in,
+                asset_step_name_in=asset_step_name_in,
+                asset_step_status_in=asset_step_status_in,
+                author_in=author_in,
+                created_at=created_at,
+                created_at_gte=created_at_gte,
+                created_at_lte=created_at_lte,
+                fields=fields,
+                first=first,
+                honeypot_mark_gte=honeypot_mark_gte,
+                honeypot_mark_lte=honeypot_mark_lte,
+                id_contains=id_contains,
+                label_id=label_id,
+                skip=skip,
+                type_in=["PREDICTION"],
+                user_id=user_id,
+                disable_tqdm=disable_tqdm,
+                category_search=category_search,
+                as_generator=True,
+            )
         return self.labels(
             project_id=project_id,
             asset_id=asset_id,
@@ -699,7 +723,7 @@ class LabelClientMethods(BaseClientMethods):
             user_id=user_id,
             disable_tqdm=disable_tqdm,
             category_search=category_search,
-            as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
+            as_generator=False,
         )
 
     @overload
@@ -708,10 +732,10 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
@@ -726,7 +750,7 @@ class LabelClientMethods(BaseClientMethods):
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
@@ -734,7 +758,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -743,10 +767,10 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
@@ -761,7 +785,7 @@ class LabelClientMethods(BaseClientMethods):
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
@@ -769,7 +793,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -778,10 +802,10 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         asset_id: Optional[str] = None,
         asset_status_in: Optional[ListOrTuple[AssetStatus]] = None,
-        asset_external_id_in: Optional[List[str]] = None,
-        asset_step_name_in: Optional[List[str]] = None,
-        asset_step_status_in: Optional[List[StatusInStep]] = None,
-        author_in: Optional[List[str]] = None,
+        asset_external_id_in: Optional[list[str]] = None,
+        asset_step_name_in: Optional[list[str]] = None,
+        asset_step_status_in: Optional[list[StatusInStep]] = None,
+        author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
@@ -796,7 +820,7 @@ class LabelClientMethods(BaseClientMethods):
         first: Optional[int] = None,
         honeypot_mark_gte: Optional[float] = None,
         honeypot_mark_lte: Optional[float] = None,
-        id_contains: Optional[List[str]] = None,
+        id_contains: Optional[list[str]] = None,
         label_id: Optional[str] = None,
         skip: int = 0,
         user_id: Optional[str] = None,
@@ -804,7 +828,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get inference labels from a project based on a set of criteria.
 
@@ -845,6 +869,31 @@ class LabelClientMethods(BaseClientMethods):
         Examples:
             >>> kili.inferences(project_id=project_id) # returns a list of inference labels of a project
         """
+        if as_generator:
+            return self.labels(
+                project_id=project_id,
+                asset_id=asset_id,
+                asset_status_in=asset_status_in,
+                asset_external_id_in=asset_external_id_in,
+                asset_step_name_in=asset_step_name_in,
+                asset_step_status_in=asset_step_status_in,
+                author_in=author_in,
+                created_at=created_at,
+                created_at_gte=created_at_gte,
+                created_at_lte=created_at_lte,
+                fields=fields,
+                first=first,
+                honeypot_mark_gte=honeypot_mark_gte,
+                honeypot_mark_lte=honeypot_mark_lte,
+                id_contains=id_contains,
+                label_id=label_id,
+                skip=skip,
+                type_in=["INFERENCE"],
+                user_id=user_id,
+                disable_tqdm=disable_tqdm,
+                category_search=category_search,
+                as_generator=True,
+            )
         return self.labels(
             project_id=project_id,
             asset_id=asset_id,
@@ -867,7 +916,7 @@ class LabelClientMethods(BaseClientMethods):
             user_id=user_id,
             disable_tqdm=disable_tqdm,
             category_search=category_search,
-            as_generator=as_generator,  # pyright: ignore[reportGeneralTypeIssues]
+            as_generator=False,
         )
 
     @typechecked
@@ -875,7 +924,7 @@ class LabelClientMethods(BaseClientMethods):
         self,
         ids: ListOrTuple[str],
         disable_tqdm: Optional[bool] = None,
-    ) -> List[str]:
+    ) -> list[str]:
         """Delete labels.
 
         Currently, only `PREDICTION` and `INFERENCE` labels can be deleted.
@@ -894,24 +943,24 @@ class LabelClientMethods(BaseClientMethods):
             ids=cast(ListOrTuple[LabelId], ids),
             disable_tqdm=disable_tqdm,
         )
-        return cast(List[str], deleted_label_ids)
+        return cast(list[str], deleted_label_ids)
 
     @typechecked
     def append_labels(
         self,
-        asset_id_array: Optional[List[str]] = None,
-        json_response_array: ListOrTuple[Dict] = (),
-        author_id_array: Optional[List[str]] = None,
-        seconds_to_label_array: Optional[List[int]] = None,
+        asset_id_array: Optional[list[str]] = None,
+        json_response_array: ListOrTuple[dict] = (),
+        author_id_array: Optional[list[str]] = None,
+        seconds_to_label_array: Optional[list[int]] = None,
         model_name: Optional[str] = None,
         label_type: LabelType = "DEFAULT",
         project_id: Optional[str] = None,
-        asset_external_id_array: Optional[List[str]] = None,
+        asset_external_id_array: Optional[list[str]] = None,
         disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
         step_name: Optional[str] = None,
-        reviewed_label_id_array: Optional[List[str]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+        reviewed_label_id_array: Optional[list[str]] = None,
+    ) -> list[dict[Literal["id"], str]]:
         """Append labels to assets.
 
         Args:
@@ -993,6 +1042,7 @@ class LabelClientMethods(BaseClientMethods):
                 seconds_to_label_array or repeat(None),
                 author_id_array or repeat(None),
                 reviewed_label_id_array or repeat(None),
+                strict=False,
             )
         ]
 
@@ -1010,14 +1060,14 @@ class LabelClientMethods(BaseClientMethods):
     def create_predictions(
         self,
         project_id: str,
-        external_id_array: Optional[List[str]] = None,
-        model_name_array: Optional[List[str]] = None,
-        json_response_array: Optional[List[dict]] = None,
+        external_id_array: Optional[list[str]] = None,
+        model_name_array: Optional[list[str]] = None,
+        json_response_array: Optional[list[dict]] = None,
         model_name: Optional[str] = None,
-        asset_id_array: Optional[List[str]] = None,
+        asset_id_array: Optional[list[str]] = None,
         disable_tqdm: Optional[bool] = None,
         overwrite: bool = False,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         # pylint: disable=line-too-long
         """Create predictions for specific assets.
 
@@ -1088,6 +1138,7 @@ class LabelClientMethods(BaseClientMethods):
                 asset_id_array or repeat(None, nb_labels_to_add),
                 external_id_array or repeat(None, nb_labels_to_add),
                 json_response_array,
+                strict=False,
             )
         ]
 
@@ -1108,7 +1159,7 @@ class LabelClientMethods(BaseClientMethods):
         asset_external_id: Optional[str] = None,
         asset_id: Optional[str] = None,
         project_id: Optional[str] = None,
-    ) -> Dict:
+    ) -> dict:
         """Create honeypot for an asset.
 
         !!! info
@@ -1152,7 +1203,7 @@ class LabelClientMethods(BaseClientMethods):
         label_type: LabelType = "DEFAULT",
         project_id: Optional[str] = None,
         seconds_to_label: Optional[int] = 0,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """!!! danger "[DEPRECATED]".
 
         append_to_labels method is deprecated. Please use append_labels instead.
@@ -1195,14 +1246,14 @@ class LabelClientMethods(BaseClientMethods):
             and project_id is not None
         ):
             label_asset_id = AssetUseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
-                cast(List[AssetExternalId], [label_asset_external_id]), ProjectId(project_id)
+                cast(list[AssetExternalId], [label_asset_external_id]), ProjectId(project_id)
             )[AssetExternalId(label_asset_external_id)]
 
         return LabelUseCases(self.kili_api_gateway).append_to_labels(
             author_id=UserId(author_id) if author_id else None,
             json_response=json_response,
             label_type=label_type,
-            asset_id=AssetId(label_asset_id),  # pyright: ignore[reportGeneralTypeIssues]
+            asset_id=AssetId(label_asset_id),  # pyright: ignore[reportArgumentType]
             seconds_to_label=seconds_to_label,
             fields=("id",),
         )
@@ -1236,18 +1287,18 @@ class LabelClientMethods(BaseClientMethods):
         project_id: str,
         filename: Optional[str],
         fmt: LabelFormat,
-        asset_ids: Optional[List[str]] = None,
+        asset_ids: Optional[list[str]] = None,
         layout: SplitOption = "split",
         single_file: bool = False,
         disable_tqdm: Optional[bool] = None,
         with_assets: bool = True,
-        external_ids: Optional[List[str]] = None,
+        external_ids: Optional[list[str]] = None,
         annotation_modifier: Optional[CocoAnnotationModifier] = None,
-        asset_filter_kwargs: Optional[Dict[str, Any]] = None,
+        asset_filter_kwargs: Optional[dict[str, Any]] = None,
         normalized_coordinates: Optional[bool] = None,
-        label_type_in: Optional[List[str]] = None,
+        label_type_in: Optional[list[str]] = None,
         include_sent_back_labels: Optional[bool] = None,
-    ) -> Optional[List[Dict[str, Union[List[str], str]]]]:
+    ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         # pylint: disable=line-too-long
         """Export the project labels with the requested format into the requested output path.
 
@@ -1337,12 +1388,12 @@ class LabelClientMethods(BaseClientMethods):
         """
         if external_ids is not None and asset_ids is None:
             id_map = AssetUseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(
-                asset_external_ids=cast(List[AssetExternalId], external_ids),
+                asset_external_ids=cast(list[AssetExternalId], external_ids),
                 project_id=ProjectId(project_id),
             )
             resolved_asset_ids = [id_map[AssetExternalId(i)] for i in external_ids]
         else:
-            resolved_asset_ids = cast(List[AssetId], asset_ids)
+            resolved_asset_ids = cast(list[AssetId], asset_ids)
 
         if asset_filter_kwargs and (
             asset_filter_kwargs.get("step_name_in") is not None
@@ -1381,7 +1432,7 @@ class LabelClientMethods(BaseClientMethods):
 
         try:
             return export_labels(
-                self,  # pyright: ignore[reportGeneralTypeIssues]
+                self,  # pyright: ignore[reportArgumentType]
                 asset_ids=resolved_asset_ids,
                 project_id=ProjectId(project_id),
                 export_type="latest",
@@ -1407,10 +1458,10 @@ class LabelClientMethods(BaseClientMethods):
         self,
         project_id: str,
         asset_external_id: str,
-        shapefile_paths: List[str],
-        job_names: List[str],
-        category_names: List[str],
-        from_epsgs: Optional[List[int]] = None,
+        shapefile_paths: list[str],
+        job_names: list[str],
+        category_names: list[str],
+        from_epsgs: Optional[list[int]] = None,
         label_type: LabelType = "DEFAULT",
         step_name: Optional[str] = None,
         model_name: Optional[str] = None,
@@ -1469,9 +1520,9 @@ class LabelClientMethods(BaseClientMethods):
         self,
         project_id: str,
         asset_external_id: str,
-        geojson_file_paths: List[str],
-        job_names: Optional[List[str]] = None,
-        category_names: Optional[List[str]] = None,
+        geojson_file_paths: list[str],
+        job_names: Optional[list[str]] = None,
+        category_names: Optional[list[str]] = None,
         label_type: LabelType = "DEFAULT",
         step_name: Optional[str] = None,
         model_name: Optional[str] = None,

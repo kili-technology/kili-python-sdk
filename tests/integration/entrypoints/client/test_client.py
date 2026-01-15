@@ -7,6 +7,7 @@ from unittest.mock import patch
 import pytest
 import pytest_mock
 from filelock import FileLock
+from graphql import ExecutionResult
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.client import Kili
@@ -147,7 +148,10 @@ def test_complexity_increases_with_calls(
     mocker: pytest_mock.MockerFixture,
 ):
     graphql_mock = mocker.MagicMock()
-    graphql_mock.execute.return_value = {"data": 1}
+    graphql_mock.execute.return_value = ExecutionResult(
+        data={"data": 1},
+        extensions=None,
+    )
     graphql_mock.transport.response_headers = {"x-complexity": "125"}
 
     # Given
@@ -172,7 +176,10 @@ def test_complexity_compatibility_with_legacy(
     mocker: pytest_mock.MockerFixture,
 ):
     graphql_mock = mocker.MagicMock()
-    graphql_mock.execute.return_value = {"data": 1}
+    graphql_mock.execute.return_value = ExecutionResult(
+        data={"data": 1},
+        extensions=None,
+    )
     graphql_mock.transport.response_headers = {}
 
     # Given

@@ -1,4 +1,4 @@
-from typing import Dict, Generator, List
+from collections.abc import Generator
 
 import pytest
 import pytest_mock
@@ -16,9 +16,9 @@ def test_given_kili_client_when_fetching_labels_then_i_get_correct_type(mocker):
     """This test does not check types at runtime, but rather during pyright type checking."""
     mocker.patch.object(Kili, "__init__", return_value=None)
     mocker.patch.object(LabelClientMethods, "labels")
-    assert_type(Kili().labels("project_id"), List[Dict])
-    assert_type(Kili().labels("project_id", as_generator=True), Generator[Dict, None, None])
-    assert_type(Kili().labels("project_id", output_format="parsed_label"), List[ParsedLabel])
+    assert_type(Kili().labels("project_id"), list[dict])
+    assert_type(Kili().labels("project_id", as_generator=True), Generator[dict, None, None])
+    assert_type(Kili().labels("project_id", output_format="parsed_label"), list[ParsedLabel])
     assert_type(
         Kili().labels("project_id", output_format="parsed_label", as_generator=True),
         Generator[ParsedLabel, None, None],

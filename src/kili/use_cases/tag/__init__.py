@@ -1,7 +1,7 @@
 """Tag use cases."""
 
 from collections import defaultdict
-from typing import Dict, List, Optional
+from typing import Optional
 
 from kili.adapters.kili_api_gateway.tag.types import UpdateTagReturnData
 from kili.domain.project import ProjectId
@@ -14,17 +14,17 @@ from kili.utils.tqdm import tqdm
 class TagUseCases(BaseUseCases):
     """Tag use cases."""
 
-    def get_tags_of_organization(self, fields: ListOrTuple[str]) -> List[Dict]:
+    def get_tags_of_organization(self, fields: ListOrTuple[str]) -> list[dict]:
         """Get tags of organization."""
         return self._kili_api_gateway.list_tags_by_org(fields=fields)
 
-    def get_tags_of_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> List[Dict]:
+    def get_tags_of_project(self, project_id: ProjectId, fields: ListOrTuple[str]) -> list[dict]:
         """Get tags of project."""
         return self._kili_api_gateway.list_tags_by_project(project_id=project_id, fields=fields)
 
     def tag_project(
         self, project_id: ProjectId, tag_ids: ListOrTuple[TagId], disable_tqdm: Optional[bool]
-    ) -> List[TagId]:
+    ) -> list[TagId]:
         """Assign tags to a project."""
         tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
         tags_of_orga_ids = [tag["id"] for tag in tags_of_orga]
@@ -53,7 +53,7 @@ class TagUseCases(BaseUseCases):
         project_id: ProjectId,
         tag_ids: ListOrTuple[TagId],
         disable_tqdm: Optional[bool],
-    ) -> List[TagId]:
+    ) -> list[TagId]:
         """Remove tags from a project."""
         tag_ids_of_project = {
             tag["id"]
@@ -75,7 +75,7 @@ class TagUseCases(BaseUseCases):
             for tag_id in tqdm(tag_ids, desc="Untagging project", disable=disable_tqdm)
         ]
 
-    def get_tag_ids_from_labels(self, labels: ListOrTuple[str]) -> List[TagId]:
+    def get_tag_ids_from_labels(self, labels: ListOrTuple[str]) -> list[TagId]:
         """Get tag ids from labels."""
         tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id", "label"))
 
@@ -128,6 +128,6 @@ class TagUseCases(BaseUseCases):
         """
         return self._kili_api_gateway.delete_tag(tag_id=tag_id)
 
-    def create_tag(self, name: str, color: Optional[str]) -> Dict:
+    def create_tag(self, name: str, color: Optional[str]) -> dict:
         """Create a tag."""
         return self._kili_api_gateway.create_tag(label=name, color=color)

@@ -1,7 +1,8 @@
 """GraphQL module."""
 
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, Generator, Optional, Type, TypeVar
+from collections.abc import Callable, Generator
+from typing import Optional, TypeVar
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -25,12 +26,12 @@ class BaseQueryWhere(ABC):
         self._graphql_payload = self.graphql_where_builder()
 
     @abstractmethod
-    def graphql_where_builder(self) -> Dict:
+    def graphql_where_builder(self) -> dict:
         """Build the GraphQL where payload from the arguments given to the where class."""
         raise NotImplementedError
 
     @property
-    def graphql_payload(self) -> Dict:
+    def graphql_payload(self) -> dict:
         """Where payload to send in the graphQL query."""
         return self._graphql_payload
 
@@ -59,7 +60,7 @@ class GraphQLQuery(ABC):
         raise NotImplementedError
 
     COUNT_QUERY: str = NotImplemented
-    FORMAT_TYPE: Optional[Type] = None
+    FORMAT_TYPE: Optional[type] = None
 
     def __call__(
         self,
@@ -67,7 +68,7 @@ class GraphQLQuery(ABC):
         fields: ListOrTuple[str],
         options: QueryOptions,
         post_call_function: Optional[Callable] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Get a generator of objects of the specified type in accordance with the provided where."""
         fragment = fragment_builder(fields)
         query = self.query(fragment)
@@ -100,7 +101,7 @@ class GraphQLQuery(ABC):
         where: BaseQueryWhere,
         options: QueryOptions,
         post_call_function: Optional[Callable],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Build a row generator from paginated calls.
 
         Args:
@@ -150,7 +151,7 @@ class GraphQLQuery(ABC):
                     if post_call_function is not None:
                         rows = post_call_function(rows)
 
-                    if isinstance(rows, Dict):
+                    if isinstance(rows, dict):
                         yield rows
                         break
 
@@ -162,6 +163,6 @@ class GraphQLQuery(ABC):
                     if len(rows) < first:
                         break
 
-    def format_result(self, name: str, result: dict, object_: Optional[Type[T]] = None) -> T:
+    def format_result(self, name: str, result: dict, object_: Optional[type[T]] = None) -> T:
         """Format the result of a graphQL query."""
         return format_result(name, result, object_, self.http_client)

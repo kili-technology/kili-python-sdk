@@ -61,7 +61,9 @@ Path(images_folder).mkdir(parents=True, exist_ok=True)
 
 ```python
 for image_name in images_names:
-    for fld, img_ext in zip([images_folder, annos_folder], [images_extension, ".xml"]):
+    for fld, img_ext in zip(
+        [images_folder, annos_folder], [images_extension, ".xml"], strict=False
+    ):
         url = f"https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/datasets/pascalVOC2012/valsubset/{fld}/{image_name}{img_ext}"
         urllib.request.urlretrieve(url, f"{fld}/{image_name}{img_ext}")
 ```
@@ -190,16 +192,14 @@ Below, we import an useful function to convert annotations to Kili label format.
 
 
 ```python
-from typing import Dict, List
-
 from kili.utils.labels.bbox import bbox_points_to_normalized_vertices
 ```
 
 
 ```python
 def pascal_bbox_to_kili_normalized_vertices(
-    pascal_bbox: Dict, img_width: int, img_height: int
-) -> List[Dict]:
+    pascal_bbox: dict, img_width: int, img_height: int
+) -> list[dict]:
     x1, y1, x2, y2 = (
         pascal_bbox["xmin"],
         pascal_bbox["ymin"],

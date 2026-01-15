@@ -1,12 +1,13 @@
 """Client presentation methods for tags."""
 
-from typing import Dict, List, Literal, Optional
+from typing import Literal, Optional
 
 from typeguard import typechecked
 
 from kili.domain.project import ProjectId
 from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
+from kili.presentation.client.helpers.common_validators import resolve_disable_tqdm
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
@@ -22,7 +23,7 @@ class TagClientMethods(BaseClientMethods):
         self,
         project_id: Optional[str] = None,
         fields: ListOrTuple[str] = ("id", "organizationId", "label", "checkedForProjects"),
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get tags.
 
         Args:
@@ -49,7 +50,7 @@ class TagClientMethods(BaseClientMethods):
         tags: Optional[ListOrTuple[str]] = None,
         tag_ids: Optional[ListOrTuple[str]] = None,
         disable_tqdm: Optional[bool] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> list[dict[Literal["id"], str]]:
         """Link tags to a project.
 
         Args:
@@ -64,18 +65,21 @@ class TagClientMethods(BaseClientMethods):
         """
         tag_use_cases = TagUseCases(self.kili_api_gateway)
 
+        resolved_tag_ids: ListOrTuple[TagId]
         if tag_ids is None:
             if tags is None:
                 raise ValueError("Either `tags` or `tag_ids` must be provided.")
-            tag_ids = tag_use_cases.get_tag_ids_from_labels(
-                labels=tags  # pyright: ignore[reportGeneralTypeIssues]
-            )
+            resolved_tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
+        else:
+            resolved_tag_ids = [TagId(tag_id) for tag_id in tag_ids]
+
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
 
         return [
             {"id": str(tag_id)}
             for tag_id in tag_use_cases.tag_project(
                 project_id=ProjectId(project_id),
-                tag_ids=tag_ids,  # pyright: ignore[reportGeneralTypeIssues]
+                tag_ids=resolved_tag_ids,
                 disable_tqdm=disable_tqdm,
             )
         ]
@@ -89,7 +93,7 @@ class TagClientMethods(BaseClientMethods):
         tag_ids: Optional[ListOrTuple[str]] = None,
         all: Optional[bool] = None,  # pylint: disable=redefined-builtin
         disable_tqdm: Optional[bool] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> list[dict[Literal["id"], str]]:
         """Remove tags from a project.
 
         Args:
@@ -110,31 +114,34 @@ class TagClientMethods(BaseClientMethods):
 
         tag_use_cases = TagUseCases(self.kili_api_gateway)
 
+        resolved_tag_ids: ListOrTuple[TagId]
         if tag_ids is None:
             if tags is not None:
-                tag_ids = tag_use_cases.get_tag_ids_from_labels(
-                    labels=tags  # pyright: ignore[reportGeneralTypeIssues]
-                )
+                resolved_tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=tags)
             elif all is not None:
-                tag_ids = [
-                    tag["id"]
+                resolved_tag_ids = [
+                    TagId(tag["id"])
                     for tag in tag_use_cases.get_tags_of_project(
                         project_id=ProjectId(project_id), fields=("id",)
                     )
                 ]
             else:
                 raise ValueError("Either `tags` or `tag_ids` or `all` must be provided.")
+        else:
+            resolved_tag_ids = [TagId(tag_id) for tag_id in tag_ids]
+
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
 
         return [
             {"id": str(tag_id)}
             for tag_id in tag_use_cases.untag_project(
                 project_id=ProjectId(project_id),
-                tag_ids=tag_ids,  # pyright: ignore[reportGeneralTypeIssues]
+                tag_ids=resolved_tag_ids,
                 disable_tqdm=disable_tqdm,
             )
         ]
 
-    def update_tag(self, tag_name: str, new_tag_name: str) -> Dict[Literal["id"], str]:
+    def update_tag(self, tag_name: str, new_tag_name: str) -> dict[Literal["id"], str]:
         """Update a tag.
 
         This operation is organization-wide.
@@ -177,7 +184,7 @@ class TagClientMethods(BaseClientMethods):
             tag_id = tag_use_cases.get_tag_ids_from_labels(labels=(tag_name,))[0]
         return tag_use_cases.delete_tag(tag_id=TagId(tag_id))
 
-    def create_tag(self, name: str, color: Optional[str] = None) -> Dict[Literal["id"], str]:
+    def create_tag(self, name: str, color: Optional[str] = None) -> dict[Literal["id"], str]:
         """Create a tag.
 
         This operation is organization-wide.

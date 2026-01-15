@@ -1,9 +1,11 @@
-^(http|https)://cloud.kili-technology.com/api/label/v2/graphql$
-https://my-custom-url-publicly-accessible/
-https://to/second/asset.png
-jane.doe@test.com
-john@doe.com
-john.doe@test.com
-https://tagtog.com/JaqenNLP/ApartmentReview
-https://tagtog.com/JaqenNLP/ApartmentReviews/-settings
-https://platform.openai.com/docs/models/overview
+# Ignore localhost and local network addresses
+http://localhost:*
+http://127.0.0.1:*
+
+# Ignore GraphQL endpoints (they return 400 for GET requests)
+http://localhost:4001/api/label/v2/graphql*
+https://cloud.kili-technology.com/api/label/v2/graphql*
+
+# Ignore OpenAI documentation (403 errors due to bot protection)
+https://help.openai.com/*
+https://platform.openai.com/*

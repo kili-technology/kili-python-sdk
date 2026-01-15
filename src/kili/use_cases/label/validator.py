@@ -1,6 +1,5 @@
 """Validator for import of labels."""
 
-from typing import List
 
 from typeguard import typechecked
 
@@ -8,7 +7,7 @@ from .types import LabelToCreateUseCaseInput
 
 
 @typechecked
-def check_input_labels(labels: List[LabelToCreateUseCaseInput]) -> None:
+def check_input_labels(labels: list[LabelToCreateUseCaseInput]) -> None:
     """Check that input labels are valid."""
     for label in labels:
         _check_input_label(label)

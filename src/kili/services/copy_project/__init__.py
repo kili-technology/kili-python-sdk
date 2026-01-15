@@ -202,6 +202,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
             fields=[
                 "author.email",
                 "jsonResponse",
+                "jsonResponseUrl",
                 "secondsToLabel",
                 "isLatestLabelForUser",
                 "labelOf.externalId",

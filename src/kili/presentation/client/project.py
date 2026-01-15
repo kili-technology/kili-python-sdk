@@ -1,11 +1,9 @@
 """Client presentation methods for projects."""
+
 import warnings
+from collections.abc import Generator, Iterable
 from typing import (
     Any,
-    Dict,
-    Generator,
-    Iterable,
-    List,
     Literal,
     Optional,
     cast,
@@ -21,6 +19,7 @@ from kili.domain.tag import TagId
 from kili.domain.types import ListOrTuple
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
+    resolve_disable_tqdm,
 )
 from kili.use_cases.project.project import ProjectUseCases
 from kili.use_cases.tag import TagUseCases
@@ -40,12 +39,12 @@ class ProjectClientMethods(BaseClientMethods):
         title: str,
         description: str = "",
         input_type: Optional[InputType] = None,
-        json_interface: Optional[Dict] = None,
+        json_interface: Optional[dict] = None,
         project_id: Optional[ProjectId] = None,
         tags: Optional[ListOrTuple[str]] = None,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
         from_demo_project: Optional[DemoProjectType] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Create a project.
 
         Args:
@@ -140,7 +139,7 @@ class ProjectClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -175,7 +174,7 @@ class ProjectClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -210,7 +209,7 @@ class ProjectClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of projects that match a set of criteria.
 
@@ -249,6 +248,7 @@ class ProjectClientMethods(BaseClientMethods):
             TagUseCases(self.kili_api_gateway).get_tag_ids_from_labels(tags_in) if tags_in else None
         )
 
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
         projects_gen = ProjectUseCases(self.kili_api_gateway).list_projects(
@@ -298,7 +298,7 @@ class ProjectClientMethods(BaseClientMethods):
         metadata_properties: Optional[dict] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
         should_auto_assign: Optional[bool] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Update properties of a project.
 
         Args:
@@ -316,7 +316,7 @@ class ProjectClientMethods(BaseClientMethods):
             description: Description of the project.
             honeypot_mark: Should be between 0 and 1
             instructions: Instructions of the project.
-            input_type: Currently, one of `IMAGE`, `PDF`, `TEXT` or `VIDEO`.
+            input_type: DEPRECATED. Currently, one of `IMAGE`, `PDF`, `TEXT` or `VIDEO`.
             json_interface: The json parameters of the project, see Edit your interface.
             min_consensus_size: Should be between 1 and 10
                 Number of people that will annotate the same asset, for consensus computation.
@@ -391,6 +391,10 @@ class ProjectClientMethods(BaseClientMethods):
 
         !!! note "Deprecated: Change Metadata Types"
             The `metadata_types` parameter is deprecated. Please use `metadata_properties` instead.
+
+        !!! note "Deprecated: Input Type"
+            The `input_type` parameter is deprecated. The input type of a project cannot be changed after
+            its creation.
         """
         if seconds_to_label_before_auto_assign is not None:
             warnings.warn(
@@ -408,6 +412,14 @@ class ProjectClientMethods(BaseClientMethods):
                 stacklevel=1,
             )
 
+        if input_type is not None:
+            warnings.warn(
+                "input_type is deprecated. The input type of a project cannot be"
+                " changed after its creation.",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
         return ProjectUseCases(self.kili_api_gateway).update_properties_in_project(
             ProjectId(project_id),
             can_navigate_between_assets=can_navigate_between_assets,
@@ -418,7 +430,6 @@ class ProjectClientMethods(BaseClientMethods):
             description=description,
             honeypot_mark=honeypot_mark,
             instructions=instructions,
-            input_type=input_type,
             json_interface=json_interface,
             min_consensus_size=min_consensus_size,
             review_coverage=review_coverage,

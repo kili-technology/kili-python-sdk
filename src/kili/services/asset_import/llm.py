@@ -3,7 +3,7 @@
 import json
 import os
 from enum import Enum
-from typing import List, Optional, Tuple
+from typing import Optional
 
 from kili.core.helpers import is_url
 from kili.domain.project import InputType
@@ -30,7 +30,7 @@ class LLMDataType(Enum):
 class JSONBatchImporter(ContentBatchImporter):
     """Class for importing a batch of LLM assets with dict content into a LLM_RLHF project."""
 
-    def get_content_type_and_data_from_content(self, content: Optional[str]) -> Tuple[str, str]:
+    def get_content_type_and_data_from_content(self, content: Optional[str]) -> tuple[str, str]:
         """Returns the data of the content (path) and its content type."""
         return content or "", "application/json"
 
@@ -39,7 +39,7 @@ class LLMDataImporter(BaseAbstractAssetImporter):
     """Class for importing data into a TEXT project."""
 
     @staticmethod
-    def get_data_type(assets: List[AssetLike]) -> LLMDataType:
+    def get_data_type(assets: list[AssetLike]) -> LLMDataType:
         """Determine the type of data to upload from the service payload."""
         content_array = [asset.get("content", None) for asset in assets]
         if all(is_url(content) for content in content_array):
@@ -72,7 +72,7 @@ class LLMDataImporter(BaseAbstractAssetImporter):
 
         return transformed_asset_content, changed_json_metadata
 
-    def import_assets(self, assets: List[AssetLike], input_type: InputType):
+    def import_assets(self, assets: list[AssetLike], input_type: InputType):
         """Import LLM assets into Kili."""
         self._check_upload_is_allowed(assets)
         data_type = self.get_data_type(assets)

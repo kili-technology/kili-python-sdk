@@ -1,6 +1,7 @@
 """Client presentation methods for users."""
 
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from collections.abc import Generator, Iterable
+from typing import Literal, Optional, overload
 
 from typeguard import typechecked
 
@@ -11,6 +12,7 @@ from kili.domain.types import ListOrTuple
 from kili.domain.user import UserFilter
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
+    resolve_disable_tqdm,
 )
 from kili.use_cases.user import UserUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -33,7 +35,7 @@ class UserClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -47,7 +49,7 @@ class UserClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -61,7 +63,7 @@ class UserClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of users given a set of criteria.
 
@@ -86,6 +88,7 @@ class UserClientMethods(BaseClientMethods):
             >>> kili.users(organization_id=organization_id)
             ```
         """
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
         users_gen = UserUseCases(self.kili_api_gateway).list_users(
@@ -137,7 +140,7 @@ class UserClientMethods(BaseClientMethods):
         organization_role: OrganizationRole,
         firstname: Optional[str] = None,
         lastname: Optional[str] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Add a user to your organization.
 
         Args:
@@ -162,7 +165,7 @@ class UserClientMethods(BaseClientMethods):
     @typechecked
     def update_password(
         self, email: str, old_password: str, new_password_1: str, new_password_2: str
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Allow to modify the password that you use to connect to Kili.
 
         This resolver only works for on-premise installations without Auth0.
@@ -199,7 +202,7 @@ class UserClientMethods(BaseClientMethods):
         organization_id: Optional[str] = None,
         organization_role: Optional[OrganizationRole] = None,
         activated: Optional[bool] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Update the properties of a user.
 
         Args:
@@ -229,3 +232,19 @@ class UserClientMethods(BaseClientMethods):
             activated=activated,
             fields=("id",),
         )
+
+    @typechecked
+    def get_current_user(
+        self, fields: ListOrTuple[str] = ("email", "id", "firstname", "lastname")
+    ) -> dict:
+        # pylint: disable=line-too-long
+        """Get the current user.
+
+        Args:
+            fields: All the fields to request among the possible fields for the users.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/user) for all possible fields.
+
+        Returns:
+            A dict with the user fields chosen.
+        """
+        return UserUseCases(self.kili_api_gateway).get_current_user(fields)

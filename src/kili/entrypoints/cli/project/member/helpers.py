@@ -2,7 +2,8 @@
 
 import re
 import warnings
-from typing import TYPE_CHECKING, Callable, Iterable, Optional
+from collections.abc import Callable, Iterable
+from typing import TYPE_CHECKING, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.client import Kili

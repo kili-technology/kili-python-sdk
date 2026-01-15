@@ -4,8 +4,9 @@ import logging
 import os
 import threading
 import time
+import warnings
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 from urllib.parse import urlparse
 
 import graphql
@@ -123,7 +124,7 @@ class GraphQLClient:
 
         self._gql_client = self._initizalize_graphql_client()
 
-    def _get_headers(self) -> Dict[str, str]:
+    def _get_headers(self) -> dict[str, str]:
         """Get the headers."""
         return {
             "Authorization": f"X-API-Key: {self.api_key}",
@@ -134,7 +135,7 @@ class GraphQLClient:
         }
 
     @staticmethod
-    def _get_introspection_args() -> Dict[str, bool]:
+    def _get_introspection_args() -> dict[str, bool]:
         """Get the introspection arguments."""
         return {
             "descriptions": True,  # descriptions for the schema, types, fields, and arguments
@@ -192,7 +193,10 @@ class GraphQLClient:
             fetch_schema_from_transport=True,
             introspection_args=self._get_introspection_args(),
         ) as session:
-            return print_schema(session.client.schema)  # pyright: ignore[reportGeneralTypeIssues]
+            schema = session.client.schema
+            if schema is None:
+                raise ValueError("Failed to fetch GraphQL schema from endpoint")
+            return print_schema(schema)
 
     def _cache_graphql_schema(self, graphql_schema_path: Path, schema_str: str) -> None:
         """Cache the graphql schema on disk."""
@@ -237,7 +241,7 @@ class GraphQLClient:
         return None
 
     @classmethod
-    def _remove_nullable_inputs(cls, variables: Dict) -> Dict:
+    def _remove_nullable_inputs(cls, variables: dict) -> dict:
         """Remove nullable inputs from the variables."""
         for key in ("data", "where", "project", "asset", "label", "issue"):
             if key in variables and isinstance(variables[key], dict):
@@ -246,8 +250,8 @@ class GraphQLClient:
         return {k: v for k, v in variables.items() if v is not None}
 
     def execute(
-        self, query: Union[str, DocumentNode], variables: Optional[Dict] = None, **kwargs
-    ) -> Dict[str, Any]:
+        self, query: Union[str, DocumentNode], variables: Optional[dict] = None, **kwargs
+    ) -> dict[str, Any]:
         """Execute a query.
 
         Args:
@@ -308,13 +312,13 @@ class GraphQLClient:
         wait=wait_exponential(multiplier=0.5, min=1, max=10),
     )
     def _execute_with_retries(
-        self, document: DocumentNode, variables: Optional[Dict], **kwargs
-    ) -> Dict[str, Any]:
+        self, document: DocumentNode, variables: Optional[dict], **kwargs
+    ) -> dict[str, Any]:
         return self._raw_execute(document, variables, **kwargs)
 
     def _raw_execute(
-        self, document: DocumentNode, variables: Optional[Dict], **kwargs
-    ) -> Dict[str, Any]:
+        self, document: DocumentNode, variables: Optional[dict], **kwargs
+    ) -> dict[str, Any]:
         _limiter.try_acquire("GraphQLClient.execute")
         log_context = LogContext()
         log_context.set_client_name(self.client_name)
@@ -322,6 +326,7 @@ class GraphQLClient:
             res = self._gql_client.execute(
                 document=document,
                 variable_values=variables,
+                get_execution_result=True,
                 extra_args={
                     "headers": {
                         **(self._gql_transport.headers or {}),
@@ -330,9 +335,24 @@ class GraphQLClient:
                 },
                 **kwargs,
             )
+
+            extensions = getattr(res, "extensions", None)
+            if isinstance(extensions, dict):
+                for item in extensions.get("deprecations") or []:
+                    warnings.warn(
+                        f"[Kili SDK] Deprecated GraphQL field used: "
+                        f"{item.get('path')} – {item.get('reason')}"
+                    )
+
             transport = self._gql_client.transport
             if transport:
-                headers = transport.response_headers  # pyright: ignore[reportGeneralTypeIssues]
+                headers = transport.response_headers  # pyright: ignore[reportAttributeAccessIssue]
                 returned_complexity = int(headers.get("x-complexity", 0)) if headers else 0
                 self.complexity_consumed += returned_complexity
-            return res
+
+            if res.data is None:
+                raise kili.exceptions.GraphQLError(
+                    error="GraphQL response contains no data",
+                )
+
+            return res.data

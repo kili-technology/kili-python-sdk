@@ -1,7 +1,8 @@
 """Mixin extending Kili API Gateway class with label related operations."""
 
 import json
-from typing import Dict, Generator, List, Optional
+from collections.abc import Generator
+from typing import Optional
 
 from kili_formats.tool.annotations_to_json_response import AnnotationsToJsonResponseConverter
 
@@ -49,8 +50,10 @@ class LabelOperationMixin(BaseOperationMixin):
         filters: LabelFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List labels."""
+        has_json_response_url = "jsonResponseUrl" in fields
+
         if "jsonResponse" in fields:
             if "labelOf" not in fields:
                 fields = [*list(fields), "assetId"]
@@ -64,7 +67,10 @@ class LabelOperationMixin(BaseOperationMixin):
                 "LLM_INSTR_FOLLOWING",
                 "LLM_STATIC",
             }:
-                yield from self.list_labels_split(filters, fields, options, project_info)
+                fetch_annotations = not has_json_response_url
+                yield from self.list_labels_split(
+                    filters, fields, options, project_info, fetch_annotations
+                )
                 return
 
         fragment = fragment_builder(fields)
@@ -73,12 +79,19 @@ class LabelOperationMixin(BaseOperationMixin):
         labels_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving labels", GQL_COUNT_LABELS
         )
-        labels_gen = (load_label_json_fields(label, fields) for label in labels_gen)
+        labels_gen = (
+            load_label_json_fields(label, fields, self.http_client) for label in labels_gen
+        )
         yield from labels_gen
 
     def list_labels_split(
-        self, filters: LabelFilters, fields: ListOrTuple[str], options: QueryOptions, project_info
-    ) -> Generator[Dict, None, None]:
+        self,
+        filters: LabelFilters,
+        fields: ListOrTuple[str],
+        options: QueryOptions,
+        project_info,
+        fetch_annotations: bool,
+    ) -> Generator[dict, None, None]:
         """List labels."""
         if project_info["inputType"] == "VIDEO":
             options = QueryOptions(
@@ -86,21 +99,28 @@ class LabelOperationMixin(BaseOperationMixin):
             )
 
         fragment = fragment_builder(fields)
-        inner_annotation_fragment = get_annotation_fragment()
-        full_fragment = f"""
-            {fragment}
-            annotations {{
-                {inner_annotation_fragment}
-            }}
-        """
+
+        if fetch_annotations:
+            inner_annotation_fragment = get_annotation_fragment()
+            full_fragment = f"""
+                {fragment}
+                annotations {{
+                    {inner_annotation_fragment}
+                }}
+            """
+        else:
+            full_fragment = fragment
+
         query = get_labels_query(full_fragment)
         where = label_where_mapper(filters)
         labels_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving labels", GQL_COUNT_LABELS
         )
-        labels_gen = (load_label_json_fields(label, fields) for label in labels_gen)
+        labels_gen = (
+            load_label_json_fields(label, fields, self.http_client) for label in labels_gen
+        )
 
-        if "jsonResponse" in fields:
+        if "jsonResponse" in fields and fetch_annotations:
             converter = AnnotationsToJsonResponseConverter(
                 json_interface=project_info["jsonInterface"],
                 project_input_type=project_info["inputType"],
@@ -124,9 +144,9 @@ class LabelOperationMixin(BaseOperationMixin):
 
     def delete_labels(
         self, ids: ListOrTuple[LabelId], disable_tqdm: Optional[bool]
-    ) -> List[LabelId]:
+    ) -> list[LabelId]:
         """Delete labels."""
-        delete_label_ids: List[LabelId] = []
+        delete_label_ids: list[LabelId] = []
 
         with tqdm(total=len(ids), desc="Deleting labels", disable=disable_tqdm) as pbar:
             for batch_of_label_ids in batcher(ids, batch_size=MUTATION_BATCH_SIZE):
@@ -144,14 +164,14 @@ class LabelOperationMixin(BaseOperationMixin):
         fields: ListOrTuple[str],
         disable_tqdm: Optional[bool],
         project_id: Optional[ProjectId],
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Append many labels."""
         nb_labels_to_add = len(data.labels_data)
 
         fragment = fragment_builder(fields)
         query = get_append_many_labels_mutation(fragment=fragment)
 
-        added_labels: List[Dict] = []
+        added_labels: list[dict] = []
         with tqdm(total=nb_labels_to_add, desc="Adding labels", disable=disable_tqdm) as pbar:
             for batch_of_label_data in batcher(data.labels_data, batch_size=MUTATION_BATCH_SIZE):
                 variables = {
@@ -179,7 +199,7 @@ class LabelOperationMixin(BaseOperationMixin):
 
     def append_to_labels(
         self, data: AppendToLabelsData, asset_id: AssetId, fields: ListOrTuple[str]
-    ) -> Dict:
+    ) -> dict:
         """Append to labels."""
         fragment = fragment_builder(fields)
         query = get_append_to_labels_mutation(fragment)
@@ -191,8 +211,8 @@ class LabelOperationMixin(BaseOperationMixin):
         return result["data"]
 
     def create_honeypot_label(
-        self, json_response: Dict, asset_id: AssetId, fields: ListOrTuple[str]
-    ) -> Dict:
+        self, json_response: dict, asset_id: AssetId, fields: ListOrTuple[str]
+    ) -> dict:
         """Create honeypot label."""
         fragment = fragment_builder(fields)
         query = get_create_honeypot_mutation(fragment)

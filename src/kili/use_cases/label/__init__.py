@@ -1,7 +1,8 @@
 """Label use cases."""
 
+from collections.abc import Generator
 from functools import partial
-from typing import TYPE_CHECKING, Dict, Generator, List, Literal, Optional
+from typing import TYPE_CHECKING, Literal, Optional, cast
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.label.types import (
@@ -88,45 +89,54 @@ class LabelUseCases(BaseUseCases):
 
     def delete_labels(
         self, ids: ListOrTuple[LabelId], disable_tqdm: Optional[bool]
-    ) -> List[LabelId]:
+    ) -> list[LabelId]:
         """Delete labels."""
         return self._kili_api_gateway.delete_labels(ids=ids, disable_tqdm=disable_tqdm)
 
     def append_labels(
         self,
-        labels: List[LabelToCreateUseCaseInput],
+        labels: list[LabelToCreateUseCaseInput],
         label_type: LabelType,
         overwrite: Optional[bool],
         project_id: Optional[ProjectId],
         fields: ListOrTuple[str],
         disable_tqdm: Optional[bool],
         step_name: Optional[str] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Append labels."""
         check_input_labels(labels)
 
-        asset_id_array = [label.asset_id for label in labels]
-        if any(asset_id is None for asset_id in asset_id_array):
-            external_id_array = [label.asset_external_id for label in labels]
-            asset_id_array = AssetUseCasesUtils(
+        asset_id_array_maybe_none = [label.asset_id for label in labels]
+        resolved_asset_ids: ListOrTuple[AssetId]
+        if any(asset_id is None for asset_id in asset_id_array_maybe_none):
+            external_id_array: list[AssetExternalId] = []
+            for label in labels:
+                if label.asset_external_id is None:
+                    raise ValueError("Either specify all externalId or all assetId")
+                external_id_array.append(label.asset_external_id)
+
+            resolved_asset_ids = AssetUseCasesUtils(
                 self._kili_api_gateway
             ).get_asset_ids_or_throw_error(
                 asset_ids=None,
-                external_ids=external_id_array,  # pyright: ignore[reportGeneralTypeIssues]
+                external_ids=external_id_array,
                 project_id=project_id,
             )
+        else:
+            # All asset_ids are non-None, safe to cast
+            resolved_asset_ids = cast(list[AssetId], asset_id_array_maybe_none)
 
         labels_to_add = [
             AppendLabelData(
                 author_id=label.author_id,
-                asset_id=asset_id,  # pyright: ignore[reportGeneralTypeIssues]
+                asset_id=asset_id,
                 seconds_to_label=label.seconds_to_label,
                 json_response=label.json_response,
                 model_name=label.model_name,
                 client_version=None,
                 referenced_label_id=label.referenced_label_id,
             )
-            for label, asset_id in zip(labels, asset_id_array)
+            for label, asset_id in zip(labels, resolved_asset_ids, strict=False)
         ]
 
         data = AppendManyLabelsData(
@@ -153,12 +163,12 @@ class LabelUseCases(BaseUseCases):
     def append_to_labels(
         self,
         author_id: Optional[UserId],
-        json_response: Dict,
+        json_response: dict,
         label_type: LabelType,
         seconds_to_label: Optional[float],
         asset_id: AssetId,
         fields: ListOrTuple[str],
-    ) -> Dict:
+    ) -> dict:
         """Append to labels."""
         data = AppendToLabelsData(
             author_id=(
@@ -176,12 +186,12 @@ class LabelUseCases(BaseUseCases):
 
     def create_honeypot_label(
         self,
-        json_response: Dict,
+        json_response: dict,
         asset_id: Optional[AssetId],
         asset_external_id: Optional[AssetExternalId],
         project_id: Optional[ProjectId],
         fields: ListOrTuple[str],
-    ) -> Dict:
+    ) -> dict:
         """Create honeypot label."""
         if asset_id is None:
             if asset_external_id is None or project_id is None:

@@ -1,7 +1,7 @@
 """Utilities to handle assets."""
 
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any
 
 
 @dataclass
@@ -13,7 +13,7 @@ class PageResolution:
     page_number: int
     rotation: int = 0
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> dict[str, Any]:
         """Return a dictionary representation of the object."""
         output = {
             "width": self.width,

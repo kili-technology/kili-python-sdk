@@ -1,8 +1,9 @@
 """Storages domain namespace for the Kili Python SDK."""
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-public-methods
 
+from collections.abc import Generator
 from functools import cached_property
-from typing import Dict, Generator, List, Optional, TypedDict
+from typing import List, Optional, TypedDict
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -68,7 +69,7 @@ class IntegrationsNamespace:
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[IntegrationFilter] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get a list of cloud storage integrations that match a set of criteria.
 
         This method provides a simplified interface for querying cloud storage integrations,
@@ -138,7 +139,7 @@ class IntegrationsNamespace:
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[IntegrationFilter] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Get a generator of cloud storage integrations that match a set of criteria.
 
         This method provides a simplified interface for querying cloud storage integrations,
@@ -254,7 +255,7 @@ class IntegrationsNamespace:
         allowed_projects: Optional[List[str]] = None,
         include_root_files: Optional[str] = None,
         internal_processing_authorized: Optional[str] = None,
-    ) -> Dict:
+    ) -> dict:
         """Create a new AWS S3 cloud storage integration.
 
         This method creates an integration with Amazon S3, enabling your organization
@@ -398,7 +399,7 @@ class IntegrationsNamespace:
         allowed_projects: Optional[List[str]] = None,
         include_root_files: Optional[str] = None,
         internal_processing_authorized: Optional[str] = None,
-    ) -> Dict:
+    ) -> dict:
         """Create a new Azure Blob Storage cloud storage integration.
 
         This method creates an integration with Azure Blob Storage, enabling your organization
@@ -523,7 +524,7 @@ class IntegrationsNamespace:
         allowed_projects: Optional[List[str]] = None,
         include_root_files: Optional[str] = None,
         internal_processing_authorized: Optional[str] = None,
-    ) -> Dict:
+    ) -> dict:
         """Create a new Google Cloud Storage cloud storage integration.
 
         This method creates an integration with Google Cloud Storage, enabling your organization
@@ -644,7 +645,7 @@ class IntegrationsNamespace:
         allowed_projects: Optional[List[str]] = None,
         include_root_files: Optional[str] = None,
         internal_processing_authorized: Optional[str] = None,
-    ) -> Dict:
+    ) -> dict:
         """Create a new custom S3-compatible cloud storage integration.
 
         This method creates an integration with custom S3-compatible storage services
@@ -795,7 +796,7 @@ class IntegrationsNamespace:
         s3_region: Optional[str] = None,
         s3_secret_key: Optional[str] = None,
         s3_session_token: Optional[str] = None,
-    ) -> Dict:
+    ) -> dict:
         """Internal method to create a cloud storage integration.
 
         This is a private method called by platform-specific public methods.
@@ -853,7 +854,7 @@ class IntegrationsNamespace:
         s3_region: Optional[str] = None,
         s3_secret_key: Optional[str] = None,
         s3_session_token: Optional[str] = None,
-    ) -> Dict:
+    ) -> dict:
         """Update an existing cloud storage integration.
 
         This method allows you to modify the configuration of an existing cloud storage
@@ -1100,7 +1101,7 @@ class ConnectionsNamespace:
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[ConnectionFilter] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get a list of cloud storage connections that match a set of criteria.
 
         This method provides a simplified interface for querying cloud storage connections,
@@ -1174,7 +1175,7 @@ class ConnectionsNamespace:
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[ConnectionFilter] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Get a generator of cloud storage connections that match a set of criteria.
 
         This method provides a simplified interface for querying cloud storage connections,
@@ -1229,7 +1230,7 @@ class ConnectionsNamespace:
         prefix: Optional[str] = None,
         include: Optional[List[str]] = None,
         exclude: Optional[List[str]] = None,
-    ) -> Dict:
+    ) -> dict:
         """Connect a cloud storage integration to a project.
 
         This method creates a new connection between a cloud storage integration and a project,
@@ -1337,7 +1338,7 @@ class ConnectionsNamespace:
         connection_id: str,
         delete_extraneous_files: bool = False,
         dry_run: bool = False,
-    ) -> Dict:
+    ) -> dict:
         """Synchronize a cloud storage connection.
 
         This method synchronizes the specified cloud storage connection by computing

@@ -1,6 +1,6 @@
 """Client presentation methods for project workflow."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from typeguard import typechecked
 
@@ -18,10 +18,10 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
         self,
         project_id: str,
         enforce_step_separation: Optional[bool] = None,
-        create_steps: Optional[List[WorkflowStepCreate]] = None,
-        update_steps: Optional[List[WorkflowStepUpdate]] = None,
-        delete_steps: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
+        create_steps: Optional[list[WorkflowStepCreate]] = None,
+        update_steps: Optional[list[WorkflowStepUpdate]] = None,
+        delete_steps: Optional[list[str]] = None,
+    ) -> dict[str, Any]:
         """Update properties of a project workflow.
 
         Args:
@@ -31,7 +31,7 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
                 ensuring independent review and labeling processes
             create_steps: List of steps to create in the project workflow.
             update_steps: List of steps to update in the project workflow.
-            delete_steps: List of step IDs to delete from the project workflow.
+            delete_steps: List of step IDs or names to delete from the project workflow.
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
@@ -49,7 +49,7 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
     def get_steps(
         self,
         project_id: str,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get steps in a project workflow.
 
         Args:

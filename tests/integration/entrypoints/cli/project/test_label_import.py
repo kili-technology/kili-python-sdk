@@ -1,6 +1,5 @@
 import json
 import os
-from typing import Dict
 from unittest.mock import ANY, patch
 
 import pytest
@@ -72,7 +71,7 @@ mock_label = {"JOB_0": {"categories": [{"name": "YES_IT_IS_SPAM", "confidence": 
         ),
     ],
 )
-def test_import_labels(name: str, test_case: Dict, mocker: pytest_mock.MockFixture):
+def test_import_labels(name: str, test_case: dict, mocker: pytest_mock.MockFixture):
     """Test that the CLI properly calls the label_import service."""
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
 
@@ -176,7 +175,7 @@ def test_import_labels(name: str, test_case: Dict, mocker: pytest_mock.MockFixtu
         ),
     ],
 )
-def test_import_labels_yolo(name: str, test_case: Dict, mocker: pytest_mock.MockerFixture):
+def test_import_labels_yolo(name: str, test_case: dict, mocker: pytest_mock.MockerFixture):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
 
     _ = name

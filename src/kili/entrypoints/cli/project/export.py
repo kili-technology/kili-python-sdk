@@ -1,10 +1,9 @@
 """CLI's project export subcommand."""
 
-from typing import Optional, cast
+from typing import Optional, cast, get_args
 
 import click
 from typeguard import typechecked
-from typing_extensions import get_args
 
 from kili.domain.project import ProjectId
 from kili.entrypoints.cli.common_args import Options

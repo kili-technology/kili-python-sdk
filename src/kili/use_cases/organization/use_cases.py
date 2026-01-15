@@ -1,6 +1,6 @@
 """Organization use cases."""
 
-from typing import Dict, Generator
+from collections.abc import Generator
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.organization import (
@@ -36,7 +36,7 @@ class OrganizationUseCases(BaseUseCases):
 
     def list_organizations(
         self, where: OrganizationFilters, fields: ListOrTuple[str], options: QueryOptions
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List organizations."""
         return self._kili_api_gateway.list_organizations(
             filters=where,
@@ -51,6 +51,6 @@ class OrganizationUseCases(BaseUseCases):
 
     def get_organization_metrics(
         self, where: OrganizationMetricsFilters, fields: ListOrTuple[str]
-    ) -> Dict:
+    ) -> dict:
         """Get organization metrics."""
         return self._kili_api_gateway.get_organization_metrics(filters=where, fields=fields)

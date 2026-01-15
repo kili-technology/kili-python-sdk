@@ -1,7 +1,7 @@
 """Develop Plugins for Kili."""
 
 import logging
-from typing import Dict, List, Optional
+from typing import Optional
 
 from kili.client import Kili
 from kili.services.plugins.helpers import get_logger
@@ -43,7 +43,7 @@ class PluginCore:
 
     def on_submit(
         self,
-        label: Dict,
+        label: dict,
         asset_id: str,
     ) -> None:
         """Handler for the submit action, triggered when a default label is submitted into Kili.
@@ -72,7 +72,7 @@ class PluginCore:
 
     def on_review(
         self,
-        label: Dict,
+        label: dict,
         asset_id: str,
     ) -> None:
         """Handler for the review action, triggered when a default label is reviewed on Kili.
@@ -101,7 +101,7 @@ class PluginCore:
 
     def on_custom_interface_click(
         self,
-        label: Dict,
+        label: dict,
         asset_id: str,
     ) -> None:
         """Handler for the custom interface click action.
@@ -136,7 +136,7 @@ class PluginCore:
 
     def on_project_updated(
         self,
-        settings_updated: List[Dict],
+        settings_updated: list[dict],
     ) -> None:
         """Handler for the project updated action.
 
@@ -195,7 +195,7 @@ class PluginCore:
 
     def on_event(
         self,
-        payload: Dict,
+        payload: dict,
     ) -> None:
         """Handler for all events, triggered when an event is triggered.
 

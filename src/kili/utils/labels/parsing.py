@@ -1,17 +1,18 @@
 """Module for parsing labels returned by kili.labels()."""
 
+from collections.abc import Generator, Iterable
 from copy import deepcopy
-from typing import Dict, Generator, Iterable, List, overload
+from typing import overload
 
 from kili.domain.project import InputType
 from kili.services.label_data_parsing import json_response as json_response_module
 from kili.services.label_data_parsing.types import Project
 
 
-class ParsedLabel(Dict):
+class ParsedLabel(dict):
     """Class that represents a parsed label."""
 
-    def __init__(self, label: Dict, json_interface: Dict, input_type: InputType) -> None:
+    def __init__(self, label: dict, json_interface: dict, input_type: InputType) -> None:
         # pylint: disable=line-too-long
         """Class that represents a parsed label.
 
@@ -50,7 +51,7 @@ class ParsedLabel(Dict):
             project_info=project_info, json_response=json_response
         )
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Return a copy of the parsed label as a dict.
 
         !!! Example
@@ -76,27 +77,27 @@ class ParsedLabel(Dict):
         return str(self.to_dict())
 
     @property
-    def json_response(self) -> Dict:
+    def json_response(self) -> dict:
         """Returns a copy of the json response of the parsed label."""
         return self.jobs.to_dict()
 
 
 @overload
 def parse_labels(
-    labels: List[Dict], json_interface: Dict, input_type: InputType
-) -> List[ParsedLabel]:
+    labels: list[dict], json_interface: dict, input_type: InputType
+) -> list[ParsedLabel]:
     ...
 
 
 @overload
 def parse_labels(
-    labels: Generator[Dict, None, None], json_interface: Dict, input_type: InputType
+    labels: Generator[dict, None, None], json_interface: dict, input_type: InputType
 ) -> Generator[ParsedLabel, None, None]:
     ...
 
 
 def parse_labels(
-    labels: Iterable[Dict], json_interface: Dict, input_type: InputType
+    labels: Iterable[dict], json_interface: dict, input_type: InputType
 ) -> Iterable[ParsedLabel]:
     """Parse labels returned by kili.labels().
 

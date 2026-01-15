@@ -1,6 +1,5 @@
 """Mixin extending Kili API Gateway class with Projects related operations."""
 
-from typing import Dict, List
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -24,7 +23,7 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         self,
         project_id: ProjectId,
         project_workflow_data: ProjectWorkflowDataKiliAPIGatewayInput,
-    ) -> Dict:
+    ) -> dict:
         """Update properties in a project workflow."""
         project_workflow_input = project_input_mapper(data=project_workflow_data)
 
@@ -41,7 +40,7 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
     def get_steps(
         self,
         project_id: str,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get steps in a project workflow."""
         variables = {"where": {"id": project_id}, "first": 1, "skip": 0}
         result = self.graphql_client.execute(GQL_GET_STEPS, variables)
@@ -57,4 +56,4 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
                 f"project ID: {project_id}. The workflow v2 is not activated on this project."
             )
 
-        return [step for step in steps if step.get("isActivated") is True]
+        return steps

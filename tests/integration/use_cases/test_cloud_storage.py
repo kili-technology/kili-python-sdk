@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import pytest
 import pytest_mock
@@ -30,8 +30,8 @@ class MockerGetDataConnection:
         nb_of_assets: int,
         is_checking: bool,
         project_id: str,
-        selected_folders: Optional[List[str]],
-        data_integration: Optional[Dict] = None,
+        selected_folders: Optional[list[str]],
+        data_integration: Optional[dict] = None,
     ) -> None:
         if data_integration is None:
             data_integration = {
@@ -50,8 +50,8 @@ class MockerGetDataConnection:
         self.selected_folders = selected_folders
         self.data_integration = data_integration
 
-    def __call__(self, data_connection_id: str, fields: List[str]) -> Dict[str, Any]:
-        ret: Dict[str, Any] = {"id": data_connection_id}
+    def __call__(self, data_connection_id: str, fields: list[str]) -> dict[str, Any]:
+        ret: dict[str, Any] = {"id": data_connection_id}
 
         ret["dataDifferencesSummary"] = {}
 

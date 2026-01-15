@@ -1,7 +1,9 @@
 """Organizations domain namespace for the Kili Python SDK."""
+# pylint: disable=too-many-public-methods
 
+from collections.abc import Generator
 from datetime import datetime
-from typing import Dict, Generator, List, Optional
+from typing import Optional
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -80,7 +82,7 @@ class OrganizationsNamespace(DomainNamespace):
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get a list of organizations that match a set of criteria.
 
         Args:
@@ -127,7 +129,7 @@ class OrganizationsNamespace(DomainNamespace):
         first: Optional[int] = None,
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Get a generator of organizations that match a set of criteria.
 
         Args:
@@ -168,7 +170,7 @@ class OrganizationsNamespace(DomainNamespace):
             "numberOfHours",
             "numberOfLabeledAssets",
         ),
-    ) -> Dict:
+    ) -> dict:
         """Get organization metrics and analytics.
 
         This method provides access to organization-level analytics including

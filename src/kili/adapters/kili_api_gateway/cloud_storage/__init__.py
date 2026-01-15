@@ -1,6 +1,7 @@
 """Mixin extending Kili API Gateway class with Cloud Storage related operations."""
 
-from typing import Dict, Generator, Optional
+from collections.abc import Generator
+from typing import Optional
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.cloud_storage.types import DataIntegrationData
@@ -51,7 +52,7 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         data_integration_filters: DataIntegrationFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List data integrations."""
         fragment = fragment_builder(fields)
         query = get_list_data_integrations_query(fragment)
@@ -72,7 +73,7 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         data_connection_filters: DataConnectionFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List data connections."""
         fragment = fragment_builder(fields)
         query = get_list_data_connections_query(fragment)
@@ -83,7 +84,7 @@ class CloudStorageOperationMixin(BaseOperationMixin):
 
     def get_data_connection(
         self, data_connection_id: DataConnectionId, fields: ListOrTuple[str]
-    ) -> Dict:
+    ) -> dict:
         """Get data connection."""
         fragment = fragment_builder(fields)
         query = get_data_connection_query(fragment)
@@ -94,7 +95,7 @@ class CloudStorageOperationMixin(BaseOperationMixin):
 
     def add_data_connection(
         self, data: AddDataConnectionKiliAPIGatewayInput, fields: ListOrTuple[str]
-    ) -> Dict:
+    ) -> dict:
         """Add data connection to a project."""
         fragment = fragment_builder(fields)
         query = get_add_data_connection_mutation(fragment)
@@ -107,7 +108,7 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         data_connection_id: DataConnectionId,
         data: Optional[DataConnectionComputeDifferencesKiliAPIGatewayInput],
         fields: ListOrTuple[str],
-    ) -> Dict:
+    ) -> dict:
         """Compute data connection differences."""
         fragment = fragment_builder(fields)
         query = get_compute_data_connection_differences_mutation(fragment)
@@ -122,7 +123,7 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         data_connection_id: DataConnectionId,
         data_difference_type: DataDifferenceType,
         fields: ListOrTuple[str],
-    ) -> Dict:
+    ) -> dict:
         """Validate data connection differences."""
         fragment = fragment_builder(fields)
         query = get_validate_data_connection_differences_mutation(fragment)
@@ -130,7 +131,7 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(query, variables)
         return result["data"]
 
-    def create_data_integration(self, data: DataIntegrationData, fields: ListOrTuple[str]) -> Dict:
+    def create_data_integration(self, data: DataIntegrationData, fields: ListOrTuple[str]) -> dict:
         """Create a data integration."""
         fragment = fragment_builder(fields)
         query = get_create_integration_mutation(fragment)
@@ -143,7 +144,7 @@ class CloudStorageOperationMixin(BaseOperationMixin):
         data_integration_id: DataIntegrationId,
         data_integration_data: DataIntegrationData,
         fields: ListOrTuple[str],
-    ) -> Dict:
+    ) -> dict:
         """Update a data integration."""
         fragment = fragment_builder(fields)
         query = get_update_integration_mutation(fragment)

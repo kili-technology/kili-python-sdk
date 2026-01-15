@@ -1,6 +1,7 @@
 """User use cases."""
 
-from typing import Dict, Generator, Optional
+from collections.abc import Generator
+from typing import Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.user.types import (
@@ -19,7 +20,7 @@ class UserUseCases(BaseUseCases):
 
     def list_users(
         self, filters: UserFilter, fields: ListOrTuple[str], options: QueryOptions
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List all users."""
         return self._kili_api_gateway.list_users(
             fields=fields, user_filters=filters, options=options
@@ -29,6 +30,10 @@ class UserUseCases(BaseUseCases):
         """Count users."""
         return self._kili_api_gateway.count_users(user_filters=filters)
 
+    def get_current_user(self, fields: ListOrTuple[str]):
+        """Get the current user."""
+        return self._kili_api_gateway.get_current_user(fields)
+
     def create_user(
         self,
         email: str,
@@ -37,7 +42,7 @@ class UserUseCases(BaseUseCases):
         firstname: Optional[str],
         lastname: Optional[str],
         fields: ListOrTuple[str],
-    ) -> Dict:
+    ) -> dict:
         """Create a user."""
         return self._kili_api_gateway.create_user(
             data=CreateUserDataKiliGatewayInput(
@@ -57,7 +62,7 @@ class UserUseCases(BaseUseCases):
         new_password_2: str,
         user_filter: UserFilter,
         fields: ListOrTuple[str],
-    ) -> Dict:
+    ) -> dict:
         """Update user password."""
         return self._kili_api_gateway.update_password(
             old_password=old_password,
@@ -76,7 +81,7 @@ class UserUseCases(BaseUseCases):
         organization_role: Optional[OrganizationRole],
         activated: Optional[bool],
         fields: ListOrTuple[str],
-    ) -> Dict:
+    ) -> dict:
         """Update user."""
         return self._kili_api_gateway.update_user(
             user_filter=user_filter,

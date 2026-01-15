@@ -14,11 +14,12 @@ import base64
 import re
 import shutil
 from binascii import a2b_base64
+from collections.abc import Sequence
 from io import BytesIO
 from itertools import groupby
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Dict, Optional, Sequence
+from typing import Optional
 
 import click
 import urllib3
@@ -95,7 +96,7 @@ class RemoveTqdmOutputPreprocessor(Preprocessor):
         return cell, resources
 
 
-def embed_images_in_markdown(markdown: str, images: Dict[str, bytes], notebook_dir: Path) -> str:
+def embed_images_in_markdown(markdown: str, images: dict[str, bytes], notebook_dir: Path) -> str:
     """Embed images in markdown in base64."""
     md_img_pattern = r"!\[(.*?)\]\((.*?)\)"  # matches ![]()
     matched_images = re.findall(md_img_pattern, markdown)

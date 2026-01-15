@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-from typing import Dict, List
 
 from kili_formats import clean_json_response, convert_to_pixel_coords
 from kili_formats.media.video import cut_video
@@ -29,7 +28,7 @@ class KiliExporter(AbstractExporter):
         _ = job
         return True  # kili format is compatible with all jobs
 
-    def _save_assets_export(self, assets: List[Dict], output_filename: Path) -> None:
+    def _save_assets_export(self, assets: list[dict], output_filename: Path) -> None:
         """Save the assets to a file and return the link to that file."""
         self.logger.info("Exporting to kili format...")
 
@@ -61,7 +60,7 @@ class KiliExporter(AbstractExporter):
 
         self.logger.warning(output_filename)
 
-    def _clean_filepaths(self, assets: List[Dict]) -> List[Dict]:
+    def _clean_filepaths(self, assets: list[dict]) -> list[dict]:
         """Remove TemporaryDirectory() prefix from filepaths in "jsonContent" and "content" fields."""
         for asset in assets:
             if Path(asset["content"]).is_file():
@@ -80,7 +79,7 @@ class KiliExporter(AbstractExporter):
                 asset["jsonContent"] = json_content_list
         return assets
 
-    def _cut_video_assets(self, assets: List[Dict]) -> List[Dict]:
+    def _cut_video_assets(self, assets: list[dict]) -> list[dict]:
         """Cut video assets into frames."""
         for asset in assets:
             if asset["jsonContent"] == "" and Path(asset["content"]).is_file():
@@ -101,7 +100,7 @@ class KiliExporter(AbstractExporter):
                     ) from e
         return assets
 
-    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
+    def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
         """Extract formatted annotations from labels and save the json in the buckets."""
         clean_assets = self.preprocess_assets(assets)
         if self.project["inputType"] in ["IMAGE", "PDF", "VIDEO"]:

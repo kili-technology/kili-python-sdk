@@ -1,7 +1,8 @@
 """CLI's project import subcommand."""
 
 import os
-from typing import Iterable, Optional
+from collections.abc import Iterable
+from typing import Optional
 
 import click
 from typeguard import typechecked
