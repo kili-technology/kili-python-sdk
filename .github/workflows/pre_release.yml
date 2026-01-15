@@ -75,9 +75,9 @@ jobs:
           release_version=$(get_sdk_version_from_pyproject_toml)
           echo "Release version: $release_version"
 
-          # Get last release tag for release notes range
-          latest_release=$(get_last_release_tag_github)
-          echo "Latest release tag: $latest_release"
+          # Get previous release tag (closest inferior version)
+          latest_release=$(get_previous_release_tag "$release_version")
+          echo "Previous release tag: $latest_release"
 
           git fetch --tags --quiet
 
