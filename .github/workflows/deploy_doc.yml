@@ -22,13 +22,13 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
               echo "REF=${{ github.event.inputs.branch }}" >> $GITHUB_ENV
           else
-              release_payload=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest")
-              last_version=$(echo "$release_payload" | jq -r .tag_name)
-              echo "Last version: $last_version"
-
-              release_branch=$(echo "$release_payload" | jq -r .target_commitish)
+              # Use the release that triggered this workflow, not the "latest" release
+              release_branch="${{ github.event.release.target_commitish }}"
+              tag_name="${{ github.ref_name }}"
+              echo "Release tag: $tag_name"
               echo "Release branch: $release_branch"
-              sanitized_version=${last_version#v}
+
+              sanitized_version=${tag_name#v}
               major_minor=$(echo "$sanitized_version" | awk -F. '{print $1 "." $2}')
 
               if [[ "$release_branch" == "main" ]]; then
@@ -62,7 +62,13 @@ jobs:
         run: |
           export version=$(python -c 'from kili import __version__; print(".".join(__version__.split(".")[:2]))')  # removes patch suffix
           git fetch origin gh-pages --depth=1
-          mike deploy --push --update-aliases $version latest
+          if [[ "${{ env.REF }}" == "main" ]]; then
+              # Only update "latest" alias for releases from main branch
+              mike deploy --push --update-aliases $version latest
+          else
+              # Maintenance releases: update version docs without changing "latest" alias
+              mike deploy --push $version
+          fi
 
       - name: Slack notification
         id: slack
