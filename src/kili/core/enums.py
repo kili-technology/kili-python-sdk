@@ -58,22 +58,3 @@ DemoProjectType = Literal[
     "DEMO_LLM_INSTR_FOLLOWING",
     "DEMO_SEGMENTATION",
 ]
-
-
-Right = Literal[
-    "CAN_ACCESS_SMART_TOOLS",
-    "CAN_LABEL",
-    "CREATE_AUDIO",
-    "CREATE_FRAME",
-    "CREATE_IMAGE",
-    "CREATE_PDF",
-    "CREATE_TEXT",
-    "CREATE_TIMESERIES",
-    "CREATE_VIDEO",
-    "MAKE_PUBLIC_PROJECT",
-    "SEE_LICENSE_BANNER",
-    "SEE_UPGRADE_BUTTON",
-    "UPLOAD_CLOUD_DATA",
-    "USE_API",
-    "USE_API_PRIORITY",
-]
