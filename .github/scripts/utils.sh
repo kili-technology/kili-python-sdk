@@ -28,7 +28,17 @@ version_to_int() {
     echo "$((10#$as_int))"  # interpret as base 10
 }
 
-get_last_release_tag_github() {
-    last_tag=$(curl --silent "https://api.github.com/repos/kili-technology/kili-python-sdk/releases/latest" | jq -r .tag_name)
-    echo "$last_tag"
+
+# Get the previous release tag for a given version (closest inferior version)
+# $1: current version (e.g., "25.2.7")
+# Returns: previous tag (could be any major.minor.patch), or empty string if none
+get_previous_release_tag() {
+    local current_version="$1"
+
+    # List all semver tags, add current, sort, get line before current
+    (git tag -l | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'; echo "$current_version") | \
+        sort -V -u | \
+        grep -B1 "^${current_version}$" | \
+        head -1 | \
+        grep -v "^${current_version}$"
 }
