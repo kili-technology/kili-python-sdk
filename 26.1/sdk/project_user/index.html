@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/kili_favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2615,6 +2615,7 @@
         <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ACTIVATED&quot;</span><span class="p">,</span> <span class="s2">&quot;ORG_ADMIN&quot;</span><span class="p">,</span> <span class="s2">&quot;ORG_SUSPENDED&quot;</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;ACTIVATED&quot;</span><span class="p">,</span>
             <span class="s2">&quot;ORG_ADMIN&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ORG_SUSPENDED&quot;</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;activated&quot;</span><span class="p">,</span>
@@ -2664,6 +2665,7 @@
             <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">]</span>
 
         <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectUserWhere</span><span class="p">(</span>
+            <span class="n">deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
             <span class="n">_id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
@@ -2697,6 +2699,7 @@
         <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ACTIVATED&quot;</span><span class="p">,</span> <span class="s2">&quot;ORG_ADMIN&quot;</span><span class="p">,</span> <span class="s2">&quot;ORG_SUSPENDED&quot;</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;ACTIVATED&quot;</span><span class="p">,</span>
             <span class="s2">&quot;ORG_ADMIN&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ORG_SUSPENDED&quot;</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Count the number of projects and their users that match a set of criteria.</span>
@@ -2717,6 +2720,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">status_in</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectUserWhere</span><span class="p">(</span>
+                <span class="n">deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
                 <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
                 <span class="n">_id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
@@ -2727,6 +2731,7 @@
         <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">status</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">status_in</span><span class="p">):</span>
             <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectUserWhere</span><span class="p">(</span>
+                <span class="n">deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
                 <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
                 <span class="n">_id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
@@ -2755,7 +2760,7 @@
 
 
 <h3 id="kili.entrypoints.queries.project_user.__init__.QueriesProjectUser.count_project_users" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">count_project_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;ACTIVATED&#39;</span><span class="p">,</span> <span class="s1">&#39;ORG_ADMIN&#39;</span><span class="p">))</span></code>
+<code class="highlight language-python"><span class="n">count_project_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;ACTIVATED&#39;</span><span class="p">,</span> <span class="s1">&#39;ORG_ADMIN&#39;</span><span class="p">,</span> <span class="s1">&#39;ORG_SUSPENDED&#39;</span><span class="p">))</span></code>
 
 
 </h3>
@@ -2808,7 +2813,7 @@
 <li><code>ACTIVATED</code>: Has been invited to the project. Is not an Organization Admin</li>
 <li><code>ORG_SUSPENDED</code>: Has been suspended at the organization level. Can no longer access any projects.</li>
 </ul></td>
-        <td><code>(&#39;ACTIVATED&#39;, &#39;ORG_ADMIN&#39;)</code></td>
+        <td><code>(&#39;ACTIVATED&#39;, &#39;ORG_ADMIN&#39;, &#39;ORG_SUSPENDED&#39;)</code></td>
       </tr>
   </tbody>
 </table>
@@ -2838,6 +2843,7 @@
     <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ACTIVATED&quot;</span><span class="p">,</span> <span class="s2">&quot;ORG_ADMIN&quot;</span><span class="p">,</span> <span class="s2">&quot;ORG_SUSPENDED&quot;</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;ACTIVATED&quot;</span><span class="p">,</span>
         <span class="s2">&quot;ORG_ADMIN&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORG_SUSPENDED&quot;</span><span class="p">,</span>
     <span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Count the number of projects and their users that match a set of criteria.</span>
@@ -2858,6 +2864,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">status_in</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectUserWhere</span><span class="p">(</span>
+            <span class="n">deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
             <span class="n">_id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
@@ -2868,6 +2875,7 @@
     <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">status</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">status_in</span><span class="p">):</span>
         <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectUserWhere</span><span class="p">(</span>
+            <span class="n">deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
             <span class="n">_id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
@@ -2889,7 +2897,7 @@
 
 
 <h3 id="kili.entrypoints.queries.project_user.__init__.QueriesProjectUser.project_users" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">project_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;ACTIVATED&#39;</span><span class="p">,</span> <span class="s1">&#39;ORG_ADMIN&#39;</span><span class="p">),</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;activated&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;role&#39;</span><span class="p">,</span> <span class="s1">&#39;starred&#39;</span><span class="p">,</span> <span class="s1">&#39;user.email&#39;</span><span class="p">,</span> <span class="s1">&#39;user.id&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">project_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;ACTIVATED&#39;</span><span class="p">,</span> <span class="s1">&#39;ORG_ADMIN&#39;</span><span class="p">,</span> <span class="s1">&#39;ORG_SUSPENDED&#39;</span><span class="p">),</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;activated&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;role&#39;</span><span class="p">,</span> <span class="s1">&#39;starred&#39;</span><span class="p">,</span> <span class="s1">&#39;user.email&#39;</span><span class="p">,</span> <span class="s1">&#39;user.id&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2942,7 +2950,7 @@
 <li><code>ACTIVATED</code>: Has been invited to the project. Is not an Organization Admin</li>
 <li><code>ORG_SUSPENDED</code>: Has been suspended at the organization level. Can no longer access any projects.</li>
 </ul></td>
-        <td><code>(&#39;ACTIVATED&#39;, &#39;ORG_ADMIN&#39;)</code></td>
+        <td><code>(&#39;ACTIVATED&#39;, &#39;ORG_ADMIN&#39;, &#39;ORG_SUSPENDED&#39;)</code></td>
       </tr>
       <tr>
         <td><code>fields</code></td>
@@ -3008,6 +3016,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/project-user">th
     <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ACTIVATED&quot;</span><span class="p">,</span> <span class="s2">&quot;ORG_ADMIN&quot;</span><span class="p">,</span> <span class="s2">&quot;ORG_SUSPENDED&quot;</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;ACTIVATED&quot;</span><span class="p">,</span>
         <span class="s2">&quot;ORG_ADMIN&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ORG_SUSPENDED&quot;</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;activated&quot;</span><span class="p">,</span>
@@ -3057,6 +3066,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/project-user">th
         <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">fields</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">]</span>
 
     <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectUserWhere</span><span class="p">(</span>
+        <span class="n">deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
         <span class="n">_id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
@@ -3145,10 +3155,10 @@ See <a href="https://api-docs.kili-technology.com/types/objects/project-user">th
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
       
