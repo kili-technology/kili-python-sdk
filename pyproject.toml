@@ -83,7 +83,7 @@ dev = [
   "opencv-python >= 4.0.0, < 5.0.0",
   "azure-storage-blob >= 12.0.0, < 13.0.0",
   # optional dependencies gis
-  "pyproj == 3.7.1",
+  "pyproj ==3.7.2",
   "shapely >= 1.8, < 3",
   # optional dependencies - cli
   "tabulate >= 0.9.0, < 0.10.0",
@@ -98,7 +98,7 @@ all = [
   "kili-formats[all] == 1.1.0",
   "opencv-python >= 4.0.0, < 5.0.0",
   "Pillow >=9.0.0, <11.0.0",
-  "pyproj == 3.7.1",
+  "pyproj ==3.7.2",
   "pyyaml >= 6.0, < 7.0",
   "shapely >= 1.8, < 3",
   "tabulate >= 0.9.0, < 0.10.0"
@@ -111,7 +111,7 @@ coco = [
   "kili-formats[coco] == 1.1.0"
 ]
 gis = [
-  "pyproj == 3.7.1",
+  "pyproj ==3.7.2",
   "shapely >= 1.8, < 3"
 ]
 image = [
