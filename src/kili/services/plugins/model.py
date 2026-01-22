@@ -68,7 +68,7 @@ class PluginCore:
             ```
         """
         # pylint: disable=unused-argument
-        self.logger.warning("Method not implemented. Define a custom on_submit on your plugin")
+        self.logger.warning("Method Deprecated. Use on_event instead.")
 
     def on_review(
         self,
@@ -97,7 +97,7 @@ class PluginCore:
             ```
         """
         # pylint: disable=unused-argument
-        self.logger.warning("Method not implemented. Define a custom on_review on your plugin")
+        self.logger.warning("Method Deprecated. Use on_event instead.")
 
     def on_custom_interface_click(
         self,

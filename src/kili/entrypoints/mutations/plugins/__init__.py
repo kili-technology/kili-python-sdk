@@ -15,6 +15,8 @@ from kili.services.plugins import (
 )
 from kili.utils.logcontext import for_all_methods, log_call
 
+DEPRECATED_HANDLERS = {"onSubmit", "onReview"}
+
 
 @for_all_methods(log_call, exclude=["__init__"])
 class MutationsPlugins(BaseOperationEntrypointMixin):
@@ -93,9 +95,9 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             plugin_name: name of your plugin
             header: Authorization header to access the routes
             verbose: If false, minimal logs are displayed
-            handler_types: List of actions for which the webhook should be called.
-                Possible variants: `onSubmit`, `onReview`.
-                By default, is [`onSubmit`, `onReview`].
+            handler_types: Deprecated. Use event_matcher instead.
+                Legacy list of action handlers. Possible variants: `onCustomInterfaceClick`,
+                `onProjectUpdated`, `onSendBackToQueue`.
             event_matcher: List of events for which the webhook should be called.
 
         Returns:
@@ -105,6 +107,12 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         Examples:
             >>> kili.create_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
         """
+        if handler_types is not None:
+            if any(handler in DEPRECATED_HANDLERS for handler in handler_types):
+                raise ValueError(
+                    f"The handler_types {DEPRECATED_HANDLERS} are deprecated. Please use event_matcher instead."
+                )
+
         return WebhookUploader(
             self,  # pyright: ignore[reportArgumentType]
             webhook_url,
@@ -135,9 +143,9 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             plugin_name: name of your plugin
             new_header: Authorization header to access the routes
             verbose: If false, minimal logs are displayed
-            handler_types: List of actions for which the webhook should be called.
-                Possible variants: `onSubmit`, `onReview`.
-                By default, is [`onSubmit`, `onReview`]
+            handler_types: Deprecated. Use event_matcher instead.
+                Legacy list of action handlers. Possible variants: `onCustomInterfaceClick`,
+                `onProjectUpdated`, `onSendBackToQueue`.
             event_matcher: List of events for which the webhook should be called.
 
         Returns:
@@ -147,6 +155,12 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         Examples:
             >>> kili.update_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
         """
+        if handler_types is not None:
+            if any(handler in DEPRECATED_HANDLERS for handler in handler_types):
+                raise ValueError(
+                    f"The handler_types {DEPRECATED_HANDLERS} are deprecated. Please use event_matcher instead."
+                )
+
         return WebhookUploader(
             self,  # pyright: ignore[reportArgumentType]
             new_webhook_url,

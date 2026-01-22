@@ -125,28 +125,33 @@ class PluginHandler(PluginCore):
     Custom plugin instance
     """
 
-    def on_submit(self, label: Dict, asset_id: str) -> None:
+    def on_event(self, payload: dict) -> None:
         """
         Dedicated handler for Submit action
         """
-        self.logger.info("On submit called")
+        event = payload.get("event")
 
-        issues_array = check_rules_on_label(label)
+        if event == 'labels.created.submit':
+            label = payload["label"]
+            asset_id = label["assetId"]
+            self.logger.info("On submit called")
 
-        project_id = self.project_id
+            issues_array = check_rules_on_label(label)
 
-        if len(issues_array) > 0:
-            print("Creating an issue...")
+            project_id = self.project_id
 
-            self.kili.create_issues(
-                project_id=project_id,
-                label_id_array=[label['id']] * len(issues_array),
-                text_array=issues_array,
-            )
+            if len(issues_array) > 0:
+                print("Creating an issue...")
 
-            print("Issue created!")
+                self.kili.create_issues(
+                    project_id=project_id,
+                    label_id_array=[label['id']] * len(issues_array),
+                    text_array=issues_array,
+                )
 
-            self.kili.send_back_to_queue(asset_ids=[asset_id])
+                print("Issue created!")
+
+                self.kili.send_back_to_queue(asset_ids=[asset_id])
 
 ```
 
@@ -208,7 +213,7 @@ plugin_name = "Plugin bbox count"
 from kili.exceptions import GraphQLError
 
 try:
-    kili.upload_plugin(plugin_folder, plugin_name)
+    kili.upload_plugin(plugin_folder, plugin_name, event_matcher=["labels.created.submit"])
 except GraphQLError as error:
     print(str(error))
 ```
@@ -231,7 +236,9 @@ path_to_plugin = Path(plugin_folder) / "main.py"
 plugin_name_file = "Plugin bbox count - file"
 
 try:
-    kili.upload_plugin(str(path_to_plugin), plugin_name_file)
+    kili.upload_plugin(
+        str(path_to_plugin), plugin_name_file, event_matcher=["labels.created.submit"]
+    )
 except GraphQLError as error:
     print(str(error))
 ```
