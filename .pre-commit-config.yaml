@@ -58,7 +58,7 @@ repos:
         pass_filenames: true
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.15
+    rev: v0.14.14
     hooks:
       - id: ruff
         types_or: [python, pyi, jupyter]
