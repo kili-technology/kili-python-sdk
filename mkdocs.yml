@@ -12,6 +12,7 @@ edit_uri: "" #disables edit button
 nav:
   - Python SDK:
       - Getting Started: index.md
+      - Configuration: configuration.md
       - Tutorials: tutorials.md
       - Reference:
           - Asset: sdk/asset.md
