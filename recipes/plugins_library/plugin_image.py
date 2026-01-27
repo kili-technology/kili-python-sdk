@@ -22,29 +22,23 @@ def check_rules_on_label(label: dict) -> list[Optional[str]]:
 class PluginHandler(PluginCore):
     """Custom plugin instance."""
 
-    def on_event(self, payload: dict) -> None:
-        """Dedicated handler for Event action."""
-        event = payload.get("event")
+    def on_submit(self, label: dict, asset_id: str) -> None:
+        """Dedicated handler for Submit action."""
+        self.logger.info("On submit called")
 
-        if event == "labels.created.submit":
-            self.logger.info("On submit called")
+        issues_array = check_rules_on_label(label)
 
-            label = payload["label"]
-            asset_id = label["assetId"]
+        project_id = self.project_id
 
-            issues_array = check_rules_on_label(label)
+        if len(issues_array) > 0:
+            print("Creating an issue...")
 
-            project_id = self.project_id
+            self.kili.create_issues(
+                project_id=project_id,
+                label_id_array=[label["id"]] * len(issues_array),
+                text_array=issues_array,
+            )
 
-            if len(issues_array) > 0:
-                print("Creating an issue...")
+            print("Issue created!")
 
-                self.kili.create_issues(
-                    project_id=project_id,
-                    label_id_array=[label["id"]] * len(issues_array),
-                    text_array=issues_array,
-                )
-
-                print("Issue created!")
-
-                self.kili.send_back_to_queue(asset_ids=[asset_id])
+            self.kili.send_back_to_queue(asset_ids=[asset_id])
