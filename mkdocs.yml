@@ -44,7 +44,7 @@ nav:
           - PDF Assets: sdk/tutorials/importing_pdf_assets.md
           - Rich Text Assets: sdk/tutorials/import_text_assets.md
           - Multi-Layer Geospatial Assets: sdk/tutorials/importing_multilayer_geospatial_assets.md
-          - LLM Static Assets : sdk/tutorials/llm_static.md
+          - LLM Static Assets: sdk/tutorials/llm_static.md
       - Importing Labels:
           - Importing Labels: sdk/tutorials/importing_labels.md
           - OpenAI NER Pre-annotations: sdk/tutorials/ner_pre_annotations_openai.md
@@ -64,8 +64,7 @@ nav:
           - Parsing Labels: sdk/tutorials/label_parsing.md
       - LLM Dynamic Projects: sdk/tutorials/llm_dynamic.md
       - Setting Up Plugins:
-          - Developing Plugins: sdk/tutorials/plugins_development.md
-          - Plugin Example - Programmatic QA: sdk/tutorials/plugins_example.md
+          - Developing Plugins: sdk/tutorials/plugins_example.md
           - Plugins Library: sdk/tutorials/plugins_library.md
           - Webhooks: sdk/tutorials/webhooks_example.md
       - Integrations:

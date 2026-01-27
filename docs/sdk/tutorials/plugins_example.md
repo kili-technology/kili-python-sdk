@@ -98,7 +98,6 @@ This project has one job of bounding box creation with two categories.
 
 With our plugin, we want to make sure that the labelers don't create more than one bounding box of category A.
 
-To iterate on the plugin code, you can refer to the plugins_development.ipynb notebook.
 
 ## Step 3: Write the plugin
 

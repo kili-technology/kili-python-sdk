@@ -19,15 +19,19 @@ plugin_folder
     |__ helper.py
 ```
 
-The plugin you are going to upload has to contain a `class PluginHandler(PluginCore)` (in the case of the module type plugin it has to be inside `main.py`) that implements two methods for the different types of events:
 
-- `on_submit`
-- `on_review`
+> **Note**: `on_submit` and `on_review` handlers are deprecated. Please use `on_event` instead. If your plugin was already uploaded with thoses handlers, it will still work. If you want the same behavior as `on_submit` and `on_review`, when you upload your plugin, you can use `event_matcher=["labels.created.submit"]` for `on_submit` and `event_matcher=["labels.created.review"]` for `on_review` events.
 
-These methods have a predefined set of parameters:
 
-- the `label` submitted (a dictionary containing the fields of the GraphQL type [Label](https://api-docs.kili-technology.com/types/objects/label/))
-- the `asset_id` of the asset labeled
+The plugin you are going to upload has to contain a `class PluginHandler(PluginCore)` (in the case of the module type plugin it has to be inside `main.py`) that implements one method for the different types of events:
+
+- `on_event`
+
+These methods have a predefined set of parameter:
+
+- the `payload` submitted (a dictionary containing the fields for your plugins)
+    - `payload.event` the name of the event (ex: for submit : `labels.created.submit`, for review `labels.created.review`)
+    - `payload.label` the label containing the fields of the GraphQL type [Label](https://api-docs.kili-technology.com/types/objects/label/)
 
 You can add custom methods in your class as well.
 
@@ -53,12 +57,18 @@ class PluginHandler(PluginCore):
     def custom_method(self):
         # Do something...
 
-    def on_review(self, label: Dict, asset_id: str) -> None:
+    def on_event(self, payload: dict) -> None: # This can replace on_review method
         """Dedicated handler for Review action"""
+        event = payload.get("event")
+
+        if event == 'labels.created.review':
         # Do something...
 
-    def on_submit(self, label: Dict, asset_id: str) -> None:
+    def on_event(self, payload: dict) -> None: # This can replace on_submit method
         """Dedicated handler for Submit action"""
+        event = payload.get("event")
+
+        if event == 'labels.created.submit':
         # Do something...
 ```
 
@@ -85,15 +95,22 @@ def custom_function(label: Dict, logger: Logger):
 class PluginHandler(PluginCore):
     """Custom plugin"""
 
-    def on_submit(self, label: Dict, asset_id: str) -> None:
+    def on_event(self, payload: dict) -> None:
         """Dedicated handler for Submit action"""
-        self.logger.info("On Submit called")
-        custom_function(label, self.logger)
+        event = payload.get("event")
+        if event == 'labels.created.submit':
+            self.logger.info("On Submit called")
+            label = payload["label"]
+            custom_function(label, self.logger)
 ```
 
 ## Model for Plugins
 
 ::: kili.services.plugins.model.PluginCore
+    options:
+      filters:
+        - "!^on_review$"
+        - "!^on_submit$"
 
 ## Queries
 
