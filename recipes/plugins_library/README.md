@@ -4,7 +4,7 @@
 
 In this section you can find multiple examples of use-cases where our system of plugins can help you in the Kili projects.
 
-You can refer to our [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/) to develop your plugin and iterate on it locally (or use the [plugins_development.ipynb](../plugins_example.ipynb) notebook), before uploading the final version to Kili.
+You can refer to our [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_development/) to develop your plugin and iterate on it locally (or use the [plugins_development.ipynb](../plugins_development.ipynb) notebook), before uploading the final version to Kili.
 
 If you want to see some end-to-end example of our plugins, you can refer to the notebooks [plugins_example.ipynb](../plugins_example.ipynb) (example of a plugin checking the number of annotation).
 
