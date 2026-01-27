@@ -4,7 +4,7 @@
 
 In this section you can find multiple examples of use-cases where our system of plugins can help you in the Kili projects.
 
-You can also refer to our [tutorial](./plugins_example.md) to develop your plugin and iterate on it locally, before uploading the final version to Kili.
+You can also refer to our [tutorial](./plugins_development.md) to develop your plugin and iterate on it locally, before uploading the final version to Kili.
 
 For further information concerning the Kili plugins, refer to the [Reference page](../plugins.md)
 

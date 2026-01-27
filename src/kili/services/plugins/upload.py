@@ -204,10 +204,7 @@ class PluginUploader:
                 handler in DEPRECATED_HANDLERS for handler in handler_types
             ):
                 raise ValueError(
-                    f"The handler_types {DEPRECATED_HANDLERS} are deprecated. Please use"
-                    " event_matcher instead. To replace onSubmit and onReview, use"
-                    " 'labels.created.submit' and 'labels.created.review' event_matchers"
-                    " respectively."
+                    f"The handler_types {DEPRECATED_HANDLERS} are deprecated. Please use event_matcher instead."
                 )
 
             self.handler_types = handler_types
@@ -233,10 +230,7 @@ class PluginUploader:
             handler in DEPRECATED_HANDLERS for handler in handler_types
         ):
             raise ValueError(
-                f"The handler_types {DEPRECATED_HANDLERS} are deprecated. Please use"
-                " event_matcher instead. To replace onSubmit and onReview, use"
-                " 'labels.created.submit' and 'labels.created.review' event_matchers"
-                " respectively."
+                f"The handler_types {DEPRECATED_HANDLERS} are deprecated. Please use event_matcher instead."
             )
 
         self.handler_types = handler_types

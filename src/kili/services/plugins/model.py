@@ -16,14 +16,15 @@ class PluginCore:
 
     Implements:
 
+        on_submit(self, label: Dict, asset_id: str)
+        on_review(self, label: Dict, asset_id: str)
         on_custom_interface_click(self, label: Dict, asset_id: str)
         on_project_updated(self, settings_updated: List[Dict])
         on_send_back_to_queue(self, asset_id: str)
         on_event(self, payload: Dict)
 
     !!! warning
-        - if using a custom init, be sure to call super().__init__()
-        - `on_submit` and `on_review` are deprecated, prefer `on_event` instead.
+        if using a custom init, be sure to call super().__init__()
     """
 
     logger: logging.Logger
@@ -65,12 +66,6 @@ class PluginCore:
                 else:
                     self.kili.send_back_to_queue(asset_ids=[asset_id])
             ```
-
-        !!! warning
-            This method is deprecated. Use `on_event` instead.
-
-            You can have the same behavior using `on_event` and
-            checking for the `'labels.created.submit'` event in payload.
         """
         # pylint: disable=unused-argument
         self.logger.warning("Method Deprecated. Use on_event instead.")
@@ -100,11 +95,6 @@ class PluginCore:
                 else:
                     self.kili.send_back_to_queue(asset_ids=[asset_id])
             ```
-
-        !!! warning
-            This method is deprecated. Use `on_event` instead.
-            You can have the same behavior using `on_event`
-            and checking for the `'labels.created.review'` event in payload.
         """
         # pylint: disable=unused-argument
         self.logger.warning("Method Deprecated. Use on_event instead.")
