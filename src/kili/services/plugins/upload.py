@@ -43,8 +43,6 @@ POSSIBLE_HANDLERS = {
     "on_send_back_to_queue": "onSendBackToQueue",
 }
 
-DEPRECATED_HANDLERS = {"onSubmit", "onReview"}
-
 
 def check_file_mime_type(
     path: Path, compatible_mime_extensions: list[str], verbose: bool = True
@@ -200,13 +198,6 @@ class PluginUploader:
             if handler_types and self.event_matcher:
                 raise ValueError("Cannot have both handler types and event matcher.")
 
-            if handler_types is not None and any(
-                handler in DEPRECATED_HANDLERS for handler in handler_types
-            ):
-                raise ValueError(
-                    f"The handler_types {DEPRECATED_HANDLERS} are deprecated. Please use event_matcher instead."
-                )
-
             self.handler_types = handler_types
 
             return list(self.plugin_path.glob("**/*.py"))
@@ -225,13 +216,6 @@ class PluginUploader:
 
         if handler_types and self.event_matcher:
             raise ValueError("Cannot have both handler types and event matcher.")
-
-        if handler_types is not None and any(
-            handler in DEPRECATED_HANDLERS for handler in handler_types
-        ):
-            raise ValueError(
-                f"The handler_types {DEPRECATED_HANDLERS} are deprecated. Please use event_matcher instead."
-            )
 
         self.handler_types = handler_types
 

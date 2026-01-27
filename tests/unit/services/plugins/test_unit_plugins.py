@@ -175,7 +175,7 @@ def test_zip_creation_from_file(kili):
             HttpClient(
                 kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
             ),
-            event_matcher=["labels.created.submit"],
+            event_matcher=None,
         )._create_zip(tmp_dir)
 
         zip_path = tmp_dir / "archive.zip"
@@ -208,7 +208,7 @@ def test_no_main_when_creating_zip_from_folder(kili):
                     api_key="",
                     verify=True,
                 ),
-                event_matcher=["labels.created.submit"],
+                event_matcher=None,
             )._create_zip(tmp_dir)
 
 
@@ -248,7 +248,7 @@ def test_zip_creation_from_folder(kili):
             HttpClient(
                 kili_endpoint="https://fake_endpoint.kili-technology.com", api_key="", verify=True
             ),
-            event_matcher=["labels.created.submit"],
+            event_matcher=None,
         )._create_zip(tmp_dir)
 
         zip_path = tmp_dir / "archive.zip"
