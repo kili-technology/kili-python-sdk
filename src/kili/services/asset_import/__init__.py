@@ -7,6 +7,7 @@ from kili.services.asset_import.exceptions import (
     ImportValidationError,
 )
 
+from .audio import AudioDataImporter
 from .base import (
     BaseAbstractAssetImporter,
     LoggerParams,
@@ -24,6 +25,7 @@ if TYPE_CHECKING:
     from kili.client import Kili
 
 importer_by_type: dict[str, type[BaseAbstractAssetImporter]] = {
+    "AUDIO": AudioDataImporter,
     "PDF": PdfDataImporter,
     "IMAGE": ImageDataImporter,
     "GEOSPATIAL": ImageDataImporter,
