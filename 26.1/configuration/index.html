@@ -10,31 +10,31 @@
       
       
       
-        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/26.1/sdk/tutorials/plugins_library/">
+        <link rel="canonical" href="https://python-sdk-docs.kili-technology.com/26.1/configuration/">
       
       
-        <link rel="prev" href="../plugins_example/">
+        <link rel="prev" href="..">
       
       
-        <link rel="next" href="../webhooks_example/">
+        <link rel="next" href="../tutorials/">
       
       
         
       
       
-      <link rel="icon" href="../../../assets/kili_favicon.ico">
+      <link rel="icon" href="../assets/kili_favicon.ico">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Plugins Library - Python SDK</title>
+        <title>Configuration - Python SDK</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,13 +53,13 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../stylesheets/extra.css">
     
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
   
@@ -92,7 +92,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#plugins-library" class="md-skip">
+        <a href="#kili-python-sdk-configuration-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -110,9 +110,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="Python SDK" class="md-header__button md-logo" aria-label="Python SDK" data-md-component="logo">
+    <a href=".." title="Python SDK" class="md-header__button md-logo" aria-label="Python SDK" data-md-component="logo">
       
-  <img src="../../../assets/kili_logo_resized.webp" alt="logo">
+  <img src="../assets/kili_logo_resized.webp" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -129,7 +129,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Plugins Library
+              Configuration
             
           </span>
         </div>
@@ -212,11 +212,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../.." class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href=".." class="md-tabs__link">
           
   
   
@@ -236,7 +238,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../cli/" class="md-tabs__link">
+        <a href="../cli/" class="md-tabs__link">
           
   
   
@@ -252,13 +254,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../../tutorials/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../tutorials/" class="md-tabs__link">
           
   
   
@@ -330,9 +330,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="Python SDK" class="md-nav__button md-logo" aria-label="Python SDK" data-md-component="logo">
+    <a href=".." title="Python SDK" class="md-nav__button md-logo" aria-label="Python SDK" data-md-component="logo">
       
-  <img src="../../../assets/kili_logo_resized.webp" alt="logo">
+  <img src="../assets/kili_logo_resized.webp" alt="logo">
 
     </a>
     Python SDK
@@ -356,24 +356,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
         
           
-          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
             
   
   
@@ -391,7 +396,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -409,7 +414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -434,10 +439,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../../configuration/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -453,6 +485,170 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration File
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration File">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#location" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-api-key-api_key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. API Key (api_key)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-api-endpoint-api_endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. API Endpoint (api_endpoint)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tls-verification-verify-verify_ssl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. TLS Verification (verify / verify_ssl)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-disable-progress-bars-disable_tqdm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Disable Progress Bars (disable_tqdm)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environment-variables-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variables Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-production-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example : Production Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-priority-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Priority Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -465,7 +661,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorials/" class="md-nav__link">
+      <a href="../tutorials/" class="md-nav__link">
         
   
   
@@ -543,7 +739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../asset/" class="md-nav__link">
+      <a href="../sdk/asset/" class="md-nav__link">
         
   
   
@@ -571,7 +767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cloud_storage/" class="md-nav__link">
+      <a href="../sdk/cloud_storage/" class="md-nav__link">
         
   
   
@@ -599,7 +795,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../event/" class="md-nav__link">
+      <a href="../sdk/event/" class="md-nav__link">
         
   
   
@@ -627,7 +823,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../issue/" class="md-nav__link">
+      <a href="../sdk/issue/" class="md-nav__link">
         
   
   
@@ -655,7 +851,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../label/" class="md-nav__link">
+      <a href="../sdk/label/" class="md-nav__link">
         
   
   
@@ -683,7 +879,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../label_utils/" class="md-nav__link">
+      <a href="../sdk/label_utils/" class="md-nav__link">
         
   
   
@@ -711,7 +907,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../label_parsing/" class="md-nav__link">
+      <a href="../sdk/label_parsing/" class="md-nav__link">
         
   
   
@@ -739,7 +935,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../llm/" class="md-nav__link">
+      <a href="../sdk/llm/" class="md-nav__link">
         
   
   
@@ -767,7 +963,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../notification/" class="md-nav__link">
+      <a href="../sdk/notification/" class="md-nav__link">
         
   
   
@@ -795,7 +991,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../organization/" class="md-nav__link">
+      <a href="../sdk/organization/" class="md-nav__link">
         
   
   
@@ -823,7 +1019,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../plugins/" class="md-nav__link">
+      <a href="../sdk/plugins/" class="md-nav__link">
         
   
   
@@ -851,7 +1047,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../project/" class="md-nav__link">
+      <a href="../sdk/project/" class="md-nav__link">
         
   
   
@@ -879,7 +1075,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../project_user/" class="md-nav__link">
+      <a href="../sdk/project_user/" class="md-nav__link">
         
   
   
@@ -907,7 +1103,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../project_version/" class="md-nav__link">
+      <a href="../sdk/project_version/" class="md-nav__link">
         
   
   
@@ -935,7 +1131,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../project_workflow/" class="md-nav__link">
+      <a href="../sdk/project_workflow/" class="md-nav__link">
         
   
   
@@ -963,7 +1159,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tag/" class="md-nav__link">
+      <a href="../sdk/tag/" class="md-nav__link">
         
   
   
@@ -991,7 +1187,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user/" class="md-nav__link">
+      <a href="../sdk/user/" class="md-nav__link">
         
   
   
@@ -1084,7 +1280,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../cli/" class="md-nav__link">
+      <a href="../cli/" class="md-nav__link">
         
   
   
@@ -1112,7 +1308,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../cli/reference/" class="md-nav__link">
+      <a href="../cli/reference/" class="md-nav__link">
         
   
   
@@ -1144,29 +1340,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   
@@ -1184,7 +1375,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1202,7 +1393,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorials/" class="md-nav__link">
+      <a href="../tutorials/" class="md-nav__link">
         
   
   
@@ -1230,7 +1421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../basic_project_setup/" class="md-nav__link">
+      <a href="../sdk/tutorials/basic_project_setup/" class="md-nav__link">
         
   
   
@@ -1308,7 +1499,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../importing_assets_and_metadata/" class="md-nav__link">
+      <a href="../sdk/tutorials/importing_assets_and_metadata/" class="md-nav__link">
         
   
   
@@ -1336,7 +1527,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../importing_video_assets/" class="md-nav__link">
+      <a href="../sdk/tutorials/importing_video_assets/" class="md-nav__link">
         
   
   
@@ -1364,7 +1555,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../importing_pdf_assets/" class="md-nav__link">
+      <a href="../sdk/tutorials/importing_pdf_assets/" class="md-nav__link">
         
   
   
@@ -1392,7 +1583,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../import_text_assets/" class="md-nav__link">
+      <a href="../sdk/tutorials/import_text_assets/" class="md-nav__link">
         
   
   
@@ -1420,7 +1611,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../importing_multilayer_geospatial_assets/" class="md-nav__link">
+      <a href="../sdk/tutorials/importing_multilayer_geospatial_assets/" class="md-nav__link">
         
   
   
@@ -1448,7 +1639,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../llm_static/" class="md-nav__link">
+      <a href="../sdk/tutorials/llm_static/" class="md-nav__link">
         
   
   
@@ -1534,7 +1725,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../importing_labels/" class="md-nav__link">
+      <a href="../sdk/tutorials/importing_labels/" class="md-nav__link">
         
   
   
@@ -1562,7 +1753,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ner_pre_annotations_openai/" class="md-nav__link">
+      <a href="../sdk/tutorials/ner_pre_annotations_openai/" class="md-nav__link">
         
   
   
@@ -1590,7 +1781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ocr_pre_annotations/" class="md-nav__link">
+      <a href="../sdk/tutorials/ocr_pre_annotations/" class="md-nav__link">
         
   
   
@@ -1618,7 +1809,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pixel_level_masks/" class="md-nav__link">
+      <a href="../sdk/tutorials/pixel_level_masks/" class="md-nav__link">
         
   
   
@@ -1646,7 +1837,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../inference_labels/" class="md-nav__link">
+      <a href="../sdk/tutorials/inference_labels/" class="md-nav__link">
         
   
   
@@ -1674,7 +1865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../finetuning_dinov2/" class="md-nav__link">
+      <a href="../sdk/tutorials/finetuning_dinov2/" class="md-nav__link">
         
   
   
@@ -1702,7 +1893,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../import_labels_from_shapefiles/" class="md-nav__link">
+      <a href="../sdk/tutorials/import_labels_from_shapefiles/" class="md-nav__link">
         
   
   
@@ -1730,7 +1921,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../import_labels_from_geojson/" class="md-nav__link">
+      <a href="../sdk/tutorials/import_labels_from_geojson/" class="md-nav__link">
         
   
   
@@ -1816,7 +2007,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../medical_imaging/" class="md-nav__link">
+      <a href="../sdk/tutorials/medical_imaging/" class="md-nav__link">
         
   
   
@@ -1844,7 +2035,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../importing_coco/" class="md-nav__link">
+      <a href="../sdk/tutorials/importing_coco/" class="md-nav__link">
         
   
   
@@ -1872,7 +2063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../importing_pascalvoc/" class="md-nav__link">
+      <a href="../sdk/tutorials/importing_pascalvoc/" class="md-nav__link">
         
   
   
@@ -1908,7 +2099,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../set_up_workflows/" class="md-nav__link">
+      <a href="../sdk/tutorials/set_up_workflows/" class="md-nav__link">
         
   
   
@@ -1986,7 +2177,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../export_a_kili_project/" class="md-nav__link">
+      <a href="../sdk/tutorials/export_a_kili_project/" class="md-nav__link">
         
   
   
@@ -2014,7 +2205,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../label_parsing/" class="md-nav__link">
+      <a href="../sdk/tutorials/label_parsing/" class="md-nav__link">
         
   
   
@@ -2050,7 +2241,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../llm_dynamic/" class="md-nav__link">
+      <a href="../sdk/tutorials/llm_dynamic/" class="md-nav__link">
         
   
   
@@ -2075,8 +2266,6 @@
                 
   
   
-    
-  
   
   
     
@@ -2087,11 +2276,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
         
           
           <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
@@ -2112,7 +2301,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2130,7 +2319,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../plugins_development/" class="md-nav__link">
+      <a href="../sdk/tutorials/plugins_development/" class="md-nav__link">
         
   
   
@@ -2158,7 +2347,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../plugins_example/" class="md-nav__link">
+      <a href="../sdk/tutorials/plugins_example/" class="md-nav__link">
         
   
   
@@ -2183,37 +2372,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Plugins Library
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../sdk/tutorials/plugins_library/" class="md-nav__link">
         
   
   
@@ -2229,109 +2391,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#context" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Context
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#library-of-pre-built-plugins" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Library of pre-built plugins
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Library of pre-built plugins">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-programmatic-qa" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Programmatic QA
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#11-image-object-detection-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.1 Image Object Detection example
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#12-document-processing-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.2 Document processing example
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-consensus-resolution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Consensus resolution
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-parallel-labeling" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Parallel labeling
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2344,7 +2403,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../webhooks_example/" class="md-nav__link">
+      <a href="../sdk/tutorials/webhooks_example/" class="md-nav__link">
         
   
   
@@ -2430,7 +2489,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vertex_ai_automl_od/" class="md-nav__link">
+      <a href="../sdk/tutorials/vertex_ai_automl_od/" class="md-nav__link">
         
   
   
@@ -2547,10 +2606,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#context" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Context
+        Overview
       
     </span>
   </a>
@@ -2558,22 +2617,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#library-of-pre-built-plugins" class="md-nav__link">
+  <a href="#configuration-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Library of pre-built plugins
+        Configuration File
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Library of pre-built plugins">
+    <nav class="md-nav" aria-label="Configuration File">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-programmatic-qa" class="md-nav__link">
+  <a href="#location" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Programmatic QA
+        Location
       
     </span>
   </a>
@@ -2581,43 +2640,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#11-image-object-detection-example" class="md-nav__link">
+  <a href="#format" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1.1 Image Object Detection example
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#12-document-processing-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1.2 Document processing example
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-consensus-resolution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Consensus resolution
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-parallel-labeling" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Parallel labeling
+        Format
       
     </span>
   </a>
@@ -2626,6 +2652,100 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-api-key-api_key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. API Key (api_key)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-api-endpoint-api_endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. API Endpoint (api_endpoint)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tls-verification-verify-verify_ssl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. TLS Verification (verify / verify_ssl)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-disable-progress-bars-disable_tqdm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Disable Progress Bars (disable_tqdm)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environment-variables-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variables Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-production-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example : Production Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-priority-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Priority Summary
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2646,38 +2766,277 @@
 
 
 
-<h1 id="plugins-library">Plugins library</h1>
-<h2 id="context">Context</h2>
-<p>In this section you can find multiple examples of use-cases where our system of plugins can help you in the Kili projects.</p>
-<p>You can also refer to our <a href="../plugins_development/">tutorial</a> to develop your plugin and iterate on it locally, before uploading the final version to Kili.</p>
-<p>For further information concerning the Kili plugins, refer to the <a href="../../plugins/">Reference page</a></p>
-<h2 id="library-of-pre-built-plugins">Library of pre-built plugins</h2>
-<p>In the folder <a href="https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/plugins_library" target="_blank"><code>plugins_library</code></a> you can find multiple examples of plugins that are ready to use in your projects. They can be split in various use-cases:</p>
-<h3 id="1-programmatic-qa">1. Programmatic QA</h3>
-<p>One application of plugins is to automate your quality checks: you can directly write your business rules in a Python script and upload them to Kili to have each new label automatically checked.</p>
-<h3 id="11-image-object-detection-example">1.1 Image Object Detection example</h3>
-<p>Let's imagine a project where we want to process images and detect some objects. One of the jobs is to detect an object and we are sure that in any image of the dataset we can have at most a single object of that type. In order to be sure that we will have only one object in all submitted labels, we can create a plugin that, in case a label has 2 BBoxes for that type of objects, will automatically create an issue with a clear instruction and will send the label back to the queue.</p>
+<h1 id="kili-python-sdk-configuration-guide">Kili Python SDK Configuration Guide</h1>
+<h2 id="overview">Overview</h2>
+<p>The Kili Python SDK supports multiple configuration methods with a clear priority order. Configuration can be set via:</p>
+<ol>
+<li>Function parameters (highest priority)</li>
+<li>Environment variables</li>
+<li>Configuration file (<code>sdk-config.json</code>)</li>
+<li>Default values (lowest priority)</li>
+</ol>
+<h2 id="configuration-file">Configuration File</h2>
+<h3 id="location">Location</h3>
+<p>The SDK searches for <code>sdk-config.json</code> in the following locations (in order):</p>
+<ol>
+<li>Current working directory</li>
+<li>Home directory (<code>~</code>)</li>
+</ol>
+<h3 id="format">Format</h3>
+<p>Create <code>sdk-config.json</code> with the following structure:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;api_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;your-api-key-here&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;api_endpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;verify_ssl&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;disable_tqdm&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="configuration-options">Configuration Options</h2>
+<h3 id="1-api-key-api_key">1. API Key (<code>api_key</code>)</h3>
+<p>Your Kili API key for authentication.</p>
+<p><strong>Configuration Methods:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Function parameter (highest priority)</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">)</span>
+
+<span class="c1"># 2. Environment variable</span>
+<span class="n">export</span> <span class="n">KILI_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span>
+
+<span class="c1"># 3. Configuration file</span>
+<span class="p">{</span>
+  <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;your-api-key&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># 4. Interactive prompt (if not set and terminal is available)</span>
+<span class="c1"># The SDK will prompt you to enter the API key</span>
+</code></pre></div></p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
+
+<span class="c1"># Method 1: Direct parameter</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;abc123&quot;</span><span class="p">)</span>
+
+<span class="c1"># Method 2: Environment variable</span>
+<span class="c1"># $ export KILI_API_KEY=&quot;abc123&quot;</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">()</span>  <span class="c1"># Will use env var</span>
+
+<span class="c1"># Method 3: Config file (sdk-config.json)</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">()</span>  <span class="c1"># Will use config file</span>
+</code></pre></div></p>
+<hr />
+<h3 id="2-api-endpoint-api_endpoint">2. API Endpoint (<code>api_endpoint</code>)</h3>
+<p>The GraphQL endpoint URL for Kili API.</p>
+<p><strong>Configuration Methods:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Function parameter</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_endpoint</span><span class="o">=</span><span class="s2">&quot;https://custom.kili.com/api/label/v2/graphql&quot;</span><span class="p">)</span>
+
+<span class="c1"># 2. Environment variable</span>
+<span class="n">export</span> <span class="n">KILI_API_ENDPOINT</span><span class="o">=</span><span class="s2">&quot;https://custom.kili.com/api/label/v2/graphql&quot;</span>
+
+<span class="c1"># 3. Configuration file</span>
+<span class="p">{</span>
+  <span class="s2">&quot;api_endpoint&quot;</span><span class="p">:</span> <span class="s2">&quot;https://custom.kili.com/api/label/v2/graphql&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># 4. Default value</span>
+<span class="c1"># &quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;</span>
+</code></pre></div></p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
+
+<span class="c1"># For on-premise installations</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">,</span>
+    <span class="n">api_endpoint</span><span class="o">=</span><span class="s2">&quot;https://your-company.kili.com/api/label/v2/graphql&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Or via environment variable</span>
+<span class="c1"># $ export KILI_API_ENDPOINT=&quot;https://your-company.kili.com/api/label/v2/graphql&quot;</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h3 id="3-tls-verification-verify-verify_ssl">3. TLS Verification (<code>verify</code> / <code>verify_ssl</code>)</h3>
+<p>Controls TLS certificate verification for HTTPS requests.</p>
+<p><strong>Values:</strong></p>
 <ul>
-<li>Plugin file: <a href="https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/plugins_library/plugin_image.py" target="_blank"><code>plugin_image.py</code></a></li>
-<li>End-to-end notebook showcasing this example: <a href="https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/plugins_example.ipynb" target="_blank"><code>plugins_example.ipynb</code></a></li>
+<li><code>True</code> (default): Verify TLS certificates</li>
+<li><code>False</code>: Disable verification (not recommended for production)</li>
+<li><code>str</code>: Path to CA bundle file</li>
 </ul>
-<h3 id="12-document-processing-example">1.2 Document processing example</h3>
-<p>Let's imagine another project where we process invoices. The project has two jobs and several transcription tasks associated with them. One of the jobs is about payment information and must contain a proper IBAN number as well as currency. The IBAN must start with FR, and the currency should be one of: <em>EURO</em> or <em>DOLLAR</em>. Kili's interface customization options are powerful and flexible, but won't help us in this specific situation so we have to turn to Kili plugins for help. We'll set up our Kili plugin to check these two rules when labelers click <em>Submit</em>. If the annotations don't match our predefined rules, our QA bot will add issues to the asset and send the asset back to the labeling queue. At the end, our script will calculate labeling accuracy and insert the accuracy metric in the json_metadata of the asset. All that with no need to engage a human reviewer.</p>
+<p><strong>Configuration Methods:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Function parameter (uses &#39;verify&#39;)</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># 2. Environment variable</span>
+<span class="n">export</span> <span class="n">KILI_VERIFY</span><span class="o">=</span><span class="n">false</span>  <span class="c1"># or &quot;true&quot;, &quot;1&quot;, &quot;yes&quot;</span>
+
+<span class="c1"># 3. Configuration file (uses &#39;verify_ssl&#39;)</span>
+<span class="p">{</span>
+  <span class="s2">&quot;verify_ssl&quot;</span><span class="p">:</span> <span class="n">false</span>
+<span class="p">}</span>
+
+<span class="c1"># Note: The config file also supports &#39;verify&#39; for backward compatibility</span>
+
+<span class="c1"># 4. Default value: True</span>
+</code></pre></div></p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
+
+<span class="c1"># Disable verification for local development (NOT RECOMMENDED FOR PRODUCTION)</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">,</span>
+    <span class="n">verify</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># Use custom CA bundle</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">,</span>
+    <span class="n">verify</span><span class="o">=</span><span class="s2">&quot;/path/to/ca-bundle.crt&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Via environment variable for testing</span>
+<span class="c1"># $ export KILI_VERIFY=false</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h3 id="4-disable-progress-bars-disable_tqdm">4. Disable Progress Bars (<code>disable_tqdm</code>)</h3>
+<p>Globally disable progress bars (tqdm) for all operations. Individual function calls can still override this setting.</p>
+<p><strong>Values:</strong></p>
 <ul>
-<li>Plugin file: <a href="https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/plugins_library/plugin_document.py" target="_blank"><code>plugin_document.py</code></a></li>
-<li>End-to-end notebook showcasing this example: <a href="https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/plugins_example_document.ipynb" target="_blank"><code>plugins_example_document.ipynb</code></a></li>
+<li><code>None</code> (default): Use each function's default behavior</li>
+<li><code>True</code>: Disable progress bars globally</li>
+<li><code>False</code>: Enable progress bars globally</li>
 </ul>
-<h3 id="2-consensus-resolution">2. Consensus resolution</h3>
-<p>When working with consensus for object detection tasks, it is often handy for a reviewer to access the annotations of all the labelers involved, compare them and choose the best one. With Kili plugins, this task will be much simpler.</p>
-<p>For example: you can program your plugin to create an additional annotation that combines the annotations created by all the labelers. This way, you can instantaneously get a big-picture overview and only act when the situation calls for it. In large projects, this can save you a significant amount of time.</p>
+<p><strong>Configuration Methods:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Function parameter (highest priority)</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 2. Environment variable</span>
+<span class="n">export</span> <span class="n">KILI_DISABLE_TQDM</span><span class="o">=</span><span class="n">true</span>  <span class="c1"># or &quot;false&quot;, &quot;1&quot;, &quot;yes&quot;</span>
+
+<span class="c1"># 3. Configuration file</span>
+<span class="p">{</span>
+  <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">:</span> <span class="n">true</span>
+<span class="p">}</span>
+
+<span class="c1"># 4. Default: None (each function uses its own default)</span>
+</code></pre></div></p>
+<p><strong>Priority for Individual Operations:</strong></p>
+<ol>
+<li>Function parameter: <code>kili.assets(project_id="id", disable_tqdm=True)</code></li>
+<li>Client global setting: <code>Kili(disable_tqdm=True)</code></li>
+<li>Function default (usually <code>False</code> to show progress)</li>
+</ol>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
+
+<span class="c1"># Disable progress bars globally for automated scripts</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># All operations will have progress bars disabled</span>
+<span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your-project-id&quot;</span><span class="p">)</span>
+<span class="n">projects</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">projects</span><span class="p">()</span>
+
+<span class="c1"># Override for specific operations</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your-project-id&quot;</span><span class="p">,</span>
+    <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># Show progress bar just for this call</span>
+<span class="p">)</span>
+
+<span class="c1"># Via environment variable for CI/CD</span>
+<span class="c1"># $ export KILI_DISABLE_TQDM=true</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">)</span>  <span class="c1"># Progress bars disabled</span>
+</code></pre></div></p>
+<hr />
+<h2 id="environment-variables-reference">Environment Variables Reference</h2>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>KILI_API_KEY</code></td>
+<td>string</td>
+<td>None</td>
+<td>Your Kili API key</td>
+</tr>
+<tr>
+<td><code>KILI_API_ENDPOINT</code></td>
+<td>string</td>
+<td><code>https://cloud.kili-technology.com/api/label/v2/graphql</code></td>
+<td>GraphQL API endpoint</td>
+</tr>
+<tr>
+<td><code>KILI_VERIFY</code></td>
+<td>boolean/string</td>
+<td><code>true</code></td>
+<td>TLS certificate verification</td>
+</tr>
+<tr>
+<td><code>KILI_DISABLE_TQDM</code></td>
+<td>boolean</td>
+<td>None</td>
+<td>Disable progress bars globally</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Boolean Environment Variables:</strong></p>
 <ul>
-<li>Plugin file: <a href="https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/plugins_library/plugin_consensus.py" target="_blank"><code>plugin_consensus.py</code></a></li>
+<li>Truthy values: <code>"true"</code>, <code>"1"</code>, <code>"yes"</code> (case-insensitive)</li>
+<li>Falsy values: <code>"false"</code>, <code>"0"</code>, <code>"no"</code> (case-insensitive)</li>
 </ul>
-<h3 id="3-parallel-labeling">3. Parallel labeling</h3>
-<p>For projects with specialized workforce, you can split your workforce in several groups, with each of them focused on a specific portion of your labeling tasks. For instance, group A (experts in the A domain) only does labeling for job A and group B (experts in the B domain) only does labeling for job B. With Kili Plugins, you could then combine these workflows by aggregating the annotations done by multiple labelers as one label. Your reviewers would then be presented with the combined results.</p>
+<hr />
+<h2 id="example-production-configuration">Example : Production Configuration</h2>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;api_endpoint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;verify_ssl&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;disable_tqdm&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">KILI_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-production-key&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
+
+<span class="c1"># Loads settings from env var and config file</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="configuration-priority-summary">Configuration Priority Summary</h2>
+<p>For each setting, the priority order is:</p>
+<ol>
+<li>
+<p><strong>Function parameter</strong> (highest)
+   <div class="highlight"><pre><span></span><code><span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Environment variable</strong>
+   <div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">KILI_API_KEY</span><span class="o">=</span><span class="s2">&quot;key&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">KILI_VERIFY</span><span class="o">=</span><span class="nb">false</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">KILI_DISABLE_TQDM</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Configuration file</strong> (<code>sdk-config.json</code>)
+   <div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;api_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;key&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;verify_ssl&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;disable_tqdm&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="p">}</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Default value</strong> (lowest)</p>
 <ul>
-<li>Plugin file: <a href="https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/plugins_library/parallel_labeling_plugin.py" target="_blank"><code>parallel_labeling_plugin.py</code></a></li>
+<li><code>api_endpoint</code>: <code>https://cloud.kili-technology.com/api/label/v2/graphql</code></li>
+<li><code>verify</code>: <code>True</code></li>
+<li><code>disable_tqdm</code>: <code>None</code></li>
 </ul>
+</li>
+</ol>
 
 
 
@@ -2729,14 +3088,14 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
       
-        <script src="../../../extra_javascript/katex.js"></script>
+        <script src="../extra_javascript/katex.js"></script>
       
     
   </body>
