@@ -273,6 +273,27 @@ class TestAssetsNamespaceCoreOperations:
             wait_until_availability=True,
         )
 
+    def test_create_audio_assets(self, assets_namespace, mock_client):
+        """Test create_audio method delegates to client."""
+        expected_result = {"id": "project_123", "asset_ids": ["asset1", "asset2"]}
+        mock_client.append_many_to_dataset.return_value = expected_result
+
+        result = assets_namespace.create_audio(
+            project_id="project_123",
+            content_array=["https://example.com/audio.mp3"],
+            external_id_array=["ext1"],
+        )
+
+        assert result == expected_result
+        mock_client.append_many_to_dataset.assert_called_once_with(
+            project_id="project_123",
+            content_array=["https://example.com/audio.mp3"],
+            external_id_array=["ext1"],
+            json_metadata_array=None,
+            disable_tqdm=None,
+            wait_until_availability=True,
+        )
+
     def test_delete_assets(self, assets_namespace, mock_client):
         """Test delete method delegates to client."""
         expected_result = {"id": "project_123"}
