@@ -1,5 +1,4 @@
 """Tags domain namespace for the Kili Python SDK."""
-# pylint: disable=too-many-public-methods
 
 from typing import TYPE_CHECKING, Any, Optional, TypedDict, Union
 
@@ -12,7 +11,7 @@ from kili.domain.label import LabelType
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
-from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
+from kili.services.export.types import CocoAnnotationModifier, ExportType, LabelFormat, SplitOption
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -94,6 +93,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         single_file: Optional[bool] = False,
+        export_type: ExportType = "latest_from_last_step",
     ):
         """Export project labels in Kili native format.
 
@@ -114,6 +114,14 @@ class ExportNamespace(DomainNamespace):
                 whose type belongs to that list.
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             single_file: If True, all labels are exported in a single JSON file.
+            export_type: Type of export. Options are:
+                - `"latest_from_last_step"`: exports the latest labels from the last workflow step
+                  (uses `latestLabels` field, supports multiple annotators).
+                - `"latest_from_all_steps"`: exports latest labels from all workflow steps
+                - `"latest"`: exports the latest label for each asset
+                  (deprecated, use `"latest_from_last_step"` instead).
+                - `"normal"`: exports all labels for each asset.
+                Defaults to `"latest_from_last_step"`.
 
         Returns:
             Export information or None if export failed.
@@ -129,6 +137,7 @@ class ExportNamespace(DomainNamespace):
             normalized_coordinates=True,
             fmt="kili",
             single_file=bool(single_file),
+            export_type=export_type,
         )
 
     def coco(
@@ -142,6 +151,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         layout: SplitOption = "split",
+        export_type: ExportType = "latest_from_last_step",
     ):
         """Export project labels in COCO format.
 
@@ -165,6 +175,14 @@ class ExportNamespace(DomainNamespace):
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
+            export_type: Type of export. Options are:
+                - `"latest_from_last_step"`: exports the latest labels from the last workflow step
+                  (uses `latestLabels` field, supports multiple annotators).
+                - `"latest_from_all_steps"`: exports latest labels from all workflow steps
+                - `"latest"`: exports the latest label for each asset
+                  (deprecated, use `"latest_from_last_step"` instead).
+                - `"normal"`: exports all labels for each asset.
+                Defaults to `"latest_from_last_step"`.
 
         Returns:
             Export information or None if export failed.
@@ -180,6 +198,7 @@ class ExportNamespace(DomainNamespace):
             label_type_in=label_type_in,
             layout=layout,
             fmt="coco",
+            export_type=export_type,
         )
 
     def yolo_v4(
@@ -192,6 +211,7 @@ class ExportNamespace(DomainNamespace):
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
+        export_type: ExportType = "latest_from_last_step",
     ):
         """Export project labels in YOLO v4 format.
 
@@ -214,6 +234,14 @@ class ExportNamespace(DomainNamespace):
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
+            export_type: Type of export. Options are:
+                - `"latest_from_last_step"`: exports the latest labels from the last workflow step
+                  (uses `latestLabels` field, supports multiple annotators).
+                - `"latest_from_all_steps"`: exports latest labels from all workflow steps
+                - `"latest"`: exports the latest label for each asset
+                  (deprecated, use `"latest_from_last_step"` instead).
+                - `"normal"`: exports all labels for each asset.
+                Defaults to `"latest_from_last_step"`.
 
         Returns:
             Export information or None if export failed.
@@ -228,6 +256,7 @@ class ExportNamespace(DomainNamespace):
             label_type_in=label_type_in,
             layout=layout,
             fmt="yolo_v4",
+            export_type=export_type,
         )
 
     def yolo_v5(
@@ -240,6 +269,7 @@ class ExportNamespace(DomainNamespace):
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
+        export_type: ExportType = "latest_from_last_step",
     ):
         """Export project labels in YOLO v5 format.
 
@@ -262,6 +292,14 @@ class ExportNamespace(DomainNamespace):
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
+            export_type: Type of export. Options are:
+                - `"latest_from_last_step"`: exports the latest labels from the last workflow step
+                  (uses `latestLabels` field, supports multiple annotators).
+                - `"latest_from_all_steps"`: exports latest labels from all workflow steps
+                - `"latest"`: exports the latest label for each asset
+                  (deprecated, use `"latest_from_last_step"` instead).
+                - `"normal"`: exports all labels for each asset.
+                Defaults to `"latest_from_last_step"`.
 
         Returns:
             Export information or None if export failed.
@@ -276,6 +314,7 @@ class ExportNamespace(DomainNamespace):
             label_type_in=label_type_in,
             layout=layout,
             fmt="yolo_v5",
+            export_type=export_type,
         )
 
     def yolo_v7(
@@ -288,6 +327,7 @@ class ExportNamespace(DomainNamespace):
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
+        export_type: ExportType = "latest_from_last_step",
     ):
         """Export project labels in YOLO v7 format.
 
@@ -310,6 +350,14 @@ class ExportNamespace(DomainNamespace):
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
+            export_type: Type of export. Options are:
+                - `"latest_from_last_step"`: exports the latest labels from the last workflow step
+                  (uses `latestLabels` field, supports multiple annotators).
+                - `"latest_from_all_steps"`: exports latest labels from all workflow steps
+                - `"latest"`: exports the latest label for each asset
+                  (deprecated, use `"latest_from_last_step"` instead).
+                - `"normal"`: exports all labels for each asset.
+                Defaults to `"latest_from_last_step"`.
 
         Returns:
             Export information or None if export failed.
@@ -324,6 +372,7 @@ class ExportNamespace(DomainNamespace):
             label_type_in=label_type_in,
             layout=layout,
             fmt="yolo_v7",
+            export_type=export_type,
         )
 
     def yolo_v8(
@@ -336,6 +385,7 @@ class ExportNamespace(DomainNamespace):
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
+        export_type: ExportType = "latest_from_last_step",
     ):
         """Export project labels in YOLO v8 format.
 
@@ -358,6 +408,14 @@ class ExportNamespace(DomainNamespace):
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
+            export_type: Type of export. Options are:
+                - `"latest_from_last_step"`: exports the latest labels from the last workflow step
+                  (uses `latestLabels` field, supports multiple annotators).
+                - `"latest_from_all_steps"`: exports latest labels from all workflow steps
+                - `"latest"`: exports the latest label for each asset
+                  (deprecated, use `"latest_from_last_step"` instead).
+                - `"normal"`: exports all labels for each asset.
+                Defaults to `"latest_from_last_step"`.
 
         Returns:
             Export information or None if export failed.
@@ -372,6 +430,7 @@ class ExportNamespace(DomainNamespace):
             label_type_in=label_type_in,
             layout=layout,
             fmt="yolo_v8",
+            export_type=export_type,
         )
 
     def pascal_voc(
@@ -383,6 +442,7 @@ class ExportNamespace(DomainNamespace):
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
+        export_type: ExportType = "latest_from_last_step",
     ):
         """Export project labels in Pascal VOC format.
 
@@ -403,6 +463,14 @@ class ExportNamespace(DomainNamespace):
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
+            export_type: Type of export. Options are:
+                - `"latest_from_last_step"`: exports the latest labels from the last workflow step
+                  (uses `latestLabels` field, supports multiple annotators).
+                - `"latest_from_all_steps"`: exports latest labels from all workflow steps
+                - `"latest"`: exports the latest label for each asset
+                  (deprecated, use `"latest_from_last_step"` instead).
+                - `"normal"`: exports all labels for each asset.
+                Defaults to `"latest_from_last_step"`.
 
         Returns:
             Export information or None if export failed.
@@ -417,6 +485,7 @@ class ExportNamespace(DomainNamespace):
             label_type_in=label_type_in,
             layout="merged",
             fmt="pascal_voc",
+            export_type=export_type,
         )
 
     def geojson(
@@ -428,6 +497,7 @@ class ExportNamespace(DomainNamespace):
         filter: Optional[ExportAssetFilter] = None,
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
+        export_type: ExportType = "latest_from_last_step",
     ):
         """Export project labels in GeoJSON format.
 
@@ -448,6 +518,14 @@ class ExportNamespace(DomainNamespace):
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
+            export_type: Type of export. Options are:
+                - `"latest_from_last_step"`: exports the latest labels from the last workflow step
+                  (uses `latestLabels` field, supports multiple annotators).
+                - `"latest_from_all_steps"`: exports latest labels from all workflow steps
+                - `"latest"`: exports the latest label for each asset
+                  (deprecated, use `"latest_from_last_step"` instead).
+                - `"normal"`: exports all labels for each asset.
+                Defaults to `"latest_from_last_step"`.
 
         Returns:
             Export information or None if export failed.
@@ -462,6 +540,7 @@ class ExportNamespace(DomainNamespace):
             label_type_in=label_type_in,
             layout="merged",
             fmt="geojson",
+            export_type=export_type,
         )
 
     @typechecked
@@ -531,6 +610,7 @@ class ExportNamespace(DomainNamespace):
         project_id: str,
         single_file: bool = False,
         with_assets: Optional[bool] = True,
+        export_type: ExportType = "latest_from_last_step",
     ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export the project labels with the requested format into the requested output path.
 
@@ -591,4 +671,5 @@ class ExportNamespace(DomainNamespace):
             normalized_coordinates=normalized_coordinates,
             label_type_in=list(label_type_in) if label_type_in else None,
             include_sent_back_labels=include_sent_back_labels,
+            export_type=export_type,
         )

@@ -83,7 +83,10 @@ class KiliExporter(AbstractExporter):
         """Cut video assets into frames."""
         for asset in assets:
             if asset["jsonContent"] == "" and Path(asset["content"]).is_file():
-                nbr_frames = len(asset.get("latestLabel", {}).get("jsonResponse", {}))
+                label_for_frames = asset.get("latestLabel") or next(
+                    (label for label in asset.get("latestLabels", []) if label), None
+                )
+                nbr_frames = len((label_for_frames or {}).get("jsonResponse", {}))
                 if nbr_frames == 0:
                     continue
                 leading_zeros = len(str(nbr_frames))

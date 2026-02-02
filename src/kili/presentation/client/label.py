@@ -44,7 +44,7 @@ from kili.presentation.client.helpers.filter_conversion import (
 )
 from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
-from kili.services.export.types import CocoAnnotationModifier, LabelFormat, SplitOption
+from kili.services.export.types import CocoAnnotationModifier, ExportType, LabelFormat, SplitOption
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.label import LabelUseCases
 from kili.use_cases.label.process_shapefiles import get_json_response_from_shapefiles
@@ -1298,6 +1298,7 @@ class LabelClientMethods(BaseClientMethods):
         normalized_coordinates: Optional[bool] = None,
         label_type_in: Optional[list[str]] = None,
         include_sent_back_labels: Optional[bool] = None,
+        export_type: ExportType = "latest",
     ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         # pylint: disable=line-too-long
         """Export the project labels with the requested format into the requested output path.
@@ -1355,6 +1356,11 @@ class LabelClientMethods(BaseClientMethods):
             label_type_in: Optional list of label type. Exported assets should have a label whose type belongs to that list.
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that have been sent back.
+            export_type: Type of export. Options are:
+                - `"latest"`: Export only the latest label for each asset (deprecated, use `"latest_from_last_step"` instead).
+                - `"latest_from_last_step"`: Export the latest label from each annotator for the last step.
+                - `"latest_from_all_steps"`: Export the latest label from each annotator for all steps.
+                - `"normal"`: Export all labels.
 
         !!! Info
             The supported formats are:
@@ -1435,7 +1441,7 @@ class LabelClientMethods(BaseClientMethods):
                 self,  # pyright: ignore[reportArgumentType]
                 asset_ids=resolved_asset_ids,
                 project_id=ProjectId(project_id),
-                export_type="latest",
+                export_type=export_type,
                 label_format=fmt,
                 split_option=layout,
                 single_file=single_file,

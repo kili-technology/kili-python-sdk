@@ -139,6 +139,11 @@ def load_asset_json_fields(asset: dict, fields: ListOrTuple[str], http_client: H
     if "latestLabel.jsonResponse" in fields and asset.get("latestLabel") is not None:
         _process_label_json_response(asset["latestLabel"], url_to_label_mapping)
 
+    if "latestLabels.jsonResponse" in fields:
+        for label in asset.get("latestLabels", []):
+            if label is not None:
+                _process_label_json_response(label, url_to_label_mapping)
+
     if url_to_label_mapping:
         download_json_responses_parallel(url_to_label_mapping, http_client)
 
