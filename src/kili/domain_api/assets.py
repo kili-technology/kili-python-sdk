@@ -257,6 +257,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     - create_pdf(): Create PDF assets
     - create_text(): Create plain text assets
     - create_rich_text(): Create rich-text formatted text assets
+    - create_audio(): Create audio assets
     - delete(): Delete assets from projects
     - add_metadata(): Add metadata to assets
     - set_metadata(): Set metadata on assets
@@ -1304,6 +1305,102 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         return self._client.append_many_to_dataset(
             project_id=project_id,
             json_content_array=json_content_array,
+            external_id_array=external_id_array,
+            json_metadata_array=json_metadata_array,
+            disable_tqdm=disable_tqdm,
+            wait_until_availability=wait_until_availability,
+            **kwargs,
+        )
+
+    @overload
+    def create_audio(
+        self,
+        *,
+        project_id: str,
+        content: Union[str, dict],
+        external_id: Optional[str] = None,
+        json_metadata: Optional[dict] = None,
+        wait_until_availability: bool = True,
+        **kwargs,
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+        ...
+
+    @overload
+    def create_audio(
+        self,
+        *,
+        project_id: str,
+        content_array: Union[List[str], List[dict]],
+        external_id_array: Optional[List[str]] = None,
+        json_metadata_array: Optional[List[dict]] = None,
+        disable_tqdm: Optional[bool] = None,
+        wait_until_availability: bool = True,
+        **kwargs,
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+        ...
+
+    @typechecked
+    def create_audio(
+        self,
+        *,
+        project_id: str,
+        content: Optional[Union[str, dict]] = None,
+        content_array: Optional[Union[List[str], List[dict]]] = None,
+        external_id: Optional[str] = None,
+        external_id_array: Optional[List[str]] = None,
+        json_metadata: Optional[dict] = None,
+        json_metadata_array: Optional[List[dict]] = None,
+        disable_tqdm: Optional[bool] = None,
+        wait_until_availability: bool = True,
+        **kwargs,
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+        """Create audio assets in a project.
+
+        Args:
+            project_id: Identifier of the project
+            content: URL or local file path to an audio file
+            content_array: List of URLs or local file paths to audio files
+            external_id: External id to identify the asset
+            external_id_array: List of external ids given to identify the assets
+            json_metadata: The metadata given to the asset
+            json_metadata_array: The metadata given to each asset
+            disable_tqdm: If True, the progress bar will be disabled
+            wait_until_availability: If True, waits until assets are fully processed
+            **kwargs: Additional arguments (e.g., is_honeypot)
+
+        Returns:
+            A dictionary with project id and list of created asset ids
+
+        Examples:
+            >>> # Create single audio asset
+            >>> result = kili.assets.create_audio(
+            ...     project_id="my_project",
+            ...     content="https://example.com/audio.mp3"
+            ... )
+
+            >>> # Create multiple audio assets
+            >>> result = kili.assets.create_audio(
+            ...     project_id="my_project",
+            ...     content_array=["https://example.com/audio1.mp3", "https://example.com/audio2.wav"]
+            ... )
+
+            >>> # Create audio with metadata
+            >>> result = kili.assets.create_audio(
+            ...     project_id="my_project",
+            ...     content="https://example.com/audio.mp3",
+            ...     json_metadata={"speaker": "John Doe"}
+            ... )
+        """
+        if content is not None:
+            content_array = cast(Union[list[str], list[dict]], [content])
+        if external_id is not None:
+            external_id_array = [external_id]
+        if json_metadata is not None:
+            json_metadata_array = [json_metadata]
+
+        return self._client.append_many_to_dataset(
+            project_id=project_id,
+            content_array=content_array,
             external_id_array=external_id_array,
             json_metadata_array=json_metadata_array,
             disable_tqdm=disable_tqdm,
