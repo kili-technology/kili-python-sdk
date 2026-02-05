@@ -7,6 +7,7 @@ from typeguard import typechecked
 from kili.domain.project import ProjectId, WorkflowStepCreate, WorkflowStepUpdate
 from kili.use_cases.project_workflow import ProjectWorkflowUseCases
 
+from ...domain.types import ListOrTuple
 from .base import BaseClientMethods
 
 
@@ -49,15 +50,60 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
     def get_steps(
         self,
         project_id: str,
+        fields: ListOrTuple[str] = (
+            "steps.type",
+            "steps.name",
+            "steps.id",
+            "steps.assignees.email",
+            "steps.assignees.id",
+        ),
     ) -> list[dict[str, Any]]:
         """Get steps in a project workflow.
 
         Args:
             project_id: Id of the project.
+            fields: All the fields to request among the possible fields for the project.
+                See the documentation for all possible fields.
 
         Returns:
             A dict with the steps of the project workflow.
         """
         return ProjectWorkflowUseCases(self.kili_api_gateway).get_steps(
-            project_id=ProjectId(project_id),
+            project_id=ProjectId(project_id), fields=fields
+        )
+
+    @typechecked
+    def add_reviewers_to_step(
+        self, project_id: str, step_name: str, emails: list[str]
+    ) -> list[str]:
+        """Add reviewers to a specific step.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the step.
+            emails: List of emails to add.
+
+        Returns:
+            A list with the added emails.
+        """
+        return ProjectWorkflowUseCases(self.kili_api_gateway).add_reviewers_to_step(
+            project_id=project_id, step_name=step_name, emails=emails
+        )
+
+    @typechecked
+    def remove_reviewers_from_step(
+        self, project_id: str, step_name: str, emails: list[str]
+    ) -> list[str]:
+        """Remove reviewers from a specific step.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the step.
+            emails: List of emails to remove.
+
+        Returns:
+            A list with the removed emails.
+        """
+        return ProjectWorkflowUseCases(self.kili_api_gateway).remove_reviewers_from_step(
+            project_id=project_id, step_name=step_name, emails=emails
         )

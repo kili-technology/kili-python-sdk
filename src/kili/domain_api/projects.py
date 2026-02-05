@@ -7,13 +7,7 @@ including lifecycle management, user management, workflow configuration, and ver
 
 from collections.abc import Generator, Iterable, Sequence
 from functools import cached_property
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Literal,
-    Optional,
-    TypedDict,
-)
+from typing import TYPE_CHECKING, Any, List, Literal, Optional, TypedDict
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -284,6 +278,48 @@ class WorkflowNamespace:
             A list with the steps of the project workflow.
         """
         return self._client.get_steps(project_id=project_id)
+
+    @typechecked
+    def add_reviewers(
+        self,
+        project_id: str,
+        step_name: str,
+        emails: List[str],
+    ) -> List[str]:
+        """Add reviewers to a specific step.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the step.
+            emails: List of emails to add.
+
+        Returns:
+            A list with emails added to the step.
+        """
+        return self._client.add_reviewers_to_step(
+            project_id=project_id, step_name=step_name, emails=emails
+        )
+
+    @typechecked
+    def remove_reviewers(
+        self,
+        project_id: str,
+        step_name: str,
+        emails: List[str],
+    ) -> List[str]:
+        """Remove reviewers from a specific step.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the step.
+            emails: List of emails to remove.
+
+        Returns:
+            A list with emails removed from the step.
+        """
+        return self._client.remove_reviewers_from_step(
+            project_id=project_id, step_name=step_name, emails=emails
+        )
 
 
 class ProjectsNamespace(DomainNamespace):
