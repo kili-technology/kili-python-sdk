@@ -6,6 +6,7 @@ from kili.adapters.kili_api_gateway.project_workflow.types import (
     ProjectWorkflowDataKiliAPIGatewayInput,
 )
 from kili.domain.project import ProjectId, WorkflowStepCreate, WorkflowStepUpdate
+from kili.domain.types import ListOrTuple
 from kili.use_cases.base import BaseUseCases
 
 
@@ -33,6 +34,19 @@ class ProjectWorkflowUseCases(BaseUseCases):
     def get_steps(
         self,
         project_id: ProjectId,
+        fields: ListOrTuple[str],
     ) -> list[dict[str, object]]:
         """Get steps in a project workflow."""
-        return self._kili_api_gateway.get_steps(project_id)
+        return self._kili_api_gateway.get_steps(project_id, fields)
+
+    def add_reviewers_to_step(
+        self, project_id: str, step_name: str, emails: list[str]
+    ) -> list[str]:
+        """Add reviewers to a specific step."""
+        return self._kili_api_gateway.add_reviewers_to_step(project_id, step_name, emails)
+
+    def remove_reviewers_from_step(
+        self, project_id: str, step_name: str, emails: list[str]
+    ) -> list[str]:
+        """Remove reviewers from a specific step."""
+        return self._kili_api_gateway.remove_reviewers_from_step(project_id, step_name, emails)
