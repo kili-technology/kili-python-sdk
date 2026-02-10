@@ -43,7 +43,7 @@ class FakeFFmpegVideoSplitter:
         self.round = round
         return self
 
-    def output(self, output_path_pattern, start_number):
+    def output(self, output_path_pattern, start_number, **kwargs):
         self.output_path_pattern = output_path_pattern
         self.start_number = start_number
         return self
