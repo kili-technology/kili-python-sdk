@@ -4,9 +4,6 @@ from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.asset.formatters import load_asset_json_fields
 from kili.adapters.kili_api_gateway.asset.operations import get_assets_query
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
-from kili.adapters.kili_api_gateway.label.operations import (
-    get_annotations_partial_query,
-)
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.asset.asset import AssetId
 from kili.domain.types import ListOrTuple
@@ -32,47 +29,3 @@ def get_asset(
             f"asset ID: {asset_id}. The asset does not exist or you do not have access to it."
         )
     return load_asset_json_fields(assets[0], fields, http_client=http_client)
-
-
-def get_annotation_fragment():
-    """Generates a fragment to get all annotations and their values."""
-    return get_annotations_partial_query(
-        annotation_fragment=fragment_builder(("__typename", "id", "job", "path", "labelId")),
-        classification_annotation_fragment=fragment_builder(
-            ("annotationValue.categories", "chatItemId")
-        ),
-        comparison_annotation_fragment=fragment_builder(
-            (
-                "annotationValue.choice.code",
-                "annotationValue.choice.firstId",
-                "annotationValue.choice.secondId",
-                "chatItemId",
-            )
-        ),
-        transcription_annotation_fragment=fragment_builder(("annotationValue.text", "chatItemId")),
-        video_annotation_fragment=fragment_builder(
-            (
-                "frames.start",
-                "frames.end",
-                "keyAnnotations.id",
-                "keyAnnotations.frame",
-            )
-        ),
-        video_classification_annotation_fragment=fragment_builder(
-            ("keyAnnotations.annotationValue.categories",)
-        ),
-        video_object_detection_annotation_fragment=fragment_builder(
-            (
-                "keyAnnotations.annotationValue.vertices: verticesScalar",
-                "name",
-                "mid",
-                "category",
-            )
-        ),
-        video_transcription_annotation_fragment=fragment_builder(
-            ("keyAnnotations.annotationValue.text",)
-        ),
-        object_detection_annotation_fragment=fragment_builder(
-            ("category", "mid", "name", "annotationValue.vertices: verticesScalar")
-        ),
-    )

@@ -19,9 +19,6 @@ def test_given_video_project_only_latest_label_json_response_requested_annotatio
     def mock_graphql_execute(query, *_args, **_kwargs) -> dict:
         captured_queries.append(query)
 
-        if "countAssetAnnotations" in query:
-            return {"data": 1}
-
         if "query countAssets" in query:
             return {"data": 1}
 
