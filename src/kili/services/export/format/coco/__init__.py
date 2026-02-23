@@ -51,9 +51,13 @@ class CocoExporter(AbstractExporter):
     def process_and_save(self, assets: list[dict], output_filename: Path):
         """Extract formatted annotations from labels."""
         clean_assets = self.preprocess_assets(assets)
+        # Expand assets with latestLabels into multiple assets
+        expanded_assets = self._expand_assets_with_multiple_labels(clean_assets)
         try:
             self._save_assets_export(
-                clean_assets, self.export_root_folder, annotation_modifier=self.annotation_modifier
+                expanded_assets,
+                self.export_root_folder,
+                annotation_modifier=self.annotation_modifier,
             )
         except ImportError as e:
             raise ImportError("Install with `pip install kili[coco]` to use this feature.") from e
@@ -61,6 +65,43 @@ class CocoExporter(AbstractExporter):
         self.make_archive(self.export_root_folder, output_filename)
 
         self.logger.warning(output_filename)
+
+    def _expand_assets_with_multiple_labels(self, assets: list[dict]) -> list[dict]:
+        """Expand assets with latestLabels into multiple asset entries with latestLabel.
+
+        When an asset has multiple labels (latestLabels), create separate asset entries
+        for each label with a unique externalId suffix (_label0, _label1, etc.).
+        """
+        expanded_assets = []
+        for asset in assets:
+            # Collect all labels to process (handle both latestLabel and latestLabels)
+            labels_to_process = []
+            if "latestLabel" in asset and asset["latestLabel"]:
+                labels_to_process.append(asset["latestLabel"])
+            if "latestLabels" in asset and asset["latestLabels"]:
+                for label in asset["latestLabels"]:
+                    if label is not None:
+                        labels_to_process.append(label)
+
+            if not labels_to_process:
+                continue
+
+            # Create asset copy for each label
+            for label_idx, latest_label in enumerate(labels_to_process, start=1):
+                asset_copy = asset.copy()
+                # Add label suffix if we have multiple labels
+                if len(labels_to_process) > 1:
+                    label_suffix = f"_label{label_idx}"
+                    asset_copy["externalId"] = f"{asset['externalId']}{label_suffix}"
+
+                # Set latestLabel and remove latestLabels
+                asset_copy["latestLabel"] = latest_label
+                if "latestLabels" in asset_copy:
+                    del asset_copy["latestLabels"]
+
+                expanded_assets.append(asset_copy)
+
+        return expanded_assets
 
     def _save_assets_export(
         self,

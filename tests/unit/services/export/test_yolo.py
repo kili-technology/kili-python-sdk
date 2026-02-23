@@ -451,3 +451,92 @@ def test_write_labels_to_file_with_external_id_containing_slash(tmp_path: Path):
     )
 
     assert (tmp_path / "image" / "1.txt").is_file()
+
+
+def test_process_asset_with_latest_labels():
+    """Test that multiple labels create separate annotation files with label suffix."""
+    with TemporaryDirectory() as images_folder, TemporaryDirectory() as labels_folder:
+        fake_content_repository = FakeContentRepository(
+            "https://contentrep",
+            HttpClient(
+                kili_endpoint="https://fake_endpoint.kili-technology.com",
+                api_key="",
+                verify=True,
+            ),
+        )
+        asset_remote_content, video_filenames = _process_asset(
+            {
+                "latestLabels": [
+                    {
+                        "jsonResponse": {
+                            "JOB_0": {
+                                "annotations": [
+                                    {
+                                        "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                                        "jobName": "JOB_0",
+                                        "mid": "2022040515434712-7532",
+                                        "mlTask": "OBJECT_DETECTION",
+                                        "boundingPoly": [
+                                            {
+                                                "normalizedVertices": [
+                                                    {"x": 0.1, "y": 0.8},
+                                                    {"x": 0.1, "y": 0.2},
+                                                    {"x": 0.8, "y": 0.2},
+                                                    {"x": 0.8, "y": 0.8},
+                                                ]
+                                            }
+                                        ],
+                                        "type": "rectangle",
+                                        "children": {},
+                                    }
+                                ]
+                            }
+                        },
+                        "author": {"firstname": "User", "lastname": "One"},
+                    },
+                    {
+                        "jsonResponse": {
+                            "JOB_0": {
+                                "annotations": [
+                                    {
+                                        "categories": [{"confidence": 100, "name": "OBJECT_B"}],
+                                        "jobName": "JOB_0",
+                                        "mid": "2022040515434712-7533",
+                                        "mlTask": "OBJECT_DETECTION",
+                                        "boundingPoly": [
+                                            {
+                                                "normalizedVertices": [
+                                                    {"x": 0.2, "y": 0.9},
+                                                    {"x": 0.2, "y": 0.3},
+                                                    {"x": 0.9, "y": 0.3},
+                                                    {"x": 0.9, "y": 0.9},
+                                                ]
+                                            }
+                                        ],
+                                        "type": "rectangle",
+                                        "children": {},
+                                    }
+                                ]
+                            }
+                        },
+                        "author": {"firstname": "User", "lastname": "Two"},
+                    },
+                ],
+                "externalId": "multi_label",
+                "content": "https://storage.googleapis.com/label-public-staging/car/multi.jpg",
+                "jsonContent": "",
+                "resolution": {"height": 1000, "width": 1000},
+            },
+            images_folder,
+            labels_folder,
+            category_ids,
+            fake_content_repository,
+            with_assets=False,
+            project_input_type="IMAGE",
+        )
+
+        # Should create two label files with suffixes
+        assert (labels_folder / "multi_label_label1.txt").is_file()
+        assert (labels_folder / "multi_label_label2.txt").is_file()
+        assert len(asset_remote_content) == 2
+        assert len(video_filenames) == 0
