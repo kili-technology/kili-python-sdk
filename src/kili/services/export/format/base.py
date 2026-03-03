@@ -319,5 +319,26 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                     asset["latestLabel"] = clean_label
                 if include_sent_back_labels or asset["latestLabel"]["isSentBackToQueue"] is False:
                     assets_in_format.append(asset)
+            if "latestLabels" in asset:
+                latest_labels = asset.get("latestLabels", [])
+                if latest_labels:
+                    clean_labels = [
+                        AbstractExporter._format_json_response(label)
+                        for label in latest_labels
+                        if label is not None
+                    ]
+                    asset["latestLabels"] = clean_labels
+                    if include_sent_back_labels:
+                        assets_in_format.append(asset)
+                    elif any(
+                        label and label.get("isSentBackToQueue") is False for label in clean_labels
+                    ):
+                        # Filter out sent back labels if needed
+                        asset["latestLabels"] = [
+                            label
+                            for label in clean_labels
+                            if label and label.get("isSentBackToQueue") is False
+                        ]
+                        assets_in_format.append(asset)
 
         return AbstractExporter._filter_out_autosave_labels(assets_in_format)

@@ -99,3 +99,68 @@ def test_process_asset_with_external_id_containing_slash(tmp_path: Path):
     _process_asset(asset, label_path)
 
     assert Path(label_path / "a/b.png.geojson").is_file()
+
+
+def test_process_asset_with_latest_labels(tmp_path: Path):
+    """Test that multiple labels create separate GeoJSON files with label suffix."""
+    asset = {
+        "latestLabels": [
+            {
+                "jsonResponse": {
+                    "JOB_0": {
+                        "annotations": [
+                            {
+                                "categories": [{"name": "OBJECT_A"}],
+                                "mid": "20230111125258113-44528",
+                                "type": "rectangle",
+                                "boundingPoly": [
+                                    {
+                                        "normalizedVertices": [
+                                            {"x": 0.6101435505380516, "y": 0.7689773770786136},
+                                            {"x": 0.6101435505380516, "y": 0.39426226491370664},
+                                            {"x": 0.8962087421313937, "y": 0.39426226491370664},
+                                            {"x": 0.8962087421313937, "y": 0.7689773770786136},
+                                        ]
+                                    }
+                                ],
+                                "polyline": [],
+                                "children": {},
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "jsonResponse": {
+                    "JOB_0": {
+                        "annotations": [
+                            {
+                                "categories": [{"name": "OBJECT_B"}],
+                                "mid": "20230111125258113-44529",
+                                "type": "rectangle",
+                                "boundingPoly": [
+                                    {
+                                        "normalizedVertices": [
+                                            {"x": 0.1, "y": 0.2},
+                                            {"x": 0.1, "y": 0.1},
+                                            {"x": 0.2, "y": 0.1},
+                                            {"x": 0.2, "y": 0.2},
+                                        ]
+                                    }
+                                ],
+                                "polyline": [],
+                                "children": {},
+                            }
+                        ]
+                    }
+                }
+            },
+        ],
+        "externalId": "multi_label",
+    }
+    label_path = Path(tmp_path) / "labels"
+    _process_asset(asset, label_path)
+
+    # Should create two GeoJSON files with label suffixes
+    assert Path(label_path / "multi_label_label1.geojson").is_file()
+    assert Path(label_path / "multi_label_label2.geojson").is_file()

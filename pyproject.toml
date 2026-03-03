@@ -44,7 +44,7 @@ dependencies = [
   "filelock >= 3.0.0, < 4.0.0",
   "pip-system-certs >= 4.0.0, < 5.0.0; platform_system=='Windows'",
   "pyrate-limiter >= 3, < 4",
-  "kili-formats == 1.3.0"
+  "kili-formats == 1.4.0"
 ]
 urls = { homepage = "https://github.com/kili-technology/kili-python-sdk" }
 
@@ -63,8 +63,8 @@ dev = [
   "pytest-xdist[psutil]",
   "pytest-timeout",
   # documentation
-  "mkdocs",
-  "mkdocs-material",
+  "mkdocs >= 1.0.0, < 2.0.0",
+  "mkdocs-material >= 9.0.0, < 9.6.0",
   "mkdocstrings",
   "mkdocstrings-python-legacy",
   "mkdocs-click",
@@ -79,7 +79,7 @@ dev = [
   "nbconvert",
   "ipykernel",
   # optional dependencies
-  "kili-formats[all] == 1.3.0",
+  "kili-formats[all] == 1.4.0",
   "opencv-python >= 4.0.0, < 5.0.0",
   "azure-storage-blob >= 12.0.0, < 13.0.0",
   # optional dependencies gis
@@ -90,14 +90,14 @@ dev = [
   # optional dependencies - yolo
   "pyyaml >= 6.0, < 7.0",
   # optional dependencies - image
-  "Pillow >=9.0.0, <11.0.0"
+  "Pillow >=10.0.0, <13.0.0"
 ]
 all = [
   # aggregate all optional deps without dev
   "azure-storage-blob >= 12.0.0, < 13.0.0",
-  "kili-formats[all] == 1.3.0",
+  "kili-formats[all] == 1.4.0",
   "opencv-python >= 4.0.0, < 5.0.0",
-  "Pillow >=9.0.0, <11.0.0",
+  "Pillow >=10.0.0, <13.0.0",
   "pyproj == 3.7.1",
   "pyyaml >= 6.0, < 7.0",
   "shapely >= 1.8, < 3",
@@ -108,20 +108,20 @@ cli = [
   "tabulate >= 0.9.0, < 0.10.0"
 ]
 coco = [
-  "kili-formats[coco] == 1.3.0"
+  "kili-formats[coco] == 1.4.0"
 ]
 gis = [
   "pyproj == 3.7.1",
   "shapely >= 1.8, < 3"
 ]
 image = [
-  "Pillow >=9.0.0, <11.0.0",
-  "kili-formats[image] == 1.3.0"
+  "Pillow >=10.0.0, <13.0.0",
+  "kili-formats[image] == 1.4.0"
 ]
 image-utils = ["opencv-python >= 4.0.0, < 5.0.0"]
 
 video = [
-  "kili-formats[video] == 1.3.0"
+  "kili-formats[video] == 1.4.0"
 ]
 yolo = [
   "pyyaml >= 6.0, < 7.0"

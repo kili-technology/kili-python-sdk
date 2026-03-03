@@ -3,7 +3,7 @@
 from collections.abc import Callable
 from typing import Literal
 
-ExportType = Literal["latest", "normal"]
+ExportType = Literal["latest", "latest_from_last_step", "latest_from_all_steps", "normal"]
 SplitOption = Literal["split", "merged"]
 LabelFormat = Literal[
     "raw",
