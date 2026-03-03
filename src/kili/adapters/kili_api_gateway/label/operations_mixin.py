@@ -4,8 +4,6 @@ import json
 from collections.abc import Generator
 from typing import Optional
 
-from kili_formats.tool.annotations_to_json_response import AnnotationsToJsonResponseConverter
-
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
@@ -21,7 +19,6 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
-from .common import get_annotation_fragment, get_asset
 from .formatters import load_label_json_fields
 from .mappers import append_label_data_mapper, append_to_labels_data_mapper, label_where_mapper
 from .operations import (
@@ -52,11 +49,7 @@ class LabelOperationMixin(BaseOperationMixin):
         options: QueryOptions,
     ) -> Generator[dict, None, None]:
         """List labels."""
-        has_json_response_url = "jsonResponseUrl" in fields
-
         if "jsonResponse" in fields:
-            if "labelOf" not in fields:
-                fields = [*list(fields), "assetId"]
             project_info = get_project(
                 self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
             )
@@ -67,10 +60,7 @@ class LabelOperationMixin(BaseOperationMixin):
                 "LLM_INSTR_FOLLOWING",
                 "LLM_STATIC",
             }:
-                fetch_annotations = not has_json_response_url
-                yield from self.list_labels_split(
-                    filters, fields, options, project_info, fetch_annotations
-                )
+                yield from self.list_labels_split(filters, fields, options, project_info)
                 return
 
         fragment = fragment_builder(fields)
@@ -90,7 +80,6 @@ class LabelOperationMixin(BaseOperationMixin):
         fields: ListOrTuple[str],
         options: QueryOptions,
         project_info,
-        fetch_annotations: bool,
     ) -> Generator[dict, None, None]:
         """List labels."""
         if project_info["inputType"] == "VIDEO":
@@ -98,20 +87,12 @@ class LabelOperationMixin(BaseOperationMixin):
                 options.disable_tqdm, options.first, options.skip, min(options.batch_size, 20)
             )
 
+        fields = list(fields)
+        if "jsonResponse" in fields and "jsonResponseUrl" not in fields:
+            fields.append("jsonResponseUrl")
+
         fragment = fragment_builder(fields)
-
-        if fetch_annotations:
-            inner_annotation_fragment = get_annotation_fragment()
-            full_fragment = f"""
-                {fragment}
-                annotations {{
-                    {inner_annotation_fragment}
-                }}
-            """
-        else:
-            full_fragment = fragment
-
-        query = get_labels_query(full_fragment)
+        query = get_labels_query(fragment)
         where = label_where_mapper(filters)
         labels_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving labels", GQL_COUNT_LABELS
@@ -119,28 +100,7 @@ class LabelOperationMixin(BaseOperationMixin):
         labels_gen = (
             load_label_json_fields(label, fields, self.http_client) for label in labels_gen
         )
-
-        if "jsonResponse" in fields and fetch_annotations:
-            converter = AnnotationsToJsonResponseConverter(
-                json_interface=project_info["jsonInterface"],
-                project_input_type=project_info["inputType"],
-            )
-            for label in labels_gen:
-                asset = None
-                if project_info["inputType"] == "VIDEO":
-                    asset = get_asset(
-                        self.graphql_client,
-                        self.http_client,
-                        label["assetId"],
-                        ["content", "jsonContent", "resolution.width", "resolution.height"],
-                    )
-                converter.patch_label_json_response(asset, label, label["annotations"])
-                if not any("annotations." in element for element in fields):
-                    label.pop("annotations")
-                yield label
-
-        else:
-            yield from labels_gen
+        yield from labels_gen
 
     def delete_labels(
         self, ids: ListOrTuple[LabelId], disable_tqdm: Optional[bool]

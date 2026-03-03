@@ -21,7 +21,6 @@ from kili.domain.asset.asset import AssetId
 from kili.domain.label import LabelFilters, LabelId
 from kili.domain.project import ProjectId
 from kili.domain.user import UserId
-from kili.utils.tempfile import TemporaryDirectory
 from tests.unit.adapters.kili_api_gateway.label.test_data import test_case_1
 
 
@@ -210,50 +209,32 @@ def test_given_kili_gateway_when_adding_labels_by_batch_then_it_calls_proper_res
 def test_given_project_with_new_annotations_when_calling_list_labels_it_converts_to_json_response(
     graphql_client: GraphQLClient, http_client: HttpClient, mocker: pytest_mock.MockerFixture
 ):
+    """For VIDEO projects, when jsonResponse is requested, it is fetched from jsonResponseUrl."""
+
     # Given
-    with TemporaryDirectory() as tmp_dir:
-        video_path = tmp_dir / "video1.mp4"
-        video_path.write_bytes(b"fake video content")
+    def mocked_graphql_execute(query: str, variables: dict, **kwargs) -> dict:
+        if "projects(" in query:
+            return {"data": [{"inputType": "VIDEO", "jsonInterface": test_case_1.json_interface}]}
 
-        def mocked_graphql_execute(query, variables, **kwargs):
-            if "assets(" in query:
-                return {
-                    "data": [
-                        {
-                            "id": "fake_asset_id",
-                            "resolution": {"width": 1920, "height": 1080},
-                            "content": str(video_path),
-                            "jsonContent": "",
-                        }
-                    ]
-                }
-            if "projects(" in query:
-                return {
-                    "data": [{"inputType": "VIDEO", "jsonInterface": test_case_1.json_interface}]
-                }
+        if "countLabels(" in query:
+            return {"data": 1}
 
-            if "countProjects(" in query:
-                return {"data": 1}
+        if "labels(" in query:
+            return {
+                "data": [
+                    {
+                        "id": "fake_label_id",
+                        "jsonResponseUrl": "https://storage.example.com/label.json",
+                    }
+                ]
+            }
 
-            if "countLabels(" in query:
-                return {"data": 1}
-
-            if "labels(" in query:
-                return {
-                    "data": [
-                        {
-                            "id": "fake_label_id",
-                            "jsonResponse": "{}",
-                            "jsonResponseUrl": None,
-                            "annotations": test_case_1.annotations,
-                            "assetId": "fake_asset_id",
-                        }
-                    ]
-                }
-
-            raise NotImplementedError
+        raise NotImplementedError
 
     graphql_client.execute.side_effect = mocked_graphql_execute
+
+    mock_http_response = http_client.get.return_value
+    mock_http_response.json.return_value = test_case_1.expected_json_resp
 
     kili_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
 
@@ -268,3 +249,4 @@ def test_given_project_with_new_annotations_when_calling_list_labels_it_converts
 
     # Then
     assert labels[0]["jsonResponse"] == test_case_1.expected_json_resp
+    assert "jsonResponseUrl" not in labels[0]

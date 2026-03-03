@@ -35,7 +35,6 @@ COMMON_FIELDS = [
 DEFAULT_FIELDS = [
     *COMMON_FIELDS,
     "labels.jsonResponse",
-    "labels.jsonResponseUrl",
     "labels.author.id",
     "labels.author.email",
     "labels.author.firstname",
@@ -50,7 +49,6 @@ DEFAULT_FIELDS = [
 LATEST_LABEL_FIELDS = [
     *COMMON_FIELDS,
     "latestLabel.jsonResponse",
-    "latestLabel.jsonResponseUrl",
     "latestLabel.author.id",
     "latestLabel.author.email",
     "latestLabel.author.firstname",
