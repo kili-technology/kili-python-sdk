@@ -1,6 +1,6 @@
 """Types used by the conversion service."""
 
-from typing import Dict, Literal, NewType, Union
+from typing import Literal, NewType, Union
 
 from kili_formats.types import Job
 
@@ -14,4 +14,4 @@ Tool = Literal["rectangle", "semantic", "polygon"]
 JobName = NewType("JobName", str)
 
 
-Jobs = Dict[JobName, Job]
+Jobs = dict[JobName, Job]

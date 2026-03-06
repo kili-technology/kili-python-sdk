@@ -1,6 +1,5 @@
 """Helpers for the issue mutations."""
 
-from typing import Dict
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
@@ -14,7 +13,7 @@ def get_labels_asset_ids_map(
     kili_api_gateway: KiliAPIGateway,
     project_id: ProjectId,
     label_id_array: ListOrTuple[LabelId],
-) -> Dict:
+) -> dict:
     """Return a dictionary that gives for every label id, its associated asset id.
 
     Args:

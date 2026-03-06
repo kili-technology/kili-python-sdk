@@ -1,7 +1,6 @@
 """Tests the Kili CLI project member commands."""
 
 import csv
-from typing import Dict, List
 
 import pytest
 import pytest_mock
@@ -135,9 +134,9 @@ def test_list_members(mocker: pytest_mock.MockerFixture):
 )
 def test_add_member(
     case_name: str,
-    inputs: List[str],
-    options: Dict[str, str],
-    expected_mutation_payload: Dict[str, str],
+    inputs: list[str],
+    options: dict[str, str],
+    expected_mutation_payload: dict[str, str],
     mocker: pytest_mock.MockerFixture,
 ):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
@@ -205,9 +204,9 @@ def test_add_member(
 )
 def test_update_member(
     case_name: str,
-    inputs: List[str],
-    options: Dict[str, str],
-    expected_mutation_payload: Dict[str, str],
+    inputs: list[str],
+    options: dict[str, str],
+    expected_mutation_payload: dict[str, str],
     mocker: pytest_mock.MockerFixture,
 ):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
@@ -263,10 +262,10 @@ def test_update_member(
 )
 def test_remove_member(
     case_name: str,
-    inputs: List[str],
-    options: Dict[str, str],
-    flags: List[str],
-    expected_mutation_payload: Dict[str, str],
+    inputs: list[str],
+    options: dict[str, str],
+    flags: list[str],
+    expected_mutation_payload: dict[str, str],
     mocker: pytest_mock.MockerFixture,
 ):
     mocker.patch.dict("os.environ", {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})

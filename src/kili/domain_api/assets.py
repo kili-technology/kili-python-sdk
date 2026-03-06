@@ -1,12 +1,11 @@
 """Assets domain namespace for the Kili Python SDK."""
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-public-methods
 
 import warnings
+from collections.abc import Generator
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Generator,
     List,
     Literal,
     Optional,
@@ -45,8 +44,8 @@ class AssetFilter(TypedDict, total=False):
     metadata, and more.
     """
 
-    asset_id_in: Optional[List[str]]
-    asset_id_not_in: Optional[List[str]]
+    asset_id_in: Optional[list[str]]
+    asset_id_not_in: Optional[list[str]]
     assignee_in: Optional[ListOrTuple[str]]
     assignee_not_in: Optional[ListOrTuple[str]]
     consensus_mark_gt: Optional[float]
@@ -55,8 +54,8 @@ class AssetFilter(TypedDict, total=False):
     consensus_mark_lte: Optional[float]
     created_at_gte: Optional[str]
     created_at_lte: Optional[str]
-    external_id_in: Optional[List[str]]
-    external_id_strictly_in: Optional[List[str]]
+    external_id_in: Optional[list[str]]
+    external_id_strictly_in: Optional[list[str]]
     honeypot_mark_gt: Optional[float]
     honeypot_mark_gte: Optional[float]
     honeypot_mark_lt: Optional[float]
@@ -65,7 +64,7 @@ class AssetFilter(TypedDict, total=False):
     inference_mark_lte: Optional[float]
     issue_status: Optional[IssueStatus]
     issue_type: Optional[IssueType]
-    label_author_in: Optional[List[str]]
+    label_author_in: Optional[list[str]]
     label_category_search: Optional[str]
     label_consensus_mark_gt: Optional[float]
     label_consensus_mark_gte: Optional[float]
@@ -84,12 +83,14 @@ class AssetFilter(TypedDict, total=False):
     label_labeler_not_in: Optional[ListOrTuple[str]]
     label_reviewer_in: Optional[ListOrTuple[str]]
     label_reviewer_not_in: Optional[ListOrTuple[str]]
-    label_type_in: Optional[List[LabelType]]
-    metadata_where: Optional[Dict[str, Any]]
+    label_type_in: Optional[list[LabelType]]
+    metadata_where: Optional[dict[str, Any]]
     skipped: Optional[bool]
-    status_in: Optional[List[AssetStatus]]
-    step_name_in: Optional[List[str]]
-    step_status_in: Optional[List[StatusInStep]]
+    status_in: Optional[list[AssetStatus]]
+    step_name_in: Optional[list[str]]
+    step_name_not_in: Optional[list[str]]
+    step_status_in: Optional[list[StatusInStep]]
+    step_status_not_in: Optional[list[StatusInStep]]
     updated_at_gte: Optional[str]
     updated_at_lte: Optional[str]
 
@@ -134,7 +135,7 @@ class GeospatialLayerParam(ImageLayerParam, total=False):
         epsg: Optional coordinate reference system (EPSG3857 or EPSG4326)
     """
 
-    bounds: Optional[List[List[float]]]
+    bounds: Optional[list[list[float]]]
     epsg: Optional[Literal["EPSG3857", "EPSG4326"]]
 
 
@@ -198,8 +199,8 @@ def _snake_to_camel_case(snake_str: str) -> str:
 
 
 def _transform_processing_parameters(
-    params: Dict[str, Any],
-) -> Dict[str, Any]:
+    params: dict[str, Any],
+) -> dict[str, Any]:
     """Transform processing parameter keys from snake_case to camelCase.
 
     Args:
@@ -213,7 +214,7 @@ def _transform_processing_parameters(
 
 def _prepare_video_processing_parameters(
     params: VideoProcessingParameters, use_native_video: bool
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Prepare video processing parameters with defaults.
 
     Transforms keys from snake_case to camelCase and adds default parameters:
@@ -228,7 +229,7 @@ def _prepare_video_processing_parameters(
         Dictionary with camelCase keys and default parameters added
     """
     # Transform to camelCase
-    transformed = _transform_processing_parameters(cast(Dict[str, Any], params))
+    transformed = _transform_processing_parameters(cast(dict[str, Any], params))
 
     # Add shouldUseNativeVideo based on the method
     transformed["shouldUseNativeVideo"] = use_native_video
@@ -256,6 +257,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     - create_pdf(): Create PDF assets
     - create_text(): Create plain text assets
     - create_rich_text(): Create rich-text formatted text assets
+    - create_audio(): Create audio assets
     - delete(): Delete assets from projects
     - add_metadata(): Add metadata to assets
     - set_metadata(): Set metadata on assets
@@ -267,6 +269,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     - update_priority(): Update asset priorities
     - skip(): Skip an asset
     - unskip(): Unskip an asset
+    - add_consensus(): Activate or deactivate consensus on an asset
 
     Examples:
         >>> kili = Kili()
@@ -345,7 +348,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         local_media_dir: Optional[str] = None,
         skip: int = 0,
-    ) -> Union[List[Dict], "pd.DataFrame"]:
+    ) -> Union[list[dict], "pd.DataFrame"]:
         """List assets from a project.
 
         Args:
@@ -390,7 +393,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         local_media_dir: Optional[str] = None,
         skip: int = 0,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List assets from a project.
 
         Args:
@@ -462,7 +465,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @overload
@@ -476,7 +479,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @typechecked
@@ -493,7 +496,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         """Create image assets in a project.
 
         Args:
@@ -533,7 +536,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         """
         # Convert singular to plural
         if content is not None:
-            content_array = cast(Union[List[str], List[dict]], [content])
+            content_array = cast(Union[list[str], list[dict]], [content])
         if external_id is not None:
             external_id_array = [external_id]
         if json_metadata is not None:
@@ -560,7 +563,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @overload
@@ -574,7 +577,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @typechecked
@@ -591,7 +594,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         """Create image assets in a project.
 
         Args:
@@ -640,7 +643,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         # Call the legacy method directly through the client
         return self._client.append_many_to_dataset(
             project_id=project_id,
-            multi_layer_content_array=cast(Optional[List[List[dict]]], layers_array),
+            multi_layer_content_array=cast(Optional[list[list[dict]]], layers_array),
             external_id_array=external_id_array,
             json_metadata_array=json_metadata_array,
             disable_tqdm=disable_tqdm,
@@ -659,7 +662,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @overload
@@ -674,7 +677,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @typechecked
@@ -693,7 +696,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         """Create video assets from video files in a project.
 
         If processing parameters are incomplete, Kili will probe the videos to determine missing parameters.
@@ -738,7 +741,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         """
         # Convert singular to plural
         if content is not None:
-            content_array = cast(Union[List[str], List[dict]], [content])
+            content_array = cast(Union[list[str], list[dict]], [content])
         if external_id is not None:
             external_id_array = [external_id]
         if json_metadata is not None:
@@ -778,7 +781,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @overload
@@ -793,7 +796,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @typechecked
@@ -812,7 +815,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         """Create video assets from frame sequences in a project.
 
         If processing parameters are incomplete, Kili will probe the videos to determine missing parameters.
@@ -898,7 +901,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @overload
@@ -912,7 +915,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @typechecked
@@ -929,7 +932,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         """Create single/multi-layer geospatial imagery assets in a project.
 
         Args:
@@ -1020,7 +1023,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @overload
@@ -1034,7 +1037,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @typechecked
@@ -1051,7 +1054,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         """Create PDF assets in a project.
 
         Args:
@@ -1091,7 +1094,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         """
         # Convert singular to plural
         if content is not None:
-            content_array = cast(Union[List[str], List[dict]], [content])
+            content_array = cast(Union[list[str], list[dict]], [content])
         if external_id is not None:
             external_id_array = [external_id]
         if json_metadata is not None:
@@ -1118,7 +1121,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @overload
@@ -1132,7 +1135,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @typechecked
@@ -1149,7 +1152,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         """Create plain text assets in a project.
 
         Args:
@@ -1189,7 +1192,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         """
         # Convert singular to plural
         if content is not None:
-            content_array = cast(Union[List[str], List[dict]], [content])
+            content_array = cast(Union[list[str], list[dict]], [content])
         if external_id is not None:
             external_id_array = [external_id]
         if json_metadata is not None:
@@ -1216,7 +1219,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         json_metadata: Optional[dict] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @overload
@@ -1230,7 +1233,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
     @typechecked
@@ -1247,7 +1250,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         disable_tqdm: Optional[bool] = None,
         wait_until_availability: bool = True,
         **kwargs,
-    ) -> Dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         """Create rich-text formatted text assets in a project.
 
         Rich-text assets use a structured JSON format to represent formatted text content.
@@ -1310,12 +1313,108 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         )
 
     @overload
+    def create_audio(
+        self,
+        *,
+        project_id: str,
+        content: Union[str, dict],
+        external_id: Optional[str] = None,
+        json_metadata: Optional[dict] = None,
+        wait_until_availability: bool = True,
+        **kwargs,
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+        ...
+
+    @overload
+    def create_audio(
+        self,
+        *,
+        project_id: str,
+        content_array: Union[List[str], List[dict]],
+        external_id_array: Optional[List[str]] = None,
+        json_metadata_array: Optional[List[dict]] = None,
+        disable_tqdm: Optional[bool] = None,
+        wait_until_availability: bool = True,
+        **kwargs,
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+        ...
+
+    @typechecked
+    def create_audio(
+        self,
+        *,
+        project_id: str,
+        content: Optional[Union[str, dict]] = None,
+        content_array: Optional[Union[List[str], List[dict]]] = None,
+        external_id: Optional[str] = None,
+        external_id_array: Optional[List[str]] = None,
+        json_metadata: Optional[dict] = None,
+        json_metadata_array: Optional[List[dict]] = None,
+        disable_tqdm: Optional[bool] = None,
+        wait_until_availability: bool = True,
+        **kwargs,
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+        """Create audio assets in a project.
+
+        Args:
+            project_id: Identifier of the project
+            content: URL or local file path to an audio file
+            content_array: List of URLs or local file paths to audio files
+            external_id: External id to identify the asset
+            external_id_array: List of external ids given to identify the assets
+            json_metadata: The metadata given to the asset
+            json_metadata_array: The metadata given to each asset
+            disable_tqdm: If True, the progress bar will be disabled
+            wait_until_availability: If True, waits until assets are fully processed
+            **kwargs: Additional arguments (e.g., is_honeypot)
+
+        Returns:
+            A dictionary with project id and list of created asset ids
+
+        Examples:
+            >>> # Create single audio asset
+            >>> result = kili.assets.create_audio(
+            ...     project_id="my_project",
+            ...     content="https://example.com/audio.mp3"
+            ... )
+
+            >>> # Create multiple audio assets
+            >>> result = kili.assets.create_audio(
+            ...     project_id="my_project",
+            ...     content_array=["https://example.com/audio1.mp3", "https://example.com/audio2.wav"]
+            ... )
+
+            >>> # Create audio with metadata
+            >>> result = kili.assets.create_audio(
+            ...     project_id="my_project",
+            ...     content="https://example.com/audio.mp3",
+            ...     json_metadata={"speaker": "John Doe"}
+            ... )
+        """
+        if content is not None:
+            content_array = cast(Union[list[str], list[dict]], [content])
+        if external_id is not None:
+            external_id_array = [external_id]
+        if json_metadata is not None:
+            json_metadata_array = [json_metadata]
+
+        return self._client.append_many_to_dataset(
+            project_id=project_id,
+            content_array=content_array,
+            external_id_array=external_id_array,
+            json_metadata_array=json_metadata_array,
+            disable_tqdm=disable_tqdm,
+            wait_until_availability=wait_until_availability,
+            **kwargs,
+        )
+
+    @overload
     def delete(
         self,
         *,
         asset_id: str,
         project_id: str = "",
-    ) -> Optional[Dict[Literal["id"], str]]:
+    ) -> Optional[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -1324,7 +1423,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_ids: List[str],
         project_id: str = "",
-    ) -> Optional[Dict[Literal["id"], str]]:
+    ) -> Optional[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -1333,7 +1432,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_id: str,
         project_id: str = "",
-    ) -> Optional[Dict[Literal["id"], str]]:
+    ) -> Optional[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -1342,7 +1441,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_ids: List[str],
         project_id: str = "",
-    ) -> Optional[Dict[Literal["id"], str]]:
+    ) -> Optional[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -1354,7 +1453,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> Optional[Dict[Literal["id"], str]]:
+    ) -> Optional[dict[Literal["id"], str]]:
         """Delete assets from a project.
 
         Args:
@@ -1403,7 +1502,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         processing_parameter: Union[dict, str],
         project_id: str = "",
         **kwargs,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -1414,7 +1513,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         processing_parameters: List[Union[dict, str]],
         project_id: str = "",
         **kwargs,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -1425,7 +1524,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         processing_parameter: Union[dict, str],
         project_id: str = "",
         **kwargs,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -1436,7 +1535,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         processing_parameters: List[Union[dict, str]],
         project_id: str = "",
         **kwargs,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -1451,7 +1550,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
         **kwargs,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Update processing_parameter of one or more assets.
 
         Args:
@@ -1522,7 +1621,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         new_external_id: str,
         asset_id: str,
         project_id: str = "",
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -1532,7 +1631,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         new_external_ids: List[str],
         asset_ids: List[str],
         project_id: str = "",
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -1542,7 +1641,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         new_external_id: str,
         external_id: str,
         project_id: str = "",
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -1552,7 +1651,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         new_external_ids: List[str],
         external_ids: List[str],
         project_id: str = "",
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -1566,7 +1665,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Update the external ID of one or more assets.
 
         Args:
@@ -1615,40 +1714,40 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def add_metadata(
         self,
         *,
-        json_metadata: Dict[str, Union[str, int, float]],
+        json_metadata: dict[str, Union[str, int, float]],
         project_id: str,
         asset_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
     def add_metadata(
         self,
         *,
-        json_metadata: List[Dict[str, Union[str, int, float]]],
+        json_metadata: List[dict[str, Union[str, int, float]]],
         project_id: str,
         asset_ids: List[str],
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
     def add_metadata(
         self,
         *,
-        json_metadata: Dict[str, Union[str, int, float]],
+        json_metadata: dict[str, Union[str, int, float]],
         project_id: str,
         external_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
     def add_metadata(
         self,
         *,
-        json_metadata: List[Dict[str, Union[str, int, float]]],
+        json_metadata: List[dict[str, Union[str, int, float]]],
         project_id: str,
         external_ids: List[str],
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -1656,14 +1755,14 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         self,
         *,
         json_metadata: Union[
-            Dict[str, Union[str, int, float]], List[Dict[str, Union[str, int, float]]]
+            dict[str, Union[str, int, float]], List[dict[str, Union[str, int, float]]]
         ],
         project_id: str,
         asset_id: Optional[str] = None,
         asset_ids: Optional[List[str]] = None,
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Add metadata to assets without overriding existing metadata.
 
         Args:
@@ -1715,40 +1814,40 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def set_metadata(
         self,
         *,
-        json_metadata: Dict[str, Union[str, int, float]],
+        json_metadata: dict[str, Union[str, int, float]],
         project_id: str,
         asset_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
     def set_metadata(
         self,
         *,
-        json_metadata: List[Dict[str, Union[str, int, float]]],
+        json_metadata: List[dict[str, Union[str, int, float]]],
         project_id: str,
         asset_ids: List[str],
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
     def set_metadata(
         self,
         *,
-        json_metadata: Dict[str, Union[str, int, float]],
+        json_metadata: dict[str, Union[str, int, float]],
         project_id: str,
         external_id: str,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
     def set_metadata(
         self,
         *,
-        json_metadata: List[Dict[str, Union[str, int, float]]],
+        json_metadata: List[dict[str, Union[str, int, float]]],
         project_id: str,
         external_ids: List[str],
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -1756,14 +1855,14 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         self,
         *,
         json_metadata: Union[
-            Dict[str, Union[str, int, float]], List[Dict[str, Union[str, int, float]]]
+            dict[str, Union[str, int, float]], List[dict[str, Union[str, int, float]]]
         ],
         project_id: str,
         asset_id: Optional[str] = None,
         asset_ids: Optional[List[str]] = None,
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Set metadata on assets, replacing any existing metadata.
 
         Args:
@@ -1875,7 +1974,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_id: str,
         project_id: str = "",
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         ...
 
     @overload
@@ -1884,7 +1983,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_ids: List[str],
         project_id: str = "",
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         ...
 
     @overload
@@ -1893,7 +1992,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_id: str,
         project_id: str = "",
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         ...
 
     @overload
@@ -1902,7 +2001,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_ids: List[str],
         project_id: str = "",
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         ...
 
     @typechecked
@@ -1914,7 +2013,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         """Send assets back to queue (invalidate current step).
 
         This method sends assets back to the queue, effectively invalidating their
@@ -1958,7 +2057,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_id: str,
         project_id: str = "",
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         ...
 
     @overload
@@ -1967,7 +2066,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_ids: List[str],
         project_id: str = "",
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         ...
 
     @overload
@@ -1976,7 +2075,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_id: str,
         project_id: str = "",
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         ...
 
     @overload
@@ -1985,7 +2084,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_ids: List[str],
         project_id: str = "",
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         ...
 
     @typechecked
@@ -1997,7 +2096,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         """Move assets to the next workflow step (typically review).
 
         This method moves assets to the next step in the workflow, typically
@@ -2043,7 +2142,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by: List[str],
         asset_id: str,
         project_id: str = "",
-    ) -> List[Dict[str, Any]]:
+    ) -> List[dict[str, Any]]:
         ...
 
     @overload
@@ -2053,7 +2152,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by_array: List[List[str]],
         asset_ids: List[str],
         project_id: str = "",
-    ) -> List[Dict[str, Any]]:
+    ) -> List[dict[str, Any]]:
         ...
 
     @overload
@@ -2063,7 +2162,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by: List[str],
         external_id: str,
         project_id: str = "",
-    ) -> List[Dict[str, Any]]:
+    ) -> List[dict[str, Any]]:
         ...
 
     @overload
@@ -2073,7 +2172,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by_array: List[List[str]],
         external_ids: List[str],
         project_id: str = "",
-    ) -> List[Dict[str, Any]]:
+    ) -> List[dict[str, Any]]:
         ...
 
     @typechecked
@@ -2087,7 +2186,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> List[Dict[str, Any]]:
+    ) -> List[dict[str, Any]]:
         """Assign a list of assets to a list of labelers.
 
         Args:
@@ -2141,7 +2240,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         priority: int,
         project_id: str = "",
         **kwargs,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -2152,7 +2251,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         priorities: List[int],
         project_id: str = "",
         **kwargs,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -2163,7 +2262,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         priority: int,
         project_id: str = "",
         **kwargs,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -2174,7 +2273,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         priorities: List[int],
         project_id: str = "",
         **kwargs,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -2189,7 +2288,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
         **kwargs,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Update the priority of one or more assets.
 
         Args:
@@ -2233,4 +2332,79 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             project_id=project_id,
             priorities=priorities if priorities is not None else [],
             **kwargs,
+        )
+
+    @overload
+    def update_consensus(
+        self,
+        *,
+        asset_id: str,
+        project_id: str,
+        is_consensus: bool,
+    ) -> bool:
+        ...
+
+    @overload
+    def update_consensus(
+        self,
+        *,
+        external_id: str,
+        project_id: str,
+        is_consensus: bool,
+    ) -> bool:
+        ...
+
+    @typechecked
+    def update_consensus(
+        self,
+        *,
+        project_id: str,
+        is_consensus: bool,
+        asset_id: Optional[str] = None,
+        external_id: Optional[str] = None,
+    ) -> bool:
+        """Activate or deactivate consensus on an asset.
+
+        Args:
+            project_id: The project ID.
+            is_consensus: Whether to activate (True) or deactivate (False) consensus on the asset.
+            asset_id: The internal asset ID to modify. Either asset_id or external_id must be provided.
+            external_id: The external ID of the asset to modify. Either asset_id or external_id must be provided.
+
+        Returns:
+            The consensus value that was set (True if consensus was activated, False if deactivated).
+
+        Raises:
+            ValueError: If neither asset_id nor external_id is provided.
+
+        Examples:
+            >>> # Activate consensus on an asset using asset_id
+            >>> result = kili.assets.update_consensus(
+            ...     project_id="my_project",
+            ...     is_consensus=True,
+            ...     asset_id="ckg22d81r0jrg0885unmuswj8"
+            ... )
+            >>> # result is True
+
+            >>> # Activate consensus on an asset using external_id
+            >>> result = kili.assets.update_consensus(
+            ...     project_id="my_project",
+            ...     is_consensus=True,
+            ...     external_id="my_asset_001"
+            ... )
+            >>> # result is True
+
+            >>> # Deactivate consensus on an asset
+            >>> result = kili.assets.update_consensus(
+            ...     project_id="my_project",
+            ...     is_consensus=False,
+            ...     asset_id="ckg22d81r0jrg0885unmuswj8"
+            ... )
+            >>> # result is False
+        """
+        return self._client.update_asset_consensus(
+            project_id=project_id,
+            is_consensus=is_consensus,
+            asset_id=asset_id,
+            external_id=external_id,
         )

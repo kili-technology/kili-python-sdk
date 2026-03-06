@@ -1,6 +1,5 @@
 """Common arguments and options for the CLI."""
 
-from typing import List
 
 import click
 
@@ -73,7 +72,7 @@ class Options:  # pylint: disable=too-few-public-methods
     )
 
 
-def from_csv(required_columns: List[str], optionnal_columns: List[str]):
+def from_csv(required_columns: list[str], optionnal_columns: list[str]):
     """--from-csv shared click option."""
     help_ = (
         "path to a csv file with required columns:"

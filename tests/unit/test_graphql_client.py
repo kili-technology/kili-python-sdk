@@ -1,11 +1,11 @@
 import os
 from time import time
-from typing import Dict
 
 import pytest
 import pytest_mock
 from gql import Client
 from gql.transport import exceptions
+from graphql import ExecutionResult
 from pyrate_limiter import Duration, Rate
 from pyrate_limiter.limiter import Limiter
 
@@ -89,9 +89,11 @@ def test_rate_limiting(mocker: pytest_mock.MockerFixture):
         nonlocal before_last_call_timestamp
         before_last_call_timestamp = last_call_timestamp
         last_call_timestamp = time()
+        return ExecutionResult({"data": 1}, extensions=None)
 
     client._gql_client = mocker.MagicMock()
     client._gql_client.execute.side_effect = mock_execute
+    client._gql_client.transport.response_headers = {}
 
     # first calls should not be rate limited
     for _ in range(MAX_CALLS_PER_MINUTE):
@@ -163,7 +165,7 @@ def test_given_gql_client_when_the_server_returns_flagsmith_error_then_it_retrie
         nonlocal nb_times_called
         nb_times_called += 1
         if nb_times_called > 2:
-            return {"data": "all good"}
+            return ExecutionResult({"data": "all good"}, extensions=None)
         raise exceptions.TransportQueryError(
             msg=(
                 "[unexpectedRetrieving] Unexpected error when retrieving runtime information."
@@ -290,7 +292,7 @@ def test_given_gql_client_when_the_server_returns_flagsmith_error_then_it_retrie
         ),
     ],
 )
-def test_given_variables_when_i_remove_null_values_then_it_works(variables: Dict, expected: Dict):
+def test_given_variables_when_i_remove_null_values_then_it_works(variables: dict, expected: dict):
     # Given
     _ = variables
 

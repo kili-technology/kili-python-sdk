@@ -1,7 +1,7 @@
 """Client presentation methods for labels."""
 
 # pylint: disable=too-many-lines
-from typing import List, Optional
+from typing import Optional
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.event import EventDict, EventFilters, OrderType, QueryOptions
@@ -18,7 +18,7 @@ class EventClientMethods:
     def list(
         self,
         project_id: str,
-        fields: Optional[List[str]] = None,
+        fields: Optional[list[str]] = None,
         created_at_gte: Optional[str] = None,
         created_at_lte: Optional[str] = None,
         user_id: Optional[str] = None,
@@ -28,7 +28,7 @@ class EventClientMethods:
         until_event_id: Optional[str] = None,
         organization_id: Optional[str] = None,
         order: Optional[OrderType] = "asc",
-    ) -> List[EventDict]:
+    ) -> list[EventDict]:
         """List events of my project.
 
         Args:

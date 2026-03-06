@@ -1,7 +1,9 @@
 """Users domain namespace for the Kili Python SDK."""
+# pylint: disable=too-many-public-methods
 
 import re
-from typing import Dict, Generator, List, Literal, Optional, TypedDict
+from collections.abc import Generator
+from typing import Literal, Optional, TypedDict
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -33,6 +35,7 @@ class UsersNamespace(DomainNamespace):
     The namespace provides the following main operations:
     - list(): Query and list users
     - count(): Count users matching filters
+    - me(): Get the current user
     - create(): Create new users
     - update(): Update user properties
     - update_password(): Update user password with enhanced security validation
@@ -105,7 +108,7 @@ class UsersNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[UserFilter] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get a list of users given a set of criteria.
 
         Args:
@@ -147,7 +150,7 @@ class UsersNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[UserFilter] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Get a generator of users given a set of criteria.
 
         Args:
@@ -204,6 +207,23 @@ class UsersNamespace(DomainNamespace):
         return self._client.count_users(**filter_kwargs)
 
     @typechecked
+    def me(self, fields: ListOrTuple[str] = ("email", "id", "firstname", "lastname")) -> dict:
+        """Get the current user.
+
+        Args:
+            fields: All the fields to request among the possible fields for the users.
+                See the documentation for all possible fields.
+
+        Returns:
+            A dict with the user fields chosen.
+
+        Examples:
+            >>> # Get the current user
+            >>> user = kili.users.me(fields=['id', 'email'])
+        """
+        return self._client.get_current_user(fields)
+
+    @typechecked
     def create(
         self,
         email: str,
@@ -211,7 +231,7 @@ class UsersNamespace(DomainNamespace):
         organization_role: OrganizationRole,
         firstname: Optional[str] = None,
         lastname: Optional[str] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Add a user to your organization.
 
         Args:
@@ -271,7 +291,7 @@ class UsersNamespace(DomainNamespace):
         organization_id: Optional[str] = None,
         organization_role: Optional[OrganizationRole] = None,
         activated: Optional[bool] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Update the properties of a user.
 
         Args:
@@ -325,7 +345,7 @@ class UsersNamespace(DomainNamespace):
     @typechecked
     def update_password(
         self, email: str, old_password: str, new_password_1: str, new_password_2: str
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Allow to modify the password that you use to connect to Kili.
 
         This resolver only works for on-premise installations without Auth0.

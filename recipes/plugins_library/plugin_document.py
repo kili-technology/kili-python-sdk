@@ -1,5 +1,3 @@
-from typing import Dict
-
 from kili.plugins import PluginCore
 
 
@@ -7,7 +5,7 @@ class PluginHandler(PluginCore):
     """Custom plugin instance."""
 
     @staticmethod
-    def check_rules_on_label(label: Dict):
+    def check_rules_on_label(label: dict):
         """Method for business logic."""
         text_issues_array = []
         mid_issues_array = []
@@ -31,7 +29,7 @@ class PluginHandler(PluginCore):
 
         return text_issues_array, mid_issues_array
 
-    def on_submit(self, label: Dict, asset_id: str) -> None:
+    def on_submit(self, label: dict, asset_id: str) -> None:
         """Dedicated handler for Submit action."""
         self.logger.info("On submit called")
 

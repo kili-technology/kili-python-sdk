@@ -1,6 +1,6 @@
 """Types for label data parsing module."""
 
-from typing import Dict, Literal
+from typing import Literal
 
 from typing_extensions import TypedDict
 
@@ -15,4 +15,4 @@ class Project(TypedDict):
     jsonInterface: Jobs
 
 
-NormalizedVertex = Dict[Literal["x", "y"], float]
+NormalizedVertex = dict[Literal["x", "y"], float]

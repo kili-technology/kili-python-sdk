@@ -1,6 +1,5 @@
 """Integration tests for core utils pagination module."""
 
-from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
@@ -17,7 +16,7 @@ class MyGraphQLQuery(GraphQLQuery):
 
 
 class MyGraphQLWhere(BaseQueryWhere):
-    def graphql_where_builder(self) -> Dict:
+    def graphql_where_builder(self) -> dict:
         return {"where": "not_implemented_where"}
 
 
@@ -118,5 +117,5 @@ def test_row_generator_from_paginated_calls(name, test_case):
         query="", where=where, options=options, post_call_function=None
     )
 
-    assert all(a == b for a, b in zip(actual, expected))
+    assert all(a == b for a, b in zip(actual, expected, strict=False))
     assert type(actual).__name__ == "generator"

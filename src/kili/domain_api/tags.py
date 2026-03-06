@@ -1,6 +1,7 @@
 """Tags domain namespace for the Kili Python SDK."""
+# pylint: disable=too-many-public-methods
 
-from typing import Dict, List, Literal, Optional
+from typing import List, Literal, Optional
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -91,7 +92,7 @@ class TagsNamespace(DomainNamespace):
         self,
         project_id: Optional[str] = None,
         fields: Optional[ListOrTuple[str]] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """List tags from the organization or a specific project.
 
         Args:
@@ -128,7 +129,7 @@ class TagsNamespace(DomainNamespace):
         self,
         name: str,
         color: Optional[str] = None,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Create a new tag in the organization.
 
         This operation is organization-wide.
@@ -156,7 +157,7 @@ class TagsNamespace(DomainNamespace):
         self,
         tag_name: str,
         new_name: str,
-    ) -> Dict[Literal["id"], str]:
+    ) -> dict[Literal["id"], str]:
         """Update an existing tag.
 
         This operation is organization-wide.
@@ -217,7 +218,7 @@ class TagsNamespace(DomainNamespace):
         tag: Optional[str] = None,
         tags: Optional[ListOrTuple[str]] = None,
         disable_tqdm: Optional[bool] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Assign tags to a project.
 
         This method replaces the legacy tag_project method with a more intuitive name.
@@ -273,7 +274,7 @@ class TagsNamespace(DomainNamespace):
         tags: Optional[ListOrTuple[str]] = None,
         all: Optional[bool] = None,  # pylint: disable=redefined-builtin
         disable_tqdm: Optional[bool] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Remove tags from a project.
 
         This method replaces the legacy untag_project method with a more intuitive name.

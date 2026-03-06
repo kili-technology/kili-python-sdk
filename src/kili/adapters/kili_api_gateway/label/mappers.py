@@ -1,7 +1,6 @@
 """GraphQL payload data mappers for label operations."""
 
 import json
-from typing import Dict
 
 from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
 from kili.adapters.kili_api_gateway.user.mappers import user_where_mapper
@@ -10,7 +9,7 @@ from kili.domain.label import LabelFilters
 from .types import AppendLabelData, AppendToLabelsData, UpdateLabelData
 
 
-def label_where_mapper(filters: LabelFilters) -> Dict[str, object]:
+def label_where_mapper(filters: LabelFilters) -> dict[str, object]:
     """Map label filters to GraphQL LabelWhere."""
     return {
         "asset": asset_where_mapper(filters.asset) if filters.asset else None,
@@ -33,7 +32,7 @@ def label_where_mapper(filters: LabelFilters) -> Dict[str, object]:
     }
 
 
-def update_label_data_mapper(data: UpdateLabelData) -> Dict:
+def update_label_data_mapper(data: UpdateLabelData) -> dict:
     """Map UpdateLabelData to GraphQL LabelData input."""
     return {
         "isSentBackToQueue": data.is_sent_back_to_queue,
@@ -43,7 +42,7 @@ def update_label_data_mapper(data: UpdateLabelData) -> Dict:
     }
 
 
-def append_label_data_mapper(data: AppendLabelData) -> Dict:
+def append_label_data_mapper(data: AppendLabelData) -> dict:
     """Map AppendLabelData to GraphQL AppendLabelData input."""
     return {
         "assetID": data.asset_id,
@@ -56,7 +55,7 @@ def append_label_data_mapper(data: AppendLabelData) -> Dict:
     }
 
 
-def append_to_labels_data_mapper(data: AppendToLabelsData) -> Dict:
+def append_to_labels_data_mapper(data: AppendToLabelsData) -> dict:
     """Map AppendToLabelsData to GraphQL AppendToLabelsData input."""
     return {
         "authorID": data.author_id,

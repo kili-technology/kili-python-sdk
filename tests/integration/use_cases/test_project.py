@@ -192,7 +192,6 @@ def test_given_a_project_when_update_its_properties_then_it_updates_project_prop
         description=None,
         honeypot_mark=None,
         instructions=None,
-        input_type=None,
         json_interface=None,
         min_consensus_size=None,
         review_coverage=None,

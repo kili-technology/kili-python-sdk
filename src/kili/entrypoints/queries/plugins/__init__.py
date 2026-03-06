@@ -2,7 +2,7 @@
 
 import json
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Optional
 
 from typeguard import typechecked
 
@@ -108,7 +108,7 @@ class QueriesPlugins(BaseOperationEntrypointMixin):
             >>> kili.get_plugin_status(plugin_name="my_plugin_name")
         """
         return PluginUploader(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            self,  # pyright: ignore[reportArgumentType]
             "",
             plugin_name,
             verbose,
@@ -120,7 +120,7 @@ class QueriesPlugins(BaseOperationEntrypointMixin):
     def list_plugins(
         self,
         fields: ListOrTuple[str] = ("name", "projectIds", "id", "createdAt", "updatedAt"),
-    ) -> List[Dict]:
+    ) -> list[dict]:
         # pylint: disable=line-too-long
         """List all plugins from your organization.
 

@@ -1,7 +1,7 @@
 """User domain."""
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Literal, NewType, Optional
+from typing import TYPE_CHECKING, Literal, NewType, Optional
 
 if TYPE_CHECKING:
     from .organization import OrganizationId
@@ -18,5 +18,5 @@ class UserFilter:
     id: Optional[UserId]
     activated: Optional[bool] = None
     email: Optional[str] = None
-    id_in: Optional[List[UserId]] = None
+    id_in: Optional[list[UserId]] = None
     organization_id: Optional["OrganizationId"] = None

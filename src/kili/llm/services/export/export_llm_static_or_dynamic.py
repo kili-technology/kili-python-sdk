@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, cast
+from typing import Optional, cast
 
 from kili_formats import convert_from_kili_to_llm_static_or_dynamic_format
 from kili_formats.types import ChatItem, Conversation, JobLevel
@@ -32,7 +32,7 @@ LABELS_NEEDED_FIELDS = [
 DEFAULT_JOB_LEVEL = JobLevel.ROUND
 
 
-def get_model_name(model_id: Optional[str], project_models: List[Dict]) -> Optional[str]:
+def get_model_name(model_id: Optional[str], project_models: list[dict]) -> Optional[str]:
     try:
         return next(
             model["configuration"]["model"] for model in project_models if model["id"] == model_id
@@ -47,10 +47,10 @@ class LLMExporter:
     def __init__(self, kili_api_gateway: KiliAPIGateway):
         self.kili_api_gateway = kili_api_gateway
 
-    def export(self, assets: List[Dict], json_interface: Dict) -> List[Conversation]:
+    def export(self, assets: list[dict], json_interface: dict) -> list[Conversation]:
         return [self.format_asset(asset, json_interface) for asset in assets if asset.get("labels")]
 
-    def format_asset(self, asset: Dict, json_interface: Dict) -> Conversation:
+    def format_asset(self, asset: dict, json_interface: dict) -> Conversation:
         label = asset["labels"][-1]
         chat_items = [
             {

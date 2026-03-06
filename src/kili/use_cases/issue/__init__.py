@@ -1,6 +1,7 @@
 """Issue use cases."""
 
-from typing import Any, Dict, Generator, List
+from collections.abc import Generator
+from typing import Any
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
@@ -15,8 +16,8 @@ class IssueUseCases(BaseUseCases):
     """Issue use cases."""
 
     def create_issues(
-        self, project_id: ProjectId, issues: List[IssueToCreateUseCaseInput]
-    ) -> List[IssueId]:
+        self, project_id: ProjectId, issues: list[IssueToCreateUseCaseInput]
+    ) -> list[IssueId]:
         """Create issues with issue type."""
         gateway_issues = [
             IssueToCreateKiliAPIGatewayInput(
@@ -40,10 +41,10 @@ class IssueUseCases(BaseUseCases):
 
     def list_issues(
         self, filters: IssueFilters, fields: ListOrTuple[str], options: QueryOptions
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List issues."""
         return self._kili_api_gateway.list_issues(filters=filters, fields=fields, options=options)
 
-    def update_issue_status(self, issue_id: IssueId, status: IssueStatus) -> Dict[str, Any]:
+    def update_issue_status(self, issue_id: IssueId, status: IssueStatus) -> dict[str, Any]:
         """Update issue status."""
         return self._kili_api_gateway.update_issue_status(issue_id=issue_id, status=status)

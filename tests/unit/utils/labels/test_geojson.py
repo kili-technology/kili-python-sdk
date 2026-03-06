@@ -270,7 +270,7 @@ def test_polygon_geojson():
         {"x": 9.519223671685653, "y": 54.52470311233283},
     ]
 
-    first_polygon_vertices = first_annotation["boundingPoly"][0]["normalizedVertices"]
+    first_polygon_vertices = first_annotation["boundingPoly"][0][0]["normalizedVertices"]
     assert len(first_polygon_vertices) == len(expected_first_polygon)
 
     for i, point in enumerate(first_polygon_vertices):
@@ -336,19 +336,16 @@ def test_multipolygon_geojson():
     assert "annotations" in response["multipolygons_job"]
 
     annotations = response["multipolygons_job"]["annotations"]
-    # MultiPolygon should create multiple annotations with the same mid
-    assert len(annotations) == 2
+    # MultiPolygon should create a single annotation with multiple polygons in boundingPoly
+    assert len(annotations) == 1
 
-    # Check that both annotations have the same mid (indicating they're parts of the same multipolygon)
-    mids = [ann.get("mid") for ann in annotations]
-    assert len(set(mids)) == 1  # All should have the same mid
-
-    for annotation in annotations:
-        assert annotation["type"] == "semantic"
-        assert "boundingPoly" in annotation
-        assert "categories" in annotation
-        assert len(annotation["categories"]) == 1
-        assert annotation["categories"][0]["name"] == "multipolygon_category"
+    annotation = annotations[0]
+    assert annotation["type"] == "semantic"
+    assert "boundingPoly" in annotation
+    assert len(annotation["boundingPoly"]) == 2
+    assert "categories" in annotation
+    assert len(annotation["categories"]) == 1
+    assert annotation["categories"][0]["name"] == "multipolygon_category"
 
     shutil.rmtree(temp_dir)
 

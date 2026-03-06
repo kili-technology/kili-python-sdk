@@ -1,6 +1,7 @@
 """Module for methods that are for internal use by Kili Technology only."""
 
-from typing import Dict, Iterable, Optional
+from collections.abc import Iterable
+from typing import Optional
 
 from typeguard import typechecked
 
@@ -10,6 +11,7 @@ from kili.adapters.kili_api_gateway.user.operations import get_reset_password_mu
 from kili.domain.api_key import ApiKeyFilters
 from kili.domain.types import ListOrTuple
 from kili.entrypoints.mutations.project.queries import GQL_DELETE_PROJECT
+from kili.presentation.client.helpers.common_validators import resolve_disable_tqdm
 from kili.presentation.client.organization import InternalOrganizationClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
 
@@ -74,7 +76,7 @@ class InternalClientMethods(InternalOrganizationClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         """Get a generator or a list of API keys that match a set of constraints.
 
         WARNING: This method is for internal use only.
@@ -96,6 +98,7 @@ class InternalClientMethods(InternalOrganizationClientMethods):
             A result object which contains the query if it was successful,
                 or an error message.
         """
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         api_key_use_cases = ApiKeyUseCases(self.kili_api_gateway)
         filters = ApiKeyFilters(api_key_id=api_key_id, user_id=user_id, api_key=api_key)
         api_keys_gen = api_key_use_cases.list_api_keys(

@@ -191,7 +191,7 @@ from kili.utils.labels.bbox import (
 )
 def test_bbox_points_to_normalized_vertices(test_name, inputs, output, origin_location):
     vertices = bbox_points_to_normalized_vertices(**inputs, origin_location=origin_location)
-    for computed_vertex, expected_vertex in zip(vertices, output):  # type: ignore
+    for computed_vertex, expected_vertex in zip(vertices, output, strict=False):  # type: ignore
         assert computed_vertex == pytest.approx(expected_vertex)
 
     bbox_points = normalized_vertices_to_bbox_points(

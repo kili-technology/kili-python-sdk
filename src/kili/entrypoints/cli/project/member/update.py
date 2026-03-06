@@ -1,7 +1,8 @@
 """CLI's project member update subcommand."""
 
 import warnings
-from typing import Iterable, Optional
+from collections.abc import Iterable
+from typing import Optional
 
 import click
 

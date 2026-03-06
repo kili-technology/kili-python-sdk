@@ -1,6 +1,5 @@
 """Types for the Coco export."""
 
-from typing import Dict, List
 
 from typing_extensions import TypedDict
 
@@ -30,8 +29,8 @@ class CocoAnnotation(TypedDict):
     id: int
     image_id: int
     category_id: int
-    bbox: List[int]
-    segmentation: List[List[float]]  # [[x, y, x, y, x ...]]
+    bbox: list[int]
+    segmentation: list[list[float]]  # [[x, y, x, y, x ...]]
     area: int
     iscrowd: int
 
@@ -39,8 +38,8 @@ class CocoAnnotation(TypedDict):
 class CocoFormat(TypedDict):
     """Handle the coco format data."""
 
-    info: Dict  # type: ignore
-    licenses: List[Dict]  # type: ignore
-    categories: List[CocoCategory]
-    images: List[CocoImage]
-    annotations: List[CocoAnnotation]
+    info: dict  # type: ignore
+    licenses: list[dict]  # type: ignore
+    categories: list[CocoCategory]
+    images: list[CocoImage]
+    annotations: list[CocoAnnotation]

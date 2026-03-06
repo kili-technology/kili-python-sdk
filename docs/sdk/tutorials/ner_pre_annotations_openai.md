@@ -315,7 +315,8 @@ ENTITY_TYPES = [
 ]
 
 ENTITY_TYPES_WITH_COLORS = [
-    (entity_type[0], entity_type[1], color) for entity_type, color in zip(ENTITY_TYPES, COLORS)
+    (entity_type[0], entity_type[1], color)
+    for entity_type, color in zip(ENTITY_TYPES, COLORS, strict=False)
 ]
 print(ENTITY_TYPES_WITH_COLORS)
 ```
@@ -405,7 +406,7 @@ We can finally import our OpenAI-generated pre-annotations!
 ```python
 json_response_array = []
 
-for datapoint, sentence_annotations in zip(dataset, openai_answers):
+for datapoint, sentence_annotations in zip(dataset, openai_answers, strict=False):
     full_sentence = datapoint["sentence"]
     annotations = []  # list of annotations for the sentence
     for category, _ in ENTITY_TYPES:
@@ -490,7 +491,7 @@ def format_sentence_annotations(sentence_annotations):
 
 references = []
 predictions = []
-for datapoint, sentence_annotations in zip(dataset, openai_answers):
+for datapoint, sentence_annotations in zip(dataset, openai_answers, strict=False):
     references.append(datapoint["ner_tags"])
 
     sentence_annotations = format_sentence_annotations(sentence_annotations)

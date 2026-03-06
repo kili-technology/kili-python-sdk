@@ -1,12 +1,13 @@
 """Service for importing objects into kili."""
 
-from typing import TYPE_CHECKING, Dict, List, Optional, Type, cast
+from typing import TYPE_CHECKING, Optional, cast
 
 from kili.domain.project import ProjectId
 from kili.services.asset_import.exceptions import (
     ImportValidationError,
 )
 
+from .audio import AudioDataImporter
 from .base import (
     BaseAbstractAssetImporter,
     LoggerParams,
@@ -23,7 +24,8 @@ from .video import VideoDataImporter
 if TYPE_CHECKING:
     from kili.client import Kili
 
-importer_by_type: Dict[str, Type[BaseAbstractAssetImporter]] = {
+importer_by_type: dict[str, type[BaseAbstractAssetImporter]] = {
+    "AUDIO": AudioDataImporter,
     "PDF": PdfDataImporter,
     "IMAGE": ImageDataImporter,
     "GEOSPATIAL": ImageDataImporter,
@@ -37,7 +39,7 @@ importer_by_type: Dict[str, Type[BaseAbstractAssetImporter]] = {
 def import_assets(  # pylint: disable=too-many-arguments
     kili: "Kili",
     project_id: ProjectId,
-    assets: List[Dict],
+    assets: list[dict],
     raise_error: bool = True,
     disable_tqdm: Optional[bool] = False,
     verify: bool = True,
@@ -59,6 +61,6 @@ def import_assets(  # pylint: disable=too-many-arguments
             f"Import of multi-layer assets is not supported for input type: {input_type}"
         )
     asset_importer = importer_by_type[input_type](*importer_params)
-    casted_assets = cast(List[AssetLike], assets)
+    casted_assets = cast(list[AssetLike], assets)
     asset_importer.check_asset_contents(casted_assets)
     return asset_importer.import_assets(assets=casted_assets, input_type=input_type)

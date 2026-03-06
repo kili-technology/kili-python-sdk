@@ -58,7 +58,6 @@ def test_when_updating_project_then_it_returns_updated_project(mocker: pytest_mo
                 "canNavigateBetweenAssets": None,
                 "canSkipAsset": None,
                 "honeypotMark": None,
-                "inputType": None,
                 "instructions": None,
                 "jsonInterface": None,
                 "minConsensusSize": None,

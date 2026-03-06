@@ -5,8 +5,9 @@ import random
 import string
 import threading
 import time
+from collections.abc import Callable
 from datetime import datetime
-from typing import Callable, Dict, Optional
+from typing import Optional
 
 import websocket
 from typing_extensions import LiteralString
@@ -94,7 +95,7 @@ class SubscriptionGraphQLClient:
         self._conn.send(json.dumps(payload).encode("utf-8"))
         return self._conn.recv()
 
-    def query(self, query: str, variables: Optional[Dict] = None, headers: Optional[Dict] = None):
+    def query(self, query: str, variables: Optional[dict] = None, headers: Optional[dict] = None):
         """Sends a query.
 
         Args:
@@ -112,8 +113,8 @@ class SubscriptionGraphQLClient:
     def prepare_subscribe(
         self,
         query: str,
-        variables: Optional[Dict],
-        headers: Optional[Dict],
+        variables: Optional[dict],
+        headers: Optional[dict],
         callback: Optional[Callable],
         authorization: Optional[str],
     ):
@@ -136,8 +137,8 @@ class SubscriptionGraphQLClient:
     def subscribe(
         self,
         query: str,
-        variables: Optional[Dict] = None,
-        headers: Optional[Dict] = None,
+        variables: Optional[dict] = None,
+        headers: Optional[dict] = None,
         callback: Optional[Callable] = None,
         authorization: Optional[str] = None,
     ):

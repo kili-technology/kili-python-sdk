@@ -1,6 +1,7 @@
 """Base class for all client methods classes."""
 
 from abc import ABC
+from typing import Optional
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 
@@ -14,3 +15,4 @@ class BaseClientMethods(ABC):
     """
 
     kili_api_gateway: KiliAPIGateway  # instantiated in the Kili client child class
+    disable_tqdm: Optional[bool]  # instantiated in the Kili client child class

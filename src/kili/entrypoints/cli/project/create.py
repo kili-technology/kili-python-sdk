@@ -73,6 +73,7 @@ def create_project(
     if ((interface is not None) + (project_id_src is not None)) == 0:
         raise ValueError("You must use either interface argument or option --from-project")
 
+    json_interface: dict
     if interface is not None:
         with open(interface, encoding="utf-8") as interface_file:
             json_interface = json.load(interface_file)

@@ -1,6 +1,7 @@
 """Client presentation methods for notifications."""
 
-from typing import Dict, Generator, Iterable, List, Literal, Optional, overload
+from collections.abc import Generator, Iterable
+from typing import Literal, Optional, overload
 
 from typeguard import typechecked
 
@@ -10,6 +11,7 @@ from kili.domain.types import ListOrTuple
 from kili.domain.user import UserFilter, UserId
 from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
+    resolve_disable_tqdm,
 )
 from kili.use_cases.notification import NotificationUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -40,7 +42,7 @@ class NotificationClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[True],
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         ...
 
     @overload
@@ -62,7 +64,7 @@ class NotificationClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: Literal[False] = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         ...
 
     @typechecked
@@ -84,7 +86,7 @@ class NotificationClientMethods(BaseClientMethods):
         disable_tqdm: Optional[bool] = None,
         *,
         as_generator: bool = False,
-    ) -> Iterable[Dict]:
+    ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get a generator or a list of notifications respecting a set of criteria.
 
@@ -103,6 +105,7 @@ class NotificationClientMethods(BaseClientMethods):
         Returns:
             An iterable of notifications.
         """
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
         filters = NotificationFilter(

@@ -2,7 +2,7 @@
 
 import os
 from enum import Enum
-from typing import List, Optional, Tuple
+from typing import Optional
 
 from kili.core.helpers import is_url
 from kili.domain.project import InputType
@@ -29,7 +29,7 @@ class TextDataType(Enum):
 class RawTextBatchImporter(ContentBatchImporter):
     """Class for importing a batch of raw text assets into a TEXT project."""
 
-    def get_content_type_and_data_from_content(self, content: Optional[str]) -> Tuple[str, str]:
+    def get_content_type_and_data_from_content(self, content: Optional[str]) -> tuple[str, str]:
         """Returns the data of the content (path) and its content type."""
         return content or "", "text/plain"
 
@@ -38,7 +38,7 @@ class TextDataImporter(BaseAbstractAssetImporter):
     """Class for importing data into a TEXT project."""
 
     @staticmethod
-    def get_data_type(assets: List[AssetLike]) -> TextDataType:
+    def get_data_type(assets: list[AssetLike]) -> TextDataType:
         """Determine the type of data to upload from the service payload."""
         content_array = [asset.get("content", "") for asset in assets]
         has_local_file = any(os.path.exists(content) for content in content_array)  # type: ignore
@@ -63,7 +63,7 @@ class TextDataImporter(BaseAbstractAssetImporter):
             return TextDataType.HOSTED_FILE
         return TextDataType.RAW_TEXT
 
-    def import_assets(self, assets: List[AssetLike], input_type: InputType):
+    def import_assets(self, assets: list[AssetLike], input_type: InputType):
         """Import TEXT assets into Kili."""
         self._check_upload_is_allowed(assets)
         data_type = self.get_data_type(assets)

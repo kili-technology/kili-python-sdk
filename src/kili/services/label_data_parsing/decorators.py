@@ -1,9 +1,9 @@
 """Decorators for label response module."""
 
-from typing import Callable, Tuple
+from collections.abc import Callable
 
 
-def for_all_properties(decorator: Callable, exclude: Tuple[str, ...] = ()) -> Callable:
+def for_all_properties(decorator: Callable, exclude: tuple[str, ...] = ()) -> Callable:
     """Class decorator to decorate all the properties of the decorated class.
 
     Decorates with a decorator passed as argument.

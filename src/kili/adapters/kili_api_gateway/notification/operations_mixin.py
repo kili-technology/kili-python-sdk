@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with notification-related operations."""
 
-from typing import Dict, Generator
+from collections.abc import Generator
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -20,7 +20,7 @@ class NotificationOperationMixin(BaseOperationMixin):
 
     def list_notifications(
         self, filters: NotificationFilter, fields: ListOrTuple[str], options: QueryOptions
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List notifications."""
         fragment = fragment_builder(fields)
         query = get_notifications_query(fragment)

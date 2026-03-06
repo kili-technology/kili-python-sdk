@@ -1,6 +1,5 @@
 """GraphQL payload data mappers for cloud storage operations."""
 
-from typing import Dict
 
 from kili.adapters.kili_api_gateway.cloud_storage.types import DataIntegrationData
 from kili.domain.cloud_storage import DataConnectionFilters, DataIntegrationFilters
@@ -11,7 +10,7 @@ from .types import (
 )
 
 
-def data_integration_where_mapper(filters: DataIntegrationFilters) -> Dict:
+def data_integration_where_mapper(filters: DataIntegrationFilters) -> dict:
     """Build the GraphQL DataIntegrationWhere variable to be sent in an operation."""
     return {
         "status": filters.status,
@@ -22,7 +21,7 @@ def data_integration_where_mapper(filters: DataIntegrationFilters) -> Dict:
     }
 
 
-def data_connection_where_mapper(filters: DataConnectionFilters) -> Dict:
+def data_connection_where_mapper(filters: DataConnectionFilters) -> dict:
     """Build the GraphQL DataConnectionsWhere variable to be sent in an operation."""
     return {
         "projectId": filters.project_id,
@@ -30,7 +29,7 @@ def data_connection_where_mapper(filters: DataConnectionFilters) -> Dict:
     }
 
 
-def add_data_connection_data_mapper(data: AddDataConnectionKiliAPIGatewayInput) -> Dict:
+def add_data_connection_data_mapper(data: AddDataConnectionKiliAPIGatewayInput) -> dict:
     """Build the GraphQL DataConnectionInput variable to be sent in an operation."""
     return {
         "exclude": data.exclude,
@@ -44,7 +43,7 @@ def add_data_connection_data_mapper(data: AddDataConnectionKiliAPIGatewayInput) 
 
 def compute_data_connection_difference_data_mapper(
     data: DataConnectionComputeDifferencesKiliAPIGatewayInput,
-) -> Dict:
+) -> dict:
     """Build the GraphQL DataConnectionComputeDifferencesPayload variable."""
     return {
         "blobPaths": data.blob_paths,
@@ -53,7 +52,7 @@ def compute_data_connection_difference_data_mapper(
     }
 
 
-def integration_data_mapper(data: DataIntegrationData) -> Dict:
+def integration_data_mapper(data: DataIntegrationData) -> dict:
     """."""
     return {
         "allowedPaths": data.allowed_paths,

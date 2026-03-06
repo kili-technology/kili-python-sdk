@@ -1,7 +1,8 @@
 """Asset use cases."""
 
 import itertools
-from typing import Generator, Literal, Optional
+from collections.abc import Generator
+from typing import Literal, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.constants import QUERY_BATCH_SIZE

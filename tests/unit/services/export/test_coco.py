@@ -10,6 +10,7 @@ from PIL import Image
 
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.coco import CocoExporter
 from kili.services.export.format.coco.types import CocoFormat
 from kili.utils.tempfile import TemporaryDirectory
 
@@ -192,3 +193,56 @@ def test__export_in_coco_format(mocker: pytest_mock.MockerFixture):
     assert "Image project" in output2["info"]["description"]
     assert len(output2["annotations"]) == 5
     assert len(output2["images"]) == 3
+
+
+def test_expand_assets_with_multiple_labels():
+    """Test that assets with latestLabels are expanded into multiple asset entries."""
+    # Test with assets containing latestLabels
+    assets = [
+        {
+            "externalId": "asset1",
+            "latestLabels": [
+                {"jsonResponse": {"JOB": {"annotations": [{"categories": [{"name": "A"}]}]}}},
+                {"jsonResponse": {"JOB": {"annotations": [{"categories": [{"name": "B"}]}]}}},
+            ],
+        },
+        {
+            "externalId": "asset2",
+            "latestLabel": {
+                "jsonResponse": {"JOB": {"annotations": [{"categories": [{"name": "C"}]}]}}
+            },
+        },
+    ]
+
+    # Call the method directly - create a simple instance just for this method
+    exporter = CocoExporter.__new__(CocoExporter)
+    expanded = exporter._expand_assets_with_multiple_labels(assets)
+
+    # Should have 3 assets total: 2 from asset1 (with latestLabels), 1 from asset2 (with latestLabel)
+    assert len(expanded) == 3
+
+    # Check first asset was expanded with suffixes
+    assert expanded[0]["externalId"] == "asset1_label1"
+    assert "latestLabel" in expanded[0]
+    assert "latestLabels" not in expanded[0]
+    assert (
+        expanded[0]["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]["categories"][0]["name"]
+        == "A"
+    )
+
+    assert expanded[1]["externalId"] == "asset1_label2"
+    assert "latestLabel" in expanded[1]
+    assert "latestLabels" not in expanded[1]
+    assert (
+        expanded[1]["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]["categories"][0]["name"]
+        == "B"
+    )
+
+    # Check second asset kept original externalId (only one label)
+    assert expanded[2]["externalId"] == "asset2"
+    assert "latestLabel" in expanded[2]
+    assert "latestLabels" not in expanded[2]
+    assert (
+        expanded[2]["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]["categories"][0]["name"]
+        == "C"
+    )

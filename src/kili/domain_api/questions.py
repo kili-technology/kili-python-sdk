@@ -3,9 +3,11 @@
 This module provides a comprehensive interface for question-related operations
 including creation, querying, status management, and lifecycle operations.
 """
+# pylint: disable=too-many-public-methods
 
+from collections.abc import Generator
 from itertools import repeat
-from typing import Any, Dict, Generator, List, Literal, Optional, TypedDict, overload
+from typing import Any, List, Literal, Optional, TypedDict, overload
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -33,7 +35,7 @@ class QuestionFilter(TypedDict, total=False):
     """
 
     asset_id: Optional[str]
-    asset_id_in: Optional[List[str]]
+    asset_id_in: Optional[list[str]]
     status: Optional[IssueStatus]
 
 
@@ -121,7 +123,7 @@ class QuestionsNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[QuestionFilter] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get a list of questions that match a set of criteria.
 
         Args:
@@ -154,7 +156,7 @@ class QuestionsNamespace(DomainNamespace):
             ...     filter={"status": "OPEN"}
             ... )
         """
-        filter_kwargs: Dict[str, Any] = dict(filter or {})
+        filter_kwargs: dict[str, Any] = dict(filter or {})
         # Force issue_type to QUESTION
         filter_kwargs["issue_type"] = "QUESTION"
         return self._client.issues(
@@ -182,7 +184,7 @@ class QuestionsNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[QuestionFilter] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Get a generator of questions that match a set of criteria.
 
         Args:
@@ -210,7 +212,7 @@ class QuestionsNamespace(DomainNamespace):
             ... ):
             ...     print(question["id"])
         """
-        filter_kwargs: Dict[str, Any] = dict(filter or {})
+        filter_kwargs: dict[str, Any] = dict(filter or {})
         # Force issue_type to QUESTION
         filter_kwargs["issue_type"] = "QUESTION"
         return self._client.issues(
@@ -244,7 +246,7 @@ class QuestionsNamespace(DomainNamespace):
             ...     filter={"asset_id_in": ["asset_1", "asset_2"], "status": "OPEN"}
             ... )
         """
-        filter_kwargs: Dict[str, Any] = dict(filter or {})
+        filter_kwargs: dict[str, Any] = dict(filter or {})
         # Force issue_type to QUESTION
         filter_kwargs["issue_type"] = "QUESTION"
         return self._client.count_issues(
@@ -259,7 +261,7 @@ class QuestionsNamespace(DomainNamespace):
         project_id: str,
         asset_id: str,
         text: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -269,7 +271,7 @@ class QuestionsNamespace(DomainNamespace):
         project_id: str,
         asset_external_id: str,
         text: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -279,7 +281,7 @@ class QuestionsNamespace(DomainNamespace):
         project_id: str,
         asset_id_array: List[str],
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -289,7 +291,7 @@ class QuestionsNamespace(DomainNamespace):
         project_id: str,
         asset_external_id_array: List[str],
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -303,7 +305,7 @@ class QuestionsNamespace(DomainNamespace):
         asset_external_id_array: Optional[List[str]] = None,
         text: Optional[str] = None,
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Create questions for the specified assets.
 
         Args:
@@ -368,6 +370,7 @@ class QuestionsNamespace(DomainNamespace):
                 text_array or repeat(None),
                 asset_id_array or repeat(None),
                 asset_external_id_array or repeat(None),
+                strict=False,
             )
         ]
 
@@ -378,11 +381,11 @@ class QuestionsNamespace(DomainNamespace):
         return [{"id": question_id} for question_id in question_ids]
 
     @overload
-    def cancel(self, *, question_id: str) -> List[Dict[str, Any]]:
+    def cancel(self, *, question_id: str) -> List[dict[str, Any]]:
         ...
 
     @overload
-    def cancel(self, *, question_ids: List[str]) -> List[Dict[str, Any]]:
+    def cancel(self, *, question_ids: List[str]) -> List[dict[str, Any]]:
         ...
 
     @typechecked
@@ -391,7 +394,7 @@ class QuestionsNamespace(DomainNamespace):
         *,
         question_id: Optional[str] = None,
         question_ids: Optional[List[str]] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> List[dict[str, Any]]:
         """Cancel questions by setting their status to CANCELLED.
 
         This method provides a more intuitive interface than the generic `update_issue_status`
@@ -447,11 +450,11 @@ class QuestionsNamespace(DomainNamespace):
         return results
 
     @overload
-    def open(self, *, question_id: str) -> List[Dict[str, Any]]:
+    def open(self, *, question_id: str) -> List[dict[str, Any]]:
         ...
 
     @overload
-    def open(self, *, question_ids: List[str]) -> List[Dict[str, Any]]:
+    def open(self, *, question_ids: List[str]) -> List[dict[str, Any]]:
         ...
 
     @typechecked
@@ -460,7 +463,7 @@ class QuestionsNamespace(DomainNamespace):
         *,
         question_id: Optional[str] = None,
         question_ids: Optional[List[str]] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> List[dict[str, Any]]:
         """Open questions by setting their status to OPEN.
 
         This method provides a more intuitive interface than the generic `update_issue_status`
@@ -511,11 +514,11 @@ class QuestionsNamespace(DomainNamespace):
         return results
 
     @overload
-    def solve(self, *, question_id: str) -> List[Dict[str, Any]]:
+    def solve(self, *, question_id: str) -> List[dict[str, Any]]:
         ...
 
     @overload
-    def solve(self, *, question_ids: List[str]) -> List[Dict[str, Any]]:
+    def solve(self, *, question_ids: List[str]) -> List[dict[str, Any]]:
         ...
 
     @typechecked
@@ -524,7 +527,7 @@ class QuestionsNamespace(DomainNamespace):
         *,
         question_id: Optional[str] = None,
         question_ids: Optional[List[str]] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> List[dict[str, Any]]:
         """Solve questions by setting their status to SOLVED.
 
         This method provides a more intuitive interface than the generic `update_issue_status`

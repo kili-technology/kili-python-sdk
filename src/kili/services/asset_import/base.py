@@ -5,6 +5,7 @@ import logging
 import mimetypes
 import os
 import warnings
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from json import dumps, loads
@@ -12,12 +13,8 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Dict,
-    List,
     NamedTuple,
     Optional,
-    Tuple,
     Union,
 )
 from uuid import uuid4
@@ -106,7 +103,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
 
     def import_batch(  # pylint: disable=unused-argument
         self, assets: ListOrTuple[AssetLike], verify: bool, input_type: Optional[InputType] = None
-    ) -> List[str]:
+    ) -> list[str]:
         """Base actions to import a batch of asset.
 
         Returns:
@@ -152,7 +149,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
                     return
                 raise BatchImportPendingNotificationError
 
-    def add_ids(self, assets: List[AssetLike]):
+    def add_ids(self, assets: list[AssetLike]):
         """Adds ids to all assets."""
         return self.loop_on_batch(self.add_id_to_asset)(assets)
 
@@ -206,7 +203,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def loop_on_batch(
         func: Callable[[AssetLike], T],
-    ) -> Callable[[ListOrTuple[AssetLike]], List[T]]:
+    ) -> Callable[[ListOrTuple[AssetLike]], list[T]]:
         """Apply a function, that takes a single asset as input, on the whole batch."""
 
         def loop_func(assets: ListOrTuple[AssetLike]):
@@ -242,7 +239,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             """
         )
 
-    def _async_import_to_kili(self, assets: List[KiliResolverAsset]):
+    def _async_import_to_kili(self, assets: list[KiliResolverAsset]):
         """Import assets with asynchronous resolver."""
         if self.input_type in ["IMAGE", "GEOSPATIAL"]:
             upload_type = "GEO_SATELLITE"
@@ -274,7 +271,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         result = self.kili.graphql_client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
         return format_result("data", result, None, self.kili.http_client)
 
-    def _sync_import_to_kili(self, assets: List[KiliResolverAsset]):
+    def _sync_import_to_kili(self, assets: list[KiliResolverAsset]):
         """Import assets with synchronous resolver."""
         payload = {
             "data": {
@@ -291,7 +288,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         created_assets = format_result("data", result, None, self.kili.http_client)
         return [asset["id"] for asset in created_assets]
 
-    def import_to_kili(self, assets: List[KiliResolverAsset]):
+    def import_to_kili(self, assets: list[KiliResolverAsset]):
         """Import assets to Kili with the right resolver.
 
         Returns:
@@ -306,7 +303,7 @@ class ContentBatchImporter(BaseBatchImporter):
     """Class defining the methods to import a batch of assets with content."""
 
     def import_batch(
-        self, assets: List[AssetLike], verify: bool, input_type: Optional[InputType] = None
+        self, assets: list[AssetLike], verify: bool, input_type: Optional[InputType] = None
     ):
         """Method to import a batch of asset with content."""
         assets = self.add_ids(assets)
@@ -327,7 +324,7 @@ class ContentBatchImporter(BaseBatchImporter):
 
     def get_content_type_and_data_from_content(
         self, content: Optional[Union[str, bytes]]
-    ) -> Tuple[bytes, Optional[str]]:
+    ) -> tuple[bytes, Optional[str]]:
         """Returns the data of the content (path) and its content type."""
         assert content
         assert isinstance(content, str)
@@ -337,18 +334,18 @@ class ContentBatchImporter(BaseBatchImporter):
             return data, content_type
 
     def get_type_and_data_from_content_array(
-        self, content_array: List[Optional[Union[str, bytes]]]
-    ) -> List[Tuple[Union[bytes, str], Optional[str]]]:
+        self, content_array: list[Optional[Union[str, bytes]]]
+    ) -> list[tuple[Union[bytes, str], Optional[str]]]:
         """Returns the data of the content (path) and its content type for each element in the array."""
         return list(map(self.get_content_type_and_data_from_content, content_array))
 
     def upload_local_content_to_bucket(
-        self, assets: List[AssetLike], input_type: Optional[InputType] = None
+        self, assets: list[AssetLike], input_type: Optional[InputType] = None
     ):
         """Upload local content to a bucket."""
         project_bucket_path = self.generate_project_bucket_path()
         # tuple containing (bucket_path, file_path, asset_index, content_index)
-        to_upload: List[Tuple[str, Any, int, Union[int, None]]] = []
+        to_upload: list[tuple[str, Any, int, Union[int, None]]] = []
         for i, asset in enumerate(assets):
             asset_id = asset.get("id", bucket.generate_unique_id())
             multi_layer_content = asset.get("multi_layer_content")
@@ -374,7 +371,7 @@ class ContentBatchImporter(BaseBatchImporter):
         data_and_content_type_array = self.get_type_and_data_from_content_array(
             [file_path for _, file_path, *_ in to_upload]
         )
-        data_array, content_type_array = zip(*data_and_content_type_array)
+        data_array, content_type_array = zip(*data_and_content_type_array, strict=False)
         with ThreadPoolExecutor() as threads:
             url_gen = threads.map(
                 bucket.upload_data_via_rest,
@@ -393,7 +390,7 @@ class ContentBatchImporter(BaseBatchImporter):
                     for content in multi_layer_content
                 ]
             assets_with_content.append(asset_copy)
-        for (_, _, asset_index, content_index), url in zip(to_upload, url_gen):
+        for (_, _, asset_index, content_index), url in zip(to_upload, url_gen, strict=False):
             if content_index is not None:
                 assets_with_content[asset_index]["multi_layer_content"][content_index]["url"] = url
             else:
@@ -410,9 +407,11 @@ class JsonContentBatchImporter(BaseBatchImporter):
         json_content = asset.get("json_content", {})
         if not isinstance(json_content, str):
             json_content = dumps(json_content)
-        return AssetLike(**{**asset, "json_content": json_content})  # type: ignore
+        updated_asset = asset.copy()
+        updated_asset["json_content"] = json_content
+        return updated_asset
 
-    def upload_json_content_to_bucket(self, assets: List[AssetLike]):
+    def upload_json_content_to_bucket(self, assets: list[AssetLike]):
         """Upload the json_contents to a bucket with signed urls."""
         project_bucket_path = self.generate_project_bucket_path()
         asset_json_content_paths = [
@@ -433,10 +432,15 @@ class JsonContentBatchImporter(BaseBatchImporter):
                 ["text/plain"] * len(assets),
                 repeat(self.http_client),
             )
-        return [AssetLike(**{**asset, "json_content": url}) for asset, url in zip(assets, url_gen)]  # type: ignore
+        result = []
+        for asset, url in zip(assets, url_gen, strict=False):
+            updated_asset = asset.copy()
+            updated_asset["json_content"] = url
+            result.append(updated_asset)
+        return result
 
     def import_batch(
-        self, assets: List[AssetLike], verify: bool, input_type: Optional[InputType] = None
+        self, assets: list[AssetLike], verify: bool, input_type: Optional[InputType] = None
     ):
         """Method to import a batch of asset with json content."""
         assets = self.add_ids(assets)
@@ -462,7 +466,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         self.pbar = tqdm(disable=logger_params.disable_tqdm)
 
     @abc.abstractmethod
-    def import_assets(self, assets: List[AssetLike], input_type: InputType) -> List[str]:
+    def import_assets(self, assets: list[AssetLike], input_type: InputType) -> list[str]:
         """Import assets into Kili.
 
         Returns:
@@ -471,7 +475,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         raise NotImplementedError
 
     @staticmethod
-    def is_hosted_content(assets: List[AssetLike]) -> bool:
+    def is_hosted_content(assets: list[AssetLike]) -> bool:
         """Determine if the assets to upload are from local files or hosted data.
 
         Raise an error if a mix of both.
@@ -502,7 +506,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         return False
 
     @staticmethod
-    def check_asset_contents(assets: List[AssetLike]) -> None:
+    def check_asset_contents(assets: list[AssetLike]) -> None:
         """Determine if the assets have at least one content or json_content.
 
         Raise an error if not
@@ -526,7 +530,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         organization = self._get_organization(user_me["email"], options)
         return organization["license"]["uploadLocalData"]
 
-    def _get_organization(self, email: str, options: QueryOptions) -> Dict:
+    def _get_organization(self, email: str, options: QueryOptions) -> dict:
         return next(
             self.kili.kili_api_gateway.list_organizations(
                 filters=OrganizationFilters(email=email),
@@ -536,12 +540,12 @@ class BaseAbstractAssetImporter(abc.ABC):
             )
         )
 
-    def _check_upload_is_allowed(self, assets: List[AssetLike]) -> None:
+    def _check_upload_is_allowed(self, assets: list[AssetLike]) -> None:
         # TODO: avoid querying API for each asset to upload when doing this check
         if not self.is_hosted_content(assets) and not self._can_upload_from_local_data():
             raise UploadFromLocalDataForbiddenError("Cannot upload content from local data")
 
-    def filter_local_assets(self, assets: List[AssetLike], raise_error: bool):
+    def filter_local_assets(self, assets: list[AssetLike], raise_error: bool):
         """Filter out local files that cannot be imported.
 
         Return an error at the first file that cannot be imported if raise_error is True
@@ -661,7 +665,7 @@ class BaseAbstractAssetImporter(abc.ABC):
 
     def import_assets_by_batch(
         self,
-        assets: List[AssetLike],
+        assets: list[AssetLike],
         batch_importer: BaseBatchImporter,
         batch_size=IMPORT_BATCH_SIZE,
         input_type: Optional[InputType] = None,
@@ -672,7 +676,7 @@ class BaseAbstractAssetImporter(abc.ABC):
         self.pbar.total = len(assets)
         self.pbar.refresh()
 
-        created_asset_ids: List[str] = []
+        created_asset_ids: list[str] = []
         for i, batch_assets in enumerate(batch_generator):
             # check last batch only
             verify = i == (nb_batch - 1) and self.verify

@@ -3,9 +3,11 @@
 This module provides a comprehensive interface for issue-related operations
 including creation, querying, status management, and lifecycle operations.
 """
+# pylint: disable=too-many-public-methods
 
+from collections.abc import Generator
 from itertools import repeat
-from typing import Any, Dict, Generator, List, Literal, Optional, TypedDict, overload
+from typing import Any, List, Literal, Optional, TypedDict, overload
 
 from typeguard import typechecked
 from typing_extensions import deprecated
@@ -18,9 +20,11 @@ from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
+    resolve_disable_tqdm,
 )
 from kili.use_cases.issue import IssueUseCases
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
+from kili.utils import tqdm
 
 
 class IssueFilter(TypedDict, total=False):
@@ -33,7 +37,7 @@ class IssueFilter(TypedDict, total=False):
     """
 
     asset_id: Optional[str]
-    asset_id_in: Optional[List[str]]
+    asset_id_in: Optional[list[str]]
     status: Optional[IssueStatus]
 
 
@@ -120,7 +124,7 @@ class IssuesNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[IssueFilter] = None,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """Get a list of issues that match a set of criteria.
 
         !!! Info "Issues vs Questions"
@@ -156,7 +160,7 @@ class IssuesNamespace(DomainNamespace):
             ...     filter={"status": "OPEN"}
             ... )
         """
-        filter_kwargs: Dict[str, Any] = dict(filter or {})
+        filter_kwargs: dict[str, Any] = dict(filter or {})
         # Force issue_type to ISSUE
         filter_kwargs["issue_type"] = "ISSUE"
         return self._client.issues(
@@ -184,7 +188,7 @@ class IssuesNamespace(DomainNamespace):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         filter: Optional[IssueFilter] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Get a generator of issues that match a set of criteria.
 
         !!! Info "Issues vs Questions"
@@ -216,7 +220,7 @@ class IssuesNamespace(DomainNamespace):
             ... ):
             ...     print(issue["id"])
         """
-        filter_kwargs: Dict[str, Any] = dict(filter or {})
+        filter_kwargs: dict[str, Any] = dict(filter or {})
         # Force issue_type to ISSUE
         filter_kwargs["issue_type"] = "ISSUE"
         return self._client.issues(
@@ -250,7 +254,7 @@ class IssuesNamespace(DomainNamespace):
             ...     filter={"asset_id_in": ["asset_1", "asset_2"], "status": "OPEN"}
             ... )
         """
-        filter_kwargs: Dict[str, Any] = dict(filter or {})
+        filter_kwargs: dict[str, Any] = dict(filter or {})
         # Force issue_type to ISSUE
         filter_kwargs["issue_type"] = "ISSUE"
         return self._client.count_issues(
@@ -266,7 +270,7 @@ class IssuesNamespace(DomainNamespace):
         label_id: str,
         object_mid: Optional[str] = None,
         text: Optional[str] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @overload
@@ -277,7 +281,7 @@ class IssuesNamespace(DomainNamespace):
         label_id_array: List[str],
         object_mid_array: Optional[List[Optional[str]]] = None,
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         ...
 
     @typechecked
@@ -291,7 +295,7 @@ class IssuesNamespace(DomainNamespace):
         object_mid_array: Optional[List[Optional[str]]] = None,
         text: Optional[str] = None,
         text_array: Optional[List[Optional[str]]] = None,
-    ) -> List[Dict[Literal["id"], str]]:
+    ) -> List[dict[Literal["id"], str]]:
         """Create issues for the specified labels.
 
         Args:
@@ -343,6 +347,7 @@ class IssuesNamespace(DomainNamespace):
                 label_id_array,
                 object_mid_array or repeat(None),
                 text_array or repeat(None),
+                strict=False,
             )
         ]
 
@@ -351,11 +356,11 @@ class IssuesNamespace(DomainNamespace):
         return [{"id": issue_id} for issue_id in issue_ids]
 
     @overload
-    def cancel(self, *, issue_id: str) -> List[Dict[str, Any]]:
+    def cancel(self, *, issue_id: str) -> List[dict[str, Any]]:
         ...
 
     @overload
-    def cancel(self, *, issue_ids: List[str]) -> List[Dict[str, Any]]:
+    def cancel(self, *, issue_ids: List[str]) -> List[dict[str, Any]]:
         ...
 
     @typechecked
@@ -364,7 +369,8 @@ class IssuesNamespace(DomainNamespace):
         *,
         issue_id: Optional[str] = None,
         issue_ids: Optional[List[str]] = None,
-    ) -> List[Dict[str, Any]]:
+        disable_tqdm: Optional[bool] = None,
+    ) -> List[dict[str, Any]]:
         """Cancel issues by setting their status to CANCELLED.
 
         This method provides a more intuitive interface than the generic `update_issue_status`
@@ -374,6 +380,7 @@ class IssuesNamespace(DomainNamespace):
         Args:
             issue_id: Issue ID to cancel.
             issue_ids: List of issue IDs to cancel.
+            disable_tqdm: If `True`, the progress bar will be disabled.
 
         Returns:
             List of dictionaries with the results of the status updates.
@@ -396,30 +403,41 @@ class IssuesNamespace(DomainNamespace):
 
         assert issue_ids is not None, "issue_ids must be provided"
 
+        resolved_disable_tqdm = resolve_disable_tqdm(disable_tqdm, self._client.disable_tqdm)
+
         issue_use_cases = IssueUseCases(self._gateway)
         results = []
 
-        for issue_id_item in issue_ids:
-            try:
-                result = issue_use_cases.update_issue_status(
-                    issue_id=IssueId(issue_id_item), status="CANCELLED"
-                )
-                results.append(
-                    {"id": issue_id_item, "status": "CANCELLED", "success": True, **result}
-                )
-            except (ValueError, TypeError, RuntimeError) as e:
-                results.append(
-                    {"id": issue_id_item, "status": "CANCELLED", "success": False, "error": str(e)}
-                )
+        with tqdm.tqdm(
+            total=len(issue_ids), disable=resolved_disable_tqdm, desc="Cancelling issues"
+        ) as pbar:
+            for issue_id_item in issue_ids:
+                try:
+                    result = issue_use_cases.update_issue_status(
+                        issue_id=IssueId(issue_id_item), status="CANCELLED"
+                    )
+                    results.append(
+                        {"id": issue_id_item, "status": "CANCELLED", "success": True, **result}
+                    )
+                except (ValueError, TypeError, RuntimeError) as e:
+                    results.append(
+                        {
+                            "id": issue_id_item,
+                            "status": "CANCELLED",
+                            "success": False,
+                            "error": str(e),
+                        }
+                    )
+                pbar.update(1)
 
         return results
 
     @overload
-    def open(self, *, issue_id: str) -> List[Dict[str, Any]]:
+    def open(self, *, issue_id: str) -> List[dict[str, Any]]:
         ...
 
     @overload
-    def open(self, *, issue_ids: List[str]) -> List[Dict[str, Any]]:
+    def open(self, *, issue_ids: List[str]) -> List[dict[str, Any]]:
         ...
 
     @typechecked
@@ -428,7 +446,8 @@ class IssuesNamespace(DomainNamespace):
         *,
         issue_id: Optional[str] = None,
         issue_ids: Optional[List[str]] = None,
-    ) -> List[Dict[str, Any]]:
+        disable_tqdm: Optional[bool] = None,
+    ) -> List[dict[str, Any]]:
         """Open issues by setting their status to OPEN.
 
         This method provides a more intuitive interface than the generic `update_issue_status`
@@ -438,6 +457,7 @@ class IssuesNamespace(DomainNamespace):
         Args:
             issue_id: Issue ID to open.
             issue_ids: List of issue IDs to open.
+            disable_tqdm: If `True`, the progress bar will be disabled.
 
         Returns:
             List of dictionaries with the results of the status updates.
@@ -460,28 +480,36 @@ class IssuesNamespace(DomainNamespace):
 
         assert issue_ids is not None, "issue_ids must be provided"
 
+        resolved_disable_tqdm = resolve_disable_tqdm(disable_tqdm, self._client.disable_tqdm)
+
         issue_use_cases = IssueUseCases(self._gateway)
         results = []
 
-        for issue_id_item in issue_ids:
-            try:
-                result = issue_use_cases.update_issue_status(
-                    issue_id=IssueId(issue_id_item), status="OPEN"
-                )
-                results.append({"id": issue_id_item, "status": "OPEN", "success": True, **result})
-            except (ValueError, TypeError, RuntimeError) as e:
-                results.append(
-                    {"id": issue_id_item, "status": "OPEN", "success": False, "error": str(e)}
-                )
+        with tqdm.tqdm(
+            total=len(issue_ids), disable=resolved_disable_tqdm, desc="Opening issues"
+        ) as pbar:
+            for issue_id_item in issue_ids:
+                try:
+                    result = issue_use_cases.update_issue_status(
+                        issue_id=IssueId(issue_id_item), status="OPEN"
+                    )
+                    results.append(
+                        {"id": issue_id_item, "status": "OPEN", "success": True, **result}
+                    )
+                except (ValueError, TypeError, RuntimeError) as e:
+                    results.append(
+                        {"id": issue_id_item, "status": "OPEN", "success": False, "error": str(e)}
+                    )
+                pbar.update(1)
 
         return results
 
     @overload
-    def solve(self, *, issue_id: str) -> List[Dict[str, Any]]:
+    def solve(self, *, issue_id: str) -> List[dict[str, Any]]:
         ...
 
     @overload
-    def solve(self, *, issue_ids: List[str]) -> List[Dict[str, Any]]:
+    def solve(self, *, issue_ids: List[str]) -> List[dict[str, Any]]:
         ...
 
     @typechecked
@@ -490,7 +518,8 @@ class IssuesNamespace(DomainNamespace):
         *,
         issue_id: Optional[str] = None,
         issue_ids: Optional[List[str]] = None,
-    ) -> List[Dict[str, Any]]:
+        disable_tqdm: Optional[bool] = None,
+    ) -> List[dict[str, Any]]:
         """Solve issues by setting their status to SOLVED.
 
         This method provides a more intuitive interface than the generic `update_issue_status`
@@ -500,6 +529,7 @@ class IssuesNamespace(DomainNamespace):
         Args:
             issue_id: Issue ID to solve.
             issue_ids: List of issue IDs to solve.
+            disable_tqdm: If `True`, the progress bar will be disabled.
 
         Returns:
             List of dictionaries with the results of the status updates.
@@ -522,19 +552,27 @@ class IssuesNamespace(DomainNamespace):
 
         assert issue_ids is not None, "issue_ids must be provided"
 
+        resolved_disable_tqdm = resolve_disable_tqdm(disable_tqdm, self._client.disable_tqdm)
+
         issue_use_cases = IssueUseCases(self._gateway)
         results = []
 
-        for issue_id_item in issue_ids:
-            try:
-                result = issue_use_cases.update_issue_status(
-                    issue_id=IssueId(issue_id_item), status="SOLVED"
-                )
-                results.append({"id": issue_id_item, "status": "SOLVED", "success": True, **result})
-            except (ValueError, TypeError, RuntimeError) as e:
-                results.append(
-                    {"id": issue_id_item, "status": "SOLVED", "success": False, "error": str(e)}
-                )
+        with tqdm.tqdm(
+            total=len(issue_ids), disable=resolved_disable_tqdm, desc="Solving issues"
+        ) as pbar:
+            for issue_id_item in issue_ids:
+                try:
+                    result = issue_use_cases.update_issue_status(
+                        issue_id=IssueId(issue_id_item), status="SOLVED"
+                    )
+                    results.append(
+                        {"id": issue_id_item, "status": "SOLVED", "success": True, **result}
+                    )
+                except (ValueError, TypeError, RuntimeError) as e:
+                    results.append(
+                        {"id": issue_id_item, "status": "SOLVED", "success": False, "error": str(e)}
+                    )
+                pbar.update(1)
 
         return results
 

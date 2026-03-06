@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with User related operations."""
 
-from typing import Dict, Generator
+from collections.abc import Generator
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -28,7 +28,7 @@ class UserOperationMixin(BaseOperationMixin):
 
     def list_users(
         self, user_filters: UserFilter, fields: ListOrTuple[str], options: QueryOptions
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Return a generator of users that match the filter."""
         fragment = fragment_builder(fields)
         query = get_users_query(fragment)
@@ -43,14 +43,14 @@ class UserOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(GQL_COUNT_USERS, variables)
         return result["data"]
 
-    def get_current_user(self, fields: ListOrTuple[str]) -> Dict:
+    def get_current_user(self, fields: ListOrTuple[str]) -> dict:
         """Return the current user."""
         fragment = fragment_builder(fields)
         query = get_current_user_query(fragment=fragment)
         result = self.graphql_client.execute(query)
         return result["data"]
 
-    def create_user(self, data: CreateUserDataKiliGatewayInput, fields: ListOrTuple[str]) -> Dict:
+    def create_user(self, data: CreateUserDataKiliGatewayInput, fields: ListOrTuple[str]) -> dict:
         """Create a user."""
         fragment = fragment_builder(fields)
         query = get_create_user_mutation(fragment)
@@ -65,7 +65,7 @@ class UserOperationMixin(BaseOperationMixin):
         new_password_2: str,
         user_filter: UserFilter,
         fields: ListOrTuple[str],
-    ) -> Dict:
+    ) -> dict:
         """Update user password."""
         fragment = fragment_builder(fields)
         query = get_update_password_mutation(fragment)
@@ -82,7 +82,7 @@ class UserOperationMixin(BaseOperationMixin):
 
     def update_user(
         self, user_filter: UserFilter, data: UserDataKiliGatewayInput, fields: ListOrTuple[str]
-    ) -> Dict:
+    ) -> dict:
         """Update a user."""
         fragment = fragment_builder(fields)
         query = get_update_user_mutation(fragment)

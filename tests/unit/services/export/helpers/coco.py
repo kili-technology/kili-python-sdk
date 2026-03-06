@@ -1,15 +1,15 @@
 import math
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 from kili_formats.types import Job, JobTool
 
 
 def get_asset(
     content_path: Path,
-    with_annotation: Optional[List[Dict]],
-    negative_polygons: Union[List[List[Dict]], None] = None,
-) -> Dict:
+    with_annotation: Optional[list[dict]],
+    negative_polygons: Union[list[list[dict]], None] = None,
+) -> dict:
     # without annotation means that: there is a label for the asset
     # but there is no labeling data for the job.
     # `annotations=[]` should not exist.
@@ -46,7 +46,7 @@ def get_asset(
 
 
 def estimate_rotated_bb_from_kili_poly(
-    coco_annotation: Dict, coco_image: Dict, kili_annotation: Dict
+    coco_annotation: dict, coco_image: dict, kili_annotation: dict
 ):
     """estimate_rotated_bb_from_kili_poly.
 
@@ -55,7 +55,7 @@ def estimate_rotated_bb_from_kili_poly(
     (top_left_x, top_left_y, width, height).
     """
 
-    def _is_rectangle(vertices: List[Dict]) -> bool:
+    def _is_rectangle(vertices: list[dict]) -> bool:
         """Check that the polygon has 4 vertices and at least 3 right angles."""
         if len(vertices) != 4:
             return False
@@ -72,12 +72,12 @@ def estimate_rotated_bb_from_kili_poly(
 
         return inner_product_1 < eps and inner_product_2 < eps and inner_product_3 < eps
 
-    def distance(point1: Dict, point2: Dict) -> float:
+    def distance(point1: dict, point2: dict) -> float:
         return math.sqrt(
             math.pow(point1["x"] - point2["x"], 2) + math.pow(point1["y"] - point2["y"], 2)
         )
 
-    def angle_to_horizontal(point1: Dict, point2: Dict):
+    def angle_to_horizontal(point1: dict, point2: dict):
         return math.degrees(math.acos((point2["x"] - point1["x"]) / distance(point1, point2)))
 
     normalized_polygon = kili_annotation["boundingPoly"][0]["normalizedVertices"]

@@ -19,7 +19,7 @@ mime_extensions = {
     "LLM": "application/json",
 }
 
-mime_extensions_for_IV2 = {
+MIME_EXTENSIONS_FOR_IV2 = {
     "AUDIO": mime_extensions["Audio"],
     "IMAGE": mime_extensions["Image"],
     "GEOSPATIAL": mime_extensions["Geospatial"],

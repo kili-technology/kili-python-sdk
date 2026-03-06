@@ -548,8 +548,6 @@ Below, we import some useful functions to convert annotations to Kili label form
 
 
 ```python
-from typing import Dict, List
-
 from kili.utils.labels.bbox import bbox_points_to_normalized_vertices, point_to_normalized_point
 from kili.utils.labels.image import mask_to_normalized_vertices
 ```
@@ -557,8 +555,8 @@ from kili.utils.labels.image import mask_to_normalized_vertices
 
 ```python
 def coco_bbox_annotation_to_normalized_vertices(
-    coco_ann: Dict, *, img_width: int, img_height: int
-) -> List[Dict]:
+    coco_ann: dict, *, img_width: int, img_height: int
+) -> list[dict]:
     x, y, width, height = coco_ann["bbox"]
     ret = bbox_points_to_normalized_vertices(
         bottom_left={"x": x, "y": y + height},
@@ -575,8 +573,8 @@ def coco_bbox_annotation_to_normalized_vertices(
 
 ```python
 def coco_segm_annotation_to_normalized_vertices(
-    coco_ann: Dict, *, img_width: int, img_height: int
-) -> List[List[Dict]]:
+    coco_ann: dict, *, img_width: int, img_height: int
+) -> list[list[dict]]:
     coco_segmentations = coco_ann["segmentation"]
 
     ret = []
@@ -590,7 +588,7 @@ def coco_segm_annotation_to_normalized_vertices(
                     img_width=img_width,
                     origin_location="top_left",
                 )
-                for x, y in zip(coco_segm[::2], coco_segm[1::2])
+                for x, y in zip(coco_segm[::2], coco_segm[1::2], strict=False)
             ]
             ret.append(vertices)
 
@@ -706,6 +704,7 @@ for image_id in external_id_array:
                 keypoints[1::3],
                 keypoints[2::3],
                 person_keypoints_val2017["categories"][0]["keypoints"],
+                strict=False,
             ):
                 if x == y == visibility == 0:
                     continue

@@ -1,6 +1,6 @@
 """Project mutations."""
 
-from typing import List, Optional
+from typing import Optional
 
 from typeguard import typechecked
 from typing_extensions import LiteralString
@@ -26,7 +26,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
-        event_matcher: Optional[List[str]] = None,
+        event_matcher: Optional[list[str]] = None,
         **kwargs,  # pylint: disable=missing-param-doc
     ) -> LiteralString:
         """Uploads a plugin.
@@ -57,7 +57,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             raise TypeError('"plugin_path is nullish, please provide a value')
 
         return PluginUploader(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            self,  # pyright: ignore[reportArgumentType]
             plugin_path,
             plugin_name,
             verbose,
@@ -72,8 +72,8 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         plugin_name: str,
         header: Optional[str] = None,
         verbose: bool = True,
-        handler_types: Optional[List[str]] = None,
-        event_matcher: Optional[List[str]] = None,
+        handler_types: Optional[list[str]] = None,
+        event_matcher: Optional[list[str]] = None,
     ) -> str:
         # pylint: disable=line-too-long,too-many-arguments
         """Create a webhook linked to Kili's events.
@@ -106,7 +106,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             >>> kili.create_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
         """
         return WebhookUploader(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            self,  # pyright: ignore[reportArgumentType]
             webhook_url,
             plugin_name,
             header,
@@ -122,8 +122,8 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         plugin_name: str,
         new_header: Optional[str] = None,
         verbose: bool = True,
-        handler_types: Optional[List[str]] = None,
-        event_matcher: Optional[List[str]] = None,
+        handler_types: Optional[list[str]] = None,
+        event_matcher: Optional[list[str]] = None,
     ) -> str:
         # pylint: disable=line-too-long,too-many-arguments
         """Update a webhook linked to Kili's events.
@@ -148,7 +148,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             >>> kili.update_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')
         """
         return WebhookUploader(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            self,  # pyright: ignore[reportArgumentType]
             new_webhook_url,
             plugin_name,
             new_header,
@@ -212,7 +212,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
-        event_matcher: Optional[List[str]] = None,
+        event_matcher: Optional[list[str]] = None,
         **kwargs,  # pylint: disable=missing-param-doc
     ) -> LiteralString:
         """Update a plugin with new code.
@@ -246,7 +246,7 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             raise TypeError('"plugin_name is nullish, please provide a value')
 
         return PluginUploader(
-            self,  # pyright: ignore[reportGeneralTypeIssues]
+            self,  # pyright: ignore[reportArgumentType]
             plugin_path,
             plugin_name,
             verbose,

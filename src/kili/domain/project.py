@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, List, Literal, NewType, Optional, TypedDict
+from typing import TYPE_CHECKING, Literal, NewType, Optional, TypedDict
 
 from typing_extensions import Required
 
@@ -32,23 +32,21 @@ class WorkflowStepCreate(TypedDict, total=False):
     name: Required[str]
     consensus_coverage: Optional[int]
     number_of_expected_labels_for_consensus: Optional[int]
-    order: Required[int]
     step_coverage: Optional[int]
     type: Required[Literal["DEFAULT", "REVIEW"]]
-    assignees: Required[List[str]]
+    assignees: Required[list[str]]
 
 
 class WorkflowStepUpdate(TypedDict, total=False):
     """Project workflow step."""
 
-    id: Required[str]
+    id: Optional[str]
     name: Optional[str]
     consensus_coverage: Optional[int]
     number_of_expected_labels_for_consensus: Optional[int]
-    order: Optional[int]
     step_coverage: Optional[int]
     type: Optional[Literal["DEFAULT", "REVIEW"]]
-    assignees: Optional[List[str]]
+    assignees: Optional[list[str]]
 
 
 class InputTypeEnum(str, Enum):

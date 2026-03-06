@@ -1,7 +1,6 @@
 """Functions to import assets into an IMAGE project."""
 
 import os
-from typing import List
 
 from kili.core.constants import mime_extensions_that_need_post_processing
 from kili.core.helpers import get_mime_type
@@ -15,7 +14,7 @@ from .types import AssetLike
 class ImageDataImporter(BaseAbstractAssetImporter):
     """Class for importing assets into an IMAGE or GEOSPATIAL project."""
 
-    def import_assets(self, assets: List[AssetLike], input_type: InputType):
+    def import_assets(self, assets: list[AssetLike], input_type: InputType):
         """Import IMAGE assets into Kili."""
         self._check_upload_is_allowed(assets)
         is_hosted = self.is_hosted_content(assets)
@@ -23,7 +22,7 @@ class ImageDataImporter(BaseAbstractAssetImporter):
             assets = self.filter_local_assets(assets, self.raise_error)
         assets = self.filter_duplicate_external_ids(assets)
         sync_assets, async_assets = self.split_asset_by_upload_type(assets, is_hosted)
-        created_asset_ids: List[str] = []
+        created_asset_ids: list[str] = []
         if len(sync_assets) > 0:
             sync_batch_params = BatchParams(
                 is_hosted=is_hosted, is_asynchronous=False, input_type=input_type
@@ -64,7 +63,7 @@ class ImageDataImporter(BaseAbstractAssetImporter):
         return width >= MAX_WIDTH_OR_HEIGHT_NON_TILED or height >= MAX_WIDTH_OR_HEIGHT_NON_TILED
 
     @staticmethod
-    def split_asset_by_upload_type(assets: List[AssetLike], is_hosted: bool):
+    def split_asset_by_upload_type(assets: list[AssetLike], is_hosted: bool):
         """Split assets into two groups, assets to to imported synchronously or asynchronously."""
         try:
             from PIL import UnidentifiedImageError  # pylint: disable=import-outside-toplevel

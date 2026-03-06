@@ -244,7 +244,7 @@ colors = [
 ]
 CLASS_TO_COLOR = {}
 for class_name, color in zip(
-    json_interface["jobs"]["JOB_0"]["content"]["categories"].keys(), colors
+    json_interface["jobs"]["JOB_0"]["content"]["categories"].keys(), colors, strict=False
 ):
     CLASS_TO_COLOR[class_name] = color
 print(CLASS_TO_COLOR)

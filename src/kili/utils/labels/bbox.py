@@ -1,20 +1,20 @@
 """Helpers to create boundingPoly rectangle annotations."""
 
-from typing import Dict, List, Literal, Optional, Union
+from typing import Literal, Optional, Union
 
 from .point import normalized_point_to_point, point_to_normalized_point
 
 
 def bbox_points_to_normalized_vertices(
     *,
-    bottom_left: Dict[str, Union[int, float]],
-    bottom_right: Dict[str, Union[int, float]],
-    top_right: Dict[str, Union[int, float]],
-    top_left: Dict[str, Union[int, float]],
+    bottom_left: dict[str, Union[int, float]],
+    bottom_right: dict[str, Union[int, float]],
+    top_right: dict[str, Union[int, float]],
+    top_left: dict[str, Union[int, float]],
     img_width: Optional[Union[int, float]] = None,
     img_height: Optional[Union[int, float]] = None,
     origin_location: Literal["top_left", "bottom_left"] = "bottom_left",
-) -> List[Dict[Literal["x", "y"], float]]:
+) -> list[dict[Literal["x", "y"], float]]:
     # pylint: disable=line-too-long
     """Converts a bounding box defined by its 4 points to normalized vertices.
 
@@ -96,12 +96,12 @@ def bbox_points_to_normalized_vertices(
 
 
 def normalized_vertices_to_bbox_points(
-    normalized_vertices: List[Dict[str, float]],
+    normalized_vertices: list[dict[str, float]],
     img_width: Optional[Union[int, float]] = None,
     img_height: Optional[Union[int, float]] = None,
     origin_location: Literal["top_left", "bottom_left"] = "bottom_left",
-) -> Dict[
-    Literal["top_left", "bottom_left", "bottom_right", "top_right"], Dict[Literal["x", "y"], float]
+) -> dict[
+    Literal["top_left", "bottom_left", "bottom_right", "top_right"], dict[Literal["x", "y"], float]
 ]:
     # pylint: disable=line-too-long
     """Converts a rectangle normalizedVertices annotation to a bounding box defined by 4 points.
@@ -160,7 +160,7 @@ def normalized_vertices_to_bbox_points(
     ret = {}
 
     for vertex, point_name in zip(
-        normalized_vertices, ("bottom_left", "top_left", "top_right", "bottom_right")
+        normalized_vertices, ("bottom_left", "top_left", "top_right", "bottom_right"), strict=False
     ):
         ret[point_name] = normalized_point_to_point(
             vertex, img_width=img_width, img_height=img_height, origin_location=origin_location

@@ -1,7 +1,8 @@
 """Helpers for the services."""
 
+from collections.abc import Iterable
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterable, Optional, TypeVar
+from typing import TYPE_CHECKING, Optional, TypeVar
 
 from kili.domain.project import ProjectId
 from kili.services.exceptions import (

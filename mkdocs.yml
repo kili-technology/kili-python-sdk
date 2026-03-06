@@ -12,6 +12,7 @@ edit_uri: "" #disables edit button
 nav:
   - Python SDK:
       - Getting Started: index.md
+      - Configuration: configuration.md
       - Tutorials: tutorials.md
       - Reference:
           - Asset: sdk/asset.md
@@ -55,7 +56,6 @@ nav:
           - Import labels from GeoJSON (GIS): sdk/tutorials/import_labels_from_geojson.md
       - Converting Labels:
           - DICOM: sdk/tutorials/medical_imaging.md
-          - Tagtog: sdk/tutorials/tagtog_to_kili.md
           - COCO: sdk/tutorials/importing_coco.md
           - PascalVOC: sdk/tutorials/importing_pascalvoc.md
       - Managing Workflows: sdk/tutorials/set_up_workflows.md

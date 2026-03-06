@@ -1,7 +1,8 @@
 """Plugins domain namespace for the Kili Python SDK."""
+# pylint: disable=too-many-public-methods
 
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from typeguard import typechecked
 from typing_extensions import LiteralString, deprecated
@@ -52,9 +53,9 @@ class WebhooksNamespace:
         header: Optional[str] = None,
         verbose: bool = True,
         handler_type: Optional[str] = None,
-        handler_types: Optional[List[str]] = None,
+        handler_types: Optional[list[str]] = None,
         event_pattern: Optional[str] = None,
-        event_matcher: Optional[List[str]] = None,
+        event_matcher: Optional[list[str]] = None,
     ) -> str:
         """Create a webhook linked to Kili's events.
 
@@ -126,9 +127,9 @@ class WebhooksNamespace:
         new_header: Optional[str] = None,
         verbose: bool = True,
         handler_type: Optional[str] = None,
-        handler_types: Optional[List[str]] = None,
+        handler_types: Optional[list[str]] = None,
         event_pattern: Optional[str] = None,
-        event_matcher: Optional[List[str]] = None,
+        event_matcher: Optional[list[str]] = None,
     ) -> str:
         """Update a webhook linked to Kili's events.
 
@@ -282,7 +283,7 @@ class PluginsNamespace(DomainNamespace):
     def list(
         self,
         fields: ListOrTuple[str] = ("name", "projectIds", "id", "createdAt", "updatedAt"),
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """List all plugins from your organization.
 
         Args:

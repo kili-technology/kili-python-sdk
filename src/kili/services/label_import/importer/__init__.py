@@ -4,7 +4,7 @@ import csv
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, NamedTuple, Optional, Type
+from typing import TYPE_CHECKING, NamedTuple, Optional
 
 from kili.core.helpers import get_file_paths_to_upload
 from kili.domain.label import LabelType
@@ -52,7 +52,7 @@ class AbstractLabelImporter(ABC):
 
     def process_from_files(  # pylint: disable=too-many-arguments
         self,
-        labels_files: List[Path],
+        labels_files: list[Path],
         meta_file_path: Optional[Path],
         project_id: ProjectId,
         target_job_name: Optional[str],
@@ -82,11 +82,11 @@ class AbstractLabelImporter(ABC):
     def process_from_dict(  # pylint: disable=too-many-arguments
         self,
         project_id: Optional[str],
-        labels: List[Dict],
+        labels: list[dict],
         label_type: LabelType,
         overwrite: bool,
         model_name: Optional[str] = None,
-    ) -> List:
+    ) -> list:
         """Imports labels from a list of dictionaries representing labels."""
         should_retrieve_asset_ids = labels[0].get("asset_id") is None
         if should_retrieve_asset_ids:
@@ -137,7 +137,7 @@ class AbstractLabelImporter(ABC):
         pass
 
     @abstractmethod
-    def _select_label_parser(self) -> Type[AbstractLabelParser]:
+    def _select_label_parser(self) -> type[AbstractLabelParser]:
         pass
 
     @abstractmethod
@@ -145,8 +145,8 @@ class AbstractLabelImporter(ABC):
         pass
 
     def extract_from_files(
-        self, labels_files: List[Path], label_parser: AbstractLabelParser
-    ) -> List[Dict]:
+        self, labels_files: list[Path], label_parser: AbstractLabelParser
+    ) -> list[dict]:
         """Extracts the labels files and their metadata from the label files."""
         label_paths = get_file_paths_to_upload(
             [str(f) for f in labels_files],
@@ -222,7 +222,7 @@ class YoloLabelImporter(AbstractLabelImporter):
 
         return classes
 
-    def _select_label_parser(self) -> Type[AbstractLabelParser]:
+    def _select_label_parser(self) -> type[AbstractLabelParser]:
         return YoloLabelParser
 
 
@@ -244,5 +244,5 @@ class KiliRawLabelImporter(AbstractLabelImporter):
     ) -> Optional[Classes]:
         return None
 
-    def _select_label_parser(self) -> Type[AbstractLabelParser]:
+    def _select_label_parser(self) -> type[AbstractLabelParser]:
         return KiliRawLabelParser

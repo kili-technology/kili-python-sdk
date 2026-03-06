@@ -1,8 +1,9 @@
 """Types used by the conversion service."""
 
-from typing import Callable, Dict, Literal
+from collections.abc import Callable
+from typing import Literal
 
-ExportType = Literal["latest", "normal"]
+ExportType = Literal["latest", "latest_from_last_step", "latest_from_all_steps", "normal"]
 SplitOption = Literal["split", "merged"]
 LabelFormat = Literal[
     "raw",
@@ -17,4 +18,4 @@ LabelFormat = Literal[
 ]
 
 
-CocoAnnotationModifier = Callable[[Dict, Dict, Dict], Dict]
+CocoAnnotationModifier = Callable[[dict, dict, dict], dict]

@@ -1,13 +1,12 @@
 """GraphQL payload data mappers for project operations."""
 
-from typing import Dict
 
 from kili.domain.project import ProjectFilters
 
 from .types import ProjectDataKiliAPIGatewayInput
 
 
-def project_where_mapper(filters: ProjectFilters) -> Dict:
+def project_where_mapper(filters: ProjectFilters) -> dict:
     """Build the GraphQL ProjectWhere variable to be sent in an operation."""
     ret = {
         "id": filters.id,
@@ -27,7 +26,7 @@ def project_where_mapper(filters: ProjectFilters) -> Dict:
     return ret
 
 
-def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> Dict:
+def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> dict:
     """Build the GraphQL ProjectData variable to be sent in an operation."""
     result = {
         "archived": data.archived,
@@ -39,7 +38,6 @@ def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> Dict:
         "canNavigateBetweenAssets": data.can_navigate_between_assets,
         "canSkipAsset": data.can_skip_asset,
         "honeypotMark": data.honeypot_mark,
-        "inputType": data.input_type,
         "instructions": data.instructions,
         "jsonInterface": data.json_interface,
         "minConsensusSize": data.min_consensus_size,

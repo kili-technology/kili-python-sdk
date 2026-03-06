@@ -1,4 +1,4 @@
-from typing import List, Optional, cast
+from typing import Optional, cast
 
 import pytest_mock
 
@@ -14,7 +14,7 @@ def test_given_text_and_asset_ids_when_calling_create_questions_it_creates_quest
     mocker: pytest_mock.MockerFixture, kili_api_gateway: KiliAPIGateway
 ):
     # Given
-    questions = cast(List[Optional[str]], ["Where is the cat?", "Where is the dog?"])
+    questions = cast(list[Optional[str]], ["Where is the cat?", "Where is the dog?"])
     kili = QuestionClientMethods()
     kili.kili_api_gateway = kili_api_gateway
     project_id = "fake_project_id"

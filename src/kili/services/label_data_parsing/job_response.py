@@ -1,7 +1,7 @@
 """Classes for job response parsing."""
 
 from datetime import datetime
-from typing import Dict, List, Optional, cast
+from typing import Optional, cast
 
 from kili_formats.types import Job
 from typeguard import typechecked
@@ -18,7 +18,7 @@ from .utils import get_children_job_names
 class JobPayload:
     """Class for job payload parsing."""
 
-    def __init__(self, job_name: str, project_info: Project, job_payload: Dict) -> None:
+    def __init__(self, job_name: str, project_info: Project, job_payload: dict) -> None:
         """Class for job payload parsing.
 
         Args:
@@ -52,7 +52,7 @@ class JobPayload:
         if self._json_data.get("children"):
             self.children = self._json_data["children"]
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Returns the parsed job payload as a dict."""
         ret = {
             k: v
@@ -64,19 +64,19 @@ class JobPayload:
         if "categories" in self._json_data:
             ret["categories"] = (
                 self._json_data["categories"]
-                if isinstance(self._json_data["categories"], List)
+                if isinstance(self._json_data["categories"], list)
                 else self._json_data["categories"].as_list()
             )
         if "annotations" in self._json_data:
             ret["annotations"] = (
                 self._json_data["annotations"]
-                if isinstance(self._json_data["annotations"], List)
+                if isinstance(self._json_data["annotations"], list)
                 else self._json_data["annotations"].as_list()
             )
         if "children" in self._json_data:
             ret["children"] = (
                 self._json_data["children"].to_dict()
-                if not isinstance(self._json_data["children"], Dict)
+                if not isinstance(self._json_data["children"], dict)
                 else self._json_data["children"]
             )
         return ret
@@ -129,7 +129,7 @@ class JobPayload:
 
     @children.setter
     @typechecked
-    def children(self, children: Dict) -> None:
+    def children(self, children: dict) -> None:
         """Sets the children jobs of the job."""
         job_names_to_parse = get_children_job_names(
             json_interface=self._project_info["jsonInterface"],
@@ -208,7 +208,7 @@ class JobPayload:
         return self._json_data["annotations"]
 
     @property
-    def entity_annotations(self) -> List["annotation_module.EntityAnnotation"]:
+    def entity_annotations(self) -> list["annotation_module.EntityAnnotation"]:
         """Returns a list of EntityAnnotation objects for a named entities recognition job."""
         if self._job_interface["mlTask"] != "NAMED_ENTITIES_RECOGNITION":
             raise AttributeNotCompatibleWithJobError("entity_annotations")
@@ -216,10 +216,10 @@ class JobPayload:
         if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("entity_annotations")
 
-        return cast(List["annotation_module.EntityAnnotation"], self.annotations)
+        return cast(list["annotation_module.EntityAnnotation"], self.annotations)
 
     @property
-    def bounding_poly_annotations(self) -> List["annotation_module.BoundingPolyAnnotation"]:
+    def bounding_poly_annotations(self) -> list["annotation_module.BoundingPolyAnnotation"]:
         """Returns a list of BoundingPolyAnnotation objects for an object detection job."""
         if self._job_interface["mlTask"] != "OBJECT_DETECTION":
             raise AttributeNotCompatibleWithJobError("bounding_poly_annotations")
@@ -227,10 +227,10 @@ class JobPayload:
         if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("bounding_poly_annotations")
 
-        return cast(List["annotation_module.BoundingPolyAnnotation"], self.annotations)
+        return cast(list["annotation_module.BoundingPolyAnnotation"], self.annotations)
 
     @typechecked
-    def add_annotation(self, annotation_dict: Dict) -> None:
+    def add_annotation(self, annotation_dict: dict) -> None:
         """Adds an annotation to a job with annotations."""
         if not _can_query_annotations(json_data=self._json_data, job_interface=self._job_interface):
             raise AttributeNotCompatibleWithJobError("add_annotation")
@@ -245,7 +245,7 @@ class JobPayload:
             self._json_data["annotations"].add_annotation(annotation_dict)
 
 
-def _can_query_annotations(json_data: Dict, job_interface: Job) -> bool:
+def _can_query_annotations(json_data: dict, job_interface: Job) -> bool:
     """Checks if the "annotations" key can be queried for the job."""
     if "annotations" in json_data:
         return True

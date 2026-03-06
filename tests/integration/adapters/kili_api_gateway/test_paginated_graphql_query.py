@@ -1,6 +1,7 @@
 """Module for testing the graphQLQuery class."""
 
-from typing import Generator, cast
+from collections.abc import Generator
+from typing import cast
 from unittest.mock import MagicMock, call
 
 import pytest

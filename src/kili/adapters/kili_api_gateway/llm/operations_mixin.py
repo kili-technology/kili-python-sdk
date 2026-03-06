@@ -1,6 +1,6 @@
 """Mixin extending Kili API Gateway class with Api Keys related operations."""
 
-from typing import Dict, List, Optional, cast
+from typing import Optional, cast
 
 from kili_formats.types import ChatItem, ChatItemRole, Conversation
 
@@ -76,7 +76,7 @@ DEFAULT_CHAT_ITEMS_FIELDS = [
 class ModelConfigurationOperationMixin(BaseOperationMixin):
     """Mixin extending Kili API Gateway class with model configuration related operations."""
 
-    def import_conversations(self, project_id: str, conversations: List[Conversation]):
+    def import_conversations(self, project_id: str, conversations: list[Conversation]):
         """Import conversations into a project."""
         where = map_project_where(project_id)
         data = map_import_conversations_input(conversations)
@@ -90,7 +90,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         filters: OrganizationModelFilters,
         fields: Optional[ListOrTuple[str]] = None,
         options: Optional[QueryOptions] = None,
-    ) -> List[ModelDict]:
+    ) -> list[ModelDict]:
         """List models with given options."""
         fragment = fragment_builder(fields or DEFAULT_PROJECT_FIELDS)
         query = get_models_query(fragment)
@@ -172,7 +172,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         filters: ProjectModelFilters,
         fields: Optional[ListOrTuple[str]] = None,
         options: Optional[QueryOptions] = None,
-    ) -> List[ProjectModelDict]:
+    ) -> list[ProjectModelDict]:
         """List project models with given options."""
         fragment = fragment_builder(fields or DEFAULT_PROJECT_MODEL_FIELDS)
         query = get_project_models_query(fragment)
@@ -194,7 +194,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         self,
         asset_id: str,
         options: Optional[QueryOptions] = None,
-    ) -> List[ChatItem]:
+    ) -> list[ChatItem]:
         """Send a GraphQL request to retrieve chat items of an asset (conversation)."""
         fragment = fragment_builder(DEFAULT_CHAT_ITEMS_FIELDS)
         where = {"assetId": asset_id}
@@ -217,7 +217,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         project_id: str,
         author_id: str,
         label_type: Optional[str] = None,
-    ) -> Dict:
+    ) -> dict:
         """Create an LLM asset in a project, with optional status and label_type."""
         where = map_project_where(project_id)
         data = {"author_id": author_id, "label_type": label_type}
@@ -235,7 +235,7 @@ class ModelConfigurationOperationMixin(BaseOperationMixin):
         prompt: str,
         role: ChatItemRole,
         parent_id: Optional[str] = None,
-    ) -> List[ChatItem]:
+    ) -> list[ChatItem]:
         """Create a chat item associated with an asset."""
         data = map_create_chat_item_input(label_id, prompt, role, parent_id)
         where = map_asset_where(asset_id)

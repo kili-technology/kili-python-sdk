@@ -1,7 +1,7 @@
 """Set of common functions used by different export formats."""
 
 import warnings
-from typing import Dict, List, Optional
+from typing import Optional
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -40,6 +40,7 @@ DEFAULT_FIELDS = [
     "labels.author.firstname",
     "labels.author.lastname",
     "labels.createdAt",
+    "labels.isLastForStep",
     "labels.isLatestLabelForUser",
     "labels.isSentBackToQueue",
     "labels.labelType",
@@ -58,17 +59,40 @@ LATEST_LABEL_FIELDS = [
     "latestLabel.labelType",
     "latestLabel.modelName",
 ]
+LATEST_LABELS_FIELDS = [
+    *COMMON_FIELDS,
+    "latestLabels.jsonResponse",
+    "latestLabels.jsonResponseUrl",
+    "latestLabels.author.id",
+    "latestLabels.author.email",
+    "latestLabels.author.firstname",
+    "latestLabels.author.lastname",
+    "latestLabels.createdAt",
+    "latestLabels.isLastForStep",
+    "latestLabels.isLatestLabelForUser",
+    "latestLabels.isSentBackToQueue",
+    "latestLabels.labelType",
+    "latestLabels.modelName",
+]
 
 
-def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportType):
+def attach_name_to_assets_labels_author(assets: list[dict], export_type: ExportType):
     """Adds `name` field for author, by concatenating his/her first and last name."""
     for asset in assets:
         if export_type == "latest":
-            latest_label = asset["latestLabel"]
+            latest_label = asset.get("latestLabel")
             if latest_label:
                 firstname = latest_label["author"]["firstname"]
                 lastname = latest_label["author"]["lastname"]
                 latest_label["author"]["name"] = f"{firstname} {lastname}"
+            continue
+        if export_type == "latest_from_last_step":
+            latest_labels = asset.get("latestLabels", [])
+            for label in latest_labels:
+                if label:
+                    firstname = label["author"]["firstname"]
+                    lastname = label["author"]["lastname"]
+                    label["author"]["name"] = f"{firstname} {lastname}"
             continue
         for label in asset.get("labels", []):
             firstname = label["author"]["firstname"]
@@ -79,18 +103,18 @@ def attach_name_to_assets_labels_author(assets: List[Dict], export_type: ExportT
 THRESHOLD_WARN_MANY_ASSETS = 1000
 
 
-# pylint: disable=too-many-arguments, too-many-locals, missing-type-doc
+# pylint: disable=too-many-arguments, too-many-locals, too-many-branches, missing-type-doc
 def fetch_assets(
     kili,
     project_id: str,
-    asset_ids: Optional[List[AssetId]],
+    asset_ids: Optional[list[AssetId]],
     export_type: ExportType,
-    label_type_in: Optional[List[str]],
+    label_type_in: Optional[list[str]],
     disable_tqdm: Optional[bool],
     download_media: bool,
     local_media_dir: Optional[str],
-    asset_filter_kwargs: Optional[Dict[str, object]],
-) -> List[Dict]:
+    asset_filter_kwargs: Optional[dict[str, object]],
+) -> list[dict]:
     """Fetches assets.
 
     Fetches assets where ID are in asset_ids if the list has more than one element,
@@ -111,6 +135,13 @@ def fetch_assets(
     Returns:
         List of fetched assets.
     """
+    if export_type == "latest":
+        warnings.warn(
+            "Export type 'latest' is deprecated and will be removed in a future version."
+            " Please use 'latest_from_last_step' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
     fields = get_fields_to_fetch(export_type)
     asset_filter_kwargs = asset_filter_kwargs or {}
     asset_where_params = {
@@ -176,6 +207,46 @@ def fetch_assets(
             assets_gen = filter(
                 lambda asset: asset["latestLabel"].get("labelType") in label_type_in, assets_gen
             )
+        elif export_type == "latest_from_last_step":
+            assets_gen = filter(lambda asset: asset.get("latestLabels") is not None, assets_gen)
+            assets_gen = filter(
+                lambda asset: any(
+                    label and label.get("labelType") in label_type_in
+                    for label in asset.get("latestLabels", [])
+                ),
+                assets_gen,
+            )
+            assets_gen = (
+                {
+                    **asset,
+                    "latestLabels": [
+                        label
+                        for label in asset.get("latestLabels", [])
+                        if label and label.get("labelType") in label_type_in
+                    ],
+                }
+                for asset in assets_gen
+            )
+        elif export_type == "latest_from_all_steps":
+            assets_gen = filter(lambda asset: asset.get("labels") is not None, assets_gen)
+            assets_gen = filter(
+                lambda asset: any(
+                    label.get("labelType") in label_type_in and label.get("isLastForStep")
+                    for label in asset["labels"]
+                ),
+                assets_gen,
+            )
+            assets_gen = (
+                {
+                    **asset,
+                    "labels": [
+                        label
+                        for label in asset["labels"]
+                        if label.get("labelType") in label_type_in and label.get("isLastForStep")
+                    ],
+                }
+                for asset in assets_gen
+            )
         else:
             assets_gen = filter(lambda asset: asset.get("labels") is not None, assets_gen)
             assets_gen = filter(
@@ -195,14 +266,33 @@ def fetch_assets(
                 }
                 for asset in assets_gen
             )
-
-    if download_media_function is not None:
-        assets: List[Dict] = []
-        # TODO: modify download_media function so it can take a generator of assets
-        for assets_batch in batcher(assets_gen, QUERY_BATCH_SIZE):
-            assets.extend(download_media_function(assets_batch))
     else:
-        assets = list(assets_gen)
+        # Filter by isLastForStep for latest_from_all_steps even when label_type_in is not provided
+        if export_type == "latest_from_all_steps":
+            assets_gen = (
+                {
+                    **asset,
+                    "labels": [
+                        label for label in asset.get("labels", []) if label.get("isLastForStep")
+                    ],
+                }
+                for asset in assets_gen
+            )
+
+    with warnings.catch_warnings():
+        if export_type == "latest":
+            warnings.filterwarnings(
+                "ignore",
+                category=UserWarning,
+                message=r"\[Kili SDK\] Deprecated GraphQL field",
+            )
+        if download_media_function is not None:
+            assets: list[dict] = []
+            # TODO: modify download_media function so it can take a generator of assets
+            for assets_batch in batcher(assets_gen, QUERY_BATCH_SIZE):
+                assets.extend(download_media_function(assets_batch))
+        else:
+            assets = list(assets_gen)
     attach_name_to_assets_labels_author(assets, export_type)
     return assets
 
@@ -211,10 +301,14 @@ def get_fields_to_fetch(export_type: ExportType):
     """Return the fields to fetch depending on the export type."""
     if export_type == "latest":
         return LATEST_LABEL_FIELDS
+    if export_type == "latest_from_last_step":
+        return LATEST_LABELS_FIELDS
+    if export_type == "latest_from_all_steps":
+        return DEFAULT_FIELDS
     return DEFAULT_FIELDS
 
 
-def is_geotiff_asset_with_lat_lon_coords(asset: Dict, http_client: HttpClient) -> bool:
+def is_geotiff_asset_with_lat_lon_coords(asset: dict, http_client: HttpClient) -> bool:
     """Check if asset is a geotiff with lat/lon coordinates."""
     if "jsonContent" not in asset:
         return False
@@ -228,9 +322,9 @@ def is_geotiff_asset_with_lat_lon_coords(asset: Dict, http_client: HttpClient) -
         json_content = asset["jsonContent"]
 
     return (
-        isinstance(json_content, List)
+        isinstance(json_content, list)
         and len(json_content) > 0
-        and isinstance(json_content[0], Dict)
+        and isinstance(json_content[0], dict)
         and json_content[0].get("useClassicCoordinates") is False
         and "epsg" in json_content[0]
         and json_content[0]["epsg"] != "TiledImage"

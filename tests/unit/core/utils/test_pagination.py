@@ -23,7 +23,7 @@ def test_batch_iterator_builder(name, test_case):
     _ = name
     actual = batcher(test_case["iterable"], batch_size=test_case["batch_size"])
     expected = test_case["expected_result"]
-    assert all(a == b for a, b in zip(actual, expected))
+    assert all(a == b for a, b in zip(actual, expected, strict=False))
 
 
 @pytest.mark.parametrize(
@@ -117,4 +117,4 @@ def test_batch_object_builder(name, test_case):
     _ = name
     actual = batch_object_builder(test_case["properties_to_batch"], test_case["batch_size"])
     expected = test_case["expected_result"]
-    assert all(a == b for a, b in zip(actual, expected))
+    assert all(a == b for a, b in zip(actual, expected, strict=False))

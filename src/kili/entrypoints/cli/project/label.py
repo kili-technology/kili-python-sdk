@@ -1,10 +1,9 @@
 """CLI's project label subcommand."""
 
 import os
-from typing import Optional, Tuple
+from typing import Optional, get_args
 
 import click
-from typing_extensions import get_args
 
 from kili.domain.project import ProjectId
 from kili.entrypoints.cli.common_args import Arguments, Options
@@ -74,7 +73,7 @@ def type_check_label(key, value):
 def import_labels(
     api_key: Optional[str],
     endpoint: Optional[str],
-    files: Tuple[str, ...],
+    files: tuple[str, ...],
     project_id: str,
     is_prediction: bool,
     model_name: Optional[str],

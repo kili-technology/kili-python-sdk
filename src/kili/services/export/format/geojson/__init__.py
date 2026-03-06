@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-from typing import Dict, List
 
 from kili_formats.format.geojson import convert_from_kili_to_geojson_format
 from kili_formats.types import Job, JobTool
@@ -64,7 +63,7 @@ class GeoJsonExporter(AbstractExporter):
             for tool in job["tools"]  # pyright: ignore[reportGeneralTypeIssues]
         )
 
-    def process_and_save(self, assets: List[Dict], output_filename: Path) -> None:
+    def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
         self.logger.info("Exporting to GeoJson format")
 
         labels_folder = self.base_folder / "labels"
@@ -82,8 +81,11 @@ class GeoJsonExporter(AbstractExporter):
                 " will be exported."
             )
 
+        # Get json_interface for GIS-friendly property names
+        json_interface = self.project.get("jsonInterface")
+
         for asset in tqdm(geotiff_assets, disable=self.disable_tqdm):
-            _process_asset(asset, labels_folder)
+            _process_asset(asset, labels_folder, json_interface, flatten_properties=True)
 
         self.create_readme_kili_file(self.export_root_folder)
         self.make_archive(self.export_root_folder, output_filename)
@@ -91,11 +93,33 @@ class GeoJsonExporter(AbstractExporter):
         self.logger.warning(output_filename)
 
 
-def _process_asset(asset: Dict, labels_folder: Path) -> None:
-    geojson_feature_collection = convert_from_kili_to_geojson_format(
-        asset["latestLabel"]["jsonResponse"]
-    )
-    filepath = labels_folder / f'{asset["externalId"]}.geojson'
-    filepath.parent.mkdir(parents=True, exist_ok=True)
-    with open(filepath, "w", encoding="utf-8") as file:
-        json.dump(geojson_feature_collection, file)
+def _process_asset(
+    asset: dict,
+    labels_folder: Path,
+    json_interface: dict | None = None,
+    flatten_properties: bool = False,
+) -> None:
+    # Collect all labels to process (handle both latestLabel and latestLabels)
+    labels_to_process = []
+    if "latestLabel" in asset and asset["latestLabel"]:
+        labels_to_process.append(asset["latestLabel"])
+    if "latestLabels" in asset and asset["latestLabels"]:
+        for label in asset["latestLabels"]:
+            if label is not None:
+                labels_to_process.append(label)
+
+    if not labels_to_process:
+        return
+
+    # Process each label
+    for label_idx, latest_label in enumerate(labels_to_process, start=1):
+        # Add label suffix if we have multiple labels
+        label_suffix = f"_label{label_idx}" if len(labels_to_process) > 1 else ""
+
+        geojson_feature_collection = convert_from_kili_to_geojson_format(
+            latest_label["jsonResponse"], json_interface, flatten_properties
+        )
+        filepath = labels_folder / f"{asset['externalId']}{label_suffix}.geojson"
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        with open(filepath, "w", encoding="utf-8") as file:
+            json.dump(geojson_feature_collection, file)

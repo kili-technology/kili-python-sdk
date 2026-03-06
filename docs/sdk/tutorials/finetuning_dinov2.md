@@ -188,7 +188,7 @@ We can then prepare the assets to be uploaded to Kili:
 # sort the assets by alternating between classes so that both
 # classes show up in the first page of the labeling interface
 content_array = []
-iterator = zip((data_dir / "def_front").iterdir(), (data_dir / "ok_front").iterdir())
+iterator = zip((data_dir / "def_front").iterdir(), (data_dir / "ok_front").iterdir(), strict=False)
 for filepath_def, filepath_ok in iterator:
     content_array.append(filepath_def)
     content_array.append(filepath_ok)

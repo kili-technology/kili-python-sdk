@@ -1,7 +1,7 @@
 """Utils for use cases."""
 
 from itertools import chain
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Optional
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.utils import pagination
@@ -41,7 +41,7 @@ class AssetUseCasesUtils:
 
     def infer_ids_from_external_ids(
         self, asset_external_ids: ListOrTuple[AssetExternalId], project_id: ProjectId
-    ) -> Dict[AssetExternalId, AssetId]:
+    ) -> dict[AssetExternalId, AssetId]:
         """Infer asset ids from their external ids and project Id.
 
         Args:
@@ -74,7 +74,7 @@ class AssetUseCasesUtils:
 
     def _build_id_map(
         self, asset_external_ids: ListOrTuple[AssetExternalId], project_id: ProjectId
-    ) -> Dict[AssetExternalId, AssetId]:
+    ) -> dict[AssetExternalId, AssetId]:
         # we batch the queries because too many assets in a "in" query makes the query fail
         assets_generators = (
             self.kili_api_gateway.list_assets(
@@ -85,7 +85,7 @@ class AssetUseCasesUtils:
             for external_ids_batch in pagination.batcher(list(asset_external_ids), 1000)
         )
         assets = chain(*assets_generators)
-        id_map: Dict[AssetExternalId, AssetId] = {}
+        id_map: dict[AssetExternalId, AssetId] = {}
         asset_external_ids_set = set(asset_external_ids)
         for asset in (asset for asset in assets if asset["externalId"] in asset_external_ids_set):
             id_map[AssetExternalId(asset["externalId"])] = AssetId(asset["id"])

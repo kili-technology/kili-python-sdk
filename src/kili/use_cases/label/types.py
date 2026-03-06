@@ -1,7 +1,7 @@
 """Types for label-related use cases."""
 
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Optional
 
 from kili.domain.asset import AssetExternalId, AssetId
 from kili.domain.label import LabelType
@@ -15,7 +15,7 @@ class LabelToCreateUseCaseInput:
     asset_external_id: Optional[AssetExternalId]
     asset_id: Optional[AssetId]
     author_id: Optional[UserId]
-    json_response: Dict
+    json_response: dict
     label_type: LabelType
     model_name: Optional[str]
     referenced_label_id: Optional[str]

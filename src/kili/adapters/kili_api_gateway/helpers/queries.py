@@ -1,6 +1,7 @@
 """GraphQL module."""
 
-from typing import Any, Dict, Generator, NamedTuple, Optional
+from collections.abc import Generator
+from typing import Any, NamedTuple, Optional
 
 from pyparsing import Union
 from typeguard import typechecked
@@ -34,12 +35,12 @@ class PaginatedGraphQLQuery:
     def execute_query_from_paginated_call(
         self,
         query: str,
-        where: Dict[str, Any],
+        where: dict[str, Any],
         options: QueryOptions,
         tqdm_desc: str,
         count_query: Optional[str],
         unicity_field: Optional[str] = None,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """Build a row generator from paginated query calls with the first and skip pattern.
 
         Args:
@@ -122,7 +123,7 @@ class PaginatedGraphQLQuery:
     def get_number_of_elements_to_query(
         self,
         count_query: str,
-        where: Dict[str, Any],
+        where: dict[str, Any],
         options: QueryOptions,
     ) -> int:
         """Give the total number of elements to query for one query that will be paginated.
@@ -157,7 +158,7 @@ def check_unicity_field_presence(field: str, object: dict):
 
 @typechecked
 def fragment_builder(
-    fields: ListOrTuple[str], static_fragments: Union[Dict[str, str], None] = None
+    fields: ListOrTuple[str], static_fragments: Union[dict[str, str], None] = None
 ) -> str:
     """Build a GraphQL fragment for a list of fields to query.
 

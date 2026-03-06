@@ -1,6 +1,7 @@
 """Module for the "boundingPoly" key parsing of an object detection job response."""
 
-from typing import Dict, Iterator, List, Literal, Optional, Union
+from collections.abc import Iterator
+from typing import Literal, Optional, Union
 
 from typeguard import typechecked
 
@@ -13,16 +14,16 @@ class BoundingPoly:
 
     def __init__(
         self,
-        bounding_poly_json: Dict[
+        bounding_poly_json: dict[
             Literal["normalizedVertices"],
-            Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
+            Union[list[NormalizedVertex], list[list[NormalizedVertex]]],
         ],
         type_of_tool: Optional[Literal["rectangle", "polygon", "semantic"]],
     ) -> None:
         """Class for BoundingPoly parsing."""
-        self._json_data: Dict[
+        self._json_data: dict[
             Literal["normalizedVertices"],
-            Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
+            Union[list[NormalizedVertex], list[list[NormalizedVertex]]],
         ] = {}
         self._type_of_tool = type_of_tool
 
@@ -36,14 +37,14 @@ class BoundingPoly:
         """Returns the string representation of the boundingPoly object."""
         return repr(self._json_data)
 
-    def as_dict(self) -> Dict:
+    def as_dict(self) -> dict:
         """Returns the boundingPoly object as a dict."""
         return self._json_data
 
     @property
     def normalized_vertices(
         self,
-    ) -> Union[List[NormalizedVertex], List[List[NormalizedVertex]]]:
+    ) -> Union[list[NormalizedVertex], list[list[NormalizedVertex]]]:
         """Returns the normalized vertices of the bounding polygon."""
         return self._json_data["normalizedVertices"]
 
@@ -51,7 +52,7 @@ class BoundingPoly:
     @typechecked
     def normalized_vertices(
         self,
-        normalized_vertices: Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
+        normalized_vertices: Union[list[NormalizedVertex], list[list[NormalizedVertex]]],
     ) -> None:
         """Sets the normalized vertices of the bounding polygon.
 
@@ -85,10 +86,10 @@ class BoundingPolyList:
 
     def __init__(
         self,
-        bounding_poly_list: List[
-            Dict[
+        bounding_poly_list: list[
+            dict[
                 Literal["normalizedVertices"],
-                Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
+                Union[list[NormalizedVertex], list[list[NormalizedVertex]]],
             ]
         ],
         project_info: Project,
@@ -103,7 +104,7 @@ class BoundingPolyList:
             job_name: Name of the job.
             type_of_tool: Type of tool used to create the bounding poly instances.
         """
-        self._bounding_poly_list: List[BoundingPoly] = []
+        self._bounding_poly_list: list[BoundingPoly] = []
         self._project_info = project_info
         self._job_name = job_name
         self._type_of_tool: Optional[Literal["rectangle", "polygon", "semantic"]] = type_of_tool
@@ -125,9 +126,9 @@ class BoundingPolyList:
     @typechecked
     def add_bounding_poly(
         self,
-        bounding_poly: Dict[
+        bounding_poly: dict[
             Literal["normalizedVertices"],
-            Union[List[NormalizedVertex], List[List[NormalizedVertex]]],
+            Union[list[NormalizedVertex], list[list[NormalizedVertex]]],
         ],
     ) -> None:
         """Adds a boundingPoly object to a BoundingPolyList object."""
@@ -156,6 +157,6 @@ class BoundingPolyList:
         """Returns the string representation of the boundingPoly list."""
         return repr(self.as_list())
 
-    def as_list(self) -> List[Dict]:
+    def as_list(self) -> list[dict]:
         """Returns the list of bounding polygons as a list of dicts."""
         return [bounding_poly.as_dict() for bounding_poly in self._bounding_poly_list]

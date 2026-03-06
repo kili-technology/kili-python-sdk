@@ -2,8 +2,9 @@
 
 import logging
 import time
+from collections.abc import Generator
 from logging import Logger
-from typing import Dict, Generator, List, Optional
+from typing import Optional
 
 from tenacity import Retrying
 from tenacity.retry import retry_if_exception_type
@@ -42,7 +43,7 @@ class CloudStorageUseCases(BaseUseCases):
         data_connection_filters: DataConnectionFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List data connections."""
         return self._kili_api_gateway.list_data_connections(
             data_connection_filters=data_connection_filters, fields=fields, options=options
@@ -50,7 +51,7 @@ class CloudStorageUseCases(BaseUseCases):
 
     def get_data_connection(
         self, data_connection_id: DataConnectionId, fields: ListOrTuple[str]
-    ) -> Dict:
+    ) -> dict:
         """Get data connection."""
         return self._kili_api_gateway.get_data_connection(
             data_connection_id=data_connection_id, fields=fields
@@ -61,7 +62,7 @@ class CloudStorageUseCases(BaseUseCases):
         data_integration_filters: DataIntegrationFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List data integrations."""
         return self._kili_api_gateway.list_data_integrations(
             data_integration_filters=data_integration_filters, fields=fields, options=options
@@ -75,12 +76,12 @@ class CloudStorageUseCases(BaseUseCases):
         self,
         data_integration_id: DataIntegrationId,
         project_id: ProjectId,
-        selected_folders: Optional[List[str]],
+        selected_folders: Optional[list[str]],
         fields: ListOrTuple[str],
         prefix: Optional[str] = None,
-        include: Optional[List[str]] = None,
-        exclude: Optional[List[str]] = None,
-    ) -> Dict:
+        include: Optional[list[str]] = None,
+        exclude: Optional[list[str]] = None,
+    ) -> dict:
         """Add data connection to a project."""
         if (
             self._kili_api_gateway.count_data_integrations(
@@ -181,8 +182,8 @@ class CloudStorageUseCases(BaseUseCases):
 
     def create_data_integration(
         self,
-        allowed_paths: Optional[List[str]],
-        allowed_projects: Optional[List[str]],
+        allowed_paths: Optional[list[str]],
+        allowed_projects: Optional[list[str]],
         aws_access_point_arn: Optional[str],
         aws_role_arn: Optional[str],
         aws_role_external_id: Optional[str],
@@ -202,7 +203,7 @@ class CloudStorageUseCases(BaseUseCases):
         s3_secret_key: Optional[str],
         s3_session_token: Optional[str],
         fields: ListOrTuple[str],
-    ) -> Dict:
+    ) -> dict:
         """Create a data integration."""
         data = DataIntegrationData(
             allowed_paths=allowed_paths,
@@ -234,8 +235,8 @@ class CloudStorageUseCases(BaseUseCases):
     def update_data_integration(
         self,
         data_integration_id: DataIntegrationId,
-        allowed_paths: Optional[List[str]],
-        allowed_projects: Optional[List[str]],
+        allowed_paths: Optional[list[str]],
+        allowed_projects: Optional[list[str]],
         aws_access_point_arn: Optional[str],
         aws_role_arn: Optional[str],
         aws_role_external_id: Optional[str],
@@ -256,7 +257,7 @@ class CloudStorageUseCases(BaseUseCases):
         s3_secret_key: Optional[str],
         s3_session_token: Optional[str],
         status: Optional[DataIntegrationStatus],
-    ) -> Dict:
+    ) -> dict:
         """Update data integration."""
         organization_id = OrganizationId(organization_id) if organization_id else None
         data = DataIntegrationData(

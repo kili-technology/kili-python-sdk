@@ -1,6 +1,7 @@
 """Classes for json response parsing."""
 
-from typing import Dict, Iterator, List, Optional, Tuple, cast
+from collections.abc import Iterator
+from typing import Optional, cast
 
 from kili.services.label_data_parsing import job_response as job_response_module
 
@@ -15,10 +16,10 @@ class _ParsedVideoJobs:
     def __init__(
         self,
         project_info: Project,
-        json_response: Dict,
-        job_names_to_parse: Optional[List[str]] = None,
+        json_response: dict,
+        job_names_to_parse: Optional[list[str]] = None,
     ) -> None:
-        self._json_data: Dict[str, "FramesList"] = {}
+        self._json_data: dict[str, "FramesList"] = {}
 
         self._nb_frames = len(json_response)
 
@@ -59,7 +60,7 @@ class _ParsedVideoJobs:
             )
             self._json_data[current_job_name] = FramesList(frames_list_for_job)
 
-    def to_dict(self) -> Dict[str, Dict]:
+    def to_dict(self) -> dict[str, dict]:
         """Returns a copy of the parsed label as a dict."""
         ret = {str(frame_id): {} for frame_id in range(self._nb_frames)}
         for job_name, frames_list in self._json_data.items():
@@ -75,10 +76,10 @@ class _ParsedJobs:
     def __init__(
         self,
         project_info: Project,
-        json_response: Dict,
-        job_names_to_parse: Optional[List[str]] = None,
+        json_response: dict,
+        job_names_to_parse: Optional[list[str]] = None,
     ) -> None:
-        self._json_data: Dict[str, "job_response_module.JobPayload"] = {}
+        self._json_data: dict[str, "job_response_module.JobPayload"] = {}
 
         json_interface = project_info["jsonInterface"]
 
@@ -104,13 +105,13 @@ class _ParsedJobs:
                 job_payload=job_response,
             )
 
-    def to_dict(self) -> Dict[str, Dict]:
+    def to_dict(self) -> dict[str, dict]:
         """Returns the parsed json response as a dict."""
         ret = {job_name: job_payload.to_dict() for job_name, job_payload in self._json_data.items()}
         return {k: v for k, v in ret.items() if v}  # remove empty json responses
 
 
-def _is_video_response(project_info: Project, json_response: Dict) -> bool:
+def _is_video_response(project_info: Project, json_response: dict) -> bool:
     """Returns True if the json response is a video job, False otherwise."""
     if "VIDEO" not in project_info["inputType"]:
         return False
@@ -139,8 +140,8 @@ class ParsedJobs(_ParsedJobs, _ParsedVideoJobs):
     def __init__(
         self,
         project_info: Project,
-        json_response: Dict,
-        job_names_to_parse: Optional[List[str]] = None,
+        json_response: dict,
+        job_names_to_parse: Optional[list[str]] = None,
     ) -> None:
         """Class for label json response parsing.
 
@@ -169,7 +170,7 @@ class ParsedJobs(_ParsedJobs, _ParsedVideoJobs):
                 job_names_to_parse=job_names_to_parse,
             )
 
-    def to_dict(self) -> Dict[str, Dict]:
+    def to_dict(self) -> dict[str, dict]:
         """Returns the parsed json response as a dict."""
         if self._is_video_response:
             return _ParsedVideoJobs.to_dict(self)
@@ -191,9 +192,9 @@ class ParsedJobs(_ParsedJobs, _ParsedVideoJobs):
         """Returns an iterator over the job names."""
         return iter(self._json_data)
 
-    def items(self) -> Iterator[Tuple[str, "JobPayload"]]:
+    def items(self) -> Iterator[tuple[str, "JobPayload"]]:
         """Returns an iterator over the job names and the corresponding objects."""
-        return cast(Iterator[Tuple[str, "JobPayload"]], iter(self._json_data.items()))
+        return cast(Iterator[tuple[str, "JobPayload"]], iter(self._json_data.items()))
 
     def keys(self) -> Iterator[str]:
         """Returns an iterator over the job names."""
@@ -215,7 +216,7 @@ class ParsedJobs(_ParsedJobs, _ParsedVideoJobs):
         return cast("JobPayload", self._json_data[job_name])
 
 
-class FramesList(List["job_response_module.JobPayload"]):
+class FramesList(list["job_response_module.JobPayload"]):
     """List class that allows to access the JobPayload object corresponding to a frame number."""
 
     def __getitem__(self, key: int) -> "job_response_module.JobPayload":

@@ -1,9 +1,7 @@
 """Custom Types."""
 
-from typing import List, Tuple, TypeVar, Union
-
-from typing_extensions import TypeAlias
+from typing import TypeAlias, TypeVar, Union
 
 T = TypeVar("T")
 
-ListOrTuple: TypeAlias = Union[List[T], Tuple[T, ...]]
+ListOrTuple: TypeAlias = Union[list[T], tuple[T, ...]]

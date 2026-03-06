@@ -1,6 +1,6 @@
 """Project version mutations."""
 
-from typing import Dict, Optional
+from typing import Optional
 
 from typeguard import typechecked
 
@@ -20,7 +20,7 @@ class MutationsProjectVersion(BaseOperationEntrypointMixin):
     @typechecked
     def update_properties_in_project_version(
         self, project_version_id: str, content: Optional[str]
-    ) -> Dict:
+    ) -> dict:
         """Update properties of a project version.
 
         Args:

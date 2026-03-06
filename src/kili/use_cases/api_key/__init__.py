@@ -1,8 +1,8 @@
 """Api Keys use cases."""
 
 import warnings
+from collections.abc import Generator
 from datetime import datetime, timedelta
-from typing import Dict, Generator
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.api_key import ApiKeyFilters
@@ -15,7 +15,7 @@ class ApiKeyUseCases(BaseUseCases):
 
     def list_api_keys(
         self, filters: ApiKeyFilters, fields: ListOrTuple[str], options: QueryOptions
-    ) -> Generator[Dict, None, None]:
+    ) -> Generator[dict, None, None]:
         """List api keys with given options."""
         return self._kili_api_gateway.list_api_keys(filters, fields, options)
 

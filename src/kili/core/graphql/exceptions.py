@@ -1,9 +1,9 @@
 """Helper functions to extract context from GraphQL error messages."""
 import ast
-from typing import Dict, Optional
+from typing import Optional
 
 
-def extract_error_context(message: str) -> Optional[Dict[str, str]]:
+def extract_error_context(message: str) -> Optional[dict[str, str]]:
     """Parse the string error message to extract the first context information."""
     try:
         parsed_errors = ast.literal_eval(message)
