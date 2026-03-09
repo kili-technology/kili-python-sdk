@@ -4,6 +4,8 @@ import json
 from collections.abc import Generator
 from typing import Optional
 
+from kili_formats.tool.annotations_to_json_response import AnnotationsToJsonResponseConverter
+
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
     PaginatedGraphQLQuery,
@@ -19,6 +21,7 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
+from .common import get_annotation_fragment
 from .formatters import load_label_json_fields
 from .mappers import append_label_data_mapper, append_to_labels_data_mapper, label_where_mapper
 from .operations import (
@@ -87,12 +90,32 @@ class LabelOperationMixin(BaseOperationMixin):
                 options.disable_tqdm, options.first, options.skip, min(options.batch_size, 20)
             )
 
-        fields = list(fields)
-        if "jsonResponse" in fields and "jsonResponseUrl" not in fields:
-            fields.append("jsonResponseUrl")
+        # For LLM projects, we need to fetch annotations and rebuild jsonResponse
+        # because LLM projects don't have jsonResponseUrl
+        is_llm_project = project_info["inputType"] in {
+            "LLM_RLHF",
+            "LLM_INSTR_FOLLOWING",
+            "LLM_STATIC",
+        }
+        needs_json_response = "jsonResponse" in fields
 
-        fragment = fragment_builder(fields)
-        query = get_labels_query(fragment)
+        fields = list(fields)
+
+        if is_llm_project and needs_json_response:
+            # For LLM projects: fetch annotations and rebuild jsonResponse client-side
+            inner_annotation_fragment = get_annotation_fragment()
+            full_fragment = f"""
+                {fragment_builder([f for f in fields if f not in {"jsonResponse", "jsonResponseUrl"}])}
+                annotations {{
+                    {inner_annotation_fragment}
+                }}
+            """
+        else:
+            if "jsonResponse" in fields and "jsonResponseUrl" not in fields:
+                fields.append("jsonResponseUrl")
+            full_fragment = fragment_builder(fields)
+
+        query = get_labels_query(full_fragment)
         where = label_where_mapper(filters)
         labels_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving labels", GQL_COUNT_LABELS
@@ -100,7 +123,20 @@ class LabelOperationMixin(BaseOperationMixin):
         labels_gen = (
             load_label_json_fields(label, fields, self.http_client) for label in labels_gen
         )
-        yield from labels_gen
+
+        if is_llm_project and needs_json_response:
+            # Rebuild jsonResponse from annotations for LLM projects
+            converter = AnnotationsToJsonResponseConverter(
+                json_interface=project_info["jsonInterface"],
+                project_input_type=project_info["inputType"],
+            )
+            for label in labels_gen:
+                asset = None
+                converter.patch_label_json_response(asset, label, label["annotations"])
+                label.pop("annotations", None)
+                yield label
+        else:
+            yield from labels_gen
 
     def delete_labels(
         self, ids: ListOrTuple[LabelId], disable_tqdm: Optional[bool]

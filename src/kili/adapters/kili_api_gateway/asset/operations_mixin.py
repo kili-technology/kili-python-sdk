@@ -2,11 +2,16 @@
 
 from collections.abc import Generator
 
+from kili_formats.tool.annotations_to_json_response import (
+    AnnotationsToJsonResponseConverter,
+)
+
 from kili.adapters.kili_api_gateway.asset.formatters import (
     load_asset_json_fields,
 )
 from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
 from kili.adapters.kili_api_gateway.asset.operations import (
+    GQL_COUNT_ASSET_ANNOTATIONS,
     GQL_COUNT_ASSETS,
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
     GQL_FILTER_EXISTING_ASSETS,
@@ -18,10 +23,17 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     QueryOptions,
     fragment_builder,
 )
+from kili.adapters.kili_api_gateway.label.common import get_annotation_fragment
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.graphql.operations.asset.mutations import GQL_SET_ASSET_CONSENSUS
 from kili.domain.asset import AssetFilters
 from kili.domain.types import ListOrTuple
+
+# Threshold for batching based on number of annotations
+# This is used to determine whether to use a single batch or multiple batches
+# when fetching assets. If the number of annotations counted exceeds this threshold,
+# the asset fetch will be done in multiple smaller batches to avoid performance issues.
+THRESHOLD_FOR_BATCHING = 200
 
 
 class AssetOperationMixin(BaseOperationMixin):
@@ -66,7 +78,7 @@ class AssetOperationMixin(BaseOperationMixin):
 
         yield from assets_gen
 
-    def list_assets_split(
+    def list_assets_split(  # pylint: disable=too-many-branches
         self,
         filters: AssetFilters,
         fields: ListOrTuple[str],
@@ -74,22 +86,65 @@ class AssetOperationMixin(BaseOperationMixin):
         project_info,
     ) -> Generator[dict, None, None]:
         """List assets with given options."""
+        # For LLM projects, we need to fetch annotations and rebuild jsonResponse
+        # because LLM projects don't have jsonResponseUrl
+        is_llm_project = project_info["inputType"] in {
+            "LLM_RLHF",
+            "LLM_INSTR_FOLLOWING",
+            "LLM_STATIC",
+        }
+
         assets_batch_max_amount = 10 if project_info["inputType"] == "VIDEO" else 50
         batch_size_to_use = min(options.batch_size, assets_batch_max_amount)
 
-        options = QueryOptions(options.disable_tqdm, options.first, options.skip, batch_size_to_use)
+        # For LLM projects fetching annotations, adjust batch size based on annotation count
+        if is_llm_project and (
+            "labels.jsonResponse" in fields or "latestLabel.jsonResponse" in fields
+        ):
+            nb_annotations = self.count_assets_annotations(filters)
+            batch_size = (
+                1
+                if nb_annotations / batch_size_to_use > THRESHOLD_FOR_BATCHING
+                else batch_size_to_use
+            )
+        else:
+            batch_size = batch_size_to_use
+
+        options = QueryOptions(options.disable_tqdm, options.first, options.skip, batch_size)
+
+        requested_labels_json_response = "labels.jsonResponse" in fields
+        requested_latest_label_json_response = "latestLabel.jsonResponse" in fields
+        needs_json_response = requested_labels_json_response or requested_latest_label_json_response
 
         required_fields = {"content", "jsonContent", "resolution.width", "resolution.height"}
-        if "labels.jsonResponse" in fields:
-            required_fields.add("labels.jsonResponseUrl")
-        if "latestLabel.jsonResponse" in fields:
-            required_fields.add("latestLabel.jsonResponseUrl")
         fields = list(fields)
+
+        static_fragments = {}
+        if is_llm_project and needs_json_response:
+            # For LLM projects: fetch annotations and rebuild jsonResponse client-side
+            inner_annotation_fragment = get_annotation_fragment()
+            annotation_fragment = f"""
+                annotations {{
+                    {inner_annotation_fragment}
+                }}
+            """
+            static_fragments = {"labels": annotation_fragment, "latestLabel": annotation_fragment}
+
+            fields = list(fields)
+            for field in required_fields:
+                if field not in fields:
+                    fields.append(field)
+        else:
+            if requested_labels_json_response:
+                required_fields.add("labels.jsonResponseUrl")
+            if requested_latest_label_json_response:
+                required_fields.add("latestLabel.jsonResponseUrl")
+
         for field in required_fields:
             if field not in fields:
                 fields.append(field)
 
-        fragment = fragment_builder(fields)
+        fragment = fragment_builder(fields, static_fragments if static_fragments else None)
         query = get_assets_query(fragment)
         where = asset_where_mapper(filters)
         assets_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
@@ -99,13 +154,40 @@ class AssetOperationMixin(BaseOperationMixin):
             load_asset_json_fields(asset, fields, self.http_client) for asset in assets_gen
         )
 
-        yield from assets_gen
+        if is_llm_project and needs_json_response:
+            # Rebuild jsonResponse from annotations for LLM projects
+            converter = AnnotationsToJsonResponseConverter(
+                json_interface=project_info["jsonInterface"],
+                project_input_type=project_info["inputType"],
+            )
+            for asset in assets_gen:
+                if requested_latest_label_json_response and asset.get("latestLabel"):
+                    converter.patch_label_json_response(
+                        asset, asset["latestLabel"], asset["latestLabel"]["annotations"]
+                    )
+                    asset["latestLabel"].pop("annotations", None)
+
+                if requested_labels_json_response:
+                    for label in asset.get("labels", []):
+                        converter.patch_label_json_response(asset, label, label["annotations"])
+                        label.pop("annotations", None)
+                yield asset
+        else:
+            yield from assets_gen
 
     def count_assets(self, filters: AssetFilters) -> int:
         """Send a GraphQL request calling countIssues resolver."""
         where = asset_where_mapper(filters)
         payload = {"where": where}
         count_result = self.graphql_client.execute(GQL_COUNT_ASSETS, payload)
+        count: int = count_result["data"]
+        return count
+
+    def count_assets_annotations(self, filters: AssetFilters) -> int:
+        """Count the number of annotations for assets matching the filters."""
+        where = asset_where_mapper(filters)
+        payload = {"where": where}
+        count_result = self.graphql_client.execute(GQL_COUNT_ASSET_ANNOTATIONS, payload)
         count: int = count_result["data"]
         return count
 
