@@ -9,3 +9,6 @@ https://cloud.kili-technology.com/api/label/v2/graphql*
 # Ignore OpenAI documentation (403 errors due to bot protection)
 https://help.openai.com/*
 https://platform.openai.com/*
+
+# Ignore Google Cloud Console (HTTP/2 protocol errors / bot protection)
+https://console.cloud.google.com/*
