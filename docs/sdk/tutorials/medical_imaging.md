@@ -41,10 +41,10 @@ Let's download some dicom images:
 
 ```python
 wget.download(
-    "https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/datasets/0000a175-0e68-4ca4-b1af-167204a7e0bc.dcm?raw=true"
+    "https://storage.googleapis.com/label-public-staging/SDK/datasets/0000a175-0e68-4ca4-b1af-167204a7e0bc.dcm"
 )
 wget.download(
-    "https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/datasets/0005d3cc-3c3f-40b9-93c3-46231c3eb813.dcm?raw=true"
+    "https://storage.googleapis.com/label-public-staging/SDK/datasets/0005d3cc-3c3f-40b9-93c3-46231c3eb813.dcm"
 )
 
 data_folder = Path()
