@@ -51,13 +51,16 @@ class AssetOperationMixin(BaseOperationMixin):
             project_info = get_project(
                 self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
             )
+            # TODO(LAB-4269): TEMPORARY WORKAROUND - Remove when backend handles jsonResponseUrl for LLM
+            # Threshold for batching based on number of annotations.
             if project_info["inputType"] in {
-                "VIDEO",
                 "LLM_RLHF",
                 "LLM_INSTR_FOLLOWING",
                 "LLM_STATIC",
-                "GEOSPATIAL",
             }:
+                yield from self.llm_list_assets_split(filters, fields, options, project_info)
+                return
+            if project_info["inputType"] in {"VIDEO", "GEOSPATIAL"}:
                 yield from self.list_assets_split(filters, fields, options, project_info)
                 return
 
@@ -78,29 +81,66 @@ class AssetOperationMixin(BaseOperationMixin):
 
         yield from assets_gen
 
-    def list_assets_split(  # pylint: disable=too-many-branches
+    def list_assets_split(
         self,
         filters: AssetFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
         project_info,
     ) -> Generator[dict, None, None]:
-        """List assets with given options."""
-        # For LLM projects, we need to fetch annotations and rebuild jsonResponse
-        # because LLM projects don't have jsonResponseUrl
-        is_llm_project = project_info["inputType"] in {
-            "LLM_RLHF",
-            "LLM_INSTR_FOLLOWING",
-            "LLM_STATIC",
-        }
-
+        """List assets with given options for VIDEO and GEOSPATIAL projects."""
         assets_batch_max_amount = 10 if project_info["inputType"] == "VIDEO" else 50
         batch_size_to_use = min(options.batch_size, assets_batch_max_amount)
 
-        # For LLM projects fetching annotations, adjust batch size based on annotation count
-        if is_llm_project and (
-            "labels.jsonResponse" in fields or "latestLabel.jsonResponse" in fields
-        ):
+        options = QueryOptions(options.disable_tqdm, options.first, options.skip, batch_size_to_use)
+
+        requested_labels_json_response = "labels.jsonResponse" in fields
+        requested_latest_label_json_response = "latestLabel.jsonResponse" in fields
+
+        required_fields = {"content", "jsonContent", "resolution.width", "resolution.height"}
+        fields = list(fields)
+
+        if requested_labels_json_response:
+            required_fields.add("labels.jsonResponseUrl")
+        if requested_latest_label_json_response:
+            required_fields.add("latestLabel.jsonResponseUrl")
+
+        for field in required_fields:
+            if field not in fields:
+                fields.append(field)
+
+        fragment = fragment_builder(fields)
+        query = get_assets_query(fragment)
+        where = asset_where_mapper(filters)
+        assets_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
+            query, where, options, "Retrieving assets", GQL_COUNT_ASSETS
+        )
+        assets_gen = (
+            load_asset_json_fields(asset, fields, self.http_client) for asset in assets_gen
+        )
+
+        yield from assets_gen
+
+    def llm_list_assets_split(
+        self,
+        filters: AssetFilters,
+        fields: ListOrTuple[str],
+        options: QueryOptions,
+        project_info,
+    ) -> Generator[dict, None, None]:
+        """List assets with given options for LLM projects.
+
+        This method handles the specific logic for LLM projects where jsonResponse
+        needs to be rebuilt from annotations client-side.
+        """
+        assets_batch_max_amount = 50
+        batch_size_to_use = min(options.batch_size, assets_batch_max_amount)
+
+        requested_labels_json_response = "labels.jsonResponse" in fields
+        requested_latest_label_json_response = "latestLabel.jsonResponse" in fields
+        needs_json_response = requested_labels_json_response or requested_latest_label_json_response
+
+        if needs_json_response:
             nb_annotations = self.count_assets_annotations(filters)
             batch_size = (
                 1
@@ -112,33 +152,17 @@ class AssetOperationMixin(BaseOperationMixin):
 
         options = QueryOptions(options.disable_tqdm, options.first, options.skip, batch_size)
 
-        requested_labels_json_response = "labels.jsonResponse" in fields
-        requested_latest_label_json_response = "latestLabel.jsonResponse" in fields
-        needs_json_response = requested_labels_json_response or requested_latest_label_json_response
-
         required_fields = {"content", "jsonContent", "resolution.width", "resolution.height"}
         fields = list(fields)
 
         static_fragments = {}
-        if is_llm_project and needs_json_response:
-            # For LLM projects: fetch annotations and rebuild jsonResponse client-side
-            inner_annotation_fragment = get_annotation_fragment()
-            annotation_fragment = f"""
-                annotations {{
-                    {inner_annotation_fragment}
-                }}
-            """
-            static_fragments = {"labels": annotation_fragment, "latestLabel": annotation_fragment}
-
-            fields = list(fields)
-            for field in required_fields:
-                if field not in fields:
-                    fields.append(field)
-        else:
-            if requested_labels_json_response:
-                required_fields.add("labels.jsonResponseUrl")
-            if requested_latest_label_json_response:
-                required_fields.add("latestLabel.jsonResponseUrl")
+        inner_annotation_fragment = get_annotation_fragment()
+        annotation_fragment = f"""
+            annotations {{
+                {inner_annotation_fragment}
+            }}
+        """
+        static_fragments = {"labels": annotation_fragment, "latestLabel": annotation_fragment}
 
         for field in required_fields:
             if field not in fields:
@@ -154,7 +178,7 @@ class AssetOperationMixin(BaseOperationMixin):
             load_asset_json_fields(asset, fields, self.http_client) for asset in assets_gen
         )
 
-        if is_llm_project and needs_json_response:
+        if needs_json_response:
             # Rebuild jsonResponse from annotations for LLM projects
             converter = AnnotationsToJsonResponseConverter(
                 json_interface=project_info["jsonInterface"],

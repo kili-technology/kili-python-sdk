@@ -56,13 +56,16 @@ class LabelOperationMixin(BaseOperationMixin):
             project_info = get_project(
                 self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
             )
+            # TODO(LAB-4269): TEMPORARY WORKAROUND - Remove when backend handles jsonResponseUrl for LLM
+            # Threshold for batching based on number of annotations.
             if project_info["inputType"] in {
-                "GEOSPATIAL",
-                "VIDEO",
                 "LLM_RLHF",
                 "LLM_INSTR_FOLLOWING",
                 "LLM_STATIC",
             }:
+                yield from self.llm_list_labels_split(filters, fields, options, project_info)
+                return
+            if project_info["inputType"] in {"GEOSPATIAL", "VIDEO"}:
                 yield from self.list_labels_split(filters, fields, options, project_info)
                 return
 
@@ -84,24 +87,45 @@ class LabelOperationMixin(BaseOperationMixin):
         options: QueryOptions,
         project_info,
     ) -> Generator[dict, None, None]:
-        """List labels."""
+        """List labels for VIDEO and GEOSPATIAL projects."""
         if project_info["inputType"] == "VIDEO":
             options = QueryOptions(
                 options.disable_tqdm, options.first, options.skip, min(options.batch_size, 20)
             )
 
-        # For LLM projects, we need to fetch annotations and rebuild jsonResponse
-        # because LLM projects don't have jsonResponseUrl
-        is_llm_project = project_info["inputType"] in {
-            "LLM_RLHF",
-            "LLM_INSTR_FOLLOWING",
-            "LLM_STATIC",
-        }
+        fields = list(fields)
+
+        if "jsonResponse" in fields and "jsonResponseUrl" not in fields:
+            fields.append("jsonResponseUrl")
+        fragment = fragment_builder(fields)
+        query = get_labels_query(fragment)
+        where = label_where_mapper(filters)
+        labels_gen = PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
+            query, where, options, "Retrieving labels", GQL_COUNT_LABELS
+        )
+        labels_gen = (
+            load_label_json_fields(label, fields, self.http_client) for label in labels_gen
+        )
+
+        yield from labels_gen
+
+    def llm_list_labels_split(
+        self,
+        filters: LabelFilters,
+        fields: ListOrTuple[str],
+        options: QueryOptions,
+        project_info,
+    ) -> Generator[dict, None, None]:
+        """List labels for LLM projects.
+
+        This method handles the specific logic for LLM projects where jsonResponse
+        needs to be rebuilt from annotations client-side.
+        """
         needs_json_response = "jsonResponse" in fields
 
         fields = list(fields)
 
-        if is_llm_project and needs_json_response:
+        if needs_json_response:
             # For LLM projects: fetch annotations and rebuild jsonResponse client-side
             inner_annotation_fragment = get_annotation_fragment()
             full_fragment = f"""
@@ -111,8 +135,6 @@ class LabelOperationMixin(BaseOperationMixin):
                 }}
             """
         else:
-            if "jsonResponse" in fields and "jsonResponseUrl" not in fields:
-                fields.append("jsonResponseUrl")
             full_fragment = fragment_builder(fields)
 
         query = get_labels_query(full_fragment)
@@ -124,7 +146,7 @@ class LabelOperationMixin(BaseOperationMixin):
             load_label_json_fields(label, fields, self.http_client) for label in labels_gen
         )
 
-        if is_llm_project and needs_json_response:
+        if needs_json_response:
             # Rebuild jsonResponse from annotations for LLM projects
             converter = AnnotationsToJsonResponseConverter(
                 json_interface=project_info["jsonInterface"],
