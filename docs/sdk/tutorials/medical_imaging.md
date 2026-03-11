@@ -190,9 +190,7 @@ from kili.utils.labels.parsing import ParsedLabel
 
 
 ```python
-wget.download(
-    "https://github.com/kili-technology/kili-python-sdk/blob/main/recipes/conf/medical-labels.pkl?raw=true"
-)
+wget.download("https://storage.googleapis.com/label-public-staging/SDK/datasets/medical-labels.pkl")
 
 with open("medical-labels.pkl", "rb") as f:
     label = pickle.load(f)
