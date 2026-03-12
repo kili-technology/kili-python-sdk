@@ -10,6 +10,42 @@ from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
 
+def get_annotation_fragment() -> str:
+    """Generate a basic annotation fragment for querying annotations.
+
+    This is used for LLM projects.
+    """
+    return """
+        __typename
+        id
+        job
+        path
+        labelId
+        ... on ClassificationAnnotation {
+            annotationValue {
+                categories
+            }
+            chatItemId
+        }
+        ... on ComparisonAnnotation {
+            annotationValue {
+                choice {
+                    code
+                    firstId
+                    secondId
+                }
+            }
+            chatItemId
+        }
+        ... on TranscriptionAnnotation {
+            annotationValue {
+                text
+            }
+            chatItemId
+        }
+    """
+
+
 def get_asset(
     graphql_client: GraphQLClient,
     http_client: HttpClient,
