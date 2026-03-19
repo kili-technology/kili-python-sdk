@@ -35,5 +35,6 @@ def update_step_mapper(data: Union[WorkflowStepCreate, WorkflowStepUpdate]) -> d
         "stepCoverage": data["step_coverage"] if "step_coverage" in data else None,
         "type": data["type"] if "type" in data else None,
         "assignees": data["assignees"] if "assignees" in data else None,
+        "sendBackStepId": data["send_back_step_id"] if "send_back_step_id" in data else None,
     }
     return {k: v for k, v in step.items() if v is not None}
