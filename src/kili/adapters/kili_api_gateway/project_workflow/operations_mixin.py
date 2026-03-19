@@ -1,4 +1,5 @@
 """Mixin extending Kili API Gateway class with Projects related operations."""
+
 import warnings
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
@@ -11,12 +12,31 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
-from .mappers import project_input_mapper
-from .operations import (
-    get_steps_query,
-    get_update_project_workflow_mutation,
+from .mappers import (
+    add_review_step_input_mapper,
+    delete_step_input_mapper,
+    project_input_mapper,
+    rename_step_input_mapper,
+    update_labeling_step_properties_input_mapper,
+    update_review_step_properties_input_mapper,
 )
-from .types import ProjectWorkflowDataKiliAPIGatewayInput
+from .operations import (
+    get_add_review_step_mutation,
+    get_delete_step_mutation,
+    get_rename_step_mutation,
+    get_steps_query,
+    get_update_labeling_step_properties_mutation,
+    get_update_project_workflow_mutation,
+    get_update_review_step_properties_mutation,
+)
+from .types import (
+    AddReviewStepInput,
+    DeleteStepInput,
+    ProjectWorkflowDataKiliAPIGatewayInput,
+    RenameStepInput,
+    UpdateLabelingStepPropertiesInput,
+    UpdateReviewStepPropertiesInput,
+)
 
 
 class ProjectWorkflowOperationMixin(BaseOperationMixin):
@@ -160,3 +180,38 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
             )
 
         return removed_emails
+
+    def add_review_step(self, data: AddReviewStepInput) -> dict:
+        """Add a review step to a project workflow."""
+        variables = {"input": add_review_step_input_mapper(data)}
+        mutation = get_add_review_step_mutation()
+        result = self.graphql_client.execute(mutation, variables)
+        return result["data"]
+
+    def update_labeling_step_properties(self, data: UpdateLabelingStepPropertiesInput) -> dict:
+        """Update properties of a labeling step."""
+        variables = {"input": update_labeling_step_properties_input_mapper(data)}
+        mutation = get_update_labeling_step_properties_mutation()
+        result = self.graphql_client.execute(mutation, variables)
+        return result["data"]
+
+    def update_review_step_properties(self, data: UpdateReviewStepPropertiesInput) -> dict:
+        """Update properties of a review step."""
+        variables = {"input": update_review_step_properties_input_mapper(data)}
+        mutation = get_update_review_step_properties_mutation()
+        result = self.graphql_client.execute(mutation, variables)
+        return result["data"]
+
+    def delete_step(self, data: DeleteStepInput) -> dict:
+        """Delete a step from a project workflow."""
+        variables = {"input": delete_step_input_mapper(data)}
+        mutation = get_delete_step_mutation()
+        result = self.graphql_client.execute(mutation, variables)
+        return result["data"]
+
+    def rename_step(self, data: RenameStepInput) -> dict:
+        """Rename a step in a project workflow."""
+        variables = {"input": rename_step_input_mapper(data)}
+        mutation = get_rename_step_mutation()
+        result = self.graphql_client.execute(mutation, variables)
+        return result["data"]
