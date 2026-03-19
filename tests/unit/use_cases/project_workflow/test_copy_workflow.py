@@ -197,3 +197,46 @@ class TestCopyWorkflowFromProject:
         data = update_call[0][1]
         for step in data.create_steps:
             assert step["assignees"] == []
+
+    def test_raises_when_source_and_destination_are_same(self, use_cases, mock_gateway):
+        """Test that ValueError is raised when source and destination are the same project."""
+        project_id = ProjectId("same-project")
+
+        with pytest.raises(ValueError, match="must be different"):
+            use_cases.copy_workflow_from_project(
+                source_project_id=project_id,
+                destination_project_id=project_id,
+            )
+
+    def test_raises_when_source_has_duplicate_step_names(self, use_cases, mock_gateway):
+        """Test that ValueError is raised when source has duplicate step names."""
+        source_id = ProjectId("source-project")
+        dest_id = ProjectId("dest-project")
+
+        duplicate_steps = [
+            {
+                "id": "step-1",
+                "name": "Labeling",
+                "type": "DEFAULT",
+                "consensusCoverage": None,
+                "numberOfExpectedLabelsForConsensus": None,
+                "stepCoverage": None,
+                "sendBackStepId": None,
+            },
+            {
+                "id": "step-2",
+                "name": "Labeling",
+                "type": "DEFAULT",
+                "consensusCoverage": None,
+                "numberOfExpectedLabelsForConsensus": None,
+                "stepCoverage": None,
+                "sendBackStepId": None,
+            },
+        ]
+        mock_gateway.get_steps.return_value = duplicate_steps
+
+        with pytest.raises(ValueError, match="duplicate step names"):
+            use_cases.copy_workflow_from_project(
+                source_project_id=source_id,
+                destination_project_id=dest_id,
+            )

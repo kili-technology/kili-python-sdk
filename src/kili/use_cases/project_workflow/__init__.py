@@ -76,12 +76,25 @@ class ProjectWorkflowUseCases(BaseUseCases):
         deletes existing destination steps, and creates new steps with remapped sendBackStepId
         references.
         """
+        if source_project_id == destination_project_id:
+            raise ValueError(
+                "Source and destination project IDs must be different."
+                f" Got the same ID: {source_project_id}"
+            )
+
         # 1. Fetch source workflow steps
         logger.info("Fetching workflow steps from source project %s", source_project_id)
         source_steps = self._kili_api_gateway.get_steps(source_project_id, _SOURCE_STEP_FIELDS)
 
         if not source_steps:
             raise ValueError(f"Source project {source_project_id} has no workflow steps to copy.")
+
+        step_names = [step["name"] for step in source_steps]
+        if len(step_names) != len(set(step_names)):
+            raise ValueError(
+                f"Source project {source_project_id} has duplicate step names."
+                " Cannot reliably copy workflow with duplicate step names."
+            )
 
         # 2. Validate destination has no labels
         self._validate_destination_has_no_labels(destination_project_id)
@@ -112,9 +125,11 @@ class ProjectWorkflowUseCases(BaseUseCases):
 
         # 6. Remap sendBackStepId references if any steps had them
         if source_steps_with_send_back:
-            result = self._remap_send_back_step_ids(
+            remap_result = self._remap_send_back_step_ids(
                 source_steps, source_steps_with_send_back, destination_project_id
             )
+            if remap_result:
+                result = remap_result
 
         logger.info(
             "Successfully copied workflow from project %s to project %s",
@@ -149,7 +164,12 @@ class ProjectWorkflowUseCases(BaseUseCases):
             dest_steps = self._kili_api_gateway.get_steps(
                 destination_project_id, ("steps.id", "steps.name")
             )
-        except (ValueError, KeyError):
+        except (ValueError, KeyError) as exc:
+            logger.warning(
+                "Could not fetch existing steps from destination project %s: %s",
+                destination_project_id,
+                exc,
+            )
             dest_steps = []
         return [step["id"] for step in dest_steps]
 
