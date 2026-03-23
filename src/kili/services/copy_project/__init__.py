@@ -155,7 +155,9 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
         ]
         assets_dst_project_map = {asset["externalId"]: asset["id"] for asset in assets_dst_project}
 
-        for src_asset in assets_src_project_list:
+        for i, src_asset in enumerate(assets_src_project_list, start=1):
+            is_last = i == len(assets_src_project_list)
+            skip_rebuilds = not is_last
             src_asset_id = src_asset["id"]
             dst_asset_id = assets_dst_project_map.get(src_asset["externalId"])
             if not dst_asset_id:
@@ -167,6 +169,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
                 src_asset_id=src_asset_id,
                 dst_asset_id=dst_asset_id,
                 project_id=new_project_id,
+                skip_rebuilds=skip_rebuilds,
             )
 
     # pylint: disable=too-many-locals

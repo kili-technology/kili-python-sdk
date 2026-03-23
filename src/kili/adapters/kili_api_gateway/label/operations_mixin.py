@@ -241,13 +241,16 @@ class LabelOperationMixin(BaseOperationMixin):
         result = self.graphql_client.execute(query, variables)
         return result["data"]
 
-    def copy_labels(self, src_asset_id: str, dst_asset_id: str, project_id: str) -> bool:
+    def copy_labels(
+        self, src_asset_id: str, dst_asset_id: str, project_id: str, skip_rebuilds: bool
+    ) -> bool:
         """Copy labels from one asset to another."""
         variables = {
             "data": {
                 "srcAssetId": src_asset_id,
                 "dstAssetId": dst_asset_id,
                 "projectId": project_id,
+                "skipRebuilds": skip_rebuilds,
             },
         }
         self.graphql_client.execute(GQL_COPY_LABELS, variables)
