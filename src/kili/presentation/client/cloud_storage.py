@@ -44,6 +44,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         project_id: Optional[str] = None,
         fields: ListOrTuple[str] = (
             "id",
+            "isJsonProcessingEnabled",
             "lastCheck",
             "numberOfAssets",
             "selectedFolders",
@@ -65,6 +66,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         project_id: Optional[str] = None,
         fields: ListOrTuple[str] = (
             "id",
+            "isJsonProcessingEnabled",
             "lastCheck",
             "numberOfAssets",
             "selectedFolders",
@@ -86,6 +88,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         project_id: Optional[str] = None,
         fields: ListOrTuple[str] = (
             "id",
+            "isJsonProcessingEnabled",
             "lastCheck",
             "numberOfAssets",
             "selectedFolders",
@@ -116,7 +119,7 @@ class CloudStorageClientMethods(BaseClientMethods):
 
         Examples:
             >>> kili.cloud_storage_connections(project_id="789465123")
-            [{'id': '123456789', 'lastCheck': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'selectedFolders': ['folder1', 'folder2'], 'projectId': '789465123'}]
+            [{'id': '123456789', 'isJsonProcessingEnabled': False, 'lastCheck': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'selectedFolders': ['folder1', 'folder2'], 'projectId': '789465123'}]
         """
         if (
             cloud_storage_connection_id is None
@@ -303,6 +306,7 @@ class CloudStorageClientMethods(BaseClientMethods):
         prefix: Optional[str] = None,
         include: Optional[list[str]] = None,
         exclude: Optional[list[str]] = None,
+        is_json_processing_enabled: Optional[bool] = None,
     ) -> dict:
         """Connect a cloud storage to a project. More details about parameters
         can be found in the [documentation](https://docs.kili-technology.com/docs/filtering-assets-from-cloud-storage).
@@ -316,6 +320,9 @@ class CloudStorageClientMethods(BaseClientMethods):
             prefix: Filter files to synchronize based on their base path.
             include: List of pattern used to include files based on their path.
             exclude: List of pattern used to exclude files based on their path.
+            is_json_processing_enabled: Whether JSON file synchronization is enabled.
+                When True, JSON files are processed during synchronization
+                to extract text content or create layered images.
 
         Returns:
             A dict with the DataConnection Id.
@@ -333,6 +340,7 @@ class CloudStorageClientMethods(BaseClientMethods):
             prefix=prefix,
             include=include,
             exclude=exclude,
+            is_json_processing_enabled=is_json_processing_enabled,
         )["id"]
 
         return {"id": data_connection_id}

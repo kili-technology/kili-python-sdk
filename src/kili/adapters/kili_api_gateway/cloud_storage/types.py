@@ -19,6 +19,7 @@ class AddDataConnectionKiliAPIGatewayInput:
     exclude: Optional[list[str]]
     include: Optional[list[str]]
     integration_id: DataIntegrationId
+    is_json_processing_enabled: Optional[bool]
     prefix: Optional[str]
     project_id: ProjectId
     selected_folders: Optional[list[str]]
