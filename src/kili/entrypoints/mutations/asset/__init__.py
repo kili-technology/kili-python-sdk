@@ -1,4 +1,5 @@
 """Asset mutations."""
+
 import warnings
 from typing import Any, Literal, Optional, Union, cast
 
@@ -252,13 +253,24 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         if len(resolved_asset_ids) != len(to_be_labeled_by_array):
             raise MutationError("There must be as many assets as there are lists of labelers.")
 
-        formated_results = []
+        # Group assets by assignee list to batch
+        # assignee combination instead of 1 call per asset.
+        groups: dict[tuple, list[str]] = {}
         for asset_id, to_be_labeled_by in zip(
             resolved_asset_ids, to_be_labeled_by_array, strict=False
         ):
-            payload = {"userIds": to_be_labeled_by, "where": {"id": asset_id}}
-            results = self.graphql_client.execute(GQL_ASSIGN_ASSETS, payload)
-            formated_results.append(results)
+            key = tuple(to_be_labeled_by)
+            if key not in groups:
+                groups[key] = []
+            groups[key].append(asset_id)
+
+        formated_results = []
+        for user_ids_tuple, ids_for_group in groups.items():
+            for i in range(0, len(ids_for_group), 100):
+                chunk = ids_for_group[i : i + 100]
+                payload = {"userIds": list(user_ids_tuple), "where": {"idIn": chunk}}
+                results = self.graphql_client.execute(GQL_ASSIGN_ASSETS, payload)
+                formated_results.append(results)
         return formated_results
 
     @typechecked
