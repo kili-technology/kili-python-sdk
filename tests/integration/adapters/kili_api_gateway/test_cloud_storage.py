@@ -3,10 +3,12 @@ from kili.adapters.kili_api_gateway.cloud_storage import (
     DataConnectionComputeDifferencesKiliAPIGatewayInput,
     DataIntegrationFilters,
 )
+from kili.adapters.kili_api_gateway.cloud_storage.mappers import add_data_connection_data_mapper
 from kili.adapters.kili_api_gateway.cloud_storage.operations import (
     GQL_COUNT_DATA_INTEGRATIONS,
     get_compute_data_connection_differences_mutation,
 )
+from kili.adapters.kili_api_gateway.cloud_storage.types import AddDataConnectionKiliAPIGatewayInput
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.cloud_storage import DataConnectionId, DataIntegrationId
@@ -83,3 +85,41 @@ def test_given_gateway_when_calling_count_data_integrations_then_it_works(
             }
         },
     )
+
+
+def test_add_data_connection_mapper_includes_json_processing_when_set():
+    # Given
+    data = AddDataConnectionKiliAPIGatewayInput(
+        exclude=None,
+        include=None,
+        integration_id=DataIntegrationId("fake_integration_id"),
+        is_json_processing_enabled=True,
+        prefix=None,
+        project_id="fake_proj_id",
+        selected_folders=None,
+    )
+
+    # When
+    result = add_data_connection_data_mapper(data)
+
+    # Then
+    assert result["isJsonProcessingEnabled"] is True
+
+
+def test_add_data_connection_mapper_excludes_json_processing_when_none():
+    # Given
+    data = AddDataConnectionKiliAPIGatewayInput(
+        exclude=None,
+        include=None,
+        integration_id=DataIntegrationId("fake_integration_id"),
+        is_json_processing_enabled=None,
+        prefix=None,
+        project_id="fake_proj_id",
+        selected_folders=None,
+    )
+
+    # When
+    result = add_data_connection_data_mapper(data)
+
+    # Then
+    assert "isJsonProcessingEnabled" not in result

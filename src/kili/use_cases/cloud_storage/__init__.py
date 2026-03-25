@@ -81,6 +81,7 @@ class CloudStorageUseCases(BaseUseCases):
         prefix: Optional[str] = None,
         include: Optional[list[str]] = None,
         exclude: Optional[list[str]] = None,
+        is_json_processing_enabled: Optional[bool] = None,
     ) -> dict:
         """Add data connection to a project."""
         if (
@@ -96,6 +97,7 @@ class CloudStorageUseCases(BaseUseCases):
                 exclude=exclude,
                 include=include,
                 integration_id=data_integration_id,
+                is_json_processing_enabled=is_json_processing_enabled,
                 prefix=prefix,
                 project_id=project_id,
                 selected_folders=selected_folders,

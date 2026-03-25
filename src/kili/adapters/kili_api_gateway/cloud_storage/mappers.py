@@ -31,7 +31,7 @@ def data_connection_where_mapper(filters: DataConnectionFilters) -> dict:
 
 def add_data_connection_data_mapper(data: AddDataConnectionKiliAPIGatewayInput) -> dict:
     """Build the GraphQL DataConnectionInput variable to be sent in an operation."""
-    return {
+    result = {
         "exclude": data.exclude,
         "include": data.include,
         "integrationId": data.integration_id,
@@ -39,6 +39,9 @@ def add_data_connection_data_mapper(data: AddDataConnectionKiliAPIGatewayInput) 
         "projectId": data.project_id,
         "selectedFolders": data.selected_folders,
     }
+    if data.is_json_processing_enabled is not None:
+        result["isJsonProcessingEnabled"] = data.is_json_processing_enabled
+    return result
 
 
 def compute_data_connection_difference_data_mapper(
