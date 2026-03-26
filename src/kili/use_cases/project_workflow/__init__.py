@@ -21,8 +21,6 @@ _SOURCE_STEP_FIELDS = (
     "steps.numberOfExpectedLabelsForConsensus",
     "steps.stepCoverage",
     "steps.sendBackStepId",
-    "steps.useHoneypot",
-    "steps.allowedJobNames",
 )
 
 
@@ -170,6 +168,7 @@ class ProjectWorkflowUseCases(BaseUseCases):
                 create_steps=steps_to_create or None,
                 update_steps=update_steps or None,
                 delete_steps=delete_steps,
+                for_copy=True,
             ),
         )
 
@@ -302,11 +301,6 @@ def _make_create_step(step: dict[str, object], assignees: list[str]) -> Workflow
         ]
     if step.get("stepCoverage") is not None:
         create_step["step_coverage"] = step["stepCoverage"]
-    if step.get("useHoneypot") is not None:
-        create_step["use_honeypot"] = step["useHoneypot"]
-    if step.get("allowedJobNames") is not None:
-        create_step["allowed_job_names"] = step["allowedJobNames"]
-
     return create_step
 
 
@@ -322,11 +316,6 @@ def _build_step_update(dest_step_id: str, source_step: dict[str, object]) -> Wor
         update["number_of_expected_labels_for_consensus"] = source_step[
             "numberOfExpectedLabelsForConsensus"
         ]
-    if source_step.get("useHoneypot") is not None:
-        update["use_honeypot"] = source_step["useHoneypot"]
-    if source_step.get("allowedJobNames") is not None:
-        update["allowed_job_names"] = source_step["allowedJobNames"]
-
     return update
 
 
