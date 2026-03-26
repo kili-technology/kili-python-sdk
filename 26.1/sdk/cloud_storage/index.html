@@ -2160,6 +2160,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;isJsonProcessingEnabled&quot;</span><span class="p">,</span>
             <span class="s2">&quot;lastCheck&quot;</span><span class="p">,</span>
             <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
             <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
@@ -2181,6 +2182,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;isJsonProcessingEnabled&quot;</span><span class="p">,</span>
             <span class="s2">&quot;lastCheck&quot;</span><span class="p">,</span>
             <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
             <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
@@ -2202,6 +2204,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;isJsonProcessingEnabled&quot;</span><span class="p">,</span>
             <span class="s2">&quot;lastCheck&quot;</span><span class="p">,</span>
             <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
             <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
@@ -2232,7 +2235,7 @@ More information about how to use a cloud storage integration in a project can b
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.cloud_storage_connections(project_id=&quot;789465123&quot;)</span>
-<span class="sd">            [{&#39;id&#39;: &#39;123456789&#39;, &#39;lastCheck&#39;: &#39;2023-02-21T14:49:35.606Z&#39;, &#39;numberOfAssets&#39;: 42, &#39;selectedFolders&#39;: [&#39;folder1&#39;, &#39;folder2&#39;], &#39;projectId&#39;: &#39;789465123&#39;}]</span>
+<span class="sd">            [{&#39;id&#39;: &#39;123456789&#39;, &#39;isJsonProcessingEnabled&#39;: False, &#39;lastCheck&#39;: &#39;2023-02-21T14:49:35.606Z&#39;, &#39;numberOfAssets&#39;: 42, &#39;selectedFolders&#39;: [&#39;folder1&#39;, &#39;folder2&#39;], &#39;projectId&#39;: &#39;789465123&#39;}]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">cloud_storage_connection_id</span> <span class="ow">is</span> <span class="kc">None</span>
@@ -2419,6 +2422,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">include</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">exclude</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">is_json_processing_enabled</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Connect a cloud storage to a project. More details about parameters</span>
 <span class="sd">        can be found in the [documentation](https://docs.kili-technology.com/docs/filtering-assets-from-cloud-storage).</span>
@@ -2432,6 +2436,9 @@ More information about how to use a cloud storage integration in a project can b
 <span class="sd">            prefix: Filter files to synchronize based on their base path.</span>
 <span class="sd">            include: List of pattern used to include files based on their path.</span>
 <span class="sd">            exclude: List of pattern used to exclude files based on their path.</span>
+<span class="sd">            is_json_processing_enabled: Whether JSON file synchronization is enabled.</span>
+<span class="sd">                When True, JSON files are processed during synchronization</span>
+<span class="sd">                to extract text content or create layered images.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the DataConnection Id.</span>
@@ -2449,6 +2456,7 @@ More information about how to use a cloud storage integration in a project can b
             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
             <span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span>
             <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">,</span>
+            <span class="n">is_json_processing_enabled</span><span class="o">=</span><span class="n">is_json_processing_enabled</span><span class="p">,</span>
         <span class="p">)[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">data_connection_id</span><span class="p">}</span>
@@ -2691,7 +2699,7 @@ More information about how to use a cloud storage integration in a project can b
 
 
 <h3 id="kili.presentation.client.cloud_storage.CloudStorageClientMethods.add_cloud_storage_connection" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">add_cloud_storage_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="p">,</span> <span class="n">selected_folders</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">add_cloud_storage_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="p">,</span> <span class="n">selected_folders</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_json_processing_enabled</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2750,6 +2758,14 @@ This option is deprecated and will be removed in the future.</p></td>
         <td><p>List of pattern used to exclude files based on their path.</p></td>
         <td><code>None</code></td>
       </tr>
+      <tr>
+        <td><code>is_json_processing_enabled</code></td>
+        <td><code>Optional[bool]</code></td>
+        <td><p>Whether JSON file synchronization is enabled.
+When True, JSON files are processed during synchronization
+to extract text content or create layered images.</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -2777,6 +2793,7 @@ This option is deprecated and will be removed in the future.</p></td>
     <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">include</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">exclude</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">is_json_processing_enabled</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect a cloud storage to a project. More details about parameters</span>
 <span class="sd">    can be found in the [documentation](https://docs.kili-technology.com/docs/filtering-assets-from-cloud-storage).</span>
@@ -2790,6 +2807,9 @@ This option is deprecated and will be removed in the future.</p></td>
 <span class="sd">        prefix: Filter files to synchronize based on their base path.</span>
 <span class="sd">        include: List of pattern used to include files based on their path.</span>
 <span class="sd">        exclude: List of pattern used to exclude files based on their path.</span>
+<span class="sd">        is_json_processing_enabled: Whether JSON file synchronization is enabled.</span>
+<span class="sd">            When True, JSON files are processed during synchronization</span>
+<span class="sd">            to extract text content or create layered images.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the DataConnection Id.</span>
@@ -2807,6 +2827,7 @@ This option is deprecated and will be removed in the future.</p></td>
         <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
         <span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span>
         <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">,</span>
+        <span class="n">is_json_processing_enabled</span><span class="o">=</span><span class="n">is_json_processing_enabled</span><span class="p">,</span>
     <span class="p">)[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">data_connection_id</span><span class="p">}</span>
@@ -2823,7 +2844,7 @@ This option is deprecated and will be removed in the future.</p></td>
 
 
 <h3 id="kili.presentation.client.cloud_storage.CloudStorageClientMethods.cloud_storage_connections" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">cloud_storage_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;lastCheck&#39;</span><span class="p">,</span> <span class="s1">&#39;numberOfAssets&#39;</span><span class="p">,</span> <span class="s1">&#39;selectedFolders&#39;</span><span class="p">,</span> <span class="s1">&#39;projectId&#39;</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">cloud_storage_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;isJsonProcessingEnabled&#39;</span><span class="p">,</span> <span class="s1">&#39;lastCheck&#39;</span><span class="p">,</span> <span class="s1">&#39;numberOfAssets&#39;</span><span class="p">,</span> <span class="s1">&#39;selectedFolders&#39;</span><span class="p">,</span> <span class="s1">&#39;projectId&#39;</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2866,7 +2887,7 @@ This option is deprecated and will be removed in the future.</p></td>
         <td><code>Union[list[str], tuple[str, ...]]</code></td>
         <td><p>All the fields to request among the possible fields for the cloud storage connections.
 See <a href="https://api-docs.kili-technology.com/types/objects/data-connection">the documentation</a> for all possible fields.</p></td>
-        <td><code>(&#39;id&#39;, &#39;lastCheck&#39;, &#39;numberOfAssets&#39;, &#39;selectedFolders&#39;, &#39;projectId&#39;)</code></td>
+        <td><code>(&#39;id&#39;, &#39;isJsonProcessingEnabled&#39;, &#39;lastCheck&#39;, &#39;numberOfAssets&#39;, &#39;selectedFolders&#39;, &#39;projectId&#39;)</code></td>
       </tr>
       <tr>
         <td><code>first</code></td>
@@ -2911,7 +2932,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-connection"
 </table>
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">cloud_storage_connections</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;789465123&quot;</span><span class="p">)</span>
-<span class="p">[{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;123456789&#39;</span><span class="p">,</span> <span class="s1">&#39;lastCheck&#39;</span><span class="p">:</span> <span class="s1">&#39;2023-02-21T14:49:35.606Z&#39;</span><span class="p">,</span> <span class="s1">&#39;numberOfAssets&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;selectedFolders&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;folder1&#39;</span><span class="p">,</span> <span class="s1">&#39;folder2&#39;</span><span class="p">],</span> <span class="s1">&#39;projectId&#39;</span><span class="p">:</span> <span class="s1">&#39;789465123&#39;</span><span class="p">}]</span>
+<span class="p">[{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;123456789&#39;</span><span class="p">,</span> <span class="s1">&#39;isJsonProcessingEnabled&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;lastCheck&#39;</span><span class="p">:</span> <span class="s1">&#39;2023-02-21T14:49:35.606Z&#39;</span><span class="p">,</span> <span class="s1">&#39;numberOfAssets&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;selectedFolders&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;folder1&#39;</span><span class="p">,</span> <span class="s1">&#39;folder2&#39;</span><span class="p">],</span> <span class="s1">&#39;projectId&#39;</span><span class="p">:</span> <span class="s1">&#39;789465123&#39;</span><span class="p">}]</span>
 </code></pre></div>
 
         <details class="quote">
@@ -2923,6 +2944,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-connection"
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;isJsonProcessingEnabled&quot;</span><span class="p">,</span>
         <span class="s2">&quot;lastCheck&quot;</span><span class="p">,</span>
         <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
         <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
@@ -2953,7 +2975,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-connection"
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.cloud_storage_connections(project_id=&quot;789465123&quot;)</span>
-<span class="sd">        [{&#39;id&#39;: &#39;123456789&#39;, &#39;lastCheck&#39;: &#39;2023-02-21T14:49:35.606Z&#39;, &#39;numberOfAssets&#39;: 42, &#39;selectedFolders&#39;: [&#39;folder1&#39;, &#39;folder2&#39;], &#39;projectId&#39;: &#39;789465123&#39;}]</span>
+<span class="sd">        [{&#39;id&#39;: &#39;123456789&#39;, &#39;isJsonProcessingEnabled&#39;: False, &#39;lastCheck&#39;: &#39;2023-02-21T14:49:35.606Z&#39;, &#39;numberOfAssets&#39;: 42, &#39;selectedFolders&#39;: [&#39;folder1&#39;, &#39;folder2&#39;], &#39;projectId&#39;: &#39;789465123&#39;}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">cloud_storage_connection_id</span> <span class="ow">is</span> <span class="kc">None</span>

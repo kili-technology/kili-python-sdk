@@ -2352,14 +2352,14 @@ The method will return the list of newly-added label IDs.</p>
 <p>Now, let's place some assets in the review queue. The method will return a project ID and a list of asset IDs placed in the review queue.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">add_to_review</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;4.jpg&quot;</span><span class="p">])</span>
 </code></pre></div>
-<p>For more information on asset statuses, refer to our <a href="https://docs.kili-technology.com/docs/multi-steps-review#asset-steps-and-statuses">documentation</a>.</p>
+<p>For more information on asset statuses, refer to our <a href="https://docs.kili-technology.com/docs/workflow-configuration">documentation</a>.</p>
 <h3 id="sending-an-asset-back-to-the-labeling-queue">Sending an asset back to the labeling queue</h3>
 <p>You can also send specific labeled assets back to the labeling queue.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">send_back_to_queue</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;4.jpg&quot;</span><span class="p">])</span>
 </code></pre></div>
 <pre><code>{'id': 'clm0sxbgb05hf082tcq813zrc', 'asset_ids': ['clm0sxcpf0003ojvzcrha754l']}
 </code></pre>
-<p>For more information on asset statuses, refer to our <a href="https://docs.kili-technology.com/docs/multi-steps-review#asset-steps-and-statuses">documentation</a>.</p>
+<p>For more information on asset statuses, refer to our <a href="https://docs.kili-technology.com/docs/workflow-configuration">documentation</a>.</p>
 <h2 id="cleanup">Cleanup</h2>
 <p>We can remove the project that we created:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">delete_project</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
