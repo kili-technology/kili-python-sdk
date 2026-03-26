@@ -60,6 +60,22 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
 
         return steps
 
+    def count_activated_project_users(self, project_id: str) -> int:
+        """Count project users with ACTIVATED status."""
+        where = ProjectUserWhere(project_id=project_id, status="ACTIVATED")
+        return ProjectUserQuery(self.graphql_client, self.http_client).count(where)
+
+    def list_activated_project_users(self, project_id: str) -> list[dict]:
+        """List project users with ACTIVATED status, returning role and user id."""
+        where = ProjectUserWhere(project_id=project_id, status="ACTIVATED")
+        return list(
+            ProjectUserQuery(self.graphql_client, self.http_client)(
+                where=where,
+                fields=["role", "user.id"],
+                options=QueryOptions(disable_tqdm=True),
+            )
+        )
+
     def add_reviewers_to_step(
         self, project_id: str, step_name: str, emails: list[str]
     ) -> list[str]:

@@ -48,6 +48,27 @@ def _make_source_steps(
     ]
 
 
+_DEST_USERS = [
+    {"role": "REVIEWER", "user": {"id": "user-reviewer-1"}},
+    {"role": "LABELER", "user": {"id": "user-labeler-1"}},
+    {"role": "REVIEWER", "user": {"id": "user-reviewer-2"}},
+]
+_LABELER_IDS = ["user-reviewer-1", "user-labeler-1", "user-reviewer-2"]
+_REVIEWER_IDS = ["user-reviewer-1", "user-reviewer-2"]  # role != LABELER
+
+
+def _setup_happy_path(mock_gateway, *, enforce_step_separation: bool | None = None) -> None:
+    """Configure common gateway mocks for tests that pass all validations."""
+    mock_gateway.get_project.side_effect = [
+        {"enforceStepSeparation": enforce_step_separation},  # source project fetch
+        {"workflowVersion": "V2"},  # destination V2 validation
+    ]
+    mock_gateway.count_labels.return_value = 0
+    # >= numberOfExpectedLabelsForConsensus (3)
+    mock_gateway.count_activated_project_users.return_value = 3
+    mock_gateway.list_activated_project_users.return_value = _DEST_USERS
+
+
 class TestCopyWorkflowFromProject:
     """Tests for copy_workflow_from_project."""
 
@@ -60,8 +81,7 @@ class TestCopyWorkflowFromProject:
             _make_source_steps(),  # source steps
             [{"id": "dest-step-old", "name": "Old Step"}],  # dest steps (1 step)
         ]
-        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
-        mock_gateway.count_labels.return_value = 0
+        _setup_happy_path(mock_gateway)
         mock_gateway.update_project_workflow.return_value = {
             "editProjectWorkflowSettings": {"steps": []}
         }
@@ -83,7 +103,6 @@ class TestCopyWorkflowFromProject:
         assert data.update_steps is not None and len(data.update_steps) == 1
         assert data.update_steps[0]["id"] == "dest-step-old"
         assert data.update_steps[0]["name"] == "Labeling"
-        assert data.update_steps[0]["type"] == "DEFAULT"
         assert data.update_steps[0]["consensus_coverage"] == 50
 
         # Remaining source steps → create new
@@ -94,6 +113,29 @@ class TestCopyWorkflowFromProject:
 
         # No dest steps to delete (only 1 dest step, which was updated)
         assert data.delete_steps is None
+
+    def test_copies_enforce_step_separation(self, use_cases, mock_gateway):
+        """Test that enforce_step_separation is copied from the source project."""
+        source_id = ProjectId("source-project")
+        dest_id = ProjectId("dest-project")
+
+        mock_gateway.get_steps.side_effect = [
+            _make_source_steps(),
+            [{"id": "dest-step-old", "name": "Old Step"}],
+        ]
+        _setup_happy_path(mock_gateway, enforce_step_separation=True)
+        mock_gateway.update_project_workflow.return_value = {
+            "editProjectWorkflowSettings": {"steps": []}
+        }
+
+        use_cases.copy_workflow_from_project(
+            source_project_id=source_id,
+            destination_project_id=dest_id,
+        )
+
+        update_call = mock_gateway.update_project_workflow.call_args
+        data = update_call[0][1]
+        assert data.enforce_step_separation is True
 
     def test_raises_when_source_has_no_steps(self, use_cases, mock_gateway):
         """Test that ValueError is raised when source has no workflow steps."""
@@ -114,7 +156,10 @@ class TestCopyWorkflowFromProject:
         dest_id = ProjectId("dest-project")
 
         mock_gateway.get_steps.return_value = _make_source_steps()
-        mock_gateway.get_project.return_value = {"workflowVersion": "V1"}
+        mock_gateway.get_project.side_effect = [
+            {"enforceStepSeparation": None},  # source project fetch
+            {"workflowVersion": "V1"},  # destination V2 validation
+        ]
 
         with pytest.raises(ValueError, match="workflow version"):
             use_cases.copy_workflow_from_project(
@@ -128,7 +173,10 @@ class TestCopyWorkflowFromProject:
         dest_id = ProjectId("dest-project")
 
         mock_gateway.get_steps.return_value = _make_source_steps()
-        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
+        mock_gateway.get_project.side_effect = [
+            {"enforceStepSeparation": None},
+            {"workflowVersion": "V2"},
+        ]
         mock_gateway.count_labels.return_value = 5
 
         with pytest.raises(ValueError, match="already has 5 label"):
@@ -136,6 +184,62 @@ class TestCopyWorkflowFromProject:
                 source_project_id=source_id,
                 destination_project_id=dest_id,
             )
+
+    def test_raises_when_destination_has_too_few_labelers(self, use_cases, mock_gateway):
+        """Test that ValueError is raised when destination lacks labelers for consensus."""
+        source_id = ProjectId("source-project")
+        dest_id = ProjectId("dest-project")
+
+        mock_gateway.get_steps.return_value = _make_source_steps()  # first step requires 3
+        mock_gateway.get_project.side_effect = [
+            {"enforceStepSeparation": None},
+            {"workflowVersion": "V2"},
+        ]
+        mock_gateway.count_labels.return_value = 0
+        # 2 is fewer than the required 3
+        mock_gateway.count_activated_project_users.return_value = 2
+
+        with pytest.raises(ValueError, match="2 activated labeler"):
+            use_cases.copy_workflow_from_project(
+                source_project_id=source_id,
+                destination_project_id=dest_id,
+            )
+
+    def test_skips_consensus_check_when_not_set(self, use_cases, mock_gateway):
+        """Test consensus labeler check is skipped when numberOfExpectedLabelsForConsensus is None."""
+        source_id = ProjectId("source-project")
+        dest_id = ProjectId("dest-project")
+
+        steps_without_consensus = [
+            {
+                "id": "source-step-1",
+                "name": "Labeling",
+                "type": "DEFAULT",
+                "consensusCoverage": None,
+                "numberOfExpectedLabelsForConsensus": None,
+                "stepCoverage": None,
+                "sendBackStepId": None,
+            }
+        ]
+        mock_gateway.get_steps.side_effect = [
+            steps_without_consensus,
+            [{"id": "dest-old", "name": "Old"}],
+        ]
+        mock_gateway.get_project.side_effect = [
+            {"enforceStepSeparation": None},
+            {"workflowVersion": "V2"},
+        ]
+        mock_gateway.count_labels.return_value = 0
+        mock_gateway.update_project_workflow.return_value = {
+            "editProjectWorkflowSettings": {"steps": []}
+        }
+
+        use_cases.copy_workflow_from_project(
+            source_project_id=source_id,
+            destination_project_id=dest_id,
+        )
+
+        mock_gateway.count_activated_project_users.assert_not_called()
 
     def test_remaps_send_back_step_id(self, use_cases, mock_gateway):
         """Test that sendBackStepId is remapped to new step IDs."""
@@ -151,8 +255,7 @@ class TestCopyWorkflowFromProject:
                 {"id": "new-step-2", "name": "Review"},
             ],
         ]
-        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
-        mock_gateway.count_labels.return_value = 0
+        _setup_happy_path(mock_gateway)
         mock_gateway.update_project_workflow.return_value = {
             "editProjectWorkflowSettings": {"steps": []}
         }
@@ -187,8 +290,7 @@ class TestCopyWorkflowFromProject:
                 {"id": "dest-step-3", "name": "Step3"},
             ],
         ]
-        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
-        mock_gateway.count_labels.return_value = 0
+        _setup_happy_path(mock_gateway)
         mock_gateway.update_project_workflow.return_value = {
             "editProjectWorkflowSettings": {"steps": []}
         }
@@ -215,8 +317,7 @@ class TestCopyWorkflowFromProject:
             raise ValueError("No workflow found")
 
         mock_gateway.get_steps.side_effect = get_steps_side_effect
-        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
-        mock_gateway.count_labels.return_value = 0
+        _setup_happy_path(mock_gateway)
         mock_gateway.update_project_workflow.return_value = {
             "editProjectWorkflowSettings": {"steps": []}
         }
@@ -233,17 +334,16 @@ class TestCopyWorkflowFromProject:
         assert data.create_steps is not None and len(data.create_steps) == 2
         assert data.delete_steps is None
 
-    def test_does_not_copy_assignees(self, use_cases, mock_gateway):
-        """Test that assignees are not copied: neither update nor create steps include them."""
+    def test_assignees_use_dest_project_users(self, use_cases, mock_gateway):
+        """Test that created steps use destination project users, not source assignees."""
         source_id = ProjectId("source-project")
         dest_id = ProjectId("dest-project")
 
         mock_gateway.get_steps.side_effect = [
-            _make_source_steps(),
+            _make_source_steps(),  # source: DEFAULT + REVIEW
             [{"id": "dest-old", "name": "Old"}],
         ]
-        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
-        mock_gateway.count_labels.return_value = 0
+        _setup_happy_path(mock_gateway)
         mock_gateway.update_project_workflow.return_value = {
             "editProjectWorkflowSettings": {"steps": []}
         }
@@ -255,10 +355,16 @@ class TestCopyWorkflowFromProject:
 
         update_call = mock_gateway.update_project_workflow.call_args
         data = update_call[0][1]
-        for step in (data.update_steps or []) + (data.create_steps or []):
-            assert "assignees" not in step
 
-    def test_raises_when_source_and_destination_are_same(self, use_cases, mock_gateway):
+        # update_steps (first DEFAULT step): no assignees on update
+        assert data.update_steps is not None
+        assert "assignees" not in data.update_steps[0]
+
+        # create_steps (REVIEW step): reviewer_ids only (role != LABELER)
+        assert data.create_steps is not None
+        assert data.create_steps[0]["assignees"] == _REVIEWER_IDS
+
+    def test_raises_when_source_and_destination_are_same(self, use_cases):
         """Test that ValueError is raised when source and destination are the same project."""
         project_id = ProjectId("same-project")
 
