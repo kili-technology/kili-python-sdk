@@ -52,14 +52,15 @@ class TestCopyWorkflowFromProject:
     """Tests for copy_workflow_from_project."""
 
     def test_copies_basic_workflow(self, use_cases, mock_gateway):
-        """Test copying a basic workflow without sendBackStepId."""
+        """Test copying a basic workflow: first dest step is updated, remaining are created."""
         source_id = ProjectId("source-project")
         dest_id = ProjectId("dest-project")
 
         mock_gateway.get_steps.side_effect = [
             _make_source_steps(),  # source steps
-            [{"id": "dest-step-old", "name": "Old Step"}],  # dest steps
+            [{"id": "dest-step-old", "name": "Old Step"}],  # dest steps (1 step)
         ]
+        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
         mock_gateway.count_labels.return_value = 0
         mock_gateway.update_project_workflow.return_value = {
             "editProjectWorkflowSettings": {"steps": []}
@@ -77,15 +78,22 @@ class TestCopyWorkflowFromProject:
         update_call = mock_gateway.update_project_workflow.call_args
         assert update_call[0][0] == dest_id
         data = update_call[0][1]
-        assert len(data.create_steps) == 2
-        assert data.create_steps[0]["name"] == "Labeling"
-        assert data.create_steps[0]["type"] == "DEFAULT"
-        assert data.create_steps[0]["assignees"] == []
-        assert data.create_steps[0]["consensus_coverage"] == 50
-        assert data.create_steps[1]["name"] == "Review"
-        assert data.create_steps[1]["type"] == "REVIEW"
-        assert data.create_steps[1]["step_coverage"] == 80
-        assert data.delete_steps == ["dest-step-old"]
+
+        # First source step → update the existing first dest step
+        assert data.update_steps is not None and len(data.update_steps) == 1
+        assert data.update_steps[0]["id"] == "dest-step-old"
+        assert data.update_steps[0]["name"] == "Labeling"
+        assert data.update_steps[0]["type"] == "DEFAULT"
+        assert data.update_steps[0]["consensus_coverage"] == 50
+
+        # Remaining source steps → create new
+        assert data.create_steps is not None and len(data.create_steps) == 1
+        assert data.create_steps[0]["name"] == "Review"
+        assert data.create_steps[0]["type"] == "REVIEW"
+        assert data.create_steps[0]["step_coverage"] == 80
+
+        # No dest steps to delete (only 1 dest step, which was updated)
+        assert data.delete_steps is None
 
     def test_raises_when_source_has_no_steps(self, use_cases, mock_gateway):
         """Test that ValueError is raised when source has no workflow steps."""
@@ -100,12 +108,27 @@ class TestCopyWorkflowFromProject:
                 destination_project_id=dest_id,
             )
 
+    def test_raises_when_destination_is_not_workflow_v2(self, use_cases, mock_gateway):
+        """Test that ValueError is raised when destination project is not workflow V2."""
+        source_id = ProjectId("source-project")
+        dest_id = ProjectId("dest-project")
+
+        mock_gateway.get_steps.return_value = _make_source_steps()
+        mock_gateway.get_project.return_value = {"workflowVersion": "V1"}
+
+        with pytest.raises(ValueError, match="workflow version"):
+            use_cases.copy_workflow_from_project(
+                source_project_id=source_id,
+                destination_project_id=dest_id,
+            )
+
     def test_raises_when_destination_has_labels(self, use_cases, mock_gateway):
         """Test that ValueError is raised when destination has labels."""
         source_id = ProjectId("source-project")
         dest_id = ProjectId("dest-project")
 
         mock_gateway.get_steps.return_value = _make_source_steps()
+        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
         mock_gateway.count_labels.return_value = 5
 
         with pytest.raises(ValueError, match="already has 5 label"):
@@ -121,12 +144,14 @@ class TestCopyWorkflowFromProject:
 
         mock_gateway.get_steps.side_effect = [
             _make_source_steps(with_send_back=True),
-            [{"id": "dest-old", "name": "OldStep"}],
+            [{"id": "dest-old", "name": "OldStep"}],  # 1 existing dest step
+            # After update+create, dest has: updated first step + new Review step
             [
-                {"id": "new-step-1", "name": "Labeling"},
+                {"id": "dest-old", "name": "Labeling"},
                 {"id": "new-step-2", "name": "Review"},
             ],
         ]
+        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
         mock_gateway.count_labels.return_value = 0
         mock_gateway.update_project_workflow.return_value = {
             "editProjectWorkflowSettings": {"steps": []}
@@ -137,7 +162,7 @@ class TestCopyWorkflowFromProject:
             destination_project_id=dest_id,
         )
 
-        # Should have been called twice: once for create, once for sendBackStepId update
+        # Should have been called twice: once for update/create, once for sendBackStepId remap
         assert mock_gateway.update_project_workflow.call_count == 2
 
         # Verify the second call remaps sendBackStepId
@@ -145,20 +170,52 @@ class TestCopyWorkflowFromProject:
         data = second_call[0][1]
         assert data.update_steps is not None
         assert len(data.update_steps) == 1
+        # Review step's sendBackStepId should point to Labeling (dest-old)
         assert data.update_steps[0]["id"] == "new-step-2"
-        assert data.update_steps[0]["send_back_step_id"] == "new-step-1"
+        assert data.update_steps[0]["send_back_step_id"] == "dest-old"
 
-    def test_handles_destination_without_existing_workflow(self, use_cases, mock_gateway):
-        """Test copying to a project that has no existing workflow."""
+    def test_deletes_extra_dest_steps(self, use_cases, mock_gateway):
+        """Test that extra dest steps beyond the first are deleted."""
         source_id = ProjectId("source-project")
         dest_id = ProjectId("dest-project")
 
-        def get_steps_side_effect(project_id, fields) -> list:
+        mock_gateway.get_steps.side_effect = [
+            _make_source_steps(),  # source: 2 steps
+            [  # dest: 3 existing steps
+                {"id": "dest-step-1", "name": "Step1"},
+                {"id": "dest-step-2", "name": "Step2"},
+                {"id": "dest-step-3", "name": "Step3"},
+            ],
+        ]
+        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
+        mock_gateway.count_labels.return_value = 0
+        mock_gateway.update_project_workflow.return_value = {
+            "editProjectWorkflowSettings": {"steps": []}
+        }
+
+        use_cases.copy_workflow_from_project(
+            source_project_id=source_id,
+            destination_project_id=dest_id,
+        )
+
+        update_call = mock_gateway.update_project_workflow.call_args
+        data = update_call[0][1]
+        # First dest step updated, other two deleted
+        assert data.update_steps is not None and data.update_steps[0]["id"] == "dest-step-1"
+        assert set(data.delete_steps) == {"dest-step-2", "dest-step-3"}
+
+    def test_handles_destination_without_existing_workflow(self, use_cases, mock_gateway):
+        """Test copying to a project that has no existing workflow (creates all steps)."""
+        source_id = ProjectId("source-project")
+        dest_id = ProjectId("dest-project")
+
+        def get_steps_side_effect(project_id, _fields) -> list:
             if project_id == source_id:
                 return _make_source_steps()
             raise ValueError("No workflow found")
 
         mock_gateway.get_steps.side_effect = get_steps_side_effect
+        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
         mock_gateway.count_labels.return_value = 0
         mock_gateway.update_project_workflow.return_value = {
             "editProjectWorkflowSettings": {"steps": []}
@@ -169,20 +226,23 @@ class TestCopyWorkflowFromProject:
             destination_project_id=dest_id,
         )
 
-        # Verify update was called with no deletes
         update_call = mock_gateway.update_project_workflow.call_args
         data = update_call[0][1]
+        # No dest steps → create all, no updates, no deletes
+        assert data.update_steps is None
+        assert data.create_steps is not None and len(data.create_steps) == 2
         assert data.delete_steps is None
 
     def test_does_not_copy_assignees(self, use_cases, mock_gateway):
-        """Test that assignees are not copied from source steps."""
+        """Test that assignees are not copied: neither update nor create steps include them."""
         source_id = ProjectId("source-project")
         dest_id = ProjectId("dest-project")
 
         mock_gateway.get_steps.side_effect = [
             _make_source_steps(),
-            [{"id": "old", "name": "Old"}],
+            [{"id": "dest-old", "name": "Old"}],
         ]
+        mock_gateway.get_project.return_value = {"workflowVersion": "V2"}
         mock_gateway.count_labels.return_value = 0
         mock_gateway.update_project_workflow.return_value = {
             "editProjectWorkflowSettings": {"steps": []}
@@ -195,8 +255,8 @@ class TestCopyWorkflowFromProject:
 
         update_call = mock_gateway.update_project_workflow.call_args
         data = update_call[0][1]
-        for step in data.create_steps:
-            assert step["assignees"] == []
+        for step in (data.update_steps or []) + (data.create_steps or []):
+            assert "assignees" not in step
 
     def test_raises_when_source_and_destination_are_same(self, use_cases, mock_gateway):
         """Test that ValueError is raised when source and destination are the same project."""

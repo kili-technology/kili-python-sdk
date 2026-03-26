@@ -96,19 +96,52 @@ class ProjectWorkflowUseCases(BaseUseCases):
                 " Cannot reliably copy workflow with duplicate step names."
             )
 
-        # 2. Validate destination has no labels
+        # 2. Validate destination project is workflow V2
+        self._validate_destination_is_workflow_v2(destination_project_id)
+
+        # 3. Validate destination has no labels
         self._validate_destination_has_no_labels(destination_project_id)
 
-        # 3. Get existing destination steps to delete
-        dest_step_ids = self._get_destination_step_ids(destination_project_id)
+        # 4. Get existing destination steps
+        dest_steps = self._get_destination_steps(destination_project_id)
 
-        # 4. Build create steps and track sendBackStepId references
-        steps_to_create, source_steps_with_send_back = _build_steps_to_create(source_steps)
+        # 5. Build operations:
+        # - Update the first dest step (cannot delete it) with first source step properties
+        # - Delete remaining dest steps
+        # - Create remaining source steps (index 1+)
+        first_dest_step = dest_steps[0] if dest_steps else None
 
-        # 5. Execute: delete existing + create new steps in a single call
+        update_steps: list[WorkflowStepUpdate] = []
+        steps_to_create: list[WorkflowStepCreate] = []
+        source_steps_with_send_back: list[tuple[str, str]] = []  # (step_name, source_send_back_id)
+
+        if first_dest_step:
+            update_steps = [_build_step_update(str(first_dest_step["id"]), source_steps[0])]
+            if source_steps[0].get("sendBackStepId"):
+                source_steps_with_send_back.append(
+                    (str(source_steps[0]["name"]), str(source_steps[0]["sendBackStepId"]))
+                )
+            for step in source_steps[1:]:
+                steps_to_create.append(_make_create_step(step))
+                if step.get("sendBackStepId"):
+                    source_steps_with_send_back.append(
+                        (str(step["name"]), str(step["sendBackStepId"]))
+                    )
+        else:
+            # No existing dest steps — create all source steps
+            for step in source_steps:
+                steps_to_create.append(_make_create_step(step))
+                if step.get("sendBackStepId"):
+                    source_steps_with_send_back.append(
+                        (str(step["name"]), str(step["sendBackStepId"]))
+                    )
+
+        delete_steps = [str(step["id"]) for step in dest_steps[1:]] or None
+
+        # 5. Execute: update first step + delete old extras + create new steps
         logger.info(
             "Copying %d steps from project %s to project %s",
-            len(steps_to_create),
+            len(source_steps),
             source_project_id,
             destination_project_id,
         )
@@ -117,9 +150,9 @@ class ProjectWorkflowUseCases(BaseUseCases):
             destination_project_id,
             ProjectWorkflowDataKiliAPIGatewayInput(
                 enforce_step_separation=None,
-                create_steps=steps_to_create,
-                update_steps=None,
-                delete_steps=dest_step_ids or None,
+                create_steps=steps_to_create or None,
+                update_steps=update_steps or None,
+                delete_steps=delete_steps,
             ),
         )
 
@@ -138,6 +171,18 @@ class ProjectWorkflowUseCases(BaseUseCases):
         )
         return result
 
+    def _validate_destination_is_workflow_v2(self, destination_project_id: ProjectId) -> None:
+        """Validate that the destination project uses workflow V2."""
+        project = self._kili_api_gateway.get_project(
+            project_id=destination_project_id, fields=["workflowVersion"]
+        )
+        version = project.get("workflowVersion")
+        if version != "V2":
+            raise ValueError(
+                f"Destination project {destination_project_id} uses workflow version"
+                f" '{version}'. Only workflow V2 projects support multi-step workflows."
+            )
+
     def _validate_destination_has_no_labels(self, destination_project_id: ProjectId) -> None:
         """Validate that the destination project has no labels."""
         logger.info(
@@ -154,14 +199,14 @@ class ProjectWorkflowUseCases(BaseUseCases):
                 " that has already been labeled."
             )
 
-    def _get_destination_step_ids(self, destination_project_id: ProjectId) -> list[str]:
-        """Get existing step IDs from the destination project."""
+    def _get_destination_steps(self, destination_project_id: ProjectId) -> list[dict[str, object]]:
+        """Get existing steps from the destination project."""
         logger.info(
             "Fetching existing steps from destination project %s",
             destination_project_id,
         )
         try:
-            dest_steps = self._kili_api_gateway.get_steps(
+            return self._kili_api_gateway.get_steps(
                 destination_project_id, ("steps.id", "steps.name")
             )
         except (ValueError, KeyError) as exc:
@@ -170,100 +215,94 @@ class ProjectWorkflowUseCases(BaseUseCases):
                 destination_project_id,
                 exc,
             )
-            dest_steps = []
-        return [step["id"] for step in dest_steps]
+            return []
 
     def _remap_send_back_step_ids(
         self,
         source_steps: list[dict[str, object]],
-        source_steps_with_send_back: list[tuple[int, str]],
+        source_steps_with_send_back: list[tuple[str, str]],
         destination_project_id: ProjectId,
     ) -> dict[str, object]:
         """Remap sendBackStepId references from source to new destination step IDs."""
         logger.info("Remapping sendBackStepId references for copied steps")
 
-        source_id_to_idx = {step["id"]: idx for idx, step in enumerate(source_steps)}
+        source_id_to_name = {str(step["id"]): str(step["name"]) for step in source_steps}
         new_steps = self._kili_api_gateway.get_steps(
             destination_project_id, ("steps.id", "steps.name")
         )
+        name_to_new_id = {str(step["name"]): str(step["id"]) for step in new_steps}
 
-        name_to_new_id = {step["name"]: step["id"] for step in new_steps}
-        idx_to_name = {idx: step["name"] for idx, step in enumerate(source_steps)}
-
-        updates_for_send_back = _build_send_back_updates(
-            source_steps_with_send_back, source_id_to_idx, idx_to_name, name_to_new_id
+        updates = _build_send_back_updates(
+            source_steps_with_send_back, source_id_to_name, name_to_new_id
         )
 
-        if updates_for_send_back:
+        if updates:
             return self._kili_api_gateway.update_project_workflow(
                 destination_project_id,
                 ProjectWorkflowDataKiliAPIGatewayInput(
                     enforce_step_separation=None,
                     create_steps=None,
-                    update_steps=updates_for_send_back,
+                    update_steps=updates,
                     delete_steps=None,
                 ),
             )
         return {}
 
 
-def _build_steps_to_create(
-    source_steps: list[dict[str, object]],
-) -> tuple[list[WorkflowStepCreate], list[tuple[int, str]]]:
-    """Build WorkflowStepCreate list from source steps and track sendBackStepId references."""
-    steps_to_create: list[WorkflowStepCreate] = []
-    source_steps_with_send_back: list[tuple[int, str]] = []
+def _make_create_step(step: dict[str, object]) -> WorkflowStepCreate:
+    """Build a WorkflowStepCreate from a source step. Assignees are omitted (backend default)."""
+    create_step: WorkflowStepCreate = {
+        "name": step["name"],
+        "type": step["type"],
+    }
+    if step.get("consensusCoverage") is not None:
+        create_step["consensus_coverage"] = step["consensusCoverage"]
+    if step.get("numberOfExpectedLabelsForConsensus") is not None:
+        create_step["number_of_expected_labels_for_consensus"] = step[
+            "numberOfExpectedLabelsForConsensus"
+        ]
+    if step.get("stepCoverage") is not None:
+        create_step["step_coverage"] = step["stepCoverage"]
+    return create_step
 
-    for idx, step in enumerate(source_steps):
-        create_step: WorkflowStepCreate = {
-            "name": step["name"],
-            "type": step["type"],
-            "assignees": [],  # Don't copy assignees per spec
-        }
-        if step.get("consensusCoverage") is not None:
-            create_step["consensus_coverage"] = step["consensusCoverage"]
-        if step.get("numberOfExpectedLabelsForConsensus") is not None:
-            create_step["number_of_expected_labels_for_consensus"] = step[
-                "numberOfExpectedLabelsForConsensus"
-            ]
-        if step.get("stepCoverage") is not None:
-            create_step["step_coverage"] = step["stepCoverage"]
 
-        if step.get("sendBackStepId"):
-            source_steps_with_send_back.append((idx, step["sendBackStepId"]))
-
-        steps_to_create.append(create_step)
-
-    return steps_to_create, source_steps_with_send_back
+def _build_step_update(dest_step_id: str, source_step: dict[str, object]) -> WorkflowStepUpdate:
+    """Build a WorkflowStepUpdate for the first dest step based on source step properties."""
+    update: WorkflowStepUpdate = {
+        "id": dest_step_id,
+        "name": source_step["name"],
+        "type": source_step["type"],
+    }
+    if source_step.get("consensusCoverage") is not None:
+        update["consensus_coverage"] = source_step["consensusCoverage"]
+    if source_step.get("numberOfExpectedLabelsForConsensus") is not None:
+        update["number_of_expected_labels_for_consensus"] = source_step[
+            "numberOfExpectedLabelsForConsensus"
+        ]
+    if source_step.get("stepCoverage") is not None:
+        update["step_coverage"] = source_step["stepCoverage"]
+    return update
 
 
 def _build_send_back_updates(
-    source_steps_with_send_back: list[tuple[int, str]],
-    source_id_to_idx: dict[str, int],
-    idx_to_name: dict[int, str],
+    source_steps_with_send_back: list[tuple[str, str]],
+    source_id_to_name: dict[str, str],
     name_to_new_id: dict[str, str],
 ) -> list[WorkflowStepUpdate]:
     """Build WorkflowStepUpdate list for sendBackStepId remapping."""
     updates: list[WorkflowStepUpdate] = []
-    for step_idx, source_send_back_id in source_steps_with_send_back:
-        target_source_idx = source_id_to_idx.get(source_send_back_id)
-        if target_source_idx is None:
+    for step_name, source_send_back_id in source_steps_with_send_back:
+        target_name = source_id_to_name.get(source_send_back_id)
+        if target_name is None:
             logger.warning(
                 "Could not find source step for sendBackStepId %s, skipping",
                 source_send_back_id,
             )
             continue
 
-        step_name = idx_to_name[step_idx]
-        target_name = idx_to_name[target_source_idx]
         new_step_id = name_to_new_id.get(step_name)
         new_target_id = name_to_new_id.get(target_name)
 
         if new_step_id and new_target_id:
-            updates.append(
-                {
-                    "id": new_step_id,
-                    "send_back_step_id": new_target_id,
-                }
-            )
+            updates.append({"id": new_step_id, "send_back_step_id": new_target_id})
     return updates
