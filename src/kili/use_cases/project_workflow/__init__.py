@@ -1,7 +1,7 @@
 """Project use cases."""
 
 import logging
-from typing import Optional
+from typing import Literal, Optional, cast
 
 from kili.adapters.kili_api_gateway.project_workflow.types import (
     ProjectWorkflowDataKiliAPIGatewayInput,
@@ -191,7 +191,7 @@ class ProjectWorkflowUseCases(BaseUseCases):
         self, destination_project_id: ProjectId, first_source_step: dict[str, object]
     ) -> None:
         """Validate the destination has enough activated labelers for the source consensus setting."""
-        required = first_source_step.get("numberOfExpectedLabelsForConsensus")
+        required = cast("int", first_source_step.get("numberOfExpectedLabelsForConsensus"))
         if not required:
             return
         activated_count = self._kili_api_gateway.count_activated_project_users(
@@ -289,18 +289,18 @@ def _make_create_step(step: dict[str, object], assignees: list[str]) -> Workflow
     For REVIEW steps, assignees are activated project users with role != LABELER.
     """
     create_step: WorkflowStepCreate = {
-        "name": step["name"],
-        "type": step["type"],
+        "name": cast("str", step["name"]),
+        "type": cast("Literal['DEFAULT', 'REVIEW']", step["type"]),
         "assignees": assignees,
     }
     if step.get("consensusCoverage") is not None:
-        create_step["consensus_coverage"] = step["consensusCoverage"]
+        create_step["consensus_coverage"] = cast("int", step["consensusCoverage"])
     if step.get("numberOfExpectedLabelsForConsensus") is not None:
-        create_step["number_of_expected_labels_for_consensus"] = step[
-            "numberOfExpectedLabelsForConsensus"
-        ]
+        create_step["number_of_expected_labels_for_consensus"] = cast(
+            "int", step["numberOfExpectedLabelsForConsensus"]
+        )
     if step.get("stepCoverage") is not None:
-        create_step["step_coverage"] = step["stepCoverage"]
+        create_step["step_coverage"] = cast("int", step["stepCoverage"])
     return create_step
 
 
@@ -308,14 +308,14 @@ def _build_step_update(dest_step_id: str, source_step: dict[str, object]) -> Wor
     """Build a WorkflowStepUpdate for the first dest step based on source step properties."""
     update: WorkflowStepUpdate = {
         "id": dest_step_id,
-        "name": source_step["name"],
+        "name": cast("str", source_step["name"]),
     }
     if source_step.get("consensusCoverage") is not None:
-        update["consensus_coverage"] = source_step["consensusCoverage"]
+        update["consensus_coverage"] = cast("int", source_step["consensusCoverage"])
     if source_step.get("numberOfExpectedLabelsForConsensus") is not None:
-        update["number_of_expected_labels_for_consensus"] = source_step[
-            "numberOfExpectedLabelsForConsensus"
-        ]
+        update["number_of_expected_labels_for_consensus"] = cast(
+            "int", source_step["numberOfExpectedLabelsForConsensus"]
+        )
     return update
 
 
