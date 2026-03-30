@@ -14,3 +14,4 @@ class ProjectWorkflowDataKiliAPIGatewayInput:
     create_steps: Optional[list[WorkflowStepCreate]]
     update_steps: Optional[list[WorkflowStepUpdate]]
     delete_steps: Optional[list[str]]
+    for_copy: bool = False

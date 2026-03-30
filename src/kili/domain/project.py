@@ -35,6 +35,7 @@ class WorkflowStepCreate(TypedDict, total=False):
     step_coverage: Optional[int]
     type: Required[Literal["DEFAULT", "REVIEW"]]
     assignees: Required[list[str]]
+    send_back_step_id: Optional[str]
 
 
 class WorkflowStepUpdate(TypedDict, total=False):
@@ -47,6 +48,7 @@ class WorkflowStepUpdate(TypedDict, total=False):
     step_coverage: Optional[int]
     type: Optional[Literal["DEFAULT", "REVIEW"]]
     assignees: Optional[list[str]]
+    send_back_step_id: Optional[str]
 
 
 class InputTypeEnum(str, Enum):

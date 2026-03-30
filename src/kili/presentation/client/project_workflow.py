@@ -107,3 +107,40 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
         return ProjectWorkflowUseCases(self.kili_api_gateway).remove_reviewers_from_step(
             project_id=project_id, step_name=step_name, emails=emails
         )
+
+    @typechecked
+    def copy_workflow_from_project(
+        self,
+        destination_project_id: str,
+        source_project_id: str,
+    ) -> dict[str, Any]:
+        """Copy the workflow from a source project to a destination project.
+
+        Copies all workflow steps with their configurations (consensus, coverage,
+        sendBackStepId) from the source project. Assignees are not copied.
+
+        The destination project must have no labels. Existing workflow steps in the
+        destination project will be deleted and replaced by the source workflow.
+
+        Args:
+            destination_project_id: Id of the destination project to copy the workflow to.
+            source_project_id: Id of the source project to copy the workflow from.
+
+        Returns:
+            A dict with the workflow data which indicates if the mutation was successful,
+                else an error message.
+
+        Raises:
+            ValueError: If the source project has no workflow steps, or if the
+                destination project already has labels.
+
+        Examples:
+            >>> kili.copy_workflow_from_project(
+            ...     destination_project_id="destination_project_id",
+            ...     source_project_id="source_project_id",
+            ... )
+        """
+        return ProjectWorkflowUseCases(self.kili_api_gateway).copy_workflow_from_project(
+            source_project_id=ProjectId(source_project_id),
+            destination_project_id=ProjectId(destination_project_id),
+        )
