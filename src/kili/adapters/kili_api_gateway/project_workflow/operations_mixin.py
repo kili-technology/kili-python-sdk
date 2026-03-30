@@ -1,4 +1,5 @@
 """Mixin extending Kili API Gateway class with Projects related operations."""
+
 import warnings
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
@@ -62,12 +63,12 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
 
     def count_activated_project_users(self, project_id: str) -> int:
         """Count project users with ACTIVATED status."""
-        where = ProjectUserWhere(project_id=project_id, status="ACTIVATED")
+        where = ProjectUserWhere(project_id=project_id, status="ACTIVATED", deleted=False)
         return ProjectUserQuery(self.graphql_client, self.http_client).count(where)
 
     def list_activated_project_users(self, project_id: str) -> list[dict]:
         """List project users with ACTIVATED status, returning role and user id."""
-        where = ProjectUserWhere(project_id=project_id, status="ACTIVATED")
+        where = ProjectUserWhere(project_id=project_id, status="ACTIVATED", deleted=False)
         return list(
             ProjectUserQuery(self.graphql_client, self.http_client)(
                 where=where,
@@ -81,7 +82,7 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
     ) -> list[str]:
         """Add reviewers to a specific step."""
         existing_members = ProjectUserQuery(self.graphql_client, self.http_client)(
-            where=ProjectUserWhere(project_id=project_id, status="ACTIVATED"),
+            where=ProjectUserWhere(project_id=project_id, status="ACTIVATED", deleted=False),
             fields=["role", "user.email", "user.id", "activated"],
             options=QueryOptions(None),
         )
