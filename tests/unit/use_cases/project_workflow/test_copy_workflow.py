@@ -205,6 +205,46 @@ class TestCopyWorkflowFromProject:
                 destination_project_id=dest_id,
             )
 
+    def test_raises_when_later_step_requires_more_labelers(self, use_cases, mock_gateway):
+        """Test that validation checks all steps, not just the first one."""
+        source_id = ProjectId("source-project")
+        dest_id = ProjectId("dest-project")
+
+        # First step: no consensus; second step: requires 5 labelers
+        steps = [
+            {
+                "id": "source-step-1",
+                "name": "Labeling",
+                "type": "DEFAULT",
+                "consensusCoverage": None,
+                "numberOfExpectedLabelsForConsensus": None,
+                "stepCoverage": None,
+                "sendBackStepId": None,
+            },
+            {
+                "id": "source-step-2",
+                "name": "Second Pass",
+                "type": "DEFAULT",
+                "consensusCoverage": 80,
+                "numberOfExpectedLabelsForConsensus": 5,
+                "stepCoverage": None,
+                "sendBackStepId": None,
+            },
+        ]
+        mock_gateway.get_steps.return_value = steps
+        mock_gateway.get_project.side_effect = [
+            {"enforceStepSeparation": None},
+            {"workflowVersion": "V2"},
+        ]
+        mock_gateway.count_labels.return_value = 0
+        mock_gateway.count_activated_project_users.return_value = 3  # fewer than 5
+
+        with pytest.raises(ValueError, match="3 activated labeler"):
+            use_cases.copy_workflow_from_project(
+                source_project_id=source_id,
+                destination_project_id=dest_id,
+            )
+
     def test_skips_consensus_check_when_not_set(self, use_cases, mock_gateway):
         """Test consensus labeler check is skipped when numberOfExpectedLabelsForConsensus is None."""
         source_id = ProjectId("source-project")

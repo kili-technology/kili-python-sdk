@@ -107,8 +107,8 @@ class ProjectWorkflowUseCases(BaseUseCases):
         # 3. Validate destination has no labels
         self._validate_destination_has_no_labels(destination_project_id)
 
-        # 3b. Validate destination has enough labelers for consensus on the first step
-        self._validate_consensus_labelers(destination_project_id, source_steps[0])
+        # 3b. Validate destination has enough labelers for the most demanding consensus step
+        self._validate_consensus_labelers(destination_project_id, source_steps)
 
         # 4. Get existing destination steps and activated users
         dest_steps = self._get_destination_steps(destination_project_id)
@@ -168,7 +168,7 @@ class ProjectWorkflowUseCases(BaseUseCases):
                 create_steps=steps_to_create or None,
                 update_steps=update_steps or None,
                 delete_steps=delete_steps,
-                for_copy=True,
+                null_fields=frozenset({"consensusCoverage", "numberOfExpectedLabelsForConsensus"}),
             ),
         )
 
@@ -188,10 +188,18 @@ class ProjectWorkflowUseCases(BaseUseCases):
         return result
 
     def _validate_consensus_labelers(
-        self, destination_project_id: ProjectId, first_source_step: dict[str, object]
+        self, destination_project_id: ProjectId, source_steps: list[dict[str, object]]
     ) -> None:
-        """Validate the destination has enough activated labelers for the source consensus setting."""
-        required = cast("int", first_source_step.get("numberOfExpectedLabelsForConsensus"))
+        """Validate the destination has enough activated labelers for every consensus step."""
+        required = max(
+            (
+                cast("int", step.get("numberOfExpectedLabelsForConsensus"))
+                for step in source_steps
+                if step.get("numberOfExpectedLabelsForConsensus")
+            ),
+            default=0,
+        )
+
         if not required:
             return
         activated_count = self._kili_api_gateway.count_activated_project_users(
@@ -306,17 +314,14 @@ def _make_create_step(step: dict[str, object], assignees: list[str]) -> Workflow
 
 def _build_step_update(dest_step_id: str, source_step: dict[str, object]) -> WorkflowStepUpdate:
     """Build a WorkflowStepUpdate for the first dest step based on source step properties."""
-    update: WorkflowStepUpdate = {
+    return {
         "id": dest_step_id,
         "name": cast("str", source_step["name"]),
+        "consensus_coverage": cast("int | None", source_step.get("consensusCoverage")),
+        "number_of_expected_labels_for_consensus": cast(
+            "int | None", source_step.get("numberOfExpectedLabelsForConsensus")
+        ),
     }
-    if source_step.get("consensusCoverage") is not None:
-        update["consensus_coverage"] = cast("int", source_step["consensusCoverage"])
-    if source_step.get("numberOfExpectedLabelsForConsensus") is not None:
-        update["number_of_expected_labels_for_consensus"] = cast(
-            "int", source_step["numberOfExpectedLabelsForConsensus"]
-        )
-    return update
 
 
 def _build_send_back_updates(
