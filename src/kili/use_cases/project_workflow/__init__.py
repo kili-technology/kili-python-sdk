@@ -4,7 +4,12 @@ import logging
 from typing import Literal, Optional, cast
 
 from kili.adapters.kili_api_gateway.project_workflow.types import (
+    AddReviewStepInput,
+    DeleteStepInput,
     ProjectWorkflowDataKiliAPIGatewayInput,
+    RenameStepInput,
+    UpdateLabelingStepPropertiesInput,
+    UpdateReviewStepPropertiesInput,
 )
 from kili.domain.label import LabelFilters
 from kili.domain.project import ProjectId, WorkflowStepCreate, WorkflowStepUpdate
@@ -288,6 +293,116 @@ class ProjectWorkflowUseCases(BaseUseCases):
                 ),
             )
         return {}
+
+    def add_review_step(
+        self,
+        project_id: str,
+        step_name: str,
+        assignees: list[str],
+        step_coverage: int | None = None,
+        use_honeypot: bool | None = None,
+        send_back_to_step: str | None = None,
+    ) -> dict[str, object]:
+        """Add a review step to a project workflow."""
+        if step_coverage and not 0 <= step_coverage <= 100:
+            raise ValueError("The parameter step_coverage must be between 0 and 100 (included).")
+        data = AddReviewStepInput(
+            project_id=project_id,
+            step_name=step_name,
+            assignees=assignees,
+            step_coverage=step_coverage,
+            use_honeypot=use_honeypot,
+            send_back_to_step=send_back_to_step,
+        )
+        return self._kili_api_gateway.add_review_step(data)
+
+    def update_labeling_step_properties(
+        self,
+        project_id: str,
+        step_name: str,
+        consensus_coverage: int | None = None,
+        number_of_expected_labels_for_consensus: int | None = None,
+        use_honeypot: bool | None = None,
+    ) -> dict[str, object]:
+        """Update properties of a labeling step."""
+        if consensus_coverage and not 0 <= consensus_coverage <= 100:
+            raise ValueError(
+                "The parameter consensus_coverage must be between 0 and 100 (included)."
+            )
+        steps = self._kili_api_gateway.get_steps(
+            project_id=ProjectId(project_id), fields=["steps.id", "steps.name"]
+        )
+        step_id = next((step["id"] for step in steps if step["name"] == step_name), None)
+        if step_id is None:
+            raise ValueError(f"Step '{step_name}' not found")
+        data = UpdateLabelingStepPropertiesInput(
+            project_id=project_id,
+            step_id=str(step_id),
+            consensus_coverage=consensus_coverage,
+            number_of_expected_labels_for_consensus=number_of_expected_labels_for_consensus,
+            use_honeypot=use_honeypot,
+        )
+        return self._kili_api_gateway.update_labeling_step_properties(data)
+
+    def update_review_step_properties(
+        self,
+        project_id: str,
+        step_name: str,
+        assignees: list[str] | None = None,
+        step_coverage: int | None = None,
+        send_back_to_step: str | None = None,
+        use_honeypot: bool | None = None,
+    ) -> dict[str, object]:
+        """Update properties of a review step."""
+        if step_coverage and not 0 <= step_coverage <= 100:
+            raise ValueError("The parameter step_coverage must be between 0 and 100 (included).")
+        steps = self._kili_api_gateway.get_steps(
+            project_id=ProjectId(project_id), fields=["steps.id", "steps.name"]
+        )
+        step_id = next((step["id"] for step in steps if step["name"] == step_name), None)
+        if step_id is None:
+            raise ValueError(f"Step '{step_name}' not found")
+        data = UpdateReviewStepPropertiesInput(
+            project_id=project_id,
+            step_id=str(step_id),
+            assignees=assignees,
+            step_coverage=step_coverage,
+            send_back_to_step=send_back_to_step,
+            use_honeypot=use_honeypot,
+        )
+        return self._kili_api_gateway.update_review_step_properties(data)
+
+    def delete_last_step(
+        self,
+        project_id: str,
+    ) -> dict[str, object]:
+        """Delete the last review step from a project workflow."""
+        steps = self._kili_api_gateway.get_steps(
+            project_id=ProjectId(project_id), fields=["steps.id", "steps.name"]
+        )
+        if len(steps) <= 2:
+            raise ValueError(
+                "Cannot delete the last review step if only one review step is remaining."
+            )
+        step = steps[-1]
+        data = DeleteStepInput(project_id=project_id, step_id=str(step["id"]))
+        return self._kili_api_gateway.delete_step(data)
+
+    def rename_step(
+        self,
+        project_id: str,
+        step_name: str,
+        new_name: str,
+    ) -> dict[str, object]:
+        """Rename a step in a project workflow."""
+        steps = self._kili_api_gateway.get_steps(
+            project_id=ProjectId(project_id), fields=["steps.id", "steps.name"]
+        )
+        step_id = next((step["id"] for step in steps if step["name"] == step_name), None)
+        if step_id is None:
+            raise ValueError(f"Step '{step_name}' not found")
+        data = RenameStepInput(project_id=project_id, step_id=str(step_id), new_name=new_name)
+        return self._kili_api_gateway.rename_step(data)
 
 
 def _make_create_step(step: dict[str, object], assignees: list[str]) -> WorkflowStepCreate:
