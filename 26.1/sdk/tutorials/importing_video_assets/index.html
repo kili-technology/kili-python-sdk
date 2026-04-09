@@ -1221,26 +1221,8 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#uploading-a-video-asset-with-a-custom-sampling-rate" class="md-nav__link">
-    <span class="md-ellipsis">
-      Uploading a video asset with a custom sampling rate
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#updating-video-metadata" class="md-nav__link">
-    <span class="md-ellipsis">
-      Updating video metadata
-    </span>
-  </a>
   
 </li>
       
@@ -2174,26 +2156,8 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#uploading-a-video-asset-with-a-custom-sampling-rate" class="md-nav__link">
-    <span class="md-ellipsis">
-      Uploading a video asset with a custom sampling rate
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#updating-video-metadata" class="md-nav__link">
-    <span class="md-ellipsis">
-      Updating video metadata
-    </span>
-  </a>
   
 </li>
       
@@ -2372,37 +2336,6 @@ You can videos using URLs or use your local assets.</p>
     <span class="n">json_content_array</span><span class="o">=</span><span class="p">[[</span><span class="n">url1</span><span class="p">,</span> <span class="n">url2</span><span class="p">,</span> <span class="n">url3</span><span class="p">]],</span>
     <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_4_from_image_urls&quot;</span><span class="p">],</span>
     <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;processingParameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;shouldUseNativeVideo&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}}],</span>
-<span class="p">)</span>
-</code></pre></div>
-<h3 id="uploading-a-video-asset-with-a-custom-sampling-rate">Uploading a video asset with a custom sampling rate</h3>
-<p>To upload a video with a custom sampling rate (let's say, 10 frames per second), use this code:</p>
-<div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;./test.mp4&quot;</span><span class="p">],</span>
-    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_5_custom&quot;</span><span class="p">],</span>
-    <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;processingParameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;framesPlayedPerSecond&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}}],</span>
-<span class="p">)</span>
-</code></pre></div>
-<h2 id="updating-video-metadata">Updating video metadata</h2>
-<p>When importing a video, if you want to add or delete metadata, you must provide the entire list of metadata. This new list will replace the previous one, meaning any metadata not included in the new list will be erased. However, this does not apply to the <code>processingParameters</code> metadata, which will be retained even if they are not present in the new list.</p>
-<p>If you need to update <code>processingParameters</code> keep in mind that you should only do it with caution as it can have an impact on how the video will be managed by the application.</p>
-<p>To update a <code>processingParameters</code>, use this code:</p>
-<div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_5_custom&quot;</span><span class="p">],</span>
-    <span class="n">json_metadatas</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;processingParameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;framesPlayedPerSecond&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}}],</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>If you have set custom metadatas to your asset, see here <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_assets_and_metadata/#adding-metadata-to-assets">how</a>, and you want to update one property you will have to first get all the json_metadatas and then update the wanted metadata :</p>
-<div class="highlight"><pre><span></span><code><span class="n">updated_json_metadatas</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_id_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_5_custom&quot;</span><span class="p">],</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;jsonMetadata&quot;</span><span class="p">]</span>
-<span class="p">)</span>
-<span class="n">updated_json_metadatas</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;jsonMetadata&quot;</span><span class="p">][</span><span class="s2">&quot;customMetadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">20</span>
-
-<span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_5_custom&quot;</span><span class="p">],</span>
-    <span class="n">json_metadatas</span><span class="o">=</span><span class="p">[</span><span class="n">updated_json_metadatas</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;jsonMetadata&quot;</span><span class="p">]],</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="cleanup">Cleanup</h2>

@@ -4875,13 +4875,24 @@ Only applicable if the project is in WorkflowV2.</p></td>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">resolved_asset_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_be_labeled_by_array</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">&quot;There must be as many assets as there are lists of labelers.&quot;</span><span class="p">)</span>
 
-        <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Group assets by assignee list to batch</span>
+        <span class="c1"># assignee combination instead of 1 call per asset.</span>
+        <span class="n">groups</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">to_be_labeled_by</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
             <span class="n">resolved_asset_ids</span><span class="p">,</span> <span class="n">to_be_labeled_by_array</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">):</span>
-            <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;userIds&quot;</span><span class="p">:</span> <span class="n">to_be_labeled_by</span><span class="p">,</span> <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">}}</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ASSIGN_ASSETS</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
-            <span class="n">formated_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">to_be_labeled_by</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+                <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset_id</span><span class="p">)</span>
+
+        <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">user_ids_tuple</span><span class="p">,</span> <span class="n">ids_for_group</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids_for_group</span><span class="p">),</span> <span class="mi">100</span><span class="p">):</span>
+                <span class="n">chunk</span> <span class="o">=</span> <span class="n">ids_for_group</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">100</span><span class="p">]</span>
+                <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;userIds&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">user_ids_tuple</span><span class="p">),</span> <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">chunk</span><span class="p">}}</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ASSIGN_ASSETS</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+                <span class="n">formated_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">formated_results</span>
 
     <span class="nd">@typechecked</span>
@@ -6366,13 +6377,24 @@ In the case where assets are uploaded asynchronously (for video imported as fram
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">resolved_asset_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_be_labeled_by_array</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">&quot;There must be as many assets as there are lists of labelers.&quot;</span><span class="p">)</span>
 
-    <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Group assets by assignee list to batch</span>
+    <span class="c1"># assignee combination instead of 1 call per asset.</span>
+    <span class="n">groups</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">to_be_labeled_by</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
         <span class="n">resolved_asset_ids</span><span class="p">,</span> <span class="n">to_be_labeled_by_array</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;userIds&quot;</span><span class="p">:</span> <span class="n">to_be_labeled_by</span><span class="p">,</span> <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">asset_id</span><span class="p">}}</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ASSIGN_ASSETS</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
-        <span class="n">formated_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">to_be_labeled_by</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+            <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset_id</span><span class="p">)</span>
+
+    <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">user_ids_tuple</span><span class="p">,</span> <span class="n">ids_for_group</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids_for_group</span><span class="p">),</span> <span class="mi">100</span><span class="p">):</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">ids_for_group</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">100</span><span class="p">]</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;userIds&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">user_ids_tuple</span><span class="p">),</span> <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idIn&quot;</span><span class="p">:</span> <span class="n">chunk</span><span class="p">}}</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ASSIGN_ASSETS</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+            <span class="n">formated_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">formated_results</span>
 </code></pre></div>
         </details>

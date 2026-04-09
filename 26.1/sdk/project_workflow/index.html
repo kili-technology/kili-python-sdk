@@ -839,6 +839,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.copy_workflow_from_project" class="md-nav__link">
+    <span class="md-ellipsis">
+      copy_workflow_from_project()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.get_steps" class="md-nav__link">
     <span class="md-ellipsis">
       get_steps()
@@ -2003,6 +2012,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.copy_workflow_from_project" class="md-nav__link">
+    <span class="md-ellipsis">
+      copy_workflow_from_project()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.get_steps" class="md-nav__link">
     <span class="md-ellipsis">
       get_steps()
@@ -2152,6 +2170,43 @@
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_reviewers_from_step</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span>
         <span class="p">)</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_workflow_from_project</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">destination_project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">source_project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the workflow from a source project to a destination project.</span>
+
+<span class="sd">        Copies all workflow steps with their configurations (consensus, coverage,</span>
+<span class="sd">        sendBackStepId) from the source project. Assignees are not copied.</span>
+
+<span class="sd">        The destination project must have no labels. Existing workflow steps in the</span>
+<span class="sd">        destination project will be deleted and replaced by the source workflow.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            destination_project_id: Id of the destination project to copy the workflow to.</span>
+<span class="sd">            source_project_id: Id of the source project to copy the workflow from.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dict with the workflow data which indicates if the mutation was successful,</span>
+<span class="sd">                else an error message.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the source project has no workflow steps, or if the</span>
+<span class="sd">                destination project already has labels.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.copy_workflow_from_project(</span>
+<span class="sd">            ...     destination_project_id=&quot;destination_project_id&quot;,</span>
+<span class="sd">            ...     source_project_id=&quot;source_project_id&quot;,</span>
+<span class="sd">            ... )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">copy_workflow_from_project</span><span class="p">(</span>
+            <span class="n">source_project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">source_project_id</span><span class="p">),</span>
+            <span class="n">destination_project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">destination_project_id</span><span class="p">),</span>
+        <span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -2244,6 +2299,133 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_reviewers_to_step</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.copy_workflow_from_project" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">copy_workflow_from_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination_project_id</span><span class="p">,</span> <span class="n">source_project_id</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Copy the workflow from a source project to a destination project.</p>
+<p>Copies all workflow steps with their configurations (consensus, coverage,
+sendBackStepId) from the source project. Assignees are not copied.</p>
+<p>The destination project must have no labels. Existing workflow steps in the
+destination project will be deleted and replaced by the source workflow.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>destination_project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Id of the destination project to copy the workflow to.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>source_project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Id of the source project to copy the workflow from.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>dict</code></td>
+      <td><p>A dict with the workflow data which indicates if the mutation was successful,
+    else an error message.</p></td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Exceptions:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>ValueError</code></td>
+        <td><p>If the source project has no workflow steps, or if the
+destination project already has labels.</p></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">copy_workflow_from_project</span><span class="p">(</span>
+<span class="o">...</span>     <span class="n">destination_project_id</span><span class="o">=</span><span class="s2">&quot;destination_project_id&quot;</span><span class="p">,</span>
+<span class="o">...</span>     <span class="n">source_project_id</span><span class="o">=</span><span class="s2">&quot;source_project_id&quot;</span><span class="p">,</span>
+<span class="o">...</span> <span class="p">)</span>
+</code></pre></div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/presentation/client/project_workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">copy_workflow_from_project</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">destination_project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">source_project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy the workflow from a source project to a destination project.</span>
+
+<span class="sd">    Copies all workflow steps with their configurations (consensus, coverage,</span>
+<span class="sd">    sendBackStepId) from the source project. Assignees are not copied.</span>
+
+<span class="sd">    The destination project must have no labels. Existing workflow steps in the</span>
+<span class="sd">    destination project will be deleted and replaced by the source workflow.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        destination_project_id: Id of the destination project to copy the workflow to.</span>
+<span class="sd">        source_project_id: Id of the source project to copy the workflow from.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with the workflow data which indicates if the mutation was successful,</span>
+<span class="sd">            else an error message.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the source project has no workflow steps, or if the</span>
+<span class="sd">            destination project already has labels.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.copy_workflow_from_project(</span>
+<span class="sd">        ...     destination_project_id=&quot;destination_project_id&quot;,</span>
+<span class="sd">        ...     source_project_id=&quot;source_project_id&quot;,</span>
+<span class="sd">        ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">copy_workflow_from_project</span><span class="p">(</span>
+        <span class="n">source_project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">source_project_id</span><span class="p">),</span>
+        <span class="n">destination_project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">destination_project_id</span><span class="p">),</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
