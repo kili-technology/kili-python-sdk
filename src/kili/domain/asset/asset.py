@@ -62,6 +62,8 @@ class AssetFilters:
     issue_status: Optional["IssueStatus"] = None
     skipped: Optional[bool] = None
     status_in: Optional[ListOrTuple[AssetStatus]] = None
+    step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None
+    step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None
     step_id_in: Optional[ListOrTuple[str]] = None
     step_id_not_in: Optional[ListOrTuple[str]] = None
     step_status_in: Optional[ListOrTuple[StatusInStep]] = None
@@ -73,6 +75,8 @@ class AssetWorkflowFilters(TypedDict, total=False):
 
     skipped: Optional[bool]
     status_in: Optional[ListOrTuple[AssetStatus]]
+    step_name_and_status_in: Optional[list[tuple[str, StatusInStep]]]
+    step_name_and_status_not_in: Optional[list[tuple[str, StatusInStep]]]
     step_name_in: Optional[ListOrTuple[str]]
     step_name_not_in: Optional[ListOrTuple[str]]
     step_status_in: Optional[ListOrTuple[StatusInStep]]
