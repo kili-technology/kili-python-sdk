@@ -239,6 +239,7 @@ class AssetClientMethods(BaseClientMethods):
     ) -> list[dict]:
         ...
 
+    # pylint: disable=too-many-branches
     @typechecked
     def assets(
         self,

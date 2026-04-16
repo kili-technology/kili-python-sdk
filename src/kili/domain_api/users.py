@@ -1,5 +1,4 @@
 """Users domain namespace for the Kili Python SDK."""
-# pylint: disable=too-many-public-methods
 
 import re
 from collections.abc import Generator

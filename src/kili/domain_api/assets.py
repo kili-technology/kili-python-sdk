@@ -1,5 +1,5 @@
 """Assets domain namespace for the Kili Python SDK."""
-# pylint: disable=too-many-lines,too-many-public-methods
+# pylint: disable=too-many-lines
 
 import warnings
 from collections.abc import Generator

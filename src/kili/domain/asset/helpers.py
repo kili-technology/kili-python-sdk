@@ -68,5 +68,6 @@ def check_asset_workflow_arguments(
         )
     if step_name_and_status_in is not None or step_name_and_status_not_in is not None:
         raise ValueError(
-            "Filters step_name_and_status_in and/or step_name_and_status_not_in given : use filter status_in for this project."
+            "Filters step_name_and_status_in and/or step_name_and_status_not_in given : use filter "
+            "status_in for this project."
         )
