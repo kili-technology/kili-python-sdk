@@ -144,3 +144,136 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             source_project_id=ProjectId(source_project_id),
             destination_project_id=ProjectId(destination_project_id),
         )
+
+    @typechecked
+    def add_review_step(
+        self,
+        project_id: str,
+        step_name: str,
+        assignees: list[str],
+        step_coverage: int | None = None,
+        use_honeypot: bool | None = None,
+        send_back_to_step: str | None = None,
+    ) -> dict[str, Any]:
+        """Add a review step to a project workflow.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the new review step.
+            assignees: List of user emails to assign as reviewers.
+            step_coverage: Percentage of assets to be reviewed in this step (0-100).
+            use_honeypot: Whether to use honeypot on this step.
+            send_back_to_step: Id of the step to send assets back to.
+
+        Returns:
+            A dict with the created step data (id, name).
+        """
+        return ProjectWorkflowUseCases(self.kili_api_gateway).add_review_step(
+            project_id=project_id,
+            step_name=step_name,
+            assignees=assignees,
+            step_coverage=step_coverage,
+            use_honeypot=use_honeypot,
+            send_back_to_step=send_back_to_step,
+        )
+
+    @typechecked
+    def update_labeling_step_properties(
+        self,
+        project_id: str,
+        step_name: str,
+        consensus_coverage: int | None = None,
+        number_of_expected_labels_for_consensus: int | None = None,
+        use_honeypot: bool | None = None,
+    ) -> dict[str, Any]:
+        """Update properties of a labeling step.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the labeling step to update.
+            consensus_coverage: Percentage of assets to be labeled for consensus (0-100).
+            number_of_expected_labels_for_consensus: Number of expected labels for consensus.
+            use_honeypot: Whether to use honeypot on this step.
+
+        Returns:
+            A dict with the updated step data (id, name).
+        """
+        return ProjectWorkflowUseCases(self.kili_api_gateway).update_labeling_step_properties(
+            project_id=project_id,
+            step_name=step_name,
+            consensus_coverage=consensus_coverage,
+            number_of_expected_labels_for_consensus=number_of_expected_labels_for_consensus,
+            use_honeypot=use_honeypot,
+        )
+
+    @typechecked
+    def update_review_step_properties(
+        self,
+        project_id: str,
+        step_name: str,
+        assignees: list[str] | None = None,
+        step_coverage: int | None = None,
+        send_back_to_step: str | None = None,
+        use_honeypot: bool | None = None,
+    ) -> dict[str, Any]:
+        """Update properties of a review step.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the review step to update.
+            assignees: List of emails to assign to the step.
+            step_coverage: Percentage of assets to be reviewed in this step (0-100).
+            send_back_to_step: Id of the step to send assets back to when rejected.
+            use_honeypot: Whether to use honeypot on this step.
+
+        Returns:
+            A dict with the updated step data (id, name).
+        """
+        return ProjectWorkflowUseCases(self.kili_api_gateway).update_review_step_properties(
+            project_id=project_id,
+            step_name=step_name,
+            assignees=assignees,
+            step_coverage=step_coverage,
+            send_back_to_step=send_back_to_step,
+            use_honeypot=use_honeypot,
+        )
+
+    @typechecked
+    def delete_last_step(
+        self,
+        project_id: str,
+    ) -> dict[str, Any]:
+        """Delete the last review step from a project workflow.
+
+        Args:
+            project_id: Id of the project.
+
+        Returns:
+            A dict with the remaining steps.
+        """
+        return ProjectWorkflowUseCases(self.kili_api_gateway).delete_last_step(
+            project_id=project_id,
+        )
+
+    @typechecked
+    def rename_step(
+        self,
+        project_id: str,
+        step_name: str,
+        new_name: str,
+    ) -> dict[str, Any]:
+        """Rename a step in a project workflow.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the step.
+            new_name: New name for the step.
+
+        Returns:
+            A dict with the renamed step data (id, name).
+        """
+        return ProjectWorkflowUseCases(self.kili_api_gateway).rename_step(
+            project_id=project_id,
+            step_name=step_name,
+            new_name=new_name,
+        )

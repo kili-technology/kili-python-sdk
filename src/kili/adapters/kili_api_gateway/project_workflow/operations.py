@@ -21,3 +21,58 @@ def get_steps_query(fragment: str) -> str:
             }}
         }}
         """
+
+
+def get_add_review_step_mutation() -> str:
+    """Return the GraphQL addReviewStep mutation."""
+    return """
+        mutation addReviewStep($input: AddReviewStepInput!) {
+            data: addReviewStep(input: $input) {
+            steps{id,name}
+            }
+        }
+        """
+
+
+def get_update_labeling_step_properties_mutation() -> str:
+    """Return the GraphQL updateLabelingStepProperties mutation."""
+    return """
+        mutation updateLabelingStepProperties($input: UpdateLabelingStepPropertiesInput!) {
+            data: updateLabelingStepProperties(input: $input) {
+               steps{id,name}
+            }
+        }
+        """
+
+
+def get_update_review_step_properties_mutation() -> str:
+    """Return the GraphQL updateReviewStepProperties mutation."""
+    return """
+        mutation updateReviewStepProperties($input: UpdateReviewStepPropertiesInput!) {
+            data: updateReviewStepProperties(input: $input) {
+                steps{id,name}
+            }
+        }
+        """
+
+
+def get_delete_step_mutation() -> str:
+    """Return the GraphQL deleteStep mutation."""
+    return """
+        mutation deleteStep($input: DeleteStepInput!) {
+            data: deleteStep(input: $input) {
+                steps{id,name}
+            }
+        }
+        """
+
+
+def get_rename_step_mutation() -> str:
+    """Return the GraphQL renameStep mutation."""
+    return """
+        mutation renameStep($input: RenameStepInput!) {
+            data: renameStep(input: $input) {
+                steps{id,name}
+            }
+        }
+        """

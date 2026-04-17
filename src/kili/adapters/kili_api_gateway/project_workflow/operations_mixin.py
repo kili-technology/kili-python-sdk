@@ -12,12 +12,32 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
-from .mappers import project_input_mapper
-from .operations import (
-    get_steps_query,
-    get_update_project_workflow_mutation,
+from .common import get_assignees_to_add_ids
+from .mappers import (
+    add_review_step_input_mapper,
+    delete_step_input_mapper,
+    project_input_mapper,
+    rename_step_input_mapper,
+    update_labeling_step_properties_input_mapper,
+    update_review_step_properties_input_mapper,
 )
-from .types import ProjectWorkflowDataKiliAPIGatewayInput
+from .operations import (
+    get_add_review_step_mutation,
+    get_delete_step_mutation,
+    get_rename_step_mutation,
+    get_steps_query,
+    get_update_labeling_step_properties_mutation,
+    get_update_project_workflow_mutation,
+    get_update_review_step_properties_mutation,
+)
+from .types import (
+    AddReviewStepInput,
+    DeleteStepInput,
+    ProjectWorkflowDataKiliAPIGatewayInput,
+    RenameStepInput,
+    UpdateLabelingStepPropertiesInput,
+    UpdateReviewStepPropertiesInput,
+)
 
 
 class ProjectWorkflowOperationMixin(BaseOperationMixin):
@@ -72,7 +92,7 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         return list(
             ProjectUserQuery(self.graphql_client, self.http_client)(
                 where=where,
-                fields=["role", "user.id"],
+                fields=["role", "user.id", "user.email"],
                 options=QueryOptions(disable_tqdm=True),
             )
         )
@@ -177,3 +197,61 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
             )
 
         return removed_emails
+
+    def add_review_step(self, data: AddReviewStepInput) -> dict:
+        """Add a review step to a project workflow."""
+        existing_members = self.list_activated_project_users(data.project_id)
+        assignees_to_add = get_assignees_to_add_ids(existing_members, data.assignees)
+        data.assignees = assignees_to_add
+        variables = {"input": add_review_step_input_mapper(data)}
+        mutation = get_add_review_step_mutation()
+        result = self.graphql_client.execute(mutation, variables)
+        steps = result.get("data", {}).get("steps", [])
+        step = next((step for step in steps if step.get("name") == data.step_name), None)
+        if not step:
+            raise NotFound(f"Could not find the stepId of the step {data.step_name}.")
+        return step
+
+    def update_labeling_step_properties(self, data: UpdateLabelingStepPropertiesInput) -> dict:
+        """Update properties of a labeling step."""
+        variables = {"input": update_labeling_step_properties_input_mapper(data)}
+        mutation = get_update_labeling_step_properties_mutation()
+        result = self.graphql_client.execute(mutation, variables)
+        steps = result.get("data", {}).get("steps", [])
+        step = next((step for step in steps if step.get("id") == data.step_id), None)
+        if not step:
+            raise NotFound(f"Could not find the step with id {data.step_id}.")
+        return step
+
+    def update_review_step_properties(self, data: UpdateReviewStepPropertiesInput) -> dict:
+        """Update properties of a review step."""
+        if data.assignees is not None:
+            existing_members = self.list_activated_project_users(data.project_id)
+            assignees_to_add = get_assignees_to_add_ids(existing_members, data.assignees)
+            data.assignees = assignees_to_add
+        variables = {"input": update_review_step_properties_input_mapper(data)}
+        mutation = get_update_review_step_properties_mutation()
+        result = self.graphql_client.execute(mutation, variables)
+        steps = result.get("data", {}).get("steps", [])
+        step = next((step for step in steps if step.get("id") == data.step_id), None)
+        if not step:
+            raise NotFound(f"Could not find the step with id {data.step_id}.")
+        return step
+
+    def delete_step(self, data: DeleteStepInput) -> dict:
+        """Delete a step from a project workflow."""
+        variables = {"input": delete_step_input_mapper(data)}
+        mutation = get_delete_step_mutation()
+        result = self.graphql_client.execute(mutation, variables)
+        return result["data"]
+
+    def rename_step(self, data: RenameStepInput) -> dict:
+        """Rename a step in a project workflow."""
+        variables = {"input": rename_step_input_mapper(data)}
+        mutation = get_rename_step_mutation()
+        result = self.graphql_client.execute(mutation, variables)
+        steps = result.get("data", {}).get("steps", [])
+        step = next((step for step in steps if step.get("id") == data.step_id), None)
+        if not step:
+            raise NotFound(f"Could not find the step with id {data.step_id}.")
+        return step
