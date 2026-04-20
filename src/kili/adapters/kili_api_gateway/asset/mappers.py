@@ -68,4 +68,20 @@ def asset_where_mapper(filters: AssetFilters):
         "stepIdNotIn": filters.step_id_not_in,
         "stepStatusIn": filters.step_status_in,
         "stepStatusNotIn": filters.step_status_not_in,
+        "stepIdAndStatusIn": (
+            [
+                {"stepId": step_id, "status": step_status}
+                for step_id, step_status in filters.step_id_and_status_in
+            ]
+            if filters.step_id_and_status_in is not None
+            else None
+        ),
+        "stepIdAndStatusNotIn": (
+            [
+                {"stepId": step_id, "status": step_status}
+                for step_id, step_status in filters.step_id_and_status_not_in
+            ]
+            if filters.step_id_and_status_not_in is not None
+            else None
+        ),
     }

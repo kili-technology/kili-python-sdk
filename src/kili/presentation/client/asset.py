@@ -32,6 +32,7 @@ from kili.presentation.client.helpers.common_validators import (
     resolve_disable_tqdm,
 )
 from kili.presentation.client.helpers.filter_conversion import (
+    extract_step_id_and_status_filters_from_project_steps,
     extract_step_ids_from_project_steps,
 )
 from kili.use_cases.asset import AssetUseCases
@@ -157,6 +158,8 @@ class AssetClientMethods(BaseClientMethods):
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         skipped: Optional[bool] = None,
         status_in: Optional[list[AssetStatus]] = None,
+        step_name_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_name_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
         step_name_in: Optional[list[str]] = None,
         step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
@@ -225,6 +228,8 @@ class AssetClientMethods(BaseClientMethods):
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         skipped: Optional[bool] = None,
         status_in: Optional[list[AssetStatus]] = None,
+        step_name_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_name_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
         step_name_in: Optional[list[str]] = None,
         step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
@@ -234,6 +239,7 @@ class AssetClientMethods(BaseClientMethods):
     ) -> list[dict]:
         ...
 
+    # pylint: disable=too-many-branches
     @typechecked
     def assets(
         self,
@@ -293,6 +299,8 @@ class AssetClientMethods(BaseClientMethods):
         label_output_format: Literal["dict", "parsed_label"] = "dict",
         skipped: Optional[bool] = None,
         status_in: Optional[list[AssetStatus]] = None,
+        step_name_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_name_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
         step_name_in: Optional[list[str]] = None,
         step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
@@ -366,6 +374,10 @@ class AssetClientMethods(BaseClientMethods):
             status_in: Returned assets should have a status that belongs to that list, if given.
                 Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
                 Only applicable if the project is in the WorkflowV1 (legacy).
+            step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.
+                Only applicable if the project is in WorkflowV2.
+            step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.
+                Only applicable if the project is in WorkflowV2.
             step_name_in: Returned assets are in the step whose name belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
             step_name_not_in: Returned assets are in the step whose name does not belong to that list, if given.
@@ -468,16 +480,21 @@ class AssetClientMethods(BaseClientMethods):
                 stacklevel=1,
             )
 
+        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None
+        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None
         step_id_in = None
         step_id_not_in = None
-        has_step_filters = step_name_in is not None or step_name_not_in is not None
-        has_status_filters = (
-            step_status_in is not None
+        has_step_or_status_filters = (
+            step_name_in is not None
+            or step_name_not_in is not None
+            or step_name_and_status_in is not None
+            or step_name_and_status_not_in is not None
+            or step_status_in is not None
             or step_status_not_in is not None
             or status_in is not None
             or skipped is not None
         )
-        if has_step_filters or has_status_filters:
+        if has_step_or_status_filters:
             check_asset_workflow_arguments(
                 project_workflow_version=project_workflow_version,
                 asset_workflow_filters={
@@ -487,6 +504,8 @@ class AssetClientMethods(BaseClientMethods):
                     "step_name_not_in": step_name_not_in,
                     "step_status_in": step_status_in,
                     "step_status_not_in": step_status_not_in,
+                    "step_name_and_status_in": step_name_and_status_in,
+                    "step_name_and_status_not_in": step_name_and_status_not_in,
                 },
             )
             if project_workflow_version == "V2" and step_name_in is not None:
@@ -498,6 +517,16 @@ class AssetClientMethods(BaseClientMethods):
                 step_id_not_in = extract_step_ids_from_project_steps(
                     project_steps=project_steps,
                     step_name_in=step_name_not_in,
+                )
+            if project_workflow_version == "V2" and step_name_and_status_in is not None:
+                step_id_and_status_in = extract_step_id_and_status_filters_from_project_steps(
+                    project_steps=project_steps,
+                    step_name_and_status_filters=step_name_and_status_in,
+                )
+            if project_workflow_version == "V2" and step_name_and_status_not_in is not None:
+                step_id_and_status_not_in = extract_step_id_and_status_filters_from_project_steps(
+                    project_steps=project_steps,
+                    step_name_and_status_filters=step_name_and_status_not_in,
                 )
 
         # Resolve disable_tqdm: function parameter > client global setting > function default
@@ -550,6 +579,8 @@ class AssetClientMethods(BaseClientMethods):
             step_id_not_in=step_id_not_in,
             step_status_in=step_status_in,
             step_status_not_in=step_status_not_in,
+            step_id_and_status_in=step_id_and_status_in,
+            step_id_and_status_not_in=step_id_and_status_not_in,
         )
         assets_gen = asset_use_cases.list_assets(
             filters,
@@ -625,6 +656,8 @@ class AssetClientMethods(BaseClientMethods):
         step_name_not_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
         step_status_not_in: Optional[list[StatusInStep]] = None,
+        step_name_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_name_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count and return the number of assets with the given constraints.
@@ -691,6 +724,10 @@ class AssetClientMethods(BaseClientMethods):
             step_status_not_in: Returned assets have the status of their step that does not belong to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
                 Only applicable if the project is in WorkflowV2.
+            step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.
+                Only applicable if the project is in WorkflowV2.
+            step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.
+                Only applicable if the project is in WorkflowV2.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -734,11 +771,18 @@ class AssetClientMethods(BaseClientMethods):
 
         step_id_in = None
         step_id_not_in = None
-        has_step_filters = step_name_in is not None or step_name_not_in is not None
-        has_status_filters = (
-            status_in is not None or step_status_in is not None or step_status_not_in is not None
+        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None
+        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None
+        has_step_or_status_filters = (
+            step_name_in is not None
+            or step_name_not_in is not None
+            or step_name_and_status_in is not None
+            or step_name_and_status_not_in is not None
+            or status_in is not None
+            or step_status_in is not None
+            or step_status_not_in is not None
         )
-        if has_step_filters or has_status_filters:
+        if has_step_or_status_filters:
             project_use_cases = ProjectUseCases(self.kili_api_gateway)
             (
                 project_steps,
@@ -749,6 +793,8 @@ class AssetClientMethods(BaseClientMethods):
                 asset_workflow_filters={
                     "skipped": skipped,
                     "step_name_in": step_name_in,
+                    "step_name_and_status_in": step_name_and_status_in,
+                    "step_name_and_status_not_in": step_name_and_status_not_in,
                     "step_name_not_in": step_name_not_in,
                     "step_status_in": step_status_in,
                     "step_status_not_in": step_status_not_in,
@@ -765,6 +811,16 @@ class AssetClientMethods(BaseClientMethods):
                 step_id_not_in = extract_step_ids_from_project_steps(
                     project_steps=project_steps,
                     step_name_in=step_name_not_in,
+                )
+            if project_workflow_version == "V2" and step_name_and_status_in is not None:
+                step_id_and_status_in = extract_step_id_and_status_filters_from_project_steps(
+                    project_steps=project_steps,
+                    step_name_and_status_filters=step_name_and_status_in,
+                )
+            if project_workflow_version == "V2" and step_name_and_status_not_in is not None:
+                step_id_and_status_not_in = extract_step_id_and_status_filters_from_project_steps(
+                    project_steps=project_steps,
+                    step_name_and_status_filters=step_name_and_status_not_in,
                 )
 
         filters = AssetFilters(
@@ -809,6 +865,8 @@ class AssetClientMethods(BaseClientMethods):
             created_at_lte=created_at_lte,
             issue_status=issue_status,
             issue_type=issue_type,
+            step_id_and_status_in=step_id_and_status_in,
+            step_id_and_status_not_in=step_id_and_status_not_in,
             step_id_in=step_id_in,
             step_id_not_in=step_id_not_in,
             step_status_in=step_status_in,

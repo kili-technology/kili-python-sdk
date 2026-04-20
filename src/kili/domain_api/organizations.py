@@ -1,5 +1,4 @@
 """Organizations domain namespace for the Kili Python SDK."""
-# pylint: disable=too-many-public-methods
 
 from collections.abc import Generator
 from datetime import datetime

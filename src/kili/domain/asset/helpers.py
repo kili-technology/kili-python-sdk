@@ -33,6 +33,8 @@ def check_asset_workflow_arguments(
     project_workflow_version: WorkflowVersion, asset_workflow_filters: AssetWorkflowFilters
 ) -> None:
     """Check asset workflow parameters relative to the project workflow version."""
+    step_name_and_status_in = asset_workflow_filters.get("step_name_and_status_in")
+    step_name_and_status_not_in = asset_workflow_filters.get("step_name_and_status_not_in")
     step_name_in = asset_workflow_filters.get("step_name_in")
     step_status_in = asset_workflow_filters.get("step_status_in")
     status_in = asset_workflow_filters.get("status_in")
@@ -63,4 +65,9 @@ def check_asset_workflow_arguments(
     if step_name_in is not None or step_status_in is not None:
         raise ValueError(
             "Filters step_name_in and/or step_status_in given : use filter status_in for this project."
+        )
+    if step_name_and_status_in is not None or step_name_and_status_not_in is not None:
+        raise ValueError(
+            "Filters step_name_and_status_in and/or step_name_and_status_not_in given : use filter "
+            "status_in for this project."
         )
