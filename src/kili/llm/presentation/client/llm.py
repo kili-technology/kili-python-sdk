@@ -98,8 +98,8 @@ class LlmClientMethods:
             step_name_in: Returned assets are in a step whose name belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
             step_status_in: Returned assets have the status of their step that belongs to that list, if given.
-                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2.
+                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .
+                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
         !!! Example
             ```python
             kili.llm.export("your_project_id")
@@ -107,6 +107,19 @@ class LlmClientMethods:
         """
         if asset_ids and external_ids:
             raise ValueError("You cannot provide both asset_ids and external_ids")
+
+        if step_status_in is not None and "DOING" in step_status_in:
+            warnings.warn(
+                "Step status 'DOING' is deprecated, use 'IN_PROGRESS' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+        if step_status_in is not None and "REDO" in step_status_in:
+            warnings.warn(
+                "Step status 'REDO' is deprecated, use 'REWORK' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
 
         if external_ids is not None and asset_ids is None:
             id_map = AssetUseCasesUtils(self.kili_api_gateway).infer_ids_from_external_ids(

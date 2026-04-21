@@ -102,8 +102,8 @@ class LabelClientMethods(BaseClientMethods):
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
-                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2.
+                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -125,6 +125,19 @@ class LabelClientMethods(BaseClientMethods):
         """
         if category_search:
             validate_category_search_query(category_search)
+
+        if asset_step_status_in is not None and "DOING" in asset_step_status_in:
+            warnings.warn(
+                "Step status 'DOING' is deprecated, use 'IN_PROGRESS' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+        if asset_step_status_in is not None and "REDO" in asset_step_status_in:
+            warnings.warn(
+                "Step status 'REDO' is deprecated, use 'REWORK' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
 
         asset_step_id_in = None
         if (
@@ -401,8 +414,8 @@ class LabelClientMethods(BaseClientMethods):
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
-                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2.
+                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have their creation date equal to this date.
@@ -454,6 +467,19 @@ class LabelClientMethods(BaseClientMethods):
         """
         if category_search:
             validate_category_search_query(category_search)
+
+        if asset_step_status_in is not None and "DOING" in asset_step_status_in:
+            warnings.warn(
+                "Step status 'DOING' is deprecated, use 'IN_PROGRESS' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+        if asset_step_status_in is not None and "REDO" in asset_step_status_in:
+            warnings.warn(
+                "Step status 'REDO' is deprecated, use 'REWORK' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
 
         disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
@@ -650,8 +676,8 @@ class LabelClientMethods(BaseClientMethods):
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
-                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2.
+                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -676,6 +702,19 @@ class LabelClientMethods(BaseClientMethods):
         Examples:
             >>> kili.predictions(project_id=project_id) # returns a list of prediction labels of a project
         """
+        if asset_step_status_in is not None and "DOING" in asset_step_status_in:
+            warnings.warn(
+                "Step status 'DOING' is deprecated, use 'IN_PROGRESS' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+        if asset_step_status_in is not None and "REDO" in asset_step_status_in:
+            warnings.warn(
+                "Step status 'REDO' is deprecated, use 'REWORK' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
         if as_generator:
             return self.labels(
                 project_id=project_id,
@@ -843,8 +882,8 @@ class LabelClientMethods(BaseClientMethods):
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
-                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2.
+                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -869,6 +908,19 @@ class LabelClientMethods(BaseClientMethods):
         Examples:
             >>> kili.inferences(project_id=project_id) # returns a list of inference labels of a project
         """
+        if asset_step_status_in is not None and "DOING" in asset_step_status_in:
+            warnings.warn(
+                "Step status 'DOING' is deprecated, use 'IN_PROGRESS' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+        if asset_step_status_in is not None and "REDO" in asset_step_status_in:
+            warnings.warn(
+                "Step status 'REDO' is deprecated, use 'REWORK' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
         if as_generator:
             return self.labels(
                 project_id=project_id,
