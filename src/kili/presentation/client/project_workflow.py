@@ -163,7 +163,7 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             assignees: List of user emails to assign as reviewers.
             step_coverage: Percentage of assets to be reviewed in this step (0-100).
             use_honeypot: Whether to use honeypot on this step.
-            send_back_to_step: Id of the step to send assets back to.
+            send_back_to_step: Name of the step to send assets back to.
 
         Returns:
             A dict with the created step data (id, name).

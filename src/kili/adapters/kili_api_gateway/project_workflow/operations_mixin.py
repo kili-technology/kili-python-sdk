@@ -203,6 +203,13 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         existing_members = self.list_activated_project_users(data.project_id)
         assignees_to_add = get_assignees_to_add_ids(existing_members, data.assignees)
         data.assignees = assignees_to_add
+        steps = self.get_steps(data.project_id, fields=["steps.id", "steps.name"])
+        send_back_to_step = next(
+            (step.get("id") for step in steps if step.get("name") == data.send_back_to_step), None
+        )
+        if not send_back_to_step:
+            raise ValueError("The sendBackToStep name given does not exist")
+        data.send_back_to_step = send_back_to_step
         variables = {"input": add_review_step_input_mapper(data)}
         mutation = get_add_review_step_mutation()
         result = self.graphql_client.execute(mutation, variables)
