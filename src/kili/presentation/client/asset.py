@@ -385,8 +385,8 @@ class AssetClientMethods(BaseClientMethods):
             step_status_in: Returned assets have the status in their step that belongs to that list, if given.
                 Only applicable if the project is in WorkflowV2.
             step_status_not_in: Returned assets have the status in their step that does not belong to that list, if given.
-                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2.
+                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .
+                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -443,6 +443,23 @@ class AssetClientMethods(BaseClientMethods):
         if external_id_contains is not None:
             warnings.warn(
                 "external_id_contains is deprecated, use external_id_strictly_in instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
+        if (step_status_in is not None and "DOING" in step_status_in) or (
+            step_status_not_in is not None and "DOING" in step_status_not_in
+        ):
+            warnings.warn(
+                "Step status 'DOING' is deprecated, use 'IN_PROGRESS' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+        if (step_status_in is not None and "REDO" in step_status_in) or (
+            step_status_not_in is not None and "REDO" in step_status_not_in
+        ):
+            warnings.warn(
+                "Step status 'REDO' is deprecated, use 'REWORK' instead",
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -719,11 +736,11 @@ class AssetClientMethods(BaseClientMethods):
             step_name_not_in: Returned assets are in a step whose name does not belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
             step_status_in: Returned assets have the status of their step that belongs to that list, if given.
-                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2.
+                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             step_status_not_in: Returned assets have the status of their step that does not belong to that list, if given.
-                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2.
+                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
+                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.
                 Only applicable if the project is in WorkflowV2.
             step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.
@@ -752,6 +769,23 @@ class AssetClientMethods(BaseClientMethods):
         if external_id_contains is not None:
             warnings.warn(
                 "external_id_contains is deprecated, use external_id_strictly_in instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
+        if (step_status_in is not None and "DOING" in step_status_in) or (
+            step_status_not_in is not None and "DOING" in step_status_not_in
+        ):
+            warnings.warn(
+                "Step status 'DOING' is deprecated, use 'IN_PROGRESS' instead",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+        if (step_status_in is not None and "REDO" in step_status_in) or (
+            step_status_not_in is not None and "REDO" in step_status_not_in
+        ):
+            warnings.warn(
+                "Step status 'REDO' is deprecated, use 'REWORK' instead",
                 DeprecationWarning,
                 stacklevel=1,
             )

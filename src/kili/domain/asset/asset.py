@@ -17,7 +17,10 @@ AssetStatusInStep = NewType("AssetStatusInStep", str)
 
 AssetStatus = Literal["TODO", "ONGOING", "LABELED", "REVIEWED", "TO_REVIEW"]
 
-StatusInStep = Literal["TO_DO", "DOING", "PARTIALLY_DONE", "REDO", "DONE", "SKIPPED"]
+# DOING and REDO are depreacated but still supported for backward compatibility. They will be removed in the future.
+StatusInStep = Literal[
+    "TO_DO", "DOING", "IN_PROGRESS", "PARTIALLY_DONE", "REWORK", "REDO", "DONE", "SKIPPED"
+]
 
 
 @dataclass
