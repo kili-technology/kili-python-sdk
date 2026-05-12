@@ -63,4 +63,5 @@ def import_assets(  # pylint: disable=too-many-arguments
     asset_importer = importer_by_type[input_type](*importer_params)
     casted_assets = cast(list[AssetLike], assets)
     asset_importer.check_asset_contents(casted_assets)
+    asset_importer.check_file_extensions(casted_assets, input_type)
     return asset_importer.import_assets(assets=casted_assets, input_type=input_type)
