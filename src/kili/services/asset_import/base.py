@@ -4,12 +4,13 @@ import abc
 import logging
 import mimetypes
 import os
+import urllib.parse
 import warnings
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
 from json import dumps, loads
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -34,6 +35,7 @@ from kili.domain.organization import OrganizationFilters
 from kili.domain.project import InputType, ProjectId
 from kili.domain.types import ListOrTuple
 from kili.services.asset_import.constants import (
+    ALLOWED_EXTENSIONS_BY_INPUT_TYPE,
     IMPORT_BATCH_SIZE,
     project_compatible_mimetypes,
 )
@@ -523,6 +525,45 @@ class BaseAbstractAssetImporter(abc.ABC):
                     "Cannot import asset with empty content, empty"
                     " multi_layer_content and empty json_content"
                 )
+
+    @staticmethod
+    def check_file_extensions(assets: list[AssetLike], input_type: str) -> None:
+        """Validate file extensions against allowed extensions for the given input type.
+
+        Skips validation when content has no extension (e.g. raw text, extensionless URLs).
+        Raises ImportValidationError on the first asset with a disallowed extension.
+        """
+        allowed = ALLOWED_EXTENSIONS_BY_INPUT_TYPE.get(input_type)
+        if allowed is None:
+            return
+
+        def get_ext(path_or_url: str) -> str:
+            path = urllib.parse.urlparse(path_or_url).path if is_url(path_or_url) else path_or_url
+            return PurePosixPath(path).suffix.lower()
+
+        for asset in assets:
+            content = asset.get("content")
+            if isinstance(content, str):
+                ext = get_ext(content)
+                if ext and ext not in allowed:
+                    raise ImportValidationError(
+                        f"File extension '{ext}' is not allowed for {input_type} projects"
+                        f" (asset external_id='{asset.get('external_id', 'unknown')}')."
+                        f" Allowed extensions: {', '.join(sorted(allowed))}"
+                    )
+
+            multi_layer = asset.get("multi_layer_content")
+            if multi_layer:
+                for layer in multi_layer:
+                    path = layer.get("path") or layer.get("url") or layer.get("content", "")
+                    if path:
+                        ext = get_ext(path)
+                        if ext and ext not in allowed:
+                            raise ImportValidationError(
+                                f"File extension '{ext}' is not allowed for {input_type} projects"
+                                f" (asset external_id='{asset.get('external_id', 'unknown')}')."
+                                f" Allowed extensions: {', '.join(sorted(allowed))}"
+                            )
 
     def _can_upload_from_local_data(self) -> bool:
         user_me = self.kili.kili_api_gateway.get_current_user(fields=("email",))
