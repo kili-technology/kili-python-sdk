@@ -1,5 +1,5 @@
 """Helpers for the asset queries."""
-
+import mimetypes
 import warnings
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
@@ -209,8 +209,12 @@ def get_download_path(
 ) -> Path:
     """Build the path to download a file the file in local."""
     extension = get_file_extension_from_headers(url, http_client)
-    filename = external_id
-    if extension is not None and not filename.endswith(extension):
+    filename = str(external_id)
+    current_suffix = Path(filename).suffix.lower()
+    has_known_extension = (
+        current_suffix != "" and mimetypes.types_map.get(current_suffix) is not None
+    )
+    if extension is not None and not has_known_extension:
         filename = filename + extension
     local_dir_path = local_dir_path / filename
     return local_dir_path.resolve()
