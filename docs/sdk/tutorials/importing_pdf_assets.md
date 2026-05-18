@@ -89,15 +89,13 @@ external_ids = ["2306.17766", "2306.17582", "2306.17514"]
 assets = kili.append_many_to_dataset(
     project_id=project_id,
     content_array=[
-        "https://arxiv.org/pdf/2306.17766",
-        "https://arxiv.org/pdf/2306.17582",
-        "https://arxiv.org/pdf/2306.17514",
+        "https://arxiv.org/pdf/2306.17766.pdf",
+        "https://arxiv.org/pdf/2306.17582.pdf",
+        "https://arxiv.org/pdf/2306.17514.pdf",
     ],
     external_id_array=external_ids,
 )
 ```
-
-
 
 ## Fetching the asset resolutions
 
