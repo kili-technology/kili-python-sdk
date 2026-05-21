@@ -2280,8 +2280,8 @@
 <span class="sd">            step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
 <span class="sd">                Only applicable if the project is in WorkflowV2.</span>
 <span class="sd">            step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
-<span class="sd">                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .</span>
+<span class="sd">                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">        !!! Example</span>
 <span class="sd">            ```python</span>
 <span class="sd">            kili.llm.export(&quot;your_project_id&quot;)</span>
@@ -2289,6 +2289,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">asset_ids</span> <span class="ow">and</span> <span class="n">external_ids</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You cannot provide both asset_ids and external_ids&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Step status &#39;DOING&#39; is deprecated, use &#39;IN_PROGRESS&#39; instead&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Step status &#39;REDO&#39; is deprecated, use &#39;REWORK&#39; instead&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">id_map</span> <span class="o">=</span> <span class="n">AssetUseCasesUtils</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">infer_ids_from_external_ids</span><span class="p">(</span>
@@ -3297,10 +3310,10 @@ Only applicable if the project is in WorkflowV2.</p></td>
       </tr>
       <tr>
         <td><code>step_status_in</code></td>
-        <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
+        <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
         <td><p>Returned assets have the status of their step that belongs to that list, if given.
-Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>PARTIALLY_DONE</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code>.
-Only applicable if the project is in WorkflowV2.</p></td>
+Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>IN_PROGRESS</code>, <code>PARTIALLY_DONE</code>, <code>REWORK</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code> .
+Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -3338,8 +3351,8 @@ Only applicable if the project is in WorkflowV2.</p></td>
 <span class="sd">        step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
 <span class="sd">            Only applicable if the project is in WorkflowV2.</span>
 <span class="sd">        step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
-<span class="sd">            Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">            Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .</span>
+<span class="sd">            Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python</span>
 <span class="sd">        kili.llm.export(&quot;your_project_id&quot;)</span>
@@ -3347,6 +3360,19 @@ Only applicable if the project is in WorkflowV2.</p></td>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">asset_ids</span> <span class="ow">and</span> <span class="n">external_ids</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You cannot provide both asset_ids and external_ids&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Step status &#39;DOING&#39; is deprecated, use &#39;IN_PROGRESS&#39; instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Step status &#39;REDO&#39; is deprecated, use &#39;REWORK&#39; instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">id_map</span> <span class="o">=</span> <span class="n">AssetUseCasesUtils</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">infer_ids_from_external_ids</span><span class="p">(</span>

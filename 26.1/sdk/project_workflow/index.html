@@ -830,6 +830,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_review_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      add_review_step()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_reviewers_to_step" class="md-nav__link">
     <span class="md-ellipsis">
       add_reviewers_to_step()
@@ -842,6 +851,15 @@
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.copy_workflow_from_project" class="md-nav__link">
     <span class="md-ellipsis">
       copy_workflow_from_project()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.delete_last_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_last_step()
     </span>
   </a>
   
@@ -866,9 +884,36 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.rename_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      rename_step()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.update_labeling_step_properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      update_labeling_step_properties()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.update_project_workflow" class="md-nav__link">
     <span class="md-ellipsis">
       update_project_workflow()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.update_review_step_properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      update_review_step_properties()
     </span>
   </a>
   
@@ -2003,6 +2048,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_review_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      add_review_step()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_reviewers_to_step" class="md-nav__link">
     <span class="md-ellipsis">
       add_reviewers_to_step()
@@ -2015,6 +2069,15 @@
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.copy_workflow_from_project" class="md-nav__link">
     <span class="md-ellipsis">
       copy_workflow_from_project()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.delete_last_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      delete_last_step()
     </span>
   </a>
   
@@ -2039,9 +2102,36 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.rename_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      rename_step()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.update_labeling_step_properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      update_labeling_step_properties()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.update_project_workflow" class="md-nav__link">
     <span class="md-ellipsis">
       update_project_workflow()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.update_review_step_properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      update_review_step_properties()
     </span>
   </a>
   
@@ -2207,6 +2297,139 @@
             <span class="n">source_project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">source_project_id</span><span class="p">),</span>
             <span class="n">destination_project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">destination_project_id</span><span class="p">),</span>
         <span class="p">)</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_review_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">assignees</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">step_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a review step to a project workflow.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Id of the project.</span>
+<span class="sd">            step_name: Name of the new review step.</span>
+<span class="sd">            assignees: List of user emails to assign as reviewers.</span>
+<span class="sd">            step_coverage: Percentage of assets to be reviewed in this step (0-100).</span>
+<span class="sd">            use_honeypot: Whether to use honeypot on this step.</span>
+<span class="sd">            send_back_to_step: Name of the step to send assets back to.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dict with the created step data (id, name).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_review_step</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">assignees</span><span class="o">=</span><span class="n">assignees</span><span class="p">,</span>
+            <span class="n">step_coverage</span><span class="o">=</span><span class="n">step_coverage</span><span class="p">,</span>
+            <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
+            <span class="n">send_back_to_step</span><span class="o">=</span><span class="n">send_back_to_step</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_labeling_step_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">consensus_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">number_of_expected_labels_for_consensus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update properties of a labeling step.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Id of the project.</span>
+<span class="sd">            step_name: Name of the labeling step to update.</span>
+<span class="sd">            consensus_coverage: Percentage of assets to be labeled for consensus (0-100).</span>
+<span class="sd">            number_of_expected_labels_for_consensus: Number of expected labels for consensus.</span>
+<span class="sd">            use_honeypot: Whether to use honeypot on this step.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dict with the updated step data (id, name).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_labeling_step_properties</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">consensus_coverage</span><span class="o">=</span><span class="n">consensus_coverage</span><span class="p">,</span>
+            <span class="n">number_of_expected_labels_for_consensus</span><span class="o">=</span><span class="n">number_of_expected_labels_for_consensus</span><span class="p">,</span>
+            <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_review_step_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">assignees</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update properties of a review step.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Id of the project.</span>
+<span class="sd">            step_name: Name of the review step to update.</span>
+<span class="sd">            assignees: List of emails to assign to the step.</span>
+<span class="sd">            step_coverage: Percentage of assets to be reviewed in this step (0-100).</span>
+<span class="sd">            send_back_to_step: Id of the step to send assets back to when rejected.</span>
+<span class="sd">            use_honeypot: Whether to use honeypot on this step.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dict with the updated step data (id, name).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_review_step_properties</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">assignees</span><span class="o">=</span><span class="n">assignees</span><span class="p">,</span>
+            <span class="n">step_coverage</span><span class="o">=</span><span class="n">step_coverage</span><span class="p">,</span>
+            <span class="n">send_back_to_step</span><span class="o">=</span><span class="n">send_back_to_step</span><span class="p">,</span>
+            <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_last_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete the last review step from a project workflow.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Id of the project.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dict with the remaining steps.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">delete_last_step</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rename_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rename a step in a project workflow.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Id of the project.</span>
+<span class="sd">            step_name: Name of the step.</span>
+<span class="sd">            new_name: New name for the step.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dict with the renamed step data (id, name).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">rename_step</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">new_name</span><span class="o">=</span><span class="n">new_name</span><span class="p">,</span>
+        <span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -2219,6 +2442,124 @@
 
 
 
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_review_step" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_review_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">assignees</span><span class="p">,</span> <span class="n">step_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">send_back_to_step</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Add a review step to a project workflow.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Id of the project.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>step_name</code></td>
+        <td><code>str</code></td>
+        <td><p>Name of the new review step.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>assignees</code></td>
+        <td><code>list</code></td>
+        <td><p>List of user emails to assign as reviewers.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>step_coverage</code></td>
+        <td><code>int | None</code></td>
+        <td><p>Percentage of assets to be reviewed in this step (0-100).</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>use_honeypot</code></td>
+        <td><code>bool | None</code></td>
+        <td><p>Whether to use honeypot on this step.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>send_back_to_step</code></td>
+        <td><code>str | None</code></td>
+        <td><p>Name of the step to send assets back to.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>dict</code></td>
+      <td><p>A dict with the created step data (id, name).</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kili/presentation/client/project_workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_review_step</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">assignees</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">step_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a review step to a project workflow.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Id of the project.</span>
+<span class="sd">        step_name: Name of the new review step.</span>
+<span class="sd">        assignees: List of user emails to assign as reviewers.</span>
+<span class="sd">        step_coverage: Percentage of assets to be reviewed in this step (0-100).</span>
+<span class="sd">        use_honeypot: Whether to use honeypot on this step.</span>
+<span class="sd">        send_back_to_step: Name of the step to send assets back to.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with the created step data (id, name).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_review_step</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+        <span class="n">assignees</span><span class="o">=</span><span class="n">assignees</span><span class="p">,</span>
+        <span class="n">step_coverage</span><span class="o">=</span><span class="n">step_coverage</span><span class="p">,</span>
+        <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
+        <span class="n">send_back_to_step</span><span class="o">=</span><span class="n">send_back_to_step</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 
@@ -2439,6 +2780,79 @@ destination project already has labels.</p></td>
 
 
 
+<h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.delete_last_step" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">delete_last_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Delete the last review step from a project workflow.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Id of the project.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>dict</code></td>
+      <td><p>A dict with the remaining steps.</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kili/presentation/client/project_workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_last_step</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete the last review step from a project workflow.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Id of the project.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with the remaining steps.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">delete_last_step</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.get_steps" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;steps.type&#39;</span><span class="p">,</span> <span class="s1">&#39;steps.name&#39;</span><span class="p">,</span> <span class="s1">&#39;steps.id&#39;</span><span class="p">,</span> <span class="s1">&#39;steps.assignees.email&#39;</span><span class="p">,</span> <span class="s1">&#39;steps.assignees.id&#39;</span><span class="p">))</span></code>
 
@@ -2614,6 +3028,206 @@ See the documentation for all possible fields.</p></td>
 
 
 
+<h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.rename_step" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">rename_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Rename a step in a project workflow.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Id of the project.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>step_name</code></td>
+        <td><code>str</code></td>
+        <td><p>Name of the step.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>new_name</code></td>
+        <td><code>str</code></td>
+        <td><p>New name for the step.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>dict</code></td>
+      <td><p>A dict with the renamed step data (id, name).</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kili/presentation/client/project_workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rename_step</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rename a step in a project workflow.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Id of the project.</span>
+<span class="sd">        step_name: Name of the step.</span>
+<span class="sd">        new_name: New name for the step.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with the renamed step data (id, name).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">rename_step</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+        <span class="n">new_name</span><span class="o">=</span><span class="n">new_name</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.update_labeling_step_properties" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">update_labeling_step_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">consensus_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_expected_labels_for_consensus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Update properties of a labeling step.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Id of the project.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>step_name</code></td>
+        <td><code>str</code></td>
+        <td><p>Name of the labeling step to update.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>consensus_coverage</code></td>
+        <td><code>int | None</code></td>
+        <td><p>Percentage of assets to be labeled for consensus (0-100).</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>number_of_expected_labels_for_consensus</code></td>
+        <td><code>int | None</code></td>
+        <td><p>Number of expected labels for consensus.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>use_honeypot</code></td>
+        <td><code>bool | None</code></td>
+        <td><p>Whether to use honeypot on this step.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>dict</code></td>
+      <td><p>A dict with the updated step data (id, name).</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kili/presentation/client/project_workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_labeling_step_properties</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">consensus_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">number_of_expected_labels_for_consensus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update properties of a labeling step.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Id of the project.</span>
+<span class="sd">        step_name: Name of the labeling step to update.</span>
+<span class="sd">        consensus_coverage: Percentage of assets to be labeled for consensus (0-100).</span>
+<span class="sd">        number_of_expected_labels_for_consensus: Number of expected labels for consensus.</span>
+<span class="sd">        use_honeypot: Whether to use honeypot on this step.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with the updated step data (id, name).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_labeling_step_properties</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+        <span class="n">consensus_coverage</span><span class="o">=</span><span class="n">consensus_coverage</span><span class="p">,</span>
+        <span class="n">number_of_expected_labels_for_consensus</span><span class="o">=</span><span class="n">number_of_expected_labels_for_consensus</span><span class="p">,</span>
+        <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.update_project_workflow" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">update_project_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">enforce_step_separation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">update_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delete_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
@@ -2716,6 +3330,124 @@ ensuring independent review and labeling processes</p></td>
         <span class="n">create_steps</span><span class="o">=</span><span class="n">create_steps</span><span class="p">,</span>
         <span class="n">update_steps</span><span class="o">=</span><span class="n">update_steps</span><span class="p">,</span>
         <span class="n">delete_steps</span><span class="o">=</span><span class="n">delete_steps</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.update_review_step_properties" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">update_review_step_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">assignees</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">send_back_to_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Update properties of a review step.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Id of the project.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>step_name</code></td>
+        <td><code>str</code></td>
+        <td><p>Name of the review step to update.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>assignees</code></td>
+        <td><code>list[str] | None</code></td>
+        <td><p>List of emails to assign to the step.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_coverage</code></td>
+        <td><code>int | None</code></td>
+        <td><p>Percentage of assets to be reviewed in this step (0-100).</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>send_back_to_step</code></td>
+        <td><code>str | None</code></td>
+        <td><p>Id of the step to send assets back to when rejected.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>use_honeypot</code></td>
+        <td><code>bool | None</code></td>
+        <td><p>Whether to use honeypot on this step.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>dict</code></td>
+      <td><p>A dict with the updated step data (id, name).</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kili/presentation/client/project_workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_review_step_properties</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">assignees</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update properties of a review step.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Id of the project.</span>
+<span class="sd">        step_name: Name of the review step to update.</span>
+<span class="sd">        assignees: List of emails to assign to the step.</span>
+<span class="sd">        step_coverage: Percentage of assets to be reviewed in this step (0-100).</span>
+<span class="sd">        send_back_to_step: Id of the step to send assets back to when rejected.</span>
+<span class="sd">        use_honeypot: Whether to use honeypot on this step.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with the updated step data (id, name).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_review_step_properties</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+        <span class="n">assignees</span><span class="o">=</span><span class="n">assignees</span><span class="p">,</span>
+        <span class="n">step_coverage</span><span class="o">=</span><span class="n">step_coverage</span><span class="p">,</span>
+        <span class="n">send_back_to_step</span><span class="o">=</span><span class="n">send_back_to_step</span><span class="p">,</span>
+        <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>

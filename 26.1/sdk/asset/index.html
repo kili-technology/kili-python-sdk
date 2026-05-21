@@ -2282,6 +2282,8 @@
         <span class="n">label_output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;parsed_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
         <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetStatus</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_and_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_and_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2350,6 +2352,8 @@
         <span class="n">label_output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;parsed_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
         <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetStatus</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_and_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_and_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2359,6 +2363,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="o">...</span>
 
+    <span class="c1"># pylint: disable=too-many-branches</span>
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">assets</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -2418,6 +2423,8 @@
         <span class="n">label_output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;parsed_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
         <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetStatus</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_and_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_and_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2491,6 +2498,10 @@
 <span class="sd">            status_in: Returned assets should have a status that belongs to that list, if given.</span>
 <span class="sd">                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.</span>
 <span class="sd">                Only applicable if the project is in the WorkflowV1 (legacy).</span>
+<span class="sd">            step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.</span>
+<span class="sd">                Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">            step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.</span>
+<span class="sd">                Only applicable if the project is in WorkflowV2.</span>
 <span class="sd">            step_name_in: Returned assets are in the step whose name belong to that list, if given.</span>
 <span class="sd">                Only applicable if the project is in WorkflowV2.</span>
 <span class="sd">            step_name_not_in: Returned assets are in the step whose name does not belong to that list, if given.</span>
@@ -2498,8 +2509,8 @@
 <span class="sd">            step_status_in: Returned assets have the status in their step that belongs to that list, if given.</span>
 <span class="sd">                Only applicable if the project is in WorkflowV2.</span>
 <span class="sd">            step_status_not_in: Returned assets have the status in their step that does not belong to that list, if given.</span>
-<span class="sd">                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .</span>
+<span class="sd">                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 
 <span class="sd">        !!! info &quot;Dates format&quot;</span>
 <span class="sd">            Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
@@ -2560,6 +2571,23 @@
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
 
+        <span class="k">if</span> <span class="p">(</span><span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_not_in</span>
+        <span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Step status &#39;DOING&#39; is deprecated, use &#39;IN_PROGRESS&#39; instead&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_not_in</span>
+        <span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Step status &#39;REDO&#39; is deprecated, use &#39;REWORK&#39; instead&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="n">_warn_deprecated_gt_lt_args</span><span class="p">(</span>
             <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="n">consensus_mark_gt</span><span class="p">,</span>
             <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="n">consensus_mark_lt</span><span class="p">,</span>
@@ -2593,16 +2621,21 @@
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
 
+        <span class="n">step_id_and_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">step_id_and_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">step_id_not_in</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">has_step_filters</span> <span class="o">=</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_name_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="n">has_status_filters</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">has_step_or_status_filters</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">step_name_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">step_name_and_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">step_name_and_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="ow">or</span> <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="ow">or</span> <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="ow">or</span> <span class="n">skipped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="n">has_step_filters</span> <span class="ow">or</span> <span class="n">has_status_filters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">has_step_or_status_filters</span><span class="p">:</span>
             <span class="n">check_asset_workflow_arguments</span><span class="p">(</span>
                 <span class="n">project_workflow_version</span><span class="o">=</span><span class="n">project_workflow_version</span><span class="p">,</span>
                 <span class="n">asset_workflow_filters</span><span class="o">=</span><span class="p">{</span>
@@ -2612,6 +2645,8 @@
                     <span class="s2">&quot;step_name_not_in&quot;</span><span class="p">:</span> <span class="n">step_name_not_in</span><span class="p">,</span>
                     <span class="s2">&quot;step_status_in&quot;</span><span class="p">:</span> <span class="n">step_status_in</span><span class="p">,</span>
                     <span class="s2">&quot;step_status_not_in&quot;</span><span class="p">:</span> <span class="n">step_status_not_in</span><span class="p">,</span>
+                    <span class="s2">&quot;step_name_and_status_in&quot;</span><span class="p">:</span> <span class="n">step_name_and_status_in</span><span class="p">,</span>
+                    <span class="s2">&quot;step_name_and_status_not_in&quot;</span><span class="p">:</span> <span class="n">step_name_and_status_not_in</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -2623,6 +2658,16 @@
                 <span class="n">step_id_not_in</span> <span class="o">=</span> <span class="n">extract_step_ids_from_project_steps</span><span class="p">(</span>
                     <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
                     <span class="n">step_name_in</span><span class="o">=</span><span class="n">step_name_not_in</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_and_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">step_id_and_status_in</span> <span class="o">=</span> <span class="n">extract_step_id_and_status_filters_from_project_steps</span><span class="p">(</span>
+                    <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
+                    <span class="n">step_name_and_status_filters</span><span class="o">=</span><span class="n">step_name_and_status_in</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_and_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">step_id_and_status_not_in</span> <span class="o">=</span> <span class="n">extract_step_id_and_status_filters_from_project_steps</span><span class="p">(</span>
+                    <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
+                    <span class="n">step_name_and_status_filters</span><span class="o">=</span><span class="n">step_name_and_status_not_in</span><span class="p">,</span>
                 <span class="p">)</span>
 
         <span class="c1"># Resolve disable_tqdm: function parameter &gt; client global setting &gt; function default</span>
@@ -2675,6 +2720,8 @@
             <span class="n">step_id_not_in</span><span class="o">=</span><span class="n">step_id_not_in</span><span class="p">,</span>
             <span class="n">step_status_in</span><span class="o">=</span><span class="n">step_status_in</span><span class="p">,</span>
             <span class="n">step_status_not_in</span><span class="o">=</span><span class="n">step_status_not_in</span><span class="p">,</span>
+            <span class="n">step_id_and_status_in</span><span class="o">=</span><span class="n">step_id_and_status_in</span><span class="p">,</span>
+            <span class="n">step_id_and_status_not_in</span><span class="o">=</span><span class="n">step_id_and_status_not_in</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">asset_use_cases</span><span class="o">.</span><span class="n">list_assets</span><span class="p">(</span>
             <span class="n">filters</span><span class="p">,</span>
@@ -2750,6 +2797,8 @@
         <span class="n">step_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_and_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_and_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Count and return the number of assets with the given constraints.</span>
@@ -2811,10 +2860,14 @@
 <span class="sd">            step_name_not_in: Returned assets are in a step whose name does not belong to that list, if given.</span>
 <span class="sd">                Only applicable if the project is in WorkflowV2.</span>
 <span class="sd">            step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
-<span class="sd">                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
+<span class="sd">                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">            step_status_not_in: Returned assets have the status of their step that does not belong to that list, if given.</span>
-<span class="sd">                Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.</span>
+<span class="sd">                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
+<span class="sd">                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">            step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.</span>
+<span class="sd">                Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">            step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.</span>
 <span class="sd">                Only applicable if the project is in WorkflowV2.</span>
 
 <span class="sd">        !!! info &quot;Dates format&quot;</span>
@@ -2844,6 +2897,23 @@
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
 
+        <span class="k">if</span> <span class="p">(</span><span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_not_in</span>
+        <span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Step status &#39;DOING&#39; is deprecated, use &#39;IN_PROGRESS&#39; instead&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_not_in</span>
+        <span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Step status &#39;REDO&#39; is deprecated, use &#39;REWORK&#39; instead&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="n">_warn_deprecated_gt_lt_args</span><span class="p">(</span>
             <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="n">consensus_mark_gt</span><span class="p">,</span>
             <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="n">consensus_mark_lt</span><span class="p">,</span>
@@ -2859,11 +2929,18 @@
 
         <span class="n">step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">step_id_not_in</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">has_step_filters</span> <span class="o">=</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_name_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="n">has_status_filters</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">step_id_and_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">step_id_and_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">has_step_or_status_filters</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">step_name_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">step_name_and_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">step_name_and_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="n">has_step_filters</span> <span class="ow">or</span> <span class="n">has_status_filters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">has_step_or_status_filters</span><span class="p">:</span>
             <span class="n">project_use_cases</span> <span class="o">=</span> <span class="n">ProjectUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
             <span class="p">(</span>
                 <span class="n">project_steps</span><span class="p">,</span>
@@ -2874,6 +2951,8 @@
                 <span class="n">asset_workflow_filters</span><span class="o">=</span><span class="p">{</span>
                     <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
                     <span class="s2">&quot;step_name_in&quot;</span><span class="p">:</span> <span class="n">step_name_in</span><span class="p">,</span>
+                    <span class="s2">&quot;step_name_and_status_in&quot;</span><span class="p">:</span> <span class="n">step_name_and_status_in</span><span class="p">,</span>
+                    <span class="s2">&quot;step_name_and_status_not_in&quot;</span><span class="p">:</span> <span class="n">step_name_and_status_not_in</span><span class="p">,</span>
                     <span class="s2">&quot;step_name_not_in&quot;</span><span class="p">:</span> <span class="n">step_name_not_in</span><span class="p">,</span>
                     <span class="s2">&quot;step_status_in&quot;</span><span class="p">:</span> <span class="n">step_status_in</span><span class="p">,</span>
                     <span class="s2">&quot;step_status_not_in&quot;</span><span class="p">:</span> <span class="n">step_status_not_in</span><span class="p">,</span>
@@ -2890,6 +2969,16 @@
                 <span class="n">step_id_not_in</span> <span class="o">=</span> <span class="n">extract_step_ids_from_project_steps</span><span class="p">(</span>
                     <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
                     <span class="n">step_name_in</span><span class="o">=</span><span class="n">step_name_not_in</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_and_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">step_id_and_status_in</span> <span class="o">=</span> <span class="n">extract_step_id_and_status_filters_from_project_steps</span><span class="p">(</span>
+                    <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
+                    <span class="n">step_name_and_status_filters</span><span class="o">=</span><span class="n">step_name_and_status_in</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_and_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">step_id_and_status_not_in</span> <span class="o">=</span> <span class="n">extract_step_id_and_status_filters_from_project_steps</span><span class="p">(</span>
+                    <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
+                    <span class="n">step_name_and_status_filters</span><span class="o">=</span><span class="n">step_name_and_status_not_in</span><span class="p">,</span>
                 <span class="p">)</span>
 
         <span class="n">filters</span> <span class="o">=</span> <span class="n">AssetFilters</span><span class="p">(</span>
@@ -2934,6 +3023,8 @@
             <span class="n">created_at_lte</span><span class="o">=</span><span class="n">created_at_lte</span><span class="p">,</span>
             <span class="n">issue_status</span><span class="o">=</span><span class="n">issue_status</span><span class="p">,</span>
             <span class="n">issue_type</span><span class="o">=</span><span class="n">issue_type</span><span class="p">,</span>
+            <span class="n">step_id_and_status_in</span><span class="o">=</span><span class="n">step_id_and_status_in</span><span class="p">,</span>
+            <span class="n">step_id_and_status_not_in</span><span class="o">=</span><span class="n">step_id_and_status_not_in</span><span class="p">,</span>
             <span class="n">step_id_in</span><span class="o">=</span><span class="n">step_id_in</span><span class="p">,</span>
             <span class="n">step_id_not_in</span><span class="o">=</span><span class="n">step_id_not_in</span><span class="p">,</span>
             <span class="n">step_status_in</span><span class="o">=</span><span class="n">step_status_in</span><span class="p">,</span>
@@ -3020,7 +3111,7 @@
 
 
 <h3 id="kili.presentation.client.asset.AssetClientMethods.assets" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">assets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata_where</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">download_media</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">local_media_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inference_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inference_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_labeler_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_labeler_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_reviewer_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_reviewer_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assignee_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assignee_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_strictly_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_output_format</span><span class="o">=</span><span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">skipped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">assets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata_where</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">download_media</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">local_media_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inference_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inference_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_labeler_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_labeler_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_reviewer_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_reviewer_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assignee_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assignee_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_strictly_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_output_format</span><span class="o">=</span><span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">skipped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_and_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_and_status_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3388,6 +3479,20 @@ Only applicable if the project is in the WorkflowV1 (legacy).</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
+        <td><code>step_name_and_status_in</code></td>
+        <td><code>Optional[list[tuple[str, Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]]</code></td>
+        <td><p>Returned assets match at least one of the given (step_name, step_status) pairs.
+Only applicable if the project is in WorkflowV2.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_name_and_status_not_in</code></td>
+        <td><code>Optional[list[tuple[str, Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]]</code></td>
+        <td><p>Returned assets do not match any of the given (step_name, step_status) pairs.
+Only applicable if the project is in WorkflowV2.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
         <td><code>step_name_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets are in the step whose name belong to that list, if given.
@@ -3403,17 +3508,17 @@ Only applicable if the project is in WorkflowV2.</p></td>
       </tr>
       <tr>
         <td><code>step_status_in</code></td>
-        <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
+        <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
         <td><p>Returned assets have the status in their step that belongs to that list, if given.
 Only applicable if the project is in WorkflowV2.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>step_status_not_in</code></td>
-        <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
+        <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
         <td><p>Returned assets have the status in their step that does not belong to that list, if given.
-Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>PARTIALLY_DONE</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code>.
-Only applicable if the project is in WorkflowV2.</p></td>
+Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>IN_PROGRESS</code>, <code>PARTIALLY_DONE</code>, <code>REWORK</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code> .
+Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -3541,6 +3646,8 @@ with the assets (and not only the ones matching the criteria)</p>
     <span class="n">label_output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;parsed_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
     <span class="n">skipped</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetStatus</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_name_and_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_name_and_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">step_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">step_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3614,6 +3721,10 @@ with the assets (and not only the ones matching the criteria)</p>
 <span class="sd">        status_in: Returned assets should have a status that belongs to that list, if given.</span>
 <span class="sd">            Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.</span>
 <span class="sd">            Only applicable if the project is in the WorkflowV1 (legacy).</span>
+<span class="sd">        step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.</span>
+<span class="sd">            Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">        step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.</span>
+<span class="sd">            Only applicable if the project is in WorkflowV2.</span>
 <span class="sd">        step_name_in: Returned assets are in the step whose name belong to that list, if given.</span>
 <span class="sd">            Only applicable if the project is in WorkflowV2.</span>
 <span class="sd">        step_name_not_in: Returned assets are in the step whose name does not belong to that list, if given.</span>
@@ -3621,8 +3732,8 @@ with the assets (and not only the ones matching the criteria)</p>
 <span class="sd">        step_status_in: Returned assets have the status in their step that belongs to that list, if given.</span>
 <span class="sd">            Only applicable if the project is in WorkflowV2.</span>
 <span class="sd">        step_status_not_in: Returned assets have the status in their step that does not belong to that list, if given.</span>
-<span class="sd">            Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">            Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .</span>
+<span class="sd">            Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 
 <span class="sd">    !!! info &quot;Dates format&quot;</span>
 <span class="sd">        Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
@@ -3683,6 +3794,23 @@ with the assets (and not only the ones matching the criteria)</p>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
 
+    <span class="k">if</span> <span class="p">(</span><span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_not_in</span>
+    <span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Step status &#39;DOING&#39; is deprecated, use &#39;IN_PROGRESS&#39; instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_not_in</span>
+    <span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Step status &#39;REDO&#39; is deprecated, use &#39;REWORK&#39; instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+
     <span class="n">_warn_deprecated_gt_lt_args</span><span class="p">(</span>
         <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="n">consensus_mark_gt</span><span class="p">,</span>
         <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="n">consensus_mark_lt</span><span class="p">,</span>
@@ -3716,16 +3844,21 @@ with the assets (and not only the ones matching the criteria)</p>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
 
+    <span class="n">step_id_and_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">step_id_and_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">step_id_not_in</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">has_step_filters</span> <span class="o">=</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_name_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-    <span class="n">has_status_filters</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">has_step_or_status_filters</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">step_name_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">step_name_and_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">step_name_and_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="ow">or</span> <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="ow">or</span> <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="ow">or</span> <span class="n">skipped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="p">)</span>
-    <span class="k">if</span> <span class="n">has_step_filters</span> <span class="ow">or</span> <span class="n">has_status_filters</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">has_step_or_status_filters</span><span class="p">:</span>
         <span class="n">check_asset_workflow_arguments</span><span class="p">(</span>
             <span class="n">project_workflow_version</span><span class="o">=</span><span class="n">project_workflow_version</span><span class="p">,</span>
             <span class="n">asset_workflow_filters</span><span class="o">=</span><span class="p">{</span>
@@ -3735,6 +3868,8 @@ with the assets (and not only the ones matching the criteria)</p>
                 <span class="s2">&quot;step_name_not_in&quot;</span><span class="p">:</span> <span class="n">step_name_not_in</span><span class="p">,</span>
                 <span class="s2">&quot;step_status_in&quot;</span><span class="p">:</span> <span class="n">step_status_in</span><span class="p">,</span>
                 <span class="s2">&quot;step_status_not_in&quot;</span><span class="p">:</span> <span class="n">step_status_not_in</span><span class="p">,</span>
+                <span class="s2">&quot;step_name_and_status_in&quot;</span><span class="p">:</span> <span class="n">step_name_and_status_in</span><span class="p">,</span>
+                <span class="s2">&quot;step_name_and_status_not_in&quot;</span><span class="p">:</span> <span class="n">step_name_and_status_not_in</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -3746,6 +3881,16 @@ with the assets (and not only the ones matching the criteria)</p>
             <span class="n">step_id_not_in</span> <span class="o">=</span> <span class="n">extract_step_ids_from_project_steps</span><span class="p">(</span>
                 <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
                 <span class="n">step_name_in</span><span class="o">=</span><span class="n">step_name_not_in</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_and_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_id_and_status_in</span> <span class="o">=</span> <span class="n">extract_step_id_and_status_filters_from_project_steps</span><span class="p">(</span>
+                <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
+                <span class="n">step_name_and_status_filters</span><span class="o">=</span><span class="n">step_name_and_status_in</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_and_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_id_and_status_not_in</span> <span class="o">=</span> <span class="n">extract_step_id_and_status_filters_from_project_steps</span><span class="p">(</span>
+                <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
+                <span class="n">step_name_and_status_filters</span><span class="o">=</span><span class="n">step_name_and_status_not_in</span><span class="p">,</span>
             <span class="p">)</span>
 
     <span class="c1"># Resolve disable_tqdm: function parameter &gt; client global setting &gt; function default</span>
@@ -3798,6 +3943,8 @@ with the assets (and not only the ones matching the criteria)</p>
         <span class="n">step_id_not_in</span><span class="o">=</span><span class="n">step_id_not_in</span><span class="p">,</span>
         <span class="n">step_status_in</span><span class="o">=</span><span class="n">step_status_in</span><span class="p">,</span>
         <span class="n">step_status_not_in</span><span class="o">=</span><span class="n">step_status_not_in</span><span class="p">,</span>
+        <span class="n">step_id_and_status_in</span><span class="o">=</span><span class="n">step_id_and_status_in</span><span class="p">,</span>
+        <span class="n">step_id_and_status_not_in</span><span class="o">=</span><span class="n">step_id_and_status_not_in</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">assets_gen</span> <span class="o">=</span> <span class="n">asset_use_cases</span><span class="o">.</span><span class="n">list_assets</span><span class="p">(</span>
         <span class="n">filters</span><span class="p">,</span>
@@ -3829,7 +3976,7 @@ with the assets (and not only the ones matching the criteria)</p>
 
 
 <h3 id="kili.presentation.client.asset.AssetClientMethods.count_assets" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">count_assets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata_where</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skipped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inference_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inference_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_labeler_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_labeler_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_reviewer_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_reviewer_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assignee_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assignee_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_strictly_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">count_assets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata_where</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_gt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_lt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skipped</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inference_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inference_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_labeler_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_labeler_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_reviewer_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_reviewer_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assignee_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assignee_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_consensus_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_strictly_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_and_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_and_status_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -4155,17 +4302,31 @@ Only applicable if the project is in WorkflowV2.</p></td>
       </tr>
       <tr>
         <td><code>step_status_in</code></td>
-        <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
+        <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
         <td><p>Returned assets have the status of their step that belongs to that list, if given.
-Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>PARTIALLY_DONE</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code>.
-Only applicable if the project is in WorkflowV2.</p></td>
+Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>IN_PROGRESS</code>, <code>PARTIALLY_DONE</code>, <code>REWORK</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code>.
+Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>step_status_not_in</code></td>
-        <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
+        <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
         <td><p>Returned assets have the status of their step that does not belong to that list, if given.
-Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>PARTIALLY_DONE</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code>.
+Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>IN_PROGRESS</code>, <code>PARTIALLY_DONE</code>, <code>REWORK</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code>.
+Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_name_and_status_in</code></td>
+        <td><code>Optional[list[tuple[str, Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]]</code></td>
+        <td><p>Returned assets match at least one of the given (step_name, step_status) pairs.
+Only applicable if the project is in WorkflowV2.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_name_and_status_not_in</code></td>
+        <td><code>Optional[list[tuple[str, Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]]</code></td>
+        <td><p>Returned assets do not match any of the given (step_name, step_status) pairs.
 Only applicable if the project is in WorkflowV2.</p></td>
         <td><code>None</code></td>
       </tr>
@@ -4264,6 +4425,8 @@ Only applicable if the project is in WorkflowV2.</p></td>
     <span class="n">step_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">step_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">step_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_name_and_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_name_and_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Count and return the number of assets with the given constraints.</span>
@@ -4325,10 +4488,14 @@ Only applicable if the project is in WorkflowV2.</p></td>
 <span class="sd">        step_name_not_in: Returned assets are in a step whose name does not belong to that list, if given.</span>
 <span class="sd">            Only applicable if the project is in WorkflowV2.</span>
 <span class="sd">        step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
-<span class="sd">            Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">            Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
+<span class="sd">            Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">        step_status_not_in: Returned assets have the status of their step that does not belong to that list, if given.</span>
-<span class="sd">            Possible choices: `TO_DO`, `DOING`, `PARTIALLY_DONE`, `REDO`, `DONE`, `SKIPPED`.</span>
+<span class="sd">            Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
+<span class="sd">            Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">        step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.</span>
+<span class="sd">            Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">        step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.</span>
 <span class="sd">            Only applicable if the project is in WorkflowV2.</span>
 
 <span class="sd">    !!! info &quot;Dates format&quot;</span>
@@ -4358,6 +4525,23 @@ Only applicable if the project is in WorkflowV2.</p></td>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
 
+    <span class="k">if</span> <span class="p">(</span><span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_not_in</span>
+    <span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Step status &#39;DOING&#39; is deprecated, use &#39;IN_PROGRESS&#39; instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_not_in</span>
+    <span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Step status &#39;REDO&#39; is deprecated, use &#39;REWORK&#39; instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+
     <span class="n">_warn_deprecated_gt_lt_args</span><span class="p">(</span>
         <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="n">consensus_mark_gt</span><span class="p">,</span>
         <span class="n">consensus_mark_lt</span><span class="o">=</span><span class="n">consensus_mark_lt</span><span class="p">,</span>
@@ -4373,11 +4557,18 @@ Only applicable if the project is in WorkflowV2.</p></td>
 
     <span class="n">step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">step_id_not_in</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">has_step_filters</span> <span class="o">=</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_name_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-    <span class="n">has_status_filters</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">step_id_and_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">step_id_and_status_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StatusInStep</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">has_step_or_status_filters</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">step_name_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">step_name_and_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">step_name_and_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">step_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="p">)</span>
-    <span class="k">if</span> <span class="n">has_step_filters</span> <span class="ow">or</span> <span class="n">has_status_filters</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">has_step_or_status_filters</span><span class="p">:</span>
         <span class="n">project_use_cases</span> <span class="o">=</span> <span class="n">ProjectUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
         <span class="p">(</span>
             <span class="n">project_steps</span><span class="p">,</span>
@@ -4388,6 +4579,8 @@ Only applicable if the project is in WorkflowV2.</p></td>
             <span class="n">asset_workflow_filters</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="n">skipped</span><span class="p">,</span>
                 <span class="s2">&quot;step_name_in&quot;</span><span class="p">:</span> <span class="n">step_name_in</span><span class="p">,</span>
+                <span class="s2">&quot;step_name_and_status_in&quot;</span><span class="p">:</span> <span class="n">step_name_and_status_in</span><span class="p">,</span>
+                <span class="s2">&quot;step_name_and_status_not_in&quot;</span><span class="p">:</span> <span class="n">step_name_and_status_not_in</span><span class="p">,</span>
                 <span class="s2">&quot;step_name_not_in&quot;</span><span class="p">:</span> <span class="n">step_name_not_in</span><span class="p">,</span>
                 <span class="s2">&quot;step_status_in&quot;</span><span class="p">:</span> <span class="n">step_status_in</span><span class="p">,</span>
                 <span class="s2">&quot;step_status_not_in&quot;</span><span class="p">:</span> <span class="n">step_status_not_in</span><span class="p">,</span>
@@ -4404,6 +4597,16 @@ Only applicable if the project is in WorkflowV2.</p></td>
             <span class="n">step_id_not_in</span> <span class="o">=</span> <span class="n">extract_step_ids_from_project_steps</span><span class="p">(</span>
                 <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
                 <span class="n">step_name_in</span><span class="o">=</span><span class="n">step_name_not_in</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_and_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_id_and_status_in</span> <span class="o">=</span> <span class="n">extract_step_id_and_status_filters_from_project_steps</span><span class="p">(</span>
+                <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
+                <span class="n">step_name_and_status_filters</span><span class="o">=</span><span class="n">step_name_and_status_in</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_and_status_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_id_and_status_not_in</span> <span class="o">=</span> <span class="n">extract_step_id_and_status_filters_from_project_steps</span><span class="p">(</span>
+                <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
+                <span class="n">step_name_and_status_filters</span><span class="o">=</span><span class="n">step_name_and_status_not_in</span><span class="p">,</span>
             <span class="p">)</span>
 
     <span class="n">filters</span> <span class="o">=</span> <span class="n">AssetFilters</span><span class="p">(</span>
@@ -4448,6 +4651,8 @@ Only applicable if the project is in WorkflowV2.</p></td>
         <span class="n">created_at_lte</span><span class="o">=</span><span class="n">created_at_lte</span><span class="p">,</span>
         <span class="n">issue_status</span><span class="o">=</span><span class="n">issue_status</span><span class="p">,</span>
         <span class="n">issue_type</span><span class="o">=</span><span class="n">issue_type</span><span class="p">,</span>
+        <span class="n">step_id_and_status_in</span><span class="o">=</span><span class="n">step_id_and_status_in</span><span class="p">,</span>
+        <span class="n">step_id_and_status_not_in</span><span class="o">=</span><span class="n">step_id_and_status_not_in</span><span class="p">,</span>
         <span class="n">step_id_in</span><span class="o">=</span><span class="n">step_id_in</span><span class="p">,</span>
         <span class="n">step_id_not_in</span><span class="o">=</span><span class="n">step_id_not_in</span><span class="p">,</span>
         <span class="n">step_status_in</span><span class="o">=</span><span class="n">step_status_in</span><span class="p">,</span>
