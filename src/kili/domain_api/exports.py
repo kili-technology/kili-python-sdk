@@ -49,6 +49,7 @@ class ExportAssetFilter(TypedDict, total=False):
     status_in: Optional[list[AssetStatus]]
     step_name_in: Optional[list[str]]
     step_status_in: Optional[list[StatusInStep]]
+    group_name: Optional[list[str]]
 
 
 class ExportNamespace(DomainNamespace):

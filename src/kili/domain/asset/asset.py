@@ -71,6 +71,7 @@ class AssetFilters:
     step_id_not_in: Optional[ListOrTuple[str]] = None
     step_status_in: Optional[ListOrTuple[StatusInStep]] = None
     step_status_not_in: Optional[ListOrTuple[StatusInStep]] = None
+    group_name: Optional[ListOrTuple[str]] = None
 
 
 class AssetWorkflowFilters(TypedDict, total=False):
@@ -84,6 +85,7 @@ class AssetWorkflowFilters(TypedDict, total=False):
     step_name_not_in: Optional[ListOrTuple[str]]
     step_status_in: Optional[ListOrTuple[StatusInStep]]
     step_status_not_in: Optional[ListOrTuple[StatusInStep]]
+    group_name: Optional[ListOrTuple[str]]
 
 
 def get_asset_default_fields(

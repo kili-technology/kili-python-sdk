@@ -73,6 +73,7 @@ class LabelFilter(TypedDict, total=False):
     label_id: Optional[str]
     type_in: Optional[list[LabelType]]
     user_id: Optional[str]
+    asset_group_name: Optional[list[str]]
 
 
 class LabelsNamespace(DomainNamespace):

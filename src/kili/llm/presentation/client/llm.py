@@ -83,6 +83,7 @@ class LlmClientMethods:
         status_in: Optional[list[AssetStatus]] = None,
         step_name_in: Optional[list[str]] = None,
         step_status_in: Optional[list[StatusInStep]] = None,
+        group_name: Optional[list[str]] = None,
     ) -> Optional[Union[list[Conversation], list[dict[str, Union[list[str], str]]]]]:
         """Returns an export of llm conversations with valid labels.
 
@@ -100,6 +101,8 @@ class LlmClientMethods:
             step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .
                 Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+            group_name: Returned assets belong to a workflow step group whose name is in the list, if given.
+                Only applicable if the project is in WorkflowV2.
         !!! Example
             ```python
             kili.llm.export("your_project_id")
@@ -136,7 +139,12 @@ class LlmClientMethods:
 
         step_id_in = None
 
-        if status_in is not None or step_name_in is not None or step_status_in is not None:
+        if (
+            status_in is not None
+            or step_name_in is not None
+            or step_status_in is not None
+            or group_name is not None
+        ):
             project_use_cases = ProjectUseCases(self.kili_api_gateway)
             (
                 project_steps,
@@ -149,6 +157,7 @@ class LlmClientMethods:
                     "status_in": status_in,
                     "step_name_in": step_name_in,
                     "step_status_in": step_status_in,
+                    "group_name": group_name,
                 },
             )
 
@@ -165,6 +174,7 @@ class LlmClientMethods:
             status_in=status_in,
             step_id_in=step_id_in,
             step_status_in=step_status_in,
+            group_name=group_name if group_name else None,
         )
 
         try:

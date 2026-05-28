@@ -173,6 +173,7 @@ def fetch_assets(
         "metadata_where": asset_filter_kwargs.pop("metadata_where", None),
         "step_id_in": asset_filter_kwargs.pop("step_id_in", None),
         "step_status_in": asset_filter_kwargs.pop("step_status_in", None),
+        "group_name": asset_filter_kwargs.pop("group_name", None),
     }
 
     if asset_filter_kwargs:

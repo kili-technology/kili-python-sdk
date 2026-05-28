@@ -39,6 +39,7 @@ def check_asset_workflow_arguments(
     step_status_in = asset_workflow_filters.get("step_status_in")
     status_in = asset_workflow_filters.get("status_in")
     skipped = asset_workflow_filters.get("skipped")
+    group_name = asset_workflow_filters.get("group_name")
 
     if project_workflow_version == "V2":
         if step_status_in is not None and status_in is not None:
@@ -70,4 +71,8 @@ def check_asset_workflow_arguments(
         raise ValueError(
             "Filters step_name_and_status_in and/or step_name_and_status_not_in given : use filter "
             "status_in for this project."
+        )
+    if group_name is not None:
+        raise ValueError(
+            "Filter group_name given : group_name is only applicable to WorkflowV2 projects."
         )
