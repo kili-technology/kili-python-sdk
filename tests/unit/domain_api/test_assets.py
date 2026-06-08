@@ -422,7 +422,7 @@ class TestAssetsNamespaceContractCompatibility:
 
 
 class TestAssetsNamespaceGroupNameFilter:
-    """Tests for group_name filter forwarding in AssetsNamespace."""
+    """Tests for group_name_in filter forwarding in AssetsNamespace."""
 
     @pytest.fixture()
     def mock_client(self):
@@ -442,35 +442,65 @@ class TestAssetsNamespaceGroupNameFilter:
         """Create an AssetsNamespace instance."""
         return AssetsNamespace(mock_client, mock_gateway)
 
-    def test_list_assets_with_group_name_filter(self, assets_namespace):
-        """Test that group_name filter is forwarded to the legacy client assets() method."""
+    def test_list_assets_with_group_name_in_filter(self, assets_namespace):
+        """Test that group_name_in filter is forwarded to the legacy client assets() method."""
         assets_namespace._client.assets.return_value = [
             {"id": "asset1", "externalId": "ext1"},
         ]
 
         result = assets_namespace.list(
             project_id="project_123",
-            filter={"group_name": ["GroupA"]},
+            filter={"group_name_in": ["GroupA"]},
         )
 
         assert isinstance(result, list)
         assets_namespace._client.assets.assert_called_once()
         call_kwargs = assets_namespace._client.assets.call_args[1]
-        assert call_kwargs["group_name"] == ["GroupA"]
+        assert call_kwargs["group_name_in"] == ["GroupA"]
 
-    def test_count_assets_with_group_name_filter(self, assets_namespace):
-        """Test that group_name filter is forwarded to the legacy client count_assets() method."""
+    def test_count_assets_with_group_name_in_filter(self, assets_namespace):
+        """Test that group_name_in filter is forwarded to the legacy client count_assets() method."""
         assets_namespace._client.count_assets.return_value = 7
 
         result = assets_namespace.count(
             project_id="project_123",
-            filter={"group_name": ["GroupA", "GroupB"]},
+            filter={"group_name_in": ["GroupA", "GroupB"]},
         )
 
         assert result == 7
         assets_namespace._client.count_assets.assert_called_once()
         call_kwargs = assets_namespace._client.count_assets.call_args[1]
-        assert call_kwargs["group_name"] == ["GroupA", "GroupB"]
+        assert call_kwargs["group_name_in"] == ["GroupA", "GroupB"]
+
+    def test_list_assets_with_group_name_not_in_filter(self, assets_namespace):
+        """Test that group_name_not_in filter is forwarded to the legacy client assets() method."""
+        assets_namespace._client.assets.return_value = [
+            {"id": "asset1", "externalId": "ext1"},
+        ]
+
+        result = assets_namespace.list(
+            project_id="project_123",
+            filter={"group_name_not_in": ["GroupA"]},
+        )
+
+        assert isinstance(result, list)
+        assets_namespace._client.assets.assert_called_once()
+        call_kwargs = assets_namespace._client.assets.call_args[1]
+        assert call_kwargs["group_name_not_in"] == ["GroupA"]
+
+    def test_count_assets_with_group_name_not_in_filter(self, assets_namespace):
+        """Test that group_name_not_in filter is forwarded to the legacy count_assets() method."""
+        assets_namespace._client.count_assets.return_value = 7
+
+        result = assets_namespace.count(
+            project_id="project_123",
+            filter={"group_name_not_in": ["GroupA", "GroupB"]},
+        )
+
+        assert result == 7
+        assets_namespace._client.count_assets.assert_called_once()
+        call_kwargs = assets_namespace._client.count_assets.call_args[1]
+        assert call_kwargs["group_name_not_in"] == ["GroupA", "GroupB"]
 
 
 if __name__ == "__main__":

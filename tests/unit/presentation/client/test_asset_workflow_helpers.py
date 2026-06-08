@@ -6,39 +6,79 @@ from kili.domain.asset.helpers import check_asset_workflow_arguments
 
 
 class TestCheckAssetWorkflowArgumentsGroupName:
-    """Tests for group_name validation in check_asset_workflow_arguments."""
+    """Tests for group_name_in validation in check_asset_workflow_arguments."""
 
-    def test_group_name_raises_on_v1_project(self):
-        """group_name must be rejected on WorkflowV1 projects."""
-        with pytest.raises(ValueError, match="group_name"):
+    def test_group_name_in_raises_on_v1_project(self):
+        """group_name_in must be rejected on WorkflowV1 projects."""
+        with pytest.raises(ValueError, match="group_name_in"):
             check_asset_workflow_arguments(
                 project_workflow_version="V1",
-                asset_workflow_filters={"group_name": ["GroupA"]},
+                asset_workflow_filters={"group_name_in": ["GroupA"]},
             )
 
-    def test_group_name_is_accepted_on_v2_project(self):
-        """group_name must be silently accepted on WorkflowV2 projects."""
+    def test_group_name_in_raises_on_v2_project(self):
+        """group_name_in must be rejected on WorkflowV2 projects (V3-only filter)."""
+        with pytest.raises(ValueError, match="group_name_in"):
+            check_asset_workflow_arguments(
+                project_workflow_version="V2",
+                asset_workflow_filters={"group_name_in": ["GroupA"]},
+            )
+
+    def test_group_name_in_is_accepted_on_v3_project(self):
+        """group_name_in must be silently accepted on WorkflowV3 projects."""
         # Should not raise
         check_asset_workflow_arguments(
-            project_workflow_version="V2",
-            asset_workflow_filters={"group_name": ["GroupA"]},
+            project_workflow_version="V3",
+            asset_workflow_filters={"group_name_in": ["GroupA"]},
         )
 
-    def test_group_name_none_does_not_raise_on_v1(self):
-        """None group_name must not trigger a rejection on V1 projects."""
+    def test_group_name_in_none_does_not_raise_on_v1(self):
+        """None group_name_in must not trigger a rejection on V1 projects."""
         # Should not raise
         check_asset_workflow_arguments(
             project_workflow_version="V1",
-            asset_workflow_filters={"group_name": None},
+            asset_workflow_filters={"group_name_in": None},
         )
 
-    def test_group_name_combined_with_step_status_on_v2(self):
-        """group_name combined with step_status_in on V2 must not raise."""
+    def test_group_name_in_combined_with_step_status_on_v3(self):
+        """group_name_in combined with step_status_in on V3 must not raise."""
         # Should not raise
         check_asset_workflow_arguments(
-            project_workflow_version="V2",
+            project_workflow_version="V3",
             asset_workflow_filters={
-                "group_name": ["GroupA"],
+                "group_name_in": ["GroupA"],
                 "step_status_in": ["TO_DO"],
             },
+        )
+
+    def test_group_name_not_in_raises_on_v1_project(self):
+        """group_name_not_in must be rejected on WorkflowV1 projects."""
+        with pytest.raises(ValueError, match="group_name_not_in"):
+            check_asset_workflow_arguments(
+                project_workflow_version="V1",
+                asset_workflow_filters={"group_name_not_in": ["GroupA"]},
+            )
+
+    def test_group_name_not_in_raises_on_v2_project(self):
+        """group_name_not_in must be rejected on WorkflowV2 projects (V3-only filter)."""
+        with pytest.raises(ValueError, match="group_name_not_in"):
+            check_asset_workflow_arguments(
+                project_workflow_version="V2",
+                asset_workflow_filters={"group_name_not_in": ["GroupA"]},
+            )
+
+    def test_group_name_not_in_is_accepted_on_v3_project(self):
+        """group_name_not_in must be silently accepted on WorkflowV3 projects."""
+        # Should not raise
+        check_asset_workflow_arguments(
+            project_workflow_version="V3",
+            asset_workflow_filters={"group_name_not_in": ["GroupA"]},
+        )
+
+    def test_group_name_not_in_none_does_not_raise_on_v1(self):
+        """None group_name_not_in must not trigger a rejection on V1 projects."""
+        # Should not raise
+        check_asset_workflow_arguments(
+            project_workflow_version="V1",
+            asset_workflow_filters={"group_name_not_in": None},
         )

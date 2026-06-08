@@ -84,5 +84,6 @@ def asset_where_mapper(filters: AssetFilters):
             if filters.step_id_and_status_not_in is not None
             else None
         ),
-        "groupName": filters.group_name if filters.group_name else None,
+        "groupNameIn": filters.group_name_in or None,
+        "groupNameNotIn": filters.group_name_not_in or None,
     }
