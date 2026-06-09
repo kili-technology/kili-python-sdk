@@ -19,7 +19,6 @@ class PluginCore:
         on_submit(self, label: Dict, asset_id: str)
         on_review(self, label: Dict, asset_id: str)
         on_custom_interface_click(self, label: Dict, asset_id: str)
-        on_project_updated(self, settings_updated: List[Dict])
         on_send_back_to_queue(self, asset_id: str)
         on_event(self, payload: Dict)
 
@@ -129,41 +128,6 @@ class PluginCore:
                             label_id_array=[label_id],
                             text_array=[issue]
                         )
-            ```
-        """
-        # pylint: disable=unused-argument
-        self.logger.warning("Handler is in active development.")
-
-    def on_project_updated(
-        self,
-        settings_updated: list[dict],
-    ) -> None:
-        """Handler for the project updated action.
-
-        Triggered when a project setting is updated on Kili.
-
-        !!! warning
-            This handler is in beta and is still in active development,
-            it should be used with caution.
-
-        Args:
-            settings_updated: Settings updated on the project a list of
-                dictionary containing the following fields:
-                `key`, `newValue`, `oldValue`.
-                !!! note
-                    key is one of the following: 'canNavigateBetweenAssets',
-                    'canSkipAsset', 'consensusTotCoverage', 'description',
-                    'inputType', 'instructions', 'isAnonymized', 'jsonInterface',
-                    'metadataTypes', 'minConsensusSize', 'reviewCoverage',
-                    'title', 'archivedAt', 'useHoneyPot'
-
-        !!! example
-            ```python
-            def on_project_updated(self, settings_updated: List[Dict]):
-                for setting in settings_updated:
-                    self.logger.info(setting)
-                    # this will print:
-                    # {'key': 'description', 'newValue': 'new desc', 'oldValue': 'old desc'}
             ```
         """
         # pylint: disable=unused-argument

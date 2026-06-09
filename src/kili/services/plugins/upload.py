@@ -39,7 +39,6 @@ POSSIBLE_HANDLERS = {
     "on_submit": "onSubmit",
     "on_review": "onReview",
     "on_custom_interface_click": "onCustomInterfaceClick",
-    "on_project_updated": "onProjectUpdated",
     "on_send_back_to_queue": "onSendBackToQueue",
 }
 
