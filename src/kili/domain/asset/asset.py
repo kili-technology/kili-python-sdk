@@ -71,6 +71,8 @@ class AssetFilters:
     step_id_not_in: Optional[ListOrTuple[str]] = None
     step_status_in: Optional[ListOrTuple[StatusInStep]] = None
     step_status_not_in: Optional[ListOrTuple[StatusInStep]] = None
+    group_name_in: Optional[ListOrTuple[str]] = None
+    group_name_not_in: Optional[ListOrTuple[str]] = None
 
 
 class AssetWorkflowFilters(TypedDict, total=False):
@@ -84,6 +86,8 @@ class AssetWorkflowFilters(TypedDict, total=False):
     step_name_not_in: Optional[ListOrTuple[str]]
     step_status_in: Optional[ListOrTuple[StatusInStep]]
     step_status_not_in: Optional[ListOrTuple[StatusInStep]]
+    group_name_in: Optional[ListOrTuple[str]]
+    group_name_not_in: Optional[ListOrTuple[str]]
 
 
 def get_asset_default_fields(
@@ -105,6 +109,25 @@ def get_asset_default_fields(
             "labels.jsonResponse",
             "skipped",
             "status",
+        )
+
+    if project_workflow_version == "V3":
+        return (
+            "content",
+            "createdAt",
+            "externalId",
+            "id",
+            "isHoneypot",
+            "jsonMetadata",
+            "labels.author.id",
+            "labels.author.email",
+            "labels.createdAt",
+            "labels.id",
+            "labels.jsonResponse",
+            "skipped",
+            "currentStep.stepGroupName",
+            "currentStep.name",
+            "currentStep.status",
         )
 
     return (

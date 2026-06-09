@@ -98,7 +98,7 @@ class ProjectCopier:  # pylint: disable=too-few-public-methods
 
         if copy_labels:
             logger.info("Copying labels...")
-            if src_project["workflowVersion"] == "V2":
+            if src_project["workflowVersion"] in ("V2", "V3"):
                 self._copy_labels(from_project_id=from_project_id, new_project_id=new_project_id)
             else:
                 warnings.warn(

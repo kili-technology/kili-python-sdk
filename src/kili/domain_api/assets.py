@@ -95,6 +95,8 @@ class AssetFilter(TypedDict, total=False):
     step_status_not_in: Optional[list[StatusInStep]]
     updated_at_gte: Optional[str]
     updated_at_lte: Optional[str]
+    group_name_in: Optional[list[str]]
+    group_name_not_in: Optional[list[str]]
 
 
 class VideoProcessingParameters(TypedDict, total=False):

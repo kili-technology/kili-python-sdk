@@ -49,6 +49,8 @@ class ExportAssetFilter(TypedDict, total=False):
     status_in: Optional[list[AssetStatus]]
     step_name_in: Optional[list[str]]
     step_status_in: Optional[list[StatusInStep]]
+    group_name_in: Optional[list[str]]
+    group_name_not_in: Optional[list[str]]
 
 
 class ExportNamespace(DomainNamespace):
@@ -97,7 +99,7 @@ class ExportNamespace(DomainNamespace):
         Returns:
             The optimal export type for this project
         """
-        if workflow_version == "V2":
+        if workflow_version in ("V2", "V3"):
             return "latest_from_last_step"
         return "latest"
 

@@ -77,6 +77,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_external_id_strictly_in: Optional[list[str]] = None,
         asset_step_name_in: Optional[list[str]] = None,
         asset_step_status_in: Optional[list[StatusInStep]] = None,
+        asset_group_name_in: Optional[list[str]] = None,
+        asset_group_name_not_in: Optional[list[str]] = None,
         author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -104,6 +106,10 @@ class LabelClientMethods(BaseClientMethods):
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
                 Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+            asset_group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
+                Only applicable if the project is in WorkflowV3.
+            asset_group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
+                Only applicable if the project is in WorkflowV3.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -144,6 +150,8 @@ class LabelClientMethods(BaseClientMethods):
             asset_status_in is not None
             or asset_step_name_in is not None
             or asset_step_status_in is not None
+            or asset_group_name_in is not None
+            or asset_group_name_not_in is not None
         ):
             project_use_cases = ProjectUseCases(self.kili_api_gateway)
             (
@@ -157,9 +165,11 @@ class LabelClientMethods(BaseClientMethods):
                     "step_name_in": asset_step_name_in,
                     "step_status_in": asset_step_status_in,
                     "status_in": asset_status_in,
+                    "group_name_in": asset_group_name_in,
+                    "group_name_not_in": asset_group_name_not_in,
                 },
             )
-            if project_workflow_version == "V2" and asset_step_name_in is not None:
+            if project_workflow_version in ("V2", "V3") and asset_step_name_in is not None:
                 asset_step_id_in = extract_step_ids_from_project_steps(
                     project_steps=project_steps,
                     step_name_in=asset_step_name_in,
@@ -183,6 +193,8 @@ class LabelClientMethods(BaseClientMethods):
                 ),
                 step_id_in=asset_step_id_in,
                 step_status_in=asset_step_status_in,
+                group_name_in=asset_group_name_in if asset_group_name_in else None,
+                group_name_not_in=asset_group_name_not_in if asset_group_name_not_in else None,
             ),
             author_in=author_in,
             created_at=created_at,
@@ -213,6 +225,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_external_id_strictly_in: Optional[list[str]] = None,
         asset_step_name_in: Optional[list[str]] = None,
         asset_step_status_in: Optional[list[StatusInStep]] = None,
+        asset_group_name_in: Optional[list[str]] = None,
+        asset_group_name_not_in: Optional[list[str]] = None,
         author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -253,6 +267,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_external_id_strictly_in: Optional[list[str]] = None,
         asset_step_name_in: Optional[list[str]] = None,
         asset_step_status_in: Optional[list[StatusInStep]] = None,
+        asset_group_name_in: Optional[list[str]] = None,
+        asset_group_name_not_in: Optional[list[str]] = None,
         author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -293,6 +309,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_external_id_strictly_in: Optional[list[str]] = None,
         asset_step_name_in: Optional[list[str]] = None,
         asset_step_status_in: Optional[list[StatusInStep]] = None,
+        asset_group_name_in: Optional[list[str]] = None,
+        asset_group_name_not_in: Optional[list[str]] = None,
         author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -333,6 +351,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_external_id_strictly_in: Optional[list[str]] = None,
         asset_step_name_in: Optional[list[str]] = None,
         asset_step_status_in: Optional[list[StatusInStep]] = None,
+        asset_group_name_in: Optional[list[str]] = None,
+        asset_group_name_not_in: Optional[list[str]] = None,
         author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -373,6 +393,8 @@ class LabelClientMethods(BaseClientMethods):
         asset_external_id_strictly_in: Optional[list[str]] = None,
         asset_step_name_in: Optional[list[str]] = None,
         asset_step_status_in: Optional[list[StatusInStep]] = None,
+        asset_group_name_in: Optional[list[str]] = None,
+        asset_group_name_not_in: Optional[list[str]] = None,
         author_in: Optional[list[str]] = None,
         created_at: Optional[str] = None,
         created_at_gte: Optional[str] = None,
@@ -416,6 +438,10 @@ class LabelClientMethods(BaseClientMethods):
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
                 Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+            asset_group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
+                Only applicable if the project is in WorkflowV3.
+            asset_group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
+                Only applicable if the project is in WorkflowV3.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have their creation date equal to this date.
@@ -490,6 +516,8 @@ class LabelClientMethods(BaseClientMethods):
             asset_status_in is not None
             or asset_step_name_in is not None
             or asset_step_status_in is not None
+            or asset_group_name_in is not None
+            or asset_group_name_not_in is not None
         ):
             project_use_cases = ProjectUseCases(self.kili_api_gateway)
             (
@@ -503,9 +531,11 @@ class LabelClientMethods(BaseClientMethods):
                     "step_name_in": asset_step_name_in,
                     "step_status_in": asset_step_status_in,
                     "status_in": asset_status_in,
+                    "group_name_in": asset_group_name_in,
+                    "group_name_not_in": asset_group_name_not_in,
                 },
             )
-            if project_workflow_version == "V2" and asset_step_name_in is not None:
+            if project_workflow_version in ("V2", "V3") and asset_step_name_in is not None:
                 asset_step_id_in = extract_step_ids_from_project_steps(
                     project_steps=project_steps,
                     step_name_in=asset_step_name_in,
@@ -529,6 +559,8 @@ class LabelClientMethods(BaseClientMethods):
                 ),
                 step_id_in=asset_step_id_in,
                 step_status_in=asset_step_status_in,
+                group_name_in=asset_group_name_in if asset_group_name_in else None,
+                group_name_not_in=asset_group_name_not_in if asset_group_name_not_in else None,
             ),
             author_in=author_in,
             created_at=created_at,
@@ -1480,7 +1512,7 @@ class LabelClientMethods(BaseClientMethods):
                 },
             )
 
-            if project_workflow_version == "V2" and step_name_in is not None:
+            if project_workflow_version in ("V2", "V3") and step_name_in is not None:
                 step_id_in = extract_step_ids_from_project_steps(
                     project_steps=project_steps,
                     step_name_in=step_name_in,
