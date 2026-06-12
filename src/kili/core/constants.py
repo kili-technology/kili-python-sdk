@@ -2,7 +2,7 @@
 
 
 mime_extensions = {
-    "Audio": "audio/x-flac,audio/mpeg,video/mp4",
+    "Audio": "audio/x-flac,audio/mpeg,video/mp4,audio/wav,audio/x-wav",
     "Csv": "text/csv",
     "Video": (
         "video/mp4,video/x-matroska,video/3gpp,video/x-msvideo,"
