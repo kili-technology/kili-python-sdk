@@ -2265,6 +2265,8 @@
         <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetStatus</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Conversation</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]]]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an export of llm conversations with valid labels.</span>
 
@@ -2282,6 +2284,10 @@
 <span class="sd">            step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .</span>
 <span class="sd">                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">            group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.</span>
+<span class="sd">                Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">            group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.</span>
+<span class="sd">                Only applicable if the project is in WorkflowV3.</span>
 <span class="sd">        !!! Example</span>
 <span class="sd">            ```python</span>
 <span class="sd">            kili.llm.export(&quot;your_project_id&quot;)</span>
@@ -2318,7 +2324,13 @@
 
         <span class="n">step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">group_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="n">group_name_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
             <span class="n">project_use_cases</span> <span class="o">=</span> <span class="n">ProjectUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
             <span class="p">(</span>
                 <span class="n">project_steps</span><span class="p">,</span>
@@ -2331,10 +2343,12 @@
                     <span class="s2">&quot;status_in&quot;</span><span class="p">:</span> <span class="n">status_in</span><span class="p">,</span>
                     <span class="s2">&quot;step_name_in&quot;</span><span class="p">:</span> <span class="n">step_name_in</span><span class="p">,</span>
                     <span class="s2">&quot;step_status_in&quot;</span><span class="p">:</span> <span class="n">step_status_in</span><span class="p">,</span>
+                    <span class="s2">&quot;group_name_in&quot;</span><span class="p">:</span> <span class="n">group_name_in</span><span class="p">,</span>
+                    <span class="s2">&quot;group_name_not_in&quot;</span><span class="p">:</span> <span class="n">group_name_not_in</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;V2&quot;</span><span class="p">,</span> <span class="s2">&quot;V3&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">step_id_in</span> <span class="o">=</span> <span class="n">extract_step_ids_from_project_steps</span><span class="p">(</span>
                     <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
                     <span class="n">step_name_in</span><span class="o">=</span><span class="n">step_name_in</span><span class="p">,</span>
@@ -2347,6 +2361,8 @@
             <span class="n">status_in</span><span class="o">=</span><span class="n">status_in</span><span class="p">,</span>
             <span class="n">step_id_in</span><span class="o">=</span><span class="n">step_id_in</span><span class="p">,</span>
             <span class="n">step_status_in</span><span class="o">=</span><span class="n">step_status_in</span><span class="p">,</span>
+            <span class="n">group_name_in</span><span class="o">=</span><span class="n">group_name_in</span> <span class="k">if</span> <span class="n">group_name_in</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">group_name_not_in</span><span class="o">=</span><span class="n">group_name_not_in</span> <span class="k">if</span> <span class="n">group_name_not_in</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -3238,7 +3254,7 @@
 
 
 <h3 id="kili.llm.presentation.client.llm.LlmClientMethods.export" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_sent_back_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_sent_back_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3316,6 +3332,20 @@ Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>IN_PROGRESS</cod
 Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
         <td><code>None</code></td>
       </tr>
+      <tr>
+        <td><code>group_name_in</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>Returned assets belong to a workflow step group whose name is in the list, if given.
+Only applicable if the project is in WorkflowV3.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>group_name_not_in</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>Returned assets do not belong to a workflow step group whose name is in the list, if given.
+Only applicable if the project is in WorkflowV3.</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>      <div class="admonition example">
 <p class="admonition-title">Example</p>
@@ -3336,6 +3366,8 @@ Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> an
     <span class="n">status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetStatus</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">step_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">group_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">group_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Conversation</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns an export of llm conversations with valid labels.</span>
 
@@ -3353,6 +3385,10 @@ Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> an
 <span class="sd">        step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">            Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .</span>
 <span class="sd">            Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">        group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.</span>
+<span class="sd">            Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">        group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.</span>
+<span class="sd">            Only applicable if the project is in WorkflowV3.</span>
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python</span>
 <span class="sd">        kili.llm.export(&quot;your_project_id&quot;)</span>
@@ -3389,7 +3425,13 @@ Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> an
 
     <span class="n">step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">if</span> <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">group_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="n">group_name_not_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">):</span>
         <span class="n">project_use_cases</span> <span class="o">=</span> <span class="n">ProjectUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
         <span class="p">(</span>
             <span class="n">project_steps</span><span class="p">,</span>
@@ -3402,10 +3444,12 @@ Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> an
                 <span class="s2">&quot;status_in&quot;</span><span class="p">:</span> <span class="n">status_in</span><span class="p">,</span>
                 <span class="s2">&quot;step_name_in&quot;</span><span class="p">:</span> <span class="n">step_name_in</span><span class="p">,</span>
                 <span class="s2">&quot;step_status_in&quot;</span><span class="p">:</span> <span class="n">step_status_in</span><span class="p">,</span>
+                <span class="s2">&quot;group_name_in&quot;</span><span class="p">:</span> <span class="n">group_name_in</span><span class="p">,</span>
+                <span class="s2">&quot;group_name_not_in&quot;</span><span class="p">:</span> <span class="n">group_name_not_in</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="o">==</span> <span class="s2">&quot;V2&quot;</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;V2&quot;</span><span class="p">,</span> <span class="s2">&quot;V3&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">step_id_in</span> <span class="o">=</span> <span class="n">extract_step_ids_from_project_steps</span><span class="p">(</span>
                 <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
                 <span class="n">step_name_in</span><span class="o">=</span><span class="n">step_name_in</span><span class="p">,</span>
@@ -3418,6 +3462,8 @@ Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> an
         <span class="n">status_in</span><span class="o">=</span><span class="n">status_in</span><span class="p">,</span>
         <span class="n">step_id_in</span><span class="o">=</span><span class="n">step_id_in</span><span class="p">,</span>
         <span class="n">step_status_in</span><span class="o">=</span><span class="n">step_status_in</span><span class="p">,</span>
+        <span class="n">group_name_in</span><span class="o">=</span><span class="n">group_name_in</span> <span class="k">if</span> <span class="n">group_name_in</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group_name_not_in</span><span class="o">=</span><span class="n">group_name_not_in</span> <span class="k">if</span> <span class="n">group_name_not_in</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>

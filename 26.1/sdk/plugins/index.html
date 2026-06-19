@@ -792,15 +792,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kili.services.plugins.model.PluginCore.on_project_updated" class="md-nav__link">
-    <span class="md-ellipsis">
-      on_project_updated()
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#kili.services.plugins.model.PluginCore.on_review" class="md-nav__link">
     <span class="md-ellipsis">
       on_review()
@@ -2220,15 +2211,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kili.services.plugins.model.PluginCore.on_project_updated" class="md-nav__link">
-    <span class="md-ellipsis">
-      on_project_updated()
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#kili.services.plugins.model.PluginCore.on_review" class="md-nav__link">
     <span class="md-ellipsis">
       on_review()
@@ -2526,7 +2508,6 @@
 <pre><code>on_submit(self, label: Dict, asset_id: str)
 on_review(self, label: Dict, asset_id: str)
 on_custom_interface_click(self, label: Dict, asset_id: str)
-on_project_updated(self, settings_updated: List[Dict])
 on_send_back_to_queue(self, asset_id: str)
 on_event(self, payload: Dict)
 </code></pre>
@@ -2549,7 +2530,6 @@ on_event(self, payload: Dict)
 <span class="sd">        on_submit(self, label: Dict, asset_id: str)</span>
 <span class="sd">        on_review(self, label: Dict, asset_id: str)</span>
 <span class="sd">        on_custom_interface_click(self, label: Dict, asset_id: str)</span>
-<span class="sd">        on_project_updated(self, settings_updated: List[Dict])</span>
 <span class="sd">        on_send_back_to_queue(self, asset_id: str)</span>
 <span class="sd">        on_event(self, payload: Dict)</span>
 
@@ -2659,41 +2639,6 @@ on_event(self, payload: Dict)
 <span class="sd">                            label_id_array=[label_id],</span>
 <span class="sd">                            text_array=[issue]</span>
 <span class="sd">                        )</span>
-<span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># pylint: disable=unused-argument</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Handler is in active development.&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">on_project_updated</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">settings_updated</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handler for the project updated action.</span>
-
-<span class="sd">        Triggered when a project setting is updated on Kili.</span>
-
-<span class="sd">        !!! warning</span>
-<span class="sd">            This handler is in beta and is still in active development,</span>
-<span class="sd">            it should be used with caution.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            settings_updated: Settings updated on the project a list of</span>
-<span class="sd">                dictionary containing the following fields:</span>
-<span class="sd">                `key`, `newValue`, `oldValue`.</span>
-<span class="sd">                !!! note</span>
-<span class="sd">                    key is one of the following: &#39;canNavigateBetweenAssets&#39;,</span>
-<span class="sd">                    &#39;canSkipAsset&#39;, &#39;consensusTotCoverage&#39;, &#39;description&#39;,</span>
-<span class="sd">                    &#39;inputType&#39;, &#39;instructions&#39;, &#39;isAnonymized&#39;, &#39;jsonInterface&#39;,</span>
-<span class="sd">                    &#39;metadataTypes&#39;, &#39;minConsensusSize&#39;, &#39;reviewCoverage&#39;,</span>
-<span class="sd">                    &#39;title&#39;, &#39;archivedAt&#39;, &#39;useHoneyPot&#39;</span>
-
-<span class="sd">        !!! example</span>
-<span class="sd">            ```python</span>
-<span class="sd">            def on_project_updated(self, settings_updated: List[Dict]):</span>
-<span class="sd">                for setting in settings_updated:</span>
-<span class="sd">                    self.logger.info(setting)</span>
-<span class="sd">                    # this will print:</span>
-<span class="sd">                    # {&#39;key&#39;: &#39;description&#39;, &#39;newValue&#39;: &#39;new desc&#39;, &#39;oldValue&#39;: &#39;old desc&#39;}</span>
 <span class="sd">            ```</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=unused-argument</span>
@@ -2900,108 +2845,6 @@ it should be used with caution.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># pylint: disable=unused-argument</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Method not implemented. Define a custom on_event on your plugin&quot;</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h3 id="kili.services.plugins.model.PluginCore.on_project_updated" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">on_project_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings_updated</span><span class="p">)</span></code>
-
-
-</h3>
-
-    <div class="doc doc-contents ">
-
-      <p>Handler for the project updated action.</p>
-<p>Triggered when a project setting is updated on Kili.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This handler is in beta and is still in active development,
-it should be used with caution.</p>
-</div>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>settings_updated</code></td>
-        <td><code>list</code></td>
-        <td><p>Settings updated on the project a list of
-dictionary containing the following fields:
-<code>key</code>, <code>newValue</code>, <code>oldValue</code>.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>key is one of the following: 'canNavigateBetweenAssets',
-'canSkipAsset', 'consensusTotCoverage', 'description',
-'inputType', 'instructions', 'isAnonymized', 'jsonInterface',
-'metadataTypes', 'minConsensusSize', 'reviewCoverage',
-'title', 'archivedAt', 'useHoneyPot'</p>
-</div></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>      <div class="admonition example">
-<p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_project_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings_updated</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
-    <span class="k">for</span> <span class="n">setting</span> <span class="ow">in</span> <span class="n">settings_updated</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">setting</span><span class="p">)</span>
-        <span class="c1"># this will print:</span>
-        <span class="c1"># {&#39;key&#39;: &#39;description&#39;, &#39;newValue&#39;: &#39;new desc&#39;, &#39;oldValue&#39;: &#39;old desc&#39;}</span>
-</code></pre></div>
-</div>
-
-        <details class="quote">
-          <summary>Source code in <code>kili/services/plugins/model.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_project_updated</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
-    <span class="n">settings_updated</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handler for the project updated action.</span>
-
-<span class="sd">    Triggered when a project setting is updated on Kili.</span>
-
-<span class="sd">    !!! warning</span>
-<span class="sd">        This handler is in beta and is still in active development,</span>
-<span class="sd">        it should be used with caution.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        settings_updated: Settings updated on the project a list of</span>
-<span class="sd">            dictionary containing the following fields:</span>
-<span class="sd">            `key`, `newValue`, `oldValue`.</span>
-<span class="sd">            !!! note</span>
-<span class="sd">                key is one of the following: &#39;canNavigateBetweenAssets&#39;,</span>
-<span class="sd">                &#39;canSkipAsset&#39;, &#39;consensusTotCoverage&#39;, &#39;description&#39;,</span>
-<span class="sd">                &#39;inputType&#39;, &#39;instructions&#39;, &#39;isAnonymized&#39;, &#39;jsonInterface&#39;,</span>
-<span class="sd">                &#39;metadataTypes&#39;, &#39;minConsensusSize&#39;, &#39;reviewCoverage&#39;,</span>
-<span class="sd">                &#39;title&#39;, &#39;archivedAt&#39;, &#39;useHoneyPot&#39;</span>
-
-<span class="sd">    !!! example</span>
-<span class="sd">        ```python</span>
-<span class="sd">        def on_project_updated(self, settings_updated: List[Dict]):</span>
-<span class="sd">            for setting in settings_updated:</span>
-<span class="sd">                self.logger.info(setting)</span>
-<span class="sd">                # this will print:</span>
-<span class="sd">                # {&#39;key&#39;: &#39;description&#39;, &#39;newValue&#39;: &#39;new desc&#39;, &#39;oldValue&#39;: &#39;old desc&#39;}</span>
-<span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># pylint: disable=unused-argument</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Handler is in active development.&quot;</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
