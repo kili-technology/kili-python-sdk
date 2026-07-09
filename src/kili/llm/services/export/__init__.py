@@ -36,7 +36,6 @@ LABELS_NEEDED_FIELDS = [
     "isLatestLabelForUser",
     "isSentBackToQueue",
     "jsonResponse",  # This is needed to keep annotations
-    "jsonResponseUrl",
     "labelType",
     "modelName",
 ]
