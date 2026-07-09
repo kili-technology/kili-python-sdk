@@ -1,3 +1,4 @@
+import pytest
 import pytest_mock
 
 from kili.adapters.http_client import HttpClient
@@ -21,7 +22,11 @@ from kili.domain.asset.asset import AssetId
 from kili.domain.label import LabelFilters, LabelId
 from kili.domain.project import ProjectId
 from kili.domain.user import UserId
-from tests.unit.adapters.kili_api_gateway.label.test_data import test_case_1
+from tests.unit.adapters.kili_api_gateway.label.test_data import (
+    audio_test_case,
+    geospatial_test_case,
+    test_case_1,
+)
 
 
 def test_given_kili_gateway_when_querying_labels__it_calls_proper_resolver(
@@ -206,15 +211,27 @@ def test_given_kili_gateway_when_adding_labels_by_batch_then_it_calls_proper_res
     )
 
 
+@pytest.mark.parametrize(
+    ("input_type", "test_case"),
+    [
+        ("VIDEO", test_case_1),
+        ("GEOSPATIAL", geospatial_test_case),
+        ("AUDIO", audio_test_case),
+    ],
+)
 def test_given_project_with_new_annotations_when_calling_list_labels_it_converts_to_json_response(
-    graphql_client: GraphQLClient, http_client: HttpClient, mocker: pytest_mock.MockerFixture
+    input_type: str,
+    test_case,
+    graphql_client: GraphQLClient,
+    http_client: HttpClient,
+    mocker: pytest_mock.MockerFixture,
 ):
-    """For VIDEO projects, when jsonResponse is requested, it is fetched from jsonResponseUrl."""
+    """When jsonResponse is requested, it is fetched from jsonResponseUrl."""
 
     # Given
     def mocked_graphql_execute(query: str, variables: dict, **kwargs) -> dict:
         if "projects(" in query:
-            return {"data": [{"inputType": "VIDEO", "jsonInterface": test_case_1.json_interface}]}
+            return {"data": [{"inputType": input_type, "jsonInterface": test_case.json_interface}]}
 
         if "countLabels(" in query:
             return {"data": 1}
@@ -234,7 +251,7 @@ def test_given_project_with_new_annotations_when_calling_list_labels_it_converts
     graphql_client.execute.side_effect = mocked_graphql_execute
 
     mock_http_response = http_client.get.return_value
-    mock_http_response.json.return_value = test_case_1.expected_json_resp
+    mock_http_response.json.return_value = test_case.expected_json_resp
 
     kili_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
 
@@ -248,5 +265,5 @@ def test_given_project_with_new_annotations_when_calling_list_labels_it_converts
     )
 
     # Then
-    assert labels[0]["jsonResponse"] == test_case_1.expected_json_resp
+    assert labels[0]["jsonResponse"] == test_case.expected_json_resp
     assert "jsonResponseUrl" not in labels[0]

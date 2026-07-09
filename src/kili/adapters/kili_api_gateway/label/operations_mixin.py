@@ -59,15 +59,17 @@ class LabelOperationMixin(BaseOperationMixin):
             # TODO(LAB-4269): TEMPORARY WORKAROUND - Remove when backend handles jsonResponseUrl for LLM
             # Threshold for batching based on number of annotations.
             if project_info["inputType"] in {
-                "LLM_RLHF",
                 "LLM_INSTR_FOLLOWING",
                 "LLM_STATIC",
             }:
-                yield from self.llm_list_labels_split(filters, fields, options, project_info)
+                yield from self.llm_list_labels_without_json_response_from_bucket(
+                    filters, fields, options, project_info
+                )
                 return
-            if project_info["inputType"] in {"GEOSPATIAL", "VIDEO"}:
-                yield from self.list_labels_split(filters, fields, options, project_info)
-                return
+            yield from self.list_labels_with_json_response_from_bucket(
+                filters, fields, options, project_info
+            )
+            return
 
         fragment = fragment_builder(fields)
         query = get_labels_query(fragment)
@@ -80,14 +82,14 @@ class LabelOperationMixin(BaseOperationMixin):
         )
         yield from labels_gen
 
-    def list_labels_split(
+    def list_labels_with_json_response_from_bucket(
         self,
         filters: LabelFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
         project_info,
     ) -> Generator[dict, None, None]:
-        """List labels for VIDEO and GEOSPATIAL projects."""
+        """List labels for every non-LLM projects."""
         if project_info["inputType"] == "VIDEO":
             options = QueryOptions(
                 options.disable_tqdm, options.first, options.skip, min(options.batch_size, 20)
@@ -109,7 +111,7 @@ class LabelOperationMixin(BaseOperationMixin):
 
         yield from labels_gen
 
-    def llm_list_labels_split(
+    def llm_list_labels_without_json_response_from_bucket(
         self,
         filters: LabelFilters,
         fields: ListOrTuple[str],

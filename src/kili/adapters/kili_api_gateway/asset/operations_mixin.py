@@ -54,15 +54,17 @@ class AssetOperationMixin(BaseOperationMixin):
             # TODO(LAB-4269): TEMPORARY WORKAROUND - Remove when backend handles jsonResponseUrl for LLM
             # Threshold for batching based on number of annotations.
             if project_info["inputType"] in {
-                "LLM_RLHF",
                 "LLM_INSTR_FOLLOWING",
                 "LLM_STATIC",
             }:
-                yield from self.llm_list_assets_split(filters, fields, options, project_info)
+                yield from self.llm_list_assets_without_json_response_from_bucket(
+                    filters, fields, options, project_info
+                )
                 return
-            if project_info["inputType"] in {"VIDEO", "GEOSPATIAL"}:
-                yield from self.list_assets_split(filters, fields, options, project_info)
-                return
+            yield from self.list_assets_with_json_response_from_bucket(
+                filters, fields, options, project_info
+            )
+            return
 
         fragment = fragment_builder(fields)
         query = get_assets_query(fragment)
@@ -81,14 +83,14 @@ class AssetOperationMixin(BaseOperationMixin):
 
         yield from assets_gen
 
-    def list_assets_split(
+    def list_assets_with_json_response_from_bucket(
         self,
         filters: AssetFilters,
         fields: ListOrTuple[str],
         options: QueryOptions,
         project_info,
     ) -> Generator[dict, None, None]:
-        """List assets with given options for VIDEO and GEOSPATIAL projects."""
+        """List assets with given options for every non-LLM projects."""
         assets_batch_max_amount = 10 if project_info["inputType"] == "VIDEO" else 50
         batch_size_to_use = min(options.batch_size, assets_batch_max_amount)
 
@@ -121,7 +123,7 @@ class AssetOperationMixin(BaseOperationMixin):
 
         yield from assets_gen
 
-    def llm_list_assets_split(
+    def llm_list_assets_without_json_response_from_bucket(
         self,
         filters: AssetFilters,
         fields: ListOrTuple[str],
