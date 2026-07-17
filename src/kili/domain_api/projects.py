@@ -284,6 +284,7 @@ class WorkflowNamespace:
         project_id: str,
         step_name: str,
         emails: List[str],
+        group_name: Optional[str] = None,
     ) -> List[str]:
         """Add reviewers to a specific step.
 
@@ -291,12 +292,14 @@ class WorkflowNamespace:
             project_id: Id of the project.
             step_name: Name of the step.
             emails: List of emails to add.
+            group_name: Name of the workflow V3 group containing the step.
+                Required when several groups have a step with the same name.
 
         Returns:
             A list with emails added to the step.
         """
         return self._client.add_reviewers_to_step(
-            project_id=project_id, step_name=step_name, emails=emails
+            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
         )
 
     @typechecked
@@ -305,6 +308,7 @@ class WorkflowNamespace:
         project_id: str,
         step_name: str,
         emails: List[str],
+        group_name: Optional[str] = None,
     ) -> List[str]:
         """Remove reviewers from a specific step.
 
@@ -312,12 +316,69 @@ class WorkflowNamespace:
             project_id: Id of the project.
             step_name: Name of the step.
             emails: List of emails to remove.
+            group_name: Name of the workflow V3 group containing the step.
+                Required when several groups have a step with the same name.
 
         Returns:
             A list with emails removed from the step.
         """
         return self._client.remove_reviewers_from_step(
-            project_id=project_id, step_name=step_name, emails=emails
+            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+        )
+
+    @typechecked
+    def add_labelers(
+        self,
+        project_id: str,
+        step_name: str,
+        emails: List[str],
+        group_name: Optional[str] = None,
+    ) -> List[str]:
+        """Add labelers to a specific labeling step.
+
+        Only workflow V3 projects support assigning labelers to a step, and the target step must
+        be a labeling step.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the labeling step.
+            emails: List of emails to add.
+            group_name: Name of the workflow V3 group containing the step.
+                Required when several groups have a step with the same name.
+
+        Returns:
+            A list with emails added to the step.
+        """
+        return self._client.add_labelers_to_step(
+            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+        )
+
+    @typechecked
+    def remove_labelers(
+        self,
+        project_id: str,
+        step_name: str,
+        emails: List[str],
+        group_name: Optional[str] = None,
+    ) -> List[str]:
+        """Remove labelers from a specific labeling step.
+
+        Only workflow V3 projects support removing labelers from a step, and the target step must
+        be a labeling step. Removing a labeler also clears their asset-step assignments and step
+        queue for that step.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the labeling step.
+            emails: List of emails to remove.
+            group_name: Name of the workflow V3 group containing the step.
+                Required when several groups have a step with the same name.
+
+        Returns:
+            A list with emails removed from the step.
+        """
+        return self._client.remove_labelers_from_step(
+            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
         )
 
     @typechecked

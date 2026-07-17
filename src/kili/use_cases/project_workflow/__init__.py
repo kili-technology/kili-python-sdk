@@ -59,16 +59,36 @@ class ProjectWorkflowUseCases(BaseUseCases):
         return self._kili_api_gateway.get_steps(project_id, fields)
 
     def add_reviewers_to_step(
-        self, project_id: str, step_name: str, emails: list[str]
+        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
     ) -> list[str]:
         """Add reviewers to a specific step."""
-        return self._kili_api_gateway.add_reviewers_to_step(project_id, step_name, emails)
+        return self._kili_api_gateway.add_reviewers_to_step(
+            project_id, step_name, emails, group_name
+        )
 
     def remove_reviewers_from_step(
-        self, project_id: str, step_name: str, emails: list[str]
+        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
     ) -> list[str]:
         """Remove reviewers from a specific step."""
-        return self._kili_api_gateway.remove_reviewers_from_step(project_id, step_name, emails)
+        return self._kili_api_gateway.remove_reviewers_from_step(
+            project_id, step_name, emails, group_name
+        )
+
+    def add_labelers_to_step(
+        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
+    ) -> list[str]:
+        """Add labelers to a specific step."""
+        return self._kili_api_gateway.add_labelers_to_step(
+            project_id, step_name, emails, group_name
+        )
+
+    def remove_labelers_from_step(
+        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
+    ) -> list[str]:
+        """Remove labelers from a specific step."""
+        return self._kili_api_gateway.remove_labelers_from_step(
+            project_id, step_name, emails, group_name
+        )
 
     def copy_workflow_from_project(
         self,

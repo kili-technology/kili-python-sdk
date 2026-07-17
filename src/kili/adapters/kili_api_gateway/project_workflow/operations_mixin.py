@@ -1,6 +1,7 @@
 """Mixin extending Kili API Gateway class with Projects related operations."""
 
 import warnings
+from typing import Optional
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import (
@@ -12,7 +13,7 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
-from .common import get_assignees_to_add_ids
+from .common import find_step_by_name, get_assignees_to_add_ids
 from .mappers import (
     add_review_step_input_mapper,
     delete_step_input_mapper,
@@ -81,6 +82,41 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
 
         return steps
 
+    def get_project_workflow_context(
+        self, project_id: str, include_assignee_emails: bool = False
+    ) -> dict:
+        """Get the workflow version, steps and step groups of a project in a single query."""
+        fields = [
+            "workflowVersion",
+            "steps.id",
+            "steps.name",
+            "steps.type",
+            "steps.stepGroupId",
+            "steps.assignees.id",
+            "stepGroups.id",
+            "stepGroups.name",
+        ]
+        if include_assignee_emails:
+            fields.append("steps.assignees.email")
+
+        fragment = fragment_builder(fields)
+        query = get_steps_query(fragment)
+        variables = {"where": {"id": project_id}, "first": 1, "skip": 0}
+        result = self.graphql_client.execute(query, variables)
+        project = result["data"]
+
+        if len(project) == 0:
+            raise NotFound(f"project ID: {project_id}. The project does not exist.")
+
+        steps = project[0].get("steps")
+
+        if len(steps) == 0:
+            raise NotFound(
+                f"project ID: {project_id}. The workflow v2 is not activated on this project."
+            )
+
+        return project[0]
+
     def count_activated_project_users(self, project_id: str) -> int:
         """Count project users with ACTIVATED status."""
         where = ProjectUserWhere(project_id=project_id, status="ACTIVATED", deleted=False)
@@ -98,9 +134,80 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         )
 
     def add_reviewers_to_step(
-        self, project_id: str, step_name: str, emails: list[str]
+        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
     ) -> list[str]:
         """Add reviewers to a specific step."""
+        assignees_to_add, assignees_added = self._resolve_assignees_to_add(
+            project_id,
+            emails,
+            exclude_labelers=True,
+            not_added_warning_prefix="These emails were not added (not found or can not review): ",
+        )
+        context = self.get_project_workflow_context(project_id)
+        target_step = find_step_by_name(context, step_name, group_name)
+        if target_step.get("type") == "DEFAULT":
+            raise ValueError("The step must be a review step, can't add reviewers to a label step")
+        self._apply_added_assignees(project_id, target_step, assignees_to_add)
+        return assignees_added
+
+    def remove_reviewers_from_step(
+        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
+    ) -> list[str]:
+        """Remove reviewers from a specific step."""
+        context = self.get_project_workflow_context(project_id, include_assignee_emails=True)
+        target_step = find_step_by_name(context, step_name, group_name)
+        if target_step.get("type") == "DEFAULT":
+            raise ValueError(
+                "The step must be a review step, can't remove reviewers from a label step"
+            )
+        return self._remove_assignees_from_step(project_id, target_step, emails)
+
+    def add_labelers_to_step(
+        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
+    ) -> list[str]:
+        """Add labelers to a specific labeling step of a workflow V3 project."""
+        context = self.get_project_workflow_context(project_id)
+        if context.get("workflowVersion") != "V3":
+            raise ValueError("Assigning labelers to a step requires a workflow V3 project")
+        target_step = find_step_by_name(context, step_name, group_name)
+        if target_step.get("type") != "DEFAULT":
+            raise ValueError(
+                "The step must be a labeling step, can't add labelers to a review step"
+            )
+        assignees_to_add, assignees_added = self._resolve_assignees_to_add(
+            project_id,
+            emails,
+            exclude_labelers=False,
+            not_added_warning_prefix="These emails were not added (not project members): ",
+        )
+        self._apply_added_assignees(project_id, target_step, assignees_to_add)
+        return assignees_added
+
+    def remove_labelers_from_step(
+        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
+    ) -> list[str]:
+        """Remove labelers from a specific labeling step of a workflow V3 project."""
+        context = self.get_project_workflow_context(project_id, include_assignee_emails=True)
+        if context.get("workflowVersion") != "V3":
+            raise ValueError("Assigning labelers to a step requires a workflow V3 project")
+        target_step = find_step_by_name(context, step_name, group_name)
+        if target_step.get("type") != "DEFAULT":
+            raise ValueError(
+                "The step must be a labeling step, can't remove labelers from a review step"
+            )
+        return self._remove_assignees_from_step(project_id, target_step, emails)
+
+    def _resolve_assignees_to_add(
+        self,
+        project_id: str,
+        emails: list[str],
+        exclude_labelers: bool,
+        not_added_warning_prefix: str,
+    ) -> tuple[list[str], list[str]]:
+        """Resolve emails to activated member ids to add, warning about emails that can't be added.
+
+        Returns a tuple (assignees_to_add_ids, assignees_added_emails).
+        """
         existing_members = ProjectUserQuery(self.graphql_client, self.http_client)(
             where=ProjectUserWhere(project_id=project_id, status="ACTIVATED", deleted=False),
             fields=["role", "user.email", "user.id", "activated"],
@@ -112,59 +219,32 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         assignees_not_added = []
         for email in emails:
             member = members_by_email.get(email)
-
-            if member and member.get("role") != "LABELER":
-                user_id = member["user"]["id"]
-                assignees_to_add.append(user_id)
+            if member and (not exclude_labelers or member.get("role") != "LABELER"):
+                assignees_to_add.append(member["user"]["id"])
                 assignees_added.append(email)
             else:
                 assignees_not_added.append(email)
         if assignees_not_added:
-            warnings.warn(
-                "These emails were not added (not found or can not review): "
-                + ", ".join(assignees_not_added)
-            )
-        steps = self.get_steps(
-            project_id, fields=["steps.id", "steps.name", "steps.type", "steps.assignees.id"]
-        )
-        target_step = next((s for s in steps if s.get("name") == step_name), None)
-        if not target_step:
-            raise ValueError(f"Step '{step_name}' not found in project workflow")
-        if target_step.get("type") == "DEFAULT":
-            raise ValueError("The step must be a review step, can't add reviewers to a label step")
+            warnings.warn(not_added_warning_prefix + ", ".join(assignees_not_added))
+        return assignees_to_add, assignees_added
+
+    def _apply_added_assignees(
+        self, project_id: str, target_step: dict, assignees_to_add: list[str]
+    ) -> None:
+        """Merge the new assignees with the step's current assignees and update the workflow."""
         current_ids = [a["id"] for a in target_step.get("assignees", [])]
-
         merged_ids = list(dict.fromkeys(current_ids + assignees_to_add))
-
         self.update_project_workflow(
             project_id=ProjectId(project_id),
             project_workflow_data=ProjectWorkflowDataKiliAPIGatewayInput(
                 None, None, [{"id": target_step["id"], "assignees": merged_ids}], None
             ),
         )
-        return assignees_added
 
-    def remove_reviewers_from_step(
-        self, project_id: str, step_name: str, emails: list[str]
+    def _remove_assignees_from_step(
+        self, project_id: str, target_step: dict, emails: list[str]
     ) -> list[str]:
-        """Remove reviewers from a specific step."""
-        steps = self.get_steps(
-            project_id,
-            fields=[
-                "steps.id",
-                "steps.name",
-                "steps.type",
-                "steps.assignees.id",
-                "steps.assignees.email",
-            ],
-        )
-        target_step = next((s for s in steps if s.get("name") == step_name), None)
-        if not target_step:
-            raise ValueError(f"Step '{step_name}' not found in project workflow")
-        if target_step.get("type") == "DEFAULT":
-            raise ValueError(
-                "The step must be a review step, can't remove reviewers from a label step"
-            )
+        """Remove the given emails from the step's assignees and update the workflow."""
         assignees = target_step.get("assignees", [])
         email_to_id = {a["email"]: a["id"] for a in assignees}
         removed_emails = []
@@ -182,6 +262,11 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
             new_assignees_ids = [
                 a["id"] for a in assignees if a.get("id") and a["id"] not in ids_to_remove
             ]
+            if not new_assignees_ids:
+                raise ValueError(
+                    "Cannot remove all assignees from a step; a step must keep at least one"
+                    " assignee"
+                )
 
             self.update_project_workflow(
                 project_id=ProjectId(project_id),

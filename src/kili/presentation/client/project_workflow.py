@@ -74,7 +74,11 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
 
     @typechecked
     def add_reviewers_to_step(
-        self, project_id: str, step_name: str, emails: list[str]
+        self,
+        project_id: str,
+        step_name: str,
+        emails: list[str],
+        group_name: Optional[str] = None,
     ) -> list[str]:
         """Add reviewers to a specific step.
 
@@ -82,17 +86,23 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             project_id: Id of the project.
             step_name: Name of the step.
             emails: List of emails to add.
+            group_name: Name of the workflow V3 group containing the step.
+                Required when several groups have a step with the same name.
 
         Returns:
             A list with the added emails.
         """
         return ProjectWorkflowUseCases(self.kili_api_gateway).add_reviewers_to_step(
-            project_id=project_id, step_name=step_name, emails=emails
+            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
         )
 
     @typechecked
     def remove_reviewers_from_step(
-        self, project_id: str, step_name: str, emails: list[str]
+        self,
+        project_id: str,
+        step_name: str,
+        emails: list[str],
+        group_name: Optional[str] = None,
     ) -> list[str]:
         """Remove reviewers from a specific step.
 
@@ -100,12 +110,69 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             project_id: Id of the project.
             step_name: Name of the step.
             emails: List of emails to remove.
+            group_name: Name of the workflow V3 group containing the step.
+                Required when several groups have a step with the same name.
 
         Returns:
             A list with the removed emails.
         """
         return ProjectWorkflowUseCases(self.kili_api_gateway).remove_reviewers_from_step(
-            project_id=project_id, step_name=step_name, emails=emails
+            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+        )
+
+    @typechecked
+    def add_labelers_to_step(
+        self,
+        project_id: str,
+        step_name: str,
+        emails: list[str],
+        group_name: Optional[str] = None,
+    ) -> list[str]:
+        """Add labelers to a specific labeling step.
+
+        Only workflow V3 projects support assigning labelers to a step, and the target step must
+        be a labeling step.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the labeling step.
+            emails: List of emails to add.
+            group_name: Name of the workflow V3 group containing the step.
+                Required when several groups have a step with the same name.
+
+        Returns:
+            A list with the added emails.
+        """
+        return ProjectWorkflowUseCases(self.kili_api_gateway).add_labelers_to_step(
+            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+        )
+
+    @typechecked
+    def remove_labelers_from_step(
+        self,
+        project_id: str,
+        step_name: str,
+        emails: list[str],
+        group_name: Optional[str] = None,
+    ) -> list[str]:
+        """Remove labelers from a specific labeling step.
+
+        Only workflow V3 projects support removing labelers from a step, and the target step must
+        be a labeling step. Removing a labeler also clears their asset-step assignments and step
+        queue for that step.
+
+        Args:
+            project_id: Id of the project.
+            step_name: Name of the labeling step.
+            emails: List of emails to remove.
+            group_name: Name of the workflow V3 group containing the step.
+                Required when several groups have a step with the same name.
+
+        Returns:
+            A list with the removed emails.
+        """
+        return ProjectWorkflowUseCases(self.kili_api_gateway).remove_labelers_from_step(
+            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
         )
 
     @typechecked
