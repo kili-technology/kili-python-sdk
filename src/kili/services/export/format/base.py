@@ -189,6 +189,14 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
 
         with TemporaryDirectory() as export_root_folder:
             self.export_root_folder = export_root_folder
+            # Geospatial export metadata is only available on GEOSPATIAL projects. Fetch it so
+            # that it can be carried in the Kili/raw asset dump and injected into the GeoJson
+            # features (see the GeoJson exporter).
+            additional_fields = (
+                ["geospatialExportMetadata"]
+                if self.project.get("inputType") == "GEOSPATIAL"
+                else None
+            )
             assets = fetch_assets(
                 self.kili,
                 project_id=self.project_id,
@@ -199,6 +207,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
                 download_media=self.with_assets,
                 local_media_dir=str(self.images_folder),
                 asset_filter_kwargs=self.asset_filter_kwargs,
+                additional_fields=additional_fields,
             )
 
             self._check_geotiff_export_compatibility(assets)

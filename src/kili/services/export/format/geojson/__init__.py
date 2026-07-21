@@ -1,6 +1,7 @@
 """Common code for the GeoJson exporter."""
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 from kili_formats.format.geojson import convert_from_kili_to_geojson_format
@@ -84,8 +85,18 @@ class GeoJsonExporter(AbstractExporter):
         # Get json_interface for GIS-friendly property names
         json_interface = self.project.get("jsonInterface")
 
+        export_date = (
+            datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+        )
+
         for asset in tqdm(geotiff_assets, disable=self.disable_tqdm):
-            _process_asset(asset, labels_folder, json_interface, flatten_properties=True)
+            _process_asset(
+                asset,
+                labels_folder,
+                json_interface,
+                flatten_properties=True,
+                export_date=export_date,
+            )
 
         self.create_readme_kili_file(self.export_root_folder)
         self.make_archive(self.export_root_folder, output_filename)
@@ -98,6 +109,7 @@ def _process_asset(
     labels_folder: Path,
     json_interface: dict | None = None,
     flatten_properties: bool = False,
+    export_date: str | None = None,
 ) -> None:
     # Collect all labels to process (handle both latestLabel and latestLabels)
     labels_to_process = []
@@ -117,9 +129,37 @@ def _process_asset(
         label_suffix = f"_label{label_idx}" if len(labels_to_process) > 1 else ""
 
         geojson_feature_collection = convert_from_kili_to_geojson_format(
-            latest_label["jsonResponse"], json_interface, flatten_properties
+            latest_label["jsonResponse"],
+            json_interface,
+            flatten_properties,
         )
+        label_author = (latest_label.get("author") or {}).get("email")
+        _attach_export_metadata(geojson_feature_collection, asset, label_author, export_date)
         filepath = labels_folder / f"{asset['externalId']}{label_suffix}.geojson"
         filepath.parent.mkdir(parents=True, exist_ok=True)
         with open(filepath, "w", encoding="utf-8") as file:
             json.dump(geojson_feature_collection, file)
+
+
+def _attach_export_metadata(
+    geojson_feature_collection: dict,
+    asset: dict,
+    author: str | None,
+    export_date: str | None,
+) -> None:
+    """Attach asset/export-level metadata once at the root of the FeatureCollection.
+
+    The metadata describes the asset and the export (not individual annotations), so it is
+    stored once under `properties.kili` of the FeatureCollection rather than duplicated on
+    every feature. `author` is the email of the labeler who created the exported label (each
+    FeatureCollection corresponds to a single label), not the user who requested the export.
+    """
+    kili_properties = {
+        "assetId": asset.get("id"),
+        "author": author,
+        "exportDate": export_date,
+    }
+    geospatial_export_metadata = asset.get("geospatialExportMetadata")
+    if geospatial_export_metadata:
+        kili_properties["geospatialExportMetadata"] = geospatial_export_metadata
+    geojson_feature_collection.setdefault("properties", {})["kili"] = kili_properties
