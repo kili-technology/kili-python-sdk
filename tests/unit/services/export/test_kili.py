@@ -546,7 +546,7 @@ def test_save_assets_export_with_external_id_containing_slash(
 
 
 def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
-    def mocked_graphql_execute(query, variables, **kwargs):
+    def mocked_graphql_execute(query, variables=None, **kwargs):
         if "projects(" in query:
             return {
                 "data": [
@@ -570,6 +570,9 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
 
         if "assets(" in query:
             return {"data": test_case_13.assets}
+
+        if "viewer" in query:
+            return {"data": {"email": "test+admin@kili-technology.com"}}
 
         raise NotImplementedError
 
@@ -607,5 +610,12 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
 
             with Path(f"{extract_folder}/labels/Click_here_to_start.geojson").open() as f:
                 output = json.load(f)
+
+    # Asset/export-level metadata sits once at the root under properties.kili (not per-feature).
+    # Assert it, then strip it (exportDate is dynamic) before comparing against the static fixture.
+    root_kili = output.pop("properties")["kili"]
+    assert root_kili["assetId"] == "clrrybpj800003b75o7ykp3st"
+    assert root_kili["author"] == "test+admin@kili-technology.com"
+    assert root_kili["exportDate"]
 
     assert output == geojson_project_asset

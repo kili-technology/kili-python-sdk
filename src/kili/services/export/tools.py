@@ -114,6 +114,7 @@ def fetch_assets(
     download_media: bool,
     local_media_dir: Optional[str],
     asset_filter_kwargs: Optional[dict[str, object]],
+    additional_fields: Optional[list[str]] = None,
 ) -> list[dict]:
     """Fetches assets.
 
@@ -131,6 +132,7 @@ def fetch_assets(
         download_media: tell to download the media in the cache folder.
         local_media_dir: Directory where the media are downloaded if `download_media` is True.
         asset_filter_kwargs: Optional dictionary of arguments to filter the assets to export.
+        additional_fields: Optional extra asset fields to fetch on top of the format defaults.
 
     Returns:
         List of fetched assets.
@@ -143,6 +145,8 @@ def fetch_assets(
             stacklevel=2,
         )
     fields = get_fields_to_fetch(export_type)
+    if additional_fields:
+        fields = [*fields, *additional_fields]
     asset_filter_kwargs = asset_filter_kwargs or {}
     asset_where_params = {
         "project_id": project_id,
