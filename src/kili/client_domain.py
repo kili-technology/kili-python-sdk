@@ -7,7 +7,9 @@ from typing import TYPE_CHECKING, Optional, Union
 
 from kili.client import GraphQLClientParams
 from kili.client import Kili as KiliLegacy
+from kili.core.config_loader import load_config_from_file
 from kili.core.graphql.graphql_client import GraphQLClientName
+from kili.core.simplified_errors import enable_error_simplification_from_config
 
 if TYPE_CHECKING:
     from kili.domain_api import (
@@ -97,6 +99,7 @@ class Kili:
             kili = Kili(disable_tqdm=True)
             ```
         """
+        enable_error_simplification_from_config(load_config_from_file())
         warnings.warn(
             "Client domain api is still a work in progress. Method names and return type will evolve.",
             stacklevel=1,
