@@ -216,6 +216,43 @@ kili = Kili(api_key="your-api-key")  # Progress bars disabled
 
 ---
 
+### 5. Simplified Error Logs (`simplify_error_logs`)
+
+Display SDK errors as a short, single-line message instead of the full Python
+traceback and raw GraphQL error payload. Warnings emitted by the SDK are also
+displayed on a single line.
+
+**Values:**
+
+- `False` (default): Standard Python error display (full tracebacks)
+- `True`: Single-line, human-readable error messages
+
+**Configuration Methods:**
+```python
+# 1. Environment variable
+export KILI_SDK_SIMPLIFY_ERROR_LOGS=true  # or "1", "yes"
+
+# 2. Configuration file
+{
+  "simplify_error_logs": true
+}
+
+# 3. Default: false
+```
+
+**Example:**
+
+With the option disabled (default), a call on a non-existing project ends with a
+full traceback and a raw GraphQL error. With the option enabled:
+
+```bash
+$ export KILI_SDK_SIMPLIFY_ERROR_LOGS=true
+$ python my_script.py
+Project with id cme2rmsjdg0k4an0w4j0iggq3 not found
+```
+
+---
+
 ## Environment Variables Reference
 
 | Variable | Type | Default | Description |
@@ -224,6 +261,7 @@ kili = Kili(api_key="your-api-key")  # Progress bars disabled
 | `KILI_API_ENDPOINT` | string | `https://cloud.kili-technology.com/api/label/v2/graphql` | GraphQL API endpoint |
 | `KILI_VERIFY` | boolean/string | `true` | TLS certificate verification |
 | `KILI_DISABLE_TQDM` | boolean | None | Disable progress bars globally |
+| `KILI_SDK_SIMPLIFY_ERROR_LOGS` | boolean | `false` | Display SDK errors as single-line messages without traceback |
 
 **Boolean Environment Variables:**
 

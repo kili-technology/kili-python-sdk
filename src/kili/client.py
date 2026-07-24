@@ -13,6 +13,7 @@ from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.core.config_loader import load_config_from_file
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
+from kili.core.simplified_errors import enable_error_simplification_from_config
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.issue import MutationsIssue
 from kili.entrypoints.mutations.notification import MutationsNotification
@@ -143,6 +144,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             ```
         """
         config_file = load_config_from_file()
+        enable_error_simplification_from_config(config_file)
 
         api_key = api_key or os.getenv("KILI_API_KEY") or config_file.get("api_key")
 
