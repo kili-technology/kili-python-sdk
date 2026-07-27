@@ -19,6 +19,14 @@ query countAssets($where: AssetWhere!) {
 """
 
 GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS = """
+mutation CreateUploadBucketSignedUrls($filePaths: [String!]) {
+  urls: createUploadBucketSignedUrls(filePaths: $filePaths)
+}
+"""
+
+# Backends that predate the mutation only expose createUploadBucketSignedUrls on the Query root.
+# The query field is kept and deprecated backend-side, so this stays valid on recent backends too.
+GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS_LEGACY_QUERY = """
 query($filePaths: [String!]) {
   urls: createUploadBucketSignedUrls(filePaths: $filePaths)
 }

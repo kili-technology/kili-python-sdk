@@ -14,6 +14,7 @@ from kili.adapters.kili_api_gateway.asset.operations import (
     GQL_COUNT_ASSET_ANNOTATIONS,
     GQL_COUNT_ASSETS,
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
+    GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS_LEGACY_QUERY,
     GQL_FILTER_EXISTING_ASSETS,
     get_assets_query,
 )
@@ -222,7 +223,16 @@ class AssetOperationMixin(BaseOperationMixin):
         payload = {
             "filePaths": file_paths,
         }
-        urls_response = self.graphql_client.execute(GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS, payload)
+        # The backend serves this field from both root types: the query is kept but deprecated, so
+        # it is present on every backend version and its presence discriminates nothing. Only the
+        # mutation being present tells us the backend is recent enough to accept one. Do not
+        # replace this with a query-presence check, and do not read the deprecation reason either.
+        operation = (
+            GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS
+            if self.graphql_client.supports_mutation("createUploadBucketSignedUrls")
+            else GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS_LEGACY_QUERY
+        )
+        urls_response = self.graphql_client.execute(operation, payload)
         return urls_response["urls"]
 
     def filter_existing_assets(self, project_id: str, assets_external_ids: ListOrTuple[str]):

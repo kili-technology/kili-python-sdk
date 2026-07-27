@@ -231,6 +231,74 @@ def test_given_gql_client_when_the_server_returns_flagsmith_error_then_it_retrie
     assert mocked_execute.call_count == nb_times_called == 3
 
 
+SCHEMA_WITH_QUERY_AND_MUTATION = """
+type Query {
+  createUploadBucketSignedUrls(filePaths: [String!]): [String!]
+}
+
+type Mutation {
+  createUploadBucketSignedUrls(filePaths: [String!]): [String!]
+}
+"""
+
+SCHEMA_WITH_QUERY_ONLY = """
+type Query {
+  createUploadBucketSignedUrls(filePaths: [String!]): [String!]
+}
+"""
+
+SCHEMA_WITH_AN_UNRELATED_MUTATION = """
+type Query {
+  createUploadBucketSignedUrls(filePaths: [String!]): [String!]
+}
+
+type Mutation {
+  someOtherMutation: String
+}
+"""
+
+
+def test_given_field_on_both_root_types_when_i_check_support_then_mutation_is_supported(
+    make_graphql_client,
+):
+    # Given
+    client = make_graphql_client(SCHEMA_WITH_QUERY_AND_MUTATION)
+
+    # When / Then
+    assert client.supports_mutation("createUploadBucketSignedUrls") is True
+
+
+def test_given_field_on_query_only_when_i_check_support_then_mutation_is_not_supported(
+    make_graphql_client,
+):
+    # Given a backend where the field exists, but only under Query
+    client = make_graphql_client(SCHEMA_WITH_QUERY_ONLY)
+
+    # When / Then
+    assert client.supports_mutation("createUploadBucketSignedUrls") is False
+
+
+def test_given_mutation_type_without_the_field_when_i_check_support_then_it_is_not_supported(
+    make_graphql_client,
+):
+    # Given a backend that has a Mutation root type, but no such field on it
+    client = make_graphql_client(SCHEMA_WITH_AN_UNRELATED_MUTATION)
+
+    # When / Then
+    assert client.supports_mutation("createUploadBucketSignedUrls") is False
+
+
+def test_given_no_local_schema_when_i_check_support_then_mutation_is_assumed_supported(
+    make_graphql_client,
+):
+    # Given a client with local validation disabled, as with KILI_SDK_SKIP_CHECKS
+    client = make_graphql_client(None)
+    assert client._gql_client.schema is None
+
+    # When / Then the backend, not the SDK, decides whether the mutation exists
+    assert client.supports_mutation("createUploadBucketSignedUrls") is True
+
+
 @pytest.mark.parametrize(
     ("variables", "expected"),
     [

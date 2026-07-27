@@ -51,7 +51,7 @@ _execute_lock = threading.Lock()
 DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR = Path.home() / ".cache" / "kili" / "graphql"
 
 
-# pylint: disable=too-many-instance-attributes, too-few-public-methods
+# pylint: disable=too-many-instance-attributes
 class GraphQLClient:
     """GraphQL client."""
 
@@ -248,6 +248,32 @@ class GraphQLClient:
                 variables[key] = cls._remove_nullable_inputs(variables[key])
 
         return {k: v for k, v in variables.items() if v is not None}
+
+    def supports_mutation(self, mutation_name: str) -> bool:
+        """Tell whether the connected backend exposes the given field on the Mutation root type.
+
+        Presence on the Mutation type is the only usable discriminator for a field that the backend
+        serves from both root types during a deprecation window. The Query field stays present and
+        non-null on every backend version, and only its `isDeprecated` flag flips, so looking the
+        field up under Query proves nothing about the backend version. Dispatching on `isDeprecated`
+        or on its reason string would work today but couple the SDK to a human-readable string,
+        where Mutation field presence is a structural fact.
+
+        This reads the schema already loaded by the client, so it costs no extra network call.
+
+        Args:
+            mutation_name: Name of the field on the Mutation root type.
+
+        Returns:
+            Whether the field exists on the Mutation root type. True when no schema is loaded
+                locally, which happens with `KILI_SDK_SKIP_CHECKS` and on the first call when
+                `enable_schema_caching` is False: the default is then to assume an up-to-date
+                backend and let the server reject the call if it is not.
+        """
+        schema = self._gql_client.schema
+        if schema is None:
+            return True
+        return schema.mutation_type is not None and mutation_name in schema.mutation_type.fields
 
     def execute(
         self, query: Union[str, DocumentNode], variables: Optional[dict] = None, **kwargs
