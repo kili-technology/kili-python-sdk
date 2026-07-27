@@ -27,7 +27,7 @@ from tenacity.wait import wait_exponential
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
-    GQL_APPEND_MANY_FRAMES_TO_DATASET,
+    GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY,
 )
 from kili.core.helpers import T, format_result, get_mime_type, is_url
 from kili.core.utils.pagination import batcher
@@ -243,8 +243,10 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
 
     def _async_import_to_kili(self, assets: list[KiliResolverAsset]):
         """Import assets with asynchronous resolver."""
-        if self.input_type in ["IMAGE", "GEOSPATIAL"]:
+        if self.input_type == "GEOSPATIAL":
             upload_type = "GEO_SATELLITE"
+        elif self.input_type == "IMAGE":
+            upload_type = "TILED_IMAGE"
         elif self.input_type in ("VIDEO", "VIDEO_LEGACY"):
             upload_type = "NATIVE_VIDEO" if self.are_native_videos(assets) else "FRAME_VIDEO"
         else:
@@ -270,7 +272,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             },
             "where": {"id": self.project_id},
         }
-        result = self.kili.graphql_client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
+        result = self.kili.graphql_client.execute(GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY, payload)
         return format_result("data", result, None, self.kili.http_client)
 
     def _sync_import_to_kili(self, assets: list[KiliResolverAsset]):
