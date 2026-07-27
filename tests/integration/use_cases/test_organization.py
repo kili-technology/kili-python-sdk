@@ -1,6 +1,4 @@
-from datetime import datetime
-
-import pytz
+from datetime import datetime, timezone
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
@@ -95,8 +93,8 @@ def test_given_existing_organization_when_I_call_organization_metrics_the_it_ret
     organization_metrics = organization_use_cases.get_organization_metrics(
         OrganizationMetricsFilters(
             id=OrganizationId("fake_organization_id"),
-            start_datetime=datetime.now(tz=pytz.UTC),
-            end_datetime=datetime.now(tz=pytz.UTC),
+            start_datetime=datetime.now(tz=timezone.utc),
+            end_datetime=datetime.now(tz=timezone.utc),
         ),
         fields=["nbUsers"],
     )
