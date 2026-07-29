@@ -55,6 +55,7 @@ def test_when_updating_project_then_it_returns_updated_project(mocker: pytest_mo
                 "consensusMark": None,
                 "consensusTotCoverage": None,
                 "description": None,
+                "geospatialSettings": None,
                 "canNavigateBetweenAssets": None,
                 "canSkipAsset": None,
                 "honeypotMark": None,

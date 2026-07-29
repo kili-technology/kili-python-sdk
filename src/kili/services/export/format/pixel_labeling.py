@@ -6,14 +6,15 @@ labels are stored as normalized coordinates relative to the image — like an im
 recorded at import time.
 """
 
-from typing import Optional
+from collections.abc import Mapping
+from typing import Any, Optional
 
 PIXEL_LABELING_CRS_CODE = "PIXEL"
 
 _VERTEX_CONTAINERS = ("boundingPoly", "polyline", "point", "vertices")
 
 
-def is_pixel_labeling_project(project: dict) -> bool:
+def is_pixel_labeling_project(project: Mapping[str, Any]) -> bool:
     """Whether the project labels in the image's own pixel grid."""
     geospatial_settings = project.get("geospatialSettings") or {}
     return geospatial_settings.get("labelingCRSCode") == PIXEL_LABELING_CRS_CODE
