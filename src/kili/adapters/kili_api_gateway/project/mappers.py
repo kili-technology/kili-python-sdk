@@ -35,6 +35,7 @@ def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> dict:
         "consensusMark": data.consensus_mark,
         "consensusTotCoverage": data.consensus_tot_coverage,
         "description": data.description,
+        "geospatialSettings": data.geospatial_settings,
         "canNavigateBetweenAssets": data.can_navigate_between_assets,
         "canSkipAsset": data.can_skip_asset,
         "honeypotMark": data.honeypot_mark,

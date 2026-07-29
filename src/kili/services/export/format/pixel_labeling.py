@@ -1,0 +1,86 @@
+"""Export of geospatial projects labeled in the image's own sensor pixel grid.
+
+Those projects annotate the image exactly as captured, with no reprojection, so their
+labels are stored as normalized coordinates relative to the image — like an image asset
+— rather than in a geographic CRS. The export unnormalizes them with the dimensions
+recorded at import time.
+"""
+
+from typing import Optional
+
+PIXEL_LABELING_CRS_CODE = "PIXEL"
+
+_VERTEX_CONTAINERS = ("boundingPoly", "polyline", "point", "vertices")
+
+
+def is_pixel_labeling_project(project: dict) -> bool:
+    """Whether the project labels in the image's own pixel grid."""
+    geospatial_settings = project.get("geospatialSettings") or {}
+    return geospatial_settings.get("labelingCRSCode") == PIXEL_LABELING_CRS_CODE
+
+
+def get_asset_pixel_dimensions(asset: dict) -> Optional[tuple[int, int]]:
+    """Reads the image dimensions recorded at import time."""
+    layers: list[dict] = asset.get("geospatialExportMetadata") or []
+    for layer in layers:
+        width, height = layer.get("width"), layer.get("height")
+        if width and height:
+            return int(width), int(height)
+    return None
+
+
+def _scale_vertex(vertex: dict, width: int, height: int) -> dict:
+    return {**vertex, "x": vertex["x"] * width, "y": vertex["y"] * height}
+
+
+def _scale_annotation(annotation: dict, width: int, height: int) -> None:
+    for key in _VERTEX_CONTAINERS:
+        value = annotation.get(key)
+        if value is None:
+            continue
+
+        if key == "point":
+            annotation[key] = _scale_vertex(value, width, height)
+        elif key == "boundingPoly":
+            annotation[key] = [
+                {
+                    **norm_vertices,
+                    "normalizedVertices": [
+                        _scale_vertex(vertex, width, height)
+                        for vertex in norm_vertices["normalizedVertices"]
+                    ],
+                }
+                for norm_vertices in value
+            ]
+        else:
+            annotation[key] = [_scale_vertex(vertex, width, height) for vertex in value]
+
+
+def _scale_json_response(json_response: dict, width: int, height: int) -> None:
+    for job_response in json_response.values():
+        if not isinstance(job_response, dict):
+            continue
+        for annotation in job_response.get("annotations", []):
+            _scale_annotation(annotation, width, height)
+
+
+def convert_to_pixel_coords(asset: dict) -> dict:
+    """Turns the normalized coordinates of an asset's labels into image pixels."""
+    dimensions = get_asset_pixel_dimensions(asset)
+    if dimensions is None:
+        return asset
+
+    width, height = dimensions
+
+    labels = []
+    if asset.get("latestLabel"):
+        labels.append(asset["latestLabel"])
+    labels.extend(asset.get("labels") or [])
+    labels.extend(label for label in (asset.get("latestLabels") or []) if label)
+
+    for label in labels:
+        json_response = label.get("jsonResponse")
+        if json_response:
+            _scale_json_response(json_response, width, height)
+
+    return asset

@@ -132,6 +132,7 @@ class ProjectUseCases(BaseUseCases):
         metadata_properties: Optional[dict] = None,
         should_auto_assign: Optional[bool] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
+        geospatial_settings: Optional[dict] = None,
     ) -> dict[str, object]:
         """Update properties in a project."""
         if consensus_tot_coverage is not None and not 0 <= consensus_tot_coverage <= 100:
@@ -179,6 +180,7 @@ class ProjectUseCases(BaseUseCases):
             consensus_tot_coverage=consensus_tot_coverage,
             compliance_tags=compliance_tags,
             description=description,
+            geospatial_settings=geospatial_settings,
             honeypot_mark=honeypot_mark,
             instructions=instructions,
             json_interface=json.dumps(json_interface) if json_interface is not None else None,

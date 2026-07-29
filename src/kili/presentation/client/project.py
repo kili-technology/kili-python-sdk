@@ -21,6 +21,7 @@ from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
     resolve_disable_tqdm,
 )
+from kili.services.export.format.pixel_labeling import PIXEL_LABELING_CRS_CODE
 from kili.use_cases.project.project import ProjectUseCases
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -44,6 +45,7 @@ class ProjectClientMethods(BaseClientMethods):
         tags: Optional[ListOrTuple[str]] = None,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
         from_demo_project: Optional[DemoProjectType] = None,
+        pixel_labeling: bool = False,
     ) -> dict[Literal["id"], str]:
         """Create a project.
 
@@ -58,6 +60,10 @@ class ProjectClientMethods(BaseClientMethods):
                 Compliance tags are used to categorize projects based on the sensitivity of
                 the data being handled and the legal constraints associated with it.
                 Possible values are: `PHI` and `PII`.
+            pixel_labeling: `GEOSPATIAL` projects only. Label the images in their own
+                sensor pixel grid, with no reprojection: annotations are stored and
+                exported in pixel coordinates, and geographic coordinates come from your
+                pixel-to-geo conversion service. It can only be set at creation time.
             from_demo_project: Currently, one of:
 
                 - `DEMO_COMPUTER_VISION_TUTORIAL`
@@ -97,6 +103,14 @@ class ProjectClientMethods(BaseClientMethods):
             compliance_tags=compliance_tags,
             from_demo_project=from_demo_project,
         )
+
+        if pixel_labeling:
+            if input_type != "GEOSPATIAL":
+                raise ValueError("`pixel_labeling` is only available for `GEOSPATIAL` projects.")
+            ProjectUseCases(self.kili_api_gateway).update_properties_in_project(
+                project_id,
+                geospatial_settings={"labelingCRSCode": PIXEL_LABELING_CRS_CODE},
+            )
 
         if tags is not None:
             tag_use_cases = TagUseCases(self.kili_api_gateway)
@@ -298,6 +312,7 @@ class ProjectClientMethods(BaseClientMethods):
         metadata_properties: Optional[dict] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
         should_auto_assign: Optional[bool] = None,
+        geospatial_settings: Optional[dict] = None,
     ) -> dict[str, Any]:
         """Update properties of a project.
 
@@ -340,6 +355,9 @@ class ProjectClientMethods(BaseClientMethods):
                     - `visibleByReviewer`: If `True`, the metadata is visible one the asset by reviewers
             seconds_to_label_before_auto_assign: DEPRECATED, use `should_auto_assign` instead.
             should_auto_assign: If `True`, assets are automatically assigned to users when they start annotating.
+            geospatial_settings: `GEOSPATIAL` projects only. Rendering and labeling settings,
+                such as `labelingCRSCode`. Note that pixel labeling can only be turned on or
+                off while the project has no asset.
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
@@ -440,6 +458,7 @@ class ProjectClientMethods(BaseClientMethods):
             metadata_properties=metadata_properties,
             should_auto_assign=should_auto_assign,
             seconds_to_label_before_auto_assign=seconds_to_label_before_auto_assign,
+            geospatial_settings=geospatial_settings,
         )
 
     @typechecked

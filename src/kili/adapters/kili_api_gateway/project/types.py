@@ -18,6 +18,7 @@ class ProjectDataKiliAPIGatewayInput:
     consensus_mark: Optional[float]
     consensus_tot_coverage: Optional[int]
     description: Optional[str]
+    geospatial_settings: Optional[dict]
     can_navigate_between_assets: Optional[bool]
     can_skip_asset: Optional[bool]
     honeypot_mark: Optional[float]
