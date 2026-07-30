@@ -94,6 +94,9 @@ class ProjectClientMethods(BaseClientMethods):
             For more detailed examples on how to create projects,
                 see [the recipe](https://docs.kili-technology.com/recipes/creating-a-project).
         """
+        if pixel_labeling and input_type is not None and input_type != "GEOSPATIAL":
+            raise ValueError("`pixel_labeling` is only available for `GEOSPATIAL` projects.")
+
         project_id = ProjectUseCases(self.kili_api_gateway).create_project(
             input_type=input_type,
             json_interface=json_interface,
@@ -105,8 +108,6 @@ class ProjectClientMethods(BaseClientMethods):
         )
 
         if pixel_labeling:
-            if input_type != "GEOSPATIAL":
-                raise ValueError("`pixel_labeling` is only available for `GEOSPATIAL` projects.")
             ProjectUseCases(self.kili_api_gateway).update_properties_in_project(
                 project_id,
                 geospatial_settings={"labelingCRSCode": PIXEL_LABELING_CRS_CODE},

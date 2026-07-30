@@ -1,13 +1,14 @@
 """Export of geospatial projects labeled in the image's own sensor pixel grid.
 
-Those projects annotate the image exactly as captured, with no reprojection, so their
-labels are stored as normalized coordinates relative to the image — like an image asset
-— rather than in a geographic CRS. The export unnormalizes them with the dimensions
-recorded at import time.
+Those projects store annotations normalized against the image, like an image asset, so
+the export unnormalizes them with its dimensions. GeoJSON is not offered.
 """
 
+import logging
 from collections.abc import Mapping
 from typing import Any, Optional
+
+logger = logging.getLogger(__name__)
 
 PIXEL_LABELING_CRS_CODE = "PIXEL"
 
@@ -56,6 +57,20 @@ def _scale_annotation(annotation: dict, width: int, height: int) -> None:
         else:
             annotation[key] = [_scale_vertex(vertex, width, height) for vertex in value]
 
+    # Pose estimation stores a list of named points, each wrapping its own vertex.
+    points = annotation.get("points")
+    if isinstance(points, list):
+        annotation["points"] = [
+            {**point, "point": _scale_vertex(point["point"], width, height)}
+            if isinstance(point.get("point"), dict)
+            else point
+            for point in points
+        ]
+
+    children = annotation.get("children")
+    if isinstance(children, dict):
+        _scale_json_response(children, width, height)
+
 
 def _scale_json_response(json_response: dict, width: int, height: int) -> None:
     for job_response in json_response.values():
@@ -69,6 +84,10 @@ def convert_to_pixel_coords(asset: dict) -> dict:
     """Turns the normalized coordinates of an asset's labels into image pixels."""
     dimensions = get_asset_pixel_dimensions(asset)
     if dimensions is None:
+        logger.warning(
+            "Asset %s has no recorded image dimensions: its labels stay normalized",
+            asset.get("externalId") or asset.get("id"),
+        )
         return asset
 
     width, height = dimensions

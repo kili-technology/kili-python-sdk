@@ -59,3 +59,51 @@ def test_convert_is_a_no_op_without_dimensions():
         "x": 0.1,
         "y": 0.2,
     }
+
+
+def test_convert_pose_estimation_points_to_pixels():
+    asset = _asset_with_label(
+        {
+            "JOB": {
+                "annotations": [
+                    {
+                        "points": [
+                            {"code": "HEAD", "jobName": "JOB", "point": {"x": 0.5, "y": 0.5}},
+                            {"code": "TAIL", "jobName": "JOB"},
+                        ]
+                    }
+                ]
+            }
+        }
+    )
+
+    convert_to_pixel_coords(asset)
+
+    points = asset["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]["points"]
+    assert points[0]["point"] == {"x": WIDTH * 0.5, "y": HEIGHT * 0.5}
+    assert points[1] == {"code": "TAIL", "jobName": "JOB"}
+
+
+def test_convert_nested_job_annotations_to_pixels():
+    asset = _asset_with_label(
+        {
+            "JOB": {
+                "annotations": [
+                    {
+                        "point": {"x": 0.1, "y": 0.2},
+                        "children": {
+                            "NESTED_JOB": {"annotations": [{"point": {"x": 0.4, "y": 0.8}}]}
+                        },
+                    }
+                ]
+            }
+        }
+    )
+
+    convert_to_pixel_coords(asset)
+
+    annotation = asset["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]
+    assert annotation["children"]["NESTED_JOB"]["annotations"][0]["point"] == {
+        "x": WIDTH * 0.4,
+        "y": HEIGHT * 0.8,
+    }
