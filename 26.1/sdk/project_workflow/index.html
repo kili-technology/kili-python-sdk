@@ -830,6 +830,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_labelers_to_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      add_labelers_to_step()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_review_step" class="md-nav__link">
     <span class="md-ellipsis">
       add_review_step()
@@ -869,6 +878,15 @@
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.get_steps" class="md-nav__link">
     <span class="md-ellipsis">
       get_steps()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.remove_labelers_from_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      remove_labelers_from_step()
     </span>
   </a>
   
@@ -2048,6 +2066,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_labelers_to_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      add_labelers_to_step()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_review_step" class="md-nav__link">
     <span class="md-ellipsis">
       add_review_step()
@@ -2087,6 +2114,15 @@
   <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.get_steps" class="md-nav__link">
     <span class="md-ellipsis">
       get_steps()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.remove_labelers_from_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      remove_labelers_from_step()
     </span>
   </a>
   
@@ -2227,7 +2263,11 @@
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_reviewers_to_step</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add reviewers to a specific step.</span>
 
@@ -2235,17 +2275,23 @@
 <span class="sd">            project_id: Id of the project.</span>
 <span class="sd">            step_name: Name of the step.</span>
 <span class="sd">            emails: List of emails to add.</span>
+<span class="sd">            group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">                Required when several groups have a step with the same name.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list with the added emails.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_reviewers_to_step</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_reviewers_from_step</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove reviewers from a specific step.</span>
 
@@ -2253,12 +2299,69 @@
 <span class="sd">            project_id: Id of the project.</span>
 <span class="sd">            step_name: Name of the step.</span>
 <span class="sd">            emails: List of emails to remove.</span>
+<span class="sd">            group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">                Required when several groups have a step with the same name.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list with the removed emails.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_reviewers_from_step</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+        <span class="p">)</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_labelers_to_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add labelers to a specific labeling step.</span>
+
+<span class="sd">        Only workflow V3 projects support assigning labelers to a step, and the target step must</span>
+<span class="sd">        be a labeling step.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Id of the project.</span>
+<span class="sd">            step_name: Name of the labeling step.</span>
+<span class="sd">            emails: List of emails to add.</span>
+<span class="sd">            group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">                Required when several groups have a step with the same name.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list with the added emails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_labelers_to_step</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+        <span class="p">)</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_labelers_from_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove labelers from a specific labeling step.</span>
+
+<span class="sd">        Only workflow V3 projects support removing labelers from a step, and the target step must</span>
+<span class="sd">        be a labeling step. Removing a labeler also clears their asset-step assignments and step</span>
+<span class="sd">        queue for that step.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            project_id: Id of the project.</span>
+<span class="sd">            step_name: Name of the labeling step.</span>
+<span class="sd">            emails: List of emails to remove.</span>
+<span class="sd">            group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">                Required when several groups have a step with the same name.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list with the removed emails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_labelers_from_step</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -2449,6 +2552,110 @@
 
 
 
+<h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_labelers_to_step" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">add_labelers_to_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Add labelers to a specific labeling step.</p>
+<p>Only workflow V3 projects support assigning labelers to a step, and the target step must
+be a labeling step.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Id of the project.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>step_name</code></td>
+        <td><code>str</code></td>
+        <td><p>Name of the labeling step.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>emails</code></td>
+        <td><code>list</code></td>
+        <td><p>List of emails to add.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>group_name</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Name of the workflow V3 group containing the step.
+Required when several groups have a step with the same name.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>list</code></td>
+      <td><p>A list with the added emails.</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kili/presentation/client/project_workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_labelers_to_step</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add labelers to a specific labeling step.</span>
+
+<span class="sd">    Only workflow V3 projects support assigning labelers to a step, and the target step must</span>
+<span class="sd">    be a labeling step.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Id of the project.</span>
+<span class="sd">        step_name: Name of the labeling step.</span>
+<span class="sd">        emails: List of emails to add.</span>
+<span class="sd">        group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">            Required when several groups have a step with the same name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list with the added emails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_labelers_to_step</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_review_step" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">add_review_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">assignees</span><span class="p">,</span> <span class="n">step_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">send_back_to_step</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
@@ -2568,7 +2775,7 @@
 
 
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_reviewers_to_step" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">add_reviewers_to_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">add_reviewers_to_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2606,6 +2813,13 @@
         <td><p>List of emails to add.</p></td>
         <td><em>required</em></td>
       </tr>
+      <tr>
+        <td><code>group_name</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Name of the workflow V3 group containing the step.
+Required when several groups have a step with the same name.</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -2626,7 +2840,11 @@
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/project_workflow.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_reviewers_to_step</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add reviewers to a specific step.</span>
 
@@ -2634,12 +2852,14 @@
 <span class="sd">        project_id: Id of the project.</span>
 <span class="sd">        step_name: Name of the step.</span>
 <span class="sd">        emails: List of emails to add.</span>
+<span class="sd">        group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">            Required when several groups have a step with the same name.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list with the added emails.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_reviewers_to_step</span><span class="p">(</span>
-        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2942,8 +3162,114 @@ See the documentation for all possible fields.</p></td>
 
 
 
+<h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.remove_labelers_from_step" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">remove_labelers_from_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Remove labelers from a specific labeling step.</p>
+<p>Only workflow V3 projects support removing labelers from a step, and the target step must
+be a labeling step. Removing a labeler also clears their asset-step assignments and step
+queue for that step.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>Id of the project.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>step_name</code></td>
+        <td><code>str</code></td>
+        <td><p>Name of the labeling step.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>emails</code></td>
+        <td><code>list</code></td>
+        <td><p>List of emails to remove.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>group_name</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Name of the workflow V3 group containing the step.
+Required when several groups have a step with the same name.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>list</code></td>
+      <td><p>A list with the removed emails.</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kili/presentation/client/project_workflow.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_labelers_from_step</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove labelers from a specific labeling step.</span>
+
+<span class="sd">    Only workflow V3 projects support removing labelers from a step, and the target step must</span>
+<span class="sd">    be a labeling step. Removing a labeler also clears their asset-step assignments and step</span>
+<span class="sd">    queue for that step.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: Id of the project.</span>
+<span class="sd">        step_name: Name of the labeling step.</span>
+<span class="sd">        emails: List of emails to remove.</span>
+<span class="sd">        group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">            Required when several groups have a step with the same name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list with the removed emails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_labelers_from_step</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.remove_reviewers_from_step" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">remove_reviewers_from_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">remove_reviewers_from_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2981,6 +3307,13 @@ See the documentation for all possible fields.</p></td>
         <td><p>List of emails to remove.</p></td>
         <td><em>required</em></td>
       </tr>
+      <tr>
+        <td><code>group_name</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Name of the workflow V3 group containing the step.
+Required when several groups have a step with the same name.</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -3001,7 +3334,11 @@ See the documentation for all possible fields.</p></td>
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/project_workflow.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_reviewers_from_step</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove reviewers from a specific step.</span>
 
@@ -3009,12 +3346,14 @@ See the documentation for all possible fields.</p></td>
 <span class="sd">        project_id: Id of the project.</span>
 <span class="sd">        step_name: Name of the step.</span>
 <span class="sd">        emails: List of emails to remove.</span>
+<span class="sd">        group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">            Required when several groups have a step with the same name.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list with the removed emails.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_reviewers_from_step</span><span class="p">(</span>
-        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
