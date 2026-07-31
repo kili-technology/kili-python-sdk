@@ -44,9 +44,6 @@ class GeoJsonExporter(AbstractExporter):
                 " GeoJson export format."
             )
 
-        # Labels of a pixel-labeled project live in the image's own sensor grid: Kili holds
-        # no trustworthy geographic coordinates for them, those come from the customer's
-        # pixel-to-geo service. Exporting them as GeoJson would fabricate a geolocation.
         if is_pixel_labeling_project(self.project):
             raise NotCompatibleInputType(
                 "GeoJson export is not available for projects labeled in image pixel"

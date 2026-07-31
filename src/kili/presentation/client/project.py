@@ -356,9 +356,28 @@ class ProjectClientMethods(BaseClientMethods):
                     - `visibleByReviewer`: If `True`, the metadata is visible one the asset by reviewers
             seconds_to_label_before_auto_assign: DEPRECATED, use `should_auto_assign` instead.
             should_auto_assign: If `True`, assets are automatically assigned to users when they start annotating.
-            geospatial_settings: `GEOSPATIAL` projects only. Rendering and labeling settings,
-                such as `labelingCRSCode`. Note that pixel labeling can only be turned on or
-                off while the project has no asset.
+            geospatial_settings: `GEOSPATIAL` projects only. A dict accepting the keys below,
+                for instance `{"labelingCRSCode": "EPSG:3857", "resamplingMethod": "bilinear"}`.
+                It replaces the previous settings, so send every key you want to keep.
+
+                - `labelingCRSCode`: coordinate reference system the annotators work in.
+                    One of `"original"`, `"EPSG:3857"`, `"EPSG:4326"` or `"PIXEL"`.
+                    `"PIXEL"` labels the image in its own sensor pixel grid, with no
+                    reprojection, and can only be turned on or off while the project has
+                    no asset, since it defines the frame the labels are stored in.
+                - `baseMaps`: background tile layers, as
+                    `[{"name": "Satellite", "url": "https://…/{z}/{x}/{y}.png"}]`.
+                    They are served in `EPSG:3857`, so they require `labelingCRSCode` to
+                    be `"EPSG:3857"` or `"PIXEL"`.
+                - `geoLayers`: WMS/WMTS overlays, as
+                    `[{"id": …, "layerName": …, "serviceUrl": …, "type": "wms"}]`.
+                    Optional per layer: `crs`, `dimensions`, `format`, `legendUrl`,
+                    `resourceUrl`, `style`, `tileMatrixSet`, `tileSize`, `title`.
+                - `resamplingMethod`: how pixels are interpolated when images are
+                    reprojected. One of `"nearest"`, `"bilinear"`, `"cubic"`, `"average"`.
+                - `allowAffineTransformationForRpc`: `True` to import images carrying RPC
+                    metadata by approximating them with an affine transform, without
+                    orthorectification. Geographic accuracy is then not guaranteed.
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,

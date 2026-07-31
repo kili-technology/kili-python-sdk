@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 PIXEL_LABELING_CRS_CODE = "PIXEL"
 
-_VERTEX_CONTAINERS = ("boundingPoly", "polyline", "point", "vertices")
+_VERTEX_CONTAINERS = ("boundingPoly", "polyline", "point")
 
 
 def is_pixel_labeling_project(project: Mapping[str, Any]) -> bool:
@@ -56,20 +56,6 @@ def _scale_annotation(annotation: dict, width: int, height: int) -> None:
             ]
         else:
             annotation[key] = [_scale_vertex(vertex, width, height) for vertex in value]
-
-    # Pose estimation stores a list of named points, each wrapping its own vertex.
-    points = annotation.get("points")
-    if isinstance(points, list):
-        annotation["points"] = [
-            {**point, "point": _scale_vertex(point["point"], width, height)}
-            if isinstance(point.get("point"), dict)
-            else point
-            for point in points
-        ]
-
-    children = annotation.get("children")
-    if isinstance(children, dict):
-        _scale_json_response(children, width, height)
 
 
 def _scale_json_response(json_response: dict, width: int, height: int) -> None:
