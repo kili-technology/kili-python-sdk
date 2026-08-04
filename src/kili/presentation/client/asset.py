@@ -625,8 +625,10 @@ class AssetClientMethods(BaseClientMethods):
         )
 
         if format == "pandas":
-            import pandas as pd  # pylint: disable=import-outside-toplevel
-
+            try:
+                import pandas as pd  # pylint: disable=import-outside-toplevel
+            except ImportError as e:
+                raise ImportError("Install `pip install kili[pandas]` for format='pandas'.") from e
             return pd.DataFrame(list(assets_gen))
 
         if as_generator:

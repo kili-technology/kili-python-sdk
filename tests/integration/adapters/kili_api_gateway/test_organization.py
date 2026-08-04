@@ -1,6 +1,4 @@
-from datetime import datetime
-
-import pytz
+from datetime import datetime, timezone
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.organization.operations_mixin import (
@@ -116,8 +114,8 @@ def test_get_organization_metrics(graphql_client: GraphQLClient):
     metrics = kili_api_gateway.get_organization_metrics(
         filters=OrganizationMetricsFilters(
             id=OrganizationId("fake_organization_id"),
-            start_datetime=datetime(2022, 1, 1, tzinfo=pytz.UTC),
-            end_datetime=datetime(2022, 1, 5, tzinfo=pytz.UTC),
+            start_datetime=datetime(2022, 1, 1, tzinfo=timezone.utc),
+            end_datetime=datetime(2022, 1, 5, tzinfo=timezone.utc),
         ),
         fields=["numberOfAnnotations", "numberOfHours", "numberOfLabeledAssets"],
     )

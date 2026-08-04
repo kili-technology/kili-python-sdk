@@ -231,6 +231,8 @@ class LabelUseCases(BaseUseCases):
             for label in asset["labels"]
         ]
 
-        import pandas as pd  # pylint: disable=import-outside-toplevel
-
+        try:
+            import pandas as pd  # pylint: disable=import-outside-toplevel
+        except ImportError as e:
+            raise ImportError("Install `pip install kili[pandas]` for format='pandas'.") from e
         return pd.DataFrame(labels)
