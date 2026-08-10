@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, call
 from kili.adapters.http_client import HttpClient
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
-    GQL_APPEND_MANY_FRAMES_TO_DATASET,
+    GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY,
 )
 from kili.domain.project import ProjectId
 from kili.services.asset_import import import_assets
@@ -62,10 +62,15 @@ class ImportTestCase(TestCase):
         )
 
     def get_expected_async_call(
-        self, content_array, external_id_array, id_array, json_metadata_array, upload_type
+        self,
+        content_array,
+        external_id_array,
+        id_array,
+        json_metadata_array,
+        upload_type,
     ):
         return (
-            GQL_APPEND_MANY_FRAMES_TO_DATASET,
+            GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY,
             {
                 "data": {
                     "contentArray": content_array,
@@ -88,7 +93,7 @@ class ImportTestCase(TestCase):
         upload_type,
     ):
         return (
-            GQL_APPEND_MANY_FRAMES_TO_DATASET,
+            GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY,
             {
                 "data": {
                     "multiLayerContentArray": multi_layer_content_array,

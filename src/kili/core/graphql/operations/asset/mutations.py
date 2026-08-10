@@ -14,16 +14,16 @@ mutation appendManyAssets(
 }
 """
 
-GQL_APPEND_MANY_FRAMES_TO_DATASET = """
-mutation(
-    $data: AppendManyFramesToDatasetAsynchronouslyData!,
+GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY = """
+mutation appendManyAssetsAsynchronously(
+    $data: AppendManyAssetsAsynchronouslyData!,
     $where: ProjectWhere!
   ) {
-  data: appendManyFramesToDatasetAsynchronously(
+  data: appendManyAssetsAsynchronously(
     data: $data,
     where: $where
   ) {
-    id
+      id
   }
 }
 """
