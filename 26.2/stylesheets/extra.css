@@ -1,0 +1,43 @@
+[data-md-color-scheme='kili'] {
+  /* general colors */
+  --md-default-bg-color: white;
+  --md-default-fg-color: #081819;
+  --md-primary-fg-color: #081819;
+  --md-primary-bg-color: white;
+  --md-accent-fg-color: #ff8200;
+}
+
+/* Indentation. */
+div.doc-contents:not(.first) {
+  padding-left: 25px;
+  border-left: 0.05rem solid var(--md-default-fg-color--lightest);
+  margin-bottom: 80px;
+}
+
+.md-nav__item .md-nav__link--active {
+  color: var(--md-accent-fg-color);
+}
+
+.md-typeset a {
+  color: #b090ef;
+}
+
+.md-typeset {
+  font-size: 15px;
+}
+
+.md-typeset code {
+  font-size: 13px;
+}
+
+.md-grid {
+  max-width: 1500px;
+}
+
+div.doc-contents:not(.first)
+  > div.md-typeset__scrollwrap
+  > div
+  > table
+  > thead {
+  background-color: rgba(176, 144, 239, 0.1);
+}
