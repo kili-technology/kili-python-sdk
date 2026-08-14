@@ -368,7 +368,8 @@ class ProjectClientMethods(BaseClientMethods):
                 - `baseMaps`: background tile layers, as
                     `[{"name": "Satellite", "url": "https://…/{z}/{x}/{y}.png"}]`.
                     They are served in `EPSG:3857`, so they require `labelingCRSCode` to
-                    be `"EPSG:3857"` or `"PIXEL"`.
+                    be `"EPSG:3857"`. A pixel-labeled asset is never reprojected, so
+                    there is no view they could sit under.
                 - `geoLayers`: WMS/WMTS overlays, as
                     `[{"id": …, "layerName": …, "serviceUrl": …, "type": "wms"}]`.
                     Optional per layer: `crs`, `dimensions`, `format`, `legendUrl`,
