@@ -16,6 +16,24 @@ In this tutorial, we will go through the full life cycle of an audio project:
 5. Exporting audio labels
 6. Cleanup
 
+Let's start by installing the SDK and instantiating the client. `Kili()` reads your API key from the
+`KILI_API_KEY` environment variable — see
+[how to create one](https://docs.kili-technology.com/docs/creating-an-api-key).
+
+
+```python
+%pip install  kili
+```
+
+
+```python
+import json
+
+from kili.client import Kili
+
+kili = Kili()
+```
+
 ## 1. Setting up an audio project
 
 ### Designing the labeling interface
