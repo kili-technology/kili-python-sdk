@@ -317,6 +317,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     to each frame of the video.
             status_array: DEPRECATED and does not have any effect.
             is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.
+                Only supported on legacy workflow V1 projects; on workflow V2/V3 projects use
+                `kili.assets.update_consensus()` instead.
             is_honeypot_array: Whether to use the asset for honeypot.
             project_id: The project ID. Only required if `external_ids` argument is provided.
             resolution_array: The resolution of each asset (for image and video assets).
