@@ -1,7 +1,12 @@
 """Export of geospatial projects labeled in the image's own sensor pixel grid.
 
 Those projects store annotations normalized against the image, like an image asset, so
-the export unnormalizes them with its dimensions. GeoJSON is not offered.
+the export adds the pixel coordinates beside the normalized ones, under the same keys an
+image project uses: `vertices` next to `boundingPoly[].normalizedVertices`, and
+`pointPixels` / `polylinePixels` next to `point` / `polyline`. The normalized values are
+left untouched — a consumer that reads them must keep reading fractions.
+
+GeoJSON is not offered.
 """
 
 import logging
@@ -11,8 +16,6 @@ from typing import Any, Optional
 logger = logging.getLogger(__name__)
 
 PIXEL_LABELING_CRS_CODE = "PIXEL"
-
-_VERTEX_CONTAINERS = ("boundingPoly", "polyline", "point")
 
 
 def is_pixel_labeling_project(project: Mapping[str, Any]) -> bool:
@@ -36,26 +39,28 @@ def _scale_vertex(vertex: dict, width: int, height: int) -> dict:
 
 
 def _scale_annotation(annotation: dict, width: int, height: int) -> None:
-    for key in _VERTEX_CONTAINERS:
-        value = annotation.get(key)
-        if value is None:
-            continue
+    """Adds the pixel coordinates beside the normalized ones, in place."""
+    # Bounding boxes, polygons, segmentation: `vertices` beside `normalizedVertices`.
+    bounding_poly = annotation.get("boundingPoly")
+    if bounding_poly is not None:
+        annotation["boundingPoly"] = [
+            {
+                **norm_vertices,
+                "vertices": [
+                    _scale_vertex(vertex, width, height)
+                    for vertex in norm_vertices["normalizedVertices"]
+                ],
+            }
+            for norm_vertices in bounding_poly
+        ]
 
-        if key == "point":
-            annotation[key] = _scale_vertex(value, width, height)
-        elif key == "boundingPoly":
-            annotation[key] = [
-                {
-                    **norm_vertices,
-                    "normalizedVertices": [
-                        _scale_vertex(vertex, width, height)
-                        for vertex in norm_vertices["normalizedVertices"]
-                    ],
-                }
-                for norm_vertices in value
-            ]
-        else:
-            annotation[key] = [_scale_vertex(vertex, width, height) for vertex in value]
+    point = annotation.get("point")
+    if point is not None:
+        annotation["pointPixels"] = _scale_vertex(point, width, height)
+
+    polyline = annotation.get("polyline")
+    if polyline is not None:
+        annotation["polylinePixels"] = [_scale_vertex(vertex, width, height) for vertex in polyline]
 
 
 def _scale_json_response(json_response: dict, width: int, height: int) -> None:
@@ -67,11 +72,11 @@ def _scale_json_response(json_response: dict, width: int, height: int) -> None:
 
 
 def convert_to_pixel_coords(asset: dict) -> dict:
-    """Turns the normalized coordinates of an asset's labels into image pixels."""
+    """Adds the image pixel coordinates of an asset's labels, beside the normalized ones."""
     dimensions = get_asset_pixel_dimensions(asset)
     if dimensions is None:
         logger.warning(
-            "Asset %s has no recorded image dimensions: its labels stay normalized",
+            "Asset %s has no recorded image dimensions: its labels carry no pixel coordinates",
             asset.get("externalId") or asset.get("id"),
         )
         return asset
