@@ -62,6 +62,7 @@ nav:
       - Exporting Project Data:
           - Exporting a Project: sdk/tutorials/export_a_kili_project.md
           - Parsing Labels: sdk/tutorials/label_parsing.md
+      - Audio Projects: sdk/tutorials/audio_projects.md
       - LLM Dynamic Projects: sdk/tutorials/llm_dynamic.md
       - Setting Up Plugins:
           - Developing Plugins: sdk/tutorials/plugins_development.md
