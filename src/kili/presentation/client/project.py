@@ -21,7 +21,6 @@ from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
     resolve_disable_tqdm,
 )
-from kili.services.export.format.pixel_labeling import PIXEL_LABELING_CRS_CODE
 from kili.use_cases.project.project import ProjectUseCases
 from kili.use_cases.tag import TagUseCases
 from kili.utils.logcontext import for_all_methods, log_call
@@ -98,6 +97,7 @@ class ProjectClientMethods(BaseClientMethods):
             raise ValueError("`pixel_labeling` is only available for `GEOSPATIAL` projects.")
 
         project_id = ProjectUseCases(self.kili_api_gateway).create_project(
+            pixel_labeling=pixel_labeling,
             input_type=input_type,
             json_interface=json_interface,
             title=title,
@@ -106,12 +106,6 @@ class ProjectClientMethods(BaseClientMethods):
             compliance_tags=compliance_tags,
             from_demo_project=from_demo_project,
         )
-
-        if pixel_labeling:
-            ProjectUseCases(self.kili_api_gateway).update_properties_in_project(
-                project_id,
-                geospatial_settings={"labelingCRSCode": PIXEL_LABELING_CRS_CODE},
-            )
 
         if tags is not None:
             tag_use_cases = TagUseCases(self.kili_api_gateway)
@@ -313,7 +307,6 @@ class ProjectClientMethods(BaseClientMethods):
         metadata_properties: Optional[dict] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
         should_auto_assign: Optional[bool] = None,
-        geospatial_settings: Optional[dict] = None,
     ) -> dict[str, Any]:
         """Update properties of a project.
 
@@ -356,29 +349,6 @@ class ProjectClientMethods(BaseClientMethods):
                     - `visibleByReviewer`: If `True`, the metadata is visible one the asset by reviewers
             seconds_to_label_before_auto_assign: DEPRECATED, use `should_auto_assign` instead.
             should_auto_assign: If `True`, assets are automatically assigned to users when they start annotating.
-            geospatial_settings: `GEOSPATIAL` projects only. A dict accepting the keys below,
-                for instance `{"labelingCRSCode": "EPSG:3857", "resamplingMethod": "bilinear"}`.
-                It replaces the previous settings, so send every key you want to keep.
-
-                - `labelingCRSCode`: coordinate reference system the annotators work in.
-                    One of `"original"`, `"EPSG:3857"`, `"EPSG:4326"` or `"PIXEL"`.
-                    `"PIXEL"` labels the image in its own sensor pixel grid, with no
-                    reprojection, and can only be turned on or off while the project has
-                    no asset, since it defines the frame the labels are stored in.
-                - `baseMaps`: background tile layers, as
-                    `[{"name": "Satellite", "url": "https://…/{z}/{x}/{y}.png"}]`.
-                    They are served in `EPSG:3857`, so they require `labelingCRSCode` to
-                    be `"EPSG:3857"`. A pixel-labeled asset is never reprojected, so
-                    there is no view they could sit under.
-                - `geoLayers`: WMS/WMTS overlays, as
-                    `[{"id": …, "layerName": …, "serviceUrl": …, "type": "wms"}]`.
-                    Optional per layer: `crs`, `dimensions`, `format`, `legendUrl`,
-                    `resourceUrl`, `style`, `tileMatrixSet`, `tileSize`, `title`.
-                - `resamplingMethod`: how pixels are interpolated when images are
-                    reprojected. One of `"nearest"`, `"bilinear"`, `"cubic"`, `"average"`.
-                - `allowAffineTransformationForRpc`: `True` to import images carrying RPC
-                    metadata by approximating them with an affine transform, without
-                    orthorectification. Geographic accuracy is then not guaranteed.
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
@@ -479,7 +449,6 @@ class ProjectClientMethods(BaseClientMethods):
             metadata_properties=metadata_properties,
             should_auto_assign=should_auto_assign,
             seconds_to_label_before_auto_assign=seconds_to_label_before_auto_assign,
-            geospatial_settings=geospatial_settings,
         )
 
     @typechecked

@@ -1,12 +1,8 @@
 """Export of geospatial projects labeled in the image's own sensor pixel grid.
 
-Those projects store annotations normalized against the image, like an image asset, so
-the export adds the pixel coordinates beside the normalized ones, under the same keys an
-image project uses: `vertices` next to `boundingPoly[].normalizedVertices`, and
-`pointPixels` / `polylinePixels` next to `point` / `polyline`. The normalized values are
-left untouched — a consumer that reads them must keep reading fractions.
-
-GeoJSON is not offered.
+Annotations are normalized against the image, as for an image asset, so the export adds
+the pixel coordinates beside them under the same keys: `vertices`, `pointPixels` and
+`polylinePixels`. The normalized values are left untouched. GeoJSON is not offered.
 """
 
 import logging

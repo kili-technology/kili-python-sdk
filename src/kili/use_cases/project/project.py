@@ -38,37 +38,17 @@ class ProjectUseCases(BaseUseCases):
         project_id: Optional[ProjectId] = None,
         input_type: Optional[InputType] = None,
         json_interface: Optional[dict] = None,
+        pixel_labeling: bool = False,
     ) -> ProjectId:
         """Create or copy a project if project_id is set."""
         if project_id is not None:
-            project_copied = self._kili_api_gateway.get_project(
-                project_id=project_id, fields=["jsonInterface", "instructions", "inputType"]
-            )
-            project_tag = self._kili_api_gateway.list_tags_by_project(
-                project_id=project_id, fields=["id"]
-            )
-            new_project_id = self._kili_api_gateway.create_project(
-                input_type=project_copied["inputType"],
-                json_interface=project_copied["jsonInterface"],
+            new_project_id = self._copy_project(
+                project_id,
                 title=title,
                 description=description,
                 compliance_tags=compliance_tags,
                 from_demo_project=from_demo_project,
             )
-            if project_copied["instructions"]:
-                self.update_properties_in_project(
-                    project_id=new_project_id,
-                    instructions=project_copied["instructions"],
-                )
-            tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
-            tags_of_orga_ids = [tag["id"] for tag in tags_of_orga]
-
-            for tag in project_tag:
-                if tag["id"] not in tags_of_orga_ids:
-                    raise ValueError(
-                        f"Tag {tag['id']} doesn't belong to your organization and was not copied."
-                    )
-                self._kili_api_gateway.check_tag(project_id=new_project_id, tag_id=tag["id"])
         elif from_demo_project is None and (input_type is None or json_interface is None):
             raise ValueError(
                 "Arguments `input_type` and `json_interface` must be set if neither "
@@ -82,6 +62,7 @@ class ProjectUseCases(BaseUseCases):
                 description=description,
                 compliance_tags=compliance_tags,
                 from_demo_project=from_demo_project,
+                pixel_labeling=pixel_labeling,
             )
 
         # The project is not immediately available after creation
@@ -95,6 +76,47 @@ class ProjectUseCases(BaseUseCases):
                 _ = self._kili_api_gateway.get_project(project_id=new_project_id, fields=("id",))
 
         return ProjectId(new_project_id)
+
+    def _copy_project(
+        self,
+        project_id: ProjectId,
+        *,
+        title: str,
+        description: str,
+        compliance_tags: Optional[ListOrTuple[ComplianceTag]],
+        from_demo_project: Optional[DemoProjectType],
+    ) -> ProjectId:
+        """Create a project from an existing one, carrying over its instructions and tags."""
+        project_copied = self._kili_api_gateway.get_project(
+            project_id=project_id, fields=["jsonInterface", "instructions", "inputType"]
+        )
+        project_tag = self._kili_api_gateway.list_tags_by_project(
+            project_id=project_id, fields=["id"]
+        )
+        new_project_id = self._kili_api_gateway.create_project(
+            input_type=project_copied["inputType"],
+            json_interface=project_copied["jsonInterface"],
+            title=title,
+            description=description,
+            compliance_tags=compliance_tags,
+            from_demo_project=from_demo_project,
+        )
+        if project_copied["instructions"]:
+            self.update_properties_in_project(
+                project_id=new_project_id,
+                instructions=project_copied["instructions"],
+            )
+
+        tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
+        tags_of_orga_ids = [tag["id"] for tag in tags_of_orga]
+        for tag in project_tag:
+            if tag["id"] not in tags_of_orga_ids:
+                raise ValueError(
+                    f"Tag {tag['id']} doesn't belong to your organization and was not copied."
+                )
+            self._kili_api_gateway.check_tag(project_id=new_project_id, tag_id=tag["id"])
+
+        return new_project_id
 
     def list_projects(
         self,
@@ -132,7 +154,6 @@ class ProjectUseCases(BaseUseCases):
         metadata_properties: Optional[dict] = None,
         should_auto_assign: Optional[bool] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
-        geospatial_settings: Optional[dict] = None,
     ) -> dict[str, object]:
         """Update properties in a project."""
         if consensus_tot_coverage is not None and not 0 <= consensus_tot_coverage <= 100:
@@ -180,7 +201,6 @@ class ProjectUseCases(BaseUseCases):
             consensus_tot_coverage=consensus_tot_coverage,
             compliance_tags=compliance_tags,
             description=description,
-            geospatial_settings=geospatial_settings,
             honeypot_mark=honeypot_mark,
             instructions=instructions,
             json_interface=json.dumps(json_interface) if json_interface is not None else None,

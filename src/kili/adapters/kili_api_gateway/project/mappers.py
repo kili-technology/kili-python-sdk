@@ -48,10 +48,6 @@ def project_data_mapper(data: ProjectDataKiliAPIGatewayInput) -> dict:
         "useHoneyPot": data.use_honeypot,
     }
 
-    # Omitted rather than sent as null: older deployments do not know the field.
-    if data.geospatial_settings is not None:
-        result["geospatialSettings"] = data.geospatial_settings
-
     if data.metadata_properties is not None:
         result["metadataProperties"] = data.metadata_properties
     elif data.metadata_types is not None:
