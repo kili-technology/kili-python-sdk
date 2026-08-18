@@ -73,7 +73,7 @@ Webhooks are really similar to plugins, except they are self-hosted, and require
 
 ## Audio projects
 
-[This tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/audio_projects/) walks you through the whole life cycle of an audio transcription project: designing an interface with a segment-level transcription job and asset-level jobs, importing recordings, importing speaker-attributed pre-annotations, and exporting the result — including as a subtitle file. It also explains how speakers work, both in the label format and in the labeling interface.
+[This tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/audio_projects/) walks you through the whole life cycle of an audio transcription project: designing an interface with a segment-level transcription job and asset-level jobs, importing recordings, importing speaker-attributed pre-annotations, and exporting the result. It also explains how speakers work in the audio label format.
 
 ## LLM Dynamic Project
 
