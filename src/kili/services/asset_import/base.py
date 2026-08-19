@@ -31,6 +31,7 @@ from kili.core.graphql.operations.asset.mutations import (
 )
 from kili.core.helpers import T, format_result, get_mime_type, is_url
 from kili.core.utils.pagination import batcher
+from kili.domain.notification import NotificationFilter, NotificationId
 from kili.domain.organization import OrganizationFilters
 from kili.domain.project import InputType, ProjectId
 from kili.domain.types import ListOrTuple
@@ -139,7 +140,13 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             reraise=True,
         ):
             with attempt:
-                notification = self.kili.notifications(notification_id=notification_id)[0]
+                notification = list(
+                    self.kili.kili_api_gateway.list_notifications(
+                        filters=NotificationFilter(id=NotificationId(notification_id)),
+                        fields=("status",),
+                        options=QueryOptions(disable_tqdm=True, first=1, skip=0),
+                    )
+                )[0]
                 if notification["status"] == "FAILURE":
                     error_message = (
                         "Some assets were not imported. "
