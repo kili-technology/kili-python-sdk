@@ -27,11 +27,35 @@ from kili.entrypoints.mutations.asset.queries import (
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
 )
 from kili.entrypoints.mutations.exceptions import MutationError
-from kili.exceptions import MissingArgumentError
+from kili.exceptions import DeprecatedArgumentError, GraphQLError, MissingArgumentError
 from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv
 from kili.utils.assets import PageResolution
 from kili.utils.logcontext import for_all_methods, log_call
+
+# The backend rejects `isUsedForConsensus` on multi-review projects (workflow version 2 and
+# above). Its error message is the only place carrying this key: `extensions.code` is the generic
+# `OPERATION_RESOLUTION_FAILURE` shared by nearly every domain error, so the bracketed token is
+# the only usable discriminator.
+IS_USED_FOR_CONSENSUS_DEPRECATED_KEY = "[isUsedForConsensusDeprecated]"
+IS_USED_FOR_CONSENSUS_DEPRECATED_MESSAGE = (
+    "`isUsedForConsensus` is deprecated in `update_properties_in_assets`."
+    " Use `update_asset_consensus` instead to manage consensus for this asset."
+)
+
+
+def _has_error_key(error: GraphQLError, key: str) -> bool:
+    """Tell whether any GraphQL error raised by the backend carries the given key.
+
+    Every element is scanned because `GraphQLError` only ever renders the first one, and the
+    backend may report several errors for a single batch.
+    """
+    errors = error.error if isinstance(error.error, list) else [error.error]
+    for item in errors:
+        message = item.get("message", "") if isinstance(item, dict) else str(item)
+        if key in message:
+            return True
+    return False
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -317,6 +341,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     to each frame of the video.
             status_array: DEPRECATED and does not have any effect.
             is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.
+                Not supported on multi-review projects, where it raises
+                `DeprecatedArgumentError`. Use `kili.update_asset_consensus()` for those projects.
             is_honeypot_array: Whether to use the asset for honeypot.
             project_id: The project ID. Only required if `external_ids` argument is provided.
             resolution_array: The resolution of each asset (for image and video assets).
@@ -329,6 +355,13 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         Returns:
             A list of dictionaries with the asset ids.
+
+        Raises:
+            DeprecatedArgumentError: If `is_used_for_consensus_array` is used on a multi-review
+                project. Use `kili.update_asset_consensus()` for those projects.
+            MissingArgumentError: If both `asset_ids` and `external_ids` are provided, or if
+                neither of them is.
+            GraphQLError: If the backend refuses the update for any other reason.
 
         Examples:
             >>> kili.update_properties_in_assets(
@@ -417,12 +450,17 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 "dataArray": data_array,
             }
 
-        results = mutate_from_paginated_call(
-            self,
-            properties_to_batch,
-            generate_variables,
-            GQL_UPDATE_PROPERTIES_IN_ASSETS,
-        )
+        try:
+            results = mutate_from_paginated_call(
+                self,
+                properties_to_batch,
+                generate_variables,
+                GQL_UPDATE_PROPERTIES_IN_ASSETS,
+            )
+        except GraphQLError as err:
+            if _has_error_key(err, IS_USED_FOR_CONSENSUS_DEPRECATED_KEY):
+                raise DeprecatedArgumentError(IS_USED_FOR_CONSENSUS_DEPRECATED_MESSAGE) from err
+            raise
         formated_results = [self.format_result("data", result, None) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 

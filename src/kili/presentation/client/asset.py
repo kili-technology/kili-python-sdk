@@ -1,5 +1,6 @@
 """Client presentation methods for assets."""
 
+# pylint: disable=too-many-lines
 import warnings
 from collections.abc import Generator, Iterable
 from typing import (
@@ -948,6 +949,9 @@ class AssetClientMethods(BaseClientMethods):
         external_id: Optional[str] = None,
     ) -> bool:
         """Activate or deactivate consensus on an asset.
+
+        This method is not compatible with projects using workflow version 1. On those projects,
+        use `kili.update_properties_in_assets()` with `is_used_for_consensus_array` instead.
 
         Args:
             project_id: The project ID.
