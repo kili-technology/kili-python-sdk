@@ -21,13 +21,21 @@ def is_pixel_labeling_project(project: Mapping[str, Any]) -> bool:
 
 
 def get_asset_pixel_dimensions(asset: dict) -> Optional[tuple[int, int]]:
-    """Reads the image dimensions recorded at import time."""
+    """Dimensions of the layer the annotations were normalized against.
+
+    The first layer, which the labeling grid is built from — never a later one: an asset
+    may carry a reference image of a different size, and unnormalizing against that would
+    silently move every annotation.
+    """
     layers: list[dict] = asset.get("geospatialExportMetadata") or []
-    for layer in layers:
-        width, height = layer.get("width"), layer.get("height")
-        if width and height:
-            return int(width), int(height)
-    return None
+    if not layers:
+        return None
+
+    width, height = layers[0].get("width"), layers[0].get("height")
+    if not width or not height:
+        return None
+
+    return int(width), int(height)
 
 
 def _scale_vertex(vertex: dict, width: int, height: int) -> dict:

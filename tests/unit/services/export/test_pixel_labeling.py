@@ -25,6 +25,23 @@ def test_get_asset_pixel_dimensions():
     assert get_asset_pixel_dimensions({}) is None
 
 
+def test_get_asset_pixel_dimensions_ignores_the_other_layers():
+    """A reference layer of another size must never unnormalize the annotations."""
+    asset = {
+        "geospatialExportMetadata": [
+            {"width": WIDTH, "height": HEIGHT},
+            {"width": 640, "height": 480},
+        ]
+    }
+    assert get_asset_pixel_dimensions(asset) == (WIDTH, HEIGHT)
+
+
+def test_get_asset_pixel_dimensions_without_a_dimensioned_first_layer():
+    """Sliding to the next layer would silently use the wrong grid."""
+    asset = {"geospatialExportMetadata": [{"labelingCRS": "PIXEL"}, {"width": 640, "height": 480}]}
+    assert get_asset_pixel_dimensions(asset) is None
+
+
 def test_bounding_poly_carries_both_normalized_and_pixel_vertices():
     """As for an image asset: `vertices` is added, `normalizedVertices` stays normalized."""
     asset = _asset_with_label(
