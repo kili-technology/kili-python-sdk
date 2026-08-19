@@ -18,13 +18,6 @@ LockType = Literal[
 ]
 
 
-NotificationStatus = Literal[
-    "FAILURE",
-    "PENDING",
-    "SUCCESS",
-]
-
-
 OrganizationRole = Literal[
     "ADMIN",
     "USER",
