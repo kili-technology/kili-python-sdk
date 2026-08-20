@@ -92,6 +92,7 @@ def _render_cmap(mapping: dict[int, Union[int, list[int]]], existing_text: str =
 def _glyph_names_of_font(font, descriptor) -> dict[int, str]:
     """Build the character-code to glyph-name table a font declares."""
     from pypdf.generic import (
+        DictionaryObject,
         IndirectObject,
     )
 
@@ -100,7 +101,9 @@ def _glyph_names_of_font(font, descriptor) -> dict[int, str]:
     if isinstance(encoding, IndirectObject):
         encoding = encoding.get_object()
 
-    base_name = encoding.get("/BaseEncoding") if hasattr(encoding, "get") else encoding
+    # /Encoding is either a dictionary describing the encoding, or the plain name of one.
+    encoding_dict = encoding if isinstance(encoding, DictionaryObject) else None
+    base_name = encoding_dict.get("/BaseEncoding") if encoding_dict is not None else encoding
 
     # With no base encoding declared, the font program's own encoding is what applies.
     if base_name is None:
@@ -114,7 +117,7 @@ def _glyph_names_of_font(font, descriptor) -> dict[int, str]:
                     {code: charset[gid] for code, gid in raw.items() if 0 <= gid < len(charset)}
                 )
 
-    differences = encoding.get("/Differences") if hasattr(encoding, "get") else None
+    differences = encoding_dict.get("/Differences") if encoding_dict is not None else None
     if differences:
         code = 0
         for item in differences:
@@ -268,6 +271,7 @@ def _repair_simple_font(font, writer) -> tuple[int, int]:
     from pypdf.generic import (
         DecodedStreamObject,
         DictionaryObject,
+        IndirectObject,
         NameObject,
     )
 
@@ -279,9 +283,10 @@ def _repair_simple_font(font, writer) -> tuple[int, int]:
     symbolic = bool(int(descriptor.get("/Flags", 0) or 0) & 4)
 
     encoding = font.get("/Encoding")
-    if hasattr(encoding, "get_object"):
+    if isinstance(encoding, IndirectObject):
         encoding = encoding.get_object()
-    base_name = encoding.get("/BaseEncoding") if hasattr(encoding, "get") else encoding
+    encoding_dict = encoding if isinstance(encoding, DictionaryObject) else None
+    base_name = encoding_dict.get("/BaseEncoding") if encoding_dict is not None else encoding
     base_name = str(base_name) if base_name is not None else None
     fallback = base_encoding(base_name)
 

@@ -1,4 +1,5 @@
 """Client presentation methods for assets."""
+# pylint: disable=too-many-lines
 
 import warnings
 from collections.abc import Generator, Iterable
