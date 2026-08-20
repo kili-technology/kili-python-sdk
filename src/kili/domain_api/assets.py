@@ -2369,6 +2369,9 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     ) -> bool:
         """Activate or deactivate consensus on an asset.
 
+        This method is not compatible with projects using workflow version 1. On those projects,
+        use `kili.update_properties_in_assets()` with `is_used_for_consensus_array` instead.
+
         Args:
             project_id: The project ID.
             is_consensus: Whether to activate (True) or deactivate (False) consensus on the asset.

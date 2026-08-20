@@ -90,6 +90,21 @@ kili.update_properties_in_project(
 
 You can manually select specific project assets to be used for computing consensus KPIs.
 
+The method to use depends on the workflow version of your project. On multi-review
+projects, use `update_asset_consensus`, one call per asset:
+
+
+```python
+for external_id in ["1.jpg", "2.jpg", "3.jpg"]:
+    kili.update_asset_consensus(
+        project_id=project_id,
+        external_id=external_id,
+        is_consensus=True,
+    )
+```
+
+On projects still using workflow version 1, `update_asset_consensus` is not available.
+Use `update_properties_in_assets` with `is_used_for_consensus_array` instead:
 
 ```python
 kili.update_properties_in_assets(
@@ -99,14 +114,8 @@ kili.update_properties_in_assets(
 )
 ```
 
-
-
-
-    [{'id': 'clnwvhvo00000gsvzinsato00'},
-     {'id': 'clnwvhvo00001gsvzsiqcx5dc'},
-     {'id': 'clnwvhvo00002gsvzzbjtyuif'}]
-
-
+Using `is_used_for_consensus_array` on a multi-review project raises
+`DeprecatedArgumentError`.
 
 For more information on consensus, refer to our [documentation](https://docs.kili-technology.com/docs/consensus-overview).
 

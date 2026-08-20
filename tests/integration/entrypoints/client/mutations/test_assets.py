@@ -4,6 +4,7 @@ import pytest
 import pytest_mock
 
 from kili.entrypoints.mutations.asset import MutationsAsset, PageResolution
+from kili.exceptions import DeprecatedArgumentError, GraphQLError
 
 
 @pytest.mark.parametrize(
@@ -79,3 +80,83 @@ def test_given_asset_resolution_when_updating_resolution_then_it_works(
         "whereArray": [{"id": "asset_id_1"}],
         "dataArray": [{"resolution": {"width": 100, "height": 200}}],
     }
+
+
+def _backend_error(message: str) -> GraphQLError:
+    """Build the error the graphql client raises when the backend refuses the mutation."""
+    return GraphQLError(
+        error=[
+            {
+                "message": message,
+                "extensions": {
+                    "code": "OPERATION_RESOLUTION_FAILURE",
+                    "context": {"projectID": "project_id"},
+                },
+            }
+        ]
+    )
+
+
+def test_given_multi_review_project_when_i_use_is_used_for_consensus_then_i_get_a_clear_error(
+    mocker: pytest_mock.MockerFixture,
+):
+    # Given
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.graphql_client.execute.side_effect = _backend_error(
+        "[isUsedForConsensusDeprecated] `isUsedForConsensus` is deprecated in"
+        " `update_properties_in_assets`. Use `update_asset_consensus` instead to manage consensus"
+        " for this asset."
+    )
+
+    # When
+    with pytest.raises(DeprecatedArgumentError) as exc_info:
+        kili.update_properties_in_assets(
+            asset_ids=["asset_id_1"], is_used_for_consensus_array=[True]
+        )
+
+    # Then
+    assert str(exc_info.value) == (
+        "`isUsedForConsensus` is deprecated in `update_properties_in_assets`."
+        " Use `update_asset_consensus` instead to manage consensus for this asset."
+    )
+    assert isinstance(exc_info.value.__cause__, GraphQLError)
+    assert "[isUsedForConsensusDeprecated]" in str(exc_info.value.__cause__)
+
+
+def test_given_workflow_v1_project_when_i_use_is_used_for_consensus_then_the_field_is_sent(
+    mocker: pytest_mock.MockerFixture,
+):
+    # Given
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+
+    # When
+    kili.update_properties_in_assets(
+        asset_ids=["asset_id_1", "asset_id_2"], is_used_for_consensus_array=[True, False]
+    )
+
+    # Then
+    assert kili.graphql_client.execute.call_args[0][1] == {
+        "whereArray": [{"id": "asset_id_1"}, {"id": "asset_id_2"}],
+        "dataArray": [{"isUsedForConsensus": True}, {"isUsedForConsensus": False}],
+    }
+
+
+def test_given_an_unrelated_backend_error_when_i_update_properties_then_it_is_not_converted(
+    mocker: pytest_mock.MockerFixture,
+):
+    # Given
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.graphql_client.execute.side_effect = _backend_error("[somethingElse] Another failure")
+
+    # When / Then
+    with pytest.raises(GraphQLError):
+        kili.update_properties_in_assets(asset_ids=["asset_id_1"], priorities=[1])
