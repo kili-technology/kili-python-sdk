@@ -1,1 +1,2 @@
 include *.md
+recursive-include src/kili/utils/pdf/data *.json

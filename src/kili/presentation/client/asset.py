@@ -42,7 +42,11 @@ from kili.utils.logcontext import for_all_methods, log_call
 from .base import BaseClientMethods
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     import pandas as pd
+
+    from kili.utils.pdf import PdfRepairReport
 
 
 def _warn_deprecated_gt_lt_args(
@@ -997,3 +1001,65 @@ class AssetClientMethods(BaseClientMethods):
             asset_id=asset_id,
             external_id=external_id,
         )
+
+    @typechecked
+    def repair_pdf(
+        self,
+        input_dir: Union[str, "Path"],
+        output_dir: Union[str, "Path"],
+        *,
+        verbose: bool = True,
+    ) -> "PdfRepairReport":
+        """Repair the text layer of every PDF in a directory, before importing them.
+
+        Some PDFs describe their own characters incorrectly. The page looks perfect on
+        screen, but the text stored underneath it is wrong: a minus sign may be missing
+        entirely, or a "greater than or equal" sign may be recorded as a dollar sign.
+        Annotating such a document captures the wrong text in your labels.
+
+        This method reads every PDF in `input_dir`, corrects the character tables, and
+        writes the result to `output_dir` under the same file name. PDFs that need no
+        correction are copied through unchanged, so `output_dir` always contains a
+        complete set ready to import.
+
+        Your original files are never modified, and repaired files look exactly the same
+        as before: only the invisible text layer changes.
+
+        !!! warning "Beta feature"
+            This feature is in beta and still being developed. It has been tested against
+            a varied corpus of documents, but it does not yet fix every case: some
+            documents will be only partly repaired. If you find a document that is not
+            repaired, or one whose text the repair makes worse, please report it to Kili
+            support so the reference tables can be extended.
+
+        !!! info "Extra dependencies"
+            This method needs extra libraries:
+            ```bash
+            pip install kili[pdf]
+            ```
+
+        Args:
+            input_dir: Directory containing the PDFs to repair.
+            output_dir: Directory the repaired PDFs are written to. Created if missing.
+            verbose: Whether to print the report once the run finishes.
+
+        Returns:
+            A report describing what was corrected, in total and per file.
+
+        Raises:
+            ImportError: If the extra PDF dependencies are not installed.
+            FileNotFoundError: If `input_dir` does not exist.
+            NotADirectoryError: If `input_dir` is not a directory.
+            ValueError: If `input_dir` and `output_dir` are the same directory.
+
+        Examples:
+            >>> report = kili.repair_pdf(
+            ...     input_dir="documents",
+            ...     output_dir="documents_repaired",
+            ... )
+            >>> report.total_characters_corrected
+            12
+        """
+        from kili.utils.pdf import repair_pdf  # pylint: disable=import-outside-toplevel
+
+        return repair_pdf(input_dir, output_dir, verbose=verbose)

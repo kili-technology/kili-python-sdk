@@ -91,15 +91,20 @@ dev = [
   # optional dependencies - yolo
   "pyyaml >= 6.0, < 7.0",
   # optional dependencies - image
-  "Pillow >=10.0.0, <13.0.0"
+  "Pillow >=10.0.0, <13.0.0",
+  # optional dependencies - pdf
+  "pypdf >= 5.0.0, < 7.0.0",
+  "fonttools >= 4.40.0, < 5.0.0"
 ]
 all = [
   # aggregate all optional deps without dev
   "azure-storage-blob >= 12.0.0, < 13.0.0",
+  "fonttools >= 4.40.0, < 5.0.0",
   "kili-formats[all] == 1.5.0",
   "opencv-python >= 4.0.0, < 5.0.0",
   "pandas >= 1.0.0, < 3.0.0",
   "Pillow >=10.0.0, <13.0.0",
+  "pypdf >= 5.0.0, < 7.0.0",
   "pyproj == 3.7.1",
   "pyyaml >= 6.0, < 7.0",
   "shapely >= 1.8, < 3",
@@ -117,6 +122,10 @@ gis = [
   "pyproj == 3.7.1",
   "shapely >= 1.8, < 3"
 ]
+pdf = [
+  "pypdf >= 5.0.0, < 7.0.0",
+  "fonttools >= 4.40.0, < 5.0.0"
+]
 image = [
   "Pillow >=10.0.0, <13.0.0",
   "kili-formats[image] == 1.5.0"
@@ -130,6 +139,10 @@ video = [
 yolo = [
   "pyyaml >= 6.0, < 7.0"
 ]
+
+[tool.setuptools.package-data]
+# Reference tables shipped with the PDF repair utility.
+"kili.utils.pdf" = ["data/*.json"]
 
 [tool.pyright]
 exclude = ["**/__pycache__", ".github/scripts/upload_test_stats_datadog.py"]

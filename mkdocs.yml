@@ -25,6 +25,7 @@ nav:
           - LLM: sdk/llm.md
           - Notification: sdk/notification.md
           - Organization: sdk/organization.md
+          - PDF Repair (beta): sdk/pdf_repair.md
           - Plugins: sdk/plugins.md
           - Project: sdk/project.md
           - Project User: sdk/project_user.md
