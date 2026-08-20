@@ -114,7 +114,7 @@ coco = [
   "kili-formats[coco] == 1.5.0"
 ]
 gis = [
-  "pyproj == 3.7.1",
+  "pyproj ==3.7.2",
   "shapely >= 1.8, < 3"
 ]
 image = [
