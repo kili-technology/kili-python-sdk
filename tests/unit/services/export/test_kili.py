@@ -197,6 +197,113 @@ def test_kili_exporter_convert_to_pixel_coords_pdf(mocker: pytest_mock.MockerFix
     }
 
 
+def test_kili_exporter_convert_to_pixel_coords_pdf_polygon(mocker: pytest_mock.MockerFixture):
+    """A PDF polygon scales to pixels against the dimensions of its own page.
+
+    Self-contained on purpose: `fakes/pdf_project_assets.json` is left untouched so that the
+    bounding box expectations keep proving that nothing regressed for existing PDF projects.
+    """
+    mocker.patch.object(KiliExporter, "__init__", return_value=None)
+    exporter = KiliExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
+    exporter.normalized_coordinates = None
+
+    project: ProjectDict = {
+        "id": "fake_project_id",
+        "title": "Fake Project Title",
+        "description": "Fake Project Description",
+        "organizationId": "fake_organization_id",
+        "inputType": "PDF",
+        "jsonInterface": {
+            "jobs": {
+                "OBJECT_DETECTION_JOB": {
+                    "content": {
+                        "categories": {
+                            "A": {"children": [], "color": "#472CED", "name": "A"},
+                            "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                        },
+                        "input": "radio",
+                    },
+                    "instruction": "Polygon",
+                    "mlTask": "OBJECT_DETECTION",
+                    "required": 1,
+                    "tools": ["polygon"],
+                    "isChild": False,
+                }
+            }
+        },
+    }
+    normalized_vertices = [
+        {"x": 0.1, "y": 0.1},
+        {"x": 0.3, "y": 0.05},
+        {"x": 0.4, "y": 0.3},
+        {"x": 0.25, "y": 0.45},
+        {"x": 0.08, "y": 0.3},
+    ]
+    # page 2 is landscape, so scaling against page 1 would give a different result
+    page_resolutions = [
+        {"pageNumber": 1, "height": 842, "width": 595, "rotation": 0},
+        {"pageNumber": 2, "height": 595, "width": 842, "rotation": 0},
+    ]
+    asset = {
+        "latestLabel": {
+            "author": {
+                "id": "user-feat1-1",
+                "email": "test+admin+1@kili-technology.com",
+                "firstname": "Feat1",
+                "lastname": "Test Admin",
+                "name": "Feat1 Test Admin",
+            },
+            "jsonResponse": {
+                "OBJECT_DETECTION_JOB": {
+                    "annotations": [
+                        {
+                            "children": {},
+                            "annotations": [
+                                {
+                                    "boundingPoly": [{"normalizedVertices": [normalized_vertices]}],
+                                    "pageNumberArray": [2],
+                                    "polys": [{"normalizedVertices": [normalized_vertices]}],
+                                }
+                            ],
+                            "categories": [{"confidence": 100, "name": "A"}],
+                            "content": "",
+                            "mid": "20230703112327217-43948",
+                            "type": "polygon",
+                        },
+                    ]
+                }
+            },
+            "createdAt": "2023-07-03T12:18:08.825Z",
+            "isLatestLabelForUser": True,
+            "labelType": "DEFAULT",
+            "modelName": None,
+        },
+        "pageResolutions": page_resolutions,
+        "content": "https://",
+        "jsonContent": "https://",
+    }
+
+    scaled_asset = convert_to_pixel_coords(asset, project)
+
+    expected_vertices = [
+        [{"x": vertex["x"] * 842, "y": vertex["y"] * 595} for vertex in normalized_vertices]
+    ]
+    scaled_page_annotation = scaled_asset["latestLabel"]["jsonResponse"]["OBJECT_DETECTION_JOB"][
+        "annotations"
+    ][0]["annotations"][0]
+
+    for key in ("polys", "boundingPoly"):
+        assert scaled_page_annotation[key] == [
+            {
+                "normalizedVertices": [normalized_vertices],
+                "vertices": expected_vertices,
+            }
+        ]
+    assert scaled_page_annotation["pageNumberArray"] == [2]
+    # the polygon keeps its five vertices, it is not reduced to a bounding rectangle
+    assert len(scaled_page_annotation["polys"][0]["vertices"][0]) == 5
+
+
 def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture):
     get_project_return_val = {
         "inputType": "PDF",

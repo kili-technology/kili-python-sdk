@@ -9,7 +9,11 @@ from kili.services.label_data_parsing.annotation import (
 )
 from kili.services.label_data_parsing.bounding_poly import BoundingPoly
 from kili.services.label_data_parsing.category import Category, CategoryList
-from kili.services.label_data_parsing.exceptions import FrameIndexError
+from kili.services.label_data_parsing.exceptions import (
+    AttributeNotCompatibleWithJobError,
+    FrameIndexError,
+    InvalidMutationError,
+)
 from kili.services.label_data_parsing.job_response import JobPayload
 from kili.services.label_data_parsing.json_response import ParsedJobs
 from kili.services.label_data_parsing.types import Project
@@ -1649,6 +1653,243 @@ def test_parsing_ner_in_pdf_2():
 
     assert annotation_1.annotations[0].polys == [{"normalizedVertices": [normalizedVertices] * 3}]
     assert annotation_1.annotations[0].page_number_array == [1, 1, 1]
+
+
+def _object_detection_in_pdf_json_interface(tools: list) -> dict:
+    return {
+        "JOB_0": {
+            "content": {
+                "categories": {
+                    "OBJECT_A": {"children": [], "name": "Object A", "color": "#733AFB"},
+                    "OBJECT_B": {"children": [], "name": "Object B", "color": "#3CD876"},
+                },
+                "input": "radio",
+            },
+            "instruction": "What objects can you identify?",
+            "isChild": False,
+            "tools": tools,
+            "mlTask": "OBJECT_DETECTION",
+            "models": {},
+            "isVisible": True,
+            "required": 1,
+        }
+    }
+
+
+POLYGON_VERTICES = [
+    {"x": 0.1, "y": 0.1},
+    {"x": 0.3, "y": 0.05},
+    {"x": 0.4, "y": 0.3},
+    {"x": 0.25, "y": 0.45},
+    {"x": 0.08, "y": 0.3},
+]
+
+RECTANGLE_VERTICES = [
+    {"x": 0.47, "y": 0.1},
+    {"x": 0.47, "y": 0.23},
+    {"x": 0.67, "y": 0.23},
+    {"x": 0.67, "y": 0.1},
+]
+
+
+def _object_detection_in_pdf_json_resp(
+    vertices: list, page_number: int, type_of_tool, nested: bool = True
+) -> dict:
+    """Build a PDF object detection response, with the geometry on the nested page annotation."""
+    normalized_vertices = [vertices] if nested else vertices
+    # boundingPoly and polys hold the same ring but must not share the same list object
+    annotation = {
+        "children": {},
+        "annotations": [
+            {
+                "boundingPoly": [{"normalizedVertices": deepcopy(normalized_vertices)}],
+                "pageNumberArray": [page_number],
+                "polys": [{"normalizedVertices": deepcopy(normalized_vertices)}],
+            }
+        ],
+        "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+        "content": "",
+        "mid": "20230703112327217-43948",
+    }
+    if type_of_tool is not None:
+        annotation["type"] = type_of_tool
+    return {"JOB_0": {"annotations": [annotation]}}
+
+
+def test_parsing_polygon_in_pdf():
+    json_interface = _object_detection_in_pdf_json_interface(["polygon"])
+    json_resp = _object_detection_in_pdf_json_resp(POLYGON_VERTICES, 2, "polygon")
+
+    project_info = Project(jsonInterface=json_interface, inputType="PDF")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    annotation = parsed_jobs["JOB_0"].annotations[0]
+    assert annotation.type == "polygon"
+    assert annotation.category.name == "OBJECT_A"
+
+    page_annotation = annotation.annotations[0]
+    assert page_annotation.polys == [{"normalizedVertices": [POLYGON_VERTICES]}]
+    assert page_annotation.page_number_array == [2]
+    assert page_annotation.bounding_poly[0].normalized_vertices == [POLYGON_VERTICES]
+
+    # reading the nested layer must not corrupt the label
+    assert parsed_jobs.to_dict() == json_resp
+
+
+def test_parsing_polygon_with_a_hole_in_pdf():
+    """A polygon can carry several rings: the outer contour and its holes."""
+    hole_vertices = [
+        {"x": 0.15, "y": 0.15},
+        {"x": 0.2, "y": 0.12},
+        {"x": 0.22, "y": 0.25},
+    ]
+    json_interface = _object_detection_in_pdf_json_interface(["polygon"])
+    json_resp = _object_detection_in_pdf_json_resp(POLYGON_VERTICES, 1, "polygon")
+    for key in ("boundingPoly", "polys"):
+        json_resp["JOB_0"]["annotations"][0]["annotations"][0][key][0]["normalizedVertices"].append(
+            hole_vertices
+        )
+
+    project_info = Project(jsonInterface=json_interface, inputType="PDF")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    page_annotation = parsed_jobs["JOB_0"].annotations[0].annotations[0]
+    assert page_annotation.bounding_poly[0].normalized_vertices == [
+        POLYGON_VERTICES,
+        hole_vertices,
+    ]
+    assert parsed_jobs.to_dict() == json_resp
+
+
+def test_parsing_rectangle_in_pdf_job_configured_with_the_polygon_tool():
+    """A rectangle drawn before the job was switched to the polygon tool must still parse.
+
+    It carries no "type" key, since PDF labels only emit one for the polygon, so it is not
+    rejected as a tool the job does not declare.
+    """
+    json_interface = _object_detection_in_pdf_json_interface(["polygon"])
+    json_resp = _object_detection_in_pdf_json_resp(RECTANGLE_VERTICES, 1, None)
+
+    project_info = Project(jsonInterface=json_interface, inputType="PDF")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    annotation = parsed_jobs["JOB_0"].annotations[0]
+    assert annotation.type == "rectangle"
+    assert annotation.annotations[0].bounding_poly[0].normalized_vertices == [RECTANGLE_VERTICES]
+    assert parsed_jobs.to_dict() == json_resp
+
+
+def test_parsing_polygon_in_pdf_keeps_vertices_outside_the_page():
+    """The SDK does not clip on import: clipping would silently rewrite user data."""
+    out_of_page_vertices = [
+        {"x": -0.2, "y": 0.1},
+        {"x": 0.3, "y": -0.05},
+        {"x": 1.4, "y": 0.3},
+    ]
+    json_interface = _object_detection_in_pdf_json_interface(["polygon"])
+    json_resp = _object_detection_in_pdf_json_resp(out_of_page_vertices, 1, "polygon")
+
+    project_info = Project(jsonInterface=json_interface, inputType="PDF")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    page_annotation = parsed_jobs["JOB_0"].annotations[0].annotations[0]
+    assert page_annotation.polys == [{"normalizedVertices": [out_of_page_vertices]}]
+    assert parsed_jobs.to_dict() == json_resp
+
+
+@pytest.mark.parametrize(
+    ("test_name", "type_of_tool", "nested"),
+    [
+        # labels stored as a raw jsonResponse before the polygon tool existed
+        ("legacy: no type, nested vertices", None, True),
+        # labels produced by the current backend
+        ("current: type, flat vertices", "rectangle", False),
+        ("no type, flat vertices", None, False),
+        ("type, nested vertices", "rectangle", True),
+    ],
+)
+def test_parsing_rectangle_in_pdf(test_name, type_of_tool, nested):
+    """Every rectangle shape found in production must parse and round-trip unchanged."""
+    json_interface = _object_detection_in_pdf_json_interface(["rectangle"])
+    json_resp = _object_detection_in_pdf_json_resp(
+        RECTANGLE_VERTICES, 1, type_of_tool, nested=nested
+    )
+
+    project_info = Project(jsonInterface=json_interface, inputType="PDF")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    annotation = parsed_jobs["JOB_0"].annotations[0]
+    # a PDF object detection annotation without a "type" key is a rectangle
+    assert annotation.type == "rectangle"
+
+    expected_vertices = [RECTANGLE_VERTICES] if nested else RECTANGLE_VERTICES
+    page_annotation = annotation.annotations[0]
+    assert page_annotation.polys == [{"normalizedVertices": expected_vertices}]
+    assert page_annotation.page_number_array == [1]
+    assert page_annotation.bounding_poly[0].normalized_vertices == expected_vertices
+
+    assert parsed_jobs.to_dict() == json_resp
+
+
+def test_parsing_polygon_in_pdf_job_without_the_polygon_tool_raises():
+    json_interface = _object_detection_in_pdf_json_interface(["rectangle"])
+    json_resp = _object_detection_in_pdf_json_resp(POLYGON_VERTICES, 1, "polygon")
+
+    project_info = Project(jsonInterface=json_interface, inputType="PDF")  # type: ignore
+
+    with pytest.raises(InvalidMutationError):
+        ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+
+def test_parsing_polygon_in_image_still_rejects_pdf_attributes():
+    """The page level attributes are PDF only: an image polygon must keep rejecting them."""
+    json_interface = _object_detection_in_pdf_json_interface(["polygon"])
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": POLYGON_VERTICES}],
+                    "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                    "mid": "20230703112327217-43948",
+                    "type": "polygon",
+                }
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface, inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    annotation = parsed_jobs["JOB_0"].annotations[0]
+    assert annotation.bounding_poly[0].normalized_vertices == POLYGON_VERTICES
+
+    for attribute_name in ("annotations", "polys", "page_number_array"):
+        with pytest.raises(AttributeNotCompatibleWithJobError):
+            getattr(annotation, attribute_name)
+
+
+def test_parsing_object_detection_in_image_without_type_still_raises():
+    """The rectangle fallback is PDF only: an image annotation must keep raising."""
+    json_interface = _object_detection_in_pdf_json_interface(["rectangle"])
+    json_resp = {
+        "JOB_0": {
+            "annotations": [
+                {
+                    "children": {},
+                    "boundingPoly": [{"normalizedVertices": RECTANGLE_VERTICES}],
+                    "categories": [{"confidence": 100, "name": "OBJECT_A"}],
+                    "mid": "20230703112327217-43948",
+                }
+            ]
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface, inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
+
+    with pytest.raises(KeyError):
+        _ = parsed_jobs["JOB_0"].annotations[0].type
 
 
 def test_pose_estimation_1():
