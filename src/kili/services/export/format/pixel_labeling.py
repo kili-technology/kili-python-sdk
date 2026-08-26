@@ -42,21 +42,35 @@ def _scale_vertex(vertex: dict, width: int, height: int) -> dict:
     return {**vertex, "x": vertex["x"] * width, "y": vertex["y"] * height}
 
 
+def _scale_ring(ring: dict, width: int, height: int) -> dict:
+    return {
+        **ring,
+        "vertices": [_scale_vertex(vertex, width, height) for vertex in ring["normalizedVertices"]],
+    }
+
+
+def _scale_bounding_poly(bounding_poly: list, width: int, height: int) -> list:
+    """Scales a `boundingPoly`, whichever of its two shapes it carries.
+
+    A geospatial semantic annotation holds every part of one object: its `boundingPoly` is
+    a list of polygon groups, each group a list of rings. Boxes and polygons are a flat
+    list of rings. Decided per element rather than from the first one, so a mixed list
+    cannot silently take the wrong branch.
+    """
+    return [
+        [_scale_ring(ring, width, height) for ring in group]
+        if isinstance(group, list)
+        else _scale_ring(group, width, height)
+        for group in bounding_poly
+    ]
+
+
 def _scale_annotation(annotation: dict, width: int, height: int) -> None:
     """Adds the pixel coordinates beside the normalized ones, in place."""
     # Bounding boxes, polygons, segmentation: `vertices` beside `normalizedVertices`.
     bounding_poly = annotation.get("boundingPoly")
     if bounding_poly is not None:
-        annotation["boundingPoly"] = [
-            {
-                **norm_vertices,
-                "vertices": [
-                    _scale_vertex(vertex, width, height)
-                    for vertex in norm_vertices["normalizedVertices"]
-                ],
-            }
-            for norm_vertices in bounding_poly
-        ]
+        annotation["boundingPoly"] = _scale_bounding_poly(bounding_poly, width, height)
 
     point = annotation.get("point")
     if point is not None:

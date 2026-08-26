@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from kili.services.export.format.pixel_labeling import (
     convert_to_pixel_coords,
     get_asset_pixel_dimensions,
@@ -96,3 +98,64 @@ def test_no_pixel_coordinates_are_added_without_dimensions():
     annotation = asset["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]
     assert annotation["point"] == {"x": 0.1, "y": 0.2}
     assert "pointPixels" not in annotation
+
+
+def test_semantic_bounding_poly_keeps_its_polygon_groups():
+    """Geospatial semantic holds every part of one object, so its boundingPoly is nested."""
+    asset = _asset_with_label(
+        {
+            "JOB": {
+                "annotations": [
+                    {
+                        "type": "semantic",
+                        "boundingPoly": [
+                            [
+                                {"normalizedVertices": [{"x": 0.1, "y": 0.2}]},
+                                {"normalizedVertices": [{"x": 0.3, "y": 0.4}]},
+                            ],
+                            [{"normalizedVertices": [{"x": 0.5, "y": 0.6}]}],
+                        ],
+                    }
+                ]
+            }
+        }
+    )
+
+    convert_to_pixel_coords(asset)
+
+    bounding_poly = asset["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]["boundingPoly"]
+    assert len(bounding_poly) == 2
+    assert len(bounding_poly[0]) == 2
+    # The exterior ring and its hole keep their grouping, and both carry pixel coordinates.
+    assert bounding_poly[0][0]["normalizedVertices"] == [{"x": 0.1, "y": 0.2}]
+    assert bounding_poly[0][0]["vertices"] == [{"x": WIDTH * 0.1, "y": HEIGHT * 0.2}]
+    assert bounding_poly[0][1]["vertices"] == [{"x": WIDTH * 0.3, "y": HEIGHT * 0.4}]
+    assert bounding_poly[1][0]["vertices"] == [{"x": WIDTH * 0.5, "y": HEIGHT * 0.6}]
+
+
+def test_conversion_is_idempotent():
+    """Labels are collected from three overlapping lists, so a label can be reached twice."""
+    label = {
+        "jsonResponse": {
+            "JOB": {
+                "annotations": [
+                    {"boundingPoly": [{"normalizedVertices": [{"x": 0.1, "y": 0.2}]}]},
+                    {"boundingPoly": [[{"normalizedVertices": [{"x": 0.3, "y": 0.4}]}]]},
+                    {"point": {"x": 0.5, "y": 0.6}},
+                    {"polyline": [{"x": 0.7, "y": 0.8}]},
+                ]
+            }
+        }
+    }
+    asset = {
+        "geospatialExportMetadata": [{"labelingCRS": "PIXEL", "width": WIDTH, "height": HEIGHT}],
+        "latestLabel": label,
+        "labels": [label],
+        "latestLabels": [label],
+    }
+
+    convert_to_pixel_coords(asset)
+    once = deepcopy(asset["latestLabel"]["jsonResponse"])
+    convert_to_pixel_coords(asset)
+
+    assert asset["latestLabel"]["jsonResponse"] == once
