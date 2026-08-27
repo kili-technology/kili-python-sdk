@@ -62,7 +62,9 @@ class ProjectClientMethods(BaseClientMethods):
             pixel_labeling: `GEOSPATIAL` projects only. Label the images in their own
                 sensor pixel grid, with no reprojection: annotations are stored and
                 exported in pixel coordinates, and geographic coordinates come from your
-                pixel-to-geo conversion service. It can only be set at creation time.
+                pixel-to-geo conversion service. It can only be set at creation time, and
+                cannot be combined with `project_id`: a copy keeps the labeling mode of the
+                project it is copied from.
             from_demo_project: Currently, one of:
 
                 - `DEMO_COMPUTER_VISION_TUTORIAL`

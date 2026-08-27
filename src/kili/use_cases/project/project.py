@@ -25,6 +25,14 @@ from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 from kili.use_cases.base import BaseUseCases
 
+PIXEL_LABELING_CRS_CODE = "PIXEL"
+
+
+def _labels_in_image_pixels(project: dict) -> bool:
+    """Whether a project labels in the image's own sensor pixel grid."""
+    geospatial_settings = project.get("geospatialSettings") or {}
+    return geospatial_settings.get("labelingCRSCode") == PIXEL_LABELING_CRS_CODE
+
 
 class ProjectUseCases(BaseUseCases):
     """Project use cases."""
@@ -42,6 +50,14 @@ class ProjectUseCases(BaseUseCases):
     ) -> ProjectId:
         """Create or copy a project if project_id is set."""
         if project_id is not None:
+            # A copy keeps the labeling mode of the project it is copied from, which the
+            # caller cannot override: the mode is settable at creation only, so a copy in
+            # the wrong mode could never be repaired afterwards.
+            if pixel_labeling:
+                raise ValueError(
+                    "`pixel_labeling` cannot be set when copying a project: the copy keeps"
+                    " the labeling mode of the project it is copied from."
+                )
             new_project_id = self._copy_project(
                 project_id,
                 title=title,
@@ -88,7 +104,8 @@ class ProjectUseCases(BaseUseCases):
     ) -> ProjectId:
         """Create a project from an existing one, carrying over its instructions and tags."""
         project_copied = self._kili_api_gateway.get_project(
-            project_id=project_id, fields=["jsonInterface", "instructions", "inputType"]
+            project_id=project_id,
+            fields=["jsonInterface", "instructions", "inputType", "geospatialSettings"],
         )
         project_tag = self._kili_api_gateway.list_tags_by_project(
             project_id=project_id, fields=["id"]
@@ -100,6 +117,7 @@ class ProjectUseCases(BaseUseCases):
             description=description,
             compliance_tags=compliance_tags,
             from_demo_project=from_demo_project,
+            pixel_labeling=_labels_in_image_pixels(project_copied),
         )
         if project_copied["instructions"]:
             self.update_properties_in_project(
