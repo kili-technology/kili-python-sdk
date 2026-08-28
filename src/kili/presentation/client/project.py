@@ -63,8 +63,8 @@ class ProjectClientMethods(BaseClientMethods):
                 sensor pixel grid, with no reprojection: annotations are stored and
                 exported in pixel coordinates, and geographic coordinates come from your
                 pixel-to-geo conversion service. It can only be set at creation time, and
-                cannot be combined with `project_id`: a copy keeps the labeling mode of the
-                project it is copied from.
+                cannot be combined with `project_id` — a copy keeps the labeling mode of
+                the project it is copied from — nor with `from_demo_project`.
             from_demo_project: Currently, one of:
 
                 - `DEMO_COMPUTER_VISION_TUTORIAL`
@@ -95,9 +95,6 @@ class ProjectClientMethods(BaseClientMethods):
             For more detailed examples on how to create projects,
                 see [the recipe](https://docs.kili-technology.com/recipes/creating-a-project).
         """
-        if pixel_labeling and input_type is not None and input_type != "GEOSPATIAL":
-            raise ValueError("`pixel_labeling` is only available for `GEOSPATIAL` projects.")
-
         project_id = ProjectUseCases(self.kili_api_gateway).create_project(
             pixel_labeling=pixel_labeling,
             input_type=input_type,

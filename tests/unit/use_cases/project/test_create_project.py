@@ -72,6 +72,35 @@ def test_asking_for_pixel_labeling_on_a_copy_is_refused(use_cases, mock_gateway)
     mock_gateway.create_project.assert_not_called()
 
 
+def test_asking_for_pixel_labeling_on_a_demo_project_is_refused(use_cases, mock_gateway):
+    """`input_type` is None there too, so the mode used to reach the wire on a demo project."""
+    with pytest.raises(ValueError, match="cannot be set when creating a project from a demo"):
+        use_cases.create_project(
+            title="a demo project",
+            description="",
+            compliance_tags=None,
+            from_demo_project="DEMO_COMPUTER_VISION_TUTORIAL",
+            pixel_labeling=True,
+        )
+
+    mock_gateway.create_project.assert_not_called()
+
+
+def test_asking_for_pixel_labeling_on_a_non_geospatial_project_is_refused(use_cases, mock_gateway):
+    with pytest.raises(ValueError, match="only available for `GEOSPATIAL`"):
+        use_cases.create_project(
+            title="an image project",
+            description="",
+            compliance_tags=None,
+            from_demo_project=None,
+            input_type="IMAGE",
+            json_interface={"jobs": {}},
+            pixel_labeling=True,
+        )
+
+    mock_gateway.create_project.assert_not_called()
+
+
 def test_creating_a_project_forwards_the_mode(use_cases, mock_gateway):
     use_cases.create_project(
         title="a project",

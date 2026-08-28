@@ -34,6 +34,31 @@ def _labels_in_image_pixels(project: dict) -> bool:
     return geospatial_settings.get("labelingCRSCode") == PIXEL_LABELING_CRS_CODE
 
 
+def _validate_pixel_labeling(
+    project_id: Optional[ProjectId],
+    from_demo_project: Optional[DemoProjectType],
+    input_type: Optional[InputType],
+) -> None:
+    """Refuses every creation the pixel labeling mode cannot apply to.
+
+    Checked exhaustively, and on the single path every caller goes through: the mode is
+    settable at creation only, so a project silently created without it could never be
+    repaired afterwards.
+    """
+    if project_id is not None:
+        raise ValueError(
+            "`pixel_labeling` cannot be set when copying a project: the copy keeps"
+            " the labeling mode of the project it is copied from."
+        )
+    if from_demo_project is not None:
+        raise ValueError(
+            "`pixel_labeling` cannot be set when creating a project from a demo project:"
+            " none of them is geospatial."
+        )
+    if input_type != "GEOSPATIAL":
+        raise ValueError("`pixel_labeling` is only available for `GEOSPATIAL` projects.")
+
+
 class ProjectUseCases(BaseUseCases):
     """Project use cases."""
 
@@ -49,15 +74,10 @@ class ProjectUseCases(BaseUseCases):
         pixel_labeling: bool = False,
     ) -> ProjectId:
         """Create or copy a project if project_id is set."""
+        if pixel_labeling:
+            _validate_pixel_labeling(project_id, from_demo_project, input_type)
+
         if project_id is not None:
-            # A copy keeps the labeling mode of the project it is copied from, which the
-            # caller cannot override: the mode is settable at creation only, so a copy in
-            # the wrong mode could never be repaired afterwards.
-            if pixel_labeling:
-                raise ValueError(
-                    "`pixel_labeling` cannot be set when copying a project: the copy keeps"
-                    " the labeling mode of the project it is copied from."
-                )
             new_project_id = self._copy_project(
                 project_id,
                 title=title,
