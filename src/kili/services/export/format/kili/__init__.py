@@ -8,6 +8,10 @@ from kili_formats.media.video import cut_video
 from kili_formats.types import Job, ProjectDict
 
 from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.pixel_labeling import (
+    convert_to_pixel_coords as convert_to_pixel_coords_for_pixel_labeling,
+)
+from kili.services.export.format.pixel_labeling import is_pixel_labeling_project
 
 
 class KiliExporter(AbstractExporter):
@@ -106,7 +110,13 @@ class KiliExporter(AbstractExporter):
     def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
         """Extract formatted annotations from labels and save the json in the buckets."""
         clean_assets = self.preprocess_assets(assets)
-        if self.project["inputType"] in ["IMAGE", "PDF", "VIDEO"]:
+        if is_pixel_labeling_project(self.project):
+            # Labels were stored in the image's own pixel grid, normalized as for an
+            # image asset: unnormalize them rather than leaving geographic coordinates.
+            for i, asset in enumerate(clean_assets):
+                clean_assets[i] = convert_to_pixel_coords_for_pixel_labeling(asset)
+                clean_json_response(clean_assets[i])
+        elif self.project["inputType"] in ["IMAGE", "PDF", "VIDEO"]:
             for i, asset in enumerate(clean_assets):
                 clean_assets[i] = convert_to_pixel_coords(asset, self.project)
                 clean_json_response(asset)

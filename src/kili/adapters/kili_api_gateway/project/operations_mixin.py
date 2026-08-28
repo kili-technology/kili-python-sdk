@@ -46,6 +46,7 @@ class ProjectOperationMixin(BaseOperationMixin):
         description: str,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
         from_demo_project: Optional[DemoProjectType],
+        pixel_labeling: bool = False,
     ) -> ProjectId:
         """Create a project."""
         variables = {
@@ -60,6 +61,9 @@ class ProjectOperationMixin(BaseOperationMixin):
         # compliance tags are only available for Kili app > 2.138
         if compliance_tags:
             variables["data"]["complianceTags"] = compliance_tags
+        # Omitted rather than sent as false: older deployments do not know the field.
+        if pixel_labeling:
+            variables["data"]["pixelLabeling"] = True
 
         result = self.graphql_client.execute(GQL_CREATE_PROJECT, variables)
         return ProjectId(result["data"]["id"])
