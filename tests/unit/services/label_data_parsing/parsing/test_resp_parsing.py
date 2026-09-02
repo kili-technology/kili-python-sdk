@@ -1692,19 +1692,41 @@ RECTANGLE_VERTICES = [
 ]
 
 
+def _enclosing_rectangle(vertices: list) -> list:
+    """The 4-vertex box the backend derives for boundingPoly, in the vertex order it writes.
+
+    For a rectangle this is the shape itself, which is why the two coincide there.
+    """
+    xs = [vertex["x"] for vertex in vertices]
+    ys = [vertex["y"] for vertex in vertices]
+    x_min, x_max, y_min, y_max = min(xs), max(xs), min(ys), max(ys)
+    return [
+        {"x": x_min, "y": y_min},
+        {"x": x_min, "y": y_max},
+        {"x": x_max, "y": y_max},
+        {"x": x_max, "y": y_min},
+    ]
+
+
 def _object_detection_in_pdf_json_resp(
     vertices: list, page_number: int, type_of_tool, nested: bool = True
 ) -> dict:
-    """Build a PDF object detection response, with the geometry on the nested page annotation."""
-    normalized_vertices = [vertices] if nested else vertices
-    # boundingPoly and polys hold the same ring but must not share the same list object
+    """Build a PDF object detection response, with the geometry on the nested page annotation.
+
+    Only polys carries the shape's own ring. boundingPoly is the enclosing rectangle the backend
+    recomputes, so a polygon exports 4 vertices there whatever its vertex count -- reading it
+    back as the polygon would silently hand out a box.
+    """
+    polys_vertices = [vertices] if nested else vertices
+    enclosing_rectangle = _enclosing_rectangle(vertices)
+    bounding_poly_vertices = [enclosing_rectangle] if nested else enclosing_rectangle
     annotation = {
         "children": {},
         "annotations": [
             {
-                "boundingPoly": [{"normalizedVertices": deepcopy(normalized_vertices)}],
+                "boundingPoly": [{"normalizedVertices": deepcopy(bounding_poly_vertices)}],
                 "pageNumberArray": [page_number],
-                "polys": [{"normalizedVertices": deepcopy(normalized_vertices)}],
+                "polys": [{"normalizedVertices": deepcopy(polys_vertices)}],
             }
         ],
         "categories": [{"confidence": 100, "name": "OBJECT_A"}],
@@ -1730,7 +1752,10 @@ def test_parsing_polygon_in_pdf():
     page_annotation = annotation.annotations[0]
     assert page_annotation.polys == [{"normalizedVertices": [POLYGON_VERTICES]}]
     assert page_annotation.page_number_array == [2]
-    assert page_annotation.bounding_poly[0].normalized_vertices == [POLYGON_VERTICES]
+    # the ring lives in polys; boundingPoly is the derived 4-vertex box, not the polygon
+    assert page_annotation.bounding_poly[0].normalized_vertices == [
+        _enclosing_rectangle(POLYGON_VERTICES)
+    ]
 
     # reading the nested layer must not corrupt the label
     assert parsed_jobs.to_dict() == json_resp
@@ -1745,18 +1770,20 @@ def test_parsing_polygon_with_a_hole_in_pdf():
     ]
     json_interface = _object_detection_in_pdf_json_interface(["polygon"])
     json_resp = _object_detection_in_pdf_json_resp(POLYGON_VERTICES, 1, "polygon")
-    for key in ("boundingPoly", "polys"):
-        json_resp["JOB_0"]["annotations"][0]["annotations"][0][key][0]["normalizedVertices"].append(
-            hole_vertices
-        )
+    json_resp["JOB_0"]["annotations"][0]["annotations"][0]["polys"][0][
+        "normalizedVertices"
+    ].append(hole_vertices)
 
     project_info = Project(jsonInterface=json_interface, inputType="PDF")  # type: ignore
     parsed_jobs = ParsedJobs(project_info=project_info, json_response=deepcopy(json_resp))
 
     page_annotation = parsed_jobs["JOB_0"].annotations[0].annotations[0]
+    assert page_annotation.polys == [
+        {"normalizedVertices": [POLYGON_VERTICES, hole_vertices]}
+    ]
+    # the hole does not widen the enclosing box, which stays a single 4-vertex ring
     assert page_annotation.bounding_poly[0].normalized_vertices == [
-        POLYGON_VERTICES,
-        hole_vertices,
+        _enclosing_rectangle(POLYGON_VERTICES)
     ]
     assert parsed_jobs.to_dict() == json_resp
 
