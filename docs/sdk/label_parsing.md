@@ -150,6 +150,45 @@ label.jobs["BBOX_JOB"].annotations.content
 label.jobs["BBOX_JOB"].bounding_poly_annotations.content
 ```
 
+#### Object detection in PDFs
+
+In a PDF project, the geometry of a bounding box or of a polygon is not on the annotation itself but one level deeper, in a nested `.annotations` list: a PDF page has its own coordinate system, so the vertices are normalized to the page named by `.page_number_array`.
+
+##### `.type`
+
+Returns the tool used to draw the annotation, `"rectangle"` or `"polygon"`.
+
+```python
+label.jobs["DETECTION_JOB"].annotations[0].type
+```
+
+PDF labels only carry the tool when it is not the rectangle, so an annotation without it is reported as a `"rectangle"`. This is a read-time default only: it is never written back, and exporting a label leaves it unchanged.
+
+##### `.annotations`
+
+Returns the page-level positions of the annotation. A polygon always has exactly one, since a polygon lives on a single page.
+
+```python
+label.jobs["DETECTION_JOB"].annotations[0].annotations[0]
+```
+
+##### `.polys` and `.bounding_poly`
+
+Return the vertices of the shape. For a polygon both hold the same ring of `N >= 3` vertices.
+
+```python
+label.jobs["DETECTION_JOB"].annotations[0].annotations[0].polys
+label.jobs["DETECTION_JOB"].annotations[0].annotations[0].bounding_poly[0].normalized_vertices
+```
+
+##### `.page_number_array`
+
+Returns the page the annotation is drawn on, 1-indexed.
+
+```python
+label.jobs["DETECTION_JOB"].annotations[0].annotations[0].page_number_array
+```
+
 #### Point detection
 
 ##### `.point`

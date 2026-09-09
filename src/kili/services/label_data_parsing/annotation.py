@@ -5,6 +5,7 @@ from collections import defaultdict
 from collections.abc import Iterator, Sequence
 from typing import Literal, Optional, Union
 
+from kili_formats.types import Job
 from typeguard import typechecked
 
 from kili.services.label_data_parsing import category as category_module
@@ -15,6 +16,11 @@ from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
 from .types import NormalizedVertex, Project
 from .utils import get_children_job_names
+
+
+def _is_pdf_object_detection(project_info: Project, job_interface: Job) -> bool:
+    """Return whether the annotation belongs to an object detection job of a PDF project."""
+    return project_info["inputType"] == "PDF" and job_interface["mlTask"] == "OBJECT_DETECTION"
 
 
 class _BaseAnnotation:
@@ -73,8 +79,14 @@ class _BaseAnnotation:
         ret = {
             k: v
             for k, v in self._json_data.items()
-            if k not in ("categories", "children", "boundingPoly", "points")
+            if k not in ("categories", "children", "boundingPoly", "points", "annotations")
         }
+        if "annotations" in self._json_data:
+            ret["annotations"] = (
+                self._json_data["annotations"]
+                if isinstance(self._json_data["annotations"], list)
+                else self._json_data["annotations"].as_list()
+            )
         if "categories" in self._json_data:
             ret["categories"] = (
                 self._json_data["categories"]
@@ -224,7 +236,18 @@ class _BaseAnnotationWithTool(_BaseAnnotation):
     def type(
         self,
     ) -> Literal["rectangle", "polygon", "semantic", "marker", "vector", "polyline", "pose"]:
-        """Returns the tool of the annotation."""
+        """Returns the tool of the annotation.
+
+        A PDF object detection annotation only carries a "type" key when the tool is not the
+        rectangle: labels produced before the polygon tool existed, and labels produced by the
+        current backend, both omit it for rectangles. The absence of the key is therefore read
+        as "rectangle" instead of raising. This never reaches an export, because serialization
+        reads the raw json data, which this property does not write to.
+        """
+        if "type" not in self._json_data and _is_pdf_object_detection(
+            self._project_info, self._job_interface
+        ):
+            return "rectangle"
         return self._json_data["type"]
 
 
@@ -283,39 +306,79 @@ class _BaseAnnotationWithBoundingPoly(_BaseAnnotation):
         return self._json_data["boundingPoly"]
 
 
-class EntityInPdfAnnotation(_BaseNamedEntityRecognitionAnnotation, _BaseAnnotationWithBoundingPoly):
+class _BasePdfAnnotation(_BaseAnnotationWithBoundingPoly):
+    """Base class for the page-level geometry of a PDF annotation.
+
+    In a PDF project the geometry is not on the annotation itself but one level deeper, in a
+    nested "annotations" list, because a PDF page has its own coordinate system. This layout is
+    shared by named entities recognition and object detection.
+
+    The compatibility machinery of `Annotation` matches on the mlTask and the tool, neither of
+    which distinguishes a PDF project from an image one. The input type is therefore checked
+    here, so that an image polygon keeps rejecting `.polys` the way it does today.
+    """
+
+    def _assert_input_type_is_pdf(self, attribute_name: str) -> None:
+        if self._project_info["inputType"] != "PDF":
+            raise AttributeNotCompatibleWithJobError(attribute_name)
+
+    @property
+    def annotations(self) -> "AnnotationList":
+        """Return the list of positions of the annotation.
+
+        For NER, when an annotation spans multiple lines, there will be multiple polys and a single boundingPoly.
+        """
+        self._assert_input_type_is_pdf("annotations")
+        if not isinstance(self._json_data["annotations"], AnnotationList):
+            self._json_data["annotations"] = AnnotationList(
+                job_name=self._job_name,
+                project_info=self._project_info,
+                annotations_list=self._json_data["annotations"],
+            )
+        return self._json_data["annotations"]
+
+    @property
+    def polys(
+        self,
+    ) -> list[dict[Literal["normalizedVertices"], list[list[NormalizedVertex]]]]:
+        """Return the coordinates of the shapes in the annotation.
+
+        An annotation can have several shapes (for example if a NER annotation covers more than
+        one line). A polygon always has exactly one.
+        """
+        self._assert_input_type_is_pdf("polys")
+        return self._json_data["polys"]
+
+    @property
+    def page_number_array(self) -> list[int]:
+        """Return the pages where the annotation appears."""
+        self._assert_input_type_is_pdf("page_number_array")
+        return self._json_data["pageNumberArray"]
+
+
+class EntityInPdfAnnotation(_BaseNamedEntityRecognitionAnnotation, _BasePdfAnnotation):
     """Class for parsing the "annotations" key of a job response for named entities recognition in PDFs."""
 
     @staticmethod
     def _get_compatible_ml_task() -> Literal["NAMED_ENTITIES_RECOGNITION"]:
         return "NAMED_ENTITIES_RECOGNITION"
 
-    @property
-    def annotations(self) -> "AnnotationList":
-        """Return the tist of positions of the annotation.
 
-        For NER, when an annotation spans multiple lines, there will be multiple polys and a single boundingPoly.
-        """
-        return AnnotationList(
-            job_name=self._job_name,
-            project_info=self._project_info,
-            annotations_list=self._json_data["annotations"],
-        )
+class PdfObjectDetectionAnnotation(_BasePdfAnnotation):
+    """Class for parsing the "annotations" key of a job response for object detection in PDFs.
 
-    @property
-    def polys(
-        self,
-    ) -> list[dict[Literal["normalizedVertices"], list[list[NormalizedVertex]]]]:
-        """Return the coordinates from the different rectangles in the annotation.
+    Registers the page-level geometry attributes for object detection jobs, which is what makes
+    a PDF bounding box or polygon reachable through `.annotations`, `.polys` and
+    `.page_number_array`.
+    """
 
-        An annotation can have several rectangles (for example if the annotation covers more than one line).
-        """
-        return self._json_data["polys"]
+    @staticmethod
+    def _get_compatible_ml_task() -> Literal["OBJECT_DETECTION"]:
+        return "OBJECT_DETECTION"
 
-    @property
-    def page_number_array(self) -> list[int]:
-        """Return the pages where the annotation appears."""
-        return self._json_data["pageNumberArray"]
+    @staticmethod
+    def _get_compatible_type_of_tools() -> Sequence[Literal["rectangle", "polygon", "semantic"]]:
+        return ("rectangle", "polygon", "semantic")
 
 
 class _Base2DAnnotation(_BaseAnnotationWithTool, _BaseAnnotationWithBoundingPoly):
@@ -344,7 +407,7 @@ class _Base2DAnnotation(_BaseAnnotationWithTool, _BaseAnnotationWithBoundingPoly
                 bounding_poly_list=[],
                 project_info=self._project_info,
                 job_name=self._job_name,
-                type_of_tool=self._json_data["type"],
+                type_of_tool=self._json_data.get("type"),
             )
             if "boundingPoly" not in self._json_data
             else self._json_data["boundingPoly"]
@@ -526,6 +589,7 @@ class Annotation(
     PointAnnotation,
     PolyLineAnnotation,
     EntityInPdfAnnotation,
+    PdfObjectDetectionAnnotation,
     BoundingPolyAnnotation,
     VideoAnnotation,
     PoseEstimationAnnotation,
