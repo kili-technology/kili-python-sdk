@@ -1924,6 +1924,10 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     ) -> str:
         """Skip an asset.
 
+        An asset used for consensus cannot be skipped: several labels are expected on it, and
+        skipping abandons the step for every labeler at once, so the call raises on such an asset.
+        The rule is per asset — the other assets of a consensus project skip as they always did.
+
         Args:
             asset_id: ID of the asset you want to skip.
             project_id: The project ID.
@@ -2380,6 +2384,13 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
 
         Raises:
             ValueError: If neither asset_id nor external_id is provided.
+            GraphQLError: If a server-side precondition is not met. The server accepts the
+                call only on workflow V2/V3 projects, while the asset sits on a labeling
+                (DEFAULT) step whose status is still TO_DO, when consensus is enabled on that
+                step, and when the caller is an admin or a team manager. Note that the TO_DO
+                window closes as soon as any labeler starts working on the asset (their first
+                autosave, not their submission), so the real precondition is that no labeler
+                has opened and started the asset yet.
 
         Examples:
             >>> # Activate consensus on an asset using asset_id
