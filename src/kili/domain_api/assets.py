@@ -1924,6 +1924,10 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     ) -> str:
         """Skip an asset.
 
+        An asset used for consensus cannot be skipped: several labels are expected on it, and
+        skipping abandons the step for every labeler at once, so the call raises on such an asset.
+        The rule is per asset — the other assets of a consensus project skip as they always did.
+
         Args:
             asset_id: ID of the asset you want to skip.
             project_id: The project ID.

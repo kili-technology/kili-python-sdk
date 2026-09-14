@@ -886,6 +886,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     ) -> str:
         """Skip or unskip an asset.
 
+        An asset used for consensus cannot be skipped: several labels are expected on it, and
+        skipping abandons the step for every labeler at once, so skipping such an asset raises.
+        The rule is per asset — the other assets of a consensus project skip as they always did —
+        and unskipping is never restricted.
+
         Args:
             action: The action you want to do. Either skip or unskip.
             asset_id: ID of the asset you want to skip or unskip.
