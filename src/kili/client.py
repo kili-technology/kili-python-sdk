@@ -11,6 +11,7 @@ from typing import Optional, TypedDict, Union
 from kili.adapters.authentification import is_api_key_valid
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
+from kili.adapters.pypi import warn_if_sdk_version_is_outdated
 from kili.core.config_loader import load_config_from_file
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.entrypoints.mutations.asset import MutationsAsset
@@ -214,3 +215,4 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         if not skip_checks:
             api_key_use_cases = ApiKeyUseCases(self.kili_api_gateway)
             api_key_use_cases.check_expiry_of_key_is_close(api_key)
+            warn_if_sdk_version_is_outdated(self.http_client)
