@@ -71,7 +71,7 @@ dev = [
   "pymdown-extensions",
   # linting
   "pre-commit >= 3.3.0, < 4.0.0",
-  "pylint == 4.0.3",
+  "pylint ==4.0.8",
   "pyright ==1.1.407",
   # notebooks tests
   "nbformat",
