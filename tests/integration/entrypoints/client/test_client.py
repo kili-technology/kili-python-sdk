@@ -144,6 +144,38 @@ def test_given_an_api_key_away_to_expiration_when_I_check_expiry_of_key_is_not_c
 
 
 @patch.dict(os.environ, {"KILI_API_KEY": "fake_key"})
+def test_given_an_outdated_sdk_version_when_initializing_kili_client_then_it_outputs_a_warning(
+    mocker: pytest_mock.MockerFixture,
+):
+    # Given
+    mocker.patch("kili.client.is_api_key_valid", return_value=True)
+    mocker.patch.object(GraphQLClient, "_initizalize_graphql_client")
+    mocker.patch.object(ApiKeyUseCases, "check_expiry_of_key_is_close")
+    mocker.patch("kili.adapters.pypi.__version__", "1.0.0")
+    mocker.patch("kili.adapters.pypi.get_latest_sdk_version_from_pypi", return_value="2.0.0")
+
+    # Then
+    with pytest.warns(UserWarning, match="You are using Kili SDK version 1.0.0"):
+        # When
+        _ = Kili()
+
+
+@patch.dict(os.environ, {"KILI_API_KEY": "fake_key", "KILI_SDK_SKIP_CHECKS": "True"})
+def test_given_skipped_checks_when_initializing_kili_client_then_it_does_not_check_the_sdk_version(
+    mocker: pytest_mock.MockerFixture, _no_pypi_call
+):
+    # Given
+    mocker.patch("kili.client.is_api_key_valid", return_value=True)
+    mocker.patch.object(GraphQLClient, "_initizalize_graphql_client")
+
+    # When
+    _ = Kili()
+
+    # Then
+    _no_pypi_call.assert_not_called()
+
+
+@patch.dict(os.environ, {"KILI_API_KEY": "fake_key"})
 def test_complexity_increases_with_calls(
     mocker: pytest_mock.MockerFixture,
 ):
