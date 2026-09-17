@@ -2148,9 +2148,9 @@ More information about how to use a cloud storage integration in a project can b
 
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/cloud_storage.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"__init__"</span><span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CloudStorageClientMethods</span><span class="p">(</span><span class="n">BaseClientMethods</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Methods attached to the Kili client, to run actions on cloud storage.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Methods attached to the Kili client, to run actions on cloud storage."""</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cloud_storage_connections</span><span class="p">(</span>
@@ -2159,12 +2159,12 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isJsonProcessingEnabled&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;lastCheck&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;projectId&quot;</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">,</span>
+            <span class="s2">"isJsonProcessingEnabled"</span><span class="p">,</span>
+            <span class="s2">"lastCheck"</span><span class="p">,</span>
+            <span class="s2">"numberOfAssets"</span><span class="p">,</span>
+            <span class="s2">"selectedFolders"</span><span class="p">,</span>
+            <span class="s2">"projectId"</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -2181,12 +2181,12 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isJsonProcessingEnabled&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;lastCheck&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;projectId&quot;</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">,</span>
+            <span class="s2">"isJsonProcessingEnabled"</span><span class="p">,</span>
+            <span class="s2">"lastCheck"</span><span class="p">,</span>
+            <span class="s2">"numberOfAssets"</span><span class="p">,</span>
+            <span class="s2">"selectedFolders"</span><span class="p">,</span>
+            <span class="s2">"projectId"</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -2203,12 +2203,12 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isJsonProcessingEnabled&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;lastCheck&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;projectId&quot;</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">,</span>
+            <span class="s2">"isJsonProcessingEnabled"</span><span class="p">,</span>
+            <span class="s2">"lastCheck"</span><span class="p">,</span>
+            <span class="s2">"numberOfAssets"</span><span class="p">,</span>
+            <span class="s2">"selectedFolders"</span><span class="p">,</span>
+            <span class="s2">"projectId"</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -2217,7 +2217,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of cloud storage connections that match a set of criteria.</span>
+<span class="w">        </span><span class="sd">"""Get a generator or a list of cloud storage connections that match a set of criteria.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            cloud_storage_connection_id: ID of the cloud storage connection.</span>
@@ -2234,20 +2234,20 @@ More information about how to use a cloud storage integration in a project can b
 <span class="sd">            A list or a generator of the cloud storage connections that match the criteria.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.cloud_storage_connections(project_id=&quot;789465123&quot;)</span>
-<span class="sd">            [{&#39;id&#39;: &#39;123456789&#39;, &#39;isJsonProcessingEnabled&#39;: False, &#39;lastCheck&#39;: &#39;2023-02-21T14:49:35.606Z&#39;, &#39;numberOfAssets&#39;: 42, &#39;selectedFolders&#39;: [&#39;folder1&#39;, &#39;folder2&#39;], &#39;projectId&#39;: &#39;789465123&#39;}]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.cloud_storage_connections(project_id="789465123")</span>
+<span class="sd">            [{'id': '123456789', 'isJsonProcessingEnabled': False, 'lastCheck': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'selectedFolders': ['folder1', 'folder2'], 'projectId': '789465123'}]</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">cloud_storage_connection_id</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="ow">and</span> <span class="n">cloud_storage_integration_id</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="ow">and</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;At least one of cloud_storage_connection_id, cloud_storage_integration_id or&quot;</span>
-                <span class="s2">&quot; project_id must be specified&quot;</span>
+                <span class="s2">"At least one of cloud_storage_connection_id, cloud_storage_integration_id or"</span>
+                <span class="s2">" project_id must be specified"</span>
             <span class="p">)</span>
 
-        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
         <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
 
         <span class="n">cloud_storage_use_cases</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
@@ -2287,7 +2287,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">platform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataIntegrationPlatform</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataIntegrationStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;platform&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"platform"</span><span class="p">,</span> <span class="s2">"status"</span><span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2304,7 +2304,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">platform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataIntegrationPlatform</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataIntegrationStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;platform&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"platform"</span><span class="p">,</span> <span class="s2">"status"</span><span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2321,7 +2321,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">platform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataIntegrationPlatform</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataIntegrationStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;platform&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"platform"</span><span class="p">,</span> <span class="s2">"status"</span><span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2329,7 +2329,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of cloud storage integrations that match a set of criteria.</span>
+<span class="w">        </span><span class="sd">"""Get a generator or a list of cloud storage integrations that match a set of criteria.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            cloud_storage_integration_id: ID of the cloud storage integration.</span>
@@ -2349,9 +2349,9 @@ More information about how to use a cloud storage integration in a project can b
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.cloud_storage_integrations()</span>
-<span class="sd">            [{&#39;name&#39;: &#39;My bucket&#39;, &#39;id&#39;: &#39;123456789&#39;, &#39;platform&#39;: &#39;AWS&#39;, &#39;status&#39;: &#39;CONNECTED&#39;}]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="sd">            [{'name': 'My bucket', 'id': '123456789', 'platform': 'AWS', 'status': 'CONNECTED'}]</span>
+<span class="sd">        """</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
         <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
         <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
         <span class="n">data_integrations_gen</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">list_data_integrations</span><span class="p">(</span>
@@ -2385,7 +2385,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataIntegrationStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Count and return the number of cloud storage integrations that match a set of criteria.</span>
+<span class="w">        </span><span class="sd">"""Count and return the number of cloud storage integrations that match a set of criteria.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            cloud_storage_integration_id: ID of the cloud storage integration.</span>
@@ -2396,7 +2396,7 @@ More information about how to use a cloud storage integration in a project can b
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The number of cloud storage integrations that match the criteria.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">count_data_integrations</span><span class="p">(</span>
             <span class="n">DataIntegrationFilters</span><span class="p">(</span>
                 <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
@@ -2424,7 +2424,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">exclude</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">is_json_processing_enabled</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Connect a cloud storage to a project. More details about parameters</span>
+<span class="w">        </span><span class="sd">"""Connect a cloud storage to a project. More details about parameters</span>
 <span class="sd">        can be found in the [documentation](https://docs.kili-technology.com/docs/filtering-assets-from-cloud-storage).</span>
 
 <span class="sd">        Args:</span>
@@ -2442,24 +2442,24 @@ More information about how to use a cloud storage integration in a project can b
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the DataConnection Id.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">selected_folders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;The selected_folders argument is deprecated and will be removed in the future.&quot;</span>
+                <span class="s2">"The selected_folders argument is deprecated and will be removed in the future."</span>
             <span class="p">)</span>
 
         <span class="n">data_connection_id</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_data_connection</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
             <span class="n">data_integration_id</span><span class="o">=</span><span class="n">DataIntegrationId</span><span class="p">(</span><span class="n">cloud_storage_integration_id</span><span class="p">),</span>
             <span class="n">selected_folders</span><span class="o">=</span><span class="n">selected_folders</span><span class="p">,</span>
-            <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,),</span>
+            <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,),</span>
             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
             <span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span>
             <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">,</span>
             <span class="n">is_json_processing_enabled</span><span class="o">=</span><span class="n">is_json_processing_enabled</span><span class="p">,</span>
-        <span class="p">)[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="p">)[</span><span class="s2">"id"</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">data_connection_id</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">data_connection_id</span><span class="p">}</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">synchronize_cloud_storage_connection</span><span class="p">(</span>
@@ -2468,7 +2468,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">delete_extraneous_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">dry_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Synchronize a cloud storage connection.</span>
+<span class="w">        </span><span class="sd">"""Synchronize a cloud storage connection.</span>
 
 <span class="sd">        This method will compute differences between the cloud storage connection and the project,</span>
 <span class="sd">            and then validate the differences.</span>
@@ -2485,7 +2485,7 @@ More information about how to use a cloud storage integration in a project can b
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the cloud storage connection Id.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data_connection_id</span> <span class="o">=</span> <span class="n">DataConnectionId</span><span class="p">(</span><span class="n">cloud_storage_connection_id</span><span class="p">)</span>
 
         <span class="n">cloud_storage_use_cases</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
@@ -2498,7 +2498,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">cloud_storage_use_cases</span><span class="o">.</span><span class="n">get_data_connection</span><span class="p">(</span>
-            <span class="n">data_connection_id</span><span class="o">=</span><span class="n">data_connection_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span> <span class="s2">&quot;projectId&quot;</span><span class="p">)</span>
+            <span class="n">data_connection_id</span><span class="o">=</span><span class="n">data_connection_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"numberOfAssets"</span><span class="p">,</span> <span class="s2">"projectId"</span><span class="p">)</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -2507,11 +2507,11 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">platform</span><span class="p">:</span> <span class="n">DataIntegrationPlatform</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;status&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;platform&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;allowedPaths&quot;</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">,</span>
+            <span class="s2">"name"</span><span class="p">,</span>
+            <span class="s2">"status"</span><span class="p">,</span>
+            <span class="s2">"platform"</span><span class="p">,</span>
+            <span class="s2">"allowedPaths"</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">allowed_paths</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">allowed_projects</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2533,7 +2533,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">s3_session_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a cloud storage integration.</span>
+<span class="w">        </span><span class="sd">"""Create a cloud storage integration.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the cloud storage integration.</span>
@@ -2558,7 +2558,7 @@ More information about how to use a cloud storage integration in a project can b
 <span class="sd">            s3_region: S3 region.</span>
 <span class="sd">            s3_secret_key: S3 secret key.</span>
 <span class="sd">            s3_session_token: S3 session token.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">cloud_storage_use_cases</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">cloud_storage_use_cases</span><span class="o">.</span><span class="n">create_data_integration</span><span class="p">(</span>
@@ -2612,7 +2612,7 @@ More information about how to use a cloud storage integration in a project can b
         <span class="n">s3_secret_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">s3_session_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update cloud storage data integration.</span>
+<span class="w">        </span><span class="sd">"""Update cloud storage data integration.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            allowed_paths: List of allowed paths.</span>
@@ -2638,7 +2638,7 @@ More information about how to use a cloud storage integration in a project can b
 <span class="sd">            s3_region: S3 region.</span>
 <span class="sd">            s3_secret_key: S3 secret key.</span>
 <span class="sd">            s3_session_token: S3 session token.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_data_integration</span><span class="p">(</span>
             <span class="n">data_integration_id</span><span class="o">=</span><span class="n">DataIntegrationId</span><span class="p">(</span><span class="n">cloud_storage_integration_id</span><span class="p">),</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
@@ -2667,11 +2667,11 @@ More information about how to use a cloud storage integration in a project can b
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_cloud_storage_integration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a cloud storage integration.</span>
+<span class="w">        </span><span class="sd">"""Delete a cloud storage integration.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            cloud_storage_integration_id: Id of the cloud storage integration.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">cloud_storage_integration_id</span> <span class="o">=</span> <span class="n">DataIntegrationId</span><span class="p">(</span><span class="n">cloud_storage_integration_id</span><span class="p">)</span>
 
         <span class="n">cloud_storage_use_cases</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
@@ -2795,7 +2795,7 @@ to extract text content or create layered images.</p></td>
     <span class="n">exclude</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">is_json_processing_enabled</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect a cloud storage to a project. More details about parameters</span>
+<span class="w">    </span><span class="sd">"""Connect a cloud storage to a project. More details about parameters</span>
 <span class="sd">    can be found in the [documentation](https://docs.kili-technology.com/docs/filtering-assets-from-cloud-storage).</span>
 
 <span class="sd">    Args:</span>
@@ -2813,24 +2813,24 @@ to extract text content or create layered images.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the DataConnection Id.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">selected_folders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">&quot;The selected_folders argument is deprecated and will be removed in the future.&quot;</span>
+            <span class="s2">"The selected_folders argument is deprecated and will be removed in the future."</span>
         <span class="p">)</span>
 
     <span class="n">data_connection_id</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_data_connection</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
         <span class="n">data_integration_id</span><span class="o">=</span><span class="n">DataIntegrationId</span><span class="p">(</span><span class="n">cloud_storage_integration_id</span><span class="p">),</span>
         <span class="n">selected_folders</span><span class="o">=</span><span class="n">selected_folders</span><span class="p">,</span>
-        <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,),</span>
+        <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,),</span>
         <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
         <span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span>
         <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">,</span>
         <span class="n">is_json_processing_enabled</span><span class="o">=</span><span class="n">is_json_processing_enabled</span><span class="p">,</span>
-    <span class="p">)[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+    <span class="p">)[</span><span class="s2">"id"</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">data_connection_id</span><span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">data_connection_id</span><span class="p">}</span>
 </code></pre></div>
         </details>
     </div>
@@ -2844,7 +2844,7 @@ to extract text content or create layered images.</p></td>
 
 
 <h3 id="kili.presentation.client.cloud_storage.CloudStorageClientMethods.cloud_storage_connections" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">cloud_storage_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;isJsonProcessingEnabled&#39;</span><span class="p">,</span> <span class="s1">&#39;lastCheck&#39;</span><span class="p">,</span> <span class="s1">&#39;numberOfAssets&#39;</span><span class="p">,</span> <span class="s1">&#39;selectedFolders&#39;</span><span class="p">,</span> <span class="s1">&#39;projectId&#39;</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">cloud_storage_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_connection_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'id'</span><span class="p">,</span> <span class="s1">'isJsonProcessingEnabled'</span><span class="p">,</span> <span class="s1">'lastCheck'</span><span class="p">,</span> <span class="s1">'numberOfAssets'</span><span class="p">,</span> <span class="s1">'selectedFolders'</span><span class="p">,</span> <span class="s1">'projectId'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2931,8 +2931,8 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-connection"
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">cloud_storage_connections</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;789465123&quot;</span><span class="p">)</span>
-<span class="p">[{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;123456789&#39;</span><span class="p">,</span> <span class="s1">&#39;isJsonProcessingEnabled&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;lastCheck&#39;</span><span class="p">:</span> <span class="s1">&#39;2023-02-21T14:49:35.606Z&#39;</span><span class="p">,</span> <span class="s1">&#39;numberOfAssets&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;selectedFolders&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;folder1&#39;</span><span class="p">,</span> <span class="s1">&#39;folder2&#39;</span><span class="p">],</span> <span class="s1">&#39;projectId&#39;</span><span class="p">:</span> <span class="s1">&#39;789465123&#39;</span><span class="p">}]</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">cloud_storage_connections</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">"789465123"</span><span class="p">)</span>
+<span class="p">[{</span><span class="s1">'id'</span><span class="p">:</span> <span class="s1">'123456789'</span><span class="p">,</span> <span class="s1">'isJsonProcessingEnabled'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'lastCheck'</span><span class="p">:</span> <span class="s1">'2023-02-21T14:49:35.606Z'</span><span class="p">,</span> <span class="s1">'numberOfAssets'</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">'selectedFolders'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'folder1'</span><span class="p">,</span> <span class="s1">'folder2'</span><span class="p">],</span> <span class="s1">'projectId'</span><span class="p">:</span> <span class="s1">'789465123'</span><span class="p">}]</span>
 </code></pre></div>
 
         <details class="quote">
@@ -2943,12 +2943,12 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-connection"
     <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;isJsonProcessingEnabled&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;lastCheck&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;selectedFolders&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;projectId&quot;</span><span class="p">,</span>
+        <span class="s2">"id"</span><span class="p">,</span>
+        <span class="s2">"isJsonProcessingEnabled"</span><span class="p">,</span>
+        <span class="s2">"lastCheck"</span><span class="p">,</span>
+        <span class="s2">"numberOfAssets"</span><span class="p">,</span>
+        <span class="s2">"selectedFolders"</span><span class="p">,</span>
+        <span class="s2">"projectId"</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -2957,7 +2957,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-connection"
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of cloud storage connections that match a set of criteria.</span>
+<span class="w">    </span><span class="sd">"""Get a generator or a list of cloud storage connections that match a set of criteria.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        cloud_storage_connection_id: ID of the cloud storage connection.</span>
@@ -2974,20 +2974,20 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-connection"
 <span class="sd">        A list or a generator of the cloud storage connections that match the criteria.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.cloud_storage_connections(project_id=&quot;789465123&quot;)</span>
-<span class="sd">        [{&#39;id&#39;: &#39;123456789&#39;, &#39;isJsonProcessingEnabled&#39;: False, &#39;lastCheck&#39;: &#39;2023-02-21T14:49:35.606Z&#39;, &#39;numberOfAssets&#39;: 42, &#39;selectedFolders&#39;: [&#39;folder1&#39;, &#39;folder2&#39;], &#39;projectId&#39;: &#39;789465123&#39;}]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.cloud_storage_connections(project_id="789465123")</span>
+<span class="sd">        [{'id': '123456789', 'isJsonProcessingEnabled': False, 'lastCheck': '2023-02-21T14:49:35.606Z', 'numberOfAssets': 42, 'selectedFolders': ['folder1', 'folder2'], 'projectId': '789465123'}]</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">cloud_storage_connection_id</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="ow">and</span> <span class="n">cloud_storage_integration_id</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="ow">and</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="kc">None</span>
     <span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;At least one of cloud_storage_connection_id, cloud_storage_integration_id or&quot;</span>
-            <span class="s2">&quot; project_id must be specified&quot;</span>
+            <span class="s2">"At least one of cloud_storage_connection_id, cloud_storage_integration_id or"</span>
+            <span class="s2">" project_id must be specified"</span>
         <span class="p">)</span>
 
-    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
     <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
 
     <span class="n">cloud_storage_use_cases</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
@@ -3031,7 +3031,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-connection"
 
 
 <h3 id="kili.presentation.client.cloud_storage.CloudStorageClientMethods.cloud_storage_integrations" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">cloud_storage_integrations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;platform&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">cloud_storage_integrations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'name'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'platform'</span><span class="p">,</span> <span class="s1">'status'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3131,7 +3131,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-integration
 </table>
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">cloud_storage_integrations</span><span class="p">()</span>
-<span class="p">[{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;My bucket&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;123456789&#39;</span><span class="p">,</span> <span class="s1">&#39;platform&#39;</span><span class="p">:</span> <span class="s1">&#39;AWS&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;CONNECTED&#39;</span><span class="p">}]</span>
+<span class="p">[{</span><span class="s1">'name'</span><span class="p">:</span> <span class="s1">'My bucket'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">:</span> <span class="s1">'123456789'</span><span class="p">,</span> <span class="s1">'platform'</span><span class="p">:</span> <span class="s1">'AWS'</span><span class="p">,</span> <span class="s1">'status'</span><span class="p">:</span> <span class="s1">'CONNECTED'</span><span class="p">}]</span>
 </code></pre></div>
 
         <details class="quote">
@@ -3143,7 +3143,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-integration
     <span class="n">platform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataIntegrationPlatform</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataIntegrationStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;platform&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">),</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"platform"</span><span class="p">,</span> <span class="s2">"status"</span><span class="p">),</span>
     <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3151,7 +3151,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-integration
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of cloud storage integrations that match a set of criteria.</span>
+<span class="w">    </span><span class="sd">"""Get a generator or a list of cloud storage integrations that match a set of criteria.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        cloud_storage_integration_id: ID of the cloud storage integration.</span>
@@ -3171,9 +3171,9 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-integration
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.cloud_storage_integrations()</span>
-<span class="sd">        [{&#39;name&#39;: &#39;My bucket&#39;, &#39;id&#39;: &#39;123456789&#39;, &#39;platform&#39;: &#39;AWS&#39;, &#39;status&#39;: &#39;CONNECTED&#39;}]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="sd">        [{'name': 'My bucket', 'id': '123456789', 'platform': 'AWS', 'status': 'CONNECTED'}]</span>
+<span class="sd">    """</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
     <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
     <span class="n">data_integrations_gen</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">list_data_integrations</span><span class="p">(</span>
@@ -3287,7 +3287,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-integration
     <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataIntegrationStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count and return the number of cloud storage integrations that match a set of criteria.</span>
+<span class="w">    </span><span class="sd">"""Count and return the number of cloud storage integrations that match a set of criteria.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        cloud_storage_integration_id: ID of the cloud storage integration.</span>
@@ -3298,7 +3298,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-integration
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of cloud storage integrations that match the criteria.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">count_data_integrations</span><span class="p">(</span>
         <span class="n">DataIntegrationFilters</span><span class="p">(</span>
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
@@ -3327,7 +3327,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-integration
 
 
 <h3 id="kili.presentation.client.cloud_storage.CloudStorageClientMethods.create_cloud_storage_integration" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_cloud_storage_integration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;platform&#39;</span><span class="p">,</span> <span class="s1">&#39;allowedPaths&#39;</span><span class="p">),</span> <span class="n">allowed_paths</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allowed_projects</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aws_access_point_arn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aws_role_arn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aws_role_external_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">azure_connection_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">azure_is_using_service_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">azure_sas_token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">azure_tenant_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gcp_bucket_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_root_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">internal_processing_authorized</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_access_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_bucket_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_endpoint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_region</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_secret_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_session_token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_cloud_storage_integration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'id'</span><span class="p">,</span> <span class="s1">'name'</span><span class="p">,</span> <span class="s1">'status'</span><span class="p">,</span> <span class="s1">'platform'</span><span class="p">,</span> <span class="s1">'allowedPaths'</span><span class="p">),</span> <span class="n">allowed_paths</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allowed_projects</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aws_access_point_arn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aws_role_arn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aws_role_external_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">azure_connection_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">azure_is_using_service_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">azure_sas_token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">azure_tenant_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gcp_bucket_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_root_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">internal_processing_authorized</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_access_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_bucket_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_endpoint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_region</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_secret_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s3_session_token</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3483,11 +3483,11 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-integration
     <span class="n">platform</span><span class="p">:</span> <span class="n">DataIntegrationPlatform</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;status&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;platform&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;allowedPaths&quot;</span><span class="p">,</span>
+        <span class="s2">"id"</span><span class="p">,</span>
+        <span class="s2">"name"</span><span class="p">,</span>
+        <span class="s2">"status"</span><span class="p">,</span>
+        <span class="s2">"platform"</span><span class="p">,</span>
+        <span class="s2">"allowedPaths"</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">allowed_paths</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">allowed_projects</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3509,7 +3509,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-integration
     <span class="n">s3_session_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a cloud storage integration.</span>
+<span class="w">    </span><span class="sd">"""Create a cloud storage integration.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the cloud storage integration.</span>
@@ -3534,7 +3534,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-integration
 <span class="sd">        s3_region: S3 region.</span>
 <span class="sd">        s3_secret_key: S3 secret key.</span>
 <span class="sd">        s3_session_token: S3 session token.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">cloud_storage_use_cases</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">cloud_storage_use_cases</span><span class="o">.</span><span class="n">create_data_integration</span><span class="p">(</span>
@@ -3604,11 +3604,11 @@ See <a href="https://api-docs.kili-technology.com/types/objects/data-integration
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/cloud_storage.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_cloud_storage_integration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud_storage_integration_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a cloud storage integration.</span>
+<span class="w">    </span><span class="sd">"""Delete a cloud storage integration.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        cloud_storage_integration_id: Id of the cloud storage integration.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">cloud_storage_integration_id</span> <span class="o">=</span> <span class="n">DataIntegrationId</span><span class="p">(</span><span class="n">cloud_storage_integration_id</span><span class="p">)</span>
 
     <span class="n">cloud_storage_use_cases</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
@@ -3698,7 +3698,7 @@ project.</p></td>
     <span class="n">delete_extraneous_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">dry_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Synchronize a cloud storage connection.</span>
+<span class="w">    </span><span class="sd">"""Synchronize a cloud storage connection.</span>
 
 <span class="sd">    This method will compute differences between the cloud storage connection and the project,</span>
 <span class="sd">        and then validate the differences.</span>
@@ -3715,7 +3715,7 @@ project.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the cloud storage connection Id.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data_connection_id</span> <span class="o">=</span> <span class="n">DataConnectionId</span><span class="p">(</span><span class="n">cloud_storage_connection_id</span><span class="p">)</span>
 
     <span class="n">cloud_storage_use_cases</span> <span class="o">=</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
@@ -3728,7 +3728,7 @@ project.</p></td>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">cloud_storage_use_cases</span><span class="o">.</span><span class="n">get_data_connection</span><span class="p">(</span>
-        <span class="n">data_connection_id</span><span class="o">=</span><span class="n">data_connection_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;numberOfAssets&quot;</span><span class="p">,</span> <span class="s2">&quot;projectId&quot;</span><span class="p">)</span>
+        <span class="n">data_connection_id</span><span class="o">=</span><span class="n">data_connection_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"numberOfAssets"</span><span class="p">,</span> <span class="s2">"projectId"</span><span class="p">)</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3931,7 +3931,7 @@ project.</p></td>
     <span class="n">s3_secret_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">s3_session_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update cloud storage data integration.</span>
+<span class="w">    </span><span class="sd">"""Update cloud storage data integration.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        allowed_paths: List of allowed paths.</span>
@@ -3957,7 +3957,7 @@ project.</p></td>
 <span class="sd">        s3_region: S3 region.</span>
 <span class="sd">        s3_secret_key: S3 secret key.</span>
 <span class="sd">        s3_session_token: S3 session token.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">CloudStorageUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_data_integration</span><span class="p">(</span>
         <span class="n">data_integration_id</span><span class="o">=</span><span class="n">DataIntegrationId</span><span class="p">(</span><span class="n">cloud_storage_integration_id</span><span class="p">),</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>

@@ -2248,7 +2248,7 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2281,7 +2281,7 @@ For information on how to add users and assign them to your project, refer to th
 <p>You can manually select specific project assets to be used for computing consensus KPIs.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;2.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;3.jpg&quot;</span><span class="p">],</span>
+    <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"1.jpg"</span><span class="p">,</span> <span class="s2">"2.jpg"</span><span class="p">,</span> <span class="s2">"3.jpg"</span><span class="p">],</span>
     <span class="n">is_used_for_consensus_array</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2301,8 +2301,8 @@ Honeypot works by interspersing assets with defined ground truth label in the an
 <p>You can now manually select specific project assets to be used as honeypots:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">create_honeypot</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">&quot;1.jpg&quot;</span><span class="p">,</span>
-    <span class="n">json_response</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">}]}},</span>
+    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">"1.jpg"</span><span class="p">,</span>
+    <span class="n">json_response</span><span class="o">=</span><span class="p">{</span><span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"confidence"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"OBJECT_B"</span><span class="p">}]}},</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>For more information on honeypot, refer to our <a href="https://docs.kili-technology.com/docs/consensus-overview">documentation</a>.</p>
@@ -2310,11 +2310,11 @@ Honeypot works by interspersing assets with defined ground truth label in the an
 <p>You can assign specific labelers to specific assets in your project. You can do that by assigning users' emails to the selected asset IDs. Remember that you can assign more than one user to a specific asset.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;2.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;3.jpg&quot;</span><span class="p">],</span>
+    <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"1.jpg"</span><span class="p">,</span> <span class="s2">"2.jpg"</span><span class="p">,</span> <span class="s2">"3.jpg"</span><span class="p">],</span>
     <span class="n">to_be_labeled_by_array</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">[</span><span class="s2">&quot;example1@example.com&quot;</span><span class="p">],</span>
-        <span class="p">[</span><span class="s2">&quot;example2@example.com&quot;</span><span class="p">],</span>
-        <span class="p">[</span><span class="s2">&quot;example3@example.com&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">"example1@example.com"</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">"example2@example.com"</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">"example3@example.com"</span><span class="p">],</span>
     <span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2330,7 +2330,7 @@ For information on assigning assets to users, refer to our <a href="https://docs
 <h2 id="prioritizing-assets-in-the-labeling-queue">Prioritizing assets in the labeling queue</h2>
 <p>If you have certain assets that you need to have labeled earlier or later than the rest, you can use Kili's asset prioritization methods.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;2.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;3.jpg&quot;</span><span class="p">],</span> <span class="n">priorities</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"1.jpg"</span><span class="p">,</span> <span class="s2">"2.jpg"</span><span class="p">,</span> <span class="s2">"3.jpg"</span><span class="p">],</span> <span class="n">priorities</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div>
 <pre><code>[{'id': 'clnwvhvo00000gsvzinsato00'},
@@ -2344,18 +2344,18 @@ As this requires the assets to be labeled, first, let's simulate adding labels t
 The method will return the list of newly-added label IDs.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;4.jpg&quot;</span><span class="p">],</span>
-    <span class="n">json_response_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">}]}}],</span>
-    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">"4.jpg"</span><span class="p">],</span>
+    <span class="n">json_response_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"confidence"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"OBJECT_B"</span><span class="p">}]}}],</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">"DEFAULT"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Now, let's place some assets in the review queue. The method will return a project ID and a list of asset IDs placed in the review queue.</p>
-<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">add_to_review</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;4.jpg&quot;</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">add_to_review</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"4.jpg"</span><span class="p">])</span>
 </code></pre></div>
 <p>For more information on asset statuses, refer to our <a href="https://docs.kili-technology.com/docs/workflow-configuration">documentation</a>.</p>
 <h3 id="sending-an-asset-back-to-the-labeling-queue">Sending an asset back to the labeling queue</h3>
 <p>You can also send specific labeled assets back to the labeling queue.</p>
-<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">send_back_to_queue</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;4.jpg&quot;</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">send_back_to_queue</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"4.jpg"</span><span class="p">])</span>
 </code></pre></div>
 <pre><code>{'id': 'clm0sxbgb05hf082tcq813zrc', 'asset_ids': ['clm0sxcpf0003ojvzcrha754l']}
 </code></pre>

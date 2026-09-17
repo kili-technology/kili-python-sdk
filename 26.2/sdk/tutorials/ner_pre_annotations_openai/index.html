@@ -2151,8 +2151,8 @@
 <div class="highlight"><pre><span></span><code><span class="n">MAX_DATAPOINTS</span> <span class="o">=</span> <span class="mi">20</span>
 <span class="n">MIN_NB_TOKENS_PER_SENTENCE</span> <span class="o">=</span> <span class="mi">9</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;conll2003&quot;</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-    <span class="k">lambda</span> <span class="n">datapoint</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">MIN_NB_TOKENS_PER_SENTENCE</span>
+<div class="highlight"><pre><span></span><code><span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">"conll2003"</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s2">"train"</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">datapoint</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">"tokens"</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">MIN_NB_TOKENS_PER_SENTENCE</span>
 <span class="p">)</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">MAX_DATAPOINTS</span><span class="p">))</span>
 </code></pre></div>
@@ -2179,31 +2179,31 @@
 <li><strong>ner_tags</strong>: Named Entity Recognition (NER) tags for each token in the sentence. NER is the task of identifying named entities in text and classifying them into pre-defined categories such as person, organization, location, etc.</li>
 </ul>
 <p>The sentences are split into tokens. We can regroup the tokens for later use:</p>
-<div class="highlight"><pre><span></span><code><span class="n">fix_joined_tokens_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot; .&quot;</span><span class="p">:</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;( &quot;</span><span class="p">:</span> <span class="s2">&quot;(&quot;</span><span class="p">,</span> <span class="s2">&quot; )&quot;</span><span class="p">:</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot; &#39;s &quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;s &quot;</span><span class="p">,</span> <span class="s2">&quot;s &#39; &quot;</span><span class="p">:</span> <span class="s2">&quot;s&#39; &quot;</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="n">fix_joined_tokens_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">" ."</span><span class="p">:</span> <span class="s2">"."</span><span class="p">,</span> <span class="s2">"( "</span><span class="p">:</span> <span class="s2">"("</span><span class="p">,</span> <span class="s2">" )"</span><span class="p">:</span> <span class="s2">")"</span><span class="p">,</span> <span class="s2">" 's "</span><span class="p">:</span> <span class="s2">"'s "</span><span class="p">,</span> <span class="s2">"s ' "</span><span class="p">:</span> <span class="s2">"s' "</span><span class="p">}</span>
 
 <span class="n">sentence_column</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">datapoint</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
-    <span class="n">sentence</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">])</span>
+    <span class="n">sentence</span> <span class="o">=</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">"tokens"</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">before</span><span class="p">,</span> <span class="n">after</span> <span class="ow">in</span> <span class="n">fix_joined_tokens_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">sentence</span> <span class="o">=</span> <span class="n">sentence</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="p">)</span>
     <span class="n">sentence_column</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;sentence&quot;</span><span class="p">,</span> <span class="n">sentence_column</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">"sentence"</span><span class="p">,</span> <span class="n">sentence_column</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </code></pre></div>
 <pre><code>{'id': '0', 'tokens': ['EU', 'rejects', 'German', 'call', 'to', 'boycott', 'British', 'lamb', '.'], 'pos_tags': [22, 42, 16, 21, 35, 37, 16, 21, 7], 'chunk_tags': [11, 21, 11, 12, 21, 22, 11, 12, 0], 'ner_tags': [3, 0, 7, 0, 0, 0, 7, 0, 0], 'sentence': 'EU rejects German call to boycott British lamb.'}
 </code></pre>
 <div class="highlight"><pre><span></span><code><span class="n">NER_TAGS_ONTOLOGY</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;O&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;B-PERSON&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;I-PERSON&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s2">&quot;B-ORGANIZATION&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;I-ORGANIZATION&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="s2">&quot;B-LOCATION&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s2">&quot;I-LOCATION&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
-    <span class="s2">&quot;B-MISCELLANEOUS&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-    <span class="s2">&quot;I-MISCELLANEOUS&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">"O"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">"B-PERSON"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"I-PERSON"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">"B-ORGANIZATION"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">"I-ORGANIZATION"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">"B-LOCATION"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">"I-LOCATION"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">"B-MISCELLANEOUS"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s2">"I-MISCELLANEOUS"</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <p><code>NER_TAGS_ONTOLOGY</code> is a dictionary that maps the named entity tags in the CoNLL2003 dataset to integer labels. Here is the meaning of each key-value pair in the dictionary:</p>
@@ -2221,10 +2221,10 @@
 <p>During the training of a NER model, the entity names will be converted to integer labels using such a dictionary.</p>
 <h2 id="connect-with-chatgpt-api">Connect with ChatGPT API</h2>
 <p>Let's use the OpenAI API to get the pre-annotations for our dataset.</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="s2">&quot;OPENAI_API_KEY&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-    <span class="n">OPENAI_API_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OPENAI_API_KEY&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="s2">"OPENAI_API_KEY"</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+    <span class="n">OPENAI_API_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"OPENAI_API_KEY"</span><span class="p">]</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">OPENAI_API_KEY</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s2">&quot;Please enter your OpenAI API key: &quot;</span><span class="p">)</span>
+    <span class="n">OPENAI_API_KEY</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s2">"Please enter your OpenAI API key: "</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">openai</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">OPENAI_API_KEY</span>
 </code></pre></div>
@@ -2234,7 +2234,7 @@
 <li><strong>temperature</strong>: the temperature of the model. The higher the temperature, the more random the text. The lower the temperature, the more likely it is to predict the next word. The default value is 0.7. It should be between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.</li>
 <li><strong>max_tokens</strong>: the maximum number of tokens to generate. The default value is 64. It should be between 1 and 4096, depending on the model.</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="n">openai_query_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;text-davinci-003&quot;</span><span class="p">,</span> <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="n">openai_query_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"model"</span><span class="p">:</span> <span class="s2">"text-davinci-003"</span><span class="p">,</span> <span class="s2">"temperature"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"max_tokens"</span><span class="p">:</span> <span class="mi">1024</span><span class="p">}</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">ask_openai</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">openai_query_params</span><span class="o">=</span><span class="n">openai_query_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -2242,16 +2242,16 @@
         <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
         <span class="o">**</span><span class="n">openai_query_params</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s2">"choices"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"text"</span><span class="p">]</span>
 </code></pre></div>
 <p>Let's test the API with a simple prompt:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">ask_openai</span><span class="p">(</span><span class="s2">&quot;Hello, are you here?&quot;</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">ask_openai</span><span class="p">(</span><span class="s2">"Hello, are you here?"</span><span class="p">))</span>
 </code></pre></div>
 <pre><code>Yes, I am here. How can I help you?
 </code></pre>
 <h2 id="prompt-design">Prompt design</h2>
 <p>To get pre-annotations for our dataset, we need to create a prompt that tells the model what to do:</p>
-<div class="highlight"><pre><span></span><code><span class="n">base_prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;In the sentence below, give me the list of:</span>
+<div class="highlight"><pre><span></span><code><span class="n">base_prompt</span> <span class="o">=</span> <span class="s2">"""In the sentence below, give me the list of:</span>
 <span class="s2">- organization named entity</span>
 <span class="s2">- location named entity</span>
 <span class="s2">- person named entity</span>
@@ -2262,12 +2262,12 @@
 <span class="s2">- PERSON for person named entity</span>
 <span class="s2">- MISCELLANEOUS for miscellaneous named entity.</span>
 <span class="s2">Sentence below:</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 </code></pre></div>
 <p>Let's see if the model understands the prompt well on a simple example:</p>
 <div class="highlight"><pre><span></span><code><span class="n">test_sentence</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;Elon Musk is the CEO of Tesla and SpaceX. He was born in South Africa and now lives in the&quot;</span>
-    <span class="s2">&quot; USA. He is one of the founders of OpenAI.&quot;</span>
+    <span class="s2">"Elon Musk is the CEO of Tesla and SpaceX. He was born in South Africa and now lives in the"</span>
+    <span class="s2">" USA. He is one of the founders of OpenAI."</span>
 <span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">ask_openai</span><span class="p">(</span><span class="n">base_prompt</span> <span class="o">+</span> <span class="n">test_sentence</span><span class="p">))</span>
@@ -2284,13 +2284,13 @@
 <p>In the code below, we will use the OpenAI API to get the pre-annotations for each sentence in our dataset.</p>
 <div class="highlight"><pre><span></span><code><span class="n">openai_answers</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">datapoint</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
-    <span class="n">sentence</span> <span class="o">=</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;sentence&quot;</span><span class="p">]</span>
+    <span class="n">sentence</span> <span class="o">=</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">"sentence"</span><span class="p">]</span>
     <span class="n">answer</span> <span class="o">=</span> <span class="n">ask_openai</span><span class="p">(</span><span class="n">base_prompt</span> <span class="o">+</span> <span class="n">sentence</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">answer_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrong json formatting:</span><span class="se">\n</span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">answer_json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ORGANIZATION&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;LOCATION&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;PERSON&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;MISCELLANEOUS&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Wrong json formatting:</span><span class="se">\n</span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">answer_json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"ORGANIZATION"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"LOCATION"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"PERSON"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"MISCELLANEOUS"</span><span class="p">:</span> <span class="p">[]}</span>
     <span class="n">openai_answers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">answer_json</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">openai_answers</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
@@ -2306,7 +2306,7 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">continue</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown value type &#39;</span><span class="si">{</span><span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39; for value &#39;</span><span class="si">{</span><span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown value type '</span><span class="si">{</span><span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="si">}</span><span class="s2">' for value '</span><span class="si">{</span><span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
             <span class="n">json_dict</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 </code></pre></div>
 <h2 id="import-dataset-and-pre-annotations-to-kili">Import dataset and pre-annotations to Kili</h2>
@@ -2314,18 +2314,18 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Below, we define the ontology (json interface) of the project. We define the 4 classes as well as their corresponding colors:</p>
-<div class="highlight"><pre><span></span><code><span class="n">COLORS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#1f77b4&quot;</span><span class="p">,</span> <span class="s2">&quot;#ff7f0e&quot;</span><span class="p">,</span> <span class="s2">&quot;#2ca02c&quot;</span><span class="p">,</span> <span class="s2">&quot;#d62728&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">COLORS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"#1f77b4"</span><span class="p">,</span> <span class="s2">"#ff7f0e"</span><span class="p">,</span> <span class="s2">"#2ca02c"</span><span class="p">,</span> <span class="s2">"#d62728"</span><span class="p">]</span>
 
 <span class="n">ENTITY_TYPES</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="s2">&quot;PERSON&quot;</span><span class="p">,</span> <span class="s2">&quot;Person&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;ORGANIZATION&quot;</span><span class="p">,</span> <span class="s2">&quot;Organization&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;LOCATION&quot;</span><span class="p">,</span> <span class="s2">&quot;Location&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;MISCELLANEOUS&quot;</span><span class="p">,</span> <span class="s2">&quot;Miscellaneous&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"PERSON"</span><span class="p">,</span> <span class="s2">"Person"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"ORGANIZATION"</span><span class="p">,</span> <span class="s2">"Organization"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"LOCATION"</span><span class="p">,</span> <span class="s2">"Location"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"MISCELLANEOUS"</span><span class="p">,</span> <span class="s2">"Miscellaneous"</span><span class="p">),</span>
 <span class="p">]</span>
 
 <span class="n">ENTITY_TYPES_WITH_COLORS</span> <span class="o">=</span> <span class="p">[</span>
@@ -2337,38 +2337,38 @@
 <pre><code>[('PERSON', 'Person', '#1f77b4'), ('ORGANIZATION', 'Organization', '#ff7f0e'), ('LOCATION', 'Location', '#2ca02c'), ('MISCELLANEOUS', 'Miscellaneous', '#d62728')]
 </code></pre>
 <div class="highlight"><pre><span></span><code><span class="n">json_interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;NAMED_ENTITIES_RECOGNITION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;NAMED_ENTITIES_RECOGNITION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name_pretty</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">color</span><span class="p">}</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"NAMED_ENTITIES_RECOGNITION_JOB"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"NAMED_ENTITIES_RECOGNITION"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="n">name_pretty</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"color"</span><span class="p">:</span> <span class="n">color</span><span class="p">}</span>
                     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">name_pretty</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">ENTITY_TYPES_WITH_COLORS</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">},</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>Let's now create the project with its ontology:</p>
 <div class="highlight"><pre><span></span><code><span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: CoNLL Named Entity Recognition with OpenAI pre-annotations&quot;</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;TEXT&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"[Kili SDK Notebook]: CoNLL Named Entity Recognition with OpenAI pre-annotations"</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">"TEXT"</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
 </code></pre></div>
 <p>We now import the sentences to the project:</p>
 <div class="highlight"><pre><span></span><code><span class="n">external_id_array</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">content_array</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">datapoint</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
-    <span class="n">sentence</span> <span class="o">=</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;sentence&quot;</span><span class="p">]</span>
+    <span class="n">sentence</span> <span class="o">=</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">"sentence"</span><span class="p">]</span>
     <span class="n">content_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
-    <span class="n">external_id_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+    <span class="n">external_id_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">content_array</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">external_id_array</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
@@ -2390,7 +2390,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">json_response_array</span> <span class="o">=</span> <span class="p">[]</span>
 
 <span class="k">for</span> <span class="n">datapoint</span><span class="p">,</span> <span class="n">sentence_annotations</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">openai_answers</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="n">full_sentence</span> <span class="o">=</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;sentence&quot;</span><span class="p">]</span>
+    <span class="n">full_sentence</span> <span class="o">=</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">"sentence"</span><span class="p">]</span>
     <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of annotations for the sentence</span>
     <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">ENTITY_TYPES</span><span class="p">:</span>
         <span class="n">sentence_annotations_cat</span> <span class="o">=</span> <span class="n">sentence_annotations</span><span class="p">[</span><span class="n">category</span><span class="p">]</span>
@@ -2398,15 +2398,15 @@
             <span class="n">begin_offset</span> <span class="o">=</span> <span class="n">full_sentence</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">begin_offset</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Cannot find offset of &#39;</span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s2">&#39; in sentence &#39;</span><span class="si">{</span><span class="n">full_sentence</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">"Cannot find offset of '</span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="s2">' in sentence '</span><span class="si">{</span><span class="n">full_sentence</span><span class="si">}</span><span class="s2">'"</span>
             <span class="n">annotation</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">category</span><span class="p">}],</span>
-                <span class="s2">&quot;beginOffset&quot;</span><span class="p">:</span> <span class="n">begin_offset</span><span class="p">,</span>
-                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="n">category</span><span class="p">}],</span>
+                <span class="s2">"beginOffset"</span><span class="p">:</span> <span class="n">begin_offset</span><span class="p">,</span>
+                <span class="s2">"content"</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
 
-    <span class="n">json_resp</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;NAMED_ENTITIES_RECOGNITION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">}}</span>
+    <span class="n">json_resp</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"NAMED_ENTITIES_RECOGNITION_JOB"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"annotations"</span><span class="p">:</span> <span class="n">annotations</span><span class="p">}}</span>
     <span class="n">json_response_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">json_resp</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">json_response_array</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -2418,7 +2418,7 @@
     <span class="n">project_id</span><span class="p">,</span>
     <span class="n">external_id_array</span><span class="o">=</span><span class="n">external_id_array</span><span class="p">,</span>
     <span class="n">json_response_array</span><span class="o">=</span><span class="n">json_response_array</span><span class="p">,</span>
-    <span class="n">model_name</span><span class="o">=</span><span class="n">openai_query_params</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">],</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="n">openai_query_params</span><span class="p">[</span><span class="s2">"model"</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
 <pre><code>{'id': 'clf14l26401or0jv4e0d7d9ge'}
@@ -2432,36 +2432,36 @@
 <p>Because OpenAI-generated pre-annotations are not perfect, it would be great to have a way to measure the model's accuracy.</p>
 <p>Since our dataset CoNLL2003 has been annotated, we can easily evaluate the quality of the pre-annotations generated by OpenAI.</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_sentence_annotations</span><span class="p">(</span><span class="n">sentence_annotations</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maps a token to its NER tag (B-ORGANIZATION, I-ORGANIZATION, etc.) class value.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Maps a token to its NER tag (B-ORGANIZATION, I-ORGANIZATION, etc.) class value."""</span>
     <span class="n">ret</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">ENTITY_TYPES</span><span class="p">:</span>
         <span class="n">sentence_annotations_cat</span> <span class="o">=</span> <span class="n">sentence_annotations</span><span class="p">[</span><span class="n">category</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">sentence_annotations_cat</span><span class="p">:</span>
-            <span class="n">content_split</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="n">content_split</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" "</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">content_split</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">ret</span><span class="p">[</span><span class="n">token</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NER_TAGS_ONTOLOGY</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;B-</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+                    <span class="n">ret</span><span class="p">[</span><span class="n">token</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NER_TAGS_ONTOLOGY</span><span class="p">[</span><span class="sa">f</span><span class="s2">"B-</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">"</span><span class="p">])</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">ret</span><span class="p">[</span><span class="n">token</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NER_TAGS_ONTOLOGY</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;I-</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+                    <span class="n">ret</span><span class="p">[</span><span class="n">token</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NER_TAGS_ONTOLOGY</span><span class="p">[</span><span class="sa">f</span><span class="s2">"I-</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">"</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">ret</span>
 
 
 <span class="n">references</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">datapoint</span><span class="p">,</span> <span class="n">sentence_annotations</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">openai_answers</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="n">references</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;ner_tags&quot;</span><span class="p">])</span>
+    <span class="n">references</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datapoint</span><span class="p">[</span><span class="s2">"ner_tags"</span><span class="p">])</span>
 
     <span class="n">sentence_annotations</span> <span class="o">=</span> <span class="n">format_sentence_annotations</span><span class="p">(</span><span class="n">sentence_annotations</span><span class="p">)</span>
     <span class="n">ner_tags_predicted</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">datapoint</span><span class="p">[</span><span class="s2">"tokens"</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">sentence_annotations</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentence_annotations</span><span class="p">[</span><span class="n">token</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">ner_tags_predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sentence_annotations</span><span class="p">[</span><span class="n">token</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">del</span> <span class="n">sentence_annotations</span><span class="p">[</span><span class="n">token</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ner_tags_predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NER_TAGS_ONTOLOGY</span><span class="p">[</span><span class="s2">&quot;O&quot;</span><span class="p">])</span>
+            <span class="n">ner_tags_predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NER_TAGS_ONTOLOGY</span><span class="p">[</span><span class="s2">"O"</span><span class="p">])</span>
     <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ner_tags_predicted</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;tokens&quot;</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"tokens"</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">references</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">NER_TAGS_ONTOLOGY</span><span class="p">)</span>
@@ -2486,46 +2486,46 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">f1_score</span>
 </code></pre></div>
 <p>We will use the F1 score to report the results.</p>
-<div class="highlight"><pre><span></span><code><span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Results&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"Results"</span><span class="p">)</span>
 
-<span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Class&quot;</span><span class="p">)</span>
-<span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;F1&quot;</span><span class="p">)</span>
-<span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Nb samples&quot;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
+<span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">"Class"</span><span class="p">)</span>
+<span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">"F1"</span><span class="p">)</span>
+<span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">"Nb samples"</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">"center"</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">class_value</span> <span class="ow">in</span> <span class="n">NER_TAGS_ONTOLOGY</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">references</span> <span class="o">==</span> <span class="n">class_value</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">predictions</span> <span class="o">==</span> <span class="n">class_value</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
         <span class="n">class_name</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">y_true</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">%"</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">y_true</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="n">end_section</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
 
 <span class="c1"># Group tokens regardless of their positions in the entities</span>
 <span class="n">NER_TAGS_ONTOLOGY_GROUPED</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;PERSON&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-    <span class="s2">&quot;ORGANIZATION&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-    <span class="s2">&quot;LOCATION&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
-    <span class="s2">&quot;MISCELLANEOUS&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="s2">"PERSON"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="s2">"ORGANIZATION"</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="s2">"LOCATION"</span><span class="p">:</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="s2">"MISCELLANEOUS"</span><span class="p">:</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
 <span class="p">}</span>
 <span class="k">for</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">class_values</span> <span class="ow">in</span> <span class="n">NER_TAGS_ONTOLOGY_GROUPED</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">references</span> <span class="o">==</span> <span class="n">class_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">references</span> <span class="o">==</span> <span class="n">class_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">predictions</span> <span class="o">==</span> <span class="n">class_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">predictions</span> <span class="o">==</span> <span class="n">class_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
         <span class="n">class_name</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">y_true</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold green&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span><span class="w"> </span><span class="n">y_pred</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">%"</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">y_true</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="s2">"bold green"</span><span class="p">,</span>
         <span class="n">end_section</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
 
 
 <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
-    <span class="s2">&quot;All&quot;</span><span class="p">,</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f1_score</span><span class="p">(</span><span class="n">references</span><span class="p">,</span><span class="w"> </span><span class="n">predictions</span><span class="p">,</span><span class="w"> </span><span class="n">average</span><span class="o">=</span><span class="s1">&#39;weighted&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">references</span><span class="p">)</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold bright_red&quot;</span><span class="p">,</span>
+    <span class="s2">"All"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">f1_score</span><span class="p">(</span><span class="n">references</span><span class="p">,</span><span class="w"> </span><span class="n">predictions</span><span class="p">,</span><span class="w"> </span><span class="n">average</span><span class="o">=</span><span class="s1">'weighted'</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">6.1f</span><span class="si">}</span><span class="s2">%"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">references</span><span class="p">)</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="n">style</span><span class="o">=</span><span class="s2">"bold bright_red"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>

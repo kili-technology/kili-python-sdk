@@ -2218,7 +2218,7 @@ They are commonly used in Geographic Information Systems (GIS) to represent poin
 </ul>
 <h2 id="installation">Installation</h2>
 <p>This feature requires additional dependencies. Install them using:</p>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;kili[gis]&#39;</span>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'kili[gis]'</span>
 </code></pre></div>
 <p><em>This command installs the necessary libraries such as pyproj which are used for geospatial data manipulation.</em></p>
 <h2 id="function-structure">Function Structure</h2>
@@ -2276,15 +2276,15 @@ They are commonly used in Geographic Information Systems (GIS) to represent poin
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 
 <span class="c1"># Initialize Kili client</span>
-<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your_api_key&quot;</span><span class="p">)</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">"your_api_key"</span><span class="p">)</span>
 
 <span class="c1"># Import labels from shapefiles</span>
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels_from_shapefiles</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span>
-    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">&quot;satellite_image.tif&quot;</span><span class="p">,</span>
-    <span class="n">shapefile_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;roads.shp&quot;</span><span class="p">,</span> <span class="s2">&quot;buildings.shp&quot;</span><span class="p">,</span> <span class="s2">&quot;water_points.shp&quot;</span><span class="p">],</span>
-    <span class="n">job_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ROADS&quot;</span><span class="p">,</span> <span class="s2">&quot;BUILDINGS&quot;</span><span class="p">,</span> <span class="s2">&quot;HYDROLOGY&quot;</span><span class="p">],</span>
-    <span class="n">category_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ROAD&quot;</span><span class="p">,</span> <span class="s2">&quot;BUILDING&quot;</span><span class="p">,</span> <span class="s2">&quot;WATER_POINT&quot;</span><span class="p">],</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span>
+    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">"satellite_image.tif"</span><span class="p">,</span>
+    <span class="n">shapefile_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">"roads.shp"</span><span class="p">,</span> <span class="s2">"buildings.shp"</span><span class="p">,</span> <span class="s2">"water_points.shp"</span><span class="p">],</span>
+    <span class="n">job_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"ROADS"</span><span class="p">,</span> <span class="s2">"BUILDINGS"</span><span class="p">,</span> <span class="s2">"HYDROLOGY"</span><span class="p">],</span>
+    <span class="n">category_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"ROAD"</span><span class="p">,</span> <span class="s2">"BUILDING"</span><span class="p">,</span> <span class="s2">"WATER_POINT"</span><span class="p">],</span>
     <span class="n">from_epsgs</span><span class="o">=</span><span class="p">[</span><span class="mi">4326</span><span class="p">,</span> <span class="mi">4326</span><span class="p">,</span> <span class="mi">4326</span><span class="p">]</span>  <span class="c1"># All shapefiles are in WGS84 (EPSG:4326)</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2292,14 +2292,14 @@ They are commonly used in Geographic Information Systems (GIS) to represent poin
 <p>If your shapefiles use different coordinate systems:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 
-<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your_api_key&quot;</span><span class="p">)</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">"your_api_key"</span><span class="p">)</span>
 
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels_from_shapefiles</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span>
-    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">&quot;sentinel2_image.jp2&quot;</span><span class="p">,</span>
-    <span class="n">shapefile_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;observation_points.shp&quot;</span><span class="p">,</span> <span class="s2">&quot;parcels.shp&quot;</span><span class="p">,</span> <span class="s2">&quot;protected_areas.shp&quot;</span><span class="p">],</span>
-    <span class="n">job_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;OBSERVATIONS&quot;</span><span class="p">,</span> <span class="s2">&quot;PARCELS&quot;</span><span class="p">,</span> <span class="s2">&quot;ZONES&quot;</span><span class="p">],</span>
-    <span class="n">category_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;OBS_POINT&quot;</span><span class="p">,</span> <span class="s2">&quot;AGRICULTURAL_PARCEL&quot;</span><span class="p">,</span> <span class="s2">&quot;NATURE_RESERVE&quot;</span><span class="p">],</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span>
+    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">"sentinel2_image.jp2"</span><span class="p">,</span>
+    <span class="n">shapefile_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">"observation_points.shp"</span><span class="p">,</span> <span class="s2">"parcels.shp"</span><span class="p">,</span> <span class="s2">"protected_areas.shp"</span><span class="p">],</span>
+    <span class="n">job_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"OBSERVATIONS"</span><span class="p">,</span> <span class="s2">"PARCELS"</span><span class="p">,</span> <span class="s2">"ZONES"</span><span class="p">],</span>
+    <span class="n">category_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"OBS_POINT"</span><span class="p">,</span> <span class="s2">"AGRICULTURAL_PARCEL"</span><span class="p">,</span> <span class="s2">"NATURE_RESERVE"</span><span class="p">],</span>
     <span class="n">from_epsgs</span><span class="o">=</span><span class="p">[</span><span class="mi">4326</span><span class="p">,</span> <span class="mi">2154</span><span class="p">,</span> <span class="mi">3857</span><span class="p">]</span>  <span class="c1"># WGS84, Lambert93, Web Mercator</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2307,11 +2307,11 @@ They are commonly used in Geographic Information Systems (GIS) to represent poin
 geometries to WGS84 (EPSG:4326) before importing them into Kili.</p>
 <h2 id="troubleshooting">Troubleshooting</h2>
 <h3 id="problem-importerror">Problem: ImportError</h3>
-<div class="highlight"><pre><span></span><code>ImportError:<span class="w"> </span>This<span class="w"> </span><span class="k">function</span><span class="w"> </span>requires<span class="w"> </span>the<span class="w"> </span><span class="s1">&#39;gis&#39;</span><span class="w"> </span>extra<span class="w"> </span>dependencies.
-Install<span class="w"> </span>them<span class="w"> </span>with:<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>kili<span class="o">[</span>gis<span class="o">]</span><span class="w"> </span>or<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;kili[gis]&#39;</span>
+<div class="highlight"><pre><span></span><code>ImportError:<span class="w"> </span>This<span class="w"> </span><span class="k">function</span><span class="w"> </span>requires<span class="w"> </span>the<span class="w"> </span><span class="s1">'gis'</span><span class="w"> </span>extra<span class="w"> </span>dependencies.
+Install<span class="w"> </span>them<span class="w"> </span>with:<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>kili<span class="o">[</span>gis<span class="o">]</span><span class="w"> </span>or<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'kili[gis]'</span>
 </code></pre></div>
 <p>Solution: Install the GIS dependencies:</p>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;kili[gis]&#39;</span>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'kili[gis]'</span>
 </code></pre></div>
 <h3 id="problem-incorrect-coordinates-or-invisible-annotations">Problem: Incorrect Coordinates or Invisible Annotations</h3>
 <p>Possible solutions:</p>
@@ -2320,13 +2320,13 @@ Install<span class="w"> </span>them<span class="w"> </span>with:<span class="w">
 <li>Make sure the image in Kili is correctly georeferenced</li>
 <li>Check if the image has geospatial metadata with:</li>
 </ul>
-<div class="highlight"><pre><span></span><code>asset = kili.assets(project_id=&quot;your_project_id&quot;, fields=[&quot;jsonContent&quot;])[0]
-print(asset[&#39;jsonContent&#39;])
+<div class="highlight"><pre><span></span><code>asset = kili.assets(project_id="your_project_id", fields=["jsonContent"])[0]
+print(asset['jsonContent'])
 </code></pre></div>
 <h3 id="problem-categories-not-found">Problem: Categories Not Found</h3>
 <p>Solution: Check that the category names exactly match those in your Kili ontology:</p>
-<div class="highlight"><pre><span></span><code><span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;jsonInterface&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="p">[</span><span class="s2">&quot;jsonInterface&quot;</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"jsonInterface"</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="p">[</span><span class="s2">"jsonInterface"</span><span class="p">])</span>
 </code></pre></div>
 <h2 id="conclusion">Conclusion</h2>
 <p>The <code>append_labels_from_shapefiles</code> function greatly simplifies the import of geospatial data into Kili, allowing you

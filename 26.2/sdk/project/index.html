@@ -2218,24 +2218,24 @@
 
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/project.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"__init__"</span><span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ProjectClientMethods</span><span class="p">(</span><span class="n">BaseClientMethods</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Methods attached to the Kili client, to run actions on projects.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Methods attached to the Kili client, to run actions on projects."""</span>
 
     <span class="nd">@typechecked</span>
     <span class="c1"># pylint: disable=too-many-arguments</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_project</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
         <span class="n">input_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">InputType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">json_interface</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ProjectId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">compliance_tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="n">ComplianceTag</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">from_demo_project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DemoProjectType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a project.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Create a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            input_type: Currently, one of `IMAGE`, `PDF`, `TEXT` or `VIDEO`.</span>
@@ -2272,12 +2272,12 @@
 <span class="sd">            A dict with the id of the created project.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.create_project(input_type=&#39;IMAGE&#39;, json_interface=json_interface, title=&#39;Example&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; kili.create_project(input_type='IMAGE', json_interface=json_interface, title='Example')</span>
 
-<span class="sd">        !!! example &quot;Recipe&quot;</span>
+<span class="sd">        !!! example "Recipe"</span>
 <span class="sd">            For more detailed examples on how to create projects,</span>
 <span class="sd">                see [the recipe](https://docs.kili-technology.com/recipes/creating-a-project).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">project_id</span> <span class="o">=</span> <span class="n">ProjectUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
             <span class="n">input_type</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span>
             <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
@@ -2295,7 +2295,7 @@
                 <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">tag_ids</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="n">TagId</span><span class="p">],</span> <span class="n">tag_ids</span><span class="p">),</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
 
     <span class="nd">@overload</span>
     <span class="c1"># pylint: disable=too-many-arguments</span>
@@ -2311,17 +2311,17 @@
         <span class="n">tags_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;consensusTotCoverage&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;inputType&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;jsonInterface&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;minConsensusSize&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;reviewCoverage&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.role&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.user.email&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.user.id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;title&quot;</span><span class="p">,</span>
+            <span class="s2">"consensusTotCoverage"</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">,</span>
+            <span class="s2">"inputType"</span><span class="p">,</span>
+            <span class="s2">"jsonInterface"</span><span class="p">,</span>
+            <span class="s2">"minConsensusSize"</span><span class="p">,</span>
+            <span class="s2">"reviewCoverage"</span><span class="p">,</span>
+            <span class="s2">"roles.id"</span><span class="p">,</span>
+            <span class="s2">"roles.role"</span><span class="p">,</span>
+            <span class="s2">"roles.user.email"</span><span class="p">,</span>
+            <span class="s2">"roles.user.id"</span><span class="p">,</span>
+            <span class="s2">"title"</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">deleted</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2346,17 +2346,17 @@
         <span class="n">tags_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;consensusTotCoverage&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;inputType&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;jsonInterface&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;minConsensusSize&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;reviewCoverage&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.role&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.user.email&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.user.id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;title&quot;</span><span class="p">,</span>
+            <span class="s2">"consensusTotCoverage"</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">,</span>
+            <span class="s2">"inputType"</span><span class="p">,</span>
+            <span class="s2">"jsonInterface"</span><span class="p">,</span>
+            <span class="s2">"minConsensusSize"</span><span class="p">,</span>
+            <span class="s2">"reviewCoverage"</span><span class="p">,</span>
+            <span class="s2">"roles.id"</span><span class="p">,</span>
+            <span class="s2">"roles.role"</span><span class="p">,</span>
+            <span class="s2">"roles.user.email"</span><span class="p">,</span>
+            <span class="s2">"roles.user.id"</span><span class="p">,</span>
+            <span class="s2">"title"</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">deleted</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2381,17 +2381,17 @@
         <span class="n">tags_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;consensusTotCoverage&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;inputType&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;jsonInterface&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;minConsensusSize&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;reviewCoverage&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.role&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.user.email&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;roles.user.id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;title&quot;</span><span class="p">,</span>
+            <span class="s2">"consensusTotCoverage"</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">,</span>
+            <span class="s2">"inputType"</span><span class="p">,</span>
+            <span class="s2">"jsonInterface"</span><span class="p">,</span>
+            <span class="s2">"minConsensusSize"</span><span class="p">,</span>
+            <span class="s2">"reviewCoverage"</span><span class="p">,</span>
+            <span class="s2">"roles.id"</span><span class="p">,</span>
+            <span class="s2">"roles.role"</span><span class="p">,</span>
+            <span class="s2">"roles.user.email"</span><span class="p">,</span>
+            <span class="s2">"roles.user.id"</span><span class="p">,</span>
+            <span class="s2">"title"</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">deleted</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2401,7 +2401,7 @@
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of projects that match a set of criteria.</span>
+<span class="w">        </span><span class="sd">"""Get a generator or a list of projects that match a set of criteria.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Select a specific project through its project_id.</span>
@@ -2424,8 +2424,8 @@
 <span class="sd">            as_generator: If `True`, a generator on the projects is returned.</span>
 <span class="sd">            deleted: If `True`, all projects are returned (including deleted ones).</span>
 
-<span class="sd">        !!! info &quot;Dates format&quot;</span>
-<span class="sd">            Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
+<span class="sd">        !!! info "Dates format"</span>
+<span class="sd">            Date strings should have format: "YYYY-MM-DD"</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list of projects or a generator of projects if `as_generator` is `True`.</span>
@@ -2433,12 +2433,12 @@
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; # List all my projects</span>
 <span class="sd">            &gt;&gt;&gt; kili.projects()</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">tag_ids</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">tags_in</span><span class="p">)</span> <span class="k">if</span> <span class="n">tags_in</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
 
-        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
         <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
 
         <span class="n">projects_gen</span> <span class="o">=</span> <span class="n">ProjectUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">list_projects</span><span class="p">(</span>
@@ -2489,7 +2489,7 @@
         <span class="n">seconds_to_label_before_auto_assign</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">should_auto_assign</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update properties of a project.</span>
+<span class="w">        </span><span class="sd">"""Update properties of a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project.</span>
@@ -2535,9 +2535,9 @@
 <span class="sd">            A dict with the changed properties which indicates if the mutation was successful,</span>
 <span class="sd">                else an error message.</span>
 
-<span class="sd">        !!! example &quot;Change Metadata Properties&quot;</span>
+<span class="sd">        !!! example "Change Metadata Properties"</span>
 <span class="sd">            The metadata properties of the project have to be defined to allow for application filters on</span>
-<span class="sd">            metadata. It&#39;s needed to know how to interpret the values (string, number or dates).</span>
+<span class="sd">            metadata. It's needed to know how to interpret the values (string, number or dates).</span>
 
 <span class="sd">            To define the properties of a metadata field, you can use the `update_properties_in_project`</span>
 <span class="sd">            function with the `metadata_properties` argument. `metadata_properties` is given as a dict</span>
@@ -2547,65 +2547,65 @@
 <span class="sd">            kili.update_properties_in_project(</span>
 <span class="sd">                project_id = project_id,</span>
 <span class="sd">                metadata_properties = {</span>
-<span class="sd">                    &#39;customConsensus&#39;: {</span>
-<span class="sd">                        &#39;filterable&#39;: True,</span>
-<span class="sd">                        &#39;type&#39;: &#39;number&#39;,</span>
-<span class="sd">                        &#39;visibleByLabeler&#39;: True,</span>
-<span class="sd">                        &#39;visibleByReviewer&#39;: True,</span>
+<span class="sd">                    'customConsensus': {</span>
+<span class="sd">                        'filterable': True,</span>
+<span class="sd">                        'type': 'number',</span>
+<span class="sd">                        'visibleByLabeler': True,</span>
+<span class="sd">                        'visibleByReviewer': True,</span>
 <span class="sd">                    },</span>
-<span class="sd">                    &#39;sensitiveData&#39;: {</span>
-<span class="sd">                        &#39;filterable&#39;: True,</span>
-<span class="sd">                        &#39;type&#39;: &#39;string&#39;,</span>
-<span class="sd">                        &#39;visibleByLabeler&#39;: False,</span>
-<span class="sd">                        &#39;visibleByReviewer&#39;: True,</span>
+<span class="sd">                    'sensitiveData': {</span>
+<span class="sd">                        'filterable': True,</span>
+<span class="sd">                        'type': 'string',</span>
+<span class="sd">                        'visibleByLabeler': False,</span>
+<span class="sd">                        'visibleByReviewer': True,</span>
 <span class="sd">                    },</span>
-<span class="sd">                    &#39;date&#39;: {</span>
-<span class="sd">                        &#39;filterable&#39;: True,</span>
-<span class="sd">                        &#39;type&#39;: &#39;date&#39;,</span>
-<span class="sd">                        &#39;visibleByLabeler&#39;: False,</span>
-<span class="sd">                        &#39;visibleByReviewer&#39;: True,</span>
+<span class="sd">                    'date': {</span>
+<span class="sd">                        'filterable': True,</span>
+<span class="sd">                        'type': 'date',</span>
+<span class="sd">                        'visibleByLabeler': False,</span>
+<span class="sd">                        'visibleByReviewer': True,</span>
 <span class="sd">                    },</span>
 <span class="sd">                }</span>
 <span class="sd">            )</span>
 <span class="sd">            ```</span>
 
-<span class="sd">            If you don&#39;t define all values for a given key when setting the metadata properties default</span>
+<span class="sd">            If you don't define all values for a given key when setting the metadata properties default</span>
 <span class="sd">            values will be used :Not providing a property or providing an unsupported one will use the</span>
 <span class="sd">            default values:</span>
 <span class="sd">            ```</span>
 <span class="sd">            filterable: True</span>
-<span class="sd">            type: &#39;string&#39;</span>
+<span class="sd">            type: 'string'</span>
 <span class="sd">            visibleByLabeler: True</span>
 <span class="sd">            visibleByReviewer: True</span>
 <span class="sd">            ```</span>
 
-<span class="sd">        !!! note &quot;Deprecated: Change Metadata Types&quot;</span>
+<span class="sd">        !!! note "Deprecated: Change Metadata Types"</span>
 <span class="sd">            The `metadata_types` parameter is deprecated. Please use `metadata_properties` instead.</span>
 
-<span class="sd">        !!! note &quot;Deprecated: Input Type&quot;</span>
+<span class="sd">        !!! note "Deprecated: Input Type"</span>
 <span class="sd">            The `input_type` parameter is deprecated. The input type of a project cannot be changed after</span>
 <span class="sd">            its creation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">seconds_to_label_before_auto_assign</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;seconds_to_label_before_auto_assign is going to be deprecated. Please use&quot;</span>
-                <span class="s2">&quot; `should_auto_assign` field instead to auto assign assets&quot;</span><span class="p">,</span>
+                <span class="s2">"seconds_to_label_before_auto_assign is going to be deprecated. Please use"</span>
+                <span class="s2">" `should_auto_assign` field instead to auto assign assets"</span><span class="p">,</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">metadata_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;metadata_types is going to be deprecated. Please use&quot;</span>
-                <span class="s2">&quot; `metadata_properties` field instead to configure metadata properties.&quot;</span><span class="p">,</span>
+                <span class="s2">"metadata_types is going to be deprecated. Please use"</span>
+                <span class="s2">" `metadata_properties` field instead to configure metadata properties."</span><span class="p">,</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">input_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;input_type is deprecated. The input type of a project cannot be&quot;</span>
-                <span class="s2">&quot; changed after its creation.&quot;</span><span class="p">,</span>
+                <span class="s2">"input_type is deprecated. The input type of a project cannot be"</span>
+                <span class="s2">" changed after its creation."</span><span class="p">,</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
@@ -2648,7 +2648,7 @@
         <span class="n">tags_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Count the number of projects with a search_query.</span>
+<span class="w">        </span><span class="sd">"""Count the number of projects with a search_query.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Select a specific project through its project_id.</span>
@@ -2668,12 +2668,12 @@
 <span class="sd">                None disable this filter.</span>
 <span class="sd">            tags_in: Returned projects should have at least one tag that belongs to that list, if given.</span>
 
-<span class="sd">        !!! info &quot;Dates format&quot;</span>
-<span class="sd">            Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
+<span class="sd">        !!! info "Dates format"</span>
+<span class="sd">            Date strings should have format: "YYYY-MM-DD"</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The number of projects with the parameters provided</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">tag_ids</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">tags_in</span><span class="p">)</span> <span class="k">if</span> <span class="n">tags_in</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
@@ -2834,7 +2834,7 @@ None disable this filter.</p></td>
     <span class="n">tags_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count the number of projects with a search_query.</span>
+<span class="w">    </span><span class="sd">"""Count the number of projects with a search_query.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Select a specific project through its project_id.</span>
@@ -2854,12 +2854,12 @@ None disable this filter.</p></td>
 <span class="sd">            None disable this filter.</span>
 <span class="sd">        tags_in: Returned projects should have at least one tag that belongs to that list, if given.</span>
 
-<span class="sd">    !!! info &quot;Dates format&quot;</span>
-<span class="sd">        Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
+<span class="sd">    !!! info "Dates format"</span>
+<span class="sd">        Date strings should have format: "YYYY-MM-DD"</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of projects with the parameters provided</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tag_ids</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">tags_in</span><span class="p">)</span> <span class="k">if</span> <span class="n">tags_in</span> <span class="k">else</span> <span class="kc">None</span>
     <span class="p">)</span>
@@ -2890,7 +2890,7 @@ None disable this filter.</p></td>
 
 
 <h3 id="kili.presentation.client.project.ProjectClientMethods.create_project" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compliance_tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">from_demo_project</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compliance_tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">from_demo_project</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2998,7 +2998,7 @@ Possible values are: <code>PHI</code> and <code>PII</code>.</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span><span class="n">input_type</span><span class="o">=</span><span class="s1">&#39;IMAGE&#39;</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Example&#39;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span><span class="n">input_type</span><span class="o">=</span><span class="s1">'IMAGE'</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">'Example'</span><span class="p">)</span>
 </code></pre></div>
       <div class="admonition example">
 <p class="admonition-title">Recipe</p>
@@ -3011,15 +3011,15 @@ Possible values are: <code>PHI</code> and <code>PII</code>.</p></td>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_project</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">input_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">InputType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ProjectId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">compliance_tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="n">ComplianceTag</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">from_demo_project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DemoProjectType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a project.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Create a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        input_type: Currently, one of `IMAGE`, `PDF`, `TEXT` or `VIDEO`.</span>
@@ -3056,12 +3056,12 @@ Possible values are: <code>PHI</code> and <code>PII</code>.</p></td>
 <span class="sd">        A dict with the id of the created project.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.create_project(input_type=&#39;IMAGE&#39;, json_interface=json_interface, title=&#39;Example&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; kili.create_project(input_type='IMAGE', json_interface=json_interface, title='Example')</span>
 
-<span class="sd">    !!! example &quot;Recipe&quot;</span>
+<span class="sd">    !!! example "Recipe"</span>
 <span class="sd">        For more detailed examples on how to create projects,</span>
 <span class="sd">            see [the recipe](https://docs.kili-technology.com/recipes/creating-a-project).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">project_id</span> <span class="o">=</span> <span class="n">ProjectUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
         <span class="n">input_type</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span>
         <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
@@ -3079,7 +3079,7 @@ Possible values are: <code>PHI</code> and <code>PII</code>.</p></td>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">tag_ids</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="n">TagId</span><span class="p">],</span> <span class="n">tag_ids</span><span class="p">),</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}</span>
 </code></pre></div>
         </details>
     </div>
@@ -3093,7 +3093,7 @@ Possible values are: <code>PHI</code> and <code>PII</code>.</p></td>
 
 
 <h3 id="kili.presentation.client.project.ProjectClientMethods.projects" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">projects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">search_query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">archived</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">starred</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tags_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;consensusTotCoverage&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;inputType&#39;</span><span class="p">,</span> <span class="s1">&#39;jsonInterface&#39;</span><span class="p">,</span> <span class="s1">&#39;minConsensusSize&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewCoverage&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.id&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.role&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.user.email&#39;</span><span class="p">,</span> <span class="s1">&#39;roles.user.id&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">),</span> <span class="n">deleted</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">projects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">search_query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">should_relaunch_kpi_computation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">updated_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">archived</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">starred</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tags_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'consensusTotCoverage'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'inputType'</span><span class="p">,</span> <span class="s1">'jsonInterface'</span><span class="p">,</span> <span class="s1">'minConsensusSize'</span><span class="p">,</span> <span class="s1">'reviewCoverage'</span><span class="p">,</span> <span class="s1">'roles.id'</span><span class="p">,</span> <span class="s1">'roles.role'</span><span class="p">,</span> <span class="s1">'roles.user.email'</span><span class="p">,</span> <span class="s1">'roles.user.id'</span><span class="p">,</span> <span class="s1">'title'</span><span class="p">),</span> <span class="n">deleted</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3247,17 +3247,17 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
     <span class="n">tags_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;consensusTotCoverage&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;inputType&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;jsonInterface&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;minConsensusSize&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;reviewCoverage&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;roles.id&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;roles.role&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;roles.user.email&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;roles.user.id&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;title&quot;</span><span class="p">,</span>
+        <span class="s2">"consensusTotCoverage"</span><span class="p">,</span>
+        <span class="s2">"id"</span><span class="p">,</span>
+        <span class="s2">"inputType"</span><span class="p">,</span>
+        <span class="s2">"jsonInterface"</span><span class="p">,</span>
+        <span class="s2">"minConsensusSize"</span><span class="p">,</span>
+        <span class="s2">"reviewCoverage"</span><span class="p">,</span>
+        <span class="s2">"roles.id"</span><span class="p">,</span>
+        <span class="s2">"roles.role"</span><span class="p">,</span>
+        <span class="s2">"roles.user.email"</span><span class="p">,</span>
+        <span class="s2">"roles.user.id"</span><span class="p">,</span>
+        <span class="s2">"title"</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">deleted</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3267,7 +3267,7 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of projects that match a set of criteria.</span>
+<span class="w">    </span><span class="sd">"""Get a generator or a list of projects that match a set of criteria.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Select a specific project through its project_id.</span>
@@ -3290,8 +3290,8 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 <span class="sd">        as_generator: If `True`, a generator on the projects is returned.</span>
 <span class="sd">        deleted: If `True`, all projects are returned (including deleted ones).</span>
 
-<span class="sd">    !!! info &quot;Dates format&quot;</span>
-<span class="sd">        Date strings should have format: &quot;YYYY-MM-DD&quot;</span>
+<span class="sd">    !!! info "Dates format"</span>
+<span class="sd">        Date strings should have format: "YYYY-MM-DD"</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of projects or a generator of projects if `as_generator` is `True`.</span>
@@ -3299,12 +3299,12 @@ See <a href="https://docs.kili-technology.com/reference/graphql-api#project">the
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; # List all my projects</span>
 <span class="sd">        &gt;&gt;&gt; kili.projects()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tag_ids</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">tags_in</span><span class="p">)</span> <span class="k">if</span> <span class="n">tags_in</span> <span class="k">else</span> <span class="kc">None</span>
     <span class="p">)</span>
 
-    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
     <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
 
     <span class="n">projects_gen</span> <span class="o">=</span> <span class="n">ProjectUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">list_projects</span><span class="p">(</span>
@@ -3526,23 +3526,23 @@ of metadata field names as keys and metadata properties as values.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_project</span><span class="p">(</span>
     <span class="n">project_id</span> <span class="o">=</span> <span class="n">project_id</span><span class="p">,</span>
     <span class="n">metadata_properties</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;customConsensus&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;filterable&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;visibleByLabeler&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;visibleByReviewer&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">'customConsensus'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'filterable'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'type'</span><span class="p">:</span> <span class="s1">'number'</span><span class="p">,</span>
+            <span class="s1">'visibleByLabeler'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'visibleByReviewer'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s1">&#39;sensitiveData&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;filterable&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;visibleByLabeler&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;visibleByReviewer&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">'sensitiveData'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'filterable'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'type'</span><span class="p">:</span> <span class="s1">'string'</span><span class="p">,</span>
+            <span class="s1">'visibleByLabeler'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'visibleByReviewer'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;filterable&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;visibleByLabeler&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;visibleByReviewer&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">'date'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'filterable'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'type'</span><span class="p">:</span> <span class="s1">'date'</span><span class="p">,</span>
+            <span class="s1">'visibleByLabeler'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'visibleByReviewer'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">}</span>
 <span class="p">)</span>
@@ -3551,7 +3551,7 @@ of metadata field names as keys and metadata properties as values.</p>
 values will be used :Not providing a property or providing an unsupported one will use the
 default values:
 <div class="highlight"><pre><span></span><code>filterable: True
-type: &#39;string&#39;
+type: 'string'
 visibleByLabeler: True
 visibleByReviewer: True
 </code></pre></div></p>
@@ -3591,7 +3591,7 @@ its creation.</p>
     <span class="n">seconds_to_label_before_auto_assign</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">should_auto_assign</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update properties of a project.</span>
+<span class="w">    </span><span class="sd">"""Update properties of a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project.</span>
@@ -3637,9 +3637,9 @@ its creation.</p>
 <span class="sd">        A dict with the changed properties which indicates if the mutation was successful,</span>
 <span class="sd">            else an error message.</span>
 
-<span class="sd">    !!! example &quot;Change Metadata Properties&quot;</span>
+<span class="sd">    !!! example "Change Metadata Properties"</span>
 <span class="sd">        The metadata properties of the project have to be defined to allow for application filters on</span>
-<span class="sd">        metadata. It&#39;s needed to know how to interpret the values (string, number or dates).</span>
+<span class="sd">        metadata. It's needed to know how to interpret the values (string, number or dates).</span>
 
 <span class="sd">        To define the properties of a metadata field, you can use the `update_properties_in_project`</span>
 <span class="sd">        function with the `metadata_properties` argument. `metadata_properties` is given as a dict</span>
@@ -3649,65 +3649,65 @@ its creation.</p>
 <span class="sd">        kili.update_properties_in_project(</span>
 <span class="sd">            project_id = project_id,</span>
 <span class="sd">            metadata_properties = {</span>
-<span class="sd">                &#39;customConsensus&#39;: {</span>
-<span class="sd">                    &#39;filterable&#39;: True,</span>
-<span class="sd">                    &#39;type&#39;: &#39;number&#39;,</span>
-<span class="sd">                    &#39;visibleByLabeler&#39;: True,</span>
-<span class="sd">                    &#39;visibleByReviewer&#39;: True,</span>
+<span class="sd">                'customConsensus': {</span>
+<span class="sd">                    'filterable': True,</span>
+<span class="sd">                    'type': 'number',</span>
+<span class="sd">                    'visibleByLabeler': True,</span>
+<span class="sd">                    'visibleByReviewer': True,</span>
 <span class="sd">                },</span>
-<span class="sd">                &#39;sensitiveData&#39;: {</span>
-<span class="sd">                    &#39;filterable&#39;: True,</span>
-<span class="sd">                    &#39;type&#39;: &#39;string&#39;,</span>
-<span class="sd">                    &#39;visibleByLabeler&#39;: False,</span>
-<span class="sd">                    &#39;visibleByReviewer&#39;: True,</span>
+<span class="sd">                'sensitiveData': {</span>
+<span class="sd">                    'filterable': True,</span>
+<span class="sd">                    'type': 'string',</span>
+<span class="sd">                    'visibleByLabeler': False,</span>
+<span class="sd">                    'visibleByReviewer': True,</span>
 <span class="sd">                },</span>
-<span class="sd">                &#39;date&#39;: {</span>
-<span class="sd">                    &#39;filterable&#39;: True,</span>
-<span class="sd">                    &#39;type&#39;: &#39;date&#39;,</span>
-<span class="sd">                    &#39;visibleByLabeler&#39;: False,</span>
-<span class="sd">                    &#39;visibleByReviewer&#39;: True,</span>
+<span class="sd">                'date': {</span>
+<span class="sd">                    'filterable': True,</span>
+<span class="sd">                    'type': 'date',</span>
+<span class="sd">                    'visibleByLabeler': False,</span>
+<span class="sd">                    'visibleByReviewer': True,</span>
 <span class="sd">                },</span>
 <span class="sd">            }</span>
 <span class="sd">        )</span>
 <span class="sd">        ```</span>
 
-<span class="sd">        If you don&#39;t define all values for a given key when setting the metadata properties default</span>
+<span class="sd">        If you don't define all values for a given key when setting the metadata properties default</span>
 <span class="sd">        values will be used :Not providing a property or providing an unsupported one will use the</span>
 <span class="sd">        default values:</span>
 <span class="sd">        ```</span>
 <span class="sd">        filterable: True</span>
-<span class="sd">        type: &#39;string&#39;</span>
+<span class="sd">        type: 'string'</span>
 <span class="sd">        visibleByLabeler: True</span>
 <span class="sd">        visibleByReviewer: True</span>
 <span class="sd">        ```</span>
 
-<span class="sd">    !!! note &quot;Deprecated: Change Metadata Types&quot;</span>
+<span class="sd">    !!! note "Deprecated: Change Metadata Types"</span>
 <span class="sd">        The `metadata_types` parameter is deprecated. Please use `metadata_properties` instead.</span>
 
-<span class="sd">    !!! note &quot;Deprecated: Input Type&quot;</span>
+<span class="sd">    !!! note "Deprecated: Input Type"</span>
 <span class="sd">        The `input_type` parameter is deprecated. The input type of a project cannot be changed after</span>
 <span class="sd">        its creation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">seconds_to_label_before_auto_assign</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;seconds_to_label_before_auto_assign is going to be deprecated. Please use&quot;</span>
-            <span class="s2">&quot; `should_auto_assign` field instead to auto assign assets&quot;</span><span class="p">,</span>
+            <span class="s2">"seconds_to_label_before_auto_assign is going to be deprecated. Please use"</span>
+            <span class="s2">" `should_auto_assign` field instead to auto assign assets"</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">metadata_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;metadata_types is going to be deprecated. Please use&quot;</span>
-            <span class="s2">&quot; `metadata_properties` field instead to configure metadata properties.&quot;</span><span class="p">,</span>
+            <span class="s2">"metadata_types is going to be deprecated. Please use"</span>
+            <span class="s2">" `metadata_properties` field instead to configure metadata properties."</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">input_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;input_type is deprecated. The input type of a project cannot be&quot;</span>
-            <span class="s2">&quot; changed after its creation.&quot;</span><span class="p">,</span>
+            <span class="s2">"input_type is deprecated. The input type of a project cannot be"</span>
+            <span class="s2">" changed after its creation."</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
@@ -3760,18 +3760,18 @@ its creation.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/project/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"__init__"</span><span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MutationsProject</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Project mutations.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Set of Project mutations."""</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">append_to_roles</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">user_email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ADMIN&quot;</span><span class="p">,</span> <span class="s2">&quot;TEAM_MANAGER&quot;</span><span class="p">,</span> <span class="s2">&quot;REVIEWER&quot;</span><span class="p">,</span> <span class="s2">&quot;LABELER&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;LABELER&quot;</span><span class="p">,</span>
+        <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"ADMIN"</span><span class="p">,</span> <span class="s2">"TEAM_MANAGER"</span><span class="p">,</span> <span class="s2">"REVIEWER"</span><span class="p">,</span> <span class="s2">"LABELER"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"LABELER"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a user to a project.</span>
+<span class="w">        </span><span class="sd">"""Add a user to a project.</span>
 
 <span class="sd">        !!! info</span>
 <span class="sd">            If the user does not exist in your organization, he/she is invited and added</span>
@@ -3789,21 +3789,21 @@ its creation.</p>
 
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.append_to_roles(project_id=project_id, user_email=&#39;john@doe.com&#39;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.append_to_roles(project_id=project_id, user_email='john@doe.com')</span>
+<span class="sd">        """</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span> <span class="s2">&quot;userEmail&quot;</span><span class="p">:</span> <span class="n">user_email</span><span class="p">},</span>
-            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span>
+            <span class="s2">"data"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span> <span class="s2">"userEmail"</span><span class="p">:</span> <span class="n">user_email</span><span class="p">},</span>
+            <span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span>
         <span class="p">}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_APPEND_TO_ROLES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
 
-        <span class="n">project_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">project_user</span> <span class="ow">in</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;roles&quot;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_email</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">role</span><span class="p">:</span>
+        <span class="n">project_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">project_user</span> <span class="ow">in</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">"roles"</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">"user"</span><span class="p">][</span><span class="s2">"email"</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_email</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">"role"</span><span class="p">]</span> <span class="o">==</span> <span class="n">role</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">project_user</span>
 
         <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Failed to mutate user </span><span class="si">{</span><span class="n">user_email</span><span class="si">}</span><span class="s2"> to role </span><span class="si">{</span><span class="n">role</span><span class="si">}</span><span class="s2"> for project </span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Failed to mutate user </span><span class="si">{</span><span class="n">user_email</span><span class="si">}</span><span class="s2"> to role </span><span class="si">{</span><span class="n">role</span><span class="si">}</span><span class="s2"> for project </span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -3811,12 +3811,12 @@ its creation.</p>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">user_email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ADMIN&quot;</span><span class="p">,</span> <span class="s2">&quot;TEAM_MANAGER&quot;</span><span class="p">,</span> <span class="s2">&quot;REVIEWER&quot;</span><span class="p">,</span> <span class="s2">&quot;LABELER&quot;</span><span class="p">],</span>
+        <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"ADMIN"</span><span class="p">,</span> <span class="s2">"TEAM_MANAGER"</span><span class="p">,</span> <span class="s2">"REVIEWER"</span><span class="p">,</span> <span class="s2">"LABELER"</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update properties of a role.</span>
+<span class="w">        </span><span class="sd">"""Update properties of a role.</span>
 
 <span class="sd">        !!! info</span>
-<span class="sd">            To be able to change someone&#39;s role, you must be either of:</span>
+<span class="sd">            To be able to change someone's role, you must be either of:</span>
 
 <span class="sd">            - an admin of the project</span>
 <span class="sd">            - a team manager of the project</span>
@@ -3830,31 +3830,31 @@ its creation.</p>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dictionary with the project user information.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span>
+            <span class="s2">"data"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"role"</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">user_email</span><span class="p">}},</span>
+            <span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"project"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span> <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"email"</span><span class="p">:</span> <span class="n">user_email</span><span class="p">}},</span>
         <span class="p">}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT_USER</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
-    <span class="nd">@deprecated</span><span class="p">(</span><span class="s2">&quot;use update_properties_in_project_user instead&quot;</span><span class="p">)</span>
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="s2">"use update_properties_in_project_user instead"</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_properties_in_role</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">role_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update properties of a role.</span>
+<span class="w">        </span><span class="sd">"""Update properties of a role.</span>
 
 <span class="sd">        !!! info</span>
-<span class="sd">            To be able to change someone&#39;s role, you must be either of:</span>
+<span class="sd">            To be able to change someone's role, you must be either of:</span>
 
 <span class="sd">            - an admin of the project</span>
 <span class="sd">            - a team manager of the project</span>
 <span class="sd">            - an admin of the organization</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            role_id: Role identifier of the user. E.g. : &#39;to-be-deactivated&#39;</span>
+<span class="sd">            role_id: Role identifier of the user. E.g. : 'to-be-deactivated'</span>
 <span class="sd">            project_id: Identifier of the project</span>
 <span class="sd">            user_id: The email or identifier of the user with updated role</span>
 <span class="sd">            role: The new role.</span>
@@ -3862,15 +3862,15 @@ its creation.</p>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dictionary with the project user information.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;roleID&quot;</span><span class="p">:</span> <span class="n">role_id</span><span class="p">,</span>
-            <span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-            <span class="s2">&quot;userID&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
-            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span>
+            <span class="s2">"roleID"</span><span class="p">:</span> <span class="n">role_id</span><span class="p">,</span>
+            <span class="s2">"projectID"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+            <span class="s2">"userID"</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
+            <span class="s2">"role"</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_ROLE</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_from_roles</span><span class="p">(</span>
@@ -3878,8 +3878,8 @@ its creation.</p>
         <span class="n">role_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">user_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete users by their role_id.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Delete users by their role_id.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            role_id: Identifier of the project user (not the ID of the user).</span>
@@ -3889,69 +3889,69 @@ its creation.</p>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the project id.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">role_id</span><span class="p">:</span>
-            <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">role_id</span><span class="p">}}</span>
+            <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">role_id</span><span class="p">}}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">user_email</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;If role_id is not provided, you must provide user_email and project_id.&quot;</span>
+                    <span class="s2">"If role_id is not provided, you must provide user_email and project_id."</span>
                 <span class="p">)</span>
-            <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">user_email</span><span class="p">}}}</span>
+            <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"project"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span> <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"email"</span><span class="p">:</span> <span class="n">user_email</span><span class="p">}}}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_DELETE_FROM_ROLES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a project permanently.</span>
+<span class="w">        </span><span class="sd">"""Delete a project permanently.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A string with the deleted project id.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}}</span>
+<span class="sd">        """</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_PROJECT_DELETE_ASYNCHRONOUSLY</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">archive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Archive a project.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">archive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Archive a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the id of the project.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-            <span class="s2">&quot;archived&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"projectID"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+            <span class="s2">"archived"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">unarchive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unarchive a project.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unarchive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Unarchive a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the id of the project.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-            <span class="s2">&quot;archived&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"projectID"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+            <span class="s2">"archived"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">copy_project</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
@@ -3966,7 +3966,7 @@ its creation.</p>
         <span class="n">copy_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create new project from an existing project.</span>
+<span class="w">        </span><span class="sd">"""Create new project from an existing project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            from_project_id: Project ID to copy from.</span>
@@ -3985,11 +3985,11 @@ its creation.</p>
 <span class="sd">            The created project ID.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.copy_project(from_project_id=&quot;clbqn56b331234567890l41c0&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.copy_project(from_project_id="clbqn56b331234567890l41c0")</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">copy_json_interface</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">copy_quality_settings</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;The &#39;copy_json_interface&#39; and &#39;copy_quality_settings&#39; arguments are deprecated.&quot;</span>
+                <span class="s2">"The 'copy_json_interface' and 'copy_quality_settings' arguments are deprecated."</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ProjectCopier</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">copy_project</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
@@ -4005,8 +4005,8 @@ its creation.</p>
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_project_anonymization</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">should_anonymize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Anonymize the project for the labelers and reviewers.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Anonymize the project for the labelers and reviewers.</span>
 
 <span class="sd">        !!! info</span>
 <span class="sd">            Compatible with versions of the Kili app &gt;= 2.135.0</span>
@@ -4022,16 +4022,16 @@ its creation.</p>
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.update_project_anonymization(project_id=project_id)</span>
 <span class="sd">            &gt;&gt;&gt; kili.update_project_anonymization(project_id=project_id, should_anonymize=False)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-                <span class="s2">&quot;shouldAnonymize&quot;</span><span class="p">:</span> <span class="n">should_anonymize</span><span class="p">,</span>
+            <span class="s2">"input"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+                <span class="s2">"shouldAnonymize"</span><span class="p">:</span> <span class="n">should_anonymize</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_PROJECT_UPDATE_ANONYMIZATION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -4052,7 +4052,7 @@ its creation.</p>
 
 
 <h3 id="kili.entrypoints.mutations.project.__init__.MutationsProject.append_to_roles" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">append_to_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">user_email</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s1">&#39;LABELER&#39;</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">append_to_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">user_email</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s1">'LABELER'</span><span class="p">)</span></code>
 
 
 </h3>
@@ -4115,7 +4115,7 @@ This email is used as the unique identifier of the user.</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_to_roles</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">user_email</span><span class="o">=</span><span class="s1">&#39;john@doe.com&#39;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_to_roles</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">user_email</span><span class="o">=</span><span class="s1">'john@doe.com'</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -4124,9 +4124,9 @@ This email is used as the unique identifier of the user.</p></td>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">user_email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ADMIN&quot;</span><span class="p">,</span> <span class="s2">&quot;TEAM_MANAGER&quot;</span><span class="p">,</span> <span class="s2">&quot;REVIEWER&quot;</span><span class="p">,</span> <span class="s2">&quot;LABELER&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;LABELER&quot;</span><span class="p">,</span>
+    <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"ADMIN"</span><span class="p">,</span> <span class="s2">"TEAM_MANAGER"</span><span class="p">,</span> <span class="s2">"REVIEWER"</span><span class="p">,</span> <span class="s2">"LABELER"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"LABELER"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a user to a project.</span>
+<span class="w">    </span><span class="sd">"""Add a user to a project.</span>
 
 <span class="sd">    !!! info</span>
 <span class="sd">        If the user does not exist in your organization, he/she is invited and added</span>
@@ -4144,21 +4144,21 @@ This email is used as the unique identifier of the user.</p></td>
 
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.append_to_roles(project_id=project_id, user_email=&#39;john@doe.com&#39;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.append_to_roles(project_id=project_id, user_email='john@doe.com')</span>
+<span class="sd">    """</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span> <span class="s2">&quot;userEmail&quot;</span><span class="p">:</span> <span class="n">user_email</span><span class="p">},</span>
-        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span>
+        <span class="s2">"data"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span> <span class="s2">"userEmail"</span><span class="p">:</span> <span class="n">user_email</span><span class="p">},</span>
+        <span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_APPEND_TO_ROLES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
 
-    <span class="n">project_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">project_user</span> <span class="ow">in</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;roles&quot;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_email</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">role</span><span class="p">:</span>
+    <span class="n">project_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">project_user</span> <span class="ow">in</span> <span class="n">project_data</span><span class="p">[</span><span class="s2">"roles"</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">"user"</span><span class="p">][</span><span class="s2">"email"</span><span class="p">]</span> <span class="o">==</span> <span class="n">user_email</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="n">project_user</span><span class="p">[</span><span class="s2">"role"</span><span class="p">]</span> <span class="o">==</span> <span class="n">role</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">project_user</span>
 
     <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Failed to mutate user </span><span class="si">{</span><span class="n">user_email</span><span class="si">}</span><span class="s2"> to role </span><span class="si">{</span><span class="n">role</span><span class="si">}</span><span class="s2"> for project </span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="sa">f</span><span class="s2">"Failed to mutate user </span><span class="si">{</span><span class="n">user_email</span><span class="si">}</span><span class="s2"> to role </span><span class="si">{</span><span class="n">role</span><span class="si">}</span><span class="s2"> for project </span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">."</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -4218,23 +4218,23 @@ This email is used as the unique identifier of the user.</p></td>
 </table>
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/project/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">archive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Archive a project.</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">archive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Archive a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the id of the project.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-        <span class="s2">&quot;archived&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"projectID"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+        <span class="s2">"archived"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4342,7 +4342,7 @@ if <code>None</code> is provided.</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">copy_project</span><span class="p">(</span><span class="n">from_project_id</span><span class="o">=</span><span class="s2">&quot;clbqn56b331234567890l41c0&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">copy_project</span><span class="p">(</span><span class="n">from_project_id</span><span class="o">=</span><span class="s2">"clbqn56b331234567890l41c0"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -4359,7 +4359,7 @@ if <code>None</code> is provided.</p></td>
     <span class="n">copy_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create new project from an existing project.</span>
+<span class="w">    </span><span class="sd">"""Create new project from an existing project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        from_project_id: Project ID to copy from.</span>
@@ -4378,11 +4378,11 @@ if <code>None</code> is provided.</p></td>
 <span class="sd">        The created project ID.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.copy_project(from_project_id=&quot;clbqn56b331234567890l41c0&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.copy_project(from_project_id="clbqn56b331234567890l41c0")</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">copy_json_interface</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">copy_quality_settings</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;The &#39;copy_json_interface&#39; and &#39;copy_quality_settings&#39; arguments are deprecated.&quot;</span>
+            <span class="s2">"The 'copy_json_interface' and 'copy_quality_settings' arguments are deprecated."</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">ProjectCopier</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">copy_project</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
@@ -4470,8 +4470,8 @@ If not provided, user_email and project_id must be provided.</p></td>
     <span class="n">role_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">user_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete users by their role_id.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Delete users by their role_id.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        role_id: Identifier of the project user (not the ID of the user).</span>
@@ -4481,18 +4481,18 @@ If not provided, user_email and project_id must be provided.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the project id.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">role_id</span><span class="p">:</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">role_id</span><span class="p">}}</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">role_id</span><span class="p">}}</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">user_email</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;If role_id is not provided, you must provide user_email and project_id.&quot;</span>
+                <span class="s2">"If role_id is not provided, you must provide user_email and project_id."</span>
             <span class="p">)</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">user_email</span><span class="p">}}}</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"project"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span> <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"email"</span><span class="p">:</span> <span class="n">user_email</span><span class="p">}}}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_DELETE_FROM_ROLES</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4552,17 +4552,17 @@ If not provided, user_email and project_id must be provided.</p></td>
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/project/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a project permanently.</span>
+<span class="w">    </span><span class="sd">"""Delete a project permanently.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A string with the deleted project id.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}}</span>
+<span class="sd">    """</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">}}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_PROJECT_DELETE_ASYNCHRONOUSLY</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4621,22 +4621,22 @@ If not provided, user_email and project_id must be provided.</p></td>
 </table>
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/project/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unarchive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unarchive a project.</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unarchive_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Unarchive a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the id of the project.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-        <span class="s2">&quot;archived&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"projectID"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+        <span class="s2">"archived"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4713,8 +4713,8 @@ If not provided, user_email and project_id must be provided.</p></td>
           <summary>Source code in <code>kili/entrypoints/mutations/project/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_project_anonymization</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">should_anonymize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Anonymize the project for the labelers and reviewers.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Anonymize the project for the labelers and reviewers.</span>
 
 <span class="sd">    !!! info</span>
 <span class="sd">        Compatible with versions of the Kili app &gt;= 2.135.0</span>
@@ -4730,16 +4730,16 @@ If not provided, user_email and project_id must be provided.</p></td>
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.update_project_anonymization(project_id=project_id)</span>
 <span class="sd">        &gt;&gt;&gt; kili.update_project_anonymization(project_id=project_id, should_anonymize=False)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-            <span class="s2">&quot;shouldAnonymize&quot;</span><span class="p">:</span> <span class="n">should_anonymize</span><span class="p">,</span>
+        <span class="s2">"input"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+            <span class="s2">"shouldAnonymize"</span><span class="p">:</span> <span class="n">should_anonymize</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_PROJECT_UPDATE_ANONYMIZATION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4824,12 +4824,12 @@ Possible choices are: <code>ADMIN</code>, <code>TEAM_MANAGER</code>, <code>REVIE
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">user_email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ADMIN&quot;</span><span class="p">,</span> <span class="s2">&quot;TEAM_MANAGER&quot;</span><span class="p">,</span> <span class="s2">&quot;REVIEWER&quot;</span><span class="p">,</span> <span class="s2">&quot;LABELER&quot;</span><span class="p">],</span>
+    <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"ADMIN"</span><span class="p">,</span> <span class="s2">"TEAM_MANAGER"</span><span class="p">,</span> <span class="s2">"REVIEWER"</span><span class="p">,</span> <span class="s2">"LABELER"</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update properties of a role.</span>
+<span class="w">    </span><span class="sd">"""Update properties of a role.</span>
 
 <span class="sd">    !!! info</span>
-<span class="sd">        To be able to change someone&#39;s role, you must be either of:</span>
+<span class="sd">        To be able to change someone's role, you must be either of:</span>
 
 <span class="sd">        - an admin of the project</span>
 <span class="sd">        - a team manager of the project</span>
@@ -4843,15 +4843,15 @@ Possible choices are: <code>ADMIN</code>, <code>TEAM_MANAGER</code>, <code>REVIE
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dictionary with the project user information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span>
+        <span class="s2">"data"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"role"</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">user_email</span><span class="p">}},</span>
+        <span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"project"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">},</span> <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"email"</span><span class="p">:</span> <span class="n">user_email</span><span class="p">}},</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT_USER</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4938,21 +4938,21 @@ Possible choices are: <code>ADMIN</code>, <code>TEAM_MANAGER</code>, <code>REVIE
 </table>
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/project/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@deprecated</span><span class="p">(</span><span class="s2">&quot;use update_properties_in_project_user instead&quot;</span><span class="p">)</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@deprecated</span><span class="p">(</span><span class="s2">"use update_properties_in_project_user instead"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_properties_in_role</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">role_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update properties of a role.</span>
+<span class="w">    </span><span class="sd">"""Update properties of a role.</span>
 
 <span class="sd">    !!! info</span>
-<span class="sd">        To be able to change someone&#39;s role, you must be either of:</span>
+<span class="sd">        To be able to change someone's role, you must be either of:</span>
 
 <span class="sd">        - an admin of the project</span>
 <span class="sd">        - a team manager of the project</span>
 <span class="sd">        - an admin of the organization</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        role_id: Role identifier of the user. E.g. : &#39;to-be-deactivated&#39;</span>
+<span class="sd">        role_id: Role identifier of the user. E.g. : 'to-be-deactivated'</span>
 <span class="sd">        project_id: Identifier of the project</span>
 <span class="sd">        user_id: The email or identifier of the user with updated role</span>
 <span class="sd">        role: The new role.</span>
@@ -4960,15 +4960,15 @@ Possible choices are: <code>ADMIN</code>, <code>TEAM_MANAGER</code>, <code>REVIE
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dictionary with the project user information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;roleID&quot;</span><span class="p">:</span> <span class="n">role_id</span><span class="p">,</span>
-        <span class="s2">&quot;projectID&quot;</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
-        <span class="s2">&quot;userID&quot;</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span>
+        <span class="s2">"roleID"</span><span class="p">:</span> <span class="n">role_id</span><span class="p">,</span>
+        <span class="s2">"projectID"</span><span class="p">:</span> <span class="n">project_id</span><span class="p">,</span>
+        <span class="s2">"userID"</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
+        <span class="s2">"role"</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_ROLE</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

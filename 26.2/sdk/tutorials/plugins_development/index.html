@@ -2240,14 +2240,14 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom plugin&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Custom plugin"""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Review action&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Dedicated handler for Review action"""</span>
         <span class="c1"># Do something...</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Submit action&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Dedicated handler for Submit action"""</span>
         <span class="c1"># Do something...</span>
 </code></pre></div>
 <p>Do not hesitate to reach out to us if you need more.</p>
@@ -2262,7 +2262,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 
 <span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2279,35 +2279,35 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">custom_function</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-    <span class="n">label_id</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;My custom function for review of label with id </span><span class="si">{</span><span class="n">label_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">label_id</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"My custom function for review of label with id </span><span class="si">{</span><span class="n">label_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom plugin instance&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Custom plugin instance"""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">custom_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;custom_method called for label </span><span class="si">{</span><span class="n">label_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"custom_method called for label </span><span class="si">{</span><span class="n">label_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">random_seed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">random_seed</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Generating issue&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Generating issue"</span><span class="p">)</span>
             <span class="c1"># Use kili for actions with self.kili</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">kili</span><span class="o">.</span><span class="n">create_issues</span><span class="p">(</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
                 <span class="n">label_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">label_id</span><span class="p">],</span>
-                <span class="n">text_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Random issue generated for this label&quot;</span><span class="p">],</span>
+                <span class="n">text_array</span><span class="o">=</span><span class="p">[</span><span class="s2">"Random issue generated for this label"</span><span class="p">],</span>
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Review action&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Dedicated handler for Review action"""</span>
         <span class="n">custom_function</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Submit action&quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;On submit called&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">"""Dedicated handler for Submit action"""</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"On submit called"</span><span class="p">)</span>
 
         <span class="n">project_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_id</span>
-        <span class="n">label_id</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+        <span class="n">label_id</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">custom_method</span><span class="p">(</span><span class="n">project_id</span><span class="p">,</span> <span class="n">label_id</span><span class="p">)</span>
 </code></pre></div>
@@ -2330,50 +2330,50 @@
 <li>The second is to use an absolute path to the plugin folder</li>
 </ul>
 <h4 id="21-relative-import">2.1 Relative import</h4>
-<div class="highlight"><pre><span></span><code><span class="c1"># Here replace &#39;plugin_folder&#39; with the actual name of the folder</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Here replace 'plugin_folder' with the actual name of the folder</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">plugin_folder.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">PluginHandler</span>
 </code></pre></div>
 <h4 id="22-absolute-path-import">2.2 Absolute path import</h4>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="c1"># Input the path to the plugin folder (it should include the folder), for example &#39;/path/to/plugin_folder&#39;</span>
-<span class="n">plugin_path</span> <span class="o">=</span> <span class="s2">&quot;&lt;INSERT PATH TO PLUGIN FOLDER&gt;&quot;</span>
+<span class="c1"># Input the path to the plugin folder (it should include the folder), for example '/path/to/plugin_folder'</span>
+<span class="n">plugin_path</span> <span class="o">=</span> <span class="s2">"&lt;INSERT PATH TO PLUGIN FOLDER&gt;"</span>
 
 <span class="n">module_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">plugin_path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span>
 
 <span class="c1"># We are inserting the path in the system PATH to be able to import the module in the next line</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">module_path</span><span class="p">)</span>
 
-<span class="c1"># In the next line replace &#39;plugin_folder&#39; with the actual name of the folder</span>
+<span class="c1"># In the next line replace 'plugin_folder' with the actual name of the folder</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">plugin_folder.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">PluginHandler</span>
 </code></pre></div>
 <h3 id="testing-the-plugin-locally">Testing the plugin locally</h3>
 <p>In this we will show you how to test your plugin locally before uploading it.</p>
-<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="s2">&quot;&lt;PROJECT ID&gt;&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="s2">"&lt;PROJECT ID&gt;"</span>
 </code></pre></div>
 <p>Instantiate the plugin:</p>
 <div class="highlight"><pre><span></span><code><span class="n">my_plugin_instance</span> <span class="o">=</span> <span class="n">PluginHandler</span><span class="p">(</span><span class="n">kili</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">get_label</span><span class="p">(</span><span class="n">label_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to get the object Label with the same keys as it will be in the plugin&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Function to get the object Label with the same keys as it will be in the plugin"""</span>
     <span class="n">label</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
         <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
-            <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span> <span class="s2">&quot;author.id&quot;</span><span class="p">,</span> <span class="s2">&quot;labelType&quot;</span><span class="p">,</span> <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;secondsToLabel&quot;</span><span class="p">],</span>
+            <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"jsonResponse"</span><span class="p">,</span> <span class="s2">"author.id"</span><span class="p">,</span> <span class="s2">"labelType"</span><span class="p">,</span> <span class="s2">"createdAt"</span><span class="p">,</span> <span class="s2">"secondsToLabel"</span><span class="p">],</span>
         <span class="p">)</span>
     <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="n">label</span><span class="p">[</span><span class="s2">&quot;authorId&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-    <span class="k">del</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">]</span>
+    <span class="n">label</span><span class="p">[</span><span class="s2">"authorId"</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">"author"</span><span class="p">][</span><span class="s2">"id"</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">label</span><span class="p">[</span><span class="s2">"author"</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">label</span>
 </code></pre></div>
 <h3 id="test-the-plugin-run">Test the plugin run</h3>
 <p>If you already have a test project with labels added, you can directly use the IDs of these labels (see the following cell). Otherwise, you can follow the <em>plugins_example.ipynb</em> notebook to create a new project and then upload an asset with an associated label.</p>
-<div class="highlight"><pre><span></span><code><span class="n">asset_id</span> <span class="o">=</span> <span class="s2">&quot;&lt;YOUR_ASSET_ID&gt;&quot;</span>
-<span class="n">label_id</span> <span class="o">=</span> <span class="s2">&quot;&lt;YOUR_LABEL_ID&gt;&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">asset_id</span> <span class="o">=</span> <span class="s2">"&lt;YOUR_ASSET_ID&gt;"</span>
+<span class="n">label_id</span> <span class="o">=</span> <span class="s2">"&lt;YOUR_LABEL_ID&gt;"</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">label</span> <span class="o">=</span> <span class="n">get_label</span><span class="p">(</span><span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
 
@@ -2382,8 +2382,8 @@
 <h3 id="test-the-plugin-run-on-kili">Test the plugin run on Kili</h3>
 <p>When you finish debugging the code, you may want to upload it directly into Kili.</p>
 <p>Note that you might get an error if the plugin name already exists in your Kili organization.</p>
-<div class="highlight"><pre><span></span><code><span class="n">path_to_plugin</span> <span class="o">=</span> <span class="s2">&quot;path/to/my/plugin.py&quot;</span>
-<span class="n">plugin_name</span> <span class="o">=</span> <span class="s2">&quot;My first kili plugin&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">path_to_plugin</span> <span class="o">=</span> <span class="s2">"path/to/my/plugin.py"</span>
+<span class="n">plugin_name</span> <span class="o">=</span> <span class="s2">"My first kili plugin"</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphQLError</span>
 

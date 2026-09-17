@@ -2092,17 +2092,17 @@
 
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/tag.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"__init__"</span><span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TagClientMethods</span><span class="p">(</span><span class="n">BaseClientMethods</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Methods attached to the Kili client, to run actions on tags.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Methods attached to the Kili client, to run actions on tags."""</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">tags</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;organizationId&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;checkedForProjects&quot;</span><span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"organizationId"</span><span class="p">,</span> <span class="s2">"label"</span><span class="p">,</span> <span class="s2">"checkedForProjects"</span><span class="p">),</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get tags.</span>
+<span class="w">        </span><span class="sd">"""Get tags.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project to which the tags belong.</span>
@@ -2113,7 +2113,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list of tags as dictionaries.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tags_of_organization</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
@@ -2128,8 +2128,8 @@
         <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tag_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Link tags to a project.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Link tags to a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2140,21 +2140,21 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list of dictionaries with the tag ids.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
 
         <span class="n">resolved_tag_ids</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="n">TagId</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">tag_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either `tags` or `tag_ids` must be provided.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Either `tags` or `tag_ids` must be provided."</span><span class="p">)</span>
             <span class="n">resolved_tag_ids</span> <span class="o">=</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">resolved_tag_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">TagId</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">tag_id</span> <span class="ow">in</span> <span class="n">tag_ids</span><span class="p">]</span>
 
-        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="p">[</span>
-            <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)}</span>
+            <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)}</span>
             <span class="k">for</span> <span class="n">tag_id</span> <span class="ow">in</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">tag_project</span><span class="p">(</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
                 <span class="n">tag_ids</span><span class="o">=</span><span class="n">resolved_tag_ids</span><span class="p">,</span>
@@ -2171,8 +2171,8 @@
         <span class="n">tag_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="nb">all</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove tags from a project.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Remove tags from a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2186,9 +2186,9 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: Either `tags` or `tag_ids` or `all` must be provided.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">sum</span><span class="p">([</span><span class="n">tags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">all</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only one of `tags`, `tag_ids` or `all` must be provided.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Only one of `tags`, `tag_ids` or `all` must be provided."</span><span class="p">)</span>
 
         <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
 
@@ -2198,20 +2198,20 @@
                 <span class="n">resolved_tag_ids</span> <span class="o">=</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">all</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">resolved_tag_ids</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">TagId</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+                    <span class="n">TagId</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
                     <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tags_of_project</span><span class="p">(</span>
-                        <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,)</span>
+                        <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,)</span>
                     <span class="p">)</span>
                 <span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either `tags` or `tag_ids` or `all` must be provided.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Either `tags` or `tag_ids` or `all` must be provided."</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">resolved_tag_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">TagId</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">tag_id</span> <span class="ow">in</span> <span class="n">tag_ids</span><span class="p">]</span>
 
-        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="p">[</span>
-            <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)}</span>
+            <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)}</span>
             <span class="k">for</span> <span class="n">tag_id</span> <span class="ow">in</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">untag_project</span><span class="p">(</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
                 <span class="n">tag_ids</span><span class="o">=</span><span class="n">resolved_tag_ids</span><span class="p">,</span>
@@ -2219,8 +2219,8 @@
             <span class="p">)</span>
         <span class="p">]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">update_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_tag_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update a tag.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_tag_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Update a tag.</span>
 
 <span class="sd">        This operation is organization-wide.</span>
 <span class="sd">        The tag will be updated for all projects of the organization.</span>
@@ -2231,17 +2231,17 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The id of the updated tag.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
         <span class="n">tag_id</span> <span class="o">=</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span>
                 <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">update_tag</span><span class="p">(</span><span class="n">tag_id</span><span class="o">=</span><span class="n">tag_id</span><span class="p">,</span> <span class="n">new_tag_name</span><span class="o">=</span><span class="n">new_tag_name</span><span class="p">)</span><span class="o">.</span><span class="n">updated_tag_id</span>
             <span class="p">)</span>
         <span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete the given tag.</span>
+<span class="w">        </span><span class="sd">"""Delete the given tag.</span>
 
 <span class="sd">        This operation is organization-wide.</span>
 <span class="sd">        The tag will no longer be proposed for projects of the organization.</span>
@@ -2254,16 +2254,16 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Whether the tag was successfully removed.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tag_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">tag_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either `tag_name` or `tag_id` must be provided.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Either `tag_name` or `tag_id` must be provided."</span><span class="p">)</span>
             <span class="n">tag_id</span> <span class="o">=</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">delete_tag</span><span class="p">(</span><span class="n">tag_id</span><span class="o">=</span><span class="n">TagId</span><span class="p">(</span><span class="n">tag_id</span><span class="p">))</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">create_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a tag.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Create a tag.</span>
 
 <span class="sd">        This operation is organization-wide.</span>
 <span class="sd">        The tag will be proposed for projects of the organization.</span>
@@ -2274,7 +2274,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The id of the created tag.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">create_tag</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
 </code></pre></div>
@@ -2350,8 +2350,8 @@ The tag will be proposed for projects of the organization.</p>
 </table>
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/tag.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tag.</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Create a tag.</span>
 
 <span class="sd">    This operation is organization-wide.</span>
 <span class="sd">    The tag will be proposed for projects of the organization.</span>
@@ -2362,7 +2362,7 @@ The tag will be proposed for projects of the organization.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The id of the created tag.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">create_tag</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
 </code></pre></div>
@@ -2434,7 +2434,7 @@ Use this argument if you have several tags with the same name.</p></td>
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/tag.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete the given tag.</span>
+<span class="w">    </span><span class="sd">"""Delete the given tag.</span>
 
 <span class="sd">    This operation is organization-wide.</span>
 <span class="sd">    The tag will no longer be proposed for projects of the organization.</span>
@@ -2447,11 +2447,11 @@ Use this argument if you have several tags with the same name.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the tag was successfully removed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">tag_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">tag_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either `tag_name` or `tag_id` must be provided.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Either `tag_name` or `tag_id` must be provided."</span><span class="p">)</span>
         <span class="n">tag_id</span> <span class="o">=</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">delete_tag</span><span class="p">(</span><span class="n">tag_id</span><span class="o">=</span><span class="n">TagId</span><span class="p">(</span><span class="n">tag_id</span><span class="p">))</span>
 </code></pre></div>
@@ -2537,8 +2537,8 @@ Only used if <code>tags</code> is not provided.</p></td>
     <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">tag_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Link tags to a project.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Link tags to a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -2549,21 +2549,21 @@ Only used if <code>tags</code> is not provided.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of dictionaries with the tag ids.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
 
     <span class="n">resolved_tag_ids</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="n">TagId</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">tag_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either `tags` or `tag_ids` must be provided.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Either `tags` or `tag_ids` must be provided."</span><span class="p">)</span>
         <span class="n">resolved_tag_ids</span> <span class="o">=</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">resolved_tag_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">TagId</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">tag_id</span> <span class="ow">in</span> <span class="n">tag_ids</span><span class="p">]</span>
 
-    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="p">[</span>
-        <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)}</span>
+        <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)}</span>
         <span class="k">for</span> <span class="n">tag_id</span> <span class="ow">in</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">tag_project</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
             <span class="n">tag_ids</span><span class="o">=</span><span class="n">resolved_tag_ids</span><span class="p">,</span>
@@ -2583,7 +2583,7 @@ Only used if <code>tags</code> is not provided.</p></td>
 
 
 <h3 id="kili.presentation.client.tag.TagClientMethods.tags" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;organizationId&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;checkedForProjects&#39;</span><span class="p">))</span></code>
+<code class="highlight language-python"><span class="n">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'id'</span><span class="p">,</span> <span class="s1">'organizationId'</span><span class="p">,</span> <span class="s1">'label'</span><span class="p">,</span> <span class="s1">'checkedForProjects'</span><span class="p">))</span></code>
 
 
 </h3>
@@ -2640,9 +2640,9 @@ for all possible fields.</p></td>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tags</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;organizationId&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;checkedForProjects&quot;</span><span class="p">),</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"organizationId"</span><span class="p">,</span> <span class="s2">"label"</span><span class="p">,</span> <span class="s2">"checkedForProjects"</span><span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get tags.</span>
+<span class="w">    </span><span class="sd">"""Get tags.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project to which the tags belong.</span>
@@ -2653,7 +2653,7 @@ for all possible fields.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of tags as dictionaries.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tags_of_organization</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
@@ -2764,8 +2764,8 @@ for all possible fields.</p></td>
     <span class="n">tag_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="nb">all</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove tags from a project.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Remove tags from a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -2779,9 +2779,9 @@ for all possible fields.</p></td>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: Either `tags` or `tag_ids` or `all` must be provided.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">sum</span><span class="p">([</span><span class="n">tags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">all</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only one of `tags`, `tag_ids` or `all` must be provided.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Only one of `tags`, `tag_ids` or `all` must be provided."</span><span class="p">)</span>
 
     <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
 
@@ -2791,20 +2791,20 @@ for all possible fields.</p></td>
             <span class="n">resolved_tag_ids</span> <span class="o">=</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">all</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">resolved_tag_ids</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">TagId</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+                <span class="n">TagId</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
                 <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tags_of_project</span><span class="p">(</span>
-                    <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,)</span>
+                    <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,)</span>
                 <span class="p">)</span>
             <span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either `tags` or `tag_ids` or `all` must be provided.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Either `tags` or `tag_ids` or `all` must be provided."</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">resolved_tag_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">TagId</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">tag_id</span> <span class="ow">in</span> <span class="n">tag_ids</span><span class="p">]</span>
 
-    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="p">[</span>
-        <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)}</span>
+        <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)}</span>
         <span class="k">for</span> <span class="n">tag_id</span> <span class="ow">in</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">untag_project</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
             <span class="n">tag_ids</span><span class="o">=</span><span class="n">resolved_tag_ids</span><span class="p">,</span>
@@ -2877,8 +2877,8 @@ The tag will be updated for all projects of the organization.</p>
 </table>
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/tag.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_tag_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update a tag.</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_tag_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Update a tag.</span>
 
 <span class="sd">    This operation is organization-wide.</span>
 <span class="sd">    The tag will be updated for all projects of the organization.</span>
@@ -2889,11 +2889,11 @@ The tag will be updated for all projects of the organization.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The id of the updated tag.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tag_use_cases</span> <span class="o">=</span> <span class="n">TagUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
     <span class="n">tag_id</span> <span class="o">=</span> <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">get_tag_ids_from_labels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span>
             <span class="n">tag_use_cases</span><span class="o">.</span><span class="n">update_tag</span><span class="p">(</span><span class="n">tag_id</span><span class="o">=</span><span class="n">tag_id</span><span class="p">,</span> <span class="n">new_tag_name</span><span class="o">=</span><span class="n">new_tag_name</span><span class="p">)</span><span class="o">.</span><span class="n">updated_tag_id</span>
         <span class="p">)</span>
     <span class="p">}</span>

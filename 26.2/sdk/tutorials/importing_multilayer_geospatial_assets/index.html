@@ -2141,8 +2141,8 @@
 <p>Now, let's set up variables needed to create an instance of the Kili object.</p>
 <p>We will need your API key and Kili's API endpoint.</p>
 <p>If you are unsure how to look up your API key, refer to <a href="https://docs.kili-technology.com/docs/creating-an-api-key">https://docs.kili-technology.com/docs/creating-an-api-key</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;YOUR_API_KEY&quot;</span>
-<span class="n">api_endpoint</span> <span class="o">=</span> <span class="s2">&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">api_key</span> <span class="o">=</span> <span class="s2">"YOUR_API_KEY"</span>
+<span class="n">api_endpoint</span> <span class="o">=</span> <span class="s2">"https://cloud.kili-technology.com/api/label/v2/graphql"</span>
 <span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
     <span class="c1"># api_endpoint=api_endpoint, api_key=api_key, verify=True</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
@@ -2152,33 +2152,33 @@
 <p>To create an IMAGE Kili project, you must first set up its ontology.</p>
 <p>Here, we will only add a classification task:</p>
 <div class="highlight"><pre><span></span><code><span class="n">interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;PLANE&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span>
-                        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#472CED&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Plane&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category3&quot;</span><span class="p">,</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"OBJECT_DETECTION_JOB"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"PLANE"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"#472CED"</span><span class="p">,</span>
+                        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Plane"</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category3"</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;BBOX&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_DETECTION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;tools&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;rectangle&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"BBOX"</span><span class="p">,</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"OBJECT_DETECTION"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"tools"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"rectangle"</span><span class="p">],</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Importing multi-layer Geospatial asset&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project Description&quot;</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"[Kili SDK Notebook]: Importing multi-layer Geospatial asset"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Project Description"</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">"IMAGE"</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">interface</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2188,49 +2188,49 @@
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
 
-<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;geospatial&quot;</span><span class="p">):</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;geospatial&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">"geospatial"</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">"geospatial"</span><span class="p">)</span>
 <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/geospatial/a.tiff&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;geospatial/a.tiff&quot;</span><span class="p">,</span>
+    <span class="s2">"https://storage.googleapis.com/label-public-staging/asset-test-sample/geospatial/a.tiff"</span><span class="p">,</span>
+    <span class="s2">"geospatial/a.tiff"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/geospatial/b.tiff&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;geospatial/b.tiff&quot;</span><span class="p">,</span>
+    <span class="s2">"https://storage.googleapis.com/label-public-staging/asset-test-sample/geospatial/b.tiff"</span><span class="p">,</span>
+    <span class="s2">"geospatial/b.tiff"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="add-multi-layer-assets-to-your-project">Add Multi-Layer assets to your project</h3>
 <p>You can now add assets. Here is an example to add 2 geotiffs and a public layer coming from the openstreetmap tile server.</p>
-<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-<span class="n">json_metadata_array</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;processingParameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;epsg&quot;</span><span class="p">:</span> <span class="mi">3857</span><span class="p">}}]</span>
+<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+<span class="n">json_metadata_array</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">"processingParameters"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"epsg"</span><span class="p">:</span> <span class="mi">3857</span><span class="p">}}]</span>
 <span class="n">multi_layer_content_array</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;geospatial/a.tiff&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Layer 1&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isBaseLayer&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"path"</span><span class="p">:</span> <span class="s2">"geospatial/a.tiff"</span><span class="p">,</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Layer 1"</span><span class="p">,</span>
+            <span class="s2">"isBaseLayer"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="p">{</span>
-            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;geospatial/b.tiff&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Layer 2&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isBaseLayer&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"path"</span><span class="p">:</span> <span class="s2">"geospatial/b.tiff"</span><span class="p">,</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Layer 2"</span><span class="p">,</span>
+            <span class="s2">"isBaseLayer"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">],</span>
 <span class="p">]</span>
 <span class="n">json_content_array</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;osm&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tileLayerUrl&quot;</span><span class="p">:</span> <span class="s2">&quot;https://b.tile.openstreetmap.org/</span><span class="si">{z}</span><span class="s2">/</span><span class="si">{x}</span><span class="s2">/</span><span class="si">{y}</span><span class="s2">.png&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;epsg&quot;</span><span class="p">:</span> <span class="s2">&quot;EPSG3857&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"osm"</span><span class="p">,</span>
+            <span class="s2">"tileLayerUrl"</span><span class="p">:</span> <span class="s2">"https://b.tile.openstreetmap.org/</span><span class="si">{z}</span><span class="s2">/</span><span class="si">{x}</span><span class="s2">/</span><span class="si">{y}</span><span class="s2">.png"</span><span class="p">,</span>
+            <span class="s2">"epsg"</span><span class="p">:</span> <span class="s2">"EPSG3857"</span><span class="p">,</span>
+            <span class="s2">"bounds"</span><span class="p">:</span> <span class="p">[</span>
                 <span class="p">[</span><span class="mf">11.17010498046875</span><span class="p">,</span> <span class="mf">44.308941579503745</span><span class="p">],</span>
                 <span class="p">[</span><span class="mf">13.67478942871094</span><span class="p">,</span> <span class="mf">46.542667432984864</span><span class="p">],</span>
             <span class="p">],</span>
-            <span class="s2">&quot;useClassicCoordinates&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;minZoom&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-            <span class="s2">&quot;maxZoom&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
-            <span class="s2">&quot;isBaseLayer&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"useClassicCoordinates"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"minZoom"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">"maxZoom"</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+            <span class="s2">"isBaseLayer"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">]</span>
 <span class="p">]</span>

@@ -2146,64 +2146,64 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 
 <span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="step-2-create-the-project">Step 2: Create the project</h2>
 <p>First, we need to create a new project. In our example, we will use an <code>IMAGE</code> type project with the following <code>jsonInterace</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;OBJECT_A&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span>
-                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object A&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#733AFB&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category1&quot;</span><span class="p">,</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"OBJECT_A"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Object A"</span><span class="p">,</span>
+                        <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"#733AFB"</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category1"</span><span class="p">,</span>
                     <span class="p">},</span>
-                    <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span>
-                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object B&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#3CD876&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category2&quot;</span><span class="p">,</span>
+                    <span class="s2">"OBJECT_B"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Object B"</span><span class="p">,</span>
+                        <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"#3CD876"</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category2"</span><span class="p">,</span>
                     <span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Categories&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;tools&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;rectangle&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_DETECTION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;models&quot;</span><span class="p">:</span> <span class="p">{},</span>
-            <span class="s2">&quot;isVisible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Categories"</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"tools"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"rectangle"</span><span class="p">],</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"OBJECT_DETECTION"</span><span class="p">,</span>
+            <span class="s2">"models"</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">"isVisible"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;[Kili SDK Notebook]: Plugins test project&quot;</span>
-<span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;My first project with a plugin&quot;</span>
-<span class="n">input_type</span> <span class="o">=</span> <span class="s2">&quot;IMAGE&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">title</span> <span class="o">=</span> <span class="s2">"[Kili SDK Notebook]: Plugins test project"</span>
+<span class="n">description</span> <span class="o">=</span> <span class="s2">"My first project with a plugin"</span>
+<span class="n">input_type</span> <span class="o">=</span> <span class="s2">"IMAGE"</span>
 
 <span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span>
 <span class="p">)</span>
-<span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created project </span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Created project </span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <p>Upload an asset:</p>
-<div class="highlight"><pre><span></span><code><span class="n">content_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_1.jpg&quot;</span><span class="p">]</span>
-<span class="n">names_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;landscape&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">content_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"https://storage.googleapis.com/label-public-staging/car/car_1.jpg"</span><span class="p">]</span>
+<span class="n">names_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"landscape"</span><span class="p">]</span>
 
 <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="n">content_array</span><span class="p">,</span> <span class="n">external_id_array</span><span class="o">=</span><span class="n">names_array</span>
 <span class="p">)</span>
 
-<span class="n">asset_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<span class="n">asset_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"id"</span><span class="p">]</span>
 </code></pre></div>
 <p>This project has one job of bounding box creation with two categories.</p>
 <p>With our plugin, we want to make sure that the labelers don't create more than one bounding box of category A.</p>
@@ -2214,55 +2214,55 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">check_rules_on_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
     <span class="c1">#custom methods</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Custom method - checking number of bboxes&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Custom method - checking number of bboxes'</span><span class="p">)</span>
 
     <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">label</span><span class="p">[</span><span class="s1">&#39;jsonResponse&#39;</span><span class="p">][</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">][</span><span class="s2">&quot;annotations&quot;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">annotation</span><span class="p">[</span><span class="s2">&quot;categories&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;OBJECT_A&quot;</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">label</span><span class="p">[</span><span class="s1">'jsonResponse'</span><span class="p">][</span><span class="s2">"JOB_0"</span><span class="p">][</span><span class="s2">"annotations"</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">annotation</span><span class="p">[</span><span class="s2">"categories"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"OBJECT_A"</span><span class="p">:</span>
             <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">if</span> <span class="n">counter</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[]</span>
-    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;There are too many BBox (</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s2">) - Only 1 BBox of Object A accepted&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"There are too many BBox (</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s2">) - Only 1 BBox of Object A accepted"</span><span class="p">]</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Custom plugin instance</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Dedicated handler for Submit action</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;On submit called&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"On submit called"</span><span class="p">)</span>
 
         <span class="n">issues_array</span> <span class="o">=</span> <span class="n">check_rules_on_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
 
         <span class="n">project_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_id</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">issues_array</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating an issue...&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Creating an issue..."</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">kili</span><span class="o">.</span><span class="n">create_issues</span><span class="p">(</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-                <span class="n">label_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">issues_array</span><span class="p">),</span>
+                <span class="n">label_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">issues_array</span><span class="p">),</span>
                 <span class="n">text_array</span><span class="o">=</span><span class="n">issues_array</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Issue created!&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Issue created!"</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">kili</span><span class="o">.</span><span class="n">send_back_to_queue</span><span class="p">(</span><span class="n">asset_ids</span><span class="o">=</span><span class="p">[</span><span class="n">asset_id</span><span class="p">])</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="n">plugin_folder</span> <span class="o">=</span> <span class="s2">&quot;plugin_folder&quot;</span>
+<span class="n">plugin_folder</span> <span class="o">=</span> <span class="s2">"plugin_folder"</span>
 
 <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-    <span class="s2">&quot;https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/plugins_library/plugin_image.py&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;plugin_folder/main.py&quot;</span><span class="p">,</span>
+    <span class="s2">"https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/plugins_library/plugin_image.py"</span><span class="p">,</span>
+    <span class="s2">"plugin_folder/main.py"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="step-4-upload-the-plugin-from-a-folder">Step 4: Upload the plugin from a folder</h2>
@@ -2285,19 +2285,19 @@ numpy
 scikit-learn
 pandas==1.5.1
 git+https://github.com/yzhao062/pyod.git</p>
-<div class="highlight"><pre><span></span><code><span class="n">requirements_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;requirements.txt&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">requirements_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"requirements.txt"</span>
 
 <span class="n">packages_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;numpy</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;scikit-learn</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;pandas==1.5.1</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;git+https://github.com/yzhao062/pyod.git</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s2">"numpy</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+    <span class="s2">"scikit-learn</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+    <span class="s2">"pandas==1.5.1</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+    <span class="s2">"git+https://github.com/yzhao062/pyod.git</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
 <span class="p">]</span>
 
-<span class="k">with</span> <span class="n">requirements_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="k">with</span> <span class="n">requirements_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">packages_list</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="n">plugin_name</span> <span class="o">=</span> <span class="s2">&quot;Plugin bbox count&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">plugin_name</span> <span class="o">=</span> <span class="s2">"Plugin bbox count"</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kili.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphQLError</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -2313,8 +2313,8 @@ git+https://github.com/yzhao062/pyod.git</p>
 <li>The upload will create the necessary builds to execute the plugin (it will take a few minutes)</li>
 <li>After the activation, you can start using your plugin right away.</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="n">path_to_plugin</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;main.py&quot;</span>
-<span class="n">plugin_name_file</span> <span class="o">=</span> <span class="s2">&quot;Plugin bbox count - file&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">path_to_plugin</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"main.py"</span>
+<span class="n">plugin_name_file</span> <span class="o">=</span> <span class="s2">"Plugin bbox count - file"</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path_to_plugin</span><span class="p">),</span> <span class="n">plugin_name_file</span><span class="p">)</span>
@@ -2328,62 +2328,62 @@ git+https://github.com/yzhao062/pyod.git</p>
 <p>After that, you can test it by labelling in the Kili interface or just by uploading the following label.</p>
 <p>When you add the label that contains errors, you will see a new issue automatically created in the Kili app.</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_response</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"annotations"</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;boundingPoly&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">"boundingPoly"</span><span class="p">:</span> <span class="p">[</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;normalizedVertices&quot;</span><span class="p">:</span> <span class="p">[</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.84</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.84</span><span class="p">},</span>
+                        <span class="s2">"normalizedVertices"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.84</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.84</span><span class="p">},</span>
                         <span class="p">]</span>
                     <span class="p">}</span>
                 <span class="p">],</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_A&quot;</span><span class="p">}],</span>
-                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                <span class="s2">&quot;mid&quot;</span><span class="p">:</span> <span class="s2">&quot;20221124161451411-13314&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;rectangle&quot;</span><span class="p">,</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"OBJECT_A"</span><span class="p">}],</span>
+                <span class="s2">"children"</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="s2">"mid"</span><span class="p">:</span> <span class="s2">"20221124161451411-13314"</span><span class="p">,</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"rectangle"</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="p">{</span>
-                <span class="s2">&quot;boundingPoly&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">"boundingPoly"</span><span class="p">:</span> <span class="p">[</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;normalizedVertices&quot;</span><span class="p">:</span> <span class="p">[</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.79</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.20</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.79</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.13</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.91</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.13</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.91</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.20</span><span class="p">},</span>
+                        <span class="s2">"normalizedVertices"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.79</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.20</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.79</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.13</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.91</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.13</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.91</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.20</span><span class="p">},</span>
                         <span class="p">]</span>
                     <span class="p">}</span>
                 <span class="p">],</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_A&quot;</span><span class="p">}],</span>
-                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                <span class="s2">&quot;mid&quot;</span><span class="p">:</span> <span class="s2">&quot;20221124161456406-47055&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;rectangle&quot;</span><span class="p">,</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"OBJECT_A"</span><span class="p">}],</span>
+                <span class="s2">"children"</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="s2">"mid"</span><span class="p">:</span> <span class="s2">"20221124161456406-47055"</span><span class="p">,</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"rectangle"</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="p">{</span>
-                <span class="s2">&quot;boundingPoly&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">"boundingPoly"</span><span class="p">:</span> <span class="p">[</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;normalizedVertices&quot;</span><span class="p">:</span> <span class="p">[</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.87</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.36</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.87</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.27</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.27</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.36</span><span class="p">},</span>
+                        <span class="s2">"normalizedVertices"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.87</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.36</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.87</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.27</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.27</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.36</span><span class="p">},</span>
                         <span class="p">]</span>
                     <span class="p">}</span>
                 <span class="p">],</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_A&quot;</span><span class="p">}],</span>
-                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                <span class="s2">&quot;mid&quot;</span><span class="p">:</span> <span class="s2">&quot;20221124161459298-45160&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;rectangle&quot;</span><span class="p">,</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"OBJECT_A"</span><span class="p">}],</span>
+                <span class="s2">"children"</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="s2">"mid"</span><span class="p">:</span> <span class="s2">"20221124161459298-45160"</span><span class="p">,</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"rectangle"</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">]</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
-    <span class="n">json_response_array</span><span class="o">=</span><span class="p">[</span><span class="n">json_response</span><span class="p">],</span> <span class="n">asset_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset_id</span><span class="p">],</span> <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span>
+    <span class="n">json_response_array</span><span class="o">=</span><span class="p">[</span><span class="n">json_response</span><span class="p">],</span> <span class="n">asset_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset_id</span><span class="p">],</span> <span class="n">label_type</span><span class="o">=</span><span class="s2">"DEFAULT"</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>If you use the base plugin provided, the plugin should:</p>
@@ -2392,45 +2392,45 @@ git+https://github.com/yzhao062/pyod.git</p>
 <li>Send the asset back to the labeling queue (status <code>ONGOING</code>)</li>
 </ul>
 <div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span>
-    <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;issues.comments.text&quot;</span><span class="p">])</span>
+    <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"status"</span><span class="p">,</span> <span class="s2">"issues.comments.text"</span><span class="p">])</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;Go to my project: </span><span class="si">{</span><span class="n">kili</span><span class="o">.</span><span class="n">api_endpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/api&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">/label/projects/</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">/menu/queue&quot;</span>
+    <span class="sa">f</span><span class="s2">"Go to my project: </span><span class="si">{</span><span class="n">kili</span><span class="o">.</span><span class="n">api_endpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/api'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">/label/projects/</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">/menu/queue"</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Woah! Amazing! Well done :) 🚀</p>
 <p>Let's test now to post a proper label, this one for example:</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_response</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"annotations"</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;boundingPoly&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">"boundingPoly"</span><span class="p">:</span> <span class="p">[</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;normalizedVertices&quot;</span><span class="p">:</span> <span class="p">[</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.84</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">},</span>
-                            <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.84</span><span class="p">},</span>
+                        <span class="s2">"normalizedVertices"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.84</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">},</span>
+                            <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.82</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">0.84</span><span class="p">},</span>
                         <span class="p">]</span>
                     <span class="p">}</span>
                 <span class="p">],</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_A&quot;</span><span class="p">}],</span>
-                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                <span class="s2">&quot;mid&quot;</span><span class="p">:</span> <span class="s2">&quot;20221124161451411-13314&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;rectangle&quot;</span><span class="p">,</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"OBJECT_A"</span><span class="p">}],</span>
+                <span class="s2">"children"</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="s2">"mid"</span><span class="p">:</span> <span class="s2">"20221124161451411-13314"</span><span class="p">,</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"rectangle"</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">]</span>
     <span class="p">}</span>
 <span class="p">}</span>
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
-    <span class="n">json_response_array</span><span class="o">=</span><span class="p">[</span><span class="n">json_response</span><span class="p">],</span> <span class="n">asset_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset_id</span><span class="p">],</span> <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span>
+    <span class="n">json_response_array</span><span class="o">=</span><span class="p">[</span><span class="n">json_response</span><span class="p">],</span> <span class="n">asset_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset_id</span><span class="p">],</span> <span class="n">label_type</span><span class="o">=</span><span class="s2">"DEFAULT"</span>
 <span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]))</span>
 
 <span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;Go to my project: </span><span class="si">{</span><span class="n">kili</span><span class="o">.</span><span class="n">api_endpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/api&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">/label/projects/</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">/menu/queue&quot;</span>
+    <span class="sa">f</span><span class="s2">"Go to my project: </span><span class="si">{</span><span class="n">kili</span><span class="o">.</span><span class="n">api_endpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/api'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">/label/projects/</span><span class="si">{</span><span class="n">project_id</span><span class="si">}</span><span class="s2">/menu/queue"</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>The status of your asset should have now changed to <code>LABELED</code>. In this plugin, previous issues remain but you can solve them through the API as well.</p>
@@ -2457,7 +2457,7 @@ git+https://github.com/yzhao062/pyod.git</p>
 </code></pre></div>
 <p>Update a plugin with new source code:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Insert the path to the updated plugin</span>
-<span class="n">new_path_to_plugin</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;main.py&quot;</span>
+<span class="n">new_path_to_plugin</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">plugin_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"main.py"</span>
 
 <span class="c1"># Change to True if you want to update the plugin</span>
 <span class="n">should_update</span> <span class="o">=</span> <span class="kc">False</span>

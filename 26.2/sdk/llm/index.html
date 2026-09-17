@@ -2217,7 +2217,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kili/llm/presentation/client/llm.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"__init__"</span><span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">LlmClientMethods</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kili_api_gateway</span><span class="p">:</span> <span class="n">KiliAPIGateway</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span> <span class="o">=</span> <span class="n">kili_api_gateway</span>
@@ -2227,7 +2227,7 @@
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">conversations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Conversation</span><span class="p">],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import conversations into a LLM Static project.</span>
+<span class="w">        </span><span class="sd">"""Import conversations into a LLM Static project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project.</span>
@@ -2249,7 +2249,7 @@
 <span class="sd">            A dict containing following keys</span>
 <span class="sd">            - `numberOfUploadedAssets`: Number of assets uploaded.</span>
 <span class="sd">            - `warnings`: List of detailed warnings generated during the import process, for each conversation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">import_conversations</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">conversations</span><span class="o">=</span><span class="n">conversations</span>
         <span class="p">)</span>
@@ -2268,7 +2268,7 @@
         <span class="n">group_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">group_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Conversation</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]]]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an export of llm conversations with valid labels.</span>
+<span class="w">        </span><span class="sd">"""Returns an export of llm conversations with valid labels.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project.</span>
@@ -2276,7 +2276,7 @@
 <span class="sd">            disable_tqdm: Disable the progress bar if True.</span>
 <span class="sd">            external_ids: Optional list of the assets external IDs from which to export the labels.</span>
 <span class="sd">            include_sent_back_labels: Include sent back labels if True.</span>
-<span class="sd">            label_type_in: Optional types of label to fetch, by default [&quot;DEFAULT&quot;, &quot;REVIEW&quot;].</span>
+<span class="sd">            label_type_in: Optional types of label to fetch, by default ["DEFAULT", "REVIEW"].</span>
 <span class="sd">            status_in: Returned assets should have a status that belongs to that list, if given.</span>
 <span class="sd">                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.</span>
 <span class="sd">            step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
@@ -2290,21 +2290,21 @@
 <span class="sd">                Only applicable if the project is in WorkflowV3.</span>
 <span class="sd">        !!! Example</span>
 <span class="sd">            ```python</span>
-<span class="sd">            kili.llm.export(&quot;your_project_id&quot;)</span>
+<span class="sd">            kili.llm.export("your_project_id")</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">asset_ids</span> <span class="ow">and</span> <span class="n">external_ids</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You cannot provide both asset_ids and external_ids&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"You cannot provide both asset_ids and external_ids"</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">"DOING"</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Step status &#39;DOING&#39; is deprecated, use &#39;IN_PROGRESS&#39; instead&quot;</span><span class="p">,</span>
+                <span class="s2">"Step status 'DOING' is deprecated, use 'IN_PROGRESS' instead"</span><span class="p">,</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">"REDO"</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Step status &#39;REDO&#39; is deprecated, use &#39;REWORK&#39; instead&quot;</span><span class="p">,</span>
+                <span class="s2">"Step status 'REDO' is deprecated, use 'REWORK' instead"</span><span class="p">,</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
@@ -2320,7 +2320,7 @@
                 <span class="nb">list</span><span class="p">(</span><span class="n">AssetId</span><span class="p">(</span><span class="n">asset_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">asset_id</span> <span class="ow">in</span> <span class="n">asset_ids</span><span class="p">)</span> <span class="k">if</span> <span class="n">asset_ids</span> <span class="k">else</span> <span class="kc">None</span>
             <span class="p">)</span>
 
-        <span class="n">label_type_in</span> <span class="o">=</span> <span class="n">label_type_in</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span> <span class="s2">&quot;REVIEW&quot;</span><span class="p">]</span>
+        <span class="n">label_type_in</span> <span class="o">=</span> <span class="n">label_type_in</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">"DEFAULT"</span><span class="p">,</span> <span class="s2">"REVIEW"</span><span class="p">]</span>
 
         <span class="n">step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -2339,16 +2339,16 @@
             <span class="n">check_asset_workflow_arguments</span><span class="p">(</span>
                 <span class="n">project_workflow_version</span><span class="o">=</span><span class="n">project_workflow_version</span><span class="p">,</span>
                 <span class="n">asset_workflow_filters</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s2">&quot;status_in&quot;</span><span class="p">:</span> <span class="n">status_in</span><span class="p">,</span>
-                    <span class="s2">&quot;step_name_in&quot;</span><span class="p">:</span> <span class="n">step_name_in</span><span class="p">,</span>
-                    <span class="s2">&quot;step_status_in&quot;</span><span class="p">:</span> <span class="n">step_status_in</span><span class="p">,</span>
-                    <span class="s2">&quot;group_name_in&quot;</span><span class="p">:</span> <span class="n">group_name_in</span><span class="p">,</span>
-                    <span class="s2">&quot;group_name_not_in&quot;</span><span class="p">:</span> <span class="n">group_name_not_in</span><span class="p">,</span>
+                    <span class="s2">"skipped"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">"status_in"</span><span class="p">:</span> <span class="n">status_in</span><span class="p">,</span>
+                    <span class="s2">"step_name_in"</span><span class="p">:</span> <span class="n">step_name_in</span><span class="p">,</span>
+                    <span class="s2">"step_status_in"</span><span class="p">:</span> <span class="n">step_status_in</span><span class="p">,</span>
+                    <span class="s2">"group_name_in"</span><span class="p">:</span> <span class="n">group_name_in</span><span class="p">,</span>
+                    <span class="s2">"group_name_not_in"</span><span class="p">:</span> <span class="n">group_name_not_in</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;V2&quot;</span><span class="p">,</span> <span class="s2">&quot;V3&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"V2"</span><span class="p">,</span> <span class="s2">"V3"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">step_id_in</span> <span class="o">=</span> <span class="n">extract_step_ids_from_project_steps</span><span class="p">(</span>
                     <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
                     <span class="n">step_name_in</span><span class="o">=</span><span class="n">step_name_in</span><span class="p">,</span>
@@ -2379,71 +2379,71 @@
             <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelDict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new model in an organization.</span>
+<span class="w">        </span><span class="sd">"""Create a new model in an organization.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            organization_id: Identifier of the organization.</span>
 <span class="sd">            model: A dictionary representing the model to create, containing:</span>
 <span class="sd">                - `name`: Name of the model.</span>
 <span class="sd">                - `type`: Type of the model, one of:</span>
-<span class="sd">                    - `&quot;AZURE_OPEN_AI&quot;`</span>
-<span class="sd">                    - `&quot;OPEN_AI_SDK&quot;`</span>
+<span class="sd">                    - `"AZURE_OPEN_AI"`</span>
+<span class="sd">                    - `"OPEN_AI_SDK"`</span>
 <span class="sd">                - `credentials`: Credentials required for the model, depending on the type:</span>
-<span class="sd">                    - For `&quot;AZURE_OPEN_AI&quot;` type:</span>
+<span class="sd">                    - For `"AZURE_OPEN_AI"` type:</span>
 <span class="sd">                        - `api_key`: The API key for Azure OpenAI.</span>
 <span class="sd">                        - `deployment_id`: The deployment ID within Azure.</span>
 <span class="sd">                        - `endpoint`: The endpoint URL of the Azure OpenAI service.</span>
-<span class="sd">                    - For `&quot;OPEN_AI_SDK&quot;` type:</span>
+<span class="sd">                    - For `"OPEN_AI_SDK"` type:</span>
 <span class="sd">                        - `api_key`: The API key for OpenAI SDK.</span>
 <span class="sd">                        - `endpoint`: The endpoint URL of the OpenAI SDK service.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A dictionary containing the created model&#39;s details.</span>
+<span class="sd">            A dictionary containing the created model's details.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; # Example of creating an OpenAI SDK model</span>
 <span class="sd">            &gt;&gt;&gt; model_data = {</span>
-<span class="sd">            ...     &quot;name&quot;: &quot;My OpenAI SDK Model&quot;,</span>
-<span class="sd">            ...     &quot;type&quot;: &quot;OPEN_AI_SDK&quot;,</span>
-<span class="sd">            ...     &quot;credentials&quot;: {</span>
-<span class="sd">            ...         &quot;api_key&quot;: &quot;your_open_ai_api_key&quot;,</span>
-<span class="sd">            ...         &quot;endpoint&quot;: &quot;your_open_ai_endpoint&quot;</span>
+<span class="sd">            ...     "name": "My OpenAI SDK Model",</span>
+<span class="sd">            ...     "type": "OPEN_AI_SDK",</span>
+<span class="sd">            ...     "credentials": {</span>
+<span class="sd">            ...         "api_key": "your_open_ai_api_key",</span>
+<span class="sd">            ...         "endpoint": "your_open_ai_endpoint"</span>
 <span class="sd">            ...     }</span>
 <span class="sd">            ... }</span>
-<span class="sd">            &gt;&gt;&gt; kili.llm.create_model(organization_id=&quot;your_organization_id&quot;, model=model_data)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">credentials_data</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s2">&quot;credentials&quot;</span><span class="p">]</span>
-        <span class="n">model_type</span> <span class="o">=</span> <span class="n">ModelType</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+<span class="sd">            &gt;&gt;&gt; kili.llm.create_model(organization_id="your_organization_id", model=model_data)</span>
+<span class="sd">        """</span>
+        <span class="n">credentials_data</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s2">"credentials"</span><span class="p">]</span>
+        <span class="n">model_type</span> <span class="o">=</span> <span class="n">ModelType</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="s2">"type"</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">AZURE_OPEN_AI</span><span class="p">:</span>
             <span class="n">credentials</span> <span class="o">=</span> <span class="n">AzureOpenAICredentials</span><span class="p">(</span><span class="o">**</span><span class="n">credentials_data</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">OPEN_AI_SDK</span><span class="p">:</span>
             <span class="n">credentials</span> <span class="o">=</span> <span class="n">OpenAISDKCredentials</span><span class="p">(</span><span class="o">**</span><span class="n">credentials_data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported model type: </span><span class="si">{</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported model type: </span><span class="si">{</span><span class="n">model</span><span class="p">[</span><span class="s1">'type'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="n">model_input</span> <span class="o">=</span> <span class="n">ModelToCreateInput</span><span class="p">(</span>
             <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">model_type</span><span class="p">,</span>
             <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model_input</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ModelDict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List models in an organization.</span>
+<span class="w">        </span><span class="sd">"""List models in an organization.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            organization_id: Identifier of the organization.</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the models.</span>
-<span class="sd">                Defaults to [&quot;id&quot;, &quot;credentials&quot;, &quot;name&quot;, &quot;type&quot;].</span>
+<span class="sd">                Defaults to ["id", "credentials", "name", "type"].</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list of models.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.llm.models(organization_id=&quot;your_organization_id&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.llm.models(organization_id="your_organization_id")</span>
+<span class="sd">        """</span>
         <span class="n">converted_filters</span> <span class="o">=</span> <span class="n">OrganizationModelFilters</span><span class="p">(</span>
             <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>
         <span class="p">)</span>
@@ -2451,78 +2451,78 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">list_models</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="n">converted_filters</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelDict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a specific model.</span>
+<span class="w">        </span><span class="sd">"""Retrieve a specific model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            model_id: Identifier of the model.</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the models.</span>
-<span class="sd">                Defaults to [&quot;id&quot;, &quot;credentials&quot;, &quot;name&quot;, &quot;type&quot;].</span>
+<span class="sd">                Defaults to ["id", "credentials", "name", "type"].</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dictionary representing the model.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.llm.model(model_id=&quot;your_model_id&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.llm.model(model_id="your_model_id")</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
             <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">update_properties_in_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelDict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update properties of an existing model.</span>
+<span class="w">        </span><span class="sd">"""Update properties of an existing model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            model_id: Identifier of the model to update.</span>
 <span class="sd">            model: A dictionary containing the properties to update, which may include:</span>
 <span class="sd">                - `name`: New name of the model.</span>
 <span class="sd">                - `credentials`: Updated credentials for the model, depending on the type:</span>
-<span class="sd">                    - For `&quot;AZURE_OPEN_AI&quot;` type:</span>
+<span class="sd">                    - For `"AZURE_OPEN_AI"` type:</span>
 <span class="sd">                        - `api_key`: The API key for Azure OpenAI.</span>
 <span class="sd">                        - `deployment_id`: The deployment ID within Azure.</span>
 <span class="sd">                        - `endpoint`: The endpoint URL of the Azure OpenAI service.</span>
-<span class="sd">                    - For `&quot;OPEN_AI_SDK&quot;` type:</span>
+<span class="sd">                    - For `"OPEN_AI_SDK"` type:</span>
 <span class="sd">                        - `api_key`: The API key for OpenAI SDK.</span>
 <span class="sd">                        - `endpoint`: The endpoint URL of the OpenAI SDK service.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A dictionary containing the updated model&#39;s details.</span>
+<span class="sd">            A dictionary containing the updated model's details.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; # Update the name of a model</span>
 <span class="sd">            &gt;&gt;&gt; kili.llm.update_properties_in_model(</span>
-<span class="sd">            ...     model_id=&quot;your_model_id&quot;,</span>
-<span class="sd">            ...     model={&quot;name&quot;: &quot;Updated Model Name&quot;}</span>
+<span class="sd">            ...     model_id="your_model_id",</span>
+<span class="sd">            ...     model={"name": "Updated Model Name"}</span>
 <span class="sd">            ... )</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">credentials_data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;credentials&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="n">credentials_data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"credentials"</span><span class="p">)</span>
         <span class="n">credentials</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">credentials_data</span><span class="p">:</span>
             <span class="n">existing_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span>
-                <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">]</span>
+                <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">existing_model</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model with id </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
-            <span class="n">model_type</span> <span class="o">=</span> <span class="n">ModelType</span><span class="p">(</span><span class="n">existing_model</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model with id </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> not found"</span><span class="p">)</span>
+            <span class="n">model_type</span> <span class="o">=</span> <span class="n">ModelType</span><span class="p">(</span><span class="n">existing_model</span><span class="p">[</span><span class="s2">"type"</span><span class="p">])</span>
 
             <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">AZURE_OPEN_AI</span><span class="p">:</span>
                 <span class="n">credentials</span> <span class="o">=</span> <span class="n">AzureOpenAICredentials</span><span class="p">(</span><span class="o">**</span><span class="n">credentials_data</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">OPEN_AI_SDK</span><span class="p">:</span>
                 <span class="n">credentials</span> <span class="o">=</span> <span class="n">OpenAISDKCredentials</span><span class="p">(</span><span class="o">**</span><span class="n">credentials_data</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported model type: </span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported model type: </span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="n">model_input</span> <span class="o">=</span> <span class="n">ModelToUpdateInput</span><span class="p">(</span>
             <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">),</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">update_properties_in_model</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model_input</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a model from an organization.</span>
+<span class="w">        </span><span class="sd">"""Delete a model from an organization.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            model_id: Identifier of the model to delete.</span>
@@ -2531,14 +2531,14 @@
 <span class="sd">            A dictionary indicating the result of the deletion.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.llm.delete_model(model_id=&quot;your_model_id&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.llm.delete_model(model_id="your_model_id")</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">delete_model</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">create_project_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProjectModelDict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Associate a model with a project.</span>
+<span class="w">        </span><span class="sd">"""Associate a model with a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project.</span>
@@ -2546,18 +2546,18 @@
 <span class="sd">            configuration: Configuration parameters for the project model.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A dictionary containing the created project model&#39;s details.</span>
+<span class="sd">            A dictionary containing the created project model's details.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; configuration = {</span>
 <span class="sd">            ...     # Configuration details specific to your use case</span>
 <span class="sd">            ... }</span>
 <span class="sd">            &gt;&gt;&gt; kili.llm.create_project_model(</span>
-<span class="sd">            ...     project_id=&quot;your_project_id&quot;,</span>
-<span class="sd">            ...     model_id=&quot;your_model_id&quot;,</span>
-<span class="sd">            ...     configuration={&quot;temperature&quot;: 0.7}</span>
+<span class="sd">            ...     project_id="your_project_id",</span>
+<span class="sd">            ...     model_id="your_model_id",</span>
+<span class="sd">            ...     configuration={"temperature": 0.7}</span>
 <span class="sd">            ... )</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">project_model_input</span> <span class="o">=</span> <span class="n">ProjectModelToCreateInput</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">configuration</span><span class="o">=</span><span class="n">configuration</span>
         <span class="p">)</span>
@@ -2566,24 +2566,24 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">project_models</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ProjectModelDict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List models associated with a project.</span>
+<span class="w">        </span><span class="sd">"""List models associated with a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project.</span>
 <span class="sd">            filters: Optional filters to apply. Possible keys:</span>
 <span class="sd">                - `model_id`: Identifier of a specific model to filter by.</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the project models.</span>
-<span class="sd">                Defaults to [&quot;configuration&quot;, &quot;id&quot;, &quot;model.credentials&quot;, &quot;model.name&quot;, &quot;model.type&quot;].</span>
+<span class="sd">                Defaults to ["configuration", "id", "model.credentials", "model.name", "model.type"].</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list of project models.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.llm.project_models(project_id=&quot;your_project_id&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.llm.project_models(project_id="your_project_id")</span>
+<span class="sd">        """</span>
         <span class="n">converted_filters</span> <span class="o">=</span> <span class="n">ProjectModelFilters</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-            <span class="n">model_id</span><span class="o">=</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">filters</span> <span class="ow">and</span> <span class="s2">&quot;model_id&quot;</span> <span class="ow">in</span> <span class="n">filters</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">filters</span><span class="p">[</span><span class="s2">"model_id"</span><span class="p">]</span> <span class="k">if</span> <span class="n">filters</span> <span class="ow">and</span> <span class="s2">"model_id"</span> <span class="ow">in</span> <span class="n">filters</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
@@ -2594,31 +2594,31 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">update_project_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProjectModelDict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the configuration of a project model.</span>
+<span class="w">        </span><span class="sd">"""Update the configuration of a project model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_model_id: Identifier of the project model to update.</span>
 <span class="sd">            configuration: New configuration parameters.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A dictionary containing the updated project model&#39;s details.</span>
+<span class="sd">            A dictionary containing the updated project model's details.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; configuration = {</span>
 <span class="sd">            ...     # Updated configuration details</span>
 <span class="sd">            ... }</span>
 <span class="sd">            &gt;&gt;&gt; kili.llm.update_project_model(</span>
-<span class="sd">            ...     project_model_id=&quot;your_project_model_id&quot;,</span>
+<span class="sd">            ...     project_model_id="your_project_model_id",</span>
 <span class="sd">            ...     configuration=configuration</span>
 <span class="sd">            ... )</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">project_model_input</span> <span class="o">=</span> <span class="n">ProjectModelToUpdateInput</span><span class="p">(</span><span class="n">configuration</span><span class="o">=</span><span class="n">configuration</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">update_project_model</span><span class="p">(</span>
             <span class="n">project_model_id</span><span class="o">=</span><span class="n">project_model_id</span><span class="p">,</span> <span class="n">project_model</span><span class="o">=</span><span class="n">project_model_input</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_project_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a project model.</span>
+<span class="w">        </span><span class="sd">"""Delete a project model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_model_id: Identifier of the project model to delete.</span>
@@ -2627,12 +2627,12 @@
 <span class="sd">            A dictionary indicating the result of the deletion.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.llm.delete_project_model(project_model_id=&quot;your_project_model_id&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.llm.delete_project_model(project_model_id="your_project_model_id")</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">delete_project_model</span><span class="p">(</span><span class="n">project_model_id</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">list_chat_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ChatItem</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List chat items associated with an asset.</span>
+<span class="w">        </span><span class="sd">"""List chat items associated with an asset.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            asset_id: Identifier of the asset.</span>
@@ -2641,45 +2641,45 @@
 <span class="sd">            A list of chat items associated with the asset.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.llm.list_chat_items(asset_id=&quot;your_asset_id&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.llm.list_chat_items(asset_id="your_asset_id")</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">list_chat_items</span><span class="p">(</span><span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">create_conversation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">initial_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">system_prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ChatItem</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new conversation in an LLM project starting with a user&#39;s prompt.</span>
+<span class="w">        </span><span class="sd">"""Create a new conversation in an LLM project starting with a user's prompt.</span>
 
 <span class="sd">        This method initiates a new conversation in the specified project by:</span>
 <span class="sd">        - Creating an LLM asset and label associated with the current user.</span>
-<span class="sd">        - Adding the user&#39;s prompt as the first chat item.</span>
-<span class="sd">        - Automatically generating assistant responses using the project&#39;s models.</span>
+<span class="sd">        - Adding the user's prompt as the first chat item.</span>
+<span class="sd">        - Automatically generating assistant responses using the project's models.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: The identifier of the project where the conversation will be created.</span>
 <span class="sd">            initial_prompt: The initial prompt or message from the user to start the conversation.</span>
-<span class="sd">            system_prompt: Optional system prompt to guide the assistant&#39;s responses.</span>
+<span class="sd">            system_prompt: Optional system prompt to guide the assistant's responses.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A list of chat items in the conversation, including the user&#39;s prompts and the assistant&#39;s responses.</span>
+<span class="sd">            A list of chat items in the conversation, including the user's prompts and the assistant's responses.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; PROMPT = &quot;Hello, how can I improve my coding skills?&quot;</span>
-<span class="sd">            &gt;&gt;&gt; chat_items = kili.llm.create_conversation(project_id=&quot;your_project_id&quot;, prompt=PROMPT)</span>
+<span class="sd">            &gt;&gt;&gt; PROMPT = "Hello, how can I improve my coding skills?"</span>
+<span class="sd">            &gt;&gt;&gt; chat_items = kili.llm.create_conversation(project_id="your_project_id", prompt=PROMPT)</span>
 
 <span class="sd">        Notes:</span>
-<span class="sd">            - The first chat item corresponds to the user&#39;s prompt.</span>
-<span class="sd">            - The subsequent chat items are assistant responses generated by the project&#39;s models.</span>
-<span class="sd">            - An LLM asset and a label are created in the project with labelType &quot;PREDICTION&quot;.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">get_current_user</span><span class="p">([</span><span class="s2">&quot;id&quot;</span><span class="p">])[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<span class="sd">            - The first chat item corresponds to the user's prompt.</span>
+<span class="sd">            - The subsequent chat items are assistant responses generated by the project's models.</span>
+<span class="sd">            - An LLM asset and a label are created in the project with labelType "PREDICTION".</span>
+<span class="sd">        """</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">get_current_user</span><span class="p">([</span><span class="s2">"id"</span><span class="p">])[</span><span class="s2">"id"</span><span class="p">]</span>
         <span class="n">llm_asset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">create_llm_asset</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">author_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span>
-            <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;PREDICTION&quot;</span><span class="p">,</span>
+            <span class="n">label_type</span><span class="o">=</span><span class="s2">"PREDICTION"</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">asset_id</span> <span class="o">=</span> <span class="n">llm_asset</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-        <span class="n">label_id</span> <span class="o">=</span> <span class="n">llm_asset</span><span class="p">[</span><span class="s2">&quot;latestLabel&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="n">asset_id</span> <span class="o">=</span> <span class="n">llm_asset</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+        <span class="n">label_id</span> <span class="o">=</span> <span class="n">llm_asset</span><span class="p">[</span><span class="s2">"latestLabel"</span><span class="p">][</span><span class="s2">"id"</span><span class="p">]</span>
 
         <span class="n">system_chat_item</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">system_prompt</span><span class="p">:</span>
@@ -2687,7 +2687,7 @@
                 <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="n">system_prompt</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">ChatItemRole</span><span class="o">.</span><span class="n">SYSTEM</span>
             <span class="p">)</span>
 
-        <span class="n">parent_id</span> <span class="o">=</span> <span class="n">system_chat_item</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">system_chat_item</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">parent_id</span> <span class="o">=</span> <span class="n">system_chat_item</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">if</span> <span class="n">system_chat_item</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">prompt_chat_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">create_chat_item</span><span class="p">(</span>
             <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
             <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
@@ -2777,8 +2777,8 @@
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">PROMPT</span> <span class="o">=</span> <span class="s2">&quot;Hello, how can I improve my coding skills?&quot;</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">chat_items</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">create_conversation</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="n">PROMPT</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">PROMPT</span> <span class="o">=</span> <span class="s2">"Hello, how can I improve my coding skills?"</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">chat_items</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">create_conversation</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="n">PROMPT</span><span class="p">)</span>
 </code></pre></div>
       <div class="admonition notes">
 <p class="admonition-title">Notes</p>
@@ -2794,38 +2794,38 @@
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_conversation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">initial_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">system_prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ChatItem</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new conversation in an LLM project starting with a user&#39;s prompt.</span>
+<span class="w">    </span><span class="sd">"""Create a new conversation in an LLM project starting with a user's prompt.</span>
 
 <span class="sd">    This method initiates a new conversation in the specified project by:</span>
 <span class="sd">    - Creating an LLM asset and label associated with the current user.</span>
-<span class="sd">    - Adding the user&#39;s prompt as the first chat item.</span>
-<span class="sd">    - Automatically generating assistant responses using the project&#39;s models.</span>
+<span class="sd">    - Adding the user's prompt as the first chat item.</span>
+<span class="sd">    - Automatically generating assistant responses using the project's models.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: The identifier of the project where the conversation will be created.</span>
 <span class="sd">        initial_prompt: The initial prompt or message from the user to start the conversation.</span>
-<span class="sd">        system_prompt: Optional system prompt to guide the assistant&#39;s responses.</span>
+<span class="sd">        system_prompt: Optional system prompt to guide the assistant's responses.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A list of chat items in the conversation, including the user&#39;s prompts and the assistant&#39;s responses.</span>
+<span class="sd">        A list of chat items in the conversation, including the user's prompts and the assistant's responses.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; PROMPT = &quot;Hello, how can I improve my coding skills?&quot;</span>
-<span class="sd">        &gt;&gt;&gt; chat_items = kili.llm.create_conversation(project_id=&quot;your_project_id&quot;, prompt=PROMPT)</span>
+<span class="sd">        &gt;&gt;&gt; PROMPT = "Hello, how can I improve my coding skills?"</span>
+<span class="sd">        &gt;&gt;&gt; chat_items = kili.llm.create_conversation(project_id="your_project_id", prompt=PROMPT)</span>
 
 <span class="sd">    Notes:</span>
-<span class="sd">        - The first chat item corresponds to the user&#39;s prompt.</span>
-<span class="sd">        - The subsequent chat items are assistant responses generated by the project&#39;s models.</span>
-<span class="sd">        - An LLM asset and a label are created in the project with labelType &quot;PREDICTION&quot;.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">get_current_user</span><span class="p">([</span><span class="s2">&quot;id&quot;</span><span class="p">])[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<span class="sd">        - The first chat item corresponds to the user's prompt.</span>
+<span class="sd">        - The subsequent chat items are assistant responses generated by the project's models.</span>
+<span class="sd">        - An LLM asset and a label are created in the project with labelType "PREDICTION".</span>
+<span class="sd">    """</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">get_current_user</span><span class="p">([</span><span class="s2">"id"</span><span class="p">])[</span><span class="s2">"id"</span><span class="p">]</span>
     <span class="n">llm_asset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">create_llm_asset</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="n">author_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span>
-        <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;PREDICTION&quot;</span><span class="p">,</span>
+        <span class="n">label_type</span><span class="o">=</span><span class="s2">"PREDICTION"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">asset_id</span> <span class="o">=</span> <span class="n">llm_asset</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-    <span class="n">label_id</span> <span class="o">=</span> <span class="n">llm_asset</span><span class="p">[</span><span class="s2">&quot;latestLabel&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+    <span class="n">asset_id</span> <span class="o">=</span> <span class="n">llm_asset</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+    <span class="n">label_id</span> <span class="o">=</span> <span class="n">llm_asset</span><span class="p">[</span><span class="s2">"latestLabel"</span><span class="p">][</span><span class="s2">"id"</span><span class="p">]</span>
 
     <span class="n">system_chat_item</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">system_prompt</span><span class="p">:</span>
@@ -2833,7 +2833,7 @@
             <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="n">system_prompt</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">ChatItemRole</span><span class="o">.</span><span class="n">SYSTEM</span>
         <span class="p">)</span>
 
-    <span class="n">parent_id</span> <span class="o">=</span> <span class="n">system_chat_item</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">system_chat_item</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">parent_id</span> <span class="o">=</span> <span class="n">system_chat_item</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">if</span> <span class="n">system_chat_item</span> <span class="k">else</span> <span class="kc">None</span>
     <span class="n">prompt_chat_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">create_chat_item</span><span class="p">(</span>
         <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
         <span class="n">label_id</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
@@ -2920,65 +2920,65 @@
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="c1"># Example of creating an OpenAI SDK model</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">model_data</span> <span class="o">=</span> <span class="p">{</span>
-<span class="o">...</span>     <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;My OpenAI SDK Model&quot;</span><span class="p">,</span>
-<span class="o">...</span>     <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;OPEN_AI_SDK&quot;</span><span class="p">,</span>
-<span class="o">...</span>     <span class="s2">&quot;credentials&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="o">...</span>         <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;your_open_ai_api_key&quot;</span><span class="p">,</span>
-<span class="o">...</span>         <span class="s2">&quot;endpoint&quot;</span><span class="p">:</span> <span class="s2">&quot;your_open_ai_endpoint&quot;</span>
+<span class="o">...</span>     <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"My OpenAI SDK Model"</span><span class="p">,</span>
+<span class="o">...</span>     <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"OPEN_AI_SDK"</span><span class="p">,</span>
+<span class="o">...</span>     <span class="s2">"credentials"</span><span class="p">:</span> <span class="p">{</span>
+<span class="o">...</span>         <span class="s2">"api_key"</span><span class="p">:</span> <span class="s2">"your_open_ai_api_key"</span><span class="p">,</span>
+<span class="o">...</span>         <span class="s2">"endpoint"</span><span class="p">:</span> <span class="s2">"your_open_ai_endpoint"</span>
 <span class="o">...</span>     <span class="p">}</span>
 <span class="o">...</span> <span class="p">}</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="n">organization_id</span><span class="o">=</span><span class="s2">&quot;your_organization_id&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model_data</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="n">organization_id</span><span class="o">=</span><span class="s2">"your_organization_id"</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model_data</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
           <summary>Source code in <code>kili/llm/presentation/client/llm.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelDict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new model in an organization.</span>
+<span class="w">    </span><span class="sd">"""Create a new model in an organization.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        organization_id: Identifier of the organization.</span>
 <span class="sd">        model: A dictionary representing the model to create, containing:</span>
 <span class="sd">            - `name`: Name of the model.</span>
 <span class="sd">            - `type`: Type of the model, one of:</span>
-<span class="sd">                - `&quot;AZURE_OPEN_AI&quot;`</span>
-<span class="sd">                - `&quot;OPEN_AI_SDK&quot;`</span>
+<span class="sd">                - `"AZURE_OPEN_AI"`</span>
+<span class="sd">                - `"OPEN_AI_SDK"`</span>
 <span class="sd">            - `credentials`: Credentials required for the model, depending on the type:</span>
-<span class="sd">                - For `&quot;AZURE_OPEN_AI&quot;` type:</span>
+<span class="sd">                - For `"AZURE_OPEN_AI"` type:</span>
 <span class="sd">                    - `api_key`: The API key for Azure OpenAI.</span>
 <span class="sd">                    - `deployment_id`: The deployment ID within Azure.</span>
 <span class="sd">                    - `endpoint`: The endpoint URL of the Azure OpenAI service.</span>
-<span class="sd">                - For `&quot;OPEN_AI_SDK&quot;` type:</span>
+<span class="sd">                - For `"OPEN_AI_SDK"` type:</span>
 <span class="sd">                    - `api_key`: The API key for OpenAI SDK.</span>
 <span class="sd">                    - `endpoint`: The endpoint URL of the OpenAI SDK service.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A dictionary containing the created model&#39;s details.</span>
+<span class="sd">        A dictionary containing the created model's details.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; # Example of creating an OpenAI SDK model</span>
 <span class="sd">        &gt;&gt;&gt; model_data = {</span>
-<span class="sd">        ...     &quot;name&quot;: &quot;My OpenAI SDK Model&quot;,</span>
-<span class="sd">        ...     &quot;type&quot;: &quot;OPEN_AI_SDK&quot;,</span>
-<span class="sd">        ...     &quot;credentials&quot;: {</span>
-<span class="sd">        ...         &quot;api_key&quot;: &quot;your_open_ai_api_key&quot;,</span>
-<span class="sd">        ...         &quot;endpoint&quot;: &quot;your_open_ai_endpoint&quot;</span>
+<span class="sd">        ...     "name": "My OpenAI SDK Model",</span>
+<span class="sd">        ...     "type": "OPEN_AI_SDK",</span>
+<span class="sd">        ...     "credentials": {</span>
+<span class="sd">        ...         "api_key": "your_open_ai_api_key",</span>
+<span class="sd">        ...         "endpoint": "your_open_ai_endpoint"</span>
 <span class="sd">        ...     }</span>
 <span class="sd">        ... }</span>
-<span class="sd">        &gt;&gt;&gt; kili.llm.create_model(organization_id=&quot;your_organization_id&quot;, model=model_data)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">credentials_data</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s2">&quot;credentials&quot;</span><span class="p">]</span>
-    <span class="n">model_type</span> <span class="o">=</span> <span class="n">ModelType</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+<span class="sd">        &gt;&gt;&gt; kili.llm.create_model(organization_id="your_organization_id", model=model_data)</span>
+<span class="sd">    """</span>
+    <span class="n">credentials_data</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s2">"credentials"</span><span class="p">]</span>
+    <span class="n">model_type</span> <span class="o">=</span> <span class="n">ModelType</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="s2">"type"</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">AZURE_OPEN_AI</span><span class="p">:</span>
         <span class="n">credentials</span> <span class="o">=</span> <span class="n">AzureOpenAICredentials</span><span class="p">(</span><span class="o">**</span><span class="n">credentials_data</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">OPEN_AI_SDK</span><span class="p">:</span>
         <span class="n">credentials</span> <span class="o">=</span> <span class="n">OpenAISDKCredentials</span><span class="p">(</span><span class="o">**</span><span class="n">credentials_data</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported model type: </span><span class="si">{</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported model type: </span><span class="si">{</span><span class="n">model</span><span class="p">[</span><span class="s1">'type'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">model_input</span> <span class="o">=</span> <span class="n">ModelToCreateInput</span><span class="p">(</span>
         <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">model_type</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>
     <span class="p">)</span>
@@ -3056,9 +3056,9 @@
 <span class="o">...</span>     <span class="c1"># Configuration details specific to your use case</span>
 <span class="o">...</span> <span class="p">}</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">create_project_model</span><span class="p">(</span>
-<span class="o">...</span>     <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span>
-<span class="o">...</span>     <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;your_model_id&quot;</span><span class="p">,</span>
-<span class="o">...</span>     <span class="n">configuration</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">}</span>
+<span class="o">...</span>     <span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span>
+<span class="o">...</span>     <span class="n">model_id</span><span class="o">=</span><span class="s2">"your_model_id"</span><span class="p">,</span>
+<span class="o">...</span>     <span class="n">configuration</span><span class="o">=</span><span class="p">{</span><span class="s2">"temperature"</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">}</span>
 <span class="o">...</span> <span class="p">)</span>
 </code></pre></div>
 
@@ -3067,7 +3067,7 @@
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_project_model</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProjectModelDict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Associate a model with a project.</span>
+<span class="w">    </span><span class="sd">"""Associate a model with a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project.</span>
@@ -3075,18 +3075,18 @@
 <span class="sd">        configuration: Configuration parameters for the project model.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A dictionary containing the created project model&#39;s details.</span>
+<span class="sd">        A dictionary containing the created project model's details.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; configuration = {</span>
 <span class="sd">        ...     # Configuration details specific to your use case</span>
 <span class="sd">        ... }</span>
 <span class="sd">        &gt;&gt;&gt; kili.llm.create_project_model(</span>
-<span class="sd">        ...     project_id=&quot;your_project_id&quot;,</span>
-<span class="sd">        ...     model_id=&quot;your_model_id&quot;,</span>
-<span class="sd">        ...     configuration={&quot;temperature&quot;: 0.7}</span>
+<span class="sd">        ...     project_id="your_project_id",</span>
+<span class="sd">        ...     model_id="your_model_id",</span>
+<span class="sd">        ...     configuration={"temperature": 0.7}</span>
 <span class="sd">        ... )</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">project_model_input</span> <span class="o">=</span> <span class="n">ProjectModelToCreateInput</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">configuration</span><span class="o">=</span><span class="n">configuration</span>
     <span class="p">)</span>
@@ -3148,13 +3148,13 @@
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">delete_model</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;your_model_id&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">delete_model</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">"your_model_id"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
           <summary>Source code in <code>kili/llm/presentation/client/llm.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a model from an organization.</span>
+<span class="w">    </span><span class="sd">"""Delete a model from an organization.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model_id: Identifier of the model to delete.</span>
@@ -3163,8 +3163,8 @@
 <span class="sd">        A dictionary indicating the result of the deletion.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.llm.delete_model(model_id=&quot;your_model_id&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.llm.delete_model(model_id="your_model_id")</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">delete_model</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3223,13 +3223,13 @@
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">delete_project_model</span><span class="p">(</span><span class="n">project_model_id</span><span class="o">=</span><span class="s2">&quot;your_project_model_id&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">delete_project_model</span><span class="p">(</span><span class="n">project_model_id</span><span class="o">=</span><span class="s2">"your_project_model_id"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
           <summary>Source code in <code>kili/llm/presentation/client/llm.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_project_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a project model.</span>
+<span class="w">    </span><span class="sd">"""Delete a project model.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_model_id: Identifier of the project model to delete.</span>
@@ -3238,8 +3238,8 @@
 <span class="sd">        A dictionary indicating the result of the deletion.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.llm.delete_project_model(project_model_id=&quot;your_project_model_id&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.llm.delete_project_model(project_model_id="your_project_model_id")</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">delete_project_model</span><span class="p">(</span><span class="n">project_model_id</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3349,7 +3349,7 @@ Only applicable if the project is in WorkflowV3.</p></td>
   </tbody>
 </table>      <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s2">"your_project_id"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 
@@ -3369,7 +3369,7 @@ Only applicable if the project is in WorkflowV3.</p></td>
     <span class="n">group_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">group_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Conversation</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]]]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns an export of llm conversations with valid labels.</span>
+<span class="w">    </span><span class="sd">"""Returns an export of llm conversations with valid labels.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project.</span>
@@ -3377,7 +3377,7 @@ Only applicable if the project is in WorkflowV3.</p></td>
 <span class="sd">        disable_tqdm: Disable the progress bar if True.</span>
 <span class="sd">        external_ids: Optional list of the assets external IDs from which to export the labels.</span>
 <span class="sd">        include_sent_back_labels: Include sent back labels if True.</span>
-<span class="sd">        label_type_in: Optional types of label to fetch, by default [&quot;DEFAULT&quot;, &quot;REVIEW&quot;].</span>
+<span class="sd">        label_type_in: Optional types of label to fetch, by default ["DEFAULT", "REVIEW"].</span>
 <span class="sd">        status_in: Returned assets should have a status that belongs to that list, if given.</span>
 <span class="sd">            Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.</span>
 <span class="sd">        step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
@@ -3391,21 +3391,21 @@ Only applicable if the project is in WorkflowV3.</p></td>
 <span class="sd">            Only applicable if the project is in WorkflowV3.</span>
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python</span>
-<span class="sd">        kili.llm.export(&quot;your_project_id&quot;)</span>
+<span class="sd">        kili.llm.export("your_project_id")</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">asset_ids</span> <span class="ow">and</span> <span class="n">external_ids</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You cannot provide both asset_ids and external_ids&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"You cannot provide both asset_ids and external_ids"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;DOING&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">"DOING"</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;Step status &#39;DOING&#39; is deprecated, use &#39;IN_PROGRESS&#39; instead&quot;</span><span class="p">,</span>
+            <span class="s2">"Step status 'DOING' is deprecated, use 'IN_PROGRESS' instead"</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;REDO&quot;</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">step_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">"REDO"</span> <span class="ow">in</span> <span class="n">step_status_in</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;Step status &#39;REDO&#39; is deprecated, use &#39;REWORK&#39; instead&quot;</span><span class="p">,</span>
+            <span class="s2">"Step status 'REDO' is deprecated, use 'REWORK' instead"</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
@@ -3421,7 +3421,7 @@ Only applicable if the project is in WorkflowV3.</p></td>
             <span class="nb">list</span><span class="p">(</span><span class="n">AssetId</span><span class="p">(</span><span class="n">asset_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">asset_id</span> <span class="ow">in</span> <span class="n">asset_ids</span><span class="p">)</span> <span class="k">if</span> <span class="n">asset_ids</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
 
-    <span class="n">label_type_in</span> <span class="o">=</span> <span class="n">label_type_in</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span> <span class="s2">&quot;REVIEW&quot;</span><span class="p">]</span>
+    <span class="n">label_type_in</span> <span class="o">=</span> <span class="n">label_type_in</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">"DEFAULT"</span><span class="p">,</span> <span class="s2">"REVIEW"</span><span class="p">]</span>
 
     <span class="n">step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -3440,16 +3440,16 @@ Only applicable if the project is in WorkflowV3.</p></td>
         <span class="n">check_asset_workflow_arguments</span><span class="p">(</span>
             <span class="n">project_workflow_version</span><span class="o">=</span><span class="n">project_workflow_version</span><span class="p">,</span>
             <span class="n">asset_workflow_filters</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;skipped&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="s2">&quot;status_in&quot;</span><span class="p">:</span> <span class="n">status_in</span><span class="p">,</span>
-                <span class="s2">&quot;step_name_in&quot;</span><span class="p">:</span> <span class="n">step_name_in</span><span class="p">,</span>
-                <span class="s2">&quot;step_status_in&quot;</span><span class="p">:</span> <span class="n">step_status_in</span><span class="p">,</span>
-                <span class="s2">&quot;group_name_in&quot;</span><span class="p">:</span> <span class="n">group_name_in</span><span class="p">,</span>
-                <span class="s2">&quot;group_name_not_in&quot;</span><span class="p">:</span> <span class="n">group_name_not_in</span><span class="p">,</span>
+                <span class="s2">"skipped"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"status_in"</span><span class="p">:</span> <span class="n">status_in</span><span class="p">,</span>
+                <span class="s2">"step_name_in"</span><span class="p">:</span> <span class="n">step_name_in</span><span class="p">,</span>
+                <span class="s2">"step_status_in"</span><span class="p">:</span> <span class="n">step_status_in</span><span class="p">,</span>
+                <span class="s2">"group_name_in"</span><span class="p">:</span> <span class="n">group_name_in</span><span class="p">,</span>
+                <span class="s2">"group_name_not_in"</span><span class="p">:</span> <span class="n">group_name_not_in</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;V2&quot;</span><span class="p">,</span> <span class="s2">&quot;V3&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">project_workflow_version</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"V2"</span><span class="p">,</span> <span class="s2">"V3"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">step_id_in</span> <span class="o">=</span> <span class="n">extract_step_ids_from_project_steps</span><span class="p">(</span>
                 <span class="n">project_steps</span><span class="o">=</span><span class="n">project_steps</span><span class="p">,</span>
                 <span class="n">step_name_in</span><span class="o">=</span><span class="n">step_name_in</span><span class="p">,</span>
@@ -3561,7 +3561,7 @@ Only applicable if the project is in WorkflowV3.</p></td>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">conversations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Conversation</span><span class="p">],</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Import conversations into a LLM Static project.</span>
+<span class="w">    </span><span class="sd">"""Import conversations into a LLM Static project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project.</span>
@@ -3583,7 +3583,7 @@ Only applicable if the project is in WorkflowV3.</p></td>
 <span class="sd">        A dict containing following keys</span>
 <span class="sd">        - `numberOfUploadedAssets`: Number of assets uploaded.</span>
 <span class="sd">        - `warnings`: List of detailed warnings generated during the import process, for each conversation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">import_conversations</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">conversations</span><span class="o">=</span><span class="n">conversations</span>
     <span class="p">)</span>
@@ -3644,13 +3644,13 @@ Only applicable if the project is in WorkflowV3.</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">list_chat_items</span><span class="p">(</span><span class="n">asset_id</span><span class="o">=</span><span class="s2">&quot;your_asset_id&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">list_chat_items</span><span class="p">(</span><span class="n">asset_id</span><span class="o">=</span><span class="s2">"your_asset_id"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
           <summary>Source code in <code>kili/llm/presentation/client/llm.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_chat_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ChatItem</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;List chat items associated with an asset.</span>
+<span class="w">    </span><span class="sd">"""List chat items associated with an asset.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        asset_id: Identifier of the asset.</span>
@@ -3659,8 +3659,8 @@ Only applicable if the project is in WorkflowV3.</p></td>
 <span class="sd">        A list of chat items associated with the asset.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.llm.list_chat_items(asset_id=&quot;your_asset_id&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.llm.list_chat_items(asset_id="your_asset_id")</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">list_chat_items</span><span class="p">(</span><span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3726,25 +3726,25 @@ Defaults to ["id", "credentials", "name", "type"].</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;your_model_id&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">"your_model_id"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
           <summary>Source code in <code>kili/llm/presentation/client/llm.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelDict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve a specific model.</span>
+<span class="w">    </span><span class="sd">"""Retrieve a specific model.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model_id: Identifier of the model.</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the models.</span>
-<span class="sd">            Defaults to [&quot;id&quot;, &quot;credentials&quot;, &quot;name&quot;, &quot;type&quot;].</span>
+<span class="sd">            Defaults to ["id", "credentials", "name", "type"].</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dictionary representing the model.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.llm.model(model_id=&quot;your_model_id&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.llm.model(model_id="your_model_id")</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span>
         <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
         <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
@@ -3813,25 +3813,25 @@ Defaults to ["id", "credentials", "name", "type"].</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">models</span><span class="p">(</span><span class="n">organization_id</span><span class="o">=</span><span class="s2">&quot;your_organization_id&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">models</span><span class="p">(</span><span class="n">organization_id</span><span class="o">=</span><span class="s2">"your_organization_id"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
           <summary>Source code in <code>kili/llm/presentation/client/llm.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">organization_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ModelDict</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;List models in an organization.</span>
+<span class="w">    </span><span class="sd">"""List models in an organization.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        organization_id: Identifier of the organization.</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the models.</span>
-<span class="sd">            Defaults to [&quot;id&quot;, &quot;credentials&quot;, &quot;name&quot;, &quot;type&quot;].</span>
+<span class="sd">            Defaults to ["id", "credentials", "name", "type"].</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of models.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.llm.models(organization_id=&quot;your_organization_id&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.llm.models(organization_id="your_organization_id")</span>
+<span class="sd">    """</span>
     <span class="n">converted_filters</span> <span class="o">=</span> <span class="n">OrganizationModelFilters</span><span class="p">(</span>
         <span class="n">organization_id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span>
     <span class="p">)</span>
@@ -3908,7 +3908,7 @@ Defaults to ["configuration", "id", "model.credentials", "model.name", "model.ty
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">project_models</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">project_models</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -3916,24 +3916,24 @@ Defaults to ["configuration", "id", "model.credentials", "model.name", "model.ty
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">project_models</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ProjectModelDict</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;List models associated with a project.</span>
+<span class="w">    </span><span class="sd">"""List models associated with a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project.</span>
 <span class="sd">        filters: Optional filters to apply. Possible keys:</span>
 <span class="sd">            - `model_id`: Identifier of a specific model to filter by.</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the project models.</span>
-<span class="sd">            Defaults to [&quot;configuration&quot;, &quot;id&quot;, &quot;model.credentials&quot;, &quot;model.name&quot;, &quot;model.type&quot;].</span>
+<span class="sd">            Defaults to ["configuration", "id", "model.credentials", "model.name", "model.type"].</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of project models.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.llm.project_models(project_id=&quot;your_project_id&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.llm.project_models(project_id="your_project_id")</span>
+<span class="sd">    """</span>
     <span class="n">converted_filters</span> <span class="o">=</span> <span class="n">ProjectModelFilters</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-        <span class="n">model_id</span><span class="o">=</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">filters</span> <span class="ow">and</span> <span class="s2">&quot;model_id&quot;</span> <span class="ow">in</span> <span class="n">filters</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model_id</span><span class="o">=</span><span class="n">filters</span><span class="p">[</span><span class="s2">"model_id"</span><span class="p">]</span> <span class="k">if</span> <span class="n">filters</span> <span class="ow">and</span> <span class="s2">"model_id"</span> <span class="ow">in</span> <span class="n">filters</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
@@ -4009,7 +4009,7 @@ Defaults to ["configuration", "id", "model.credentials", "model.name", "model.ty
 <span class="o">...</span>     <span class="c1"># Updated configuration details</span>
 <span class="o">...</span> <span class="p">}</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">update_project_model</span><span class="p">(</span>
-<span class="o">...</span>     <span class="n">project_model_id</span><span class="o">=</span><span class="s2">&quot;your_project_model_id&quot;</span><span class="p">,</span>
+<span class="o">...</span>     <span class="n">project_model_id</span><span class="o">=</span><span class="s2">"your_project_model_id"</span><span class="p">,</span>
 <span class="o">...</span>     <span class="n">configuration</span><span class="o">=</span><span class="n">configuration</span>
 <span class="o">...</span> <span class="p">)</span>
 </code></pre></div>
@@ -4017,24 +4017,24 @@ Defaults to ["configuration", "id", "model.credentials", "model.name", "model.ty
         <details class="quote">
           <summary>Source code in <code>kili/llm/presentation/client/llm.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_project_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">configuration</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProjectModelDict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update the configuration of a project model.</span>
+<span class="w">    </span><span class="sd">"""Update the configuration of a project model.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_model_id: Identifier of the project model to update.</span>
 <span class="sd">        configuration: New configuration parameters.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A dictionary containing the updated project model&#39;s details.</span>
+<span class="sd">        A dictionary containing the updated project model's details.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; configuration = {</span>
 <span class="sd">        ...     # Updated configuration details</span>
 <span class="sd">        ... }</span>
 <span class="sd">        &gt;&gt;&gt; kili.llm.update_project_model(</span>
-<span class="sd">        ...     project_model_id=&quot;your_project_model_id&quot;,</span>
+<span class="sd">        ...     project_model_id="your_project_model_id",</span>
 <span class="sd">        ...     configuration=configuration</span>
 <span class="sd">        ... )</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">project_model_input</span> <span class="o">=</span> <span class="n">ProjectModelToUpdateInput</span><span class="p">(</span><span class="n">configuration</span><span class="o">=</span><span class="n">configuration</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">update_project_model</span><span class="p">(</span>
         <span class="n">project_model_id</span><span class="o">=</span><span class="n">project_model_id</span><span class="p">,</span> <span class="n">project_model</span><span class="o">=</span><span class="n">project_model_input</span>
@@ -4113,60 +4113,60 @@ Defaults to ["configuration", "id", "model.credentials", "model.name", "model.ty
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="c1"># Update the name of a model</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">update_properties_in_model</span><span class="p">(</span>
-<span class="o">...</span>     <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;your_model_id&quot;</span><span class="p">,</span>
-<span class="o">...</span>     <span class="n">model</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Updated Model Name&quot;</span><span class="p">}</span>
+<span class="o">...</span>     <span class="n">model_id</span><span class="o">=</span><span class="s2">"your_model_id"</span><span class="p">,</span>
+<span class="o">...</span>     <span class="n">model</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Updated Model Name"</span><span class="p">}</span>
 <span class="o">...</span> <span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
           <summary>Source code in <code>kili/llm/presentation/client/llm.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_properties_in_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelDict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update properties of an existing model.</span>
+<span class="w">    </span><span class="sd">"""Update properties of an existing model.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model_id: Identifier of the model to update.</span>
 <span class="sd">        model: A dictionary containing the properties to update, which may include:</span>
 <span class="sd">            - `name`: New name of the model.</span>
 <span class="sd">            - `credentials`: Updated credentials for the model, depending on the type:</span>
-<span class="sd">                - For `&quot;AZURE_OPEN_AI&quot;` type:</span>
+<span class="sd">                - For `"AZURE_OPEN_AI"` type:</span>
 <span class="sd">                    - `api_key`: The API key for Azure OpenAI.</span>
 <span class="sd">                    - `deployment_id`: The deployment ID within Azure.</span>
 <span class="sd">                    - `endpoint`: The endpoint URL of the Azure OpenAI service.</span>
-<span class="sd">                - For `&quot;OPEN_AI_SDK&quot;` type:</span>
+<span class="sd">                - For `"OPEN_AI_SDK"` type:</span>
 <span class="sd">                    - `api_key`: The API key for OpenAI SDK.</span>
 <span class="sd">                    - `endpoint`: The endpoint URL of the OpenAI SDK service.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A dictionary containing the updated model&#39;s details.</span>
+<span class="sd">        A dictionary containing the updated model's details.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; # Update the name of a model</span>
 <span class="sd">        &gt;&gt;&gt; kili.llm.update_properties_in_model(</span>
-<span class="sd">        ...     model_id=&quot;your_model_id&quot;,</span>
-<span class="sd">        ...     model={&quot;name&quot;: &quot;Updated Model Name&quot;}</span>
+<span class="sd">        ...     model_id="your_model_id",</span>
+<span class="sd">        ...     model={"name": "Updated Model Name"}</span>
 <span class="sd">        ... )</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">credentials_data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;credentials&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">credentials_data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"credentials"</span><span class="p">)</span>
     <span class="n">credentials</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">credentials_data</span><span class="p">:</span>
         <span class="n">existing_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span>
-            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">]</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">existing_model</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model with id </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
-        <span class="n">model_type</span> <span class="o">=</span> <span class="n">ModelType</span><span class="p">(</span><span class="n">existing_model</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model with id </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> not found"</span><span class="p">)</span>
+        <span class="n">model_type</span> <span class="o">=</span> <span class="n">ModelType</span><span class="p">(</span><span class="n">existing_model</span><span class="p">[</span><span class="s2">"type"</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">AZURE_OPEN_AI</span><span class="p">:</span>
             <span class="n">credentials</span> <span class="o">=</span> <span class="n">AzureOpenAICredentials</span><span class="p">(</span><span class="o">**</span><span class="n">credentials_data</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">OPEN_AI_SDK</span><span class="p">:</span>
             <span class="n">credentials</span> <span class="o">=</span> <span class="n">OpenAISDKCredentials</span><span class="p">(</span><span class="o">**</span><span class="n">credentials_data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported model type: </span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported model type: </span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">model_input</span> <span class="o">=</span> <span class="n">ModelToUpdateInput</span><span class="p">(</span>
         <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">),</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">update_properties_in_model</span><span class="p">(</span>
         <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model_input</span>

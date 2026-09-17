@@ -2262,145 +2262,145 @@
 </ul>
 <p>In this example, we use a JSON interface that incorporates classifications at all these levels, enabling comprehensive annotation:</p>
 <div class="highlight"><pre><span></span><code><span class="n">interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;CLASSIFICATION_JOB_AT_COMPLETION_LEVEL&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;TOO_SHORT&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Too short&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category1&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;JUST_RIGHT&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Just right&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category2&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;TOO_VERBOSE&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Too verbose&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category3&quot;</span><span class="p">},</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"CLASSIFICATION_JOB_AT_COMPLETION_LEVEL"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"TOO_SHORT"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Too short"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category1"</span><span class="p">},</span>
+                    <span class="s2">"JUST_RIGHT"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Just right"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category2"</span><span class="p">},</span>
+                    <span class="s2">"TOO_VERBOSE"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Too verbose"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category3"</span><span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Verbosity&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;completion&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Verbosity"</span><span class="p">,</span>
+            <span class="s2">"level"</span><span class="p">:</span> <span class="s2">"completion"</span><span class="p">,</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s2">&quot;CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_1&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;NO_ISSUES&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;No issues&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category4&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;MINOR_ISSUES&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Minor issue(s)&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category5&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;MAJOR_ISSUES&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Major issue(s)&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category6&quot;</span><span class="p">},</span>
+        <span class="s2">"CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_1"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"NO_ISSUES"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"No issues"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category4"</span><span class="p">},</span>
+                    <span class="s2">"MINOR_ISSUES"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Minor issue(s)"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category5"</span><span class="p">},</span>
+                    <span class="s2">"MAJOR_ISSUES"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Major issue(s)"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category6"</span><span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Instructions Following&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;completion&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Instructions Following"</span><span class="p">,</span>
+            <span class="s2">"level"</span><span class="p">:</span> <span class="s2">"completion"</span><span class="p">,</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s2">&quot;CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_2&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;NO_ISSUES&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;No issues&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category7&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;MINOR_INACCURACY&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span>
-                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Minor inaccuracy&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category8&quot;</span><span class="p">,</span>
+        <span class="s2">"CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_2"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"NO_ISSUES"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"No issues"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category7"</span><span class="p">},</span>
+                    <span class="s2">"MINOR_INACCURACY"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Minor inaccuracy"</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category8"</span><span class="p">,</span>
                     <span class="p">},</span>
-                    <span class="s2">&quot;MAJOR_INACCURACY&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span>
-                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Major inaccuracy&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category9&quot;</span><span class="p">,</span>
-                    <span class="p">},</span>
-                <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Truthfulness&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;completion&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="s2">&quot;CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_3&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;NO_ISSUES&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;No issues&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category10&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;MINOR_SAFETY_CONCERN&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span>
-                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Minor safety concern&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category11&quot;</span><span class="p">,</span>
-                    <span class="p">},</span>
-                    <span class="s2">&quot;MAJOR_SAFETY_CONCERN&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span>
-                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Major safety concern&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category12&quot;</span><span class="p">,</span>
+                    <span class="s2">"MAJOR_INACCURACY"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Major inaccuracy"</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category9"</span><span class="p">,</span>
                     <span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Harmlessness/Safety&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;completion&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Truthfulness"</span><span class="p">,</span>
+            <span class="s2">"level"</span><span class="p">:</span> <span class="s2">"completion"</span><span class="p">,</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s2">&quot;COMPARISON_JOB&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;IS_MUCH_BETTER&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Is much better&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;option13&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;IS_BETTER&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Is better&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;option14&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;IS_SLIGHTLY_BETTER&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span>
-                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Is slightly better&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;option15&quot;</span><span class="p">,</span>
+        <span class="s2">"CLASSIFICATION_JOB_AT_COMPLETION_LEVEL_3"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"NO_ISSUES"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"No issues"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category10"</span><span class="p">},</span>
+                    <span class="s2">"MINOR_SAFETY_CONCERN"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Minor safety concern"</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category11"</span><span class="p">,</span>
                     <span class="p">},</span>
-                    <span class="s2">&quot;TIE&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Tie&quot;</span><span class="p">,</span> <span class="s2">&quot;mutual&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;option16&quot;</span><span class="p">},</span>
+                    <span class="s2">"MAJOR_SAFETY_CONCERN"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Major safety concern"</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category12"</span><span class="p">,</span>
+                    <span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Pick the best answer&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;COMPARISON&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Harmlessness/Safety"</span><span class="p">,</span>
+            <span class="s2">"level"</span><span class="p">:</span> <span class="s2">"completion"</span><span class="p">,</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s2">&quot;CLASSIFICATION_JOB_AT_ROUND_LEVEL&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;BOTH_ARE_GOOD&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Both are good&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category17&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;BOTH_ARE_BAD&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Both are bad&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category18&quot;</span><span class="p">},</span>
+        <span class="s2">"COMPARISON_JOB"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"options"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"IS_MUCH_BETTER"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Is much better"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"option13"</span><span class="p">},</span>
+                    <span class="s2">"IS_BETTER"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Is better"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"option14"</span><span class="p">},</span>
+                    <span class="s2">"IS_SLIGHTLY_BETTER"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Is slightly better"</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"option15"</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="s2">"TIE"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Tie"</span><span class="p">,</span> <span class="s2">"mutual"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"option16"</span><span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Overall quality&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;round&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Pick the best answer"</span><span class="p">,</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"COMPARISON"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s2">&quot;CLASSIFICATION_JOB_AT_CONVERSATION_LEVEL&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;GLOBAL_GOOD&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Globally good&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category19&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;BOTH_ARE_BAD&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Globally bad&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category20&quot;</span><span class="p">},</span>
+        <span class="s2">"CLASSIFICATION_JOB_AT_ROUND_LEVEL"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"BOTH_ARE_GOOD"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Both are good"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category17"</span><span class="p">},</span>
+                    <span class="s2">"BOTH_ARE_BAD"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Both are bad"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category18"</span><span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Global&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;conversation&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Overall quality"</span><span class="p">,</span>
+            <span class="s2">"level"</span><span class="p">:</span> <span class="s2">"round"</span><span class="p">,</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s2">&quot;TRANSCRIPTION_JOB_AT_CONVERSATION_LEVEL&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;textField&quot;</span><span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Additional comments...&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;conversation&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;TRANSCRIPTION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"CLASSIFICATION_JOB_AT_CONVERSATION_LEVEL"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"GLOBAL_GOOD"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Globally good"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category19"</span><span class="p">},</span>
+                    <span class="s2">"BOTH_ARE_BAD"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Globally bad"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category20"</span><span class="p">},</span>
+                <span class="p">},</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Global"</span><span class="p">,</span>
+            <span class="s2">"level"</span><span class="p">:</span> <span class="s2">"conversation"</span><span class="p">,</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">"TRANSCRIPTION_JOB_AT_CONVERSATION_LEVEL"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"input"</span><span class="p">:</span> <span class="s2">"textField"</span><span class="p">},</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Additional comments..."</span><span class="p">,</span>
+            <span class="s2">"level"</span><span class="p">:</span> <span class="s2">"conversation"</span><span class="p">,</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"TRANSCRIPTION"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -2409,15 +2409,15 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 
 <span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
 <span class="p">)</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: LLM Static&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project Description&quot;</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;LLM_STATIC&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"[Kili SDK Notebook]: LLM Static"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Project Description"</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">"LLM_STATIC"</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">interface</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
 </code></pre></div>
 <h2 id="import-conversations">Import conversations</h2>
 <p>When working with LLM Static projects in Kili, each conversation represents a single data item (or asset). You must define:</p>
@@ -2441,62 +2441,62 @@
 <h3 id="example-unlabeled-conversation">Example: Unlabeled Conversation</h3>
 <p>Below is a sample <strong>3-round</strong> conversation with two different LLMs (<code>gpt-o1</code> and <code>deepseek-r1</code>). Each round contains a
 USER query followed by ASSISTANT responses from each model.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;chatItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<div class="highlight"><pre><span></span><code><span class="nt">"chatItems"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;system-1&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SYSTEM&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;You are an assistant helping the user by providing clear and concise answers.&quot;</span>
+<span class="w">        </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"system-1"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SYSTEM"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"You are an assistant helping the user by providing clear and concise answers."</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user-1&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;USER&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;What is the capital of France?&quot;</span>
+<span class="w">        </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user-1"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USER"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"What is the capital of France?"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-1a&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ASSISTANT&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The capital of France is Paris.&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;modelName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-o1&quot;</span>
+<span class="w">        </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-1a"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ASSISTANT"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The capital of France is Paris."</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"modelName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gpt-o1"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-1b&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ASSISTANT&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The capital of France is Paris.&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;modelName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deepseek-r1&quot;</span>
+<span class="w">        </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-1b"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ASSISTANT"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The capital of France is Paris."</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"modelName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"deepseek-r1"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user-2&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;USER&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;What is Paris famous for?&quot;</span>
+<span class="w">        </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user-2"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USER"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"What is Paris famous for?"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-2a&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ASSISTANT&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Paris is renowned for its iconic landmarks, such as the Eiffel Tower, Louvre Museum, and Notre-Dame Cathedral. The city is also celebrated for its rich history, vibrant art scene, world-class cuisine, and status as a global center of fashion and romance.&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;modelName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deepseek-r1&quot;</span>
+<span class="w">        </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-2a"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ASSISTANT"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Paris is renowned for its iconic landmarks, such as the Eiffel Tower, Louvre Museum, and Notre-Dame Cathedral. The city is also celebrated for its rich history, vibrant art scene, world-class cuisine, and status as a global center of fashion and romance."</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"modelName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"deepseek-r1"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-2b&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ASSISTANT&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Paris is well-known for its art, fashion, and gastronomy, alongside iconic sites like the Eiffel Tower.&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;modelName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deepseek-r1&quot;</span>
+<span class="w">        </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-2b"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ASSISTANT"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Paris is well-known for its art, fashion, and gastronomy, alongside iconic sites like the Eiffel Tower."</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"modelName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"deepseek-r1"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user-3&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;USER&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;What is the best time to visit Paris?&quot;</span>
+<span class="w">        </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user-3"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USER"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"What is the best time to visit Paris?"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-3a&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ASSISTANT&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The best time to visit Paris is in spring (April to June) or fall (September to October), when the weather is mild and crowds are smaller.&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;modelName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-o1&quot;</span>
+<span class="w">        </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-3a"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ASSISTANT"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The best time to visit Paris is in spring (April to June) or fall (September to October), when the weather is mild and crowds are smaller."</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"modelName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gpt-o1"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-3b&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ASSISTANT&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Spring and autumn are ideal for visiting Paris, as the weather is pleasant, and you can avoid peak tourist season.&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;modelName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deepseek-r1&quot;</span>
+<span class="w">        </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-3b"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ASSISTANT"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Spring and autumn are ideal for visiting Paris, as the weather is pleasant, and you can avoid peak tourist season."</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"modelName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"deepseek-r1"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">]</span>
 </code></pre></div>
@@ -2519,30 +2519,30 @@ and <code>labeler</code> fields.</p>
 <h4 id="label-structure">Label Structure</h4>
 <p>The label object contains up to three optional keys—completion, round, and conversation—corresponding to the three granularity levels of labeling in an LLM Static project.</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;completion&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;round&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;conversation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"completion"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"round"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"conversation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
 <h5 id="1-conversation-level">1. Conversation level</h5>
 <p>Use the <code>conversation</code> field to set annotations that apply to the entire conversation.
 For each classification job, provide a <code>categories</code> array, and for transcription jobs, provide a <code>text</code> property.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;conversation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;CLASSIFICATION_JOB_AT_CONVERSATION_LEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;GLOBAL_GOOD&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">"conversation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"CLASSIFICATION_JOB_AT_CONVERSATION_LEVEL"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"GLOBAL_GOOD"</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;TRANSCRIPTION_JOB_AT_CONVERSATION_LEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Great conversation!&quot;</span>
+<span class="w">    </span><span class="nt">"TRANSCRIPTION_JOB_AT_CONVERSATION_LEVEL"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Great conversation!"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
 <blockquote>
 <p>💡 Tip: For transcription jobs, if the job has been configured with:
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;markdown&quot;</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"input"</span><span class="p">:</span><span class="w"> </span><span class="s2">"markdown"</span><span class="p">}</span>
 </code></pre></div>
 then the transcription can be edited in Markdown format</p>
 </blockquote>
@@ -2554,39 +2554,39 @@ then the transcription can be edited in Markdown format</p>
 </ul>
 <p>For comparison jobs (where <code>mlTask</code> is <code>COMPARISON</code>), you must additionally specify <code>firstId</code> and <code>secondId</code> — the IDs
 of the assistant messages being compared.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;round&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;CLASSIFICATION_JOB_AT_ROUND_LEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;BOTH_ARE_GOOD&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">"round"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"CLASSIFICATION_JOB_AT_ROUND_LEVEL"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"0"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"BOTH_ARE_GOOD"</span>
 <span class="w">          </span><span class="p">]</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;BOTH_ARE_BAD&quot;</span>
+<span class="w">        </span><span class="nt">"1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"BOTH_ARE_BAD"</span>
 <span class="w">          </span><span class="p">]</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;BOTH_ARE_GOOD&quot;</span>
+<span class="w">        </span><span class="nt">"2"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"BOTH_ARE_GOOD"</span>
 <span class="w">          </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;COMPARISON_JOB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Is much better&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;firstId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-1a&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;secondId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-1b&quot;</span>
+<span class="w">      </span><span class="nt">"COMPARISON_JOB"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"0"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Is much better"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"firstId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-1a"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"secondId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-1b"</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Is better&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;firstId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-2a&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;secondId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-2b&quot;</span>
+<span class="w">        </span><span class="nt">"1"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Is better"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"firstId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-2a"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"secondId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-2b"</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Is much better&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;firstId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-3b&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;secondId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-3a&quot;</span>
+<span class="w">        </span><span class="nt">"2"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Is much better"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"firstId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-3b"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"secondId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-3a"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -2597,21 +2597,21 @@ of the assistant messages being compared.</p>
 <li><strong>Key</strong> : The <code>externalId</code> of the assistant message</li>
 <li><strong>Value</strong>: The label details for that specific completion</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;completion&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;CLASSIFICATION_JOB_AT_COMPLETION_LEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;assistant-1a&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="s2">&quot;TOO_SHORT&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">"completion"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"CLASSIFICATION_JOB_AT_COMPLETION_LEVEL"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"assistant-1a"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">"TOO_SHORT"</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;assistant-2a&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="s2">&quot;JUST_RIGHT&quot;</span>
+<span class="w">        </span><span class="nt">"assistant-2a"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">"JUST_RIGHT"</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;assistant-3b&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="s2">&quot;TOO_SHORT&quot;</span>
+<span class="w">        </span><span class="nt">"assistant-3b"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">"TOO_SHORT"</span>
 <span class="w">            </span><span class="p">]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -2622,57 +2622,57 @@ of the assistant messages being compared.</p>
 <h3 id="full-example-labeled-conversation">Full Example: Labeled Conversation</h3>
 <p>Here is a condensed example illustrating conversation, round, and completion labels. Notice each labeled conversation includes both label and labeler.</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;conversation-42&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;labeler&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;annotator@example.com&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;conversation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;CLASSIFICATION_JOB_AT_CONVERSATION_LEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                    </span><span class="s2">&quot;GLOBAL_GOOD&quot;</span>
+<span class="w">    </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"conversation-42"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"labeler"</span><span class="p">:</span><span class="w"> </span><span class="s2">"annotator@example.com"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"conversation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"CLASSIFICATION_JOB_AT_CONVERSATION_LEVEL"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="s2">"GLOBAL_GOOD"</span>
 <span class="w">                </span><span class="p">]</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;round&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;COMPARISON_JOB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IS_BETTER&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;firstId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-1a&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;secondId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-1b&quot;</span>
+<span class="w">        </span><span class="nt">"round"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"COMPARISON_JOB"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"0"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"IS_BETTER"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"firstId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-1a"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"secondId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-1b"</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;completion&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;CLASSIFICATION_JOB_AT_COMPLETION_LEVEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;assistant-1a&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                        </span><span class="s2">&quot;TOO_SHORT&quot;</span>
+<span class="w">        </span><span class="nt">"completion"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"CLASSIFICATION_JOB_AT_COMPLETION_LEVEL"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"assistant-1a"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="s2">"TOO_SHORT"</span>
 <span class="w">                    </span><span class="p">]</span>
 <span class="w">                </span><span class="p">}</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;chatItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="nt">"chatItems"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;system-1&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SYSTEM&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;System instructions.&quot;</span>
+<span class="w">            </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"system-1"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SYSTEM"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"System instructions."</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user-1&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;USER&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;What&#39;s the capital of France?&quot;</span>
+<span class="w">            </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user-1"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USER"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"What's the capital of France?"</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-1a&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ASSISTANT&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Paris.&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;modelName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-o1&quot;</span>
+<span class="w">            </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-1a"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ASSISTANT"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Paris."</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"modelName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gpt-o1"</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;externalId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant-1b&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ASSISTANT&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The capital is Paris, France.&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;modelName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deepseek-r1&quot;</span>
+<span class="w">            </span><span class="nt">"externalId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assistant-1b"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ASSISTANT"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The capital is Paris, France."</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"modelName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"deepseek-r1"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>

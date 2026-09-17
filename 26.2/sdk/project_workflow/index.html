@@ -2201,7 +2201,7 @@
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/project_workflow.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ProjectWorkflowClientMethods</span><span class="p">(</span><span class="n">BaseClientMethods</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Client presentation methods for project workflow.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Client presentation methods for project workflow."""</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_project_workflow</span><span class="p">(</span>
@@ -2212,7 +2212,7 @@
         <span class="n">update_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">WorkflowStepUpdate</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">delete_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update properties of a project workflow.</span>
+<span class="w">        </span><span class="sd">"""Update properties of a project workflow.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2226,7 +2226,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the changed properties which indicates if the mutation was successful,</span>
 <span class="sd">                else an error message.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_project_workflow</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
             <span class="n">enforce_step_separation</span><span class="o">=</span><span class="n">enforce_step_separation</span><span class="p">,</span>
@@ -2240,14 +2240,14 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;steps.type&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;steps.name&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;steps.id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;steps.assignees.email&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;steps.assignees.id&quot;</span><span class="p">,</span>
+            <span class="s2">"steps.type"</span><span class="p">,</span>
+            <span class="s2">"steps.name"</span><span class="p">,</span>
+            <span class="s2">"steps.id"</span><span class="p">,</span>
+            <span class="s2">"steps.assignees.email"</span><span class="p">,</span>
+            <span class="s2">"steps.assignees.id"</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get steps in a project workflow.</span>
+<span class="w">        </span><span class="sd">"""Get steps in a project workflow.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2256,7 +2256,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the steps of the project workflow.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">get_steps</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">fields</span><span class="o">=</span><span class="n">fields</span>
         <span class="p">)</span>
@@ -2269,7 +2269,7 @@
         <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add reviewers to a specific step.</span>
+<span class="w">        </span><span class="sd">"""Add reviewers to a specific step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2280,7 +2280,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list with the added emails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_reviewers_to_step</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
         <span class="p">)</span>
@@ -2293,7 +2293,7 @@
         <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove reviewers from a specific step.</span>
+<span class="w">        </span><span class="sd">"""Remove reviewers from a specific step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2304,7 +2304,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list with the removed emails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_reviewers_from_step</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
         <span class="p">)</span>
@@ -2317,7 +2317,7 @@
         <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add labelers to a specific labeling step.</span>
+<span class="w">        </span><span class="sd">"""Add labelers to a specific labeling step.</span>
 
 <span class="sd">        Only workflow V3 projects support assigning labelers to a step, and the target step must</span>
 <span class="sd">        be a labeling step.</span>
@@ -2331,7 +2331,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list with the added emails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_labelers_to_step</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
         <span class="p">)</span>
@@ -2344,7 +2344,7 @@
         <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove labelers from a specific labeling step.</span>
+<span class="w">        </span><span class="sd">"""Remove labelers from a specific labeling step.</span>
 
 <span class="sd">        Only workflow V3 projects support removing labelers from a step, and the target step must</span>
 <span class="sd">        be a labeling step. Removing a labeler also clears their asset-step assignments and step</span>
@@ -2359,7 +2359,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list with the removed emails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_labelers_from_step</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
         <span class="p">)</span>
@@ -2370,7 +2370,7 @@
         <span class="n">destination_project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">source_project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the workflow from a source project to a destination project.</span>
+<span class="w">        </span><span class="sd">"""Copy the workflow from a source project to a destination project.</span>
 
 <span class="sd">        Copies all workflow steps with their configurations (consensus, coverage,</span>
 <span class="sd">        sendBackStepId) from the source project. Assignees are not copied.</span>
@@ -2392,10 +2392,10 @@
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.copy_workflow_from_project(</span>
-<span class="sd">            ...     destination_project_id=&quot;destination_project_id&quot;,</span>
-<span class="sd">            ...     source_project_id=&quot;source_project_id&quot;,</span>
+<span class="sd">            ...     destination_project_id="destination_project_id",</span>
+<span class="sd">            ...     source_project_id="source_project_id",</span>
 <span class="sd">            ... )</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">copy_workflow_from_project</span><span class="p">(</span>
             <span class="n">source_project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">source_project_id</span><span class="p">),</span>
             <span class="n">destination_project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">destination_project_id</span><span class="p">),</span>
@@ -2411,7 +2411,7 @@
         <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a review step to a project workflow.</span>
+<span class="w">        </span><span class="sd">"""Add a review step to a project workflow.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2423,7 +2423,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the created step data (id, name).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_review_step</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
@@ -2442,7 +2442,7 @@
         <span class="n">number_of_expected_labels_for_consensus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update properties of a labeling step.</span>
+<span class="w">        </span><span class="sd">"""Update properties of a labeling step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2453,7 +2453,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the updated step data (id, name).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_labeling_step_properties</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
@@ -2472,7 +2472,7 @@
         <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update properties of a review step.</span>
+<span class="w">        </span><span class="sd">"""Update properties of a review step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2484,7 +2484,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the updated step data (id, name).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_review_step_properties</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
@@ -2499,14 +2499,14 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete the last review step from a project workflow.</span>
+<span class="w">        </span><span class="sd">"""Delete the last review step from a project workflow.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the remaining steps.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">delete_last_step</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="p">)</span>
@@ -2518,7 +2518,7 @@
         <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rename a step in a project workflow.</span>
+<span class="w">        </span><span class="sd">"""Rename a step in a project workflow.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2527,7 +2527,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the renamed step data (id, name).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">rename_step</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
@@ -2626,7 +2626,7 @@ Required when several groups have a step with the same name.</p></td>
     <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add labelers to a specific labeling step.</span>
+<span class="w">    </span><span class="sd">"""Add labelers to a specific labeling step.</span>
 
 <span class="sd">    Only workflow V3 projects support assigning labelers to a step, and the target step must</span>
 <span class="sd">    be a labeling step.</span>
@@ -2640,7 +2640,7 @@ Required when several groups have a step with the same name.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list with the added emails.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_labelers_to_step</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
     <span class="p">)</span>
@@ -2741,7 +2741,7 @@ Required when several groups have a step with the same name.</p></td>
     <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a review step to a project workflow.</span>
+<span class="w">    </span><span class="sd">"""Add a review step to a project workflow.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -2753,7 +2753,7 @@ Required when several groups have a step with the same name.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the created step data (id, name).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_review_step</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
@@ -2846,7 +2846,7 @@ Required when several groups have a step with the same name.</p></td>
     <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add reviewers to a specific step.</span>
+<span class="w">    </span><span class="sd">"""Add reviewers to a specific step.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -2857,7 +2857,7 @@ Required when several groups have a step with the same name.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list with the added emails.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_reviewers_to_step</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
     <span class="p">)</span>
@@ -2946,8 +2946,8 @@ destination project already has labels.</p></td>
 </table>
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">copy_workflow_from_project</span><span class="p">(</span>
-<span class="o">...</span>     <span class="n">destination_project_id</span><span class="o">=</span><span class="s2">&quot;destination_project_id&quot;</span><span class="p">,</span>
-<span class="o">...</span>     <span class="n">source_project_id</span><span class="o">=</span><span class="s2">&quot;source_project_id&quot;</span><span class="p">,</span>
+<span class="o">...</span>     <span class="n">destination_project_id</span><span class="o">=</span><span class="s2">"destination_project_id"</span><span class="p">,</span>
+<span class="o">...</span>     <span class="n">source_project_id</span><span class="o">=</span><span class="s2">"source_project_id"</span><span class="p">,</span>
 <span class="o">...</span> <span class="p">)</span>
 </code></pre></div>
 
@@ -2958,7 +2958,7 @@ destination project already has labels.</p></td>
     <span class="n">destination_project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">source_project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy the workflow from a source project to a destination project.</span>
+<span class="w">    </span><span class="sd">"""Copy the workflow from a source project to a destination project.</span>
 
 <span class="sd">    Copies all workflow steps with their configurations (consensus, coverage,</span>
 <span class="sd">    sendBackStepId) from the source project. Assignees are not copied.</span>
@@ -2980,10 +2980,10 @@ destination project already has labels.</p></td>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.copy_workflow_from_project(</span>
-<span class="sd">        ...     destination_project_id=&quot;destination_project_id&quot;,</span>
-<span class="sd">        ...     source_project_id=&quot;source_project_id&quot;,</span>
+<span class="sd">        ...     destination_project_id="destination_project_id",</span>
+<span class="sd">        ...     source_project_id="source_project_id",</span>
 <span class="sd">        ... )</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">copy_workflow_from_project</span><span class="p">(</span>
         <span class="n">source_project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">source_project_id</span><span class="p">),</span>
         <span class="n">destination_project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">destination_project_id</span><span class="p">),</span>
@@ -3050,14 +3050,14 @@ destination project already has labels.</p></td>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete the last review step from a project workflow.</span>
+<span class="w">    </span><span class="sd">"""Delete the last review step from a project workflow.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the remaining steps.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">delete_last_step</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="p">)</span>
@@ -3074,7 +3074,7 @@ destination project already has labels.</p></td>
 
 
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.get_steps" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;steps.type&#39;</span><span class="p">,</span> <span class="s1">&#39;steps.name&#39;</span><span class="p">,</span> <span class="s1">&#39;steps.id&#39;</span><span class="p">,</span> <span class="s1">&#39;steps.assignees.email&#39;</span><span class="p">,</span> <span class="s1">&#39;steps.assignees.id&#39;</span><span class="p">))</span></code>
+<code class="highlight language-python"><span class="n">get_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'steps.type'</span><span class="p">,</span> <span class="s1">'steps.name'</span><span class="p">,</span> <span class="s1">'steps.id'</span><span class="p">,</span> <span class="s1">'steps.assignees.email'</span><span class="p">,</span> <span class="s1">'steps.assignees.id'</span><span class="p">))</span></code>
 
 
 </h3>
@@ -3130,14 +3130,14 @@ See the documentation for all possible fields.</p></td>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;steps.type&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;steps.name&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;steps.id&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;steps.assignees.email&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;steps.assignees.id&quot;</span><span class="p">,</span>
+        <span class="s2">"steps.type"</span><span class="p">,</span>
+        <span class="s2">"steps.name"</span><span class="p">,</span>
+        <span class="s2">"steps.id"</span><span class="p">,</span>
+        <span class="s2">"steps.assignees.email"</span><span class="p">,</span>
+        <span class="s2">"steps.assignees.id"</span><span class="p">,</span>
     <span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get steps in a project workflow.</span>
+<span class="w">    </span><span class="sd">"""Get steps in a project workflow.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -3146,7 +3146,7 @@ See the documentation for all possible fields.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the steps of the project workflow.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">get_steps</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">fields</span><span class="o">=</span><span class="n">fields</span>
     <span class="p">)</span>
@@ -3237,7 +3237,7 @@ Required when several groups have a step with the same name.</p></td>
     <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove labelers from a specific labeling step.</span>
+<span class="w">    </span><span class="sd">"""Remove labelers from a specific labeling step.</span>
 
 <span class="sd">    Only workflow V3 projects support removing labelers from a step, and the target step must</span>
 <span class="sd">    be a labeling step. Removing a labeler also clears their asset-step assignments and step</span>
@@ -3252,7 +3252,7 @@ Required when several groups have a step with the same name.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list with the removed emails.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_labelers_from_step</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
     <span class="p">)</span>
@@ -3340,7 +3340,7 @@ Required when several groups have a step with the same name.</p></td>
     <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove reviewers from a specific step.</span>
+<span class="w">    </span><span class="sd">"""Remove reviewers from a specific step.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -3351,7 +3351,7 @@ Required when several groups have a step with the same name.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list with the removed emails.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_reviewers_from_step</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
     <span class="p">)</span>
@@ -3431,7 +3431,7 @@ Required when several groups have a step with the same name.</p></td>
     <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rename a step in a project workflow.</span>
+<span class="w">    </span><span class="sd">"""Rename a step in a project workflow.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -3440,7 +3440,7 @@ Required when several groups have a step with the same name.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the renamed step data (id, name).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">rename_step</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
@@ -3536,7 +3536,7 @@ Required when several groups have a step with the same name.</p></td>
     <span class="n">number_of_expected_labels_for_consensus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update properties of a labeling step.</span>
+<span class="w">    </span><span class="sd">"""Update properties of a labeling step.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -3547,7 +3547,7 @@ Required when several groups have a step with the same name.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the updated step data (id, name).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_labeling_step_properties</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
@@ -3648,7 +3648,7 @@ ensuring independent review and labeling processes</p></td>
     <span class="n">update_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">WorkflowStepUpdate</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">delete_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update properties of a project workflow.</span>
+<span class="w">    </span><span class="sd">"""Update properties of a project workflow.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -3662,7 +3662,7 @@ ensuring independent review and labeling processes</p></td>
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the changed properties which indicates if the mutation was successful,</span>
 <span class="sd">            else an error message.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_project_workflow</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
         <span class="n">enforce_step_separation</span><span class="o">=</span><span class="n">enforce_step_separation</span><span class="p">,</span>
@@ -3767,7 +3767,7 @@ ensuring independent review and labeling processes</p></td>
     <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update properties of a review step.</span>
+<span class="w">    </span><span class="sd">"""Update properties of a review step.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -3779,7 +3779,7 @@ ensuring independent review and labeling processes</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the updated step data (id, name).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_review_step_properties</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>

@@ -2099,7 +2099,7 @@
 <p>We will need your API key and Kili's API endpoint.</p>
 <p>If you are unsure how to look up your API key, refer to <a href="https://docs.kili-technology.com/docs/creating-an-api-key">https://docs.kili-technology.com/docs/creating-an-api-key</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2108,30 +2108,30 @@
 <p>We will create a simple image project with just one simple classification job and two categories: <code>OBJECT_A</code> and <code>OBJECT_B</code>.</p>
 <p>To learn more about Kili project interfaces, refer to <a href="https://docs.kili-technology.com/docs/customizing-project-interface">https://docs.kili-technology.com/docs/customizing-project-interface</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;OBJECT_A&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object A&quot;</span><span class="p">},</span> <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object B&quot;</span><span class="p">}},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"OBJECT_A"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Object A"</span><span class="p">},</span> <span class="s2">"OBJECT_B"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Object B"</span><span class="p">}},</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Basic Project Setup&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project Description&quot;</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"[Kili SDK Notebook]: Basic Project Setup"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Project Description"</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">"IMAGE"</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">interface</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>For further processing, we will need to find out what our project ID is.</p>
 <p>We can easily retrieve it from the project creation response message:</p>
-<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Project ID: &quot;</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Project ID: "</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 </code></pre></div>
 <pre><code>Project ID:  clcun99cn15wx0lq4c15a4dj7
 </code></pre>
@@ -2139,24 +2139,24 @@
 <p>We will use some free off-the-shelf examples from the Internet.</p>
 <h2 id="adding-assets-to-project">Adding assets to project</h2>
 <div class="highlight"><pre><span></span><code><span class="c1"># Image urls</span>
-<span class="n">url1</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_2.jpg&quot;</span>
-<span class="n">url2</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_1.jpg&quot;</span>
-<span class="n">url3</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg&quot;</span>
+<span class="n">url1</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/car/car_2.jpg"</span>
+<span class="n">url2</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/car/car_1.jpg"</span>
+<span class="n">url3</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg"</span>
 
 <span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">url1</span><span class="p">,</span> <span class="n">url2</span><span class="p">,</span> <span class="n">url3</span><span class="p">],</span>
-    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image_1&quot;</span><span class="p">,</span> <span class="s2">&quot;image_2&quot;</span><span class="p">,</span> <span class="s2">&quot;image_3&quot;</span><span class="p">],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">"image_1"</span><span class="p">,</span> <span class="s2">"image_2"</span><span class="p">,</span> <span class="s2">"image_3"</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="adding-users-to-project">Adding users to project</h2>
 <p>Now we need to add users to our project. Before we do that, we have to add them to our organization. <strong>Note that you have to be an org admin to be able to do that</strong>.</p>
 <p>For more info on roles in an organization, refer to <a href="https://docs.kili-technology.com/docs/user-roles-in-organization">https://docs.kili-technology.com/docs/user-roles-in-organization</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">firstname</span> <span class="o">=</span> <span class="s2">&quot;Jane&quot;</span>
-<span class="n">lastname</span> <span class="o">=</span> <span class="s2">&quot;Doe&quot;</span>
-<span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;no.such.email@no.such.domain.com&quot;</span>
-<span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
-<span class="n">organization_role</span> <span class="o">=</span> <span class="s2">&quot;USER&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">firstname</span> <span class="o">=</span> <span class="s2">"Jane"</span>
+<span class="n">lastname</span> <span class="o">=</span> <span class="s2">"Doe"</span>
+<span class="n">email</span> <span class="o">=</span> <span class="s2">"no.such.email@no.such.domain.com"</span>
+<span class="n">password</span> <span class="o">=</span> <span class="s2">"12345"</span>
+<span class="n">organization_role</span> <span class="o">=</span> <span class="s2">"USER"</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">kili.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphQLError</span>
 
@@ -2169,15 +2169,15 @@
 </code></pre>
 <p>If you already have users in your organization, here's how you can easily access their IDs:</p>
 <p>1) First, retrieve your organization ID:</p>
-<div class="highlight"><pre><span></span><code><span class="n">org_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">organizations</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">org_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">organizations</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"id"</span><span class="p">]</span>
 </code></pre></div>
 <p>2) Then, based on your org ID, retrieve the full list of org users, with their e-mails:</p>
 <div class="highlight"><pre><span></span><code><span class="n">all_org_users</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">users</span><span class="p">(</span><span class="n">organization_id</span><span class="o">=</span><span class="n">org_id</span><span class="p">)</span>
 
-<span class="n">all_emails</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_org_users</span><span class="p">]</span>
+<span class="n">all_emails</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s2">"email"</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_org_users</span><span class="p">]</span>
 </code></pre></div>
 <p>3) We will use the e-mail of the new user to add our new user to our project:</p>
-<div class="highlight"><pre><span></span><code><span class="n">user</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_to_roles</span><span class="p">(</span><span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;no.such.email@no.such.domain.com&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;LABELER&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">user</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_to_roles</span><span class="p">(</span><span class="n">project_id</span><span class="p">,</span> <span class="s2">"no.such.email@no.such.domain.com"</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">"LABELER"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
 </code></pre></div>
 <pre><code>{'user': {'id': 'clcumy1fx15ci0lre0k21fnu7', 'email': 'no.such.email@no.such.domain.com'}, 'role': 'LABELER'}

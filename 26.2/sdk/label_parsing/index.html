@@ -841,6 +841,57 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#object-detection-in-pdfs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object detection in PDFs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Object detection in PDFs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type" class="md-nav__link">
+    <span class="md-ellipsis">
+      .type
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      .annotations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#polys-and-bounding_poly" class="md-nav__link">
+    <span class="md-ellipsis">
+      .polys and .bounding_poly
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#page_number_array" class="md-nav__link">
+    <span class="md-ellipsis">
+      .page_number_array
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#point-detection" class="md-nav__link">
     <span class="md-ellipsis">
       Point detection
@@ -1057,7 +1108,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#annotations" class="md-nav__link">
+  <a href="#annotations_1" class="md-nav__link">
     <span class="md-ellipsis">
       .annotations
     </span>
@@ -1075,7 +1126,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#page_number_array" class="md-nav__link">
+  <a href="#page_number_array_1" class="md-nav__link">
     <span class="md-ellipsis">
       .page_number_array
     </span>
@@ -2692,6 +2743,57 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#object-detection-in-pdfs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object detection in PDFs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Object detection in PDFs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type" class="md-nav__link">
+    <span class="md-ellipsis">
+      .type
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#annotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      .annotations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#polys-and-bounding_poly" class="md-nav__link">
+    <span class="md-ellipsis">
+      .polys and .bounding_poly
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#page_number_array" class="md-nav__link">
+    <span class="md-ellipsis">
+      .page_number_array
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#point-detection" class="md-nav__link">
     <span class="md-ellipsis">
       Point detection
@@ -2908,7 +3010,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#annotations" class="md-nav__link">
+  <a href="#annotations_1" class="md-nav__link">
     <span class="md-ellipsis">
       .annotations
     </span>
@@ -2926,7 +3028,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#page_number_array" class="md-nav__link">
+  <a href="#page_number_array_1" class="md-nav__link">
     <span class="md-ellipsis">
       .page_number_array
     </span>
@@ -3103,11 +3205,11 @@
         <details class="quote">
           <summary>Source code in <code>kili/utils/labels/parsing.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ParsedLabel</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class that represents a parsed label.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Class that represents a parsed label."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">json_interface</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">input_type</span><span class="p">:</span> <span class="n">InputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Class that represents a parsed label.</span>
+<span class="w">        </span><span class="sd">"""Class that represents a parsed label.</span>
 
 <span class="sd">        The class behaves like a dict but adds the attribute `.jobs`.</span>
 
@@ -3122,30 +3224,30 @@
 <span class="sd">            ```python</span>
 <span class="sd">            from kili.utils.labels.parsing import ParsedLabel</span>
 
-<span class="sd">            my_label = kili.labels(&quot;project_id&quot;)[0]  # my_label is a dict</span>
+<span class="sd">            my_label = kili.labels("project_id")[0]  # my_label is a dict</span>
 
 <span class="sd">            my_parsed_label = ParsedLabel(my_label, json_interface, input_type)  # ParsedLabel object</span>
 
-<span class="sd">            # Access the job &quot;JOB_0&quot; data through the attribute &quot;.jobs&quot;:</span>
-<span class="sd">            print(my_parsed_label.jobs[&quot;JOB_0&quot;])</span>
+<span class="sd">            # Access the job "JOB_0" data through the attribute ".jobs":</span>
+<span class="sd">            print(my_parsed_label.jobs["JOB_0"])</span>
 <span class="sd">            ```</span>
 
 <span class="sd">        !!! info</span>
 <span class="sd">            More information about the label parsing can be found in this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">label_copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
-        <span class="n">json_response</span> <span class="o">=</span> <span class="n">label_copy</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">json_response</span> <span class="o">=</span> <span class="n">label_copy</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"jsonResponse"</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label_copy</span><span class="p">)</span>
 
-        <span class="n">project_info</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><span class="n">inputType</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span> <span class="n">jsonInterface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">[</span><span class="s2">&quot;jobs&quot;</span><span class="p">])</span>
+        <span class="n">project_info</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><span class="n">inputType</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span> <span class="n">jsonInterface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span> <span class="o">=</span> <span class="n">json_response_module</span><span class="o">.</span><span class="n">ParsedJobs</span><span class="p">(</span>
             <span class="n">project_info</span><span class="o">=</span><span class="n">project_info</span><span class="p">,</span> <span class="n">json_response</span><span class="o">=</span><span class="n">json_response</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a copy of the parsed label as a dict.</span>
+<span class="w">        </span><span class="sd">"""Return a copy of the parsed label as a dict.</span>
 
 <span class="sd">        !!! Example</span>
 <span class="sd">            ```python</span>
@@ -3156,22 +3258,22 @@
 
 <span class="sd">            assert isinstance(my_label_as_dict, dict)  # True</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;jsonResponse&quot;</span><span class="p">}</span>
-        <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_response</span>
+<span class="sd">        """</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">"jsonResponse"</span><span class="p">}</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s2">"jsonResponse"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_response</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the representation of the object.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the representation of the object."""</span>
         <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the string representation of the object.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the string representation of the object."""</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">json_response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a copy of the json response of the parsed label.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns a copy of the json response of the parsed label."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 </code></pre></div>
         </details>
@@ -3241,12 +3343,12 @@
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.utils.labels.parsing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParsedLabel</span>
 
-<span class="n">my_label</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="s2">&quot;project_id&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># my_label is a dict</span>
+<span class="n">my_label</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="s2">"project_id"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># my_label is a dict</span>
 
 <span class="n">my_parsed_label</span> <span class="o">=</span> <span class="n">ParsedLabel</span><span class="p">(</span><span class="n">my_label</span><span class="p">,</span> <span class="n">json_interface</span><span class="p">,</span> <span class="n">input_type</span><span class="p">)</span>  <span class="c1"># ParsedLabel object</span>
 
-<span class="c1"># Access the job &quot;JOB_0&quot; data through the attribute &quot;.jobs&quot;:</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">my_parsed_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">])</span>
+<span class="c1"># Access the job "JOB_0" data through the attribute ".jobs":</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_parsed_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"JOB_0"</span><span class="p">])</span>
 </code></pre></div>
 </div>
 <div class="admonition info">
@@ -3258,7 +3360,7 @@
           <summary>Source code in <code>kili/utils/labels/parsing.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">json_interface</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">input_type</span><span class="p">:</span> <span class="n">InputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class that represents a parsed label.</span>
+<span class="w">    </span><span class="sd">"""Class that represents a parsed label.</span>
 
 <span class="sd">    The class behaves like a dict but adds the attribute `.jobs`.</span>
 
@@ -3273,23 +3375,23 @@
 <span class="sd">        ```python</span>
 <span class="sd">        from kili.utils.labels.parsing import ParsedLabel</span>
 
-<span class="sd">        my_label = kili.labels(&quot;project_id&quot;)[0]  # my_label is a dict</span>
+<span class="sd">        my_label = kili.labels("project_id")[0]  # my_label is a dict</span>
 
 <span class="sd">        my_parsed_label = ParsedLabel(my_label, json_interface, input_type)  # ParsedLabel object</span>
 
-<span class="sd">        # Access the job &quot;JOB_0&quot; data through the attribute &quot;.jobs&quot;:</span>
-<span class="sd">        print(my_parsed_label.jobs[&quot;JOB_0&quot;])</span>
+<span class="sd">        # Access the job "JOB_0" data through the attribute ".jobs":</span>
+<span class="sd">        print(my_parsed_label.jobs["JOB_0"])</span>
 <span class="sd">        ```</span>
 
 <span class="sd">    !!! info</span>
 <span class="sd">        More information about the label parsing can be found in this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">label_copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
-    <span class="n">json_response</span> <span class="o">=</span> <span class="n">label_copy</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">json_response</span> <span class="o">=</span> <span class="n">label_copy</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"jsonResponse"</span><span class="p">,</span> <span class="p">{})</span>
 
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label_copy</span><span class="p">)</span>
 
-    <span class="n">project_info</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><span class="n">inputType</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span> <span class="n">jsonInterface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">[</span><span class="s2">&quot;jobs&quot;</span><span class="p">])</span>
+    <span class="n">project_info</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><span class="n">inputType</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span> <span class="n">jsonInterface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">])</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span> <span class="o">=</span> <span class="n">json_response_module</span><span class="o">.</span><span class="n">ParsedJobs</span><span class="p">(</span>
         <span class="n">project_info</span><span class="o">=</span><span class="n">project_info</span><span class="p">,</span> <span class="n">json_response</span><span class="o">=</span><span class="n">json_response</span>
@@ -3329,7 +3431,7 @@
         <details class="quote">
           <summary>Source code in <code>kili/utils/labels/parsing.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a copy of the parsed label as a dict.</span>
+<span class="w">    </span><span class="sd">"""Return a copy of the parsed label as a dict.</span>
 
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python</span>
@@ -3340,9 +3442,9 @@
 
 <span class="sd">        assert isinstance(my_label_as_dict, dict)  # True</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;jsonResponse&quot;</span><span class="p">}</span>
-    <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_response</span>
+<span class="sd">    """</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">"jsonResponse"</span><span class="p">}</span>
+    <span class="n">ret</span><span class="p">[</span><span class="s2">"jsonResponse"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_response</span>
     <span class="k">return</span> <span class="n">ret</span>
 </code></pre></div>
         </details>
@@ -3365,76 +3467,76 @@
 <p>For classification tasks, the following attributes are available:</p>
 <h4 id="categories"><code>.categories</code></h4>
 <p>Returns a <code>CategoryList</code> object that contains the categories of an asset.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">categories</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"CLASSIF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">categories</span>
 </code></pre></div>
 <h4 id="category"><code>.category</code></h4>
 <p>Returns a <code>Category</code> object that contains the category of an asset.</p>
 <p>Only available if the classification job is a one-class classification job.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"CLASSIF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">category</span>
 <span class="c1"># Same as:</span>
-<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">categories</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"CLASSIF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">categories</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </code></pre></div>
 <h4 id="name"><code>.name</code></h4>
 <p>Retrieves the category name.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"CLASSIF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
 </code></pre></div>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;CATEGORY_A&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;CATEGORY_B&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">},</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"CATEGORY_A"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"A"</span><span class="p">},</span>
+                    <span class="s2">"CATEGORY_B"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"B"</span><span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 <span class="n">json_response_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"categories"</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;CATEGORY_A&quot;</span><span class="p">,</span>
+                <span class="s2">"confidence"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"CATEGORY_A"</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">]</span>
     <span class="p">}</span>
 <span class="p">}</span>
-<span class="n">my_label</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">:</span> <span class="n">json_response_dict</span><span class="p">}</span>
+<span class="n">my_label</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"jsonResponse"</span><span class="p">:</span> <span class="n">json_response_dict</span><span class="p">}</span>
 
-<span class="n">parsed_label</span> <span class="o">=</span> <span class="n">ParsedLabel</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">my_label</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">)</span>
+<span class="n">parsed_label</span> <span class="o">=</span> <span class="n">ParsedLabel</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">my_label</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">"IMAGE"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">parsed_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">categories</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># CATEGORY_A</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">parsed_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">categories</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span>  <span class="c1"># A</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">parsed_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"JOB_0"</span><span class="p">]</span><span class="o">.</span><span class="n">categories</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># CATEGORY_A</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">parsed_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"JOB_0"</span><span class="p">]</span><span class="o">.</span><span class="n">categories</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">display_name</span><span class="p">)</span>  <span class="c1"># A</span>
 </code></pre></div>
 </div>
 <h4 id="display_name"><code>.display_name</code></h4>
 <p>Retrieves the category name as it is displayed in the interface.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">display_name</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"CLASSIF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">display_name</span>
 </code></pre></div>
 <h4 id="confidence"><code>.confidence</code></h4>
 <p>Retrieves the confidence (when available).</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">confidence</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"CLASSIF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">confidence</span>
 </code></pre></div>
 <h3 id="transcription-tasks">Transcription tasks</h3>
 <h4 id="text"><code>.text</code></h4>
 <p>Retrieves the transcription text.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;TRANSCRIPTION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"TRANSCRIPTION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
 </code></pre></div>
 <h3 id="object-detection-tasks">Object detection tasks</h3>
 <p>For more information about the different object detection tasks and their label formats, please refer to the <a href="https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation">Kili documentation</a>.</p>
 <h4 id="standard-object-detection">Standard object detection</h4>
 <h5 id="bounding_poly"><code>.bounding_poly</code></h5>
 <p>Returns a list of bounding polygons for an annotation.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;DETECTION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"DETECTION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly</span>
 </code></pre></div>
 <h5 id="normalized_vertices"><code>.normalized_vertices</code></h5>
 <p>Returns a list of normalized vertices for a bounding polygon.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;DETECTION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">normalized_vertices</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"DETECTION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">normalized_vertices</span>
 </code></pre></div>
 <h5 id="bounding_poly_annotations"><code>.bounding_poly_annotations</code></h5>
 <p>This attribute is an alias for <code>.annotations</code>.</p>
@@ -3442,67 +3544,87 @@
 <div class="highlight"><pre><span></span><code><span class="c1"># the .content attribute is not relevant for object detection tasks!</span>
 
 <span class="c1"># IDE autocompletion will accept this attribute, but will crash at runtime</span>
-<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;BBOX_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">content</span>
+<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"BBOX_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">content</span>
 
 <span class="c1"># IDE autocompletion will not display this attribute and Python linter will raise an error</span>
-<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;BBOX_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly_annotations</span><span class="o">.</span><span class="n">content</span>
+<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"BBOX_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly_annotations</span><span class="o">.</span><span class="n">content</span>
+</code></pre></div>
+<h4 id="object-detection-in-pdfs">Object detection in PDFs</h4>
+<p>In a PDF project, the geometry of a bounding box or of a polygon is not on the annotation itself but one level deeper, in a nested <code>.annotations</code> list: a PDF page has its own coordinate system, so the vertices are normalized to the page named by <code>.page_number_array</code>.</p>
+<h5 id="type"><code>.type</code></h5>
+<p>Returns the tool used to draw the annotation, <code>"rectangle"</code> or <code>"polygon"</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"DETECTION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">type</span>
+</code></pre></div>
+<p>PDF labels only carry the tool when it is not the rectangle, so an annotation without it is reported as a <code>"rectangle"</code>. This is a read-time default only: it is never written back, and exporting a label leaves it unchanged.</p>
+<h5 id="annotations"><code>.annotations</code></h5>
+<p>Returns the page-level positions of the annotation. A polygon always has exactly one, since a polygon lives on a single page.</p>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"DETECTION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div>
+<h5 id="polys-and-bounding_poly"><code>.polys</code> and <code>.bounding_poly</code></h5>
+<p>Return the vertices of the shape. For a polygon both hold the same ring of <code>N &gt;= 3</code> vertices.</p>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"DETECTION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">polys</span>
+<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"DETECTION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">normalized_vertices</span>
+</code></pre></div>
+<h5 id="page_number_array"><code>.page_number_array</code></h5>
+<p>Returns the page the annotation is drawn on, 1-indexed.</p>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"DETECTION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">page_number_array</span>
 </code></pre></div>
 <h4 id="point-detection">Point detection</h4>
 <h5 id="point"><code>.point</code></h5>
 <p>Returns the <code>x</code> and <code>y</code> coordinates of the point.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;POINT_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"POINT_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span>
 </code></pre></div>
 <h4 id="line-detection">Line detection</h4>
 <h5 id="polyline"><code>.polyline</code></h5>
 <p>Returns the list of points for a line annotation.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;LINE_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">polyline</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"LINE_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">polyline</span>
 </code></pre></div>
 <h4 id="pose-estimation">Pose estimation</h4>
 <h5 id="points"><code>.points</code></h5>
 <p>Returns the list of points for an annotation.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;POSE_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"POSE_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span>
 </code></pre></div>
 <h5 id="point_1"><code>.point</code></h5>
 <p>Returns the point data.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;POSE_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"POSE_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span>
 </code></pre></div>
 <h5 id="pointpoint"><code>.point.point</code></h5>
 <p>Returns a dictionary with the coordinates of the point.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;POSE_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">point</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"POSE_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">point</span>
 </code></pre></div>
 <h5 id="code"><code>.code</code></h5>
 <p>Returns the point identifier (unique for each point in an object).</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;POSE_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">code</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"POSE_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">code</span>
 </code></pre></div>
 <h5 id="name_1"><code>.name</code></h5>
 <p>Returns the point name.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;POSE_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">name</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"POSE_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">name</span>
 </code></pre></div>
 <h5 id="job_name"><code>.job_name</code></h5>
 <p>Returns the job which annotated point belongs to.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;POSE_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">job_name</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"POSE_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">job_name</span>
 </code></pre></div>
 <h3 id="video-tasks">Video tasks</h3>
 <h4 id="frames"><code>.frames</code></h4>
 <p>Returns a list of parsed label data for a each frame.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;FRAME_CLASSIF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">frames</span>
-<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;FRAME_CLASSIF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>  <span class="c1"># 6th frame</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"FRAME_CLASSIF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">frames</span>
+<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"FRAME_CLASSIF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>  <span class="c1"># 6th frame</span>
 
 <span class="c1"># get category name of the 6th frame (for a frame classification job only)</span>
-<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;FRAME_CLASSIF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"FRAME_CLASSIF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
 </code></pre></div>
 <h3 id="named-entities-recognition-tasks">Named entities recognition tasks</h3>
 <h4 id="content"><code>.content</code></h4>
 <p>Returns the content of the mention.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;NER_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"NER_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
 </code></pre></div>
 <h4 id="begin_offset"><code>.begin_offset</code></h4>
 <p>Returns the position of the first character of the mention in the text.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;NER_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">begin_offset</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"NER_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">begin_offset</span>
 </code></pre></div>
 <h4 id="end_offet"><code>.end_offet</code></h4>
 <p>When available, returns the position of the last character of the mention in the text.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;NER_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end_offset</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"NER_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end_offset</span>
 </code></pre></div>
 <h4 id="entity_annotations"><code>.entity_annotations</code></h4>
 <p>This attribute is an alias for <code>.annotations</code>.</p>
@@ -3510,56 +3632,56 @@
 <div class="highlight"><pre><span></span><code><span class="c1"># the .points attribute is not relevant for NER tasks, it is only used for pose estimation tasks!</span>
 
 <span class="c1"># IDE autocompletion will accept this attribute, but will crash at runtime</span>
-<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;NER_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">points</span>
+<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"NER_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">points</span>
 
 <span class="c1"># IDE autocompletion will not display this attribute and Python linter will raise an error</span>
-<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;NER_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">entity_annotations</span><span class="o">.</span><span class="n">points</span>
+<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"NER_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">entity_annotations</span><span class="o">.</span><span class="n">points</span>
 </code></pre></div>
 <h3 id="named-entities-recognition-in-pdfs-tasks">Named entities recognition in PDFs tasks</h3>
 <h4 id="content_1"><code>.content</code></h4>
 <p>Returns the content of the mention.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;NER_PDF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"NER_PDF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
 </code></pre></div>
-<h4 id="annotations"><code>.annotations</code></h4>
+<h4 id="annotations_1"><code>.annotations</code></h4>
 <p>NER in PDFs annotations have an additional layer of annotations. See the <a href="https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation#ner-in-pdfs">documentation</a> for more information.</p>
 <h4 id="polys"><code>.polys</code></h4>
 <p>Returns a list of dictionaries containing the normalized vertices of the mention.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;NER_PDF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">polys</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"NER_PDF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">polys</span>
 </code></pre></div>
-<h4 id="page_number_array"><code>.page_number_array</code></h4>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;NER_PDF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">page_number_array</span>
+<h4 id="page_number_array_1"><code>.page_number_array</code></h4>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"NER_PDF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">page_number_array</span>
 </code></pre></div>
 <h4 id="bounding_poly_1"><code>.bounding_poly</code></h4>
 <p>Returns a list of dictionaries containing the normalized vertices of the mention.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;NER_PDF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"NER_PDF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounding_poly</span>
 </code></pre></div>
 <h3 id="relation-tasks">Relation tasks</h3>
 <h4 id="named-entities-relation">Named entities relation</h4>
 <h5 id="start_entities"><code>.start_entities</code></h5>
 <p>Returns a list of dictionaries containing the start entities Ids of the relation.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;NER_RELATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start_entities</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"NER_RELATION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start_entities</span>
 </code></pre></div>
 <h5 id="end_entities"><code>.end_entities</code></h5>
 <p>Returns a list of dictionaries containing the end entities Ids of the relation.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;NER_RELATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end_entities</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"NER_RELATION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end_entities</span>
 </code></pre></div>
 <h4 id="object-detection-relation">Object detection relation</h4>
 <h5 id="start_objects"><code>.start_objects</code></h5>
 <p>Returns a list of dictionaries containing the start objects Ids of the relation.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;OBJECT_RELATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start_objects</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"OBJECT_RELATION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start_objects</span>
 </code></pre></div>
 <h5 id="end_objects"><code>.end_objects</code></h5>
 <p>Returns a list of dictionaries containing the end objects Ids of the relation.</p>
-<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;OBJECT_RELATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end_objects</span>
+<div class="highlight"><pre><span></span><code><span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"OBJECT_RELATION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end_objects</span>
 </code></pre></div>
 <h3 id="children-tasks">Children tasks</h3>
 <h4 id="children"><code>.children</code></h4>
 <p>Depending on the task, the <code>.children</code> attribute can be found in different places:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># For cassification task</span>
-<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIF_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">children</span>
+<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"CLASSIF_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">children</span>
 
 <span class="c1"># For several kinds of tasks: object detection, NER, pose estimation, etc.</span>
-<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;OBJECT_DETECTION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span>
+<span class="n">label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"OBJECT_DETECTION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">children</span>
 </code></pre></div>
 <p>You can find more information about the children jobs in the <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/#child-jobs">label parsing tutorial</a>.</p>
 <h2 id="migrating-from-jsonreponse-format">Migrating from jsonReponse format</h2>

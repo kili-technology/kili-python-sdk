@@ -2222,7 +2222,7 @@
 <p>We will need your API key and Kili's API endpoint.</p>
 <p>If you are unsure how to look up your API key, refer to <a href="https://docs.kili-technology.com/docs/creating-an-api-key">https://docs.kili-technology.com/docs/creating-an-api-key</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2231,37 +2231,37 @@
 <p>We will create a video project with just one simple classification job and two categories: <code>OBJECT_A</code> and <code>OBJECT_B</code>.</p>
 <p>To learn more about Kili project interfaces, refer to <a href="https://docs.kili-technology.com/docs/customizing-project-interface">https://docs.kili-technology.com/docs/customizing-project-interface</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;OBJECT_A&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object A&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category3&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object B&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category4&quot;</span><span class="p">},</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"OBJECT_A"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Object A"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category3"</span><span class="p">},</span>
+                    <span class="s2">"OBJECT_B"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Object B"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category4"</span><span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Categories&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;models&quot;</span><span class="p">:</span> <span class="p">{},</span>
-            <span class="s2">&quot;isVisible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Categories"</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"models"</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">"isVisible"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Importing Video Assets&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project Description&quot;</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;VIDEO&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"[Kili SDK Notebook]: Importing Video Assets"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Project Description"</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">"VIDEO"</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">interface</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>For further processing, we will need to find out what our project ID is.</p>
 <p>We can easily retrieve it from the project creation response message:</p>
-<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Project ID: &quot;</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Project ID: "</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 </code></pre></div>
 <pre><code>Project ID:  cld90h71d0ha50jptd28xfjg1
 </code></pre>
@@ -2274,68 +2274,68 @@ You can videos using URLs or use your local assets.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
 
 <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;test.mp4&quot;</span><span class="p">,</span>
+    <span class="s2">"https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"</span><span class="p">,</span>
+    <span class="s2">"test.mp4"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Now, we can easily upload the video to our project:</p>
 <div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;./test.mp4&quot;</span><span class="p">],</span> <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_1_from_local&quot;</span><span class="p">]</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="s2">"./test.mp4"</span><span class="p">],</span> <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">"video_1_from_local"</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="uploading-a-video-asset-using-an-url">Uploading a video asset using an URL</h3>
 <p>You can of course upload videos using URLs as well. To do so, simply replace <code>'./test.mp4'</code> with the URL of the video that you want to upload.</p>
-<div class="highlight"><pre><span></span><code><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">url</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"</span>
 
 <span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">url</span><span class="p">],</span> <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_2_from_url&quot;</span><span class="p">]</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">url</span><span class="p">],</span> <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">"video_2_from_url"</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="uploading-a-video-asset-to-label-each-frame-separately">Uploading a video asset to label each frame separately</h3>
 <p>To upload your video and be able to label frames separately, as individual images, refer to this code:</p>
-<div class="highlight"><pre><span></span><code><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">url</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"</span>
 
 <span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">url</span><span class="p">],</span>
-    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_2_from_url_split_frames&quot;</span><span class="p">],</span>
-    <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;processingParameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;shouldUseNativeVideo&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}}],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">"video_2_from_url_split_frames"</span><span class="p">],</span>
+    <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">"processingParameters"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"shouldUseNativeVideo"</span><span class="p">:</span> <span class="kc">False</span><span class="p">}}],</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="uploading-a-list-of-local-images-as-one-video-asset">Uploading a list of local images as one video asset</h3>
 <p>We can create a video, by using local images as frames. Let's first download some images from the Internet:</p>
 <div class="highlight"><pre><span></span><code><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000001.jpg&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;image_1.jpg&quot;</span><span class="p">,</span>
+    <span class="s2">"https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000001.jpg"</span><span class="p">,</span>
+    <span class="s2">"image_1.jpg"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000002.jpg&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;image_2.jpg&quot;</span><span class="p">,</span>
+    <span class="s2">"https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000002.jpg"</span><span class="p">,</span>
+    <span class="s2">"image_2.jpg"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-    <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000003.jpg&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;image_3.jpg&quot;</span><span class="p">,</span>
+    <span class="s2">"https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000003.jpg"</span><span class="p">,</span>
+    <span class="s2">"image_3.jpg"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Now, let's put them together as one video:</p>
 <div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">json_content_array</span><span class="o">=</span><span class="p">[[</span><span class="s2">&quot;./image_1.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;./image_2.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;./image_3.jpg&quot;</span><span class="p">]],</span>
-    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_3_from_local_images&quot;</span><span class="p">],</span>
-    <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;processingParameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;shouldUseNativeVideo&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}}],</span>
+    <span class="n">json_content_array</span><span class="o">=</span><span class="p">[[</span><span class="s2">"./image_1.jpg"</span><span class="p">,</span> <span class="s2">"./image_2.jpg"</span><span class="p">,</span> <span class="s2">"./image_3.jpg"</span><span class="p">]],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">"video_3_from_local_images"</span><span class="p">],</span>
+    <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">"processingParameters"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"shouldUseNativeVideo"</span><span class="p">:</span> <span class="kc">False</span><span class="p">}}],</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="uploading-a-list-of-image-urls-as-one-video-asset">Uploading a list of image URLs as one video asset</h3>
 <p>You can of course upload videos using URLs as well. To do so, simply replace <code>'./test.mp4'</code> with a set of URLs of images that you want to upload as a video.</p>
-<div class="highlight"><pre><span></span><code><span class="n">url1</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000001.jpg&quot;</span>
-<span class="n">url2</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000002.jpg&quot;</span>
-<span class="n">url3</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000003.jpg&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">url1</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000001.jpg"</span>
+<span class="n">url2</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000002.jpg"</span>
+<span class="n">url3</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000003.jpg"</span>
 
 <span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="n">json_content_array</span><span class="o">=</span><span class="p">[[</span><span class="n">url1</span><span class="p">,</span> <span class="n">url2</span><span class="p">,</span> <span class="n">url3</span><span class="p">]],</span>
-    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;video_4_from_image_urls&quot;</span><span class="p">],</span>
-    <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;processingParameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;shouldUseNativeVideo&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}}],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">"video_4_from_image_urls"</span><span class="p">],</span>
+    <span class="n">json_metadata_array</span><span class="o">=</span><span class="p">[{</span><span class="s2">"processingParameters"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"shouldUseNativeVideo"</span><span class="p">:</span> <span class="kc">False</span><span class="p">}}],</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="cleanup">Cleanup</h2>

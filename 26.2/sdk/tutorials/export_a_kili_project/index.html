@@ -2333,7 +2333,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 
 <span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2343,8 +2343,8 @@
 <p>First, fetch the assets:</p>
 <div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
     <span class="n">your_project_id</span><span class="p">,</span>
-    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">,</span> <span class="s2">&quot;latestLabel.jsonResponse&quot;</span><span class="p">],</span>
-    <span class="n">label_output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"externalId"</span><span class="p">,</span> <span class="s2">"latestLabel.jsonResponse"</span><span class="p">],</span>
+    <span class="n">label_output_format</span><span class="o">=</span><span class="s2">"parsed_label"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Now if you print an asset, you will see that you can access its <code>latestLabel</code>:</p>
@@ -2354,9 +2354,9 @@
 </code></pre>
 <p>You can now get your label, and write the category name into a text file for example:</p>
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;latestLabel&quot;</span><span class="p">]:</span>  <span class="c1"># check if asset has annotations</span>
-        <span class="n">class_</span> <span class="o">=</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;latestLabel&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
-        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">asset</span><span class="p">[</span><span class="s2">"latestLabel"</span><span class="p">]:</span>  <span class="c1"># check if asset has annotations</span>
+        <span class="n">class_</span> <span class="o">=</span> <span class="n">asset</span><span class="p">[</span><span class="s2">"latestLabel"</span><span class="p">]</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"JOB_0"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">"externalId"</span><span class="p">]</span> <span class="o">+</span> <span class="s2">".txt"</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">class_</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="filtering-specific-labels-per-asset-through-the-method-filters">Filtering specific labels per asset through the method filters</h3>
@@ -2365,7 +2365,7 @@ for each one of these methods.</p>
 <p>When done, you can write the conversion code to get the data in the format that you need.</p>
 <p><strong>Get only the assets with a consensus mark above 0.5:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
-    <span class="n">your_project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;consensusMark&quot;</span><span class="p">],</span> <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="n">your_project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"externalId"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"consensusMark"</span><span class="p">],</span> <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="mf">0.5</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">assets</span><span class="p">)</span>
 <span class="c1"># + asset conversion code</span>
@@ -2375,7 +2375,7 @@ for each one of these methods.</p>
 <p><strong>Get all the labels with a honeypot mark above 0.1:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
     <span class="n">your_project_id</span><span class="p">,</span>
-    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;labelOf.externalId&quot;</span><span class="p">,</span> <span class="s2">&quot;honeypotMark&quot;</span><span class="p">,</span> <span class="s2">&quot;author.email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">],</span>
+    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"labelOf.externalId"</span><span class="p">,</span> <span class="s2">"honeypotMark"</span><span class="p">,</span> <span class="s2">"author.email"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">],</span>
     <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
@@ -2385,7 +2385,7 @@ for each one of these methods.</p>
 </code></pre>
 <p><strong>Get all the labels added by a specific project member:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
-    <span class="n">your_project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;labelOf.externalId&quot;</span><span class="p">,</span> <span class="s2">&quot;author.email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">user_id</span><span class="o">=</span><span class="n">john_doe_id</span>
+    <span class="n">your_project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"labelOf.externalId"</span><span class="p">,</span> <span class="s2">"author.email"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">],</span> <span class="n">user_id</span><span class="o">=</span><span class="n">john_doe_id</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 <span class="c1"># + label conversion code</span>
@@ -2400,15 +2400,15 @@ for each one of these methods.</p>
 
 <span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
     <span class="n">your_project_id</span><span class="p">,</span>
-    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">,</span> <span class="s2">&quot;labels.jsonResponse&quot;</span><span class="p">,</span> <span class="s2">&quot;labels.isLatestReviewLabelForUser&quot;</span><span class="p">],</span>
+    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"externalId"</span><span class="p">,</span> <span class="s2">"labels.jsonResponse"</span><span class="p">,</span> <span class="s2">"labels.isLatestReviewLabelForUser"</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]:</span>  <span class="c1"># check if asset has annotations</span>
-        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;isLatestReviewLabelForUser&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;JOB_0&quot;</span> <span class="ow">in</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">]:</span>
-                <span class="n">annotation</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">][</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">]</span>
-                <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">asset</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]:</span>  <span class="c1"># check if asset has annotations</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">"isLatestReviewLabelForUser"</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">"JOB_0"</span> <span class="ow">in</span> <span class="n">label</span><span class="p">[</span><span class="s2">"jsonResponse"</span><span class="p">]:</span>
+                <span class="n">annotation</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">"jsonResponse"</span><span class="p">][</span><span class="s2">"JOB_0"</span><span class="p">]</span>
+                <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">"externalId"</span><span class="p">]</span> <span class="o">+</span> <span class="s2">".json"</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">annotation</span><span class="p">))</span>
                 <span class="k">break</span>  <span class="c1"># once we find a latest label done by a reviewer, we move on to the next asset.</span>
 </code></pre></div>
@@ -2420,26 +2420,26 @@ for each one of these methods.</p>
 <span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
     <span class="n">your_project_id</span><span class="p">,</span>
     <span class="n">fields</span><span class="o">=</span><span class="p">[</span>
-        <span class="s2">&quot;externalId&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;labels.author.email&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;labels.createdAt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;labels.labelType&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;labels.jsonResponse&quot;</span><span class="p">,</span>
+        <span class="s2">"externalId"</span><span class="p">,</span>
+        <span class="s2">"labels.author.email"</span><span class="p">,</span>
+        <span class="s2">"labels.createdAt"</span><span class="p">,</span>
+        <span class="s2">"labels.labelType"</span><span class="p">,</span>
+        <span class="s2">"labels.jsonResponse"</span><span class="p">,</span>
     <span class="p">],</span>
 <span class="p">)</span>
 
 <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">asset</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]:</span>
         <span class="n">latest_label_by_user</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;labelType&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span>
-                <span class="n">latest_label_by_user</span><span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">][</span><span class="s2">&quot;email&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">"labelType"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"DEFAULT"</span><span class="p">:</span>
+                <span class="n">latest_label_by_user</span><span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="s2">"author"</span><span class="p">][</span><span class="s2">"email"</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
         <span class="n">latest_label_per_user</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">email</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;createdAt&quot;</span><span class="p">])</span>
+            <span class="n">email</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">"createdAt"</span><span class="p">])</span>
             <span class="k">for</span> <span class="n">email</span><span class="p">,</span> <span class="n">labels</span> <span class="ow">in</span> <span class="n">latest_label_by_user</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span>
-        <span class="k">with</span> <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;externalId&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
-            <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
+        <span class="k">with</span> <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">"externalId"</span><span class="p">]</span> <span class="o">+</span> <span class="s2">".json"</span><span class="p">))</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
+            <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
         <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">latest_label_per_user</span><span class="p">))</span>
 </code></pre></div>
@@ -2567,8 +2567,8 @@ for each one of these methods.</p>
 <p>The following code snippet exports the whole asset payload and the associated labels, with one json file per asset, into the <code>/tmp/export.zip</code> folder.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">your_project_id</span><span class="p">,</span>
-    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;/tmp/export.zip&quot;</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;kili&quot;</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">"/tmp/export.zip"</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">"kili"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <pre><code>Fetching assets...
@@ -2578,8 +2578,8 @@ for each one of these methods.</p>
 <p>This code snippet exports the whole asset payload and the associated labels as one file for the whole project, into the <code>/tmp/export.zip</code> folder.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">your_project_id</span><span class="p">,</span>
-    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;/tmp/export.zip&quot;</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;kili&quot;</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">"/tmp/export.zip"</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">"kili"</span><span class="p">,</span>
     <span class="n">single_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2619,8 +2619,8 @@ class    x1   y1   x2   y2   x3  y3  x4  y4   ...
 <p>Here is how to export to YOLO (in this example, YOLOv5):</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">your_project_id</span><span class="p">,</span>
-    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;/tmp/export.zip&quot;</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;yolo_v5&quot;</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">"/tmp/export.zip"</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">"yolo_v5"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <pre><code>Fetching assets...
@@ -2636,8 +2636,8 @@ class    x1   y1   x2   y2   x3  y3  x4  y4   ...
 <p>To export your data into the COCO format, run the following code:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">your_project_id</span><span class="p">,</span>
-    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;/tmp/export.zip&quot;</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;coco&quot;</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">"/tmp/export.zip"</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">"coco"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <pre><code>Fetching assets...

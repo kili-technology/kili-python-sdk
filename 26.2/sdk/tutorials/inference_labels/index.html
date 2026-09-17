@@ -2132,7 +2132,7 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2175,110 +2175,110 @@ Of course, you could use your own metrics (rather than our own definition of agr
 <h3 id="use-case-1">Use case 1</h3>
 <p>We start by creating a project and defining a model which, given an asset input <span class="arithmatex">\(x\)</span>, returns a category (random in our example):</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;RED&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Red&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;BLACK&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Black&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;WHITE&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;White&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;GREY&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Grey&quot;</span><span class="p">},</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"CLASSIFICATION_JOB"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"RED"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Red"</span><span class="p">},</span>
+                    <span class="s2">"BLACK"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Black"</span><span class="p">},</span>
+                    <span class="s2">"WHITE"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"White"</span><span class="p">},</span>
+                    <span class="s2">"GREY"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Grey"</span><span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Color&quot;</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Color"</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">project_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Project demo inference&quot;</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"[Kili SDK Notebook]: Project demo inference"</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">"IMAGE"</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
-<span class="p">)[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<span class="p">)[</span><span class="s2">"id"</span><span class="p">]</span>
 </code></pre></div>
 <p>Then we can simulate that our model is in production.
 Each time it receives an asset, we upload it to Kili along with the predicted label.</p>
 <div class="highlight"><pre><span></span><code><span class="n">stream_of_assets</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
-        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">(</span>
-            <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg&quot;</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">"https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg"</span>
         <span class="p">),</span>
-        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">"external_id"</span><span class="p">:</span> <span class="s2">"black_car.jpg"</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/grey_car.jpg&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;grey_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/recipes/inference/grey_car.jpg"</span><span class="p">,</span>
+        <span class="s2">"external_id"</span><span class="p">:</span> <span class="s2">"grey_car.jpg"</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">(</span>
-            <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/white_car.jpg&quot;</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">"https://storage.googleapis.com/label-public-staging/recipes/inference/white_car.jpg"</span>
         <span class="p">),</span>
-        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;white_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">"external_id"</span><span class="p">:</span> <span class="s2">"white_car.jpg"</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/red_car.jpg&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;red_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/recipes/inference/red_car.jpg"</span><span class="p">,</span>
+        <span class="s2">"external_id"</span><span class="p">:</span> <span class="s2">"red_car.jpg"</span><span class="p">,</span>
     <span class="p">},</span>
 <span class="p">]</span>
 </code></pre></div>
 <p>We import the assets into the Kili project:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
-    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
+    <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"url"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"external_id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>We simulate some model predictions:</p>
 <div class="highlight"><pre><span></span><code><span class="n">predictions</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;WHITE&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;grey_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;GREY&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;white_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;RED&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;red_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;BLACK&quot;</span><span class="p">,</span>
+    <span class="s2">"black_car.jpg"</span><span class="p">:</span> <span class="s2">"WHITE"</span><span class="p">,</span>
+    <span class="s2">"grey_car.jpg"</span><span class="p">:</span> <span class="s2">"GREY"</span><span class="p">,</span>
+    <span class="s2">"white_car.jpg"</span><span class="p">:</span> <span class="s2">"RED"</span><span class="p">,</span>
+    <span class="s2">"red_car.jpg"</span><span class="p">:</span> <span class="s2">"BLACK"</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>And we upload those predictions to Kili:</p>
-<div class="highlight"><pre><span></span><code><span class="n">predicted_categories</span> <span class="o">=</span> <span class="p">[</span><span class="n">predictions</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">predicted_categories</span> <span class="o">=</span> <span class="p">[</span><span class="n">predictions</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"external_id"</span><span class="p">]]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">]</span>
 <span class="n">inference_labels</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">predicted_category</span><span class="p">}]}}</span>
+    <span class="p">{</span><span class="s2">"CLASSIFICATION_JOB"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="n">predicted_category</span><span class="p">}]}}</span>
     <span class="k">for</span> <span class="n">predicted_category</span> <span class="ow">in</span> <span class="n">predicted_categories</span>
 <span class="p">]</span>
 
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"external_id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
     <span class="n">json_response_array</span><span class="o">=</span><span class="n">inference_labels</span><span class="p">,</span>
-    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">,</span>  <span class="c1"># We import model-generated labels as &quot;INFERENCE&quot; labels</span>
-    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;my_model&quot;</span><span class="p">,</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">"INFERENCE"</span><span class="p">,</span>  <span class="c1"># We import model-generated labels as "INFERENCE" labels</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">"my_model"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Then, human labelers can annotate a subsample of the assets pushed to Kili.</p>
 <p>Note: you can automatically <a href="https://docs.kili-technology.com/docs/queue-prioritization">prioritize assets</a> to be reviewed by a human by using the model's certainty score. When the model is unsure of its predictions, this may indicate wrong labels.</p>
 <div class="highlight"><pre><span></span><code><span class="n">ground_truths</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;BLACK&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;grey_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;GREY&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;white_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;WHITE&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;red_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;RED&quot;</span><span class="p">,</span>
+    <span class="s2">"black_car.jpg"</span><span class="p">:</span> <span class="s2">"BLACK"</span><span class="p">,</span>
+    <span class="s2">"grey_car.jpg"</span><span class="p">:</span> <span class="s2">"GREY"</span><span class="p">,</span>
+    <span class="s2">"white_car.jpg"</span><span class="p">:</span> <span class="s2">"WHITE"</span><span class="p">,</span>
+    <span class="s2">"red_car.jpg"</span><span class="p">:</span> <span class="s2">"RED"</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">human_labels</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">ground_truths</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]]}]}}</span>
+    <span class="p">{</span><span class="s2">"CLASSIFICATION_JOB"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="n">ground_truths</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"external_id"</span><span class="p">]]}]}}</span>
     <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span>
 <span class="p">]</span>
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="n">json_response_array</span><span class="o">=</span><span class="n">human_labels</span><span class="p">,</span>
-    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
-    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"external_id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">stream_of_assets</span><span class="p">],</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">"DEFAULT"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Note: that the inference metric could appear as None at the beginning (as those calculs can be complex we choose to do it in a separate way and so the return could be delayed). Just wait a bit before trigger the fetch of the labels.</p>
 <p>You can now fetch the agreement between the human and the model, for human labels:</p>
 <div class="highlight"><pre><span></span><code><span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;inferenceMark&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;labelOf.id&quot;</span><span class="p">],</span> <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">]</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"inferenceMark"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"labelOf.id"</span><span class="p">],</span> <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"DEFAULT"</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 </code></pre></div>
@@ -2287,29 +2287,29 @@ Each time it receives an asset, we upload it to Kili along with the predicted la
 <p>This allows you to identify problems:</p>
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
     <span class="c1"># this label has disagreement between human and model</span>
-    <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;inferenceMark&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">asset_id</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;labelOf&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">"inferenceMark"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">asset_id</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="s2">"labelOf"</span><span class="p">][</span><span class="s2">"id"</span><span class="p">]</span>
         <span class="c1"># get the model-generated label</span>
         <span class="n">inference_label</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">asset_id</span><span class="o">=</span><span class="n">asset_id</span><span class="p">,</span>
-            <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">],</span>
-            <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+            <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"INFERENCE"</span><span class="p">],</span>
+            <span class="n">output_format</span><span class="o">=</span><span class="s2">"parsed_label"</span><span class="p">,</span>
             <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># get the human-made label</span>
         <span class="n">human_label</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-            <span class="n">label_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-            <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+            <span class="n">label_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
+            <span class="n">output_format</span><span class="o">=</span><span class="s2">"parsed_label"</span><span class="p">,</span>
             <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">inference_category</span> <span class="o">=</span> <span class="n">inference_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">human_category</span> <span class="o">=</span> <span class="n">human_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">inference_category</span> <span class="o">=</span> <span class="n">inference_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"CLASSIFICATION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">human_category</span> <span class="o">=</span> <span class="n">human_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"CLASSIFICATION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The model predicted </span><span class="si">{</span><span class="n">inference_category</span><span class="si">}</span><span class="s2"> but the human predicted </span><span class="si">{</span><span class="n">human_category</span><span class="si">}</span><span class="s2"> for&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; asset with id </span><span class="si">{</span><span class="n">asset_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"The model predicted </span><span class="si">{</span><span class="n">inference_category</span><span class="si">}</span><span class="s2"> but the human predicted </span><span class="si">{</span><span class="n">human_category</span><span class="si">}</span><span class="s2"> for"</span>
+            <span class="sa">f</span><span class="s2">" asset with id </span><span class="si">{</span><span class="n">asset_id</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
 </code></pre></div>
 <pre><code>The model predicted WHITE but the human predicted BLACK for asset with id cleoicx8s0000h8vzn0qu3mpz.
@@ -2325,77 +2325,77 @@ The model predicted BLACK but the human predicted RED for asset with id cleoicx8
 <p>We can invert the previous use case.</p>
 <p>We start with a human-labeled dataset and we insert model predictions to it, to simulate testing our model on test data.</p>
 <div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Project demo inference 2&quot;</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"[Kili SDK Notebook]: Project demo inference 2"</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">"IMAGE"</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
-<span class="p">)[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<span class="p">)[</span><span class="s2">"id"</span><span class="p">]</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">labeled_assets</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
-        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">(</span>
-            <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg&quot;</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">"https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg"</span>
         <span class="p">),</span>
-        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">"external_id"</span><span class="p">:</span> <span class="s2">"black_car.jpg"</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/grey_car.jpg&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;grey_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/recipes/inference/grey_car.jpg"</span><span class="p">,</span>
+        <span class="s2">"external_id"</span><span class="p">:</span> <span class="s2">"grey_car.jpg"</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">(</span>
-            <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/white_car.jpg&quot;</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">"https://storage.googleapis.com/label-public-staging/recipes/inference/white_car.jpg"</span>
         <span class="p">),</span>
-        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;white_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">"external_id"</span><span class="p">:</span> <span class="s2">"white_car.jpg"</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/red_car.jpg&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;external_id&quot;</span><span class="p">:</span> <span class="s2">&quot;red_car.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">"url"</span><span class="p">:</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/recipes/inference/red_car.jpg"</span><span class="p">,</span>
+        <span class="s2">"external_id"</span><span class="p">:</span> <span class="s2">"red_car.jpg"</span><span class="p">,</span>
     <span class="p">},</span>
 <span class="p">]</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
-    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
+    <span class="n">content_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"url"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
+    <span class="n">external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"external_id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
 <p><code>ground_truths</code> represents labels made by human annotators:</p>
 <div class="highlight"><pre><span></span><code><span class="n">ground_truths</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;black_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;BLACK&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;grey_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;GREY&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;white_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;WHITE&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;red_car.jpg&quot;</span><span class="p">:</span> <span class="s2">&quot;RED&quot;</span><span class="p">,</span>
+    <span class="s2">"black_car.jpg"</span><span class="p">:</span> <span class="s2">"BLACK"</span><span class="p">,</span>
+    <span class="s2">"grey_car.jpg"</span><span class="p">:</span> <span class="s2">"GREY"</span><span class="p">,</span>
+    <span class="s2">"white_car.jpg"</span><span class="p">:</span> <span class="s2">"WHITE"</span><span class="p">,</span>
+    <span class="s2">"red_car.jpg"</span><span class="p">:</span> <span class="s2">"RED"</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>Now, we import the human labels:</p>
 <div class="highlight"><pre><span></span><code><span class="n">human_labels</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">ground_truths</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]]}]}}</span>
+    <span class="p">{</span><span class="s2">"CLASSIFICATION_JOB"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="n">ground_truths</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"external_id"</span><span class="p">]]}]}}</span>
     <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span>
 <span class="p">]</span>
 
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="n">json_response_array</span><span class="o">=</span><span class="n">human_labels</span><span class="p">,</span>
-    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
-    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"external_id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">"DEFAULT"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>We take 80% of the training data and use it to train a model.</p>
 <p>We can then run the trained model against the remaining 20% of the labeled assets, and upload predictions to Kili:</p>
 <div class="highlight"><pre><span></span><code><span class="n">test_labels</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">predictions</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]]}]}}</span>
+    <span class="p">{</span><span class="s2">"CLASSIFICATION_JOB"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="n">predictions</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"external_id"</span><span class="p">]]}]}}</span>
     <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span>
 <span class="p">]</span>
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="n">json_response_array</span><span class="o">=</span><span class="n">test_labels</span><span class="p">,</span>
-    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">&quot;external_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
-    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">,</span>
-    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;my_model&quot;</span><span class="p">,</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"external_id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">labeled_assets</span><span class="p">],</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">"INFERENCE"</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">"my_model"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">labels</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;inferenceMark&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;labelOf.id&quot;</span><span class="p">],</span> <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">]</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"inferenceMark"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"labelOf.id"</span><span class="p">],</span> <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"DEFAULT"</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 </code></pre></div>
@@ -2403,31 +2403,31 @@ The model predicted BLACK but the human predicted RED for asset with id cleoicx8
 </code></pre>
 <p>We can now print out a list of disagreements between human and machine labels:</p>
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">&quot;inferenceMark&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">label</span><span class="p">[</span><span class="s2">"inferenceMark"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">inference_label</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-                <span class="n">asset_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;labelOf&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-                <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">],</span>
-                <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+                <span class="n">asset_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">"labelOf"</span><span class="p">][</span><span class="s2">"id"</span><span class="p">],</span>
+                <span class="n">type_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"INFERENCE"</span><span class="p">],</span>
+                <span class="n">output_format</span><span class="o">=</span><span class="s2">"parsed_label"</span><span class="p">,</span>
                 <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">human_label</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
                 <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-                <span class="n">label_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-                <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;parsed_label&quot;</span><span class="p">,</span>
+                <span class="n">label_id</span><span class="o">=</span><span class="n">label</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
+                <span class="n">output_format</span><span class="o">=</span><span class="s2">"parsed_label"</span><span class="p">,</span>
                 <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">inference_category</span> <span class="o">=</span> <span class="n">inference_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">human_category</span> <span class="o">=</span> <span class="n">human_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">inference_category</span> <span class="o">=</span> <span class="n">inference_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"CLASSIFICATION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">human_category</span> <span class="o">=</span> <span class="n">human_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"CLASSIFICATION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span>
 
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The human predicted </span><span class="si">{</span><span class="n">human_category</span><span class="si">}</span><span class="s2"> but the model predicted </span><span class="si">{</span><span class="n">inference_category</span><span class="si">}</span><span class="s2"> for&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; asset with id </span><span class="si">{</span><span class="n">asset_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"The human predicted </span><span class="si">{</span><span class="n">human_category</span><span class="si">}</span><span class="s2"> but the model predicted </span><span class="si">{</span><span class="n">inference_category</span><span class="si">}</span><span class="s2"> for"</span>
+            <span class="sa">f</span><span class="s2">" asset with id </span><span class="si">{</span><span class="n">asset_id</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
 </code></pre></div>
 <pre><code>The human predicted BLACK but the model predicted WHITE for asset with id cleoicx8s0003h8vzbiaawl1j.

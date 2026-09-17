@@ -2070,50 +2070,50 @@
 <p>We can now create the project ontology (json interface).</p>
 <p>For a transcription task on images, the ontology is a classification job with nested transcriptions for each category:</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>  <span class="c1"># this job is for annotating the bounding boxes</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_DETECTION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tools&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;rectangle&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Categories&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;STORE_INFORMATIONS&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Store informations&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;JOB_1&quot;</span><span class="p">]},</span>
-                    <span class="s2">&quot;PRODUCTS&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Products&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;JOB_2&quot;</span><span class="p">]},</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span>  <span class="c1"># this job is for annotating the bounding boxes</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"OBJECT_DETECTION"</span><span class="p">,</span>
+            <span class="s2">"tools"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"rectangle"</span><span class="p">],</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Categories"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"STORE_INFORMATIONS"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Store informations"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"JOB_1"</span><span class="p">]},</span>
+                    <span class="s2">"PRODUCTS"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Products"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"JOB_2"</span><span class="p">]},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">},</span>
-        <span class="s2">&quot;JOB_1&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;TRANSCRIPTION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Transcription of store informations&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"JOB_1"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"TRANSCRIPTION"</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Transcription of store informations"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s2">&quot;JOB_2&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;TRANSCRIPTION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Transcription of products&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"JOB_2"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"TRANSCRIPTION"</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Transcription of products"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>Let's initialize the Kili client and create our project:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="c1"># Create an OCR project</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;OCR street view&quot;</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"OCR street view"</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">"IMAGE"</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Street text OCR annotation project&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"[Kili SDK Notebook]: Street text OCR annotation project"</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+<span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
 </code></pre></div>
 <h2 id="creating-ocr-annotations-using-google-vision-api">Creating OCR annotations using Google Vision API</h2>
 <p>We will now see how to perform OCR preannotation on our image using Google Vision API.</p>
@@ -2134,10 +2134,10 @@
 <li>download the key using json format</li>
 <li>place the key in your environment variables or in a file</li>
 </ol>
-<div class="highlight"><pre><span></span><code><span class="n">google_key_str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;KILI_API_CLOUD_VISION&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">google_key_str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"KILI_API_CLOUD_VISION"</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="ow">not</span> <span class="n">google_key_str</span><span class="p">:</span>
-    <span class="n">path_to_json_key</span> <span class="o">=</span> <span class="s2">&quot;./google_cloud_key.json&quot;</span>
+    <span class="n">path_to_json_key</span> <span class="o">=</span> <span class="s2">"./google_cloud_key.json"</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_to_json_key</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="n">google_key_str</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
@@ -2149,7 +2149,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">implicit</span><span class="p">():</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">google.cloud</span><span class="w"> </span><span class="kn">import</span> <span class="n">storage</span>
 
-    <span class="c1"># If you don&#39;t specify credentials when constructing the client, the</span>
+    <span class="c1"># If you don't specify credentials when constructing the client, the</span>
     <span class="c1"># client library will look for credentials in the environment.</span>
     <span class="n">storage_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
 
@@ -2158,24 +2158,24 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">buckets</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">detect_text</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Detects text in the file.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Detects text in the file."""</span>
     <span class="n">credentials</span> <span class="o">=</span> <span class="n">service_account</span><span class="o">.</span><span class="n">Credentials</span><span class="o">.</span><span class="n">from_service_account_info</span><span class="p">(</span><span class="n">GOOGLE_KEY</span><span class="p">)</span>
     <span class="n">client</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">ImageAnnotatorClient</span><span class="p">(</span><span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">image_file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">image_file</span><span class="p">:</span>
         <span class="n">content</span> <span class="o">=</span> <span class="n">image_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">text_detection</span><span class="p">({</span><span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">})</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">text_detection</span><span class="p">({</span><span class="s2">"content"</span><span class="p">:</span> <span class="n">content</span><span class="p">})</span>
     <span class="n">texts</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">_pb</span><span class="o">.</span><span class="n">text_annotations</span>
     <span class="n">text_annotations</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
-        <span class="n">vertices</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">vertex</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">vertex</span><span class="o">.</span><span class="n">y</span><span class="p">}</span> <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">bounding_poly</span><span class="o">.</span><span class="n">vertices</span><span class="p">]</span>
+        <span class="n">vertices</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">vertex</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">vertex</span><span class="o">.</span><span class="n">y</span><span class="p">}</span> <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">bounding_poly</span><span class="o">.</span><span class="n">vertices</span><span class="p">]</span>
 
         <span class="n">tmp</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">text</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
-            <span class="s2">&quot;boundingPoly&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;vertices&quot;</span><span class="p">:</span> <span class="n">vertices</span><span class="p">,</span>
+            <span class="s2">"description"</span><span class="p">:</span> <span class="n">text</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+            <span class="s2">"boundingPoly"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"vertices"</span><span class="p">:</span> <span class="n">vertices</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
 
@@ -2183,19 +2183,19 @@
 
     <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">message</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="se">\n</span><span class="s2">For more info on error messages, check: &quot;</span>
-            <span class="s2">&quot;https://cloud.google.com/apis/design/errors&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="se">\n</span><span class="s2">For more info on error messages, check: "</span>
+            <span class="s2">"https://cloud.google.com/apis/design/errors"</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">text_annotations</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">PATH_TO_IMG</span> <span class="o">=</span> <span class="n">wget</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
-    <span class="s2">&quot;https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/store_front.jpeg&quot;</span>
+    <span class="s2">"https://raw.githubusercontent.com/kili-technology/kili-python-sdk/main/recipes/img/store_front.jpeg"</span>
 <span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">text_annotations</span> <span class="o">=</span> <span class="n">detect_text</span><span class="p">(</span><span class="n">PATH_TO_IMG</span><span class="p">)</span>
 <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">text_annotations</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">text_annotations</span><span class="p">)</span><span class="si">}</span><span class="s2"> boxes of text.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">text_annotations</span><span class="p">)</span><span class="si">}</span><span class="s2"> boxes of text."</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">text_annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </code></pre></div>
 <pre><code>Found 22 boxes of text.
@@ -2209,10 +2209,10 @@
 </code></pre>
 <p>We now need to convert the OCR predictions to the Kili asset metadata format:</p>
 <div class="highlight"><pre><span></span><code><span class="n">full_text_annotations</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;fullTextAnnotation&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;pages&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">IMG_HEIGHT</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="n">IMG_WIDTH</span><span class="p">}],</span>
+    <span class="s2">"fullTextAnnotation"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"pages"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"height"</span><span class="p">:</span> <span class="n">IMG_HEIGHT</span><span class="p">,</span> <span class="s2">"width"</span><span class="p">:</span> <span class="n">IMG_WIDTH</span><span class="p">}],</span>
     <span class="p">},</span>
-    <span class="s2">&quot;textAnnotations&quot;</span><span class="p">:</span> <span class="n">text_annotations</span><span class="p">,</span>
+    <span class="s2">"textAnnotations"</span><span class="p">:</span> <span class="n">text_annotations</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>We follow the Google Vision API <a href="https://cloud.google.com/vision/docs/reference/rest/v1/AnnotateImageResponse"><code>AnnotateImageResponse</code></a> format. So in the end, the OCR data to insert into Kili as a JSON metadata contains:</p>
@@ -2225,27 +2225,27 @@
 </li>
 </ul>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;fullTextAnnotation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;pages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nt">&quot;height&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">914</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;width&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">813</span><span class="w"> </span><span class="p">}]</span><span class="w"> </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;textAnnotations&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">"fullTextAnnotation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"pages"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nt">"height"</span><span class="p">:</span><span class="w"> </span><span class="mi">914</span><span class="p">,</span><span class="w"> </span><span class="nt">"width"</span><span class="p">:</span><span class="w"> </span><span class="mi">813</span><span class="w"> </span><span class="p">}]</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"textAnnotations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7SB75&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;boundingPoly&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;vertices&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;x&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">536</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;y&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">259</span><span class="w"> </span><span class="p">},</span>
-<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;x&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">529</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;y&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">514</span><span class="w"> </span><span class="p">},</span>
-<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;x&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">449</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;y&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">512</span><span class="w"> </span><span class="p">},</span>
-<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;x&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">456</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;y&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">257</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7SB75"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"boundingPoly"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"vertices"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">"x"</span><span class="p">:</span><span class="w"> </span><span class="mi">536</span><span class="p">,</span><span class="w"> </span><span class="nt">"y"</span><span class="p">:</span><span class="w"> </span><span class="mi">259</span><span class="w"> </span><span class="p">},</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">"x"</span><span class="p">:</span><span class="w"> </span><span class="mi">529</span><span class="p">,</span><span class="w"> </span><span class="nt">"y"</span><span class="p">:</span><span class="w"> </span><span class="mi">514</span><span class="w"> </span><span class="p">},</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">"x"</span><span class="p">:</span><span class="w"> </span><span class="mi">449</span><span class="p">,</span><span class="w"> </span><span class="nt">"y"</span><span class="p">:</span><span class="w"> </span><span class="mi">512</span><span class="w"> </span><span class="p">},</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">"x"</span><span class="p">:</span><span class="w"> </span><span class="mi">456</span><span class="p">,</span><span class="w"> </span><span class="nt">"y"</span><span class="p">:</span><span class="w"> </span><span class="mi">257</span><span class="w"> </span><span class="p">}</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">      </span><span class="p">}</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;09TGG&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;boundingPoly&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;vertices&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;x&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">436</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;y&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">256</span><span class="w"> </span><span class="p">},</span>
-<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;x&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">435</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;y&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">515</span><span class="w"> </span><span class="p">},</span>
-<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;x&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">360</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;y&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">515</span><span class="w"> </span><span class="p">},</span>
-<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;x&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">361</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;y&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">256</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"09TGG"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"boundingPoly"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"vertices"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">"x"</span><span class="p">:</span><span class="w"> </span><span class="mi">436</span><span class="p">,</span><span class="w"> </span><span class="nt">"y"</span><span class="p">:</span><span class="w"> </span><span class="mi">256</span><span class="w"> </span><span class="p">},</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">"x"</span><span class="p">:</span><span class="w"> </span><span class="mi">435</span><span class="p">,</span><span class="w"> </span><span class="nt">"y"</span><span class="p">:</span><span class="w"> </span><span class="mi">515</span><span class="w"> </span><span class="p">},</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">"x"</span><span class="p">:</span><span class="w"> </span><span class="mi">360</span><span class="p">,</span><span class="w"> </span><span class="nt">"y"</span><span class="p">:</span><span class="w"> </span><span class="mi">515</span><span class="w"> </span><span class="p">},</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="nt">"x"</span><span class="p">:</span><span class="w"> </span><span class="mi">361</span><span class="p">,</span><span class="w"> </span><span class="nt">"y"</span><span class="p">:</span><span class="w"> </span><span class="mi">256</span><span class="w"> </span><span class="p">}</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">      </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -2253,7 +2253,7 @@
 <span class="p">}</span>
 </code></pre></div>
 <p>Let's upload the asset with its pre-annotations to Kili:</p>
-<div class="highlight"><pre><span></span><code><span class="n">external_id</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">external_id</span> <span class="o">=</span> <span class="s2">"store"</span>
 <span class="n">content</span> <span class="o">=</span> <span class="n">PATH_TO_IMG</span>
 
 <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>

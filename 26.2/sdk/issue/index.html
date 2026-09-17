@@ -2056,9 +2056,9 @@
 
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/issue.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"__init__"</span><span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">IssueClientMethods</span><span class="p">(</span><span class="n">BaseClientMethods</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Methods attached to the Kili client, to run actions on issues.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Methods attached to the Kili client, to run actions on issues."""</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_issues</span><span class="p">(</span>
@@ -2067,8 +2067,8 @@
         <span class="n">label_id_array</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">object_mid_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">text_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an issue.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Create an issue.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2078,7 +2078,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list of dictionaries with the `id` key of the created issues.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">assert_all_arrays_have_same_size</span><span class="p">([</span><span class="n">label_id_array</span><span class="p">,</span> <span class="n">object_mid_array</span><span class="p">,</span> <span class="n">text_array</span><span class="p">])</span>
         <span class="n">issues</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">IssueToCreateUseCaseInput</span><span class="p">(</span><span class="n">label_id</span><span class="o">=</span><span class="n">LabelId</span><span class="p">(</span><span class="n">label_id</span><span class="p">),</span> <span class="n">object_mid</span><span class="o">=</span><span class="n">object_mid</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
@@ -2091,7 +2091,7 @@
         <span class="p">]</span>
         <span class="n">issue_service</span> <span class="o">=</span> <span class="n">IssueUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
         <span class="n">issue_ids</span> <span class="o">=</span> <span class="n">issue_service</span><span class="o">.</span><span class="n">create_issues</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">issues</span><span class="o">=</span><span class="n">issues</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">issue_id</span><span class="p">}</span> <span class="k">for</span> <span class="n">issue_id</span> <span class="ow">in</span> <span class="n">issue_ids</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">issue_id</span><span class="p">}</span> <span class="k">for</span> <span class="n">issue_id</span> <span class="ow">in</span> <span class="n">issue_ids</span><span class="p">]</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">count_issues</span><span class="p">(</span>
@@ -2102,7 +2102,7 @@
         <span class="n">issue_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Count and return the number of issues with the given constraints.</span>
+<span class="w">        </span><span class="sd">"""Count and return the number of issues with the given constraints.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Project ID the issue belongs to.</span>
@@ -2114,10 +2114,10 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The number of issues that match the given constraints.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">asset_id</span> <span class="ow">and</span> <span class="n">asset_id_in</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;You cannot provide both `asset_id` and `asset_id_in` at the same time.&quot;</span>
+                <span class="s2">"You cannot provide both `asset_id` and `asset_id_in` at the same time."</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">IssueUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">count_issues</span><span class="p">(</span>
             <span class="n">IssueFilters</span><span class="p">(</span>
@@ -2134,11 +2134,11 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;status&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;assetId&quot;</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">,</span>
+            <span class="s2">"status"</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">,</span>
+            <span class="s2">"assetId"</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -2157,11 +2157,11 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;status&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;assetId&quot;</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">,</span>
+            <span class="s2">"status"</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">,</span>
+            <span class="s2">"assetId"</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -2180,11 +2180,11 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;status&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;assetId&quot;</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">,</span>
+            <span class="s2">"status"</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">,</span>
+            <span class="s2">"assetId"</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -2197,9 +2197,9 @@
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of issues that match a set of criteria.</span>
+<span class="w">        </span><span class="sd">"""Get a generator or a list of issues that match a set of criteria.</span>
 
-<span class="sd">        !!! Info &quot;Issues or Questions&quot;</span>
+<span class="sd">        !!! Info "Issues or Questions"</span>
 <span class="sd">            An `Issue` object both represent an issue and a question in the app.</span>
 <span class="sd">            To create them, two different methods are provided: `create_issues` and `create_questions`.</span>
 <span class="sd">            However to query issues and questions, we currently provide this unique method that retrieves both of them.</span>
@@ -2221,14 +2221,14 @@
 <span class="sd">            An iterable of issues objects represented as `dict`.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;]) # List all issues of a project and their authors</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">asset_id</span> <span class="ow">and</span> <span class="n">asset_id_in</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;You cannot provide both `asset_id` and `asset_id_in` at the same time.&quot;</span>
+                <span class="s2">"You cannot provide both `asset_id` and `asset_id_in` at the same time."</span>
             <span class="p">)</span>
 
-        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
         <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
         <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">)</span>
         <span class="n">issues_gen</span> <span class="o">=</span> <span class="n">IssueUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">list_issues</span><span class="p">(</span>
@@ -2247,16 +2247,16 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">issues_gen</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">update_issue_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">issue_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">IssueStatus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the status of an issue.</span>
+<span class="w">        </span><span class="sd">"""Update the status of an issue.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            issue_id: Identifier of the issue.</span>
-<span class="sd">            status: New status of the issue. &quot;CANCELLED&quot;, &quot;OPEN&quot; or &quot;SOLVED&quot;</span>
+<span class="sd">            status: New status of the issue. "CANCELLED", "OPEN" or "SOLVED"</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the changed properties which indicates if the mutation was successful,</span>
 <span class="sd">                else an error message.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">IssueUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_issue_status</span><span class="p">(</span><span class="n">IssueId</span><span class="p">(</span><span class="n">issue_id</span><span class="p">),</span> <span class="n">status</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2356,7 +2356,7 @@ represents issues and questions in the app.</p></td>
     <span class="n">issue_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count and return the number of issues with the given constraints.</span>
+<span class="w">    </span><span class="sd">"""Count and return the number of issues with the given constraints.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Project ID the issue belongs to.</span>
@@ -2368,10 +2368,10 @@ represents issues and questions in the app.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of issues that match the given constraints.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">asset_id</span> <span class="ow">and</span> <span class="n">asset_id_in</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;You cannot provide both `asset_id` and `asset_id_in` at the same time.&quot;</span>
+            <span class="s2">"You cannot provide both `asset_id` and `asset_id_in` at the same time."</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">IssueUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">count_issues</span><span class="p">(</span>
         <span class="n">IssueFilters</span><span class="p">(</span>
@@ -2464,8 +2464,8 @@ represents issues and questions in the app.</p></td>
     <span class="n">label_id_array</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">object_mid_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">text_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an issue.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Create an issue.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -2475,7 +2475,7 @@ represents issues and questions in the app.</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of dictionaries with the `id` key of the created issues.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">assert_all_arrays_have_same_size</span><span class="p">([</span><span class="n">label_id_array</span><span class="p">,</span> <span class="n">object_mid_array</span><span class="p">,</span> <span class="n">text_array</span><span class="p">])</span>
     <span class="n">issues</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">IssueToCreateUseCaseInput</span><span class="p">(</span><span class="n">label_id</span><span class="o">=</span><span class="n">LabelId</span><span class="p">(</span><span class="n">label_id</span><span class="p">),</span> <span class="n">object_mid</span><span class="o">=</span><span class="n">object_mid</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
@@ -2488,7 +2488,7 @@ represents issues and questions in the app.</p></td>
     <span class="p">]</span>
     <span class="n">issue_service</span> <span class="o">=</span> <span class="n">IssueUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span>
     <span class="n">issue_ids</span> <span class="o">=</span> <span class="n">issue_service</span><span class="o">.</span><span class="n">create_issues</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">issues</span><span class="o">=</span><span class="n">issues</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">issue_id</span><span class="p">}</span> <span class="k">for</span> <span class="n">issue_id</span> <span class="ow">in</span> <span class="n">issue_ids</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">issue_id</span><span class="p">}</span> <span class="k">for</span> <span class="n">issue_id</span> <span class="ow">in</span> <span class="n">issue_ids</span><span class="p">]</span>
 </code></pre></div>
         </details>
     </div>
@@ -2502,7 +2502,7 @@ represents issues and questions in the app.</p></td>
 
 
 <h3 id="kili.presentation.client.issue.IssueClientMethods.issues" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;assetId&#39;</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'id'</span><span class="p">,</span> <span class="s1">'createdAt'</span><span class="p">,</span> <span class="s1">'status'</span><span class="p">,</span> <span class="s1">'type'</span><span class="p">,</span> <span class="s1">'assetId'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2607,7 +2607,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/issue">the docum
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">issues</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;author.email&#39;</span><span class="p">])</span> <span class="c1"># List all issues of a project and their authors</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">issues</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">'author.email'</span><span class="p">])</span> <span class="c1"># List all issues of a project and their authors</span>
 </code></pre></div>
 
         <details class="quote">
@@ -2616,11 +2616,11 @@ See <a href="https://api-docs.kili-technology.com/types/objects/issue">the docum
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;id&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;status&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;type&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;assetId&quot;</span><span class="p">,</span>
+        <span class="s2">"id"</span><span class="p">,</span>
+        <span class="s2">"createdAt"</span><span class="p">,</span>
+        <span class="s2">"status"</span><span class="p">,</span>
+        <span class="s2">"type"</span><span class="p">,</span>
+        <span class="s2">"assetId"</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -2633,9 +2633,9 @@ See <a href="https://api-docs.kili-technology.com/types/objects/issue">the docum
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of issues that match a set of criteria.</span>
+<span class="w">    </span><span class="sd">"""Get a generator or a list of issues that match a set of criteria.</span>
 
-<span class="sd">    !!! Info &quot;Issues or Questions&quot;</span>
+<span class="sd">    !!! Info "Issues or Questions"</span>
 <span class="sd">        An `Issue` object both represent an issue and a question in the app.</span>
 <span class="sd">        To create them, two different methods are provided: `create_issues` and `create_questions`.</span>
 <span class="sd">        However to query issues and questions, we currently provide this unique method that retrieves both of them.</span>
@@ -2657,14 +2657,14 @@ See <a href="https://api-docs.kili-technology.com/types/objects/issue">the docum
 <span class="sd">        An iterable of issues objects represented as `dict`.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.issues(project_id=project_id, fields=[&#39;author.email&#39;]) # List all issues of a project and their authors</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">asset_id</span> <span class="ow">and</span> <span class="n">asset_id_in</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;You cannot provide both `asset_id` and `asset_id_in` at the same time.&quot;</span>
+            <span class="s2">"You cannot provide both `asset_id` and `asset_id_in` at the same time."</span>
         <span class="p">)</span>
 
-    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
     <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">)</span>
     <span class="n">issues_gen</span> <span class="o">=</span> <span class="n">IssueUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">list_issues</span><span class="p">(</span>
@@ -2747,16 +2747,16 @@ See <a href="https://api-docs.kili-technology.com/types/objects/issue">the docum
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/issue.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_issue_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">issue_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">IssueStatus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update the status of an issue.</span>
+<span class="w">    </span><span class="sd">"""Update the status of an issue.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        issue_id: Identifier of the issue.</span>
-<span class="sd">        status: New status of the issue. &quot;CANCELLED&quot;, &quot;OPEN&quot; or &quot;SOLVED&quot;</span>
+<span class="sd">        status: New status of the issue. "CANCELLED", "OPEN" or "SOLVED"</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the changed properties which indicates if the mutation was successful,</span>
 <span class="sd">            else an error message.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">IssueUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_issue_status</span><span class="p">(</span><span class="n">IssueId</span><span class="p">(</span><span class="n">issue_id</span><span class="p">),</span> <span class="n">status</span><span class="p">)</span>
 </code></pre></div>
         </details>

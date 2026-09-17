@@ -2099,9 +2099,9 @@
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/queries/project_version/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"__init__"</span><span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">QueriesProjectVersion</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of ProjectVersion queries.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Set of ProjectVersion queries."""</span>
 
     <span class="c1"># pylint: disable=too-many-arguments</span>
 
@@ -2111,7 +2111,7 @@
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;projectId&quot;</span><span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"createdAt"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"projectId"</span><span class="p">),</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
@@ -2124,7 +2124,7 @@
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;projectId&quot;</span><span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"createdAt"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"projectId"</span><span class="p">),</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -2137,12 +2137,12 @@
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;projectId&quot;</span><span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"createdAt"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"projectId"</span><span class="p">),</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of project versions respecting a set of criteria.</span>
+<span class="w">        </span><span class="sd">"""Get a generator or a list of project versions respecting a set of criteria.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Filter on Id of project</span>
@@ -2157,7 +2157,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            An iterable of dictionaries containing the project versions information.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectVersionWhere</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="p">)</span>
@@ -2173,14 +2173,14 @@
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">count_project_versions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Count the number of project versions.</span>
+<span class="w">        </span><span class="sd">"""Count the number of project versions.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Filter on ID of project</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The number of project versions with the parameters provided</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectVersionWhere</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="p">)</span>
@@ -2251,14 +2251,14 @@
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/queries/project_version/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">count_project_versions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count the number of project versions.</span>
+<span class="w">    </span><span class="sd">"""Count the number of project versions.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Filter on ID of project</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of project versions with the parameters provided</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectVersionWhere</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="p">)</span>
@@ -2276,7 +2276,7 @@
 
 
 <h3 id="kili.entrypoints.queries.project_version.__init__.QueriesProjectVersion.project_version" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">project_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;projectId&#39;</span><span class="p">),</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">project_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'createdAt'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'content'</span><span class="p">,</span> <span class="s1">'name'</span><span class="p">,</span> <span class="s1">'projectId'</span><span class="p">),</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2359,12 +2359,12 @@ of creation, first to last).</p></td>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;projectId&quot;</span><span class="p">),</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"createdAt"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"projectId"</span><span class="p">),</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of project versions respecting a set of criteria.</span>
+<span class="w">    </span><span class="sd">"""Get a generator or a list of project versions respecting a set of criteria.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Filter on Id of project</span>
@@ -2379,7 +2379,7 @@ of creation, first to last).</p></td>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An iterable of dictionaries containing the project versions information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">where</span> <span class="o">=</span> <span class="n">ProjectVersionWhere</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="p">)</span>
@@ -2420,9 +2420,9 @@ of creation, first to last).</p></td>
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/project_version/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"__init__"</span><span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MutationsProjectVersion</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of ProjectVersion mutations.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Set of ProjectVersion mutations."""</span>
 
     <span class="n">graphql_client</span><span class="p">:</span> <span class="n">GraphQLClient</span>
 
@@ -2430,7 +2430,7 @@ of creation, first to last).</p></td>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_properties_in_project_version</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">project_version_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update properties of a project version.</span>
+<span class="w">        </span><span class="sd">"""Update properties of a project version.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_version_id: Identifier of the project version</span>
@@ -2442,15 +2442,15 @@ of creation, first to last).</p></td>
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.update_properties_in_project_version(</span>
 <span class="sd">                    project_version_id=project_version_id,</span>
-<span class="sd">                    content=&#39;test&#39;</span>
+<span class="sd">                    content='test'</span>
 <span class="sd">                )</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_version_id</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="n">project_version_id</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -2523,7 +2523,7 @@ of creation, first to last).</p></td>
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_project_version</span><span class="p">(</span>
         <span class="n">project_version_id</span><span class="o">=</span><span class="n">project_version_id</span><span class="p">,</span>
-        <span class="n">content</span><span class="o">=</span><span class="s1">&#39;test&#39;</span>
+        <span class="n">content</span><span class="o">=</span><span class="s1">'test'</span>
     <span class="p">)</span>
 </code></pre></div>
 
@@ -2532,7 +2532,7 @@ of creation, first to last).</p></td>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_properties_in_project_version</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">project_version_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update properties of a project version.</span>
+<span class="w">    </span><span class="sd">"""Update properties of a project version.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_version_id: Identifier of the project version</span>
@@ -2544,15 +2544,15 @@ of creation, first to last).</p></td>
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.update_properties_in_project_version(</span>
 <span class="sd">                project_version_id=project_version_id,</span>
-<span class="sd">                content=&#39;test&#39;</span>
+<span class="sd">                content='test'</span>
 <span class="sd">            )</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
-        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">project_version_id</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="n">project_version_id</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_UPDATE_PROPERTIES_IN_PROJECT_VERSION</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

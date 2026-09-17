@@ -2056,7 +2056,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2070,25 +2070,25 @@
 <li><code>REFERENCE_TO_GOD</code></li>
 </ul>
 <div class="highlight"><pre><span></span><code><span class="n">json_interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;NAMED_ENTITIES_RECOGNITION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Categories&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;isVisible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;INSTRUCTIONS&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Instructions&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#cc4125&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;PREAMBLE&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Preamble&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#ffd966&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;RIGHTS&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rights&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#76a5af&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;REFERENCE_TO_GOD&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Reference to God&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span>
-                        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#c27ba0&quot;</span><span class="p">,</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"NAMED_ENTITIES_RECOGNITION"</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Categories"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"isVisible"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"INSTRUCTIONS"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Instructions"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"#cc4125"</span><span class="p">},</span>
+                    <span class="s2">"PREAMBLE"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Preamble"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"#ffd966"</span><span class="p">},</span>
+                    <span class="s2">"RIGHTS"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Rights"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"#76a5af"</span><span class="p">},</span>
+                    <span class="s2">"REFERENCE_TO_GOD"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Reference to God"</span><span class="p">,</span>
+                        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"#c27ba0"</span><span class="p">,</span>
                     <span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -2097,9 +2097,9 @@
 <p>Next, we create a project:</p>
 <div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;TEXT&quot;</span><span class="p">,</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Import text assets&quot;</span><span class="p">,</span>
-<span class="p">)[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">"TEXT"</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"[Kili SDK Notebook]: Import text assets"</span><span class="p">,</span>
+<span class="p">)[</span><span class="s2">"id"</span><span class="p">]</span>
 </code></pre></div>
 <p>The method to use for adding assets to your Kili project is the <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.mutations.asset.__init__.MutationsAsset.append_many_to_dataset"><code>kili.append_many_to_dataset()</code></a> method.</p>
 <p>In case of rich text, you need to use the <code>json_content_array</code> argument:</p>
@@ -2203,10 +2203,10 @@
 <p>We can start with a really simple example:</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_content</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
-        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># set your own id here</span>
-                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;The unanimous Declaration of the thirteen United States of America.&quot;</span><span class="p">,</span>
+                <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>  <span class="c1"># set your own id here</span>
+                <span class="s2">"text"</span><span class="p">:</span> <span class="s2">"The unanimous Declaration of the thirteen United States of America."</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">]</span>
     <span class="p">}</span>
@@ -2222,12 +2222,12 @@
 <p>Let's try to upload the asset again, but this time with some style:</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_content</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
-        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;bold&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                <span class="s2">&quot;underline&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;The unanimous Declaration of the thirteen United States of America.&quot;</span><span class="p">,</span>
+                <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="s2">"bold"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">"underline"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">"text"</span><span class="p">:</span> <span class="s2">"The unanimous Declaration of the thirteen United States of America."</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">]</span>
     <span class="p">}</span>
@@ -2242,31 +2242,31 @@
 <p>Another test with an even more complex style. We can try to mix styled text nodes with plain-text nodes:</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_content</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
-        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"p"</span><span class="p">,</span>
+                <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;bold&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                        <span class="s2">&quot;underline&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;The unanimous Declaration&quot;</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                        <span class="s2">"bold"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">"underline"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">"The unanimous Declaration"</span><span class="p">,</span>
                     <span class="p">},</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;bold&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot; of the thirteen United States of America.&quot;</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                        <span class="s2">"bold"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" of the thirteen United States of America."</span><span class="p">,</span>
                     <span class="p">},</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">(</span>
-                            <span class="s2">&quot;When in the Course of human events, it becomes necessary for one&quot;</span>
-                            <span class="s2">&quot; people to dissolve the political bands which have connected them with&quot;</span>
-                            <span class="s2">&quot; another, and to assume among the powers of the earth, the separate&quot;</span>
-                            <span class="s2">&quot; and equal station to which the Laws of Nature and of Nature&#39;s God&quot;</span>
-                            <span class="s2">&quot; entitle them, a decent respect to the opinions of mankind requires&quot;</span>
-                            <span class="s2">&quot; that they should declare the causes which impel them to the&quot;</span>
-                            <span class="s2">&quot; separation.&quot;</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                        <span class="s2">"text"</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="s2">"When in the Course of human events, it becomes necessary for one"</span>
+                            <span class="s2">" people to dissolve the political bands which have connected them with"</span>
+                            <span class="s2">" another, and to assume among the powers of the earth, the separate"</span>
+                            <span class="s2">" and equal station to which the Laws of Nature and of Nature's God"</span>
+                            <span class="s2">" entitle them, a decent respect to the opinions of mankind requires"</span>
+                            <span class="s2">" that they should declare the causes which impel them to the"</span>
+                            <span class="s2">" separation."</span>
                         <span class="p">),</span>
                     <span class="p">},</span>
                 <span class="p">],</span>
@@ -2284,93 +2284,93 @@
 <p>Let's create a new asset with a title, a sub title and proper margins:</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_content</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
-        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;h1&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"h1"</span><span class="p">,</span>
+                <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;border&quot;</span><span class="p">:</span> <span class="s2">&quot;1px solid black&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;textAlign&quot;</span><span class="p">:</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Declaration of Independence&quot;</span><span class="p">}],</span>
+                        <span class="s2">"border"</span><span class="p">:</span> <span class="s2">"1px solid black"</span><span class="p">,</span>
+                        <span class="s2">"textAlign"</span><span class="p">:</span> <span class="s2">"center"</span><span class="p">,</span>
+                        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">:</span> <span class="s2">"Declaration of Independence"</span><span class="p">}],</span>
                     <span class="p">},</span>
                 <span class="p">],</span>
             <span class="p">},</span>
             <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;h2&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;In Congress, July 4, 1776&quot;</span><span class="p">}],</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"h2"</span><span class="p">,</span>
+                <span class="s2">"children"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">:</span> <span class="s2">"In Congress, July 4, 1776"</span><span class="p">}],</span>
             <span class="p">},</span>
             <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"p"</span><span class="p">,</span>
+                <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;bold&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                        <span class="s2">&quot;underline&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;The unanimous Declaration&quot;</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                        <span class="s2">"bold"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">"underline"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">"The unanimous Declaration"</span><span class="p">,</span>
                     <span class="p">},</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;bold&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot; of the thirteen United States of America.&quot;</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                        <span class="s2">"bold"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">"text"</span><span class="p">:</span> <span class="s2">" of the thirteen United States of America."</span><span class="p">,</span>
                     <span class="p">},</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">(</span>
-                            <span class="s2">&quot;When in the Course of human events, it becomes necessary for one&quot;</span>
-                            <span class="s2">&quot; people to dissolve the political bands which have connected them with&quot;</span>
-                            <span class="s2">&quot; another, and to assume among the powers of the earth, the separate&quot;</span>
-                            <span class="s2">&quot; and equal station to which the Laws of Nature and of Nature&#39;s God&quot;</span>
-                            <span class="s2">&quot; entitle them, a decent respect to the opinions of mankind requires&quot;</span>
-                            <span class="s2">&quot; that they should declare the causes which impel them to the&quot;</span>
-                            <span class="s2">&quot; separation.&quot;</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                        <span class="s2">"text"</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="s2">"When in the Course of human events, it becomes necessary for one"</span>
+                            <span class="s2">" people to dissolve the political bands which have connected them with"</span>
+                            <span class="s2">" another, and to assume among the powers of the earth, the separate"</span>
+                            <span class="s2">" and equal station to which the Laws of Nature and of Nature's God"</span>
+                            <span class="s2">" entitle them, a decent respect to the opinions of mankind requires"</span>
+                            <span class="s2">" that they should declare the causes which impel them to the"</span>
+                            <span class="s2">" separation."</span>
                         <span class="p">),</span>
                     <span class="p">},</span>
                 <span class="p">],</span>
             <span class="p">},</span>
             <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;marginLeft&quot;</span><span class="p">:</span> <span class="s2">&quot;30px&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;marginRight&quot;</span><span class="p">:</span> <span class="s2">&quot;30px&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;border&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"p"</span><span class="p">,</span>
+                <span class="s2">"marginLeft"</span><span class="p">:</span> <span class="s2">"30px"</span><span class="p">,</span>
+                <span class="s2">"marginRight"</span><span class="p">:</span> <span class="s2">"30px"</span><span class="p">,</span>
+                <span class="s2">"border"</span><span class="p">:</span> <span class="s2">"red"</span><span class="p">,</span>
+                <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">(</span>
-                            <span class="s2">&quot;We hold these truths to be self-evident, that all men are created&quot;</span>
-                            <span class="s2">&quot; equal, that they are endowed by their Creator with certain&quot;</span>
-                            <span class="s2">&quot; unalienable Rights, that among these are Life, Liberty and the&quot;</span>
-                            <span class="s2">&quot; pursuit of Happiness.&quot;</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                        <span class="s2">"text"</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="s2">"We hold these truths to be self-evident, that all men are created"</span>
+                            <span class="s2">" equal, that they are endowed by their Creator with certain"</span>
+                            <span class="s2">" unalienable Rights, that among these are Life, Liberty and the"</span>
+                            <span class="s2">" pursuit of Happiness."</span>
                         <span class="p">),</span>
                     <span class="p">},</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;ul&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"ul"</span><span class="p">,</span>
+                        <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span>
                             <span class="p">{</span>
-                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;li&quot;</span><span class="p">,</span>
-                                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"li"</span><span class="p">,</span>
+                                <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span>
                                     <span class="p">{</span>
-                                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">(</span>
-                                            <span class="s2">&quot;That to secure these rights, Governments are&quot;</span>
-                                            <span class="s2">&quot; instituted among Men, deriving their just powers from&quot;</span>
-                                            <span class="s2">&quot; the consent of the governed,&quot;</span>
+                                        <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                                        <span class="s2">"text"</span><span class="p">:</span> <span class="p">(</span>
+                                            <span class="s2">"That to secure these rights, Governments are"</span>
+                                            <span class="s2">" instituted among Men, deriving their just powers from"</span>
+                                            <span class="s2">" the consent of the governed,"</span>
                                         <span class="p">),</span>
                                     <span class="p">},</span>
                                 <span class="p">],</span>
                             <span class="p">},</span>
                             <span class="p">{</span>
-                                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;li&quot;</span><span class="p">,</span>
-                                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"li"</span><span class="p">,</span>
+                                <span class="s2">"children"</span><span class="p">:</span> <span class="p">[</span>
                                     <span class="p">{</span>
-                                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">(</span>
-                                            <span class="s2">&quot;That whenever any Form of Government becomes&quot;</span>
-                                            <span class="s2">&quot; destructive of these ends, it is the Right of the&quot;</span>
-                                            <span class="s2">&quot; People to alter or to abolish it, and to institute&quot;</span>
-                                            <span class="s2">&quot; new Government, laying its foundation on such&quot;</span>
-                                            <span class="s2">&quot; principles and organizing its powers in such form, as&quot;</span>
-                                            <span class="s2">&quot; to them shall seem most likely to effect their Safety&quot;</span>
-                                            <span class="s2">&quot; and Happiness.&quot;</span>
+                                        <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                                        <span class="s2">"text"</span><span class="p">:</span> <span class="p">(</span>
+                                            <span class="s2">"That whenever any Form of Government becomes"</span>
+                                            <span class="s2">" destructive of these ends, it is the Right of the"</span>
+                                            <span class="s2">" People to alter or to abolish it, and to institute"</span>
+                                            <span class="s2">" new Government, laying its foundation on such"</span>
+                                            <span class="s2">" principles and organizing its powers in such form, as"</span>
+                                            <span class="s2">" to them shall seem most likely to effect their Safety"</span>
+                                            <span class="s2">" and Happiness."</span>
                                         <span class="p">),</span>
                                     <span class="p">},</span>
                                 <span class="p">],</span>
@@ -2378,23 +2378,23 @@
                         <span class="p">],</span>
                     <span class="p">},</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">(</span>
-                            <span class="s2">&quot;Prudence, indeed, will dictate that Governments long established&quot;</span>
-                            <span class="s2">&quot; should not be changed for light and transient causes; and accordingly&quot;</span>
-                            <span class="s2">&quot; all experience hath shewn, that mankind are more disposed to suffer,&quot;</span>
-                            <span class="s2">&quot; while evils are sufferable, than to right themselves by abolishing&quot;</span>
-                            <span class="s2">&quot; the forms to which they are accustomed. But when a long train of&quot;</span>
-                            <span class="s2">&quot; abuses and usurpations, pursuing invariably the same Object evinces a&quot;</span>
-                            <span class="s2">&quot; design to reduce them under absolute Despotism, it is their right, it&quot;</span>
-                            <span class="s2">&quot; is their duty, to throw off such Government, and to provide new&quot;</span>
-                            <span class="s2">&quot; Guards for their future security.--Such has been the patient&quot;</span>
-                            <span class="s2">&quot; sufferance of these Colonies; and such is now the necessity which&quot;</span>
-                            <span class="s2">&quot; constrains them to alter their former Systems of Government. The&quot;</span>
-                            <span class="s2">&quot; history of the present King of Great Britain is a history of repeated&quot;</span>
-                            <span class="s2">&quot; injuries and usurpations, all having in direct object the&quot;</span>
-                            <span class="s2">&quot; establishment of an absolute Tyranny over these States. To prove&quot;</span>
-                            <span class="s2">&quot; this, let Facts be submitted to a candid world.&quot;</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                        <span class="s2">"text"</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="s2">"Prudence, indeed, will dictate that Governments long established"</span>
+                            <span class="s2">" should not be changed for light and transient causes; and accordingly"</span>
+                            <span class="s2">" all experience hath shewn, that mankind are more disposed to suffer,"</span>
+                            <span class="s2">" while evils are sufferable, than to right themselves by abolishing"</span>
+                            <span class="s2">" the forms to which they are accustomed. But when a long train of"</span>
+                            <span class="s2">" abuses and usurpations, pursuing invariably the same Object evinces a"</span>
+                            <span class="s2">" design to reduce them under absolute Despotism, it is their right, it"</span>
+                            <span class="s2">" is their duty, to throw off such Government, and to provide new"</span>
+                            <span class="s2">" Guards for their future security.--Such has been the patient"</span>
+                            <span class="s2">" sufferance of these Colonies; and such is now the necessity which"</span>
+                            <span class="s2">" constrains them to alter their former Systems of Government. The"</span>
+                            <span class="s2">" history of the present King of Great Britain is a history of repeated"</span>
+                            <span class="s2">" injuries and usurpations, all having in direct object the"</span>
+                            <span class="s2">" establishment of an absolute Tyranny over these States. To prove"</span>
+                            <span class="s2">" this, let Facts be submitted to a candid world."</span>
                         <span class="p">),</span>
                     <span class="p">},</span>
                 <span class="p">],</span>
@@ -2418,9 +2418,9 @@
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">from_html_to_kili</span><span class="p">(</span><span class="n">html</span><span class="p">:</span> <span class="n">BeautifulSoup</span><span class="p">):</span>
     <span class="n">styles</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;border&quot;</span><span class="p">:</span> <span class="s2">&quot;1px solid #333&quot;</span><span class="p">},</span>
-        <span class="s2">&quot;td&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;border&quot;</span><span class="p">:</span> <span class="s2">&quot;1px solid #333&quot;</span><span class="p">},</span>
-        <span class="s2">&quot;th&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;backgroundColor&quot;</span><span class="p">:</span> <span class="s2">&quot;#333&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#fff&quot;</span><span class="p">},</span>
+        <span class="s2">"table"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"border"</span><span class="p">:</span> <span class="s2">"1px solid #333"</span><span class="p">},</span>
+        <span class="s2">"td"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"border"</span><span class="p">:</span> <span class="s2">"1px solid #333"</span><span class="p">},</span>
+        <span class="s2">"th"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"backgroundColor"</span><span class="p">:</span> <span class="s2">"#333"</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"#fff"</span><span class="p">},</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">html</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2429,32 +2429,32 @@
     <span class="n">attributes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">styles</span><span class="p">[</span><span class="n">html</span><span class="o">.</span><span class="n">name</span><span class="p">])</span> <span class="k">if</span> <span class="n">html</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">styles</span> <span class="k">else</span> <span class="p">{}</span>
     <span class="n">children</span> <span class="o">=</span> <span class="p">[</span><span class="n">from_html_to_kili</span><span class="p">(</span><span class="n">child</span><span class="p">)</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">html</span><span class="o">.</span><span class="n">findChildren</span><span class="p">(</span><span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">children</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">html</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()})</span>
+        <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">random</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">:</span> <span class="n">html</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()})</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">children</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;children&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">children</span>
-        <span class="k">if</span> <span class="n">html</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;[document]&quot;</span><span class="p">:</span>
-            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">attributes</span><span class="p">[</span><span class="s2">"children"</span><span class="p">]</span> <span class="o">=</span> <span class="n">children</span>
+        <span class="k">if</span> <span class="n">html</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"[document]"</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">name</span>
     <span class="k">return</span> <span class="n">attributes</span>
 </code></pre></div>
 <p>Below is our html content to convert to Kili json content:</p>
-<div class="highlight"><pre><span></span><code><span class="n">html_doc</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">html_doc</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">&lt;table&gt;</span>
 <span class="s2">    &lt;thead&gt;</span>
 <span class="s2">        &lt;tr&gt;</span>
-<span class="s2">            &lt;th colspan=&quot;2&quot;&gt;The table header&lt;/th&gt;</span>
+<span class="s2">            &lt;th colspan="2"&gt;The table header&lt;/th&gt;</span>
 <span class="s2">        &lt;/tr&gt;</span>
 <span class="s2">    &lt;/thead&gt;</span>
 <span class="s2">    &lt;tbody&gt;</span>
 <span class="s2">        &lt;tr&gt;</span>
 <span class="s2">            &lt;td&gt;The table body&lt;/td&gt;</span>
-<span class="s2">            &lt;td border=&quot;1px solid #333&quot;&gt;with two columns&lt;/td&gt;</span>
+<span class="s2">            &lt;td border="1px solid #333"&gt;with two columns&lt;/td&gt;</span>
 <span class="s2">        &lt;/tr&gt;</span>
 <span class="s2">    &lt;/tbody&gt;</span>
 <span class="s2">&lt;/table&gt;</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 </code></pre></div>
 <p>Let's convert it using our custom method:</p>
-<div class="highlight"><pre><span></span><code><span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html_doc</span><span class="p">,</span> <span class="s2">&quot;html.parser&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html_doc</span><span class="p">,</span> <span class="s2">"html.parser"</span><span class="p">)</span>
 <span class="n">json_content</span> <span class="o">=</span> <span class="p">[</span><span class="n">from_html_to_kili</span><span class="p">(</span><span class="n">soup</span><span class="p">)]</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">json_content</span><span class="p">)</span>
 </code></pre></div>

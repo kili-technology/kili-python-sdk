@@ -2381,20 +2381,20 @@
 <p>In this mode, your GeoJSON features contain <code>kili</code> metadata in their properties, specifying the job, annotation type, and categories.</p>
 <p><strong>GeoJSON Structure:</strong>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FeatureCollection&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;features&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FeatureCollection"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"features"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feature&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;geometry&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Point&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;coordinates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">2.3522</span><span class="p">,</span><span class="w"> </span><span class="mf">48.8566</span><span class="p">]</span>
+<span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Feature"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"geometry"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Point"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"coordinates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">2.3522</span><span class="p">,</span><span class="w"> </span><span class="mf">48.8566</span><span class="p">]</span>
 <span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Eiffel Tower&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;kili&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;job&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LANDMARKS&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;marker&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;categories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TOWER&quot;</span><span class="p">}]</span>
+<span class="w">      </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Eiffel Tower"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"kili"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"job"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LANDMARKS"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"marker"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TOWER"</span><span class="p">}]</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
@@ -2404,13 +2404,13 @@
 <p><strong>Python Code:</strong>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 
-<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your_api_key&quot;</span><span class="p">)</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">"your_api_key"</span><span class="p">)</span>
 
 <span class="c1"># Mode 1: Import with kili properties already in GeoJSON</span>
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels_from_geojson_files</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span>
-    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">&quot;paris_satellite.tif&quot;</span><span class="p">,</span>
-    <span class="n">geojson_file_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;landmarks_with_kili_props.geojson&quot;</span><span class="p">]</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span>
+    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">"paris_satellite.tif"</span><span class="p">,</span>
+    <span class="n">geojson_file_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">"landmarks_with_kili_props.geojson"</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div></p>
 <h3 id="mode-2-specific-jobcategory-mapping">Mode 2: Specific Job/Category Mapping</h3>
@@ -2418,11 +2418,11 @@
 <p><strong>Python Code:</strong>
 <div class="highlight"><pre><span></span><code><span class="c1"># Mode 2: Map all features to specific jobs and categories</span>
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels_from_geojson_files</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span>
-    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">&quot;urban_area.jp2&quot;</span><span class="p">,</span>
-    <span class="n">geojson_file_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;roads.geojson&quot;</span><span class="p">,</span> <span class="s2">&quot;buildings.geojson&quot;</span><span class="p">,</span> <span class="s2">&quot;parks.geojson&quot;</span><span class="p">],</span>
-    <span class="n">job_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;INFRASTRUCTURE&quot;</span><span class="p">,</span> <span class="s2">&quot;BUILDINGS&quot;</span><span class="p">,</span> <span class="s2">&quot;VEGETATION&quot;</span><span class="p">],</span>
-    <span class="n">category_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ROAD&quot;</span><span class="p">,</span> <span class="s2">&quot;RESIDENTIAL&quot;</span><span class="p">,</span> <span class="s2">&quot;PARK&quot;</span><span class="p">]</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span>
+    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">"urban_area.jp2"</span><span class="p">,</span>
+    <span class="n">geojson_file_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">"roads.geojson"</span><span class="p">,</span> <span class="s2">"buildings.geojson"</span><span class="p">,</span> <span class="s2">"parks.geojson"</span><span class="p">],</span>
+    <span class="n">job_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"INFRASTRUCTURE"</span><span class="p">,</span> <span class="s2">"BUILDINGS"</span><span class="p">,</span> <span class="s2">"VEGETATION"</span><span class="p">],</span>
+    <span class="n">category_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"ROAD"</span><span class="p">,</span> <span class="s2">"RESIDENTIAL"</span><span class="p">,</span> <span class="s2">"PARK"</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div></p>
 <h3 id="mode-3-automatic-mapping">Mode 3: Automatic Mapping</h3>
@@ -2437,9 +2437,9 @@
 <p><strong>Python Code:</strong>
 <div class="highlight"><pre><span></span><code><span class="c1"># Mode 3: Automatic mapping based on geometry types</span>
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels_from_geojson_files</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span>
-    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">&quot;geographic_data.tif&quot;</span><span class="p">,</span>
-    <span class="n">geojson_file_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mixed_features.geojson&quot;</span><span class="p">]</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span>
+    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">"geographic_data.tif"</span><span class="p">,</span>
+    <span class="n">geojson_file_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">"mixed_features.geojson"</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div></p>
 <h2 id="detailed-examples">Detailed Examples</h2>
@@ -2447,54 +2447,54 @@
 <p>This example shows how to import a GeoJSON file containing different geometry types with kili properties:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
 
-<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your_api_key&quot;</span><span class="p">)</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">"your_api_key"</span><span class="p">)</span>
 
 <span class="c1"># Create a sample GeoJSON with mixed geometries</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
 <span class="n">geojson_data</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;FeatureCollection&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"FeatureCollection"</span><span class="p">,</span>
+    <span class="s2">"features"</span><span class="p">:</span> <span class="p">[</span>
         <span class="c1"># Point annotation</span>
         <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Feature&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;geometry&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Point&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">73.985428</span><span class="p">,</span> <span class="mf">40.758896</span><span class="p">]</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Feature"</span><span class="p">,</span>
+            <span class="s2">"geometry"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Point"</span><span class="p">,</span>
+                <span class="s2">"coordinates"</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">73.985428</span><span class="p">,</span> <span class="mf">40.758896</span><span class="p">]</span>
             <span class="p">},</span>
-            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;kili&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;job&quot;</span><span class="p">:</span> <span class="s2">&quot;POI_DETECTION&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;marker&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;LANDMARK&quot;</span><span class="p">}]</span>
+            <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"kili"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"job"</span><span class="p">:</span> <span class="s2">"POI_DETECTION"</span><span class="p">,</span>
+                    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"marker"</span><span class="p">,</span>
+                    <span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"LANDMARK"</span><span class="p">}]</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="c1"># LineString annotation</span>
         <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Feature&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;geometry&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;LineString&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Feature"</span><span class="p">,</span>
+            <span class="s2">"geometry"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"LineString"</span><span class="p">,</span>
+                <span class="s2">"coordinates"</span><span class="p">:</span> <span class="p">[</span>
                     <span class="p">[</span><span class="o">-</span><span class="mf">73.985</span><span class="p">,</span> <span class="mf">40.758</span><span class="p">],</span>
                     <span class="p">[</span><span class="o">-</span><span class="mf">73.983</span><span class="p">,</span> <span class="mf">40.760</span><span class="p">],</span>
                     <span class="p">[</span><span class="o">-</span><span class="mf">73.981</span><span class="p">,</span> <span class="mf">40.762</span><span class="p">]</span>
                 <span class="p">]</span>
             <span class="p">},</span>
-            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;kili&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;job&quot;</span><span class="p">:</span> <span class="s2">&quot;ROAD_MAPPING&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;polyline&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;HIGHWAY&quot;</span><span class="p">}]</span>
+            <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"kili"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"job"</span><span class="p">:</span> <span class="s2">"ROAD_MAPPING"</span><span class="p">,</span>
+                    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"polyline"</span><span class="p">,</span>
+                    <span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"HIGHWAY"</span><span class="p">}]</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="c1"># Polygon annotation</span>
         <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Feature&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;geometry&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Polygon&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">[[</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Feature"</span><span class="p">,</span>
+            <span class="s2">"geometry"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Polygon"</span><span class="p">,</span>
+                <span class="s2">"coordinates"</span><span class="p">:</span> <span class="p">[[</span>
                     <span class="p">[</span><span class="o">-</span><span class="mf">73.980</span><span class="p">,</span> <span class="mf">40.755</span><span class="p">],</span>
                     <span class="p">[</span><span class="o">-</span><span class="mf">73.978</span><span class="p">,</span> <span class="mf">40.755</span><span class="p">],</span>
                     <span class="p">[</span><span class="o">-</span><span class="mf">73.978</span><span class="p">,</span> <span class="mf">40.757</span><span class="p">],</span>
@@ -2502,11 +2502,11 @@
                     <span class="p">[</span><span class="o">-</span><span class="mf">73.980</span><span class="p">,</span> <span class="mf">40.755</span><span class="p">]</span>
                 <span class="p">]]</span>
             <span class="p">},</span>
-            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;kili&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;job&quot;</span><span class="p">:</span> <span class="s2">&quot;ZONE_DETECTION&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;semantic&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;COMMERCIAL_AREA&quot;</span><span class="p">}]</span>
+            <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"kili"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"job"</span><span class="p">:</span> <span class="s2">"ZONE_DETECTION"</span><span class="p">,</span>
+                    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"semantic"</span><span class="p">,</span>
+                    <span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"COMMERCIAL_AREA"</span><span class="p">}]</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -2514,36 +2514,36 @@
 <span class="p">}</span>
 
 <span class="c1"># Save to file</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;mixed_annotations.geojson&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"mixed_annotations.geojson"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">geojson_data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
 <span class="c1"># Import into Kili</span>
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels_from_geojson_files</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span>
-    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">&quot;manhattan_satellite.tif&quot;</span><span class="p">,</span>
-    <span class="n">geojson_file_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mixed_annotations.geojson&quot;</span><span class="p">]</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span>
+    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">"manhattan_satellite.tif"</span><span class="p">,</span>
+    <span class="n">geojson_file_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">"mixed_annotations.geojson"</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="example-2-batch-import-with-specific-mapping">Example 2: Batch Import with Specific Mapping</h3>
 <p>This example demonstrates importing multiple GeoJSON files with specific job/category mappings:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Import different infrastructure types</span>
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels_from_geojson_files</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;city_planning_project&quot;</span><span class="p">,</span>
-    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">&quot;city_orthophoto_2024.tif&quot;</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="s2">"city_planning_project"</span><span class="p">,</span>
+    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">"city_orthophoto_2024.tif"</span><span class="p">,</span>
     <span class="n">geojson_file_paths</span><span class="o">=</span><span class="p">[</span>
-        <span class="s2">&quot;water_infrastructure.geojson&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;power_lines.geojson&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;green_spaces.geojson&quot;</span>
+        <span class="s2">"water_infrastructure.geojson"</span><span class="p">,</span>
+        <span class="s2">"power_lines.geojson"</span><span class="p">,</span>
+        <span class="s2">"green_spaces.geojson"</span>
     <span class="p">],</span>
     <span class="n">job_names</span><span class="o">=</span><span class="p">[</span>
-        <span class="s2">&quot;WATER_INFRASTRUCTURE&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;ELECTRICAL_GRID&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;URBAN_VEGETATION&quot;</span>
+        <span class="s2">"WATER_INFRASTRUCTURE"</span><span class="p">,</span>
+        <span class="s2">"ELECTRICAL_GRID"</span><span class="p">,</span>
+        <span class="s2">"URBAN_VEGETATION"</span>
     <span class="p">],</span>
     <span class="n">category_names</span><span class="o">=</span><span class="p">[</span>
-        <span class="s2">&quot;WATER_PIPELINE&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;HIGH_VOLTAGE_LINE&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;PUBLIC_PARK&quot;</span>
+        <span class="s2">"WATER_PIPELINE"</span><span class="p">,</span>
+        <span class="s2">"HIGH_VOLTAGE_LINE"</span><span class="p">,</span>
+        <span class="s2">"PUBLIC_PARK"</span>
     <span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2551,13 +2551,13 @@
 <p>MultiPolygon features are useful for representing discontinuous areas:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Create a GeoJSON with MultiPolygon for forest patches</span>
 <span class="n">forest_patches</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;FeatureCollection&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"FeatureCollection"</span><span class="p">,</span>
+    <span class="s2">"features"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Feature&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;geometry&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;MultiPolygon&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Feature"</span><span class="p">,</span>
+            <span class="s2">"geometry"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"MultiPolygon"</span><span class="p">,</span>
+                <span class="s2">"coordinates"</span><span class="p">:</span> <span class="p">[</span>
                     <span class="c1"># First forest patch</span>
                     <span class="p">[[</span>
                         <span class="p">[</span><span class="mf">2.10</span><span class="p">,</span> <span class="mf">48.80</span><span class="p">],</span>
@@ -2576,11 +2576,11 @@
                     <span class="p">]]</span>
                 <span class="p">]</span>
             <span class="p">},</span>
-            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;kili&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;job&quot;</span><span class="p">:</span> <span class="s2">&quot;LAND_COVER&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;semantic&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;DECIDUOUS_FOREST&quot;</span><span class="p">}]</span>
+            <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"kili"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"job"</span><span class="p">:</span> <span class="s2">"LAND_COVER"</span><span class="p">,</span>
+                    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"semantic"</span><span class="p">,</span>
+                    <span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"DECIDUOUS_FOREST"</span><span class="p">}]</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -2588,13 +2588,13 @@
 <span class="p">}</span>
 
 <span class="c1"># Save and import</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;forest_patches.geojson&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"forest_patches.geojson"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">forest_patches</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels_from_geojson_files</span><span class="p">(</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;environmental_monitoring&quot;</span><span class="p">,</span>
-    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">&quot;sentinel2_composite.tif&quot;</span><span class="p">,</span>
-    <span class="n">geojson_file_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;forest_patches.geojson&quot;</span><span class="p">]</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="s2">"environmental_monitoring"</span><span class="p">,</span>
+    <span class="n">asset_external_id</span><span class="o">=</span><span class="s2">"sentinel2_composite.tif"</span><span class="p">,</span>
+    <span class="n">geojson_file_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">"forest_patches.geojson"</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="best-practices">Best Practices</h2>
@@ -2605,8 +2605,8 @@
 <li>
 <p><strong>Check Job Compatibility</strong>: Ensure your Kili project has jobs with the appropriate tools for your geometry types:
    <div class="highlight"><pre><span></span><code><span class="c1"># Check project structure</span>
-<span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;jsonInterface&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">project</span><span class="p">[</span><span class="s2">&quot;jsonInterface&quot;</span><span class="p">][</span><span class="s2">&quot;jobs&quot;</span><span class="p">],</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"jsonInterface"</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">project</span><span class="p">[</span><span class="s2">"jsonInterface"</span><span class="p">][</span><span class="s2">"jobs"</span><span class="p">],</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 </code></pre></div></p>
 </li>
 </ol>
@@ -2617,9 +2617,9 @@
 <li>
 <p><strong>Incompatible geometry-job combination</strong>:
    <div class="highlight"><pre><span></span><code><span class="c1"># Check which tools are available for each job</span>
-<span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;jsonInterface&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">job_config</span> <span class="ow">in</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;jsonInterface&quot;</span><span class="p">][</span><span class="s2">&quot;jobs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">job_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">job_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tools&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">[])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"jsonInterface"</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">job_config</span> <span class="ow">in</span> <span class="n">project</span><span class="p">[</span><span class="s2">"jsonInterface"</span><span class="p">][</span><span class="s2">"jobs"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">job_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">job_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'tools'</span><span class="p">,</span><span class="w"> </span><span class="p">[])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></p>
 </li>
 <li>
@@ -2629,9 +2629,9 @@
 <h3 id="problem-valueerror-for-missing-job-or-category">Problem: ValueError for Missing Job or Category</h3>
 <p><strong>Solution</strong>: Verify exact names in your project:
 <div class="highlight"><pre><span></span><code><span class="c1"># List all jobs and categories</span>
-<span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;your_project_id&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;jsonInterface&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">job_config</span> <span class="ow">in</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;jsonInterface&quot;</span><span class="p">][</span><span class="s2">&quot;jobs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="n">categories</span> <span class="o">=</span> <span class="n">job_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">projects</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">"your_project_id"</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"jsonInterface"</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">job_config</span> <span class="ow">in</span> <span class="n">project</span><span class="p">[</span><span class="s2">"jsonInterface"</span><span class="p">][</span><span class="s2">"jobs"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="n">job_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"content"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"categories"</span><span class="p">,</span> <span class="p">{})</span>
 </code></pre></div></p>
 
 

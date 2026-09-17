@@ -2428,17 +2428,17 @@
     <span class="c1"># Do something...</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom plugin&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Custom plugin"""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">custom_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Do something...</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Review action&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Dedicated handler for Review action"""</span>
         <span class="c1"># Do something...</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Submit action&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Dedicated handler for Submit action"""</span>
         <span class="c1"># Do something...</span>
 </code></pre></div>
 <div class="admonition note">
@@ -2459,15 +2459,15 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">kili.plugins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PluginCore</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">custom_function</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">):</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Custom function called&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Custom function called"</span><span class="p">)</span>
     <span class="c1"># Do something...</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom plugin&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Custom plugin"""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dedicated handler for Submit action&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;On Submit called&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">"""Dedicated handler for Submit action"""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"On Submit called"</span><span class="p">)</span>
         <span class="n">custom_function</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="model-for-plugins">Model for Plugins</h2>
@@ -2519,7 +2519,7 @@ on_event(self, payload: Dict)
         <details class="quote">
           <summary>Source code in <code>kili/services/plugins/model.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PluginCore</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kili Plugin core class.</span>
+<span class="w">    </span><span class="sd">"""Kili Plugin core class.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        kili: kili instance that plugins can make use of</span>
@@ -2535,7 +2535,7 @@ on_event(self, payload: Dict)
 
 <span class="sd">    !!! warning</span>
 <span class="sd">        if using a custom init, be sure to call super().__init__()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span>
     <span class="n">kili</span><span class="p">:</span> <span class="n">Kili</span>
@@ -2556,7 +2556,7 @@ on_event(self, payload: Dict)
         <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handler for the submit action, triggered when a default label is submitted into Kili.</span>
+<span class="w">        </span><span class="sd">"""Handler for the submit action, triggered when a default label is submitted into Kili.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            label: Label submitted to Kili: a dictionary containing the following fields:</span>
@@ -2570,22 +2570,22 @@ on_event(self, payload: Dict)
 <span class="sd">        !!! example</span>
 <span class="sd">            ```python</span>
 <span class="sd">            def on_submit(self, label: Dict, asset_id: str):</span>
-<span class="sd">                json_response = label.get(&#39;jsonResponse&#39;)</span>
+<span class="sd">                json_response = label.get('jsonResponse')</span>
 <span class="sd">                if label_is_respecting_business_rule(json_response):</span>
 <span class="sd">                    return</span>
 <span class="sd">                else:</span>
 <span class="sd">                    self.kili.send_back_to_queue(asset_ids=[asset_id])</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># pylint: disable=unused-argument</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Method not implemented. Define a custom on_submit on your plugin&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Method not implemented. Define a custom on_submit on your plugin"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_review</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handler for the review action, triggered when a default label is reviewed on Kili.</span>
+<span class="w">        </span><span class="sd">"""Handler for the review action, triggered when a default label is reviewed on Kili.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            label: Label submitted to Kili: a dictionary containing the following fields:</span>
@@ -2599,22 +2599,22 @@ on_event(self, payload: Dict)
 <span class="sd">        !!! example</span>
 <span class="sd">            ```python</span>
 <span class="sd">            def on_review(self, label: Dict, asset_id: str):</span>
-<span class="sd">                json_response = label.get(&#39;jsonResponse&#39;)</span>
+<span class="sd">                json_response = label.get('jsonResponse')</span>
 <span class="sd">                if label_is_respecting_business_rule(json_response):</span>
 <span class="sd">                    return</span>
 <span class="sd">                else:</span>
 <span class="sd">                    self.kili.send_back_to_queue(asset_ids=[asset_id])</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># pylint: disable=unused-argument</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Method not implemented. Define a custom on_review on your plugin&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Method not implemented. Define a custom on_review on your plugin"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_custom_interface_click</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handler for the custom interface click action.</span>
+<span class="w">        </span><span class="sd">"""Handler for the custom interface click action.</span>
 
 <span class="sd">        !!! warning</span>
 <span class="sd">            This handler is in beta and is still in active development,</span>
@@ -2628,8 +2628,8 @@ on_event(self, payload: Dict)
 <span class="sd">        !!! example</span>
 <span class="sd">            ```python</span>
 <span class="sd">            def on_custom_interface_click(self, label: Dict, asset_id: str):</span>
-<span class="sd">                json_response = label.get(&#39;jsonResponse&#39;)`</span>
-<span class="sd">                label_id = label.get(&#39;id&#39;)</span>
+<span class="sd">                json_response = label.get('jsonResponse')`</span>
+<span class="sd">                label_id = label.get('id')</span>
 <span class="sd">                issue = label_is_respecting_business_rule(json_response)</span>
 <span class="sd">                if !issue:</span>
 <span class="sd">                    return</span>
@@ -2640,15 +2640,15 @@ on_event(self, payload: Dict)
 <span class="sd">                            text_array=[issue]</span>
 <span class="sd">                        )</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># pylint: disable=unused-argument</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Handler is in active development.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Handler is in active development."</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_send_back_to_queue</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handler for send back to queue.</span>
+<span class="w">        </span><span class="sd">"""Handler for send back to queue.</span>
 
 <span class="sd">        Triggered when an asset is sent back to queue</span>
 
@@ -2662,23 +2662,23 @@ on_event(self, payload: Dict)
 <span class="sd">        !!! example</span>
 <span class="sd">            ```python</span>
 <span class="sd">            def on_send_back_to_queue(self, asset_id: str):</span>
-<span class="sd">                self.logger.info(f&quot;Asset {asset_id} was sent back to queue&quot;)</span>
+<span class="sd">                self.logger.info(f"Asset {asset_id} was sent back to queue")</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># pylint: disable=unused-argument</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Handler is in active development.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Handler is in active development."</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_event</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handler for all events, triggered when an event is triggered.</span>
+<span class="w">        </span><span class="sd">"""Handler for all events, triggered when an event is triggered.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            payload: Dict.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># pylint: disable=unused-argument</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Method not implemented. Define a custom on_event on your plugin&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Method not implemented. Define a custom on_event on your plugin"</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -2741,8 +2741,8 @@ it should be used with caution.</p>
 </table>      <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_custom_interface_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">json_response</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jsonResponse&#39;</span><span class="p">)</span><span class="err">`</span>
-    <span class="n">label_id</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+    <span class="n">json_response</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'jsonResponse'</span><span class="p">)</span><span class="err">`</span>
+    <span class="n">label_id</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'id'</span><span class="p">)</span>
     <span class="n">issue</span> <span class="o">=</span> <span class="n">label_is_respecting_business_rule</span><span class="p">(</span><span class="n">json_response</span><span class="p">)</span>
     <span class="k">if</span> <span class="err">!</span><span class="n">issue</span><span class="p">:</span>
         <span class="k">return</span>
@@ -2762,7 +2762,7 @@ it should be used with caution.</p>
     <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handler for the custom interface click action.</span>
+<span class="w">    </span><span class="sd">"""Handler for the custom interface click action.</span>
 
 <span class="sd">    !!! warning</span>
 <span class="sd">        This handler is in beta and is still in active development,</span>
@@ -2776,8 +2776,8 @@ it should be used with caution.</p>
 <span class="sd">    !!! example</span>
 <span class="sd">        ```python</span>
 <span class="sd">        def on_custom_interface_click(self, label: Dict, asset_id: str):</span>
-<span class="sd">            json_response = label.get(&#39;jsonResponse&#39;)`</span>
-<span class="sd">            label_id = label.get(&#39;id&#39;)</span>
+<span class="sd">            json_response = label.get('jsonResponse')`</span>
+<span class="sd">            label_id = label.get('id')</span>
 <span class="sd">            issue = label_is_respecting_business_rule(json_response)</span>
 <span class="sd">            if !issue:</span>
 <span class="sd">                return</span>
@@ -2788,9 +2788,9 @@ it should be used with caution.</p>
 <span class="sd">                        text_array=[issue]</span>
 <span class="sd">                    )</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># pylint: disable=unused-argument</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Handler is in active development.&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Handler is in active development."</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2838,13 +2838,13 @@ it should be used with caution.</p>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handler for all events, triggered when an event is triggered.</span>
+<span class="w">    </span><span class="sd">"""Handler for all events, triggered when an event is triggered.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        payload: Dict.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># pylint: disable=unused-argument</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Method not implemented. Define a custom on_event on your plugin&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Method not implemented. Define a custom on_event on your plugin"</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2899,7 +2899,7 @@ technical fields: <code>createdAt</code>, <code>updatedAt</code>, <code>version<
 </table>      <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">json_response</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jsonResponse&#39;</span><span class="p">)</span>
+    <span class="n">json_response</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'jsonResponse'</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">label_is_respecting_business_rule</span><span class="p">(</span><span class="n">json_response</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="k">else</span><span class="p">:</span>
@@ -2914,7 +2914,7 @@ technical fields: <code>createdAt</code>, <code>updatedAt</code>, <code>version<
     <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handler for the review action, triggered when a default label is reviewed on Kili.</span>
+<span class="w">    </span><span class="sd">"""Handler for the review action, triggered when a default label is reviewed on Kili.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        label: Label submitted to Kili: a dictionary containing the following fields:</span>
@@ -2928,15 +2928,15 @@ technical fields: <code>createdAt</code>, <code>updatedAt</code>, <code>version<
 <span class="sd">    !!! example</span>
 <span class="sd">        ```python</span>
 <span class="sd">        def on_review(self, label: Dict, asset_id: str):</span>
-<span class="sd">            json_response = label.get(&#39;jsonResponse&#39;)</span>
+<span class="sd">            json_response = label.get('jsonResponse')</span>
 <span class="sd">            if label_is_respecting_business_rule(json_response):</span>
 <span class="sd">                return</span>
 <span class="sd">            else:</span>
 <span class="sd">                self.kili.send_back_to_queue(asset_ids=[asset_id])</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># pylint: disable=unused-argument</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Method not implemented. Define a custom on_review on your plugin&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Method not implemented. Define a custom on_review on your plugin"</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -2986,7 +2986,7 @@ it should be used with caution.</p>
 </table>      <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_send_back_to_queue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Asset </span><span class="si">{</span><span class="n">asset_id</span><span class="si">}</span><span class="s2"> was sent back to queue&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Asset </span><span class="si">{</span><span class="n">asset_id</span><span class="si">}</span><span class="s2"> was sent back to queue"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 
@@ -2996,7 +2996,7 @@ it should be used with caution.</p>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handler for send back to queue.</span>
+<span class="w">    </span><span class="sd">"""Handler for send back to queue.</span>
 
 <span class="sd">    Triggered when an asset is sent back to queue</span>
 
@@ -3010,11 +3010,11 @@ it should be used with caution.</p>
 <span class="sd">    !!! example</span>
 <span class="sd">        ```python</span>
 <span class="sd">        def on_send_back_to_queue(self, asset_id: str):</span>
-<span class="sd">            self.logger.info(f&quot;Asset {asset_id} was sent back to queue&quot;)</span>
+<span class="sd">            self.logger.info(f"Asset {asset_id} was sent back to queue")</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># pylint: disable=unused-argument</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Handler is in active development.&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Handler is in active development."</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -3069,7 +3069,7 @@ it should be used with caution.</p>
 </table>      <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">json_response</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jsonResponse&#39;</span><span class="p">)</span>
+    <span class="n">json_response</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'jsonResponse'</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">label_is_respecting_business_rule</span><span class="p">(</span><span class="n">json_response</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="k">else</span><span class="p">:</span>
@@ -3084,7 +3084,7 @@ it should be used with caution.</p>
     <span class="n">label</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">asset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handler for the submit action, triggered when a default label is submitted into Kili.</span>
+<span class="w">    </span><span class="sd">"""Handler for the submit action, triggered when a default label is submitted into Kili.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        label: Label submitted to Kili: a dictionary containing the following fields:</span>
@@ -3098,15 +3098,15 @@ it should be used with caution.</p>
 <span class="sd">    !!! example</span>
 <span class="sd">        ```python</span>
 <span class="sd">        def on_submit(self, label: Dict, asset_id: str):</span>
-<span class="sd">            json_response = label.get(&#39;jsonResponse&#39;)</span>
+<span class="sd">            json_response = label.get('jsonResponse')</span>
 <span class="sd">            if label_is_respecting_business_rule(json_response):</span>
 <span class="sd">                return</span>
 <span class="sd">            else:</span>
 <span class="sd">                self.kili.send_back_to_queue(asset_ids=[asset_id])</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># pylint: disable=unused-argument</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Method not implemented. Define a custom on_submit on your plugin&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Method not implemented. Define a custom on_submit on your plugin"</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -3135,9 +3135,9 @@ it should be used with caution.</p>
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/queries/plugins/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"__init__"</span><span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">QueriesPlugins</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Plugins queries.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Set of Plugins queries."""</span>
 
     <span class="c1"># pylint: disable=too-many-arguments</span>
 
@@ -3150,11 +3150,11 @@ it should be used with caution.</p>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get paginated build errors of a plugin.</span>
+<span class="w">        </span><span class="sd">"""Get paginated build errors of a plugin.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            plugin_name: Name of the plugin</span>
-<span class="sd">            start_date: Datetime used to get the build errors from, if not provided, it will be the plugin&#39;s creation date</span>
+<span class="sd">            start_date: Datetime used to get the build errors from, if not provided, it will be the plugin's creation date</span>
 <span class="sd">            limit: Limit for pagination, if not provided, it will be 100</span>
 <span class="sd">            skip: Skip for pagination, if not provided, it will be 0</span>
 <span class="sd">        Returns:</span>
@@ -3162,8 +3162,8 @@ it should be used with caution.</p>
 <span class="sd">                or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.get_plugin_build_errors(plugin_name=&quot;my_plugin_name&quot;, start_date=&quot;1970/01/01&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.get_plugin_build_errors(plugin_name="my_plugin_name", start_date="1970/01/01")</span>
+<span class="sd">        """</span>
         <span class="n">where</span> <span class="o">=</span> <span class="n">PluginBuildErrorsWhere</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">)</span>
         <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span>
             <span class="n">first</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span>
@@ -3182,12 +3182,12 @@ it should be used with caution.</p>
         <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get paginated logs of a plugin on a project.</span>
+<span class="w">        </span><span class="sd">"""Get paginated logs of a plugin on a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Identifier of the project</span>
 <span class="sd">            plugin_name: Name of the plugin</span>
-<span class="sd">            start_date: Datetime used to get the logs from, if not provided, it will be the plugin&#39;s creation date</span>
+<span class="sd">            start_date: Datetime used to get the logs from, if not provided, it will be the plugin's creation date</span>
 <span class="sd">            limit: Limit for pagination, if not provided, it will be 100</span>
 <span class="sd">            skip: Skip for pagination, if not provided, it will be 0</span>
 <span class="sd">        Returns:</span>
@@ -3195,8 +3195,8 @@ it should be used with caution.</p>
 <span class="sd">                or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.get_plugin_logs(project_id=&quot;my_project_id&quot;, plugin_name=&quot;my_plugin_name&quot;, start_date=&quot;1970/01/01&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.get_plugin_logs(project_id="my_project_id", plugin_name="my_plugin_name", start_date="1970/01/01")</span>
+<span class="sd">        """</span>
         <span class="n">where</span> <span class="o">=</span> <span class="n">PluginLogsWhere</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span>
         <span class="p">)</span>
@@ -3212,7 +3212,7 @@ it should be used with caution.</p>
         <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update a plugin with new code.</span>
+<span class="w">        </span><span class="sd">"""Update a plugin with new code.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            plugin_name: Name of the plugin</span>
@@ -3222,11 +3222,11 @@ it should be used with caution.</p>
 <span class="sd">            The status of the plugin if query was successful or an error message otherwise.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.get_plugin_status(plugin_name=&quot;my_plugin_name&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.get_plugin_status(plugin_name="my_plugin_name")</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
-            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">""</span><span class="p">,</span>
             <span class="n">plugin_name</span><span class="p">,</span>
             <span class="n">verbose</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">,</span>
@@ -3236,10 +3236,10 @@ it should be used with caution.</p>
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">list_plugins</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;projectIds&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;updatedAt&quot;</span><span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"projectIds"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"createdAt"</span><span class="p">,</span> <span class="s2">"updatedAt"</span><span class="p">),</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List all plugins from your organization.</span>
+<span class="w">        </span><span class="sd">"""List all plugins from your organization.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the plugins</span>
@@ -3251,8 +3251,8 @@ it should be used with caution.</p>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.list_plugins()</span>
-<span class="sd">            &gt;&gt;&gt; kili.list_plugins(fields=[&#39;name&#39;])</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.list_plugins(fields=['name'])</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3337,7 +3337,7 @@ it should be used with caution.</p>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">get_plugin_build_errors</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">&quot;my_plugin_name&quot;</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;1970/01/01&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">get_plugin_build_errors</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">"my_plugin_name"</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">"1970/01/01"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -3350,11 +3350,11 @@ it should be used with caution.</p>
     <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get paginated build errors of a plugin.</span>
+<span class="w">    </span><span class="sd">"""Get paginated build errors of a plugin.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        plugin_name: Name of the plugin</span>
-<span class="sd">        start_date: Datetime used to get the build errors from, if not provided, it will be the plugin&#39;s creation date</span>
+<span class="sd">        start_date: Datetime used to get the build errors from, if not provided, it will be the plugin's creation date</span>
 <span class="sd">        limit: Limit for pagination, if not provided, it will be 100</span>
 <span class="sd">        skip: Skip for pagination, if not provided, it will be 0</span>
 <span class="sd">    Returns:</span>
@@ -3362,8 +3362,8 @@ it should be used with caution.</p>
 <span class="sd">            or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.get_plugin_build_errors(plugin_name=&quot;my_plugin_name&quot;, start_date=&quot;1970/01/01&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.get_plugin_build_errors(plugin_name="my_plugin_name", start_date="1970/01/01")</span>
+<span class="sd">    """</span>
     <span class="n">where</span> <span class="o">=</span> <span class="n">PluginBuildErrorsWhere</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">)</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span>
         <span class="n">first</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span>
@@ -3454,7 +3454,7 @@ it should be used with caution.</p>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">get_plugin_logs</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;my_project_id&quot;</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="s2">&quot;my_plugin_name&quot;</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;1970/01/01&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">get_plugin_logs</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="s2">"my_project_id"</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="s2">"my_plugin_name"</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">"1970/01/01"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -3467,12 +3467,12 @@ it should be used with caution.</p>
     <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
     <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get paginated logs of a plugin on a project.</span>
+<span class="w">    </span><span class="sd">"""Get paginated logs of a plugin on a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Identifier of the project</span>
 <span class="sd">        plugin_name: Name of the plugin</span>
-<span class="sd">        start_date: Datetime used to get the logs from, if not provided, it will be the plugin&#39;s creation date</span>
+<span class="sd">        start_date: Datetime used to get the logs from, if not provided, it will be the plugin's creation date</span>
 <span class="sd">        limit: Limit for pagination, if not provided, it will be 100</span>
 <span class="sd">        skip: Skip for pagination, if not provided, it will be 0</span>
 <span class="sd">    Returns:</span>
@@ -3480,8 +3480,8 @@ it should be used with caution.</p>
 <span class="sd">            or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.get_plugin_logs(project_id=&quot;my_project_id&quot;, plugin_name=&quot;my_plugin_name&quot;, start_date=&quot;1970/01/01&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.get_plugin_logs(project_id="my_project_id", plugin_name="my_plugin_name", start_date="1970/01/01")</span>
+<span class="sd">    """</span>
     <span class="n">where</span> <span class="o">=</span> <span class="n">PluginLogsWhere</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="n">plugin_name</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span>
     <span class="p">)</span>
@@ -3553,7 +3553,7 @@ it should be used with caution.</p>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">get_plugin_status</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">&quot;my_plugin_name&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">get_plugin_status</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">"my_plugin_name"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -3563,7 +3563,7 @@ it should be used with caution.</p>
     <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update a plugin with new code.</span>
+<span class="w">    </span><span class="sd">"""Update a plugin with new code.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        plugin_name: Name of the plugin</span>
@@ -3573,11 +3573,11 @@ it should be used with caution.</p>
 <span class="sd">        The status of the plugin if query was successful or an error message otherwise.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.get_plugin_status(plugin_name=&quot;my_plugin_name&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.get_plugin_status(plugin_name="my_plugin_name")</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
-        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">,</span>
         <span class="n">plugin_name</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">,</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">,</span>
@@ -3596,7 +3596,7 @@ it should be used with caution.</p>
 
 
 <h3 id="kili.entrypoints.queries.plugins.__init__.QueriesPlugins.list_plugins" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">list_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;projectIds&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;createdAt&#39;</span><span class="p">,</span> <span class="s1">&#39;updatedAt&#39;</span><span class="p">))</span></code>
+<code class="highlight language-python"><span class="n">list_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'name'</span><span class="p">,</span> <span class="s1">'projectIds'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'createdAt'</span><span class="p">,</span> <span class="s1">'updatedAt'</span><span class="p">))</span></code>
 
 
 </h3>
@@ -3643,17 +3643,17 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 </table>
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">list_plugins</span><span class="p">()</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">list_plugins</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">list_plugins</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">'name'</span><span class="p">])</span>
 </code></pre></div>
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/queries/plugins/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_plugins</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;projectIds&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;updatedAt&quot;</span><span class="p">),</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"projectIds"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"createdAt"</span><span class="p">,</span> <span class="s2">"updatedAt"</span><span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;List all plugins from your organization.</span>
+<span class="w">    </span><span class="sd">"""List all plugins from your organization.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the plugins</span>
@@ -3665,8 +3665,8 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.list_plugins()</span>
-<span class="sd">        &gt;&gt;&gt; kili.list_plugins(fields=[&#39;name&#39;])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.list_plugins(fields=['name'])</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">PluginQuery</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_client</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3696,9 +3696,9 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/plugins/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"__init__"</span><span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MutationsPlugins</span><span class="p">(</span><span class="n">BaseOperationEntrypointMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of Plugins mutations.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Set of Plugins mutations."""</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">upload_plugin</span><span class="p">(</span>
@@ -3709,7 +3709,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
         <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LiteralString</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Uploads a plugin.</span>
+<span class="w">        </span><span class="sd">"""Uploads a plugin.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            plugin_path: Path to your plugin. Either:</span>
@@ -3724,17 +3724,17 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 <span class="sd">            A string which indicates if the mutation was successful, or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.upload_plugin(plugin_path=&quot;./path/to/my/folder&quot;)</span>
-<span class="sd">            &gt;&gt;&gt; kili.upload_plugin(plugin_path=&quot;./path/to/my/file.py&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">):</span>
+<span class="sd">            &gt;&gt;&gt; kili.upload_plugin(plugin_path="./path/to/my/folder")</span>
+<span class="sd">            &gt;&gt;&gt; kili.upload_plugin(plugin_path="./path/to/my/file.py")</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"file_path"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s1">&#39;&quot;file_path&quot; has been deprecated for &quot;plugin_path&quot;, please use &quot;plugin_path&quot;&#39;</span>
-                <span class="s2">&quot; instead&quot;</span>
+                <span class="s1">'"file_path" has been deprecated for "plugin_path", please use "plugin_path"'</span>
+                <span class="s2">" instead"</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_path</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;plugin_path is nullish, please provide a value&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'"plugin_path is nullish, please provide a value'</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
@@ -3756,7 +3756,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
         <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long,too-many-arguments</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a webhook linked to Kili&#39;s events.</span>
+<span class="w">        </span><span class="sd">"""Create a webhook linked to Kili's events.</span>
 
 <span class="sd">        For a complete example, refer to the notebook `webhooks_example` on kili repo.</span>
 
@@ -3783,8 +3783,8 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 <span class="sd">                or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.create_webhook(webhook_url=&#39;https://my-custom-url-publicly-accessible/&#39;, plugin_name=&#39;my webhook&#39;, header=&#39;...&#39;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.create_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">WebhookUploader</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
             <span class="n">webhook_url</span><span class="p">,</span>
@@ -3806,7 +3806,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
         <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long,too-many-arguments</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update a webhook linked to Kili&#39;s events.</span>
+<span class="w">        </span><span class="sd">"""Update a webhook linked to Kili's events.</span>
 
 <span class="sd">        For a complete example, refer to the notebook `webhooks_example` on kili repo.</span>
 
@@ -3825,8 +3825,8 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 <span class="sd">                or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.update_webhook(webhook_url=&#39;https://my-custom-url-publicly-accessible/&#39;, plugin_name=&#39;my webhook&#39;, header=&#39;...&#39;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.update_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">WebhookUploader</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
             <span class="n">new_webhook_url</span><span class="p">,</span>
@@ -3839,7 +3839,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">activate_plugin_on_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Activates a plugin on a project.</span>
+<span class="w">        </span><span class="sd">"""Activates a plugin on a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            plugin_name: Name of the plugin</span>
@@ -3849,13 +3849,13 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 <span class="sd">            A string which indicates if the mutation was successful, or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.activate_plugin_on_project(plugin_name=&quot;my_plugin_name&quot;, project_id=&quot;my_project_id&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.activate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">activate_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">deactivate_plugin_on_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Activates a plugin on a project.</span>
+<span class="w">        </span><span class="sd">"""Activates a plugin on a project.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            plugin_name: Name of the plugin</span>
@@ -3866,13 +3866,13 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 <span class="sd">                or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.deactivate_plugin_on_project(plugin_name=&quot;my_plugin_name&quot;, project_id=&quot;my_project_id&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.deactivate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">deactivate_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deletes a plugin.</span>
+<span class="w">        </span><span class="sd">"""Deletes a plugin.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            plugin_name: Name of the plugin</span>
@@ -3882,8 +3882,8 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 <span class="sd">                or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.delete_plugin(plugin_name=&quot;my_plugin_name&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; kili.delete_plugin(plugin_name="my_plugin_name")</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">delete_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -3895,7 +3895,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
         <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LiteralString</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update a plugin with new code.</span>
+<span class="w">        </span><span class="sd">"""Update a plugin with new code.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            plugin_path: Path to your plugin. Either:</span>
@@ -3911,19 +3911,19 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 <span class="sd">                or an error message.</span>
 
 <span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; kili.update_plugin(plugin_name=&quot;my_plugin_name&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">):</span>
+<span class="sd">            &gt;&gt;&gt; kili.update_plugin(plugin_name="my_plugin_name")</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"file_path"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s1">&#39;&quot;file_path&quot; has been deprecated for &quot;plugin_path&quot;, please use &quot;plugin_path&quot;&#39;</span>
-                <span class="s2">&quot; instead&quot;</span>
+                <span class="s1">'"file_path" has been deprecated for "plugin_path", please use "plugin_path"'</span>
+                <span class="s2">" instead"</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_path</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;plugin_path is nullish, please provide a value&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'"plugin_path is nullish, please provide a value'</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_name</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;plugin_name is nullish, please provide a value&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'"plugin_name is nullish, please provide a value'</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
@@ -4003,13 +4003,13 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">&quot;my_plugin_name&quot;</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;my_project_id&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">activate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">"my_plugin_name"</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="s2">"my_project_id"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/plugins/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">activate_plugin_on_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Activates a plugin on a project.</span>
+<span class="w">    </span><span class="sd">"""Activates a plugin on a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        plugin_name: Name of the plugin</span>
@@ -4019,8 +4019,8 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 <span class="sd">        A string which indicates if the mutation was successful, or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.activate_plugin_on_project(plugin_name=&quot;my_plugin_name&quot;, project_id=&quot;my_project_id&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.activate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">activate_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -4126,7 +4126,7 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_webhook</span><span class="p">(</span><span class="n">webhook_url</span><span class="o">=</span><span class="s1">&#39;https://my-custom-url-publicly-accessible/&#39;</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="s1">&#39;my webhook&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_webhook</span><span class="p">(</span><span class="n">webhook_url</span><span class="o">=</span><span class="s1">'https://my-custom-url-publicly-accessible/'</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="s1">'my webhook'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s1">'...'</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -4141,7 +4141,7 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
     <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long,too-many-arguments</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a webhook linked to Kili&#39;s events.</span>
+<span class="w">    </span><span class="sd">"""Create a webhook linked to Kili's events.</span>
 
 <span class="sd">    For a complete example, refer to the notebook `webhooks_example` on kili repo.</span>
 
@@ -4168,8 +4168,8 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
 <span class="sd">            or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.create_webhook(webhook_url=&#39;https://my-custom-url-publicly-accessible/&#39;, plugin_name=&#39;my webhook&#39;, header=&#39;...&#39;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.create_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">WebhookUploader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
         <span class="n">webhook_url</span><span class="p">,</span>
@@ -4243,13 +4243,13 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">deactivate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">&quot;my_plugin_name&quot;</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;my_project_id&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">deactivate_plugin_on_project</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">"my_plugin_name"</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="s2">"my_project_id"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/plugins/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">deactivate_plugin_on_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Activates a plugin on a project.</span>
+<span class="w">    </span><span class="sd">"""Activates a plugin on a project.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        plugin_name: Name of the plugin</span>
@@ -4260,8 +4260,8 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
 <span class="sd">            or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.deactivate_plugin_on_project(plugin_name=&quot;my_plugin_name&quot;, project_id=&quot;my_project_id&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.deactivate_plugin_on_project(plugin_name="my_plugin_name", project_id="my_project_id")</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">deactivate_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -4321,13 +4321,13 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">delete_plugin</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">&quot;my_plugin_name&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">delete_plugin</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">"my_plugin_name"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/plugins/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Deletes a plugin.</span>
+<span class="w">    </span><span class="sd">"""Deletes a plugin.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        plugin_name: Name of the plugin</span>
@@ -4337,8 +4337,8 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
 <span class="sd">            or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.delete_plugin(plugin_name=&quot;my_plugin_name&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.delete_plugin(plugin_name="my_plugin_name")</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">delete_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -4420,7 +4420,7 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">update_plugin</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">&quot;my_plugin_name&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">update_plugin</span><span class="p">(</span><span class="n">plugin_name</span><span class="o">=</span><span class="s2">"my_plugin_name"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -4433,7 +4433,7 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
     <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LiteralString</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update a plugin with new code.</span>
+<span class="w">    </span><span class="sd">"""Update a plugin with new code.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        plugin_path: Path to your plugin. Either:</span>
@@ -4449,19 +4449,19 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
 <span class="sd">            or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.update_plugin(plugin_name=&quot;my_plugin_name&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">):</span>
+<span class="sd">        &gt;&gt;&gt; kili.update_plugin(plugin_name="my_plugin_name")</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"file_path"</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s1">&#39;&quot;file_path&quot; has been deprecated for &quot;plugin_path&quot;, please use &quot;plugin_path&quot;&#39;</span>
-            <span class="s2">&quot; instead&quot;</span>
+            <span class="s1">'"file_path" has been deprecated for "plugin_path", please use "plugin_path"'</span>
+            <span class="s2">" instead"</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_path</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;plugin_path is nullish, please provide a value&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'"plugin_path is nullish, please provide a value'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_name</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;plugin_name is nullish, please provide a value&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'"plugin_name is nullish, please provide a value'</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
@@ -4562,7 +4562,7 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>]</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">update_webhook</span><span class="p">(</span><span class="n">webhook_url</span><span class="o">=</span><span class="s1">&#39;https://my-custom-url-publicly-accessible/&#39;</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="s1">&#39;my webhook&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">update_webhook</span><span class="p">(</span><span class="n">webhook_url</span><span class="o">=</span><span class="s1">'https://my-custom-url-publicly-accessible/'</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="s1">'my webhook'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s1">'...'</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -4577,7 +4577,7 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>]</p></td>
     <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long,too-many-arguments</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update a webhook linked to Kili&#39;s events.</span>
+<span class="w">    </span><span class="sd">"""Update a webhook linked to Kili's events.</span>
 
 <span class="sd">    For a complete example, refer to the notebook `webhooks_example` on kili repo.</span>
 
@@ -4596,8 +4596,8 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>]</p></td>
 <span class="sd">            or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.update_webhook(webhook_url=&#39;https://my-custom-url-publicly-accessible/&#39;, plugin_name=&#39;my webhook&#39;, header=&#39;...&#39;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; kili.update_webhook(webhook_url='https://my-custom-url-publicly-accessible/', plugin_name='my webhook', header='...')</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">WebhookUploader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
         <span class="n">new_webhook_url</span><span class="p">,</span>
@@ -4686,8 +4686,8 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>]</p></td>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">plugin_path</span><span class="o">=</span><span class="s2">&quot;./path/to/my/folder&quot;</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">plugin_path</span><span class="o">=</span><span class="s2">&quot;./path/to/my/file.py&quot;</span><span class="p">)</span>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">plugin_path</span><span class="o">=</span><span class="s2">"./path/to/my/folder"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">plugin_path</span><span class="o">=</span><span class="s2">"./path/to/my/file.py"</span><span class="p">)</span>
 </code></pre></div>
 
         <details class="quote">
@@ -4700,7 +4700,7 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>]</p></td>
     <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LiteralString</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Uploads a plugin.</span>
+<span class="w">    </span><span class="sd">"""Uploads a plugin.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        plugin_path: Path to your plugin. Either:</span>
@@ -4715,17 +4715,17 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>]</p></td>
 <span class="sd">        A string which indicates if the mutation was successful, or an error message.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; kili.upload_plugin(plugin_path=&quot;./path/to/my/folder&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; kili.upload_plugin(plugin_path=&quot;./path/to/my/file.py&quot;)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_path&quot;</span><span class="p">):</span>
+<span class="sd">        &gt;&gt;&gt; kili.upload_plugin(plugin_path="./path/to/my/folder")</span>
+<span class="sd">        &gt;&gt;&gt; kili.upload_plugin(plugin_path="./path/to/my/file.py")</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"file_path"</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s1">&#39;&quot;file_path&quot; has been deprecated for &quot;plugin_path&quot;, please use &quot;plugin_path&quot;&#39;</span>
-            <span class="s2">&quot; instead&quot;</span>
+            <span class="s1">'"file_path" has been deprecated for "plugin_path", please use "plugin_path"'</span>
+            <span class="s2">" instead"</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">plugin_path</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;plugin_path is nullish, please provide a value&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'"plugin_path is nullish, please provide a value'</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">PluginUploader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>

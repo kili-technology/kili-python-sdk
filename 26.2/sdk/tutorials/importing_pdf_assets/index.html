@@ -2097,7 +2097,7 @@
 <p>We will need your API key and Kili's API endpoint.</p>
 <p>If you are unsure how to look up your API key, refer to <a href="https://docs.kili-technology.com/docs/creating-an-api-key">https://docs.kili-technology.com/docs/creating-an-api-key</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2105,42 +2105,42 @@
 <p>To create a PDF Kili project, you must first set up its ontology.</p>
 <p>Here, we will only add a classification task:</p>
 <div class="highlight"><pre><span></span><code><span class="n">interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;CLASSIFICATION_JOB&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;RESEARCH&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Research&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category1&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;GUIDELINES&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Guidelines&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category2&quot;</span><span class="p">},</span>
-                    <span class="s2">&quot;TREND_ANALYSIS&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Trend analysis&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;category3&quot;</span><span class="p">},</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"CLASSIFICATION_JOB"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"RESEARCH"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Research"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category1"</span><span class="p">},</span>
+                    <span class="s2">"GUIDELINES"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Guidelines"</span><span class="p">,</span> <span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category2"</span><span class="p">},</span>
+                    <span class="s2">"TREND_ANALYSIS"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Trend analysis"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category3"</span><span class="p">},</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s2">&quot;instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;Classify the document&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;isNew&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Classify the document"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"isNew"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">project</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Importing assets with metadata - PDF&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project Description&quot;</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;PDF&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"[Kili SDK Notebook]: Importing assets with metadata - PDF"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Project Description"</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">"PDF"</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">interface</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>You can now add assets. Here, we will add PDF from public URLs:</p>
-<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-<span class="n">external_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;2306.17766&quot;</span><span class="p">,</span> <span class="s2">&quot;2306.17582&quot;</span><span class="p">,</span> <span class="s2">&quot;2306.17514&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+<span class="n">external_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"2306.17766"</span><span class="p">,</span> <span class="s2">"2306.17582"</span><span class="p">,</span> <span class="s2">"2306.17514"</span><span class="p">]</span>
 
 <span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="n">content_array</span><span class="o">=</span><span class="p">[</span>
-        <span class="s2">&quot;https://arxiv.org/pdf/2306.17766.pdf&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;https://arxiv.org/pdf/2306.17582.pdf&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;https://arxiv.org/pdf/2306.17514.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">"https://arxiv.org/pdf/2306.17766.pdf"</span><span class="p">,</span>
+        <span class="s2">"https://arxiv.org/pdf/2306.17582.pdf"</span><span class="p">,</span>
+        <span class="s2">"https://arxiv.org/pdf/2306.17514.pdf"</span><span class="p">,</span>
     <span class="p">],</span>
     <span class="n">external_id_array</span><span class="o">=</span><span class="n">external_ids</span><span class="p">,</span>
 <span class="p">)</span>
@@ -2149,7 +2149,7 @@
 <p>You can fetch the PDF asset resolutions this way:</p>
 <div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
     <span class="n">project_id</span><span class="p">,</span>
-    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;pageResolutions.height&quot;</span><span class="p">,</span> <span class="s2">&quot;pageResolutions.width&quot;</span><span class="p">,</span> <span class="s2">&quot;pageResolutions.pageNumber&quot;</span><span class="p">],</span>
+    <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"pageResolutions.height"</span><span class="p">,</span> <span class="s2">"pageResolutions.width"</span><span class="p">,</span> <span class="s2">"pageResolutions.pageNumber"</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">pprint</span><span class="p">(</span><span class="n">assets</span><span class="p">)</span>

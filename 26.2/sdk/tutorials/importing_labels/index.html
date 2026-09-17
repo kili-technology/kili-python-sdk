@@ -2150,7 +2150,7 @@
 <p>We will need your API key and Kili's API endpoint.</p>
 <p>If you are unsure how to look up your API key, refer to <a href="https://docs.kili-technology.com/docs/creating-an-api-key">https://docs.kili-technology.com/docs/creating-an-api-key</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span>
-    <span class="c1"># api_endpoint=&quot;https://cloud.kili-technology.com/api/label/v2/graphql&quot;,</span>
+    <span class="c1"># api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",</span>
     <span class="c1"># the line above can be uncommented and changed if you are working with an on-premise version of Kili</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2159,41 +2159,41 @@
 <p>We will create a simple image project with just one simple classification job and two categories: <code>OBJECT_A</code> and <code>OBJECT_B</code>.</p>
 <p>To learn more about Kili project interfaces, refer to <a href="https://docs.kili-technology.com/docs/customizing-project-interface">https://docs.kili-technology.com/docs/customizing-project-interface</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">interface</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;jobs&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;mlTask&quot;</span><span class="p">:</span> <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;isChild&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;OBJECT_A&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object A&quot;</span><span class="p">},</span> <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Object B&quot;</span><span class="p">}},</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;radio&quot;</span><span class="p">,</span>
+    <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"OBJECT_A"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Object A"</span><span class="p">},</span> <span class="s2">"OBJECT_B"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Object B"</span><span class="p">}},</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[Kili SDK Notebook]: Importing labels&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project Description&quot;</span><span class="p">,</span>
-    <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"[Kili SDK Notebook]: Importing labels"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Project Description"</span><span class="p">,</span>
+    <span class="n">input_type</span><span class="o">=</span><span class="s2">"IMAGE"</span><span class="p">,</span>
     <span class="n">json_interface</span><span class="o">=</span><span class="n">interface</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>For further processing, we will need to find out what our project ID is.</p>
 <p>We can easily retrieve it from the project creation response message:</p>
-<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Project ID: &quot;</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">project_id</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Project ID: "</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 </code></pre></div>
 <pre><code>Project ID:  clfwbvgpm00330jrne4n40m70
 </code></pre>
 <h2 id="importing-assets-to-kili">Importing assets to Kili</h2>
 <p>Now, let's add some assets to be labeled.</p>
 <p>We will use some free off-the-shelf examples from the Internet.</p>
-<div class="highlight"><pre><span></span><code><span class="n">url1</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_2.jpg&quot;</span>
-<span class="n">url2</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/car/car_1.jpg&quot;</span>
-<span class="n">url3</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">url1</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/car/car_2.jpg"</span>
+<span class="n">url2</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/car/car_1.jpg"</span>
+<span class="n">url3</span> <span class="o">=</span> <span class="s2">"https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg"</span>
 
-<span class="n">asset_external_id_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;image_1&quot;</span><span class="p">,</span> <span class="s2">&quot;image_2&quot;</span><span class="p">,</span> <span class="s2">&quot;image_3&quot;</span><span class="p">]</span>
+<span class="n">asset_external_id_array</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"image_1"</span><span class="p">,</span> <span class="s2">"image_2"</span><span class="p">,</span> <span class="s2">"image_3"</span><span class="p">]</span>
 
 <span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">append_many_to_dataset</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
@@ -2209,16 +2209,16 @@
 <p>For more information on Kili label types, refer to <a href="https://docs.kili-technology.com/reference/label-types">our documentation</a>.</p>
 <p>First, let's prepare some fake predictions:</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_response_array</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="mi">95</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">}]}},</span>
-    <span class="p">{</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="mi">79</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_A&quot;</span><span class="p">}]}},</span>
-    <span class="p">{</span><span class="s2">&quot;JOB_0&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="mi">83</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;OBJECT_B&quot;</span><span class="p">}]}},</span>
+    <span class="p">{</span><span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"confidence"</span><span class="p">:</span> <span class="mi">95</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"OBJECT_B"</span><span class="p">}]}},</span>
+    <span class="p">{</span><span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"confidence"</span><span class="p">:</span> <span class="mi">79</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"OBJECT_A"</span><span class="p">}]}},</span>
+    <span class="p">{</span><span class="s2">"JOB_0"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"confidence"</span><span class="p">:</span> <span class="mi">83</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"OBJECT_B"</span><span class="p">}]}},</span>
 <span class="p">]</span>
 </code></pre></div>
 <p>And let's upload them as <code>PREDICTION</code> labels:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
     <span class="n">json_response_array</span><span class="o">=</span><span class="n">json_response_array</span><span class="p">,</span>
-    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;MyModel&quot;</span><span class="p">,</span>
-    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;PREDICTION&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">"MyModel"</span><span class="p">,</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">"PREDICTION"</span><span class="p">,</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="n">asset_external_id_array</span><span class="o">=</span><span class="n">asset_external_id_array</span><span class="p">,</span>
 <span class="p">)</span>
@@ -2232,14 +2232,14 @@
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="n">external_id_array</span><span class="o">=</span><span class="n">asset_external_id_array</span><span class="p">,</span>
     <span class="n">json_response_array</span><span class="o">=</span><span class="n">json_response_array</span><span class="p">,</span>
-    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;MyModel&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">"MyModel"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>To import <code>INFERENCE</code>-type labels, just change the <code>label_type</code> argument of the <code>append_labels</code> method:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
     <span class="n">json_response_array</span><span class="o">=</span><span class="n">json_response_array</span><span class="p">,</span>
-    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;MyModel&quot;</span><span class="p">,</span>
-    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;INFERENCE&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">"MyModel"</span><span class="p">,</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">"INFERENCE"</span><span class="p">,</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="n">asset_external_id_array</span><span class="o">=</span><span class="n">asset_external_id_array</span><span class="p">,</span>
 <span class="p">)</span>
@@ -2249,15 +2249,15 @@
 <h2 id="importing-pre-existing-labels-into-your-project">Importing pre-existing labels into your project</h2>
 <p>If you want to copy and paste labels from other projects or other assets, add them with the <code>DEFAULT</code> label type. <code>DEFAULT</code> indicates that the label was generated by a human.</p>
 <p>In the example below, we take an existing annotation from asset <code>image_1</code>, and apply it to asset <code>image_2</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="n">asset_image_1</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_id_strictly_in</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image_1&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">asset_image_1</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">external_id_strictly_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"image_1"</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="n">json_response</span> <span class="o">=</span> <span class="n">asset_image_1</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;jsonResponse&quot;</span><span class="p">]</span>
+<span class="n">json_response</span> <span class="o">=</span> <span class="n">asset_image_1</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">"jsonResponse"</span><span class="p">]</span>
 
 <span class="n">kili</span><span class="o">.</span><span class="n">append_labels</span><span class="p">(</span>
     <span class="n">json_response_array</span><span class="o">=</span><span class="p">[</span><span class="n">json_response</span><span class="p">],</span>
-    <span class="n">label_type</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+    <span class="n">label_type</span><span class="o">=</span><span class="s2">"DEFAULT"</span><span class="p">,</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;image_2&quot;</span><span class="p">],</span>
+    <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="s2">"image_2"</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="cleanup">Cleanup</h2>

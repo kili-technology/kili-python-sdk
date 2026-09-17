@@ -2092,16 +2092,16 @@
 
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/user.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">])</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_call</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"__init__"</span><span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">UserClientMethods</span><span class="p">(</span><span class="n">BaseClientMethods</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Methods attached to the Kili client, to run actions on users.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Methods attached to the Kili client, to run actions on users."""</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">users</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">,</span> <span class="s2">&quot;lastname&quot;</span><span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"email"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"firstname"</span><span class="p">,</span> <span class="s2">"lastname"</span><span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2115,7 +2115,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">,</span> <span class="s2">&quot;lastname&quot;</span><span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"email"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"firstname"</span><span class="p">,</span> <span class="s2">"lastname"</span><span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2129,7 +2129,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">,</span> <span class="s2">&quot;lastname&quot;</span><span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"email"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"firstname"</span><span class="p">,</span> <span class="s2">"lastname"</span><span class="p">),</span>
         <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2137,11 +2137,11 @@
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of users given a set of criteria.</span>
+<span class="w">        </span><span class="sd">"""Get a generator or a list of users given a set of criteria.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            email: Email of the user</span>
-<span class="sd">            organization_id: Identifier of the user&#39;s organization</span>
+<span class="sd">            organization_id: Identifier of the user's organization</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the users.</span>
 <span class="sd">                See [the documentation](https://api-docs.kili-technology.com/types/objects/user) for all possible fields.</span>
 <span class="sd">            first: Maximum number of users to return</span>
@@ -2156,11 +2156,11 @@
 <span class="sd">            ```</span>
 <span class="sd">            # List all users in my organization</span>
 <span class="sd">            &gt;&gt;&gt; organization = kili.organizations()[0]</span>
-<span class="sd">            &gt;&gt;&gt; organization_id = organization[&#39;id&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; organization_id = organization['id']</span>
 <span class="sd">            &gt;&gt;&gt; kili.users(organization_id=organization_id)</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="sd">        """</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
         <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
 
         <span class="n">users_gen</span> <span class="o">=</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">list_users</span><span class="p">(</span>
@@ -2185,15 +2185,15 @@
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get user count based on a set of constraints.</span>
+<span class="w">        </span><span class="sd">"""Get user count based on a set of constraints.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            organization_id: Identifier of the user&#39;s organization.</span>
+<span class="sd">            organization_id: Identifier of the user's organization.</span>
 <span class="sd">            email: Filter by email.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The number of organizations with the parameters provided.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">count_users</span><span class="p">(</span>
             <span class="n">UserFilter</span><span class="p">(</span>
                 <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
@@ -2212,33 +2212,33 @@
         <span class="n">organization_role</span><span class="p">:</span> <span class="n">OrganizationRole</span><span class="p">,</span>
         <span class="n">firstname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a user to your organization.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Add a user to your organization.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            email: Email of the new user, used as user&#39;s unique identifier.</span>
+<span class="sd">            email: Email of the new user, used as user's unique identifier.</span>
 <span class="sd">            password: On the first sign in, he will use this password and be able to change it.</span>
-<span class="sd">            organization_role: One of &quot;ADMIN&quot;, &quot;USER&quot;.</span>
+<span class="sd">            organization_role: One of "ADMIN", "USER".</span>
 <span class="sd">            firstname: First name of the new user.</span>
 <span class="sd">            lastname: Last name of the new user.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dictionary with the id of the new user.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span>
             <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
             <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
             <span class="n">organization_role</span><span class="o">=</span><span class="n">organization_role</span><span class="p">,</span>
             <span class="n">firstname</span><span class="o">=</span><span class="n">firstname</span><span class="p">,</span>
             <span class="n">lastname</span><span class="o">=</span><span class="n">lastname</span><span class="p">,</span>
-            <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,),</span>
+            <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,),</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_password</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">old_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_password_1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_password_2</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow to modify the password that you use to connect to Kili.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Allow to modify the password that you use to connect to Kili.</span>
 
 <span class="sd">        This resolver only works for on-premise installations without Auth0.</span>
 
@@ -2250,7 +2250,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the user id.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_password</span><span class="p">(</span>
             <span class="n">old_password</span><span class="o">=</span><span class="n">old_password</span><span class="p">,</span>
             <span class="n">new_password_1</span><span class="o">=</span><span class="n">new_password_1</span><span class="p">,</span>
@@ -2262,7 +2262,7 @@
                 <span class="n">id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="p">),</span>
-            <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,),</span>
+            <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,),</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -2274,8 +2274,8 @@
         <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_role</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">OrganizationRole</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">activated</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the properties of a user.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Update the properties of a user.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            email: The email is the identifier of the user.</span>
@@ -2283,12 +2283,12 @@
 <span class="sd">            lastname: Change the last name of the user.</span>
 <span class="sd">            organization_id: Change the organization the user is related to.</span>
 <span class="sd">            organization_role: Change the role of the user.</span>
-<span class="sd">                One of &quot;ADMIN&quot;, &quot;TEAM_MANAGER&quot;, &quot;REVIEWER&quot;, &quot;LABELER&quot;.</span>
+<span class="sd">                One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".</span>
 <span class="sd">            activated: In case we want to deactivate a user, but keep it.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the user id.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_user</span><span class="p">(</span>
             <span class="n">user_filter</span><span class="o">=</span><span class="n">UserFilter</span><span class="p">(</span>
                 <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
@@ -2302,15 +2302,15 @@
             <span class="n">organization_id</span><span class="o">=</span><span class="n">OrganizationId</span><span class="p">(</span><span class="n">organization_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">organization_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">organization_role</span><span class="o">=</span><span class="n">organization_role</span><span class="p">,</span>
             <span class="n">activated</span><span class="o">=</span><span class="n">activated</span><span class="p">,</span>
-            <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,),</span>
+            <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,),</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_current_user</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">,</span> <span class="s2">&quot;lastname&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"email"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"firstname"</span><span class="p">,</span> <span class="s2">"lastname"</span><span class="p">)</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the current user.</span>
+<span class="w">        </span><span class="sd">"""Get the current user.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the users.</span>
@@ -2318,7 +2318,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the user fields chosen.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">get_current_user</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2396,15 +2396,15 @@
     <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get user count based on a set of constraints.</span>
+<span class="w">    </span><span class="sd">"""Get user count based on a set of constraints.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        organization_id: Identifier of the user&#39;s organization.</span>
+<span class="sd">        organization_id: Identifier of the user's organization.</span>
 <span class="sd">        email: Filter by email.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of organizations with the parameters provided.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">count_users</span><span class="p">(</span>
         <span class="n">UserFilter</span><span class="p">(</span>
             <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
@@ -2503,26 +2503,26 @@
     <span class="n">organization_role</span><span class="p">:</span> <span class="n">OrganizationRole</span><span class="p">,</span>
     <span class="n">firstname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">lastname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a user to your organization.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Add a user to your organization.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        email: Email of the new user, used as user&#39;s unique identifier.</span>
+<span class="sd">        email: Email of the new user, used as user's unique identifier.</span>
 <span class="sd">        password: On the first sign in, he will use this password and be able to change it.</span>
-<span class="sd">        organization_role: One of &quot;ADMIN&quot;, &quot;USER&quot;.</span>
+<span class="sd">        organization_role: One of "ADMIN", "USER".</span>
 <span class="sd">        firstname: First name of the new user.</span>
 <span class="sd">        lastname: Last name of the new user.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dictionary with the id of the new user.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span>
         <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
         <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
         <span class="n">organization_role</span><span class="o">=</span><span class="n">organization_role</span><span class="p">,</span>
         <span class="n">firstname</span><span class="o">=</span><span class="n">firstname</span><span class="p">,</span>
         <span class="n">lastname</span><span class="o">=</span><span class="n">lastname</span><span class="p">,</span>
-        <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,),</span>
+        <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,),</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2537,7 +2537,7 @@
 
 
 <h3 id="kili.presentation.client.user.UserClientMethods.get_current_user" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_current_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;firstname&#39;</span><span class="p">,</span> <span class="s1">&#39;lastname&#39;</span><span class="p">))</span></code>
+<code class="highlight language-python"><span class="n">get_current_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'email'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'firstname'</span><span class="p">,</span> <span class="s1">'lastname'</span><span class="p">))</span></code>
 
 
 </h3>
@@ -2584,10 +2584,10 @@ See <a href="https://api-docs.kili-technology.com/types/objects/user">the docume
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/user.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_current_user</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">,</span> <span class="s2">&quot;lastname&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"email"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"firstname"</span><span class="p">,</span> <span class="s2">"lastname"</span><span class="p">)</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the current user.</span>
+<span class="w">    </span><span class="sd">"""Get the current user.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the users.</span>
@@ -2595,7 +2595,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/user">the docume
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the user fields chosen.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">get_current_user</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2676,8 +2676,8 @@ See <a href="https://api-docs.kili-technology.com/types/objects/user">the docume
           <summary>Source code in <code>kili/presentation/client/user.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_password</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">old_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_password_1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_password_2</span><span class="p">:</span> <span class="nb">str</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Allow to modify the password that you use to connect to Kili.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Allow to modify the password that you use to connect to Kili.</span>
 
 <span class="sd">    This resolver only works for on-premise installations without Auth0.</span>
 
@@ -2689,7 +2689,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/user">the docume
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the user id.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_password</span><span class="p">(</span>
         <span class="n">old_password</span><span class="o">=</span><span class="n">old_password</span><span class="p">,</span>
         <span class="n">new_password_1</span><span class="o">=</span><span class="n">new_password_1</span><span class="p">,</span>
@@ -2701,7 +2701,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/user">the docume
             <span class="n">id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">),</span>
-        <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,),</span>
+        <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,),</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2800,8 +2800,8 @@ One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".</p></td>
     <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">organization_role</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">OrganizationRole</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">activated</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update the properties of a user.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Update the properties of a user.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        email: The email is the identifier of the user.</span>
@@ -2809,12 +2809,12 @@ One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".</p></td>
 <span class="sd">        lastname: Change the last name of the user.</span>
 <span class="sd">        organization_id: Change the organization the user is related to.</span>
 <span class="sd">        organization_role: Change the role of the user.</span>
-<span class="sd">            One of &quot;ADMIN&quot;, &quot;TEAM_MANAGER&quot;, &quot;REVIEWER&quot;, &quot;LABELER&quot;.</span>
+<span class="sd">            One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".</span>
 <span class="sd">        activated: In case we want to deactivate a user, but keep it.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the user id.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">update_user</span><span class="p">(</span>
         <span class="n">user_filter</span><span class="o">=</span><span class="n">UserFilter</span><span class="p">(</span>
             <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
@@ -2828,7 +2828,7 @@ One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".</p></td>
         <span class="n">organization_id</span><span class="o">=</span><span class="n">OrganizationId</span><span class="p">(</span><span class="n">organization_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">organization_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">organization_role</span><span class="o">=</span><span class="n">organization_role</span><span class="p">,</span>
         <span class="n">activated</span><span class="o">=</span><span class="n">activated</span><span class="p">,</span>
-        <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,),</span>
+        <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,),</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2843,7 +2843,7 @@ One of "ADMIN", "TEAM_MANAGER", "REVIEWER", "LABELER".</p></td>
 
 
 <h3 id="kili.presentation.client.user.UserClientMethods.users" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;firstname&#39;</span><span class="p">,</span> <span class="s1">&#39;lastname&#39;</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'email'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'firstname'</span><span class="p">,</span> <span class="s1">'lastname'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2926,7 +2926,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/user">the docume
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code># List all users in my organization
 &gt;&gt;&gt; organization = kili.organizations()[0]
-&gt;&gt;&gt; organization_id = organization[&#39;id&#39;]
+&gt;&gt;&gt; organization_id = organization['id']
 &gt;&gt;&gt; kili.users(organization_id=organization_id)
 </code></pre></div>
 
@@ -2936,7 +2936,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/user">the docume
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">,</span> <span class="s2">&quot;lastname&quot;</span><span class="p">),</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"email"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"firstname"</span><span class="p">,</span> <span class="s2">"lastname"</span><span class="p">),</span>
     <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2944,11 +2944,11 @@ See <a href="https://api-docs.kili-technology.com/types/objects/user">the docume
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a generator or a list of users given a set of criteria.</span>
+<span class="w">    </span><span class="sd">"""Get a generator or a list of users given a set of criteria.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        email: Email of the user</span>
-<span class="sd">        organization_id: Identifier of the user&#39;s organization</span>
+<span class="sd">        organization_id: Identifier of the user's organization</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the users.</span>
 <span class="sd">            See [the documentation](https://api-docs.kili-technology.com/types/objects/user) for all possible fields.</span>
 <span class="sd">        first: Maximum number of users to return</span>
@@ -2963,11 +2963,11 @@ See <a href="https://api-docs.kili-technology.com/types/objects/user">the docume
 <span class="sd">        ```</span>
 <span class="sd">        # List all users in my organization</span>
 <span class="sd">        &gt;&gt;&gt; organization = kili.organizations()[0]</span>
-<span class="sd">        &gt;&gt;&gt; organization_id = organization[&#39;id&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; organization_id = organization['id']</span>
 <span class="sd">        &gt;&gt;&gt; kili.users(organization_id=organization_id)</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;disable_tqdm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
     <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
 
     <span class="n">users_gen</span> <span class="o">=</span> <span class="n">UserUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">list_users</span><span class="p">(</span>

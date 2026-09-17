@@ -2207,7 +2207,7 @@ For the actions it supports, the CLI offers a more compact way to manage your pr
 <li>Create and copy a <a href="https://docs.kili-technology.com/docs/creating-an-api-key">Kili API key</a></li>
 <li>Add the <code>KILI_API_KEY</code> variable in your bash environment (or in the settings of your favorite IDE) by pasting the API key value that you copied earlier:</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">KILI_API_KEY</span><span class="o">=</span><span class="s1">&#39;&lt;you api key value here&gt;&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">KILI_API_KEY</span><span class="o">=</span><span class="s1">'&lt;you api key value here&gt;'</span>
 </code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
@@ -2225,9 +2225,9 @@ Once in the current directory where all files are stored, you can run the follow
 <p>To create an IMAGE project:</p>
 <div class="highlight"><pre><span></span><code>kili project create \
             json_interface.json \
-            --title &quot;Quality inspection&quot; \
+            --title "Quality inspection" \
             --input-type IMAGE \
-            --description &quot;Steel defects on production line&quot;
+            --description "Steel defects on production line"
 </code></pre></div>
 <p>Ouput:</p>
 <div class="highlight"><pre><span></span><code>ID                         URL
@@ -2242,8 +2242,8 @@ Quality inspection                   &lt;project_id&gt;                0.0%  Ste
 </code></pre></div>
 <h3 id="recover-your-project-id">Recover your project ID</h3>
 <div class="highlight"><pre><span></span><code>export project_id=$(kili project list \
-              | grep -m1 &quot;Quality inspection&quot; \
-              | awk &#39;{print $3}&#39;)
+              | grep -m1 "Quality inspection" \
+              | awk '{print $3}')
 </code></pre></div>
 <h3 id="add-a-member-to-your-project">Add a member to your project</h3>
 <div class="highlight"><pre><span></span><code>kili project member add \
