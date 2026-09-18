@@ -15,7 +15,6 @@ from kili.core.config_loader import load_config_from_file
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
 from kili.entrypoints.mutations.asset import MutationsAsset
 from kili.entrypoints.mutations.issue import MutationsIssue
-from kili.entrypoints.mutations.notification import MutationsNotification
 from kili.entrypoints.mutations.plugins import MutationsPlugins
 from kili.entrypoints.mutations.project import MutationsProject
 from kili.entrypoints.mutations.project_version import MutationsProjectVersion
@@ -31,7 +30,6 @@ from kili.presentation.client.cloud_storage import CloudStorageClientMethods
 from kili.presentation.client.internal import InternalClientMethods
 from kili.presentation.client.issue import IssueClientMethods
 from kili.presentation.client.label import LabelClientMethods
-from kili.presentation.client.notification import NotificationClientMethods
 from kili.presentation.client.organization import OrganizationClientMethods
 from kili.presentation.client.project import ProjectClientMethods
 from kili.presentation.client.project_workflow import ProjectWorkflowClientMethods
@@ -63,7 +61,6 @@ logging.getLogger("urllib3.connectionpool").addFilter(FilterPoolFullWarning())
 class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsAsset,
     MutationsIssue,
-    MutationsNotification,
     MutationsPlugins,
     MutationsProject,
     MutationsProjectVersion,
@@ -75,7 +72,6 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     CloudStorageClientMethods,
     IssueClientMethods,
     LabelClientMethods,
-    NotificationClientMethods,
     OrganizationClientMethods,
     ProjectClientMethods,
     ProjectWorkflowClientMethods,
