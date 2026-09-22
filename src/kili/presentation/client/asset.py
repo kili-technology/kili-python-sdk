@@ -325,10 +325,8 @@ class AssetClientMethods(BaseClientMethods):
             skip: Number of assets to skip (they are ordered by their date of creation, first to last).
             fields: All the fields to request among the possible fields for the assets.
                     See [the documentation](https://api-docs.kili-technology.com/types/objects/asset) for all possible fields.
-                    `resolution.width` and `resolution.height` carry the dimensions of an image,
-                    video or PDF asset. A `GEOSPATIAL` asset has none: its dimensions are those of
-                    each of its layers, and they are carried per layer by
-                    `geospatialExportMetadata`, alongside the CRS the layer is labeled in.
+                    `resolution` is empty on a `GEOSPATIAL` asset: its dimensions are per layer,
+                    carried by `geospatialExportMetadata` with the CRS the layer is labeled in.
             first: Maximum number of assets to return.
             consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.
             consensus_mark_lt: Deprecated. Use `consensus_mark_lte` instead.
