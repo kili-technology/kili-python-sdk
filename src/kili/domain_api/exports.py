@@ -724,6 +724,9 @@ class ExportNamespace(DomainNamespace):
                 If True, the coordinates of the `(x, y)` vertices are normalized between 0 and 1.
                 If False, the json response will contain additional fields with coordinates in
                 absolute values, that is, in pixels.
+                On a `GEOSPATIAL` project labeled in image pixel coordinates the absolute values
+                are the default, since they are what that mode exists for: `None` and `False` both
+                add them, and only `True` leaves the fractions alone.
             label_type_in: Optional list of label type. Exported assets should have a label
                 whose type belongs to that list.
                 By default, only `DEFAULT` and `REVIEW` labels are exported.

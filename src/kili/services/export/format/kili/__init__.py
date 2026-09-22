@@ -113,8 +113,13 @@ class KiliExporter(AbstractExporter):
         if is_pixel_labeling_project(self.project):
             # Labels were stored in the image's own pixel grid, normalized as for an
             # image asset: unnormalize them rather than leaving geographic coordinates.
+            # `normalized_coordinates=True` asks for the fractions alone, and is the one
+            # value that skips it — the pixel coordinates are what this mode exists for,
+            # so they stay the default, unlike on an image project.
+            keep_normalized_only = self.normalized_coordinates is True
             for i, asset in enumerate(clean_assets):
-                clean_assets[i] = convert_to_pixel_coords_for_pixel_labeling(asset)
+                if not keep_normalized_only:
+                    clean_assets[i] = convert_to_pixel_coords_for_pixel_labeling(asset)
                 clean_json_response(clean_assets[i])
         elif self.project["inputType"] in ["IMAGE", "PDF", "VIDEO"]:
             for i, asset in enumerate(clean_assets):

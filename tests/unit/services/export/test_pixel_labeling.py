@@ -159,3 +159,70 @@ def test_conversion_is_idempotent():
     convert_to_pixel_coords(asset)
 
     assert asset["latestLabel"]["jsonResponse"] == once
+
+
+# --- The exporter honours `normalized_coordinates` --------------------------------------
+#
+# The pixel coordinates are what this mode exists for, so they stay the default: only an
+# explicit `True` asks for the fractions alone. `None` and `False` both add them, which is
+# where this differs from an image project, whose default is normalized-only.
+
+PIXEL_PROJECT: dict = {
+    "inputType": "GEOSPATIAL",
+    "geospatialSettings": {"labelingCRSCode": "PIXEL"},
+}
+
+
+def _exported_annotation(mocker, normalized_coordinates):
+    """Runs one asset through `KiliExporter.process_and_save` and returns its annotation."""
+    from kili.services.export.format.kili import KiliExporter
+
+    mocker.patch.object(KiliExporter, "__init__", return_value=None)
+    exporter = KiliExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
+    exporter.project = PIXEL_PROJECT
+    exporter.normalized_coordinates = normalized_coordinates
+    mocker.patch.object(KiliExporter, "preprocess_assets", side_effect=lambda assets: assets)
+    saved = mocker.patch.object(KiliExporter, "_save_assets_export")
+
+    asset = _asset_with_label(
+        {
+            "JOB": {
+                "annotations": [
+                    {
+                        "boundingPoly": [{"normalizedVertices": [{"x": 0.5, "y": 0.25}]}],
+                        "point": {"x": 0.5, "y": 0.25},
+                        "polyline": [{"x": 0.5, "y": 0.25}],
+                    }
+                ]
+            }
+        }
+    )
+    exporter.process_and_save([asset], "out.json")
+    return saved.call_args[0][0][0]["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]
+
+
+def test_export_adds_pixel_coordinates_by_default(mocker):
+    annotation = _exported_annotation(mocker, None)
+
+    assert annotation["boundingPoly"][0]["vertices"] == [{"x": 0.5 * WIDTH, "y": 0.25 * HEIGHT}]
+    assert annotation["pointPixels"] == {"x": 0.5 * WIDTH, "y": 0.25 * HEIGHT}
+    assert annotation["polylinePixels"] == [{"x": 0.5 * WIDTH, "y": 0.25 * HEIGHT}]
+
+
+def test_export_adds_pixel_coordinates_when_asked_for_absolute_ones(mocker):
+    """`normalized_coordinates=False` is the client-facing way to ask for pixels."""
+    annotation = _exported_annotation(mocker, False)
+
+    assert annotation["boundingPoly"][0]["vertices"] == [{"x": 0.5 * WIDTH, "y": 0.25 * HEIGHT}]
+    assert annotation["pointPixels"] == {"x": 0.5 * WIDTH, "y": 0.25 * HEIGHT}
+    assert annotation["polylinePixels"] == [{"x": 0.5 * WIDTH, "y": 0.25 * HEIGHT}]
+
+
+def test_export_keeps_the_fractions_alone_when_normalized_is_asked_for(mocker):
+    """The option used to be ignored: pixels came out whatever was passed."""
+    annotation = _exported_annotation(mocker, True)
+
+    assert annotation["boundingPoly"][0]["normalizedVertices"] == [{"x": 0.5, "y": 0.25}]
+    assert "vertices" not in annotation["boundingPoly"][0]
+    assert "pointPixels" not in annotation
+    assert "polylinePixels" not in annotation
