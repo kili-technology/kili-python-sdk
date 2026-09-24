@@ -624,7 +624,7 @@ class QuestionsNamespace(DomainNamespace):
 
         Examples:
             >>> # Reply to a single question
-            >>> comment = kili.questions.reply(
+            >>> [comment] = kili.questions.reply(
             ...     question_id="question_123",
             ...     text="It is a cat, not a dog."
             ... )

@@ -125,6 +125,7 @@ def test_reply_to_issues_names_the_failing_issue_and_the_ones_already_replied_to
         'GraphQL error: "Could not reply to issue issue_2, no comment was added to it (issues'
         " already replied to in this call: ['issue_1']): [accessDenied] Access denied.\""
     )
+    assert raised.value.error == [{"message": "[accessDenied] Access denied."}]
     assert raised.value.context == {"foo": "bar"}
     assert raised.value.__cause__ is access_denied
     assert kili_api_gateway.append_to_comments.call_count == 2

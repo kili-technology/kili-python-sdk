@@ -622,7 +622,7 @@ class IssuesNamespace(DomainNamespace):
 
         Examples:
             >>> # Reply to a single issue
-            >>> comment = kili.issues.reply(
+            >>> [comment] = kili.issues.reply(
             ...     issue_id="issue_123",
             ...     text="Fixed, thanks for reporting it."
             ... )

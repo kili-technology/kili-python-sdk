@@ -70,11 +70,14 @@ class IssueUseCases(BaseUseCases):
                     original = error.error[0] if isinstance(error.error, list) else error.error
                     reason = original["message"] if isinstance(original, dict) else str(original)
                     replied_ids = [created["issueId"] for created in created_comments]
-                    raise GraphQLError(
-                        f"Could not reply to issue {issue_id}, no comment was added to it (issues"
-                        f" already replied to in this call: {replied_ids or 'none'}): {reason}",
-                        context=error.context,
-                    ) from error
+                    # keeps the backend's error payload for callers that inspect it
+                    reply_error = GraphQLError(error=error.error, context=error.context)
+                    reply_error.args = (
+                        f'GraphQL error: "Could not reply to issue {issue_id}, no comment was added'
+                        f" to it (issues already replied to in this call: {replied_ids or 'none'}):"
+                        f' {reason}"',
+                    )
+                    raise reply_error from error
                 created_comments.append(comment)
                 pbar.update(1)
         return created_comments
