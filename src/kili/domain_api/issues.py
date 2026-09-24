@@ -53,6 +53,7 @@ class IssuesNamespace(DomainNamespace):
     - cancel(): Cancel issues (set status to CANCELLED)
     - open(): Open issues (set status to OPEN)
     - solve(): Solve issues (set status to SOLVED)
+    - reply(): Reply to issues (add a comment to their thread)
 
     Examples:
         >>> kili = Kili()
@@ -73,6 +74,9 @@ class IssuesNamespace(DomainNamespace):
 
         >>> # Cancel issues
         >>> kili.issues.cancel(issue_ids=["issue_456"])
+
+        >>> # Reply to an issue
+        >>> kili.issues.reply(issue_id="issue_123", text="Fixed, thanks for reporting it.")
     """
 
     def __init__(self, client, gateway):
@@ -574,6 +578,79 @@ class IssuesNamespace(DomainNamespace):
                 pbar.update(1)
 
         return results
+
+    @overload
+    def reply(self, *, issue_id: str, text: str) -> List[dict[str, Any]]:
+        ...
+
+    @overload
+    def reply(self, *, issue_ids: List[str], text_array: List[str]) -> List[dict[str, Any]]:
+        ...
+
+    @typechecked
+    def reply(
+        self,
+        *,
+        issue_id: Optional[str] = None,
+        issue_ids: Optional[List[str]] = None,
+        text: Optional[str] = None,
+        text_array: Optional[List[str]] = None,
+        disable_tqdm: Optional[bool] = None,
+    ) -> List[dict[str, Any]]:
+        """Reply to issues by adding a comment to their thread.
+
+        The reply is added after the existing comments of the issue, with the authenticated
+        user as its author, as if typed in the issue's thread in the labeling interface.
+        The status of the issue is not changed.
+
+        Args:
+            issue_id: Id of the issue to reply to.
+            issue_ids: List of Ids of the issues to reply to.
+            text: Text of the reply.
+            text_array: List of texts of the replies, one per issue of `issue_ids`.
+            disable_tqdm: If `True`, the progress bar will be disabled.
+
+        Returns:
+            A list of the created comments, in the order of the issues, each a dictionary with
+                the keys `id`, `issueId`, `text`, `createdAt` and `authorIdUser`.
+
+        Raises:
+            ValueError: If the input arrays have different sizes, or if a text is empty.
+            GraphQLError: If a reply cannot be added, for instance because the issue does not
+                exist or the user is not a member of its project. No comment is added to that
+                issue; the issues before it in the list have already been replied to.
+
+        Examples:
+            >>> # Reply to a single issue
+            >>> comment = kili.issues.reply(
+            ...     issue_id="issue_123",
+            ...     text="Fixed, thanks for reporting it."
+            ... )
+
+            >>> # Reply to several issues in one call
+            >>> comments = kili.issues.reply(
+            ...     issue_ids=["issue_123", "issue_456"],
+            ...     text_array=["Fixed, thanks for reporting it.", "Please check the bounding box again."]
+            ... )
+        """
+        # Convert singular to plural
+        if issue_id is not None:
+            issue_ids = [issue_id]
+        if text is not None:
+            text_array = [text]
+
+        assert issue_ids is not None, "issue_ids must be provided"
+        assert text_array is not None, "text_array must be provided"
+        assert_all_arrays_have_same_size([issue_ids, text_array])
+
+        resolved_disable_tqdm = resolve_disable_tqdm(disable_tqdm, self._client.disable_tqdm)
+
+        issue_use_cases = IssueUseCases(self._gateway)
+        return issue_use_cases.reply_to_issues(
+            issue_ids=[IssueId(issue_id_item) for issue_id_item in issue_ids],
+            texts=text_array,
+            disable_tqdm=resolved_disable_tqdm,
+        )
 
     def _validate_status_transition(
         self, issue_id: str, current_status: IssueStatus, new_status: IssueStatus

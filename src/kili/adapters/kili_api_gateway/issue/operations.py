@@ -38,3 +38,16 @@ def get_issues_query(fragment: str) -> str:
         }}
     }}
     """
+
+
+GQL_APPEND_TO_COMMENTS = """
+mutation appendToComments($data: AppendToCommentsData!, $where: IssueWhere!) {
+  data: appendToComments(data: $data, where: $where) {
+    id
+    issueId
+    text
+    createdAt
+    authorIdUser
+  }
+}
+"""

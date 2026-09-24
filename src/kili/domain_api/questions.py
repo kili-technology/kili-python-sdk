@@ -19,6 +19,7 @@ from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
 from kili.presentation.client.helpers.common_validators import (
     assert_all_arrays_have_same_size,
+    resolve_disable_tqdm,
 )
 from kili.use_cases.issue import IssueUseCases
 from kili.use_cases.question import QuestionToCreateUseCaseInput, QuestionUseCases
@@ -51,6 +52,7 @@ class QuestionsNamespace(DomainNamespace):
     - cancel(): Cancel questions (set status to CANCELLED)
     - open(): Open questions (set status to OPEN)
     - solve(): Solve questions (set status to SOLVED)
+    - reply(): Reply to questions (add a comment to their thread)
 
     Examples:
         >>> kili = Kili()
@@ -72,6 +74,9 @@ class QuestionsNamespace(DomainNamespace):
 
         >>> # Cancel questions
         >>> kili.questions.cancel(question_ids=["question_456"])
+
+        >>> # Answer a question
+        >>> kili.questions.reply(question_id="question_123", text="It is a cat, not a dog.")
     """
 
     def __init__(self, client, gateway):
@@ -575,3 +580,76 @@ class QuestionsNamespace(DomainNamespace):
                 )
 
         return results
+
+    @overload
+    def reply(self, *, question_id: str, text: str) -> List[dict[str, Any]]:
+        ...
+
+    @overload
+    def reply(self, *, question_ids: List[str], text_array: List[str]) -> List[dict[str, Any]]:
+        ...
+
+    @typechecked
+    def reply(
+        self,
+        *,
+        question_id: Optional[str] = None,
+        question_ids: Optional[List[str]] = None,
+        text: Optional[str] = None,
+        text_array: Optional[List[str]] = None,
+        disable_tqdm: Optional[bool] = None,
+    ) -> List[dict[str, Any]]:
+        """Reply to questions by adding a comment to their thread.
+
+        The reply is added after the existing comments of the question, with the authenticated
+        user as its author, as if typed in the question's thread in the labeling interface.
+        The status of the question is not changed.
+
+        Args:
+            question_id: Id of the question to reply to.
+            question_ids: List of Ids of the questions to reply to.
+            text: Text of the reply.
+            text_array: List of texts of the replies, one per question of `question_ids`.
+            disable_tqdm: If `True`, the progress bar will be disabled.
+
+        Returns:
+            A list of the created comments, in the order of the questions, each a dictionary with
+                the keys `id`, `issueId`, `text`, `createdAt` and `authorIdUser`.
+
+        Raises:
+            ValueError: If the input arrays have different sizes, or if a text is empty.
+            GraphQLError: If a reply cannot be added, for instance because the question does not
+                exist or the user is not a member of its project. No comment is added to that
+                question; the questions before it in the list have already been replied to.
+
+        Examples:
+            >>> # Reply to a single question
+            >>> comment = kili.questions.reply(
+            ...     question_id="question_123",
+            ...     text="It is a cat, not a dog."
+            ... )
+
+            >>> # Reply to several questions in one call
+            >>> comments = kili.questions.reply(
+            ...     question_ids=["question_123", "question_456"],
+            ...     text_array=["It is a cat, not a dog.", "Please check the bounding box again."]
+            ... )
+        """
+        # Convert singular to plural
+        if question_id is not None:
+            question_ids = [question_id]
+        if text is not None:
+            text_array = [text]
+
+        assert question_ids is not None, "question_ids must be provided"
+        assert text_array is not None, "text_array must be provided"
+        assert_all_arrays_have_same_size([question_ids, text_array])
+
+        resolved_disable_tqdm = resolve_disable_tqdm(disable_tqdm, self._client.disable_tqdm)
+
+        issue_use_cases = IssueUseCases(self._gateway)
+        return issue_use_cases.reply_to_issues(
+            issue_ids=[IssueId(question_id_item) for question_id_item in question_ids],
+            texts=text_array,
+            disable_tqdm=resolved_disable_tqdm,
+        )

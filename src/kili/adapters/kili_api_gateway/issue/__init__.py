@@ -10,6 +10,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
     fragment_builder,
 )
 from kili.adapters.kili_api_gateway.issue.operations import (
+    GQL_APPEND_TO_COMMENTS,
     GQL_COUNT_ISSUES,
     GQL_CREATE_ISSUES,
 )
@@ -84,3 +85,9 @@ class IssueOperationMixin(BaseOperationMixin):
         where = {"id": issue_id}
         payload = {"data": data, "where": where}
         return self.graphql_client.execute(GQL_UPDATE_ISSUE, payload)
+
+    def append_to_comments(self, issue_id: IssueId, text: str) -> dict[str, Any]:
+        """Send a GraphQL request calling appendToComments resolver."""
+        payload = {"data": {"text": text, "inReview": False}, "where": {"id": issue_id}}
+        result = self.graphql_client.execute(GQL_APPEND_TO_COMMENTS, payload)
+        return result["data"]

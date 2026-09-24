@@ -226,3 +226,46 @@ class IssueClientMethods(BaseClientMethods):
                 else an error message.
         """
         return IssueUseCases(self.kili_api_gateway).update_issue_status(IssueId(issue_id), status)
+
+    @typechecked
+    def reply_to_issues(
+        self,
+        issue_ids: list[str],
+        text_array: list[str],
+        disable_tqdm: Optional[bool] = None,
+    ) -> list[dict[str, Any]]:
+        """Reply to issues or questions by adding a comment to their thread.
+
+        Each reply is added after the existing comments of the issue, with the authenticated
+        user as its author, as if typed in the issue's thread in the labeling interface.
+        The status of the issue is not changed.
+
+        Args:
+            issue_ids: List of Ids of the issues or questions to reply to.
+            text_array: List of texts of the replies, one per issue of `issue_ids`.
+            disable_tqdm: If `True`, the progress bar will be disabled.
+
+        Returns:
+            A list of the created comments, in the order of `issue_ids`, each a dictionary with
+                the keys `id`, `issueId`, `text`, `createdAt` and `authorIdUser`.
+
+        Raises:
+            ValueError: If `issue_ids` and `text_array` have different sizes, or if a text is empty.
+            GraphQLError: If a reply cannot be added, for instance because the issue does not
+                exist or the user is not a member of its project. No comment is added to that
+                issue; the issues before it in the list have already been replied to.
+
+        Examples:
+            >>> kili.reply_to_issues(
+            ...     issue_ids=["issue_123", "question_456"],
+            ...     text_array=["Fixed, thanks for reporting it.", "It is a cat, not a dog."],
+            ... )
+            [{'id': 'comment_1', 'issueId': 'issue_123', 'text': 'Fixed, thanks for reporting it.', ...}, ...]
+        """
+        assert_all_arrays_have_same_size([issue_ids, text_array])
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
+        return IssueUseCases(self.kili_api_gateway).reply_to_issues(
+            issue_ids=[IssueId(issue_id) for issue_id in issue_ids],
+            texts=text_array,
+            disable_tqdm=disable_tqdm,
+        )
