@@ -62,12 +62,24 @@ mutation($where: AssetWhere!) {
 }
 """
 
-GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW = f"""
-mutation($where: AssetWhere!) {{
-  data: addAllLabeledAssetsToReview(where: $where) {{
-    {PROJECT_FRAGMENT_ID}
-  }}
-}}
+GQL_ADD_ASSETS_TO_REVIEW = """
+mutation($where: AssetWhere!) {
+  data: addAssetsToReview(where: $where) {
+    succeeded {
+      assetId
+      externalId
+    }
+    declined {
+      assetId
+      externalId
+    }
+    failed {
+      assetId
+      externalId
+      details
+    }
+  }
+}
 """
 
 GQL_SEND_BACK_ASSETS_TO_QUEUE = f"""

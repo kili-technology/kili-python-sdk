@@ -53,7 +53,11 @@ class TestAssetsNamespaceIntegration:
             return_value={"id": "project_123", "asset_ids": ["asset1"]}
         )
         mock_kili_client.legacy_client.add_to_review = MagicMock(
-            return_value={"id": "project_123", "asset_ids": ["asset1"]}
+            return_value={
+                "declined": [],
+                "failed": [],
+                "succeeded": [{"assetId": "asset1", "externalId": "img1"}],
+            }
         )
 
         assets_ns = mock_kili_client.assets
@@ -70,7 +74,7 @@ class TestAssetsNamespaceIntegration:
 
         # Test move_to_next_step
         result = assets_ns.move_to_next_step(asset_ids=["asset1"])
-        assert result["id"] == "project_123"
+        assert result["succeeded"] == [{"assetId": "asset1", "externalId": "img1"}]
         mock_kili_client.legacy_client.add_to_review.assert_called_once()
 
     def test_list_and_count_use_cases_integration(self, mock_kili_client):
