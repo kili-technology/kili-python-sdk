@@ -2375,7 +2375,8 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             project_id: Identifier of the project.
             fields: All the fields to request among the possible fields for the assets.
                 See [the documentation](https://api-docs.kili-technology.com/types/objects/asset)
-                for all possible fields. `deletedAt` is the date of the deletion.
+                for all possible fields. `deletedAt` is the date of the deletion. The labels of a
+                deleted asset are deleted with it: `labels` is empty until the asset is restored.
             first: Maximum number of assets to return.
             skip: Number of assets to skip (they are ordered by their id).
             disable_tqdm: If `True`, the progress bar will be disabled.
@@ -2443,8 +2444,9 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     ) -> List[dict[str, Optional[str]]]:
         """Restore assets deleted from a project.
 
-        A restored asset is back in the project as it was before its deletion: with its labels,
-        at its place in the workflow and in the queue. Only a project admin can restore assets.
+        A restored asset is back in the project as it was when it was deleted: with the labels it
+        had then, at its place in the workflow and in the queue. Only a project admin can restore
+        assets.
 
         The assets are restored all together or not at all: if one of them cannot be restored,
         an error says why and none is restored.

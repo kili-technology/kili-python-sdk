@@ -506,10 +506,6 @@ class TestAssetsNamespaceGroupNameFilter:
         assert call_kwargs["group_name_not_in"] == ["GroupA", "GroupB"]
 
 
-if __name__ == "__main__":
-    pytest.main([__file__])
-
-
 class TestAssetsNamespaceDeletedAssets:
     """Tests for listing, counting and restoring deleted assets."""
 
@@ -565,3 +561,7 @@ class TestAssetsNamespaceDeletedAssets:
         restore.assert_called_once_with(
             ProjectId("project_id"), asset_ids=asset_ids, external_ids=external_ids
         )
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

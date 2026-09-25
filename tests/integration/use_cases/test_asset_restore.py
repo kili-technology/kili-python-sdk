@@ -95,9 +95,10 @@ def test_restore_returns_only_the_assets_the_backend_restored(kili_api_gateway: 
         AssetId(asset_id) for asset_id in asset_ids if asset_id == "a2"
     ]
 
-    restored = AssetUseCases(kili_api_gateway).restore_assets(
-        PROJECT_ID, asset_ids=[AssetId("a1"), AssetId("a2")], external_ids=None
-    )
+    with pytest.warns(UserWarning, match=r"\['a1'\] were not reported as restored"):
+        restored = AssetUseCases(kili_api_gateway).restore_assets(
+            PROJECT_ID, asset_ids=[AssetId("a1"), AssetId("a2")], external_ids=None
+        )
 
     assert restored == [{"id": "a2", "externalId": "img2"}]
 
@@ -198,6 +199,17 @@ def test_restore_by_a_user_who_is_not_admin_raises_a_clear_error_and_restores_no
         )
     kili_api_gateway.list_assets.assert_not_called()
     assert restore_calls(kili_api_gateway) == [[]]
+
+
+def test_restore_keeps_an_error_that_is_not_about_permissions(kili_api_gateway: KiliAPIGateway):
+    error = GraphQLError([{"message": "[licenseError] Your license does not allow it."}])
+    kili_api_gateway.restore_deleted_assets.side_effect = error
+
+    with pytest.raises(GraphQLError) as raised:
+        AssetUseCases(kili_api_gateway).restore_assets(
+            PROJECT_ID, asset_ids=[AssetId("a1")], external_ids=None
+        )
+    assert raised.value is error
 
 
 def test_restore_of_no_asset_restores_nothing(kili_api_gateway: KiliAPIGateway):

@@ -1,6 +1,7 @@
 """Asset use cases."""
 
 import itertools
+import warnings
 from collections import defaultdict
 from collections.abc import Callable, Generator
 from typing import Literal, Optional, TypeVar
@@ -131,6 +132,16 @@ class AssetUseCases(BaseUseCases):
                 project_id, [AssetId(asset["id"]) for asset in assets_to_restore]
             )
         )
+        not_restored = [
+            asset["id"] for asset in assets_to_restore if asset["id"] not in restored_ids
+        ]
+        if not_restored:
+            warnings.warn(
+                f"The assets of ids {not_restored} were not reported as restored: they may have"
+                " been permanently deleted meanwhile, or restored by a retried request. Check them"
+                " with kili.deleted_assets().",
+                stacklevel=2,
+            )
         return [
             {"id": asset["id"], "externalId": asset["externalId"]}
             for asset in assets_to_restore
@@ -146,6 +157,8 @@ class AssetUseCases(BaseUseCases):
         except GraphQLError as error:
             original = error.error[0] if isinstance(error.error, list) else error.error
             reason = original["message"] if isinstance(original, dict) else str(original)
+            if "[accessDenied]" not in reason:
+                raise
             raise GraphQLError(
                 f"Only an admin of project {project_id} can restore its deleted assets. Nothing"
                 f" was restored: {reason}",
