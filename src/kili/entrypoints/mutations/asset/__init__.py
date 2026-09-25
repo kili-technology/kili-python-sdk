@@ -1,6 +1,7 @@
 """Asset mutations."""
 
 import warnings
+from collections.abc import Sequence
 from typing import Any, Literal, Optional, Union, cast
 
 from tenacity import retry
@@ -9,9 +10,10 @@ from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
-from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssignAssetsOutcome
+from kili.domain.asset import AssetActionOutcome, AssetExternalId, AssetFilters, AssetId
 from kili.domain.project import ProjectId
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
@@ -32,6 +34,33 @@ from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv
 from kili.utils.assets import PageResolution
 from kili.utils.logcontext import for_all_methods, log_call
+
+ASSET_ACTION_BATCH_SIZE = 100
+
+
+def empty_asset_action_outcome() -> AssetActionOutcome:
+    """The outcome of an asset action given no asset."""
+    return {"declined": [], "failed": [], "succeeded": []}
+
+
+def execute_asset_action(
+    graphql_client: GraphQLClient,
+    query: str,
+    asset_ids: Sequence[str],
+    variables: Optional[dict[str, Any]] = None,
+) -> AssetActionOutcome:
+    """Run an asset action over the given assets, one call per batch of 100.
+
+    The outcome is merged rather than returned per call: which batch an asset happened to land in
+    says nothing to the caller.
+    """
+    outcome = empty_asset_action_outcome()
+    for i in range(0, len(asset_ids), ASSET_ACTION_BATCH_SIZE):
+        chunk = asset_ids[i : i + ASSET_ACTION_BATCH_SIZE]
+        results = graphql_client.execute(query, {**(variables or {}), "where": {"idIn": chunk}})
+        for key in ("declined", "failed", "succeeded"):
+            outcome[key].extend(results["data"][key])
+    return outcome
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -213,7 +242,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         asset_ids: Optional[list[str]] = None,
         external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> AssignAssetsOutcome:
+    ) -> AssetActionOutcome:
         """Assign a list of assets to a list of labelers.
 
         Assigning an asset to nobody unassigns it. A labeler who has a label in progress on an
@@ -255,7 +284,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         if is_empty_list_with_warning(
             "assign_assets_to_labelers", "asset_ids", asset_ids
         ) and is_empty_list_with_warning("assign_assets_to_labelers", "external_ids", external_ids):
-            return {"declined": [], "failed": [], "succeeded": []}
+            return empty_asset_action_outcome()
 
         if (asset_ids is not None and external_ids is not None) or (
             asset_ids is None and external_ids is None
@@ -278,16 +307,17 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 groups[key] = []
             groups[key].append(asset_id)
 
-        # One call per group of 100, so the outcome is merged rather than returned per call: which
-        # batch an asset happened to land in says nothing to the caller.
-        outcome: AssignAssetsOutcome = {"declined": [], "failed": [], "succeeded": []}
+        outcome = empty_asset_action_outcome()
         for user_ids_tuple, ids_for_group in groups.items():
-            for i in range(0, len(ids_for_group), 100):
-                chunk = ids_for_group[i : i + 100]
-                payload = {"userIds": list(user_ids_tuple), "where": {"idIn": chunk}}
-                results = self.graphql_client.execute(GQL_ASSIGN_ASSETS, payload)
-                for key in ("declined", "failed", "succeeded"):
-                    outcome[key].extend(results["data"][key])
+            group_outcome = execute_asset_action(
+                self.graphql_client,
+                GQL_ASSIGN_ASSETS,
+                ids_for_group,
+                {"userIds": list(user_ids_tuple)},
+            )
+            outcome["declined"].extend(group_outcome["declined"])
+            outcome["failed"].extend(group_outcome["failed"])
+            outcome["succeeded"].extend(group_outcome["succeeded"])
         return outcome
 
     @typechecked
