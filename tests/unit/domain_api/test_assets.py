@@ -1,5 +1,6 @@
 """Unit tests for the AssetsNamespace domain API."""
 
+import warnings
 from unittest.mock import MagicMock
 
 import pytest
@@ -308,6 +309,39 @@ class TestAssetsNamespaceCoreOperations:
         assert result == expected_result
         mock_client.delete_many_from_dataset.assert_called_once_with(
             asset_ids=["asset1", "asset2"], external_ids=None, project_id=""
+        )
+
+    def test_set_priority(self, assets_namespace, mock_client):
+        """Test set_priority method delegates to client."""
+        expected_result = {
+            "declined": [],
+            "failed": [],
+            "succeeded": [{"assetId": "asset1", "externalId": None}],
+        }
+        mock_client.set_assets_priority.return_value = expected_result
+
+        result = assets_namespace.set_priority(asset_id="asset1", priority=2)
+
+        assert result == expected_result
+        mock_client.set_assets_priority.assert_called_once_with(
+            priority=2, asset_ids=["asset1"], external_ids=None, project_id=""
+        )
+
+    def test_update_priority_is_deprecated_for_set_priority(self, assets_namespace, mock_client):
+        """Test update_priority still delegates, warning once about set_priority."""
+
+        def update_properties_in_assets(**_):
+            warnings.warn("priorities is deprecated", DeprecationWarning, stacklevel=1)
+            return [{"id": "asset1"}]
+
+        mock_client.update_properties_in_assets.side_effect = update_properties_in_assets
+
+        with pytest.warns(DeprecationWarning, match="set_priority") as records:
+            assets_namespace.update_priority(asset_id="asset1", priority=2)
+
+        assert len(records) == 1
+        mock_client.update_properties_in_assets.assert_called_once_with(
+            asset_ids=["asset1"], external_ids=None, project_id="", priorities=[2]
         )
 
     def test_update_consensus_with_asset_id(self, assets_namespace, mock_client):
