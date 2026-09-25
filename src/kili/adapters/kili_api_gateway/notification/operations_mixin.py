@@ -28,8 +28,3 @@ class NotificationOperationMixin(BaseOperationMixin):
         return PaginatedGraphQLQuery(self.graphql_client).execute_query_from_paginated_call(
             query, where, options, "Retrieving notifications", GQL_COUNT_NOTIFICATIONS
         )
-
-    def count_notification(self, filters: NotificationFilter) -> int:
-        """Count notifications."""
-        variables = {"where": map_notification_filter(filters=filters)}
-        return self.graphql_client.execute(GQL_COUNT_NOTIFICATIONS, variables)["data"]
