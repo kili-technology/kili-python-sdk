@@ -815,27 +815,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../notification/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Notification
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../organization/" class="md-nav__link">
         
   
@@ -5148,8 +5127,13 @@ has opened and started the asset yet.</p></td>
         <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssignAssetsOutcome</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Assign a list of assets to a list of labelers.</span>
+
+<span class="sd">        Assigning an asset to nobody unassigns it. A labeler who has a label in progress on an</span>
+<span class="sd">        asset stays assigned to it whatever this asks for: unassigning them would leave them with</span>
+<span class="sd">        an interface they can no longer submit from, and the asset in progress with nobody to</span>
+<span class="sd">        finish it. Those assets are reported under `declined` rather than silently left out.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            asset_ids: The internal asset IDs to assign.</span>
@@ -5158,7 +5142,16 @@ has opened and started the asset yet.</p></td>
 <span class="sd">            to_be_labeled_by_array: The array of list of labelers to assign per labelers (list of userIds).</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A list of dictionaries with the asset ids.</span>
+<span class="sd">            A dictionary with three keys, each a list covering every asset given:</span>
+
+<span class="sd">            - `succeeded`: the assets that ended up in the state that was asked for, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ...}`.</span>
+<span class="sd">            - `declined`: the assets the request could not be applied to, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise</span>
+<span class="sd">              next to the count, so no surface reports them.</span>
+<span class="sd">            - `failed`: the assets whose write threw, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these</span>
+<span class="sd">              are worth retrying as is.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.assign_assets_to_labelers(</span>
@@ -5176,7 +5169,7 @@ has opened and started the asset yet.</p></td>
         <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
             <span class="s2">"assign_assets_to_labelers"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
         <span class="p">)</span> <span class="ow">and</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"assign_assets_to_labelers"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"declined"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"failed"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"succeeded"</span><span class="p">:</span> <span class="p">[]}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="kc">None</span>
@@ -5199,14 +5192,17 @@ has opened and started the asset yet.</p></td>
                 <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset_id</span><span class="p">)</span>
 
-        <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># One call per group of 100, so the outcome is merged rather than returned per call: which</span>
+        <span class="c1"># batch an asset happened to land in says nothing to the caller.</span>
+        <span class="n">outcome</span><span class="p">:</span> <span class="n">AssignAssetsOutcome</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"declined"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"failed"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"succeeded"</span><span class="p">:</span> <span class="p">[]}</span>
         <span class="k">for</span> <span class="n">user_ids_tuple</span><span class="p">,</span> <span class="n">ids_for_group</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids_for_group</span><span class="p">),</span> <span class="mi">100</span><span class="p">):</span>
                 <span class="n">chunk</span> <span class="o">=</span> <span class="n">ids_for_group</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">100</span><span class="p">]</span>
                 <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"userIds"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">user_ids_tuple</span><span class="p">),</span> <span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"idIn"</span><span class="p">:</span> <span class="n">chunk</span><span class="p">}}</span>
                 <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ASSIGN_ASSETS</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
-                <span class="n">formated_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">formated_results</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"declined"</span><span class="p">,</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="s2">"succeeded"</span><span class="p">):</span>
+                    <span class="n">outcome</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">"data"</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">outcome</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_properties_in_assets</span><span class="p">(</span>
@@ -6579,6 +6575,10 @@ In the case where assets are uploaded asynchronously (for video imported as fram
     <div class="doc doc-contents ">
 
       <p>Assign a list of assets to a list of labelers.</p>
+<p>Assigning an asset to nobody unassigns it. A labeler who has a label in progress on an
+asset stays assigned to it whatever this asks for: unassigning them would leave them with
+an interface they can no longer submit from, and the asset in progress with nobody to
+finish it. Those assets are reported under <code>declined</code> rather than silently left out.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -6627,8 +6627,17 @@ In the case where assets are uploaded asynchronously (for video imported as fram
   </thead>
   <tbody>
     <tr>
-      <td><code>list</code></td>
-      <td><p>A list of dictionaries with the asset ids.</p></td>
+      <td><code>A dictionary with three keys, each a list covering every asset given</code></td>
+      <td><ul>
+<li><code>succeeded</code>: the assets that ended up in the state that was asked for, as
+  <code>{"assetId": ..., "externalId": ...}</code>.</li>
+<li><code>declined</code>: the assets the request could not be applied to, as
+  <code>{"assetId": ..., "externalId": ...}</code>. Why is not carried: the reasons read as noise
+  next to the count, so no surface reports them.</li>
+<li><code>failed</code>: the assets whose write threw, as
+  <code>{"assetId": ..., "externalId": ..., "details": ...}</code>. Unlike a declined asset, these
+  are worth retrying as is.</li>
+</ul></td>
     </tr>
   </tbody>
 </table>
@@ -6655,8 +6664,13 @@ In the case where assets are uploaded asynchronously (for video imported as fram
     <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssignAssetsOutcome</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Assign a list of assets to a list of labelers.</span>
+
+<span class="sd">    Assigning an asset to nobody unassigns it. A labeler who has a label in progress on an</span>
+<span class="sd">    asset stays assigned to it whatever this asks for: unassigning them would leave them with</span>
+<span class="sd">    an interface they can no longer submit from, and the asset in progress with nobody to</span>
+<span class="sd">    finish it. Those assets are reported under `declined` rather than silently left out.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        asset_ids: The internal asset IDs to assign.</span>
@@ -6665,7 +6679,16 @@ In the case where assets are uploaded asynchronously (for video imported as fram
 <span class="sd">        to_be_labeled_by_array: The array of list of labelers to assign per labelers (list of userIds).</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A list of dictionaries with the asset ids.</span>
+<span class="sd">        A dictionary with three keys, each a list covering every asset given:</span>
+
+<span class="sd">        - `succeeded`: the assets that ended up in the state that was asked for, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ...}`.</span>
+<span class="sd">        - `declined`: the assets the request could not be applied to, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise</span>
+<span class="sd">          next to the count, so no surface reports them.</span>
+<span class="sd">        - `failed`: the assets whose write threw, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these</span>
+<span class="sd">          are worth retrying as is.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.assign_assets_to_labelers(</span>
@@ -6683,7 +6706,7 @@ In the case where assets are uploaded asynchronously (for video imported as fram
     <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
         <span class="s2">"assign_assets_to_labelers"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
     <span class="p">)</span> <span class="ow">and</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"assign_assets_to_labelers"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"declined"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"failed"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"succeeded"</span><span class="p">:</span> <span class="p">[]}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
         <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="kc">None</span>
@@ -6706,14 +6729,17 @@ In the case where assets are uploaded asynchronously (for video imported as fram
             <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset_id</span><span class="p">)</span>
 
-    <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># One call per group of 100, so the outcome is merged rather than returned per call: which</span>
+    <span class="c1"># batch an asset happened to land in says nothing to the caller.</span>
+    <span class="n">outcome</span><span class="p">:</span> <span class="n">AssignAssetsOutcome</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"declined"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"failed"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"succeeded"</span><span class="p">:</span> <span class="p">[]}</span>
     <span class="k">for</span> <span class="n">user_ids_tuple</span><span class="p">,</span> <span class="n">ids_for_group</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids_for_group</span><span class="p">),</span> <span class="mi">100</span><span class="p">):</span>
             <span class="n">chunk</span> <span class="o">=</span> <span class="n">ids_for_group</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">100</span><span class="p">]</span>
             <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"userIds"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">user_ids_tuple</span><span class="p">),</span> <span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"idIn"</span><span class="p">:</span> <span class="n">chunk</span><span class="p">}}</span>
             <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ASSIGN_ASSETS</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
-            <span class="n">formated_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">formated_results</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"declined"</span><span class="p">,</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="s2">"succeeded"</span><span class="p">):</span>
+                <span class="n">outcome</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">"data"</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">outcome</span>
 </code></pre></div>
         </details>
     </div>
