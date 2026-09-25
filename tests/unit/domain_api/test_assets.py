@@ -296,7 +296,11 @@ class TestAssetsNamespaceCoreOperations:
 
     def test_delete_assets(self, assets_namespace, mock_client):
         """Test delete method delegates to client."""
-        expected_result = {"id": "project_123"}
+        expected_result = {
+            "declined": [],
+            "failed": [],
+            "succeeded": [{"assetId": "asset1", "externalId": None}],
+        }
         mock_client.delete_many_from_dataset.return_value = expected_result
 
         result = assets_namespace.delete(asset_ids=["asset1", "asset2"])
@@ -410,7 +414,11 @@ class TestAssetsNamespaceContractCompatibility:
 
     def test_api_parity_delete_vs_delete_many(self, assets_namespace, mock_client):
         """Test that delete() calls have same signature as delete_many_from_dataset()."""
-        mock_client.delete_many_from_dataset.return_value = {"id": "project"}
+        mock_client.delete_many_from_dataset.return_value = {
+            "declined": [],
+            "failed": [],
+            "succeeded": [],
+        }
 
         assets_namespace.delete(
             asset_ids=["asset1", "asset2"], external_ids=None, project_id="test_project"
