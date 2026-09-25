@@ -139,3 +139,54 @@ def test_given_no_asset_when_i_assign_it_reports_an_empty_outcome(
     # Then
     assert outcome == {"declined": [], "failed": [], "succeeded": []}
     kili.graphql_client.execute.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("method", "mutation"),
+    [
+        ("delete_many_from_dataset", "deleteAssets"),
+    ],
+)
+def test_given_more_assets_than_a_batch_when_i_run_a_queue_action_it_merges_what_each_call_reported(
+    mocker: pytest_mock.MockerFixture, method: str, mutation: str
+):
+    """The caller is told what happened to its assets, not how they were batched."""
+    # Given 101 assets, so the mutation is called twice
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    asset_ids = [f"asset_{index}" for index in range(101)]
+
+    kili.graphql_client.execute.side_effect = [
+        {
+            "data": {
+                "declined": [],
+                "failed": [{"assetId": "asset_0", "externalId": "img_0", "details": "Retry."}],
+                "succeeded": [{"assetId": "asset_1", "externalId": "img_1"}],
+            }
+        },
+        {
+            "data": {
+                "declined": [{"assetId": "asset_100", "externalId": "img_100"}],
+                "failed": [],
+                "succeeded": [],
+            }
+        },
+    ]
+
+    # When
+    outcome = getattr(kili, method)(asset_ids=asset_ids)
+
+    # Then each batch named its own assets, through the mutation that reports them
+    assert kili.graphql_client.execute.call_count == 2
+    (first_query, first_variables), _ = kili.graphql_client.execute.call_args_list[0]
+    (_, second_variables), _ = kili.graphql_client.execute.call_args_list[1]
+    assert f"{mutation}(where: $where)" in first_query
+    assert first_variables == {"where": {"idIn": asset_ids[:100]}}
+    assert second_variables == {"where": {"idIn": asset_ids[100:]}}
+    assert outcome == {
+        "declined": [{"assetId": "asset_100", "externalId": "img_100"}],
+        "failed": [{"assetId": "asset_0", "externalId": "img_0", "details": "Retry."}],
+        "succeeded": [{"assetId": "asset_1", "externalId": "img_1"}],
+    }
