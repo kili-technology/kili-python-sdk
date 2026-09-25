@@ -100,6 +100,26 @@ mutation($where: AssetWhere!) {
 }
 """
 
+GQL_SET_ASSETS_PRIORITY = """
+mutation($where: AssetWhere!, $priority: Int!) {
+  data: setAssetsPriority(where: $where, priority: $priority) {
+    succeeded {
+      assetId
+      externalId
+    }
+    declined {
+      assetId
+      externalId
+    }
+    failed {
+      assetId
+      externalId
+      details
+    }
+  }
+}
+"""
+
 GQL_SKIP_ASSET = """
 mutation SkipAsset($reason: String!, $where: AssetWhere!) {
   skipAsset(reason: $reason, where: $where) {
