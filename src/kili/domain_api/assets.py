@@ -1993,7 +1993,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_id: str,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2002,7 +2002,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2011,7 +2011,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_id: str,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2020,7 +2020,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @typechecked
@@ -2032,7 +2032,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         """Send assets back to queue (invalidate current step).
 
         This method sends assets back to the queue, effectively invalidating their
@@ -2046,8 +2046,16 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             project_id: The project ID. Only required if `external_id(s)` argument is provided.
 
         Returns:
-            A dict object with the project `id` and the `asset_ids` of assets moved to queue.
-            An error message if mutation failed.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
 
         Examples:
             >>> # Single asset

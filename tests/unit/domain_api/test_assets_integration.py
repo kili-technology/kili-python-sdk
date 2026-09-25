@@ -50,7 +50,11 @@ class TestAssetsNamespaceIntegration:
             }
         )
         mock_kili_client.legacy_client.send_back_to_queue = MagicMock(
-            return_value={"id": "project_123", "asset_ids": ["asset1"]}
+            return_value={
+                "declined": [],
+                "failed": [],
+                "succeeded": [{"assetId": "asset1", "externalId": "img1"}],
+            }
         )
         mock_kili_client.legacy_client.add_to_review = MagicMock(
             return_value={
@@ -69,7 +73,7 @@ class TestAssetsNamespaceIntegration:
 
         # Test invalidate
         result = assets_ns.invalidate(asset_ids=["asset1"])
-        assert result["id"] == "project_123"
+        assert result["succeeded"] == [{"assetId": "asset1", "externalId": "img1"}]
         mock_kili_client.legacy_client.send_back_to_queue.assert_called_once()
 
         # Test move_to_next_step
