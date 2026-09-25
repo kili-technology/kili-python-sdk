@@ -145,6 +145,7 @@ def test_given_no_asset_when_i_assign_it_reports_an_empty_outcome(
     ("method", "mutation"),
     [
         ("delete_many_from_dataset", "deleteAssets"),
+        ("add_to_review", "addAssetsToReview"),
     ],
 )
 def test_given_more_assets_than_a_batch_when_i_run_a_queue_action_it_merges_what_each_call_reported(
