@@ -59,3 +59,19 @@ class TestAssetWhereMapperGroupName:
             AssetFilters(project_id=ProjectId("proj1"), group_name_not_in=[])
         )
         assert result["groupNameNotIn"] is None
+
+
+class TestAssetWhereMapperShowOnlyRestorable:
+    """Tests for show_only_restorable field in asset_where_mapper."""
+
+    def test_show_only_restorable_is_mapped_to_graphql_show_only_restorable(self):
+        """show_only_restorable is mapped to showOnlyRestorable, which lists the deleted assets."""
+        result = asset_where_mapper(
+            AssetFilters(project_id=ProjectId("proj1"), show_only_restorable=True)
+        )
+        assert result["showOnlyRestorable"] is True
+
+    def test_show_only_restorable_defaults_to_none(self):
+        """By default showOnlyRestorable is None, stripped from the query: the active assets."""
+        result = asset_where_mapper(AssetFilters(project_id=ProjectId("proj1")))
+        assert result["showOnlyRestorable"] is None

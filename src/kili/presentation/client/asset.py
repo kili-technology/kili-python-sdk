@@ -45,6 +45,8 @@ from .base import BaseClientMethods
 if TYPE_CHECKING:
     import pandas as pd
 
+DELETED_ASSET_DEFAULT_FIELDS = ("id", "externalId", "deletedAt")
+
 
 def _warn_deprecated_gt_lt_args(
     consensus_mark_gt: Optional[float],
@@ -939,6 +941,156 @@ class AssetClientMethods(BaseClientMethods):
         )
         asset_use_cases = AssetUseCases(self.kili_api_gateway)
         return asset_use_cases.count_assets(filters)
+
+    @overload
+    def deleted_assets(
+        self,
+        project_id: str,
+        fields: ListOrTuple[str] = DELETED_ASSET_DEFAULT_FIELDS,
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: Optional[bool] = None,
+        *,
+        as_generator: Literal[True],
+    ) -> Generator[dict, None, None]:
+        ...
+
+    @overload
+    def deleted_assets(
+        self,
+        project_id: str,
+        fields: ListOrTuple[str] = DELETED_ASSET_DEFAULT_FIELDS,
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: Optional[bool] = None,
+        *,
+        as_generator: Literal[False] = False,
+    ) -> list[dict]:
+        ...
+
+    @typechecked
+    def deleted_assets(
+        self,
+        project_id: str,
+        fields: ListOrTuple[str] = DELETED_ASSET_DEFAULT_FIELDS,
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: Optional[bool] = None,
+        *,
+        as_generator: bool = False,
+    ) -> Iterable[dict]:
+        """Get the assets deleted from a project that can still be restored.
+
+        A deleted asset can be restored with `kili.restore_assets()` until it is permanently
+        deleted, 7 days after its deletion. These are the assets of the "Recently deleted" page of
+        the project settings.
+
+        Args:
+            project_id: Identifier of the project.
+            fields: All the fields to request among the possible fields for the assets.
+                See [the documentation](https://api-docs.kili-technology.com/types/objects/asset)
+                for all possible fields. `deletedAt` is the date of the deletion.
+            first: Maximum number of assets to return.
+            skip: Number of assets to skip (they are ordered by their id).
+            disable_tqdm: If `True`, the progress bar will be disabled.
+            as_generator: If `True`, a generator on the assets is returned.
+
+        Returns:
+            A list of the deleted assets, or a generator if `as_generator` is `True`.
+
+        Examples:
+            >>> kili.deleted_assets(project_id="my_project_id")
+            [{'id': 'ckg22d81r0jrg0885unmuswj8', 'externalId': 'image_1',
+              'deletedAt': '2026-09-24T09:12:43.921Z'}, ...]
+
+            >>> # Also get the labels of the deleted assets
+            >>> kili.deleted_assets(
+            ...     project_id="my_project_id",
+            ...     fields=["id", "externalId", "deletedAt", "labels.id", "labels.author.email"],
+            ... )
+        """
+        disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
+        disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
+        assets_gen = AssetUseCases(self.kili_api_gateway).list_deleted_assets(
+            ProjectId(project_id),
+            fields,
+            QueryOptions(disable_tqdm=disable_tqdm, first=first, skip=skip),
+        )
+        if as_generator:
+            return assets_gen
+        return list(assets_gen)
+
+    @typechecked
+    def count_deleted_assets(self, project_id: str) -> int:
+        """Count the assets deleted from a project that can still be restored.
+
+        Args:
+            project_id: Identifier of the project.
+
+        Returns:
+            The number of deleted assets that can still be restored with `kili.restore_assets()`.
+
+        Examples:
+            >>> kili.count_deleted_assets(project_id="my_project_id")
+            3
+        """
+        return AssetUseCases(self.kili_api_gateway).count_deleted_assets(ProjectId(project_id))
+
+    @typechecked
+    def restore_assets(
+        self,
+        project_id: str,
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
+    ) -> list[dict[str, Optional[str]]]:
+        """Restore assets deleted from a project.
+
+        A restored asset is back in the project as it was before its deletion: with its labels,
+        at its place in the workflow and in the queue. Only a project admin can restore assets.
+
+        The assets are restored all together or not at all: if one of them cannot be restored,
+        an error says why and none is restored.
+
+        Args:
+            project_id: Identifier of the project.
+            asset_ids: Identifiers of the deleted assets to restore.
+            external_ids: External ids of the deleted assets to restore, instead of `asset_ids`.
+
+        Returns:
+            The restored assets, as dictionaries with the keys `id` and `externalId`.
+
+        Raises:
+            NotFound: If an asset is not among the deleted assets of the project that can still be
+                restored (see `kili.deleted_assets()`).
+            ValueError: If an external id is used by an asset of the project, or by several of the
+                assets to restore, or if several deleted assets have one of the given external ids
+                (restore it by its asset id instead).
+            GraphQLError: If the user is not an admin of the project.
+
+        Examples:
+            >>> # Restore assets by their ids
+            >>> kili.restore_assets(
+            ...     project_id="my_project_id",
+            ...     asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+            ... )
+            [{'id': 'ckg22d81r0jrg0885unmuswj8', 'externalId': 'image_1'},
+             {'id': 'ckg22d81s0jrh0885pdxfd03n', 'externalId': 'image_2'}]
+
+            >>> # Restore every asset deleted from the project
+            >>> deleted = kili.deleted_assets(project_id="my_project_id", fields=["id"])
+            >>> kili.restore_assets(
+            ...     project_id="my_project_id", asset_ids=[asset["id"] for asset in deleted]
+            ... )
+        """
+        return AssetUseCases(self.kili_api_gateway).restore_assets(
+            ProjectId(project_id),
+            asset_ids=[AssetId(asset_id) for asset_id in asset_ids]
+            if asset_ids is not None
+            else None,
+            external_ids=[AssetExternalId(ext_id) for ext_id in external_ids]
+            if external_ids is not None
+            else None,
+        )
 
     @typechecked
     def update_asset_consensus(

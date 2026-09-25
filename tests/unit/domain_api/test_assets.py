@@ -4,8 +4,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.client import Kili
+from kili.domain.asset import AssetExternalId, AssetId
+from kili.domain.project import ProjectId
 from kili.domain_api.assets import AssetsNamespace
 
 
@@ -505,3 +508,60 @@ class TestAssetsNamespaceGroupNameFilter:
 
 if __name__ == "__main__":
     pytest.main([__file__])
+
+
+class TestAssetsNamespaceDeletedAssets:
+    """Tests for listing, counting and restoring deleted assets."""
+
+    @pytest.fixture()
+    def mock_client(self):
+        client = MagicMock(spec=Kili)
+        client.disable_tqdm = True
+        return client
+
+    @pytest.fixture()
+    def assets_namespace(self, mock_client):
+        # the namespace holds a weak reference: the fixture keeps the client alive
+        return AssetsNamespace(mock_client, MagicMock(spec=KiliAPIGateway))
+
+    def test_list_deleted(self, assets_namespace, mocker):
+        list_deleted = mocker.patch(
+            "kili.domain_api.assets.AssetUseCases.list_deleted_assets",
+            return_value=iter([{"id": "a1", "externalId": "img1", "deletedAt": "2026-09-24"}]),
+        )
+
+        result = assets_namespace.list_deleted(project_id="project_id", skip=2)
+
+        assert result == [{"id": "a1", "externalId": "img1", "deletedAt": "2026-09-24"}]
+        list_deleted.assert_called_once_with(
+            ProjectId("project_id"),
+            ("id", "externalId", "deletedAt"),
+            QueryOptions(disable_tqdm=True, first=None, skip=2),
+        )
+
+    def test_count_deleted(self, assets_namespace, mocker):
+        mocker.patch("kili.domain_api.assets.AssetUseCases.count_deleted_assets", return_value=4)
+
+        assert assets_namespace.count_deleted(project_id="project_id") == 4
+
+    @pytest.mark.parametrize(
+        ("kwargs", "asset_ids", "external_ids"),
+        [
+            ({"asset_id": "a1"}, [AssetId("a1")], None),
+            ({"asset_ids": ["a1", "a2"]}, [AssetId("a1"), AssetId("a2")], None),
+            ({"external_id": "img1"}, None, [AssetExternalId("img1")]),
+            ({"external_ids": ["img1"]}, None, [AssetExternalId("img1")]),
+        ],
+    )
+    def test_restore(self, assets_namespace, mocker, kwargs, asset_ids, external_ids):
+        restore = mocker.patch(
+            "kili.domain_api.assets.AssetUseCases.restore_assets",
+            return_value=[{"id": "a1", "externalId": "img1"}],
+        )
+
+        result = assets_namespace.restore(project_id="project_id", **kwargs)
+
+        assert result == [{"id": "a1", "externalId": "img1"}]
+        restore.assert_called_once_with(
+            ProjectId("project_id"), asset_ids=asset_ids, external_ids=external_ids
+        )

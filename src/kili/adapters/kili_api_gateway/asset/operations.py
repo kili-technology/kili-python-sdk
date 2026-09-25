@@ -36,3 +36,9 @@ query countAssetAnnotations($where: AssetWhere!) {
     data: countAssetAnnotations(where: $where)
 }
 """
+
+GQL_RESTORE_DELETED_ASSETS = """
+mutation restoreDeletedAssets($data: RestoreDeletedAssetsData!) {
+    data: restoreDeletedAssets(data: $data)
+}
+"""

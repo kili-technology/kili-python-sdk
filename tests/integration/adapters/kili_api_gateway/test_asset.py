@@ -2,9 +2,10 @@ from copy import deepcopy
 
 import pytest
 
+from kili.adapters.kili_api_gateway.asset.operations import GQL_RESTORE_DELETED_ASSETS
 from kili.adapters.kili_api_gateway.asset.operations_mixin import AssetOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetFilters, AssetId
 from kili.domain.project import ProjectId
 from kili.exceptions import GraphQLError
 
@@ -216,3 +217,25 @@ def test_update_asset_consensus_propagates_a_graphql_error_without_retrying(
         )
 
     assert graphql_client.execute.call_count == 1
+
+
+def test_given_asset_ids_when_restoring_deleted_assets_it_sends_the_mutation_and_returns_ids(
+    graphql_client, http_client
+):
+    # Given
+    graphql_client.execute.return_value = {"data": ["asset_1"]}
+    gateway = AssetOperationMixin()
+    gateway.graphql_client = graphql_client
+    gateway.http_client = http_client
+
+    # When
+    restored = gateway.restore_deleted_assets(
+        "project_id", (AssetId("asset_1"), AssetId("asset_2"))
+    )
+
+    # Then
+    assert restored == ["asset_1"]
+    graphql_client.execute.assert_called_once_with(
+        GQL_RESTORE_DELETED_ASSETS,
+        {"data": {"projectId": "project_id", "assetIds": ["asset_1", "asset_2"]}},
+    )

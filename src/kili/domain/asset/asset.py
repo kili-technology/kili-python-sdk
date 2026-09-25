@@ -73,6 +73,7 @@ class AssetFilters:
     step_status_not_in: Optional[ListOrTuple[StatusInStep]] = None
     group_name_in: Optional[ListOrTuple[str]] = None
     group_name_not_in: Optional[ListOrTuple[str]] = None
+    show_only_restorable: Optional[bool] = None
 
 
 class AssetWorkflowFilters(TypedDict, total=False):

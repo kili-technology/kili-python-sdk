@@ -86,4 +86,5 @@ def asset_where_mapper(filters: AssetFilters):
         ),
         "groupNameIn": filters.group_name_in or None,
         "groupNameNotIn": filters.group_name_not_in or None,
+        "showOnlyRestorable": filters.show_only_restorable,
     }

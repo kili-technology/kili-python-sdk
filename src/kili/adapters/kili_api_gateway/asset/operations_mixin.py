@@ -15,6 +15,7 @@ from kili.adapters.kili_api_gateway.asset.operations import (
     GQL_COUNT_ASSETS,
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
     GQL_FILTER_EXISTING_ASSETS,
+    GQL_RESTORE_DELETED_ASSETS,
     get_assets_query,
 )
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
@@ -26,7 +27,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 from kili.adapters.kili_api_gateway.label.common import get_annotation_fragment
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.graphql.operations.asset.mutations import GQL_SET_ASSET_CONSENSUS
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetFilters, AssetId
 from kili.domain.types import ListOrTuple
 
 # Threshold for batching based on number of annotations
@@ -233,6 +234,14 @@ class AssetOperationMixin(BaseOperationMixin):
         }
         external_id_response = self.graphql_client.execute(GQL_FILTER_EXISTING_ASSETS, payload)
         return external_id_response["external_ids"]
+
+    def restore_deleted_assets(
+        self, project_id: str, asset_ids: ListOrTuple[AssetId]
+    ) -> list[AssetId]:
+        """Send a GraphQL request calling restoreDeletedAssets resolver."""
+        payload = {"data": {"projectId": project_id, "assetIds": list(asset_ids)}}
+        result = self.graphql_client.execute(GQL_RESTORE_DELETED_ASSETS, payload)
+        return [AssetId(asset_id) for asset_id in result["data"] or []]
 
     def update_asset_consensus(
         self,
