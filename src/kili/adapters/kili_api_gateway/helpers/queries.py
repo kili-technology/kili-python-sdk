@@ -99,26 +99,47 @@ class PaginatedGraphQLQuery:
                         yield from elements
                         pbar.update(len(elements))
                     else:
-                        check_unicity_field_presence(unicity_field, elements[0])
-
-                        for element in elements:
-                            unicity_value = element[unicity_field]
-
-                            if unicity_value not in unicity_values:
-                                yield element
-                                unicity_values[unicity_value] = True
-                                pbar.update(1)
-
-                                if (
-                                    options.first is not None
-                                    and len(unicity_values) >= options.first
-                                ):
-                                    break
+                        yield from self._yield_unique_elements(
+                            elements, unicity_field, unicity_values, options.first, pbar
+                        )
 
                     count_elements_retrieved += len(elements)
 
+                    if (
+                        unicity_field is not None
+                        and options.first is not None
+                        and len(unicity_values) >= options.first
+                    ):
+                        break
+
                     if len(elements) < first:
                         break
+
+    @staticmethod
+    def _yield_unique_elements(
+        elements: list,
+        unicity_field: str,
+        unicity_values: dict,
+        first: Optional[int],
+        pbar,
+    ) -> Generator[dict, None, None]:
+        """Yield elements not already seen, tracking them in unicity_values.
+
+        Stops early once `first` unique elements have been yielded in total.
+        """
+        check_unicity_field_presence(unicity_field, elements[0])
+
+        for element in elements:
+            unicity_value = element[unicity_field]
+            if unicity_value in unicity_values:
+                continue
+
+            yield element
+            unicity_values[unicity_value] = True
+            pbar.update(1)
+
+            if first is not None and len(unicity_values) >= first:
+                return
 
     def get_number_of_elements_to_query(
         self,
