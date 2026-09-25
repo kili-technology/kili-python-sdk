@@ -1,27 +1,27 @@
 """Asset mutations."""
 
 import warnings
+from collections.abc import Sequence
 from typing import Any, Literal, Optional, Union, cast
 
-from tenacity import retry
-from tenacity.retry import retry_if_exception_type
-from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
-from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssignAssetsOutcome
+from kili.domain.asset import AssetActionOutcome, AssetExternalId, AssetFilters, AssetId
 from kili.domain.project import ProjectId
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
     process_update_properties_in_assets_parameters,
 )
 from kili.entrypoints.mutations.asset.queries import (
-    GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
+    GQL_ADD_ASSETS_TO_REVIEW,
     GQL_ASSIGN_ASSETS,
-    GQL_DELETE_MANY_FROM_DATASET,
-    GQL_SEND_BACK_ASSETS_TO_QUEUE,
+    GQL_DELETE_ASSETS,
+    GQL_SEND_ASSETS_BACK_TO_QUEUE,
+    GQL_SET_ASSETS_PRIORITY,
     GQL_SKIP_ASSET,
     GQL_UNSKIP_ASSET,
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
@@ -32,6 +32,33 @@ from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv
 from kili.utils.assets import PageResolution
 from kili.utils.logcontext import for_all_methods, log_call
+
+ASSET_ACTION_BATCH_SIZE = 100
+
+
+def empty_asset_action_outcome() -> AssetActionOutcome:
+    """The outcome of an asset action given no asset."""
+    return {"declined": [], "failed": [], "succeeded": []}
+
+
+def execute_asset_action(
+    graphql_client: GraphQLClient,
+    query: str,
+    asset_ids: Sequence[str],
+    variables: Optional[dict[str, Any]] = None,
+) -> AssetActionOutcome:
+    """Run an asset action over the given assets, one call per batch of 100.
+
+    The outcome is merged rather than returned per call: which batch an asset happened to land in
+    says nothing to the caller.
+    """
+    outcome = empty_asset_action_outcome()
+    for i in range(0, len(asset_ids), ASSET_ACTION_BATCH_SIZE):
+        chunk = asset_ids[i : i + ASSET_ACTION_BATCH_SIZE]
+        results = graphql_client.execute(query, {**(variables or {}), "where": {"idIn": chunk}})
+        for key in ("declined", "failed", "succeeded"):
+            outcome[key].extend(results["data"][key])
+    return outcome
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -213,7 +240,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         asset_ids: Optional[list[str]] = None,
         external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> AssignAssetsOutcome:
+    ) -> AssetActionOutcome:
         """Assign a list of assets to a list of labelers.
 
         Assigning an asset to nobody unassigns it. A labeler who has a label in progress on an
@@ -255,7 +282,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         if is_empty_list_with_warning(
             "assign_assets_to_labelers", "asset_ids", asset_ids
         ) and is_empty_list_with_warning("assign_assets_to_labelers", "external_ids", external_ids):
-            return {"declined": [], "failed": [], "succeeded": []}
+            return empty_asset_action_outcome()
 
         if (asset_ids is not None and external_ids is not None) or (
             asset_ids is None and external_ids is None
@@ -278,16 +305,17 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 groups[key] = []
             groups[key].append(asset_id)
 
-        # One call per group of 100, so the outcome is merged rather than returned per call: which
-        # batch an asset happened to land in says nothing to the caller.
-        outcome: AssignAssetsOutcome = {"declined": [], "failed": [], "succeeded": []}
+        outcome = empty_asset_action_outcome()
         for user_ids_tuple, ids_for_group in groups.items():
-            for i in range(0, len(ids_for_group), 100):
-                chunk = ids_for_group[i : i + 100]
-                payload = {"userIds": list(user_ids_tuple), "where": {"idIn": chunk}}
-                results = self.graphql_client.execute(GQL_ASSIGN_ASSETS, payload)
-                for key in ("declined", "failed", "succeeded"):
-                    outcome[key].extend(results["data"][key])
+            group_outcome = execute_asset_action(
+                self.graphql_client,
+                GQL_ASSIGN_ASSETS,
+                ids_for_group,
+                {"userIds": list(user_ids_tuple)},
+            )
+            outcome["declined"].extend(group_outcome["declined"])
+            outcome["failed"].extend(group_outcome["failed"])
+            outcome["succeeded"].extend(group_outcome["succeeded"])
         return outcome
 
     @typechecked
@@ -316,7 +344,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         Args:
             asset_ids: The internal asset IDs to modify.
             external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
-            priorities: You can change the priority of the assets.
+            priorities: DEPRECATED, use `kili.set_assets_priority()` instead, which reports the
+                assets it could not be applied to. You can change the priority of the assets.
                 By default, all assets have a priority of 0.
             json_metadatas: The metadata given to an asset should be stored
                 in a json like dict with keys `imageUrl`, `text`, `url`:
@@ -357,7 +386,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     honeypot_marks=[0.8, 0.5],
                     is_honeypot_array=[True, True],
                     is_used_for_consensus_array=[True, False],
-                    priorities=[None, 2],
                     to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
                 )
 
@@ -405,6 +433,14 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             warnings.warn(
                 "to_be_labeled_by_array is going to be deprecated. Please use"
                 " `kili.assign_assets_to_labelers()` method instead to assign assets",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
+        if priorities is not None:
+            warnings.warn(
+                "priorities is deprecated: it does not report the assets it could not be applied"
+                " to. Please use `kili.set_assets_priority()` method instead to prioritize assets",
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -660,8 +696,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         asset_ids: Optional[list[str]] = None,
         external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[dict[Literal["id"], str]]:
+    ) -> AssetActionOutcome:
         """Delete assets from a project.
+
+        A batch whose write failed is reported under `failed` rather than failing the call.
 
         Args:
             asset_ids: The list of asset internal IDs to delete.
@@ -669,54 +707,33 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
-            A dict object with the project `id`.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
+
+        Examples:
+            >>> kili.delete_many_from_dataset(
+                    asset_ids=[
+                        "ckg22d81r0jrg0885unmuswj8",
+                        "ckg22d81s0jrh0885pdxfd03n",
+                    ],
+                )
         """
         if is_empty_list_with_warning(
             "delete_many_from_dataset", "asset_ids", asset_ids
         ) or is_empty_list_with_warning("delete_many_from_dataset", "external_ids", external_ids):
-            return None
+            return empty_asset_action_outcome()
 
         resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
-        properties_to_batch = {"asset_ids": resolved_asset_ids}
-
-        def generate_variables(batch):
-            return {"where": {"idIn": batch["asset_ids"]}}
-
-        @retry(
-            wait=wait_exponential(multiplier=1, min=1, max=8),
-            retry=retry_if_exception_type(MutationError),
-            reraise=True,
-        )
-        def verify_last_batch(last_batch: dict, results: list) -> None:
-            """Check that all assets in the last batch have been deleted."""
-            if project_id is not None:
-                project_id_ = project_id
-            # in some case the results is [{'data': None}]
-            elif isinstance(results[0]["data"], dict) and results[0]["data"].get("id"):
-                project_id_ = results[0]["data"].get("id")
-            else:
-                return
-
-            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
-
-            nb_assets_in_kili = self.kili_api_gateway.count_assets(
-                AssetFilters(
-                    project_id=ProjectId(project_id_),
-                    asset_id_in=asset_ids,
-                )
-            )
-            if nb_assets_in_kili > 0:
-                raise MutationError("Failed to delete some assets.")
-
-        results = mutate_from_paginated_call(
-            self,
-            properties_to_batch,
-            generate_variables,
-            GQL_DELETE_MANY_FROM_DATASET,
-            last_batch_callback=verify_last_batch,
-        )
-        return self.format_result("data", results[0])
+        return execute_asset_action(self.graphql_client, GQL_DELETE_ASSETS, resolved_asset_ids)
 
     @typechecked
     def add_to_review(
@@ -724,11 +741,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         asset_ids: Optional[list[str]] = None,
         external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         """Add assets to review.
 
-        !!! warning
-            Assets without any label will be ignored.
+        An asset without any label, or that cannot move on yet — its step is not done, someone is
+        labeling it — is reported under `declined` rather than silently left out.
 
         Args:
             asset_ids: The asset internal IDs to add to review.
@@ -736,9 +753,16 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
-            A dict object with the project `id` and the `asset_ids` of assets moved to review.
-            `None` if no assets have changed status (already had `TO_REVIEW` status for example).
-            An error message if mutation failed.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
 
         Examples:
             >>> kili.add_to_review(
@@ -751,63 +775,13 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         if is_empty_list_with_warning(
             "add_to_review", "asset_ids", asset_ids
         ) or is_empty_list_with_warning("add_to_review", "external_ids", external_ids):
-            return None
+            return empty_asset_action_outcome()
 
         resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
-        properties_to_batch = {"asset_ids": resolved_asset_ids}
-
-        def generate_variables(batch):
-            return {"where": {"idIn": batch["asset_ids"]}}
-
-        @retry(
-            wait=wait_exponential(multiplier=1, min=1, max=8),
-            retry=retry_if_exception_type(MutationError),
-            reraise=True,
+        return execute_asset_action(
+            self.graphql_client, GQL_ADD_ASSETS_TO_REVIEW, resolved_asset_ids
         )
-        def verify_last_batch(last_batch: dict, results: list) -> None:
-            """Check that all assets in the last batch have been sent to review."""
-            if project_id is not None:
-                project_id_ = project_id
-            # in some case the results is [{'data': None}]
-            elif isinstance(results[0]["data"], dict) and results[0]["data"].get("id"):
-                project_id_ = results[0]["data"].get("id")
-            else:
-                return
-
-            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
-            nb_assets_in_review = self.kili_api_gateway.count_assets(
-                AssetFilters(
-                    project_id=ProjectId(project_id_),
-                    asset_id_in=asset_ids,
-                    status_in=["TO_REVIEW"],
-                )
-            )
-            if len(asset_ids) != nb_assets_in_review:
-                raise MutationError("Failed to send some assets to review")
-
-        results = mutate_from_paginated_call(
-            self,
-            properties_to_batch,
-            generate_variables,
-            GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
-            last_batch_callback=verify_last_batch,
-        )
-        result = self.format_result("data", results[0])
-        # unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID
-        # it happens when no assets have been sent to review
-        if isinstance(result, dict) and "id" in result:
-            assets_in_review = self.kili_api_gateway.list_assets(
-                AssetFilters(
-                    project_id=result["id"],
-                    asset_id_in=resolved_asset_ids,
-                    status_in=["TO_REVIEW"],
-                ),
-                ["id"],
-                QueryOptions(disable_tqdm=True),
-            )
-            result["asset_ids"] = [asset["id"] for asset in assets_in_review]
-        return result
 
     @typechecked
     def send_back_to_queue(
@@ -815,8 +789,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         asset_ids: Optional[list[str]] = None,
         external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         """Send assets back to queue.
+
+        An asset the send back does not apply to — one still to be labeled, one skipped — is
+        reported under `declined` rather than silently left out.
 
         Args:
             asset_ids: List of internal IDs of assets to send back to queue.
@@ -824,8 +801,16 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
-            A dict object with the project `id` and the `asset_ids` of assets moved to queue.
-            An error message if mutation failed.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
 
         Examples:
             >>> kili.send_back_to_queue(
@@ -838,61 +823,67 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         if is_empty_list_with_warning(
             "send_back_to_queue", "asset_ids", asset_ids
         ) or is_empty_list_with_warning("send_back_to_queue", "external_ids", external_ids):
-            return None
+            return empty_asset_action_outcome()
 
         resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
-        properties_to_batch = {"asset_ids": resolved_asset_ids}
-
-        def generate_variables(batch):
-            return {"where": {"idIn": batch["asset_ids"]}}
-
-        @retry(
-            wait=wait_exponential(multiplier=1, min=1, max=8),
-            retry=retry_if_exception_type(MutationError),
-            reraise=True,
+        return execute_asset_action(
+            self.graphql_client, GQL_SEND_ASSETS_BACK_TO_QUEUE, resolved_asset_ids
         )
-        def verify_last_batch(last_batch: dict, results: list) -> None:
-            """Check that all assets in the last batch have been sent back to queue."""
-            if project_id is not None:
-                project_id_ = project_id
-            # in some case the results is [{'data': None}]
-            elif isinstance(results[0]["data"], dict) and results[0]["data"].get("id"):
-                project_id_ = results[0]["data"].get("id")
-            else:
-                return
 
-            asset_ids = last_batch["asset_ids"][-1:]  # check lastest asset of the batch only
-            nb_assets_in_queue = self.kili_api_gateway.count_assets(
-                AssetFilters(
-                    project_id=ProjectId(project_id_),
-                    asset_id_in=asset_ids,
-                    status_in=["ONGOING"],
+    @typechecked
+    def set_assets_priority(
+        self,
+        priority: int,
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
+        project_id: Optional[str] = None,
+    ) -> AssetActionOutcome:
+        """Set the priority of assets.
+
+        An asset past labeling, whose priority no longer orders any queue, is reported under
+        `declined` rather than silently left out.
+
+        Args:
+            priority: The priority to give every asset. By default, all assets have a priority of 0.
+            asset_ids: The internal IDs of the assets to prioritize.
+            external_ids: The external IDs of the assets to prioritize.
+            project_id: The project ID. Only required if `external_ids` argument is provided.
+
+        Returns:
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
+
+        Examples:
+            >>> kili.set_assets_priority(
+                    priority=2,
+                    asset_ids=[
+                        "ckg22d81r0jrg0885unmuswj8",
+                        "ckg22d81s0jrh0885pdxfd03n",
+                        ],
                 )
-            )
-            if len(asset_ids) != nb_assets_in_queue:
-                raise MutationError("Failed to send some assets back to queue")
+        """
+        if is_empty_list_with_warning(
+            "set_assets_priority", "asset_ids", asset_ids
+        ) or is_empty_list_with_warning("set_assets_priority", "external_ids", external_ids):
+            return empty_asset_action_outcome()
 
-        results = mutate_from_paginated_call(
-            self,
-            properties_to_batch,
-            generate_variables,
-            GQL_SEND_BACK_ASSETS_TO_QUEUE,
-            last_batch_callback=verify_last_batch,
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
+
+        return execute_asset_action(
+            self.graphql_client,
+            GQL_SET_ASSETS_PRIORITY,
+            resolved_asset_ids,
+            {"priority": priority},
         )
-        result = self.format_result("data", results[0])
-        if isinstance(result, dict) and "id" in result:
-            assets_in_queue = self.kili_api_gateway.list_assets(
-                AssetFilters(
-                    project_id=result["id"],
-                    asset_id_in=resolved_asset_ids,
-                    status_in=["ONGOING"],
-                ),
-                ["id"],
-                QueryOptions(disable_tqdm=True),
-            )
-            result["asset_ids"] = [asset["id"] for asset in assets_in_queue]
-        return result
 
     def skip_or_unskip(
         self,

@@ -1,7 +1,5 @@
 """Queries of asset mutations."""
 
-from kili.entrypoints.mutations.project.fragments import PROJECT_FRAGMENT_ID
-
 GQL_ASSIGN_ASSETS = """
 mutation assignAssets(
     $where: AssetWhere!,
@@ -42,28 +40,84 @@ mutation(
 }
 """
 
-GQL_DELETE_MANY_FROM_DATASET = f"""
-mutation($where: AssetWhere!) {{
-  data: deleteManyFromDataset(where: $where) {{
-    {PROJECT_FRAGMENT_ID}
-  }}
-}}
+GQL_DELETE_ASSETS = """
+mutation($where: AssetWhere!) {
+  data: deleteAssets(where: $where) {
+    succeeded {
+      assetId
+      externalId
+    }
+    declined {
+      assetId
+      externalId
+    }
+    failed {
+      assetId
+      externalId
+      details
+    }
+  }
+}
 """
 
-GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW = f"""
-mutation($where: AssetWhere!) {{
-  data: addAllLabeledAssetsToReview(where: $where) {{
-    {PROJECT_FRAGMENT_ID}
-  }}
-}}
+GQL_ADD_ASSETS_TO_REVIEW = """
+mutation($where: AssetWhere!) {
+  data: addAssetsToReview(where: $where) {
+    succeeded {
+      assetId
+      externalId
+    }
+    declined {
+      assetId
+      externalId
+    }
+    failed {
+      assetId
+      externalId
+      details
+    }
+  }
+}
 """
 
-GQL_SEND_BACK_ASSETS_TO_QUEUE = f"""
-mutation($where: AssetWhere!) {{
-  data: sendBackAssetsToQueue(where: $where) {{
-    {PROJECT_FRAGMENT_ID}
-  }}
-}}
+GQL_SEND_ASSETS_BACK_TO_QUEUE = """
+mutation($where: AssetWhere!) {
+  data: sendAssetsBackToQueue(where: $where) {
+    succeeded {
+      assetId
+      externalId
+    }
+    declined {
+      assetId
+      externalId
+    }
+    failed {
+      assetId
+      externalId
+      details
+    }
+  }
+}
+"""
+
+GQL_SET_ASSETS_PRIORITY = """
+mutation($where: AssetWhere!, $priority: Int!) {
+  data: setAssetsPriority(where: $where, priority: $priority) {
+    succeeded {
+      assetId
+      externalId
+    }
+    declined {
+      assetId
+      externalId
+    }
+    failed {
+      assetId
+      externalId
+      details
+    }
+  }
+}
 """
 
 GQL_SKIP_ASSET = """
