@@ -22,7 +22,7 @@ from kili.core.helpers import is_url
 from kili.domain.asset import (
     AssetStatus,
 )
-from kili.domain.asset.asset import AssignAssetsOutcome, StatusInStep
+from kili.domain.asset.asset import AssetActionOutcome, StatusInStep
 from kili.domain.issue import IssueStatus, IssueType
 from kili.domain.label import LabelType
 from kili.domain.types import ListOrTuple
@@ -2149,7 +2149,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by: List[str],
         asset_id: str,
         project_id: str = "",
-    ) -> AssignAssetsOutcome:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2159,7 +2159,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by_array: List[List[str]],
         asset_ids: List[str],
         project_id: str = "",
-    ) -> AssignAssetsOutcome:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2169,7 +2169,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by: List[str],
         external_id: str,
         project_id: str = "",
-    ) -> AssignAssetsOutcome:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2179,7 +2179,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by_array: List[List[str]],
         external_ids: List[str],
         project_id: str = "",
-    ) -> AssignAssetsOutcome:
+    ) -> AssetActionOutcome:
         ...
 
     @typechecked
@@ -2193,7 +2193,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> AssignAssetsOutcome:
+    ) -> AssetActionOutcome:
         """Assign a list of assets to a list of labelers.
 
         Assigning an asset to nobody unassigns it. A labeler who has a label in progress on an
