@@ -22,7 +22,7 @@ from kili.entrypoints.mutations.asset.helpers import (
 from kili.entrypoints.mutations.asset.queries import (
     GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW,
     GQL_ASSIGN_ASSETS,
-    GQL_DELETE_MANY_FROM_DATASET,
+    GQL_DELETE_ASSETS,
     GQL_SEND_BACK_ASSETS_TO_QUEUE,
     GQL_SKIP_ASSET,
     GQL_UNSKIP_ASSET,
@@ -690,8 +690,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         asset_ids: Optional[list[str]] = None,
         external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[dict[Literal["id"], str]]:
+    ) -> AssetActionOutcome:
         """Delete assets from a project.
+
+        A batch whose write failed is reported under `failed` rather than failing the call.
 
         Args:
             asset_ids: The list of asset internal IDs to delete.
@@ -699,54 +701,33 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
-            A dict object with the project `id`.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
+
+        Examples:
+            >>> kili.delete_many_from_dataset(
+                    asset_ids=[
+                        "ckg22d81r0jrg0885unmuswj8",
+                        "ckg22d81s0jrh0885pdxfd03n",
+                    ],
+                )
         """
         if is_empty_list_with_warning(
             "delete_many_from_dataset", "asset_ids", asset_ids
         ) or is_empty_list_with_warning("delete_many_from_dataset", "external_ids", external_ids):
-            return None
+            return empty_asset_action_outcome()
 
         resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
-        properties_to_batch = {"asset_ids": resolved_asset_ids}
-
-        def generate_variables(batch):
-            return {"where": {"idIn": batch["asset_ids"]}}
-
-        @retry(
-            wait=wait_exponential(multiplier=1, min=1, max=8),
-            retry=retry_if_exception_type(MutationError),
-            reraise=True,
-        )
-        def verify_last_batch(last_batch: dict, results: list) -> None:
-            """Check that all assets in the last batch have been deleted."""
-            if project_id is not None:
-                project_id_ = project_id
-            # in some case the results is [{'data': None}]
-            elif isinstance(results[0]["data"], dict) and results[0]["data"].get("id"):
-                project_id_ = results[0]["data"].get("id")
-            else:
-                return
-
-            asset_ids = last_batch["asset_ids"][-1:]  # check last asset of the batch only
-
-            nb_assets_in_kili = self.kili_api_gateway.count_assets(
-                AssetFilters(
-                    project_id=ProjectId(project_id_),
-                    asset_id_in=asset_ids,
-                )
-            )
-            if nb_assets_in_kili > 0:
-                raise MutationError("Failed to delete some assets.")
-
-        results = mutate_from_paginated_call(
-            self,
-            properties_to_batch,
-            generate_variables,
-            GQL_DELETE_MANY_FROM_DATASET,
-            last_batch_callback=verify_last_batch,
-        )
-        return self.format_result("data", results[0])
+        return execute_asset_action(self.graphql_client, GQL_DELETE_ASSETS, resolved_asset_ids)
 
     @typechecked
     def add_to_review(

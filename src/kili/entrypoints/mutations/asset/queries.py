@@ -42,12 +42,24 @@ mutation(
 }
 """
 
-GQL_DELETE_MANY_FROM_DATASET = f"""
-mutation($where: AssetWhere!) {{
-  data: deleteManyFromDataset(where: $where) {{
-    {PROJECT_FRAGMENT_ID}
-  }}
-}}
+GQL_DELETE_ASSETS = """
+mutation($where: AssetWhere!) {
+  data: deleteAssets(where: $where) {
+    succeeded {
+      assetId
+      externalId
+    }
+    declined {
+      assetId
+      externalId
+    }
+    failed {
+      assetId
+      externalId
+      details
+    }
+  }
+}
 """
 
 GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW = f"""
