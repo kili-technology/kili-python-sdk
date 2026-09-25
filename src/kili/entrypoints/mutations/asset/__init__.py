@@ -21,6 +21,7 @@ from kili.entrypoints.mutations.asset.queries import (
     GQL_ASSIGN_ASSETS,
     GQL_DELETE_ASSETS,
     GQL_SEND_ASSETS_BACK_TO_QUEUE,
+    GQL_SET_ASSETS_PRIORITY,
     GQL_SKIP_ASSET,
     GQL_UNSKIP_ASSET,
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
@@ -343,7 +344,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         Args:
             asset_ids: The internal asset IDs to modify.
             external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
-            priorities: You can change the priority of the assets.
+            priorities: DEPRECATED, use `kili.set_assets_priority()` instead, which reports the
+                assets it could not be applied to. You can change the priority of the assets.
                 By default, all assets have a priority of 0.
             json_metadatas: The metadata given to an asset should be stored
                 in a json like dict with keys `imageUrl`, `text`, `url`:
@@ -384,7 +386,6 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     honeypot_marks=[0.8, 0.5],
                     is_honeypot_array=[True, True],
                     is_used_for_consensus_array=[True, False],
-                    priorities=[None, 2],
                     to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],
                 )
 
@@ -432,6 +433,14 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             warnings.warn(
                 "to_be_labeled_by_array is going to be deprecated. Please use"
                 " `kili.assign_assets_to_labelers()` method instead to assign assets",
+                DeprecationWarning,
+                stacklevel=1,
+            )
+
+        if priorities is not None:
+            warnings.warn(
+                "priorities is deprecated: it does not report the assets it could not be applied"
+                " to. Please use `kili.set_assets_priority()` method instead to prioritize assets",
                 DeprecationWarning,
                 stacklevel=1,
             )
@@ -820,6 +829,60 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         return execute_asset_action(
             self.graphql_client, GQL_SEND_ASSETS_BACK_TO_QUEUE, resolved_asset_ids
+        )
+
+    @typechecked
+    def set_assets_priority(
+        self,
+        priority: int,
+        asset_ids: Optional[list[str]] = None,
+        external_ids: Optional[list[str]] = None,
+        project_id: Optional[str] = None,
+    ) -> AssetActionOutcome:
+        """Set the priority of assets.
+
+        An asset past labeling, whose priority no longer orders any queue, is reported under
+        `declined` rather than silently left out.
+
+        Args:
+            priority: The priority to give every asset. By default, all assets have a priority of 0.
+            asset_ids: The internal IDs of the assets to prioritize.
+            external_ids: The external IDs of the assets to prioritize.
+            project_id: The project ID. Only required if `external_ids` argument is provided.
+
+        Returns:
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
+
+        Examples:
+            >>> kili.set_assets_priority(
+                    priority=2,
+                    asset_ids=[
+                        "ckg22d81r0jrg0885unmuswj8",
+                        "ckg22d81s0jrh0885pdxfd03n",
+                        ],
+                )
+        """
+        if is_empty_list_with_warning(
+            "set_assets_priority", "asset_ids", asset_ids
+        ) or is_empty_list_with_warning("set_assets_priority", "external_ids", external_ids):
+            return empty_asset_action_outcome()
+
+        resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
+
+        return execute_asset_action(
+            self.graphql_client,
+            GQL_SET_ASSETS_PRIORITY,
+            resolved_asset_ids,
+            {"priority": priority},
         )
 
     def skip_or_unskip(
