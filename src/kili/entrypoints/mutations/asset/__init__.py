@@ -4,9 +4,6 @@ import warnings
 from collections.abc import Sequence
 from typing import Any, Literal, Optional, Union, cast
 
-from tenacity import retry
-from tenacity.retry import retry_if_exception_type
-from tenacity.wait import wait_exponential
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -23,7 +20,7 @@ from kili.entrypoints.mutations.asset.queries import (
     GQL_ADD_ASSETS_TO_REVIEW,
     GQL_ASSIGN_ASSETS,
     GQL_DELETE_ASSETS,
-    GQL_SEND_BACK_ASSETS_TO_QUEUE,
+    GQL_SEND_ASSETS_BACK_TO_QUEUE,
     GQL_SKIP_ASSET,
     GQL_UNSKIP_ASSET,
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
@@ -783,8 +780,11 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         asset_ids: Optional[list[str]] = None,
         external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         """Send assets back to queue.
+
+        An asset the send back does not apply to — one still to be labeled, one skipped — is
+        reported under `declined` rather than silently left out.
 
         Args:
             asset_ids: List of internal IDs of assets to send back to queue.
@@ -792,8 +792,16 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             project_id: The project ID. Only required if `external_ids` argument is provided.
 
         Returns:
-            A dict object with the project `id` and the `asset_ids` of assets moved to queue.
-            An error message if mutation failed.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
 
         Examples:
             >>> kili.send_back_to_queue(
@@ -806,61 +814,13 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         if is_empty_list_with_warning(
             "send_back_to_queue", "asset_ids", asset_ids
         ) or is_empty_list_with_warning("send_back_to_queue", "external_ids", external_ids):
-            return None
+            return empty_asset_action_outcome()
 
         resolved_asset_ids = self._resolve_asset_ids(asset_ids, external_ids, project_id)
 
-        properties_to_batch = {"asset_ids": resolved_asset_ids}
-
-        def generate_variables(batch):
-            return {"where": {"idIn": batch["asset_ids"]}}
-
-        @retry(
-            wait=wait_exponential(multiplier=1, min=1, max=8),
-            retry=retry_if_exception_type(MutationError),
-            reraise=True,
+        return execute_asset_action(
+            self.graphql_client, GQL_SEND_ASSETS_BACK_TO_QUEUE, resolved_asset_ids
         )
-        def verify_last_batch(last_batch: dict, results: list) -> None:
-            """Check that all assets in the last batch have been sent back to queue."""
-            if project_id is not None:
-                project_id_ = project_id
-            # in some case the results is [{'data': None}]
-            elif isinstance(results[0]["data"], dict) and results[0]["data"].get("id"):
-                project_id_ = results[0]["data"].get("id")
-            else:
-                return
-
-            asset_ids = last_batch["asset_ids"][-1:]  # check lastest asset of the batch only
-            nb_assets_in_queue = self.kili_api_gateway.count_assets(
-                AssetFilters(
-                    project_id=ProjectId(project_id_),
-                    asset_id_in=asset_ids,
-                    status_in=["ONGOING"],
-                )
-            )
-            if len(asset_ids) != nb_assets_in_queue:
-                raise MutationError("Failed to send some assets back to queue")
-
-        results = mutate_from_paginated_call(
-            self,
-            properties_to_batch,
-            generate_variables,
-            GQL_SEND_BACK_ASSETS_TO_QUEUE,
-            last_batch_callback=verify_last_batch,
-        )
-        result = self.format_result("data", results[0])
-        if isinstance(result, dict) and "id" in result:
-            assets_in_queue = self.kili_api_gateway.list_assets(
-                AssetFilters(
-                    project_id=result["id"],
-                    asset_id_in=resolved_asset_ids,
-                    status_in=["ONGOING"],
-                ),
-                ["id"],
-                QueryOptions(disable_tqdm=True),
-            )
-            result["asset_ids"] = [asset["id"] for asset in assets_in_queue]
-        return result
 
     def skip_or_unskip(
         self,

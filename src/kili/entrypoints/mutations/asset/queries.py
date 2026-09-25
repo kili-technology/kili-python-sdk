@@ -1,7 +1,5 @@
 """Queries of asset mutations."""
 
-from kili.entrypoints.mutations.project.fragments import PROJECT_FRAGMENT_ID
-
 GQL_ASSIGN_ASSETS = """
 mutation assignAssets(
     $where: AssetWhere!,
@@ -82,12 +80,24 @@ mutation($where: AssetWhere!) {
 }
 """
 
-GQL_SEND_BACK_ASSETS_TO_QUEUE = f"""
-mutation($where: AssetWhere!) {{
-  data: sendBackAssetsToQueue(where: $where) {{
-    {PROJECT_FRAGMENT_ID}
-  }}
-}}
+GQL_SEND_ASSETS_BACK_TO_QUEUE = """
+mutation($where: AssetWhere!) {
+  data: sendAssetsBackToQueue(where: $where) {
+    succeeded {
+      assetId
+      externalId
+    }
+    declined {
+      assetId
+      externalId
+    }
+    failed {
+      assetId
+      externalId
+      details
+    }
+  }
+}
 """
 
 GQL_SKIP_ASSET = """
