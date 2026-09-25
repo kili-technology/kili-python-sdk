@@ -79,3 +79,63 @@ def test_given_asset_resolution_when_updating_resolution_then_it_works(
         "whereArray": [{"id": "asset_id_1"}],
         "dataArray": [{"resolution": {"width": 100, "height": 200}}],
     }
+
+
+def test_given_assets_in_several_batches_when_i_assign_them_it_merges_what_each_call_reported(
+    mocker: pytest_mock.MockerFixture,
+):
+    """The caller is told what happened to its assets, not how they were batched."""
+    # Given two assignee combinations, so the mutation is called twice
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+
+    kili.graphql_client.execute.side_effect = [
+        {
+            "data": {
+                "declined": [],
+                "failed": [],
+                "succeeded": [{"assetId": "asset_1", "externalId": "img_0001"}],
+            }
+        },
+        {
+            "data": {
+                "declined": [{"assetId": "asset_2", "externalId": "img_0042"}],
+                "failed": [],
+                "succeeded": [],
+            }
+        },
+    ]
+
+    # When
+    outcome = kili.assign_assets_to_labelers(
+        asset_ids=["asset_1", "asset_2"],
+        to_be_labeled_by_array=[["user_1"], ["user_2"]],
+    )
+
+    # Then the two calls come back as one outcome, the labeler kept at work among it
+    assert kili.graphql_client.execute.call_count == 2
+    assert outcome == {
+        "declined": [{"assetId": "asset_2", "externalId": "img_0042"}],
+        "failed": [],
+        "succeeded": [{"assetId": "asset_1", "externalId": "img_0001"}],
+    }
+
+
+def test_given_no_asset_when_i_assign_it_reports_an_empty_outcome(
+    mocker: pytest_mock.MockerFixture,
+):
+    """The empty shortcut has to return what the caller will index into anyway."""
+    # Given
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+
+    # When
+    outcome = kili.assign_assets_to_labelers(asset_ids=[], to_be_labeled_by_array=[])
+
+    # Then
+    assert outcome == {"declined": [], "failed": [], "succeeded": []}
+    kili.graphql_client.execute.assert_not_called()

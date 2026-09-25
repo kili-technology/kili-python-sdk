@@ -1,5 +1,23 @@
 """Asset domain."""
 
-from .asset import AssetExternalId, AssetFilters, AssetId, AssetStatus, get_asset_default_fields
+from .asset import (
+    AssetExternalId,
+    AssetFailure,
+    AssetFilters,
+    AssetId,
+    AssetRef,
+    AssetStatus,
+    AssignAssetsOutcome,
+    get_asset_default_fields,
+)
 
-__all__ = ["AssetFilters", "AssetId", "AssetExternalId", "AssetStatus", "get_asset_default_fields"]
+__all__ = [
+    "AssetExternalId",
+    "AssetFailure",
+    "AssetFilters",
+    "AssetId",
+    "AssetRef",
+    "AssetStatus",
+    "AssignAssetsOutcome",
+    "get_asset_default_fields",
+]

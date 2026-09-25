@@ -3,15 +3,27 @@
 from kili.entrypoints.mutations.project.fragments import PROJECT_FRAGMENT_ID
 
 GQL_ASSIGN_ASSETS = """
-mutation assignAssetsToLabelers(
+mutation assignAssets(
     $where: AssetWhere!,
     $userIds: [String!]!
 ) {
-    data: assignAssetsToLabelers(
+    data: assignAssets(
         where: $where,
         userIds: $userIds
     ) {
-      id
+      succeeded {
+        assetId
+        externalId
+      }
+      declined {
+        assetId
+        externalId
+      }
+      failed {
+        assetId
+        externalId
+        details
+      }
     }
   }
 """
