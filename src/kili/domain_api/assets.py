@@ -22,7 +22,7 @@ from kili.core.helpers import is_url
 from kili.domain.asset import (
     AssetStatus,
 )
-from kili.domain.asset.asset import StatusInStep
+from kili.domain.asset.asset import AssignAssetsOutcome, StatusInStep
 from kili.domain.issue import IssueStatus, IssueType
 from kili.domain.label import LabelType
 from kili.domain.types import ListOrTuple
@@ -2149,7 +2149,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by: List[str],
         asset_id: str,
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
+    ) -> AssignAssetsOutcome:
         ...
 
     @overload
@@ -2159,7 +2159,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by_array: List[List[str]],
         asset_ids: List[str],
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
+    ) -> AssignAssetsOutcome:
         ...
 
     @overload
@@ -2169,7 +2169,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by: List[str],
         external_id: str,
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
+    ) -> AssignAssetsOutcome:
         ...
 
     @overload
@@ -2179,7 +2179,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by_array: List[List[str]],
         external_ids: List[str],
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
+    ) -> AssignAssetsOutcome:
         ...
 
     @typechecked
@@ -2193,8 +2193,13 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
+    ) -> AssignAssetsOutcome:
         """Assign a list of assets to a list of labelers.
+
+        Assigning an asset to nobody unassigns it. A labeler who has a label in progress on an
+        asset stays assigned to it whatever this asks for: unassigning them would leave them with
+        an interface they can no longer submit from, and the asset in progress with nobody to
+        finish it. Those assets are reported under `declined` rather than silently left out.
 
         Args:
             to_be_labeled_by: List of labeler user IDs to assign to a single asset.
@@ -2206,7 +2211,16 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             project_id: The project ID. Only required if `external_id(s)` argument is provided.
 
         Returns:
-            A list of dictionaries with the asset ids.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
 
         Examples:
             >>> # Single asset

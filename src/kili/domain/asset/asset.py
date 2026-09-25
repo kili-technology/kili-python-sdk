@@ -75,6 +75,33 @@ class AssetFilters:
     group_name_not_in: Optional[ListOrTuple[str]] = None
 
 
+class AssetRef(TypedDict):
+    """An asset named by its ids alone, rather than the asset itself."""
+
+    assetId: str
+    externalId: str | None
+
+
+class AssetFailure(TypedDict):
+    """An asset whose write threw, and what went wrong."""
+
+    assetId: str
+    externalId: str | None
+    details: str | None
+
+
+class AssignAssetsOutcome(TypedDict):
+    """What an assign did. Every asset given comes back under exactly one key.
+
+    Why an asset was declined is not carried: the reasons read as noise next to the count, so
+    every surface that reports these counts them without saying why.
+    """
+
+    succeeded: list[AssetRef]
+    declined: list[AssetRef]
+    failed: list[AssetFailure]
+
+
 class AssetWorkflowFilters(TypedDict, total=False):
     """Asset filters relative to worklow."""
 

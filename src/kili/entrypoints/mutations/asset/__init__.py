@@ -11,7 +11,7 @@ from typeguard import typechecked
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import is_empty_list_with_warning
 from kili.core.utils.pagination import mutate_from_paginated_call
-from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
+from kili.domain.asset import AssetExternalId, AssetFilters, AssetId, AssignAssetsOutcome
 from kili.domain.project import ProjectId
 from kili.entrypoints.base import BaseOperationEntrypointMixin
 from kili.entrypoints.mutations.asset.helpers import (
@@ -213,8 +213,13 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         asset_ids: Optional[list[str]] = None,
         external_ids: Optional[list[str]] = None,
         project_id: Optional[str] = None,
-    ) -> list[dict[str, Any]]:
+    ) -> AssignAssetsOutcome:
         """Assign a list of assets to a list of labelers.
+
+        Assigning an asset to nobody unassigns it. A labeler who has a label in progress on an
+        asset stays assigned to it whatever this asks for: unassigning them would leave them with
+        an interface they can no longer submit from, and the asset in progress with nobody to
+        finish it. Those assets are reported under `declined` rather than silently left out.
 
         Args:
             asset_ids: The internal asset IDs to assign.
@@ -223,7 +228,16 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             to_be_labeled_by_array: The array of list of labelers to assign per labelers (list of userIds).
 
         Returns:
-            A list of dictionaries with the asset ids.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
 
         Examples:
             >>> kili.assign_assets_to_labelers(
@@ -241,7 +255,7 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         if is_empty_list_with_warning(
             "assign_assets_to_labelers", "asset_ids", asset_ids
         ) and is_empty_list_with_warning("assign_assets_to_labelers", "external_ids", external_ids):
-            return []
+            return {"declined": [], "failed": [], "succeeded": []}
 
         if (asset_ids is not None and external_ids is not None) or (
             asset_ids is None and external_ids is None
@@ -264,14 +278,17 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 groups[key] = []
             groups[key].append(asset_id)
 
-        formated_results = []
+        # One call per group of 100, so the outcome is merged rather than returned per call: which
+        # batch an asset happened to land in says nothing to the caller.
+        outcome: AssignAssetsOutcome = {"declined": [], "failed": [], "succeeded": []}
         for user_ids_tuple, ids_for_group in groups.items():
             for i in range(0, len(ids_for_group), 100):
                 chunk = ids_for_group[i : i + 100]
                 payload = {"userIds": list(user_ids_tuple), "where": {"idIn": chunk}}
                 results = self.graphql_client.execute(GQL_ASSIGN_ASSETS, payload)
-                formated_results.append(results)
-        return formated_results
+                for key in ("declined", "failed", "succeeded"):
+                    outcome[key].extend(results["data"][key])
+        return outcome
 
     @typechecked
     def update_properties_in_assets(
