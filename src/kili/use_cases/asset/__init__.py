@@ -140,7 +140,7 @@ class AssetUseCases(BaseUseCases):
                 f"The assets of ids {not_restored} were not reported as restored: they may have"
                 " been permanently deleted meanwhile, or restored by a retried request. Check them"
                 " with kili.deleted_assets().",
-                stacklevel=2,
+                stacklevel=3,
             )
         return [
             {"id": asset["id"], "externalId": asset["externalId"]}

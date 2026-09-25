@@ -1060,7 +1060,9 @@ class AssetClientMethods(BaseClientMethods):
             external_ids: External ids of the deleted assets to restore, instead of `asset_ids`.
 
         Returns:
-            The restored assets, as dictionaries with the keys `id` and `externalId`.
+            The restored assets, as dictionaries with the keys `id` and `externalId`. An asset
+                permanently deleted, or restored by someone else, between the checks and the restore
+                is left out, with a warning.
 
         Raises:
             NotFound: If an asset is not among the deleted assets of the project that can still be
