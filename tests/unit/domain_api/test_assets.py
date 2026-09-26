@@ -505,3 +505,44 @@ class TestAssetsNamespaceGroupNameFilter:
 
 if __name__ == "__main__":
     pytest.main([__file__])
+
+
+class TestAssetsNamespaceMetadataCounts:
+    """Test the metadata count operations of AssetsNamespace."""
+
+    @pytest.fixture()
+    def mock_client(self):
+        """Create a mock Kili client."""
+        client = MagicMock(spec=Kili)
+        client.list_asset_metadata_keys = MagicMock(return_value=["camera"])
+        client.count_assets_per_metadata_value = MagicMock(
+            return_value={"values": [{"value": "front", "count": 2}], "missing_count": 0}
+        )
+        return client
+
+    @pytest.fixture()
+    def assets_namespace(self, mock_client):
+        """Create an AssetsNamespace instance."""
+        return AssetsNamespace(mock_client, MagicMock(spec=KiliAPIGateway))
+
+    def test_list_metadata_keys_delegates_with_the_filter(self, assets_namespace, mock_client):
+        """list_metadata_keys passes the AssetFilter through to the client."""
+        keys = assets_namespace.list_metadata_keys(
+            project_id="project_id", filter={"status_in": ["LABELED"]}
+        )
+
+        assert keys == ["camera"]
+        mock_client.list_asset_metadata_keys.assert_called_once_with(
+            project_id="project_id", filter={"status_in": ["LABELED"]}
+        )
+
+    def test_count_per_metadata_value_delegates(self, assets_namespace, mock_client):
+        """count_per_metadata_value passes the key and the filter through to the client."""
+        counts = assets_namespace.count_per_metadata_value(
+            project_id="project_id", metadata_key="camera"
+        )
+
+        assert counts == {"values": [{"value": "front", "count": 2}], "missing_count": 0}
+        mock_client.count_assets_per_metadata_value.assert_called_once_with(
+            project_id="project_id", metadata_key="camera", filter=None
+        )

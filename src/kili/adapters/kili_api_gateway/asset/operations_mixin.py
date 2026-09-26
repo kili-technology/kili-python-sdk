@@ -13,8 +13,10 @@ from kili.adapters.kili_api_gateway.asset.mappers import asset_where_mapper
 from kili.adapters.kili_api_gateway.asset.operations import (
     GQL_COUNT_ASSET_ANNOTATIONS,
     GQL_COUNT_ASSETS,
+    GQL_COUNT_ASSETS_BY_METADATA_VALUE,
     GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS,
     GQL_FILTER_EXISTING_ASSETS,
+    GQL_LIST_ASSETS_METADATA_KEYS,
     get_assets_query,
 )
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
@@ -26,7 +28,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 from kili.adapters.kili_api_gateway.label.common import get_annotation_fragment
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.graphql.operations.asset.mutations import GQL_SET_ASSET_CONSENSUS
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetFilters, AssetMetadataValueCounts
 from kili.domain.types import ListOrTuple
 
 # Threshold for batching based on number of annotations
@@ -208,6 +210,27 @@ class AssetOperationMixin(BaseOperationMixin):
         count_result = self.graphql_client.execute(GQL_COUNT_ASSETS, payload)
         count: int = count_result["data"]
         return count
+
+    def list_assets_metadata_keys(self, filters: AssetFilters) -> list[str]:
+        """Send a GraphQL request calling listAssetsMetadataKeys resolver."""
+        payload = {"where": asset_where_mapper(filters)}
+        result = self.graphql_client.execute(GQL_LIST_ASSETS_METADATA_KEYS, payload)
+        return result["data"] or []
+
+    def count_assets_by_metadata_value(
+        self, filters: AssetFilters, metadata_key: str
+    ) -> AssetMetadataValueCounts:
+        """Send a GraphQL request calling countAssetsByMetadataValue resolver."""
+        payload = {"where": asset_where_mapper(filters), "metadataKey": metadata_key}
+        result = self.graphql_client.execute(GQL_COUNT_ASSETS_BY_METADATA_VALUE, payload)
+        counts = result["data"]
+        return {
+            "values": [
+                {"value": value_count["value"], "count": value_count["count"]}
+                for value_count in counts.get("values") or []
+            ],
+            "missing_count": counts["missingCount"],
+        }
 
     def count_assets_annotations(self, filters: AssetFilters) -> int:
         """Count the number of annotations for assets matching the filters."""

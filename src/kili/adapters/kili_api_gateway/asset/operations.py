@@ -18,6 +18,24 @@ query countAssets($where: AssetWhere!) {
 }
 """
 
+GQL_LIST_ASSETS_METADATA_KEYS = """
+query listAssetsMetadataKeys($where: AssetWhere!) {
+    data: listAssetsMetadataKeys(where: $where)
+}
+"""
+
+GQL_COUNT_ASSETS_BY_METADATA_VALUE = """
+query countAssetsByMetadataValue($where: AssetWhere!, $metadataKey: String!) {
+    data: countAssetsByMetadataValue(where: $where, metadataKey: $metadataKey) {
+        values {
+            value
+            count
+        }
+        missingCount
+    }
+}
+"""
+
 GQL_CREATE_UPLOAD_BUCKET_SIGNED_URLS = """
 query($filePaths: [String!]) {
   urls: createUploadBucketSignedUrls(filePaths: $filePaths)

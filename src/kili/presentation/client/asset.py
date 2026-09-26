@@ -19,6 +19,7 @@ from kili.domain.asset.asset import (
     AssetExternalId,
     AssetFilters,
     AssetId,
+    AssetMetadataValueCounts,
     AssetStatus,
     StatusInStep,
     get_asset_default_fields,
@@ -791,6 +792,200 @@ class AssetClientMethods(BaseClientMethods):
             - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
         """
+        filters = self._asset_filters(
+            project_id=project_id,
+            asset_id=asset_id,
+            asset_id_in=asset_id_in,
+            asset_id_not_in=asset_id_not_in,
+            external_id_contains=external_id_contains,
+            metadata_where=metadata_where,
+            status_in=status_in,
+            consensus_mark_gt=consensus_mark_gt,
+            consensus_mark_lt=consensus_mark_lt,
+            honeypot_mark_gt=honeypot_mark_gt,
+            honeypot_mark_lt=honeypot_mark_lt,
+            label_type_in=label_type_in,
+            label_author_in=label_author_in,
+            label_consensus_mark_gt=label_consensus_mark_gt,
+            label_consensus_mark_lt=label_consensus_mark_lt,
+            label_created_at=label_created_at,
+            label_created_at_gt=label_created_at_gt,
+            label_created_at_lt=label_created_at_lt,
+            label_honeypot_mark_gt=label_honeypot_mark_gt,
+            label_honeypot_mark_lt=label_honeypot_mark_lt,
+            skipped=skipped,
+            updated_at_gte=updated_at_gte,
+            updated_at_lte=updated_at_lte,
+            label_category_search=label_category_search,
+            created_at_gte=created_at_gte,
+            created_at_lte=created_at_lte,
+            honeypot_mark_gte=honeypot_mark_gte,
+            honeypot_mark_lte=honeypot_mark_lte,
+            consensus_mark_gte=consensus_mark_gte,
+            consensus_mark_lte=consensus_mark_lte,
+            inference_mark_gte=inference_mark_gte,
+            inference_mark_lte=inference_mark_lte,
+            label_labeler_in=label_labeler_in,
+            label_labeler_not_in=label_labeler_not_in,
+            label_reviewer_in=label_reviewer_in,
+            label_reviewer_not_in=label_reviewer_not_in,
+            assignee_in=assignee_in,
+            assignee_not_in=assignee_not_in,
+            label_consensus_mark_gte=label_consensus_mark_gte,
+            label_consensus_mark_lte=label_consensus_mark_lte,
+            label_created_at_gte=label_created_at_gte,
+            label_created_at_lte=label_created_at_lte,
+            label_honeypot_mark_gte=label_honeypot_mark_gte,
+            label_honeypot_mark_lte=label_honeypot_mark_lte,
+            issue_type=issue_type,
+            issue_status=issue_status,
+            external_id_strictly_in=external_id_strictly_in,
+            external_id_in=external_id_in,
+            step_name_in=step_name_in,
+            step_name_not_in=step_name_not_in,
+            step_status_in=step_status_in,
+            step_status_not_in=step_status_not_in,
+            step_name_and_status_in=step_name_and_status_in,
+            step_name_and_status_not_in=step_name_and_status_not_in,
+            group_name_in=group_name_in,
+            group_name_not_in=group_name_not_in,
+        )
+        asset_use_cases = AssetUseCases(self.kili_api_gateway)
+        return asset_use_cases.count_assets(filters)
+
+    @typechecked
+    def list_asset_metadata_keys(
+        self,
+        project_id: str,
+        filter: Optional[dict] = None,
+    ) -> list[str]:
+        """List the metadata keys used by the assets of a project.
+
+        Only top-level keys are listed. Deleted assets are never read, and a project member only
+        reads the assets they are allowed to see.
+
+        Args:
+            project_id: Identifier of the project.
+            filter: Restricts the assets read, with the arguments of `count_assets`
+                as keys — for example `{"status_in": ["LABELED"]}` or
+                `{"metadata_where": {"split": "train"}}`.
+
+        Returns:
+            The keys, sorted.
+
+        Examples:
+            >>> kili.list_asset_metadata_keys(project_id=project_id)
+            ['camera', 'site', 'split']
+            >>> kili.list_asset_metadata_keys(
+            ...     project_id=project_id,
+            ...     filter={"external_id_strictly_in": ["image-1", "image-2"]},
+            ... )
+            ['camera']
+        """
+        filters = self._asset_filters(project_id=project_id, **(filter or {}))
+        return AssetUseCases(self.kili_api_gateway).list_assets_metadata_keys(filters)
+
+    @typechecked
+    def count_assets_per_metadata_value(
+        self,
+        project_id: str,
+        metadata_key: str,
+        filter: Optional[dict] = None,
+    ) -> AssetMetadataValueCounts:
+        """Count the assets of a project per value of one metadata key, counted by Kili.
+
+        Values keep the type they were stored with: a number or a boolean comes back as a number
+        or a boolean. Deleted assets are never counted, and a project member only counts the
+        assets they are allowed to see.
+
+        Args:
+            project_id: Identifier of the project.
+            metadata_key: A top-level metadata key, as listed by `list_asset_metadata_keys`.
+            filter: Restricts the count to part of the project, with the arguments of
+                `count_assets` as keys — for example `{"status_in": ["LABELED"]}`,
+                `{"step_name_in": ["Review"]}` or `{"metadata_where": {"split": "train"}}`.
+
+        Returns:
+            A dict with `values`, each distinct value and the number of assets that carry it,
+                most frequent first, and `missing_count`, the number of assets that do not have
+                the key.
+
+        Examples:
+            >>> kili.count_assets_per_metadata_value(project_id=project_id, metadata_key="camera")
+            {'values': [{'value': 'front', 'count': 1200}, {'value': 'rear', 'count': 800}], 'missing_count': 15}
+            >>> kili.count_assets_per_metadata_value(
+            ...     project_id=project_id,
+            ...     metadata_key="split",
+            ...     filter={"status_in": ["LABELED", "REVIEWED"]},
+            ... )
+            {'values': [{'value': 'train', 'count': 640}, {'value': 'test', 'count': 160}], 'missing_count': 0}
+        """
+        filters = self._asset_filters(project_id=project_id, **(filter or {}))
+        return AssetUseCases(self.kili_api_gateway).count_assets_by_metadata_value(
+            filters, metadata_key
+        )
+
+    # pylint: disable=too-many-arguments,too-many-locals
+    def _asset_filters(
+        self,
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_id_in: Optional[list[str]] = None,
+        asset_id_not_in: Optional[list[str]] = None,
+        external_id_contains: Optional[list[str]] = None,
+        metadata_where: Optional[dict] = None,
+        status_in: Optional[list[AssetStatus]] = None,
+        consensus_mark_gt: Optional[float] = None,
+        consensus_mark_lt: Optional[float] = None,
+        honeypot_mark_gt: Optional[float] = None,
+        honeypot_mark_lt: Optional[float] = None,
+        label_type_in: Optional[list[LabelType]] = None,
+        label_author_in: Optional[list[str]] = None,
+        label_consensus_mark_gt: Optional[float] = None,
+        label_consensus_mark_lt: Optional[float] = None,
+        label_created_at: Optional[str] = None,
+        label_created_at_gt: Optional[str] = None,
+        label_created_at_lt: Optional[str] = None,
+        label_honeypot_mark_gt: Optional[float] = None,
+        label_honeypot_mark_lt: Optional[float] = None,
+        skipped: Optional[bool] = None,
+        updated_at_gte: Optional[str] = None,
+        updated_at_lte: Optional[str] = None,
+        label_category_search: Optional[str] = None,
+        created_at_gte: Optional[str] = None,
+        created_at_lte: Optional[str] = None,
+        honeypot_mark_gte: Optional[float] = None,
+        honeypot_mark_lte: Optional[float] = None,
+        consensus_mark_gte: Optional[float] = None,
+        consensus_mark_lte: Optional[float] = None,
+        inference_mark_gte: Optional[float] = None,
+        inference_mark_lte: Optional[float] = None,
+        label_labeler_in: Optional[ListOrTuple[str]] = None,
+        label_labeler_not_in: Optional[ListOrTuple[str]] = None,
+        label_reviewer_in: Optional[ListOrTuple[str]] = None,
+        label_reviewer_not_in: Optional[ListOrTuple[str]] = None,
+        assignee_in: Optional[ListOrTuple[str]] = None,
+        assignee_not_in: Optional[ListOrTuple[str]] = None,
+        label_consensus_mark_gte: Optional[float] = None,
+        label_consensus_mark_lte: Optional[float] = None,
+        label_created_at_gte: Optional[str] = None,
+        label_created_at_lte: Optional[str] = None,
+        label_honeypot_mark_gte: Optional[float] = None,
+        label_honeypot_mark_lte: Optional[float] = None,
+        issue_type: Optional[IssueType] = None,
+        issue_status: Optional[IssueStatus] = None,
+        external_id_strictly_in: Optional[list[str]] = None,
+        external_id_in: Optional[list[str]] = None,
+        step_name_in: Optional[list[str]] = None,
+        step_name_not_in: Optional[list[str]] = None,
+        step_status_in: Optional[list[StatusInStep]] = None,
+        step_status_not_in: Optional[list[StatusInStep]] = None,
+        step_name_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_name_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        group_name_in: Optional[list[str]] = None,
+        group_name_not_in: Optional[list[str]] = None,
+    ) -> AssetFilters:
+        """Build the asset filters of `count_assets` from its arguments, warning on deprecated ones."""
         if external_id_contains is not None:
             warnings.warn(
                 "external_id_contains is deprecated, use external_id_strictly_in instead",
@@ -937,8 +1132,7 @@ class AssetClientMethods(BaseClientMethods):
             group_name_in=group_name_in if group_name_in else None,
             group_name_not_in=group_name_not_in if group_name_not_in else None,
         )
-        asset_use_cases = AssetUseCases(self.kili_api_gateway)
-        return asset_use_cases.count_assets(filters)
+        return filters
 
     @typechecked
     def update_asset_consensus(

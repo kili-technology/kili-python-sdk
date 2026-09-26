@@ -20,6 +20,7 @@ from typing_extensions import deprecated
 
 from kili.core.helpers import is_url
 from kili.domain.asset import (
+    AssetMetadataValueCounts,
     AssetStatus,
 )
 from kili.domain.asset.asset import AssignAssetsOutcome, StatusInStep
@@ -457,6 +458,70 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         return self._client.count_assets(
             project_id=project_id,
             **filter_kwargs,
+        )
+
+    @typechecked
+    def list_metadata_keys(
+        self,
+        project_id: str,
+        filter: Optional[AssetFilter] = None,
+    ) -> List[str]:
+        """List the metadata keys used by the assets of a project.
+
+        Only top-level keys are listed. Deleted assets are never read, and a project member only
+        reads the assets they are allowed to see.
+
+        Args:
+            project_id: Identifier of the project.
+            filter: Restricts the assets read (see `AssetFilter` for available keys).
+
+        Returns:
+            The keys, sorted.
+
+        Examples:
+            >>> kili.assets.list_metadata_keys(project_id="my_project")
+            ['camera', 'site', 'split']
+        """
+        return self._client.list_asset_metadata_keys(
+            project_id=project_id,
+            filter=cast(Optional[dict], filter),
+        )
+
+    @typechecked
+    def count_per_metadata_value(
+        self,
+        project_id: str,
+        metadata_key: str,
+        filter: Optional[AssetFilter] = None,
+    ) -> AssetMetadataValueCounts:
+        """Count the assets of a project per value of one metadata key, counted by Kili.
+
+        Values keep the type they were stored with. Deleted assets are never counted, and a
+        project member only counts the assets they are allowed to see.
+
+        Args:
+            project_id: Identifier of the project.
+            metadata_key: A top-level metadata key, as listed by `list_metadata_keys`.
+            filter: Restricts the count to part of the project (see `AssetFilter` for available
+                keys).
+
+        Returns:
+            A dict with `values`, each distinct value and the number of assets that carry it,
+                most frequent first, and `missing_count`, the number of assets that do not have
+                the key.
+
+        Examples:
+            >>> kili.assets.count_per_metadata_value(
+            ...     project_id="my_project",
+            ...     metadata_key="split",
+            ...     filter={"status_in": ["LABELED"]},
+            ... )
+            {'values': [{'value': 'train', 'count': 640}, {'value': 'test', 'count': 160}], 'missing_count': 0}
+        """
+        return self._client.count_assets_per_metadata_value(
+            project_id=project_id,
+            metadata_key=metadata_key,
+            filter=cast(Optional[dict], filter),
         )
 
     @overload

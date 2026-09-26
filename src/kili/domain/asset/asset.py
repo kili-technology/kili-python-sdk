@@ -1,7 +1,7 @@
 """Asset domain."""
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, NewType, Optional, TypedDict
+from typing import TYPE_CHECKING, Any, Literal, NewType, Optional, TypedDict
 
 from kili.domain.project import WorkflowVersion
 from kili.domain.types import ListOrTuple
@@ -88,6 +88,20 @@ class AssetFailure(TypedDict):
     assetId: str
     externalId: str | None
     details: str | None
+
+
+class AssetMetadataValueCount(TypedDict):
+    """One value of a metadata key, as stored, and the number of assets that carry it."""
+
+    value: Any
+    count: int
+
+
+class AssetMetadataValueCounts(TypedDict):
+    """The assets counted per value of one metadata key."""
+
+    values: list[AssetMetadataValueCount]
+    missing_count: int
 
 
 class AssignAssetsOutcome(TypedDict):

@@ -8,7 +8,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.helpers import validate_category_search_query
 from kili.core.utils.pagination import batcher
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetFilters, AssetMetadataValueCounts
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.services.label_data_parsing.types import Project as LabelParsingProject
@@ -66,3 +66,22 @@ class AssetUseCases(BaseUseCases):
         if filters.label_category_search:
             validate_category_search_query(filters.label_category_search)
         return self._kili_api_gateway.count_assets(filters)
+
+    def list_assets_metadata_keys(self, filters: AssetFilters) -> list[str]:
+        """List the top-level metadata keys of the assets matching the filters."""
+        if filters.label_category_search:
+            validate_category_search_query(filters.label_category_search)
+        return self._kili_api_gateway.list_assets_metadata_keys(filters)
+
+    def count_assets_by_metadata_value(
+        self, filters: AssetFilters, metadata_key: str
+    ) -> AssetMetadataValueCounts:
+        """Count the assets matching the filters per value of one metadata key."""
+        if not metadata_key:
+            raise ValueError(
+                "metadata_key is empty. Pass the name of a top-level metadata key of the project,"
+                " as listed by list_asset_metadata_keys."
+            )
+        if filters.label_category_search:
+            validate_category_search_query(filters.label_category_search)
+        return self._kili_api_gateway.count_assets_by_metadata_value(filters, metadata_key)
