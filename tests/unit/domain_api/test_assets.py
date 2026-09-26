@@ -503,10 +503,6 @@ class TestAssetsNamespaceGroupNameFilter:
         assert call_kwargs["group_name_not_in"] == ["GroupA", "GroupB"]
 
 
-if __name__ == "__main__":
-    pytest.main([__file__])
-
-
 class TestAssetsNamespaceMetadataCounts:
     """Test the metadata count operations of AssetsNamespace."""
 
@@ -546,3 +542,7 @@ class TestAssetsNamespaceMetadataCounts:
         mock_client.count_assets_per_metadata_value.assert_called_once_with(
             project_id="project_id", metadata_key="camera", filter=None
         )
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

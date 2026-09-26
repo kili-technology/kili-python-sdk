@@ -96,7 +96,8 @@ def _warn_deprecated_gt_lt_args(
             )
 
 
-@for_all_methods(log_call, exclude=["__init__"])
+# `_asset_filters` runs inside the public methods: logging it would report every call under its name
+@for_all_methods(log_call, exclude=["__init__", "_asset_filters"])
 class AssetClientMethods(BaseClientMethods):
     """Methods attached to the Kili client, to run actions on assets."""
 
@@ -926,6 +927,7 @@ class AssetClientMethods(BaseClientMethods):
         )
 
     # pylint: disable=too-many-arguments,too-many-locals
+    @typechecked
     def _asset_filters(
         self,
         project_id: str,
