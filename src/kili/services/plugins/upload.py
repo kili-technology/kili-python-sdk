@@ -107,12 +107,15 @@ class _ImportedNames:
         self.decorators: set[str] = set()
         self.events: dict[str, str] = {}
         self.event_modules: set[str] = set()
+        self.star_events = False
         for node in ast.walk(module):
             if isinstance(node, ast.ImportFrom):
                 for alias in node.names:
                     local_name = alias.asname or alias.name
-                    if node.module in DECORATOR_MODULES and alias.name == DECORATOR_NAME:
-                        self.decorators.add(local_name)
+                    if node.module in DECORATOR_MODULES and alias.name in (DECORATOR_NAME, "*"):
+                        self.decorators.add(DECORATOR_NAME if alias.name == "*" else local_name)
+                    elif node.module == "kili_events" and alias.name == "*":
+                        self.star_events = True
                     elif node.module == "kili" and alias.name == "plugins":
                         self.decorators.add(f"{local_name}.{DECORATOR_NAME}")
                     elif node.module == "kili_events":
@@ -127,7 +130,7 @@ class _ImportedNames:
     def event_name(self, argument: ast.expr) -> Optional[str]:
         """The kili_events name an argument refers to, if it is one."""
         if isinstance(argument, ast.Name):
-            return self.events.get(argument.id)
+            return self.events.get(argument.id) or (argument.id if self.star_events else None)
         if (
             isinstance(argument, ast.Attribute)
             and isinstance(argument.value, ast.Name)
@@ -145,12 +148,19 @@ def _argument_patterns(argument: ast.expr, names: _ImportedNames) -> list[str]:
 
     from kili.services.plugins.events import (  # pylint: disable=import-outside-toplevel
         event_patterns,
+        plugin_receives,
     )
 
     if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
         patterns = event_patterns(argument.value)
-        if not kili_events.events_matching(argument.value):
+        matching = kili_events.events_matching(argument.value)
+        if not matching:
             raise ValueError(f"'{argument.value}' matches no Kili event. Is there a typo?")
+        if not any(plugin_receives(subject) for subject in matching):
+            raise ValueError(
+                f"'{argument.value}' matches only events Kili never sends to plugins (system"
+                " events, or events of no project)."
+            )
         return list(patterns)
 
     event_name = names.event_name(argument)
@@ -162,7 +172,15 @@ def _argument_patterns(argument: ast.expr, names: _ImportedNames) -> list[str]:
             " kili_events (AssetSkippedEvent, AssetWorkflowEvent), or a pattern string"
             " ('label.workflow.*')."
         )
-    return list(event_patterns(event))
+    # The subjects themselves are sent, so the ones plugins never receive are left out: the
+    # event matcher refuses system events.
+    subjects = [subject for subject in event_patterns(event) if plugin_receives(subject)]
+    if not subjects:
+        raise ValueError(
+            f"Kili never sends {ast.unparse(argument)} to plugins: system events, and events of"
+            " no project, do not reach them."
+        )
+    return subjects
 
 
 def find_event_subscriptions(path: Path) -> dict[str, list[str]]:
@@ -178,12 +196,17 @@ def find_event_subscriptions(path: Path) -> dict[str, list[str]]:
         if not (isinstance(node, ast.ClassDef) and node.name == "PluginHandler"):
             continue
         for method in node.body:
-            if not isinstance(method, ast.FunctionDef):
+            if not isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 continue
             for decorator in method.decorator_list:
                 target = decorator.func if isinstance(decorator, ast.Call) else decorator
                 if ast.unparse(target) not in names.decorators:
                     continue
+                if isinstance(method, ast.AsyncFunctionDef):
+                    raise ValueError(
+                        f"PluginHandler.{method.name}: @{DECORATOR_NAME} decorates plain methods,"
+                        " and this one is async: a plugin would never await it."
+                    )
                 if not isinstance(decorator, ast.Call) or not decorator.args:
                     raise ValueError(
                         f"PluginHandler.{method.name}: @{DECORATOR_NAME} needs the events to"
@@ -198,6 +221,13 @@ def find_event_subscriptions(path: Path) -> dict[str, list[str]]:
                 except (TypeError, ValueError) as error:
                     raise ValueError(f"PluginHandler.{method.name}: {error}") from error
                 subscriptions.setdefault(method.name, []).extend(patterns)
+        bases = [ast.unparse(base) for base in node.bases]
+        if subscriptions and any(base.split(".")[-1] != "PluginCore" for base in bases):
+            get_logger().warning(
+                f"PluginHandler inherits from {', '.join(bases)}: the upload reads the"
+                f" @{DECORATOR_NAME} methods of PluginHandler only, so the events of inherited"
+                " ones are not sent. Define them on PluginHandler."
+            )
     return subscriptions
 
 
@@ -340,6 +370,12 @@ class PluginUploader:
                 "Overriding on_event is deprecated: decorate methods with @on_kili_event to"
                 " receive typed events. on_event now receives the whole event: the fields it"
                 " read are under payload['payload']."
+            )
+        elif not handler_types:
+            raise ValueError(
+                "PluginHandler has no handler, so the plugin would never run: define on_submit,"
+                " on_review, on_custom_interface_click or on_send_back_to_queue, or methods"
+                " decorated with @on_kili_event, in the PluginHandler class of the plugin file."
             )
 
         if handler_types and self.event_matcher:

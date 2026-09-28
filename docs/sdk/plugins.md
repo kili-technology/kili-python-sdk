@@ -95,9 +95,10 @@ class PluginHandler(PluginCore):
 | --- | --- | --- |
 | an event model | that event | `AssetSkippedEvent` |
 | a family of events | every event of the family | `AssetWorkflowEvent`: every `asset.workflow.…` event |
-| a pattern | every event it matches: `*` stands for one or more names | `"label.workflow.*"`, `"asset.*.started"` |
+| a pattern | every event it matches: `*` stands for one or more names | `"label.workflow.*"`, `"project.workflow.bulkAction.*"` |
 
-A method receives an event once, even when several of its arguments match it, and every method matching an event receives it.
+A method receives an event once, even when several of its arguments match it. Every method matching an event receives it,
+in the alphabetical order of their names; an exception in one stops the others.
 Upload the plugin without `event_matcher`: the events it receives are read from the decorators.
 
 ```python
@@ -106,9 +107,12 @@ kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin")
 
 The upload reads your code without running it, so:
 
-- the decorated methods are those of the `PluginHandler` class of the plugin file (of `main.py` for a folder);
+- the decorated methods are those of the `PluginHandler` class of the plugin file (of `main.py` for a folder) — not the
+  ones it inherits — and plain methods, not `async` ones;
 - the arguments are names imported from `kili_events`, or strings — a name the upload cannot trace to `kili_events`, or a
   pattern that matches no event (`"label.wokflow.*"`), stops the upload with the reason;
+- Kili never sends plugins its system events, nor the events of no project (`assetStorage.integration.…`): a family
+  is sent without them, and a model or a pattern with nothing else stops the upload;
 - a plugin receives events either with `on_kili_event` or with `on_submit`, `on_review`, `on_custom_interface_click` and
   `on_send_back_to_queue`, not both.
 
@@ -159,6 +163,9 @@ The plugins for the on-premise deployments work exactly the same as the plugins 
 
 1. It's not possible to add custom python packages to your plugin with the help of the `requirements.txt` file, but we selected a list of the most useful packages that you can directly use, including :
     * `numpy`, `pandas`, `scikit-learn`, `opencv-python-headless`, `Pillow`, `requests`, `uuid` and of course `kili`
+
+    `on_kili_event` needs the version of `kili` that introduces it, and `kili-events`: until your plugins-runner ships them,
+    receive events with `on_submit` and `on_review`.
 2. In order to save the logs during the execution of your plugin, you should only use the provided logger in the plugin class (the simple `print` function will not save the log). For an example, see the code below:
 
 ```python

@@ -131,3 +131,11 @@ def test_on_kili_event_rejects_what_is_no_event(event):
 def test_on_kili_event_rejects_a_malformed_pattern():
     with pytest.raises(ValueError, match="Invalid event pattern 'asset.>'"):
         on_kili_event("asset.>")
+
+
+def test_on_kili_event_rejects_an_async_method():
+    with pytest.raises(TypeError, match="on_skip is async"):
+
+        @on_kili_event(AssetSkippedEvent)
+        async def on_skip(self, event):
+            pass
