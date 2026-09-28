@@ -99,7 +99,7 @@ class UserClientMethods(BaseClientMethods):
             >>> kili.users(organization_id=organization_id, activated=False)
 
             # Check whether a given user is deactivated
-            >>> kili.users(email="user@example.com", activated=False)
+            >>> is_deactivated = bool(kili.users(email="user@example.com", activated=False))
 
             # Iterate over the deactivated users one by one
             >>> for user in kili.users(activated=False, as_generator=True):

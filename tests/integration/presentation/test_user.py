@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from unittest.mock import call
 
 import pytest
 from typeguard import check_type
@@ -89,6 +90,43 @@ def test_given_users_query_when_i_filter_on_activated_then_the_where_sent_carrie
     )
 
 
+def test_given_users_query_when_i_do_not_pass_activated_then_everybody_is_asked_for(
+    kili_with_real_gateway: UserClientMethods, graphql_client: GraphQLClient, mocker
+):
+    # Given
+    mocker.patch.object(PaginatedGraphQLQuery, "get_number_of_elements_to_query", return_value=1)
+    graphql_client.execute.return_value = {"data": [{"email": "fake_email"}]}
+
+    # When
+    kili_with_real_gateway.users(fields=("email",), disable_tqdm=True)
+
+    # Then
+    graphql_client.execute.assert_called_once_with(
+        get_users_query(" email"), {"where": _user_where(), "skip": 0, "first": 1}
+    )
+
+
+def test_given_users_query_when_i_filter_on_activated_then_the_paginated_count_gets_the_same_where(
+    kili_with_real_gateway: UserClientMethods, graphql_client: GraphQLClient
+):
+    # Given: the paginator first counts, then fetches; nothing is stubbed
+    graphql_client.execute.side_effect = [
+        {"data": 2},
+        {"data": [{"email": "fake_email_1"}, {"email": "fake_email_2"}]},
+    ]
+
+    # When
+    result = kili_with_real_gateway.users(fields=("email",), disable_tqdm=True, activated=False)
+
+    # Then
+    assert result == [{"email": "fake_email_1"}, {"email": "fake_email_2"}]
+    where = _user_where(activated=False)
+    assert graphql_client.execute.call_args_list == [
+        call(GQL_COUNT_USERS, {"where": where}),
+        call(get_users_query(" email"), {"where": where, "skip": 0, "first": 2}),
+    ]
+
+
 def test_given_users_query_when_i_combine_activated_with_the_other_filters_then_all_are_sent(
     kili_with_real_gateway: UserClientMethods, graphql_client: GraphQLClient, mocker
 ):
@@ -133,6 +171,20 @@ def test_given_count_users_when_i_filter_on_activated_then_the_where_sent_carrie
     graphql_client.execute.assert_called_once_with(
         GQL_COUNT_USERS, {"where": _user_where(activated=activated)}
     )
+
+
+def test_given_count_users_when_i_do_not_pass_activated_then_everybody_is_counted(
+    kili_with_real_gateway: UserClientMethods, graphql_client: GraphQLClient
+):
+    # Given
+    graphql_client.execute.return_value = {"data": 3}
+
+    # When
+    result = kili_with_real_gateway.count_users()
+
+    # Then
+    assert result == 3
+    graphql_client.execute.assert_called_once_with(GQL_COUNT_USERS, {"where": _user_where()})
 
 
 def test_given_count_users_when_i_combine_activated_with_the_other_filters_then_all_are_sent(
