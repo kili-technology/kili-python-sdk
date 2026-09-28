@@ -65,6 +65,94 @@ class PluginHandler(PluginCore):
 !!! note
     The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run.
 
+## Receiving Kili events
+
+Instead of `on_submit` and `on_review`, a plugin can receive any Kili event:
+decorate a method of `PluginHandler` with `on_kili_event`, and it is called with each event it subscribes to, parsed into its
+[`kili_events`](https://pypi.org/project/kili-events/) model — typed fields, completion in your IDE.
+
+```python
+from kili_events import AssetSkippedEvent, AssetWorkflowEvent
+
+from kili.plugins import PluginCore, on_kili_event
+
+
+class PluginHandler(PluginCore):
+    """Custom plugin"""
+
+    @on_kili_event(AssetSkippedEvent)
+    def on_skip(self, event: AssetSkippedEvent) -> None:
+        self.logger.info(f"Asset {event.payload.asset_id} skipped by {event.user_id}")
+
+    @on_kili_event(AssetWorkflowEvent, "label.workflow.*")
+    def on_workflow(self, event) -> None:
+        self.logger.info(f"Received {event.event} on project {event.project_id}")
+```
+
+`on_kili_event` takes any mix of:
+
+| Argument | Receives | Example |
+| --- | --- | --- |
+| an event model | that event | `AssetSkippedEvent` |
+| a family of events | every event of the family | `AssetWorkflowEvent`: every `asset.workflow.…` event |
+| a pattern | every event it matches: `*` stands for one or more names | `"label.workflow.*"`, `"asset.*.started"` |
+
+A method receives an event once, even when several of its arguments match it, and every method matching an event receives it.
+Upload the plugin without `event_matcher`: the events it receives are read from the decorators.
+
+```python
+kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin")
+```
+
+The upload reads your code without running it, so:
+
+- the decorated methods are those of the `PluginHandler` class of the plugin file (of `main.py` for a folder);
+- the arguments are names imported from `kili_events`, or strings — a name the upload cannot trace to `kili_events`, or a
+  pattern that matches no event (`"label.wokflow.*"`), stops the upload with the reason;
+- a plugin receives events either with `on_kili_event` or with `on_submit`, `on_review`, `on_custom_interface_click` and
+  `on_send_back_to_queue`, not both.
+
+An event the plugin's version of `kili_events` does not know yet (Kili added it after you installed the package) is logged
+and skipped. The event carries its subject (`event.event`), `organization_id`, `project_id`, `user_id` and `payload`, as its
+model declares them — no event id or timestamp.
+
+### Migrating from `on_event`
+
+Overriding `on_event` with an `event_matcher` still works, but is deprecated in favour of `on_kili_event`. **`on_event` now
+receives the whole event**: the fields it received before are under `payload["payload"]`, beside `event`,
+`organizationId`, `projectId` and `userId`.
+
+Before:
+
+```python
+class PluginHandler(PluginCore):
+    def on_event(self, payload: dict) -> None:
+        if payload["event"] == "asset.skipped":
+            self.logger.info(f"Asset {payload['assetId']} skipped")
+
+kili.upload_plugin(plugin_path="./my_plugin/", event_matcher=["asset.skipped"])
+```
+
+After, with `on_kili_event`:
+
+```python
+class PluginHandler(PluginCore):
+    @on_kili_event(AssetSkippedEvent)
+    def on_skip(self, event: AssetSkippedEvent) -> None:
+        self.logger.info(f"Asset {event.payload.asset_id} skipped")
+
+kili.upload_plugin(plugin_path="./my_plugin/")
+```
+
+Or after, keeping `on_event`:
+
+```python
+class PluginHandler(PluginCore):
+    def on_event(self, payload: dict) -> None:
+        if payload["event"] == "asset.skipped":
+            self.logger.info(f"Asset {payload['payload']['assetId']} skipped")
+```
+
 ## On-Premise deployment details
 
 The plugins for the on-premise deployments work exactly the same as the plugins for the SaaS version of Kili, with only a few small exceptions :

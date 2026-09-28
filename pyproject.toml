@@ -43,7 +43,8 @@ dependencies = [
   "filelock >= 3.0.0, < 4.0.0",
   "pip-system-certs >= 4.0.0, < 5.0.0; platform_system=='Windows'",
   "pyrate-limiter >= 3, < 4",
-  "kili-formats == 1.5.0"
+  "kili-formats == 1.5.0",
+  "kili-events >= 26.2.1rc3, < 27"
 ]
 urls = { homepage = "https://github.com/kili-technology/kili-python-sdk" }
 

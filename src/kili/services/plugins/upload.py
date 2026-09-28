@@ -42,6 +42,9 @@ POSSIBLE_HANDLERS = {
     "on_send_back_to_queue": "onSendBackToQueue",
 }
 
+DECORATOR_NAME = "on_kili_event"
+DECORATOR_MODULES = ("kili.plugins", "kili.services.plugins.events")
+
 
 def check_file_mime_type(
     path: Path, compatible_mime_extensions: list[str], verbose: bool = True
@@ -95,6 +98,107 @@ def check_file_contains_handler(path: Path) -> tuple[bool, Optional[list[str]], 
             )
             return (True, handlers, has_on_event) if handlers else (True, None, has_on_event)
     return False, None, False
+
+
+class _ImportedNames:
+    """What the imports of a plugin file bind the decorator and the kili_events names to."""
+
+    def __init__(self, module: ast.Module) -> None:
+        self.decorators: set[str] = set()
+        self.events: dict[str, str] = {}
+        self.event_modules: set[str] = set()
+        for node in ast.walk(module):
+            if isinstance(node, ast.ImportFrom):
+                for alias in node.names:
+                    local_name = alias.asname or alias.name
+                    if node.module in DECORATOR_MODULES and alias.name == DECORATOR_NAME:
+                        self.decorators.add(local_name)
+                    elif node.module == "kili" and alias.name == "plugins":
+                        self.decorators.add(f"{local_name}.{DECORATOR_NAME}")
+                    elif node.module == "kili_events":
+                        self.events[local_name] = alias.name
+            elif isinstance(node, ast.Import):
+                for alias in node.names:
+                    if alias.name in DECORATOR_MODULES:
+                        self.decorators.add(f"{alias.asname or alias.name}.{DECORATOR_NAME}")
+                    elif alias.name == "kili_events":
+                        self.event_modules.add(alias.asname or alias.name)
+
+    def event_name(self, argument: ast.expr) -> Optional[str]:
+        """The kili_events name an argument refers to, if it is one."""
+        if isinstance(argument, ast.Name):
+            return self.events.get(argument.id)
+        if (
+            isinstance(argument, ast.Attribute)
+            and isinstance(argument.value, ast.Name)
+            and argument.value.id in self.event_modules
+        ):
+            return argument.attr
+        return None
+
+
+def _argument_patterns(argument: ast.expr, names: _ImportedNames) -> list[str]:
+    """The patterns one argument of @on_kili_event subscribes to, read without running it."""
+    # Imported here, not at the top: kili_events loads a pydantic model per event, which only
+    # a plugin upload needs — not every `import kili`.
+    import kili_events  # pylint: disable=import-outside-toplevel
+
+    from kili.services.plugins.events import (  # pylint: disable=import-outside-toplevel
+        event_patterns,
+    )
+
+    if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
+        patterns = event_patterns(argument.value)
+        if not kili_events.events_matching(argument.value):
+            raise ValueError(f"'{argument.value}' matches no Kili event. Is there a typo?")
+        return list(patterns)
+
+    event_name = names.event_name(argument)
+    event = getattr(kili_events, event_name, None) if event_name else None
+    if event is None:
+        raise ValueError(
+            f"'{ast.unparse(argument)}' is not a kili_events name, so the events it stands for"
+            " cannot be read from the plugin's code. Pass a model or a family imported from"
+            " kili_events (AssetSkippedEvent, AssetWorkflowEvent), or a pattern string"
+            " ('label.workflow.*')."
+        )
+    return list(event_patterns(event))
+
+
+def find_event_subscriptions(path: Path) -> dict[str, list[str]]:
+    """Return the patterns each method of PluginHandler subscribes to with @on_kili_event.
+
+    The plugin's code is read, never run: the arguments must be kili_events names or strings.
+    """
+    with path.open(encoding="utf-8") as file:
+        module = ast.parse(file.read())
+    names = _ImportedNames(module)
+    subscriptions: dict[str, list[str]] = {}
+    for node in module.body:
+        if not (isinstance(node, ast.ClassDef) and node.name == "PluginHandler"):
+            continue
+        for method in node.body:
+            if not isinstance(method, ast.FunctionDef):
+                continue
+            for decorator in method.decorator_list:
+                target = decorator.func if isinstance(decorator, ast.Call) else decorator
+                if ast.unparse(target) not in names.decorators:
+                    continue
+                if not isinstance(decorator, ast.Call) or not decorator.args:
+                    raise ValueError(
+                        f"PluginHandler.{method.name}: @{DECORATOR_NAME} needs the events to"
+                        f" receive, e.g. @{DECORATOR_NAME}(AssetSkippedEvent)."
+                    )
+                try:
+                    patterns = [
+                        pattern
+                        for argument in decorator.args
+                        for pattern in _argument_patterns(argument, names)
+                    ]
+                except (TypeError, ValueError) as error:
+                    raise ValueError(f"PluginHandler.{method.name}: {error}") from error
+                subscriptions.setdefault(method.name, []).extend(patterns)
+    return subscriptions
 
 
 class WebhookUploader:
@@ -187,17 +291,9 @@ class PluginUploader:
                 raise FileNotFoundError(
                     f"No main.py file in the provided folder: {self.plugin_path.absolute()}"
                 )
-            contains_handler, handler_types, has_on_event = check_file_contains_handler(file_path)
-            if not contains_handler:
-                raise ValueError("PluginHandler class is not present in your main.py file.")
-
-            if has_on_event and not self.event_matcher:
-                raise ValueError("Event matcher is required for plugins with on_event method.")
-
-            if handler_types and self.event_matcher:
-                raise ValueError("Cannot have both handler types and event matcher.")
-
-            self.handler_types = handler_types
+            self._check_handlers(
+                file_path, "PluginHandler class is not present in your main.py file."
+            )
 
             return list(self.plugin_path.glob("**/*.py"))
 
@@ -206,19 +302,50 @@ class PluginUploader:
         if not check_file_is_py(file_path, self.verbose):
             raise ValueError("Wrong file format.")
 
+        self._check_handlers(file_path, "PluginHandler class is not present in your plugin file.")
+
+        return [file_path]
+
+    def _check_handlers(self, file_path: Path, no_plugin_handler_message: str) -> None:
+        """Check how the plugin receives events, and set the handler types or event matcher."""
         contains_handler, handler_types, has_on_event = check_file_contains_handler(file_path)
         if not contains_handler:
-            raise ValueError("PluginHandler class is not present in your plugin file.")
+            raise ValueError(no_plugin_handler_message)
 
-        if has_on_event and not self.event_matcher:
-            raise ValueError("Event matcher is required for plugins with on_event method.")
+        subscriptions = find_event_subscriptions(file_path)
+        if subscriptions:
+            if handler_types:
+                raise ValueError(
+                    "A plugin either implements on_submit, on_review, on_custom_interface_click"
+                    " and on_send_back_to_queue, or subscribes to events with @on_kili_event:"
+                    " not both."
+                )
+            if has_on_event:
+                raise ValueError(
+                    "on_event would stop the events reaching the methods decorated with"
+                    " @on_kili_event: remove it from PluginHandler."
+                )
+            if self.event_matcher:
+                raise ValueError(
+                    "The events come from the @on_kili_event decorators: upload without"
+                    " event_matcher."
+                )
+            self.event_matcher = sorted(
+                {pattern for patterns in subscriptions.values() for pattern in patterns}
+            )
+        elif has_on_event:
+            if not self.event_matcher:
+                raise ValueError("Event matcher is required for plugins with on_event method.")
+            get_logger().warning(
+                "Overriding on_event is deprecated: decorate methods with @on_kili_event to"
+                " receive typed events. on_event now receives the whole event: the fields it"
+                " read are under payload['payload']."
+            )
 
         if handler_types and self.event_matcher:
             raise ValueError("Cannot have both handler types and event matcher.")
 
         self.handler_types = handler_types
-
-        return [file_path]
 
     def _retrieve_requirements(self) -> Union[Path, None]:
         """Retrieve script from file_path and execute it to prevent an upload with indentation errors."""
