@@ -70,6 +70,32 @@ def test_should_provide_the_right_number_elements_when_unicity_check_is_enabled_
     assert list(gen) == [{"id": f"id-{i}"} for i in range(220)]
 
 
+def test_should_stop_pagination_once_first_unique_elements_are_reached(
+    graphql_client: GraphQLClient,
+):
+    # Given: first is reached well before the natural end of the dataset
+    # (NUMBER_OBJECTS_IN_DB + NUMBER_DUPLICATED_OBJECTS = 290, spread over 3 pages of 100)
+    options = QueryOptions(disable_tqdm=False, skip=0, first=10)
+
+    # When
+    gen = PaginatedGraphQLQuery(graphql_client).execute_query_from_paginated_call(
+        QUERY, WHERE, options, "", COUNT_QUERY, "id"
+    )
+    result = list(gen)
+
+    # Then: exactly `first` elements are returned, and pagination stops after the
+    # single page that satisfied `first`, instead of continuing until the dataset
+    # is exhausted.
+    assert result == [{"id": f"id-{i}"} for i in range(10)]
+    graphql_client.execute.assert_has_calls(
+        [
+            call(COUNT_QUERY, {"where": WHERE}),
+            call(QUERY, {"where": WHERE, "skip": 0, "first": QUERY_BATCH_SIZE}),
+        ]
+    )
+    assert graphql_client.execute.call_count == 2
+
+
 def test_should_use_count_query_when_unicity_check_is_disabled(
     graphql_client: GraphQLClient,
 ):
