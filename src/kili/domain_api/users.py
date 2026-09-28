@@ -19,10 +19,13 @@ class UserFilter(TypedDict, total=False):
     Attributes:
         email: Filter by user email.
         organization_id: Filter by organization ID.
+        activated: `True` to keep only the active users, `False` to keep only the deactivated
+            users. Omitted or `None`: all the users.
     """
 
     email: Optional[str]
     organization_id: Optional[str]
+    activated: Optional[bool]
 
 
 class UsersNamespace(DomainNamespace):
@@ -46,6 +49,10 @@ class UsersNamespace(DomainNamespace):
 
         >>> # Count users
         >>> count = kili.users.count(organization_id="org_id")
+
+        >>> # List and count only the active or only the deactivated users
+        >>> active_users = kili.users.list(filter={"activated": True})
+        >>> nb_deactivated_users = kili.users.count(filter={"activated": False})
 
         >>> # Create a new user
         >>> result = kili.users.create(
@@ -117,7 +124,7 @@ class UsersNamespace(DomainNamespace):
             skip: Number of skipped users (they are ordered by creation date)
             disable_tqdm: If True, the progress bar will be disabled
             filter: Optional filters for users. See UserFilter for available fields:
-                email, organization_id.
+                email, organization_id, activated.
 
         Returns:
             A list of users.
@@ -128,8 +135,23 @@ class UsersNamespace(DomainNamespace):
             >>> organization_id = organization['id']
             >>> users = kili.users.list(filter={"organization_id": organization_id})
 
+            >>> # List only the active users of my organization
+            >>> active_users = kili.users.list(
+            ...     filter={"organization_id": organization_id, "activated": True}
+            ... )
+
+            >>> # List only the deactivated users of my organization
+            >>> deactivated_users = kili.users.list(
+            ...     filter={"organization_id": organization_id, "activated": False}
+            ... )
+
             >>> # Get specific user by email
             >>> user = kili.users.list(filter={"email": "user@example.com"})
+
+            >>> # Check whether a given user is deactivated
+            >>> is_deactivated = bool(
+            ...     kili.users.list(filter={"email": "user@example.com", "activated": False})
+            ... )
         """
         filter_kwargs = filter or {}
         return self._client.users(
@@ -159,7 +181,7 @@ class UsersNamespace(DomainNamespace):
             skip: Number of skipped users (they are ordered by creation date)
             disable_tqdm: If True, the progress bar will be disabled
             filter: Optional filters for users. See UserFilter for available fields:
-                email, organization_id.
+                email, organization_id, activated.
 
         Returns:
             A generator yielding users.
@@ -169,6 +191,14 @@ class UsersNamespace(DomainNamespace):
             >>> for user in kili.users.list_as_generator(
             ...     filter={"organization_id": "org_id"}
             ... ):
+            ...     print(user["email"])
+
+            >>> # Iterate over the active users only
+            >>> for user in kili.users.list_as_generator(filter={"activated": True}):
+            ...     print(user["email"])
+
+            >>> # Iterate over the deactivated users only
+            >>> for user in kili.users.list_as_generator(filter={"activated": False}):
             ...     print(user["email"])
         """
         filter_kwargs = filter or {}
@@ -190,7 +220,7 @@ class UsersNamespace(DomainNamespace):
 
         Args:
             filter: Optional filters for users. See UserFilter for available fields:
-                organization_id, email.
+                organization_id, email, activated.
 
         Returns:
             The number of users with the parameters provided.
@@ -198,6 +228,12 @@ class UsersNamespace(DomainNamespace):
         Examples:
             >>> # Count all users in organization
             >>> count = kili.users.count(filter={"organization_id": "org_id"})
+
+            >>> # Count only the active users of the organization
+            >>> count = kili.users.count(filter={"organization_id": "org_id", "activated": True})
+
+            >>> # Count only the deactivated users of the organization
+            >>> count = kili.users.count(filter={"organization_id": "org_id", "activated": False})
 
             >>> # Count users by email pattern
             >>> count = kili.users.count(filter={"email": "user@example.com"})

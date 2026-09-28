@@ -34,6 +34,7 @@ class UserClientMethods(BaseClientMethods):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         *,
+        activated: Optional[bool] = None,
         as_generator: Literal[True],
     ) -> Generator[dict, None, None]:
         ...
@@ -48,6 +49,7 @@ class UserClientMethods(BaseClientMethods):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         *,
+        activated: Optional[bool] = None,
         as_generator: Literal[False] = False,
     ) -> list[dict]:
         ...
@@ -62,6 +64,7 @@ class UserClientMethods(BaseClientMethods):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         *,
+        activated: Optional[bool] = None,
         as_generator: bool = False,
     ) -> Iterable[dict]:
         # pylint: disable=line-too-long
@@ -75,6 +78,8 @@ class UserClientMethods(BaseClientMethods):
             first: Maximum number of users to return
             skip: Number of skipped users (they are ordered by creation date)
             disable_tqdm: If `True`, the progress bar will be disabled
+            activated: If `True`, only the active users are returned. If `False`, only the
+                deactivated users are returned. If `None` (default), all the users are returned.
             as_generator: If `True`, a generator on the users is returned.
 
         Returns:
@@ -86,6 +91,19 @@ class UserClientMethods(BaseClientMethods):
             >>> organization = kili.organizations()[0]
             >>> organization_id = organization['id']
             >>> kili.users(organization_id=organization_id)
+
+            # List only the active users of my organization
+            >>> kili.users(organization_id=organization_id, activated=True)
+
+            # List only the deactivated users of my organization
+            >>> kili.users(organization_id=organization_id, activated=False)
+
+            # Check whether a given user is deactivated
+            >>> kili.users(email="user@example.com", activated=False)
+
+            # Iterate over the deactivated users one by one
+            >>> for user in kili.users(activated=False, as_generator=True):
+            ...     print(user["email"])
             ```
         """
         disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
@@ -95,7 +113,7 @@ class UserClientMethods(BaseClientMethods):
             filters=UserFilter(
                 email=email,
                 organization_id=OrganizationId(organization_id) if organization_id else None,
-                activated=None,
+                activated=activated,
                 id=None,
                 id_in=None,
             ),
@@ -112,21 +130,38 @@ class UserClientMethods(BaseClientMethods):
         self,
         organization_id: Optional[str] = None,
         email: Optional[str] = None,
+        activated: Optional[bool] = None,
     ) -> int:
         """Get user count based on a set of constraints.
 
         Args:
             organization_id: Identifier of the user's organization.
             email: Filter by email.
+            activated: If `True`, only the active users are counted. If `False`, only the
+                deactivated users are counted. If `None` (default), all the users are counted.
 
         Returns:
-            The number of organizations with the parameters provided.
+            The number of users with the parameters provided.
+
+        Examples:
+            ```
+            # Count all users in my organization
+            >>> organization = kili.organizations()[0]
+            >>> organization_id = organization['id']
+            >>> kili.count_users(organization_id=organization_id)
+
+            # Count only the active users of my organization
+            >>> kili.count_users(organization_id=organization_id, activated=True)
+
+            # Count only the deactivated users of my organization
+            >>> kili.count_users(organization_id=organization_id, activated=False)
+            ```
         """
         return UserUseCases(self.kili_api_gateway).count_users(
             UserFilter(
                 email=email,
                 organization_id=OrganizationId(organization_id) if organization_id else None,
-                activated=None,
+                activated=activated,
                 id=None,
                 id_in=None,
             )
