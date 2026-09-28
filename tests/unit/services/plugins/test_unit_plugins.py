@@ -446,3 +446,127 @@ def test_upload_of_an_on_event_plugin_warns_it_is_deprecated(kili, caplog):
 
     assert uploader.event_matcher == ["asset.*"]
     assert "Overriding on_event is deprecated" in caplog.text
+
+
+def test_upload_leaves_out_the_events_of_a_family_plugins_never_receive(kili, tmp_path):
+    uploader = _uploader(
+        kili,
+        _plugin_file(
+            tmp_path,
+            """
+            from kili_events import AssetEvent
+
+            from kili.plugins import PluginCore, on_kili_event
+
+
+            class PluginHandler(PluginCore):
+                @on_kili_event(AssetEvent)
+                def on_asset(self, event):
+                    pass
+            """,
+        ),
+    )
+
+    uploader._retrieve_plugin_src()
+
+    assert uploader.event_matcher is not None
+    assert "asset.skipped" in uploader.event_matcher
+    assert not [s for s in uploader.event_matcher if s.startswith("asset.analytics.labelMetric.")]
+    assert len(uploader.event_matcher) == 22
+
+
+@pytest.mark.parametrize(
+    "arguments",
+    ["AssetAnalyticsLabelMetricEvent", "AssetStorageIntegrationEvent", '"asset.*.started"'],
+    ids=["system events", "events of no project", "pattern of system events"],
+)
+def test_find_event_subscriptions_rejects_events_plugins_never_receive(tmp_path, arguments):
+    plugin_path = _plugin_file(
+        tmp_path,
+        f"""
+        from kili_events import AssetAnalyticsLabelMetricEvent, AssetStorageIntegrationEvent
+
+        from kili.plugins import PluginCore, on_kili_event
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event({arguments})
+            def on_something(self, event):
+                pass
+        """,
+    )
+
+    with pytest.raises(ValueError, match="never sends"):
+        find_event_subscriptions(plugin_path)
+
+
+def test_find_event_subscriptions_rejects_an_async_method(tmp_path):
+    plugin_path = _plugin_file(
+        tmp_path,
+        """
+        from kili_events import AssetSkippedEvent
+
+        from kili.plugins import PluginCore, on_kili_event
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event(AssetSkippedEvent)
+            async def on_skip(self, event):
+                pass
+        """,
+    )
+
+    with pytest.raises(ValueError, match="PluginHandler.on_skip: .* async"):
+        find_event_subscriptions(plugin_path)
+
+
+def test_find_event_subscriptions_follows_star_imports(tmp_path):
+    plugin_path = _plugin_file(
+        tmp_path,
+        """
+        from kili_events import *
+        from kili.plugins import *
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event(AssetSkippedEvent)
+            def on_skip(self, event):
+                pass
+        """,
+    )
+
+    assert find_event_subscriptions(plugin_path) == {"on_skip": ["asset.skipped"]}
+
+
+def test_find_event_subscriptions_warns_of_inherited_handlers(tmp_path, caplog):
+    plugin_path = _plugin_file(
+        tmp_path,
+        """
+        from kili_events import AssetSkippedEvent
+
+        from kili.plugins import PluginCore, on_kili_event
+        from helpers import MyBase
+
+
+        class PluginHandler(MyBase):
+            @on_kili_event(AssetSkippedEvent)
+            def on_skip(self, event):
+                pass
+        """,
+    )
+
+    with caplog.at_level(logging.WARNING, logger="kili.services.plugins"):
+        find_event_subscriptions(plugin_path)
+
+    assert "PluginHandler inherits from MyBase" in caplog.text
+
+
+def test_upload_refuses_a_plugin_without_handler(kili):
+    plugin_path = Path(
+        os.path.join(
+            "tests", "unit", "services", "plugins", "test_plugins", "no_handlers_implemented.py"
+        )
+    )
+
+    with pytest.raises(ValueError, match="PluginHandler has no handler"):
+        _uploader(kili, plugin_path)._retrieve_plugin_src()

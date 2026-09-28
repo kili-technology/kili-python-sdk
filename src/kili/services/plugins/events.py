@@ -4,7 +4,7 @@ import inspect
 from collections.abc import Callable
 from typing import Any, TypeVar, Union, get_args, get_origin
 
-from kili_events import KiliEvent, events_matching
+from kili_events import EVENT_MODELS, KiliEvent, events_matching, is_system_event
 
 # Where @on_kili_event records the patterns of a method, read back when an event arrives.
 SUBSCRIPTIONS_ATTRIBUTE = "__kili_event_patterns__"
@@ -40,6 +40,19 @@ def event_patterns(event: object) -> tuple[str, ...]:
     )
 
 
+def plugin_receives(subject: str) -> bool:
+    """Whether Kili sends an event to plugins: system events and events without project never.
+
+    Args:
+        subject: The event subject, e.g. "asset.skipped".
+
+    Returns:
+        False for a system event, or an event no project is attached to.
+    """
+    model = EVENT_MODELS.get(subject)
+    return not is_system_event(subject) and (model is None or "project_id" in model.model_fields)
+
+
 def on_kili_event(*events: object) -> Callable[[_Method], _Method]:
     """Call the decorated method of a plugin with each event it subscribes to.
 
@@ -56,7 +69,7 @@ def on_kili_event(*events: object) -> Callable[[_Method], _Method]:
         The decorator.
 
     Raises:
-        TypeError: No event, or an argument that is none of the three.
+        TypeError: No event, an argument that is none of the three, or an async method.
         ValueError: A malformed pattern.
 
     !!! example
@@ -85,6 +98,11 @@ def on_kili_event(*events: object) -> Callable[[_Method], _Method]:
     )
 
     def decorator(method: _Method) -> _Method:
+        if inspect.iscoroutinefunction(method):
+            raise TypeError(
+                f"@on_kili_event decorates plain methods: {method.__name__} is async, and a plugin"
+                " would never await it."
+            )
         setattr(method, SUBSCRIPTIONS_ATTRIBUTE, patterns)
         return method
 
