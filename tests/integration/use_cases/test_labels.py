@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -393,4 +394,122 @@ def test_import_predictions_without_giving_model_name(kili_api_gateway: KiliAPIG
             label_type=label_type,
             project_id=ProjectId(project_id),
             fields=("id",),
+        )
+
+
+def test_download_annotation_file_writes_the_bytes(kili_api_gateway: KiliAPIGateway, tmp_path):
+    # Given a file annotation whose id resolves to a short lived url
+    kili_api_gateway.get_annotation_file_url.return_value = "https://bucket.example.com/signed"
+    response = MagicMock()
+    response.__enter__.return_value = response
+    response.iter_content.return_value = [b"ren", b"der"]
+    kili_api_gateway.http_client.get.return_value = response
+    output_path = tmp_path / "nested" / "render.mp4"
+
+    # When
+    written = LabelUseCases(kili_api_gateway).download_annotation_file(
+        project_id=ProjectId("project_id"),
+        asset_id=AssetId("asset_id"),
+        file_id="file_id",
+        output_path=output_path,
+    )
+
+    # Then
+    kili_api_gateway.get_annotation_file_url.assert_called_once_with(
+        project_id="project_id", asset_id="asset_id", file_id="file_id"
+    )
+    assert written == str(output_path)
+    assert output_path.read_bytes() == b"render"
+
+
+def test_download_annotation_file_asks_for_the_url_each_time(
+    kili_api_gateway: KiliAPIGateway, tmp_path
+):
+    """The url is signed on demand and short lived, so it must not be cached between downloads."""
+    # Given
+    kili_api_gateway.get_annotation_file_url.return_value = "https://bucket.example.com/signed"
+    response = MagicMock()
+    response.__enter__.return_value = response
+    response.iter_content.return_value = [b"x"]
+    kili_api_gateway.http_client.get.return_value = response
+
+    # When
+    for name in ("first.mp4", "second.mp4"):
+        LabelUseCases(kili_api_gateway).download_annotation_file(
+            project_id=ProjectId("project_id"),
+            asset_id=AssetId("asset_id"),
+            file_id="file_id",
+            output_path=tmp_path / name,
+        )
+
+    # Then
+    assert kili_api_gateway.get_annotation_file_url.call_count == 2
+
+
+def test_upload_annotation_file_returns_the_job_answer(kili_api_gateway: KiliAPIGateway, tmp_path):
+    # Given
+    kili_api_gateway.create_annotation_file_upload.return_value = {
+        "fileId": "file_id",
+        "uploadUrl": "https://bucket.example.com/put",
+    }
+    file_path = tmp_path / "render.mp4"
+    file_path.write_bytes(b"render")
+
+    # When
+    answer = LabelUseCases(kili_api_gateway).upload_annotation_file(
+        project_id=ProjectId("project_id"), asset_id=AssetId("asset_id"), file_path=file_path
+    )
+
+    # Then the answer is the whole of that job's jsonResponse
+    assert answer == {
+        "fileId": "file_id",
+        "fileName": "render.mp4",
+        "fileMimeType": "video/mp4",
+    }
+    kili_api_gateway.create_annotation_file_upload.assert_called_once_with(
+        project_id="project_id", asset_id="asset_id"
+    )
+    _, kwargs = kili_api_gateway.http_client.put.call_args
+    assert kwargs["headers"] == {"Content-Type": "video/mp4"}
+
+
+def test_upload_annotation_file_leaves_an_unknown_type_to_the_server(
+    kili_api_gateway: KiliAPIGateway, tmp_path
+):
+    """The server fills a missing mime type from the file name, so guessing badly here is worse."""
+    # Given
+    kili_api_gateway.create_annotation_file_upload.return_value = {
+        "fileId": "file_id",
+        "uploadUrl": "https://bucket.example.com/put",
+    }
+    file_path = tmp_path / "scene.blend"
+    file_path.write_bytes(b"scene")
+
+    # When
+    answer = LabelUseCases(kili_api_gateway).upload_annotation_file(
+        project_id=ProjectId("project_id"), asset_id=AssetId("asset_id"), file_path=file_path
+    )
+
+    # Then
+    assert answer["fileMimeType"] == ""
+    _, kwargs = kili_api_gateway.http_client.put.call_args
+    assert kwargs["headers"] == {}
+
+
+def test_upload_annotation_file_raises_when_the_bucket_refuses(
+    kili_api_gateway: KiliAPIGateway, tmp_path
+):
+    # Given
+    kili_api_gateway.create_annotation_file_upload.return_value = {
+        "fileId": "file_id",
+        "uploadUrl": "https://bucket.example.com/put",
+    }
+    kili_api_gateway.http_client.put.return_value.raise_for_status.side_effect = RuntimeError("403")
+    file_path = tmp_path / "render.mp4"
+    file_path.write_bytes(b"render")
+
+    # When / Then a failed upload is not reported as a usable answer
+    with pytest.raises(RuntimeError):
+        LabelUseCases(kili_api_gateway).upload_annotation_file(
+            project_id=ProjectId("project_id"), asset_id=AssetId("asset_id"), file_path=file_path
         )

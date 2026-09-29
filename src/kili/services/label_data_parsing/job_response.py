@@ -185,6 +185,31 @@ class JobPayload:
         self._json_data["text"] = text
 
     @property
+    def file_id(self) -> str:
+        """Returns the id of the file a file job answers with.
+
+        The file is named by id, never by url, so resolving it into bytes goes through
+        `kili.download_annotation_file`.
+        """
+        if self._job_interface["mlTask"] != "FILE":
+            raise AttributeNotCompatibleWithJobError("file_id")
+        return self._json_data["fileId"]
+
+    @property
+    def file_name(self) -> str:
+        """Returns the name the file of a file job was uploaded under."""
+        if self._job_interface["mlTask"] != "FILE":
+            raise AttributeNotCompatibleWithJobError("file_name")
+        return self._json_data["fileName"]
+
+    @property
+    def file_mime_type(self) -> str:
+        """Returns the mime type of the file a file job answers with."""
+        if self._job_interface["mlTask"] != "FILE":
+            raise AttributeNotCompatibleWithJobError("file_mime_type")
+        return self._json_data["fileMimeType"]
+
+    @property
     def is_key_frame(self) -> bool:
         """Returns the value of isKeyFrame for a video job.
 
@@ -250,7 +275,7 @@ def _can_query_annotations(json_data: dict, job_interface: Job) -> bool:
     if "annotations" in json_data:
         return True
 
-    if job_interface["mlTask"] in ("CLASSIFICATION",):
+    if job_interface["mlTask"] in ("CLASSIFICATION", "FILE"):
         return False
 
     if not job_interface["required"]:

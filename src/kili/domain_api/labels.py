@@ -6,6 +6,7 @@ including creation, querying, management, and event handling.
 """
 
 from collections.abc import Generator
+from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     List,
@@ -355,6 +356,82 @@ class LabelsNamespace(DomainNamespace):
         return self._client.count_labels(
             project_id=project_id,
             **filter_kwargs,
+        )
+
+    @typechecked
+    def upload_file(
+        self,
+        project_id: str,
+        asset_id: str,
+        file_path: Union[str, Path],
+    ) -> dict:
+        """Upload a file so that a file job can answer with it.
+
+        Returns the answer to write into a label: a file job holds one file, so the returned
+        dictionary is the whole of that job's `jsonResponse`.
+
+        Args:
+            project_id: Identifier of the project.
+            asset_id: Identifier of the asset the file was produced for.
+            file_path: The file to upload.
+
+        Returns:
+            `{"fileId": ..., "fileName": ..., "fileMimeType": ...}`.
+
+        Examples:
+            >>> answer = kili.labels.upload_file(
+            ...     project_id="my_project", asset_id="my_asset", file_path="render.mp4"
+            ... )
+            >>> kili.labels.create_default(
+            ...     project_id="my_project",
+            ...     asset_id="my_asset",
+            ...     json_response={"assetLevel": {"RENDER": answer}},
+            ... )
+        """
+        return self._client.upload_annotation_file(
+            project_id=project_id,
+            asset_id=asset_id,
+            file_path=file_path,
+        )
+
+    @typechecked
+    def download_file(
+        self,
+        project_id: str,
+        asset_id: str,
+        file_id: str,
+        output_path: Union[str, Path],
+    ) -> str:
+        """Download the file held by a file annotation.
+
+        A file job answers with a file rather than a drawing or a piece of text -- a render, a
+        scene file, a report. Its `jsonResponse` names the file by id, and this resolves that id
+        into the bytes.
+
+        Args:
+            project_id: Identifier of the project.
+            asset_id: Identifier of the asset the file was produced for.
+            file_id: `fileId` read from the file job of a label's `jsonResponse`.
+            output_path: Where to write the file. Parent directories are created.
+
+        Returns:
+            The path the file was written to.
+
+        Examples:
+            >>> label = kili.labels.list(project_id="my_project", fields=["jsonResponse"])[0]
+            >>> deliverable = label["jsonResponse"]["assetLevel"]["RENDER"]
+            >>> kili.labels.download_file(
+            ...     project_id="my_project",
+            ...     asset_id="my_asset",
+            ...     file_id=deliverable["fileId"],
+            ...     output_path=deliverable["fileName"],
+            ... )
+        """
+        return self._client.download_annotation_file(
+            project_id=project_id,
+            asset_id=asset_id,
+            file_id=file_id,
+            output_path=output_path,
         )
 
     @typechecked
