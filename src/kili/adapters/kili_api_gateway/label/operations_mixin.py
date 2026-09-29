@@ -25,8 +25,10 @@ from .common import get_annotation_fragment
 from .formatters import load_label_json_fields
 from .mappers import append_label_data_mapper, append_to_labels_data_mapper, label_where_mapper
 from .operations import (
+    GQL_ANNOTATION_FILE_URL,
     GQL_COPY_LABELS,
     GQL_COUNT_LABELS,
+    GQL_CREATE_ANNOTATION_FILE_UPLOAD,
     GQL_DELETE_LABELS,
     get_append_many_labels_mutation,
     get_append_to_labels_mutation,
@@ -241,6 +243,25 @@ class LabelOperationMixin(BaseOperationMixin):
             "where": {"id": asset_id},
         }
         result = self.graphql_client.execute(query, variables)
+        return result["data"]
+
+    def create_annotation_file_upload(self, project_id: str, asset_id: str) -> dict:
+        """Reserve a file id for an asset and get where to upload its bytes.
+
+        The caller names no path: the id is minted server side and the path derived from it, which
+        is what lets a labeler produce a deliverable without being able to write anywhere else.
+        """
+        variables = {"projectId": project_id, "assetId": asset_id}
+        result = self.graphql_client.execute(GQL_CREATE_ANNOTATION_FILE_UPLOAD, variables)
+        return result["data"]
+
+    def get_annotation_file_url(self, project_id: str, asset_id: str, file_id: str) -> str:
+        """Get a short lived url to download the file held by a file annotation.
+
+        The url is signed when asked for and is never stored, so it must be used rather than kept.
+        """
+        variables = {"projectId": project_id, "assetId": asset_id, "fileId": file_id}
+        result = self.graphql_client.execute(GQL_ANNOTATION_FILE_URL, variables)
         return result["data"]
 
     def copy_labels(
