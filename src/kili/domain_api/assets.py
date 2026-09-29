@@ -2449,8 +2449,8 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     ) -> AssetActionOutcome:
         """Set the priority of one or more assets.
 
-        An asset past labeling, whose priority no longer orders any queue, is reported under
-        `declined` rather than silently left out.
+        An asset whose current step is not waiting for work — in progress, done or skipped — is
+        reported under `declined` rather than silently left out.
 
         Args:
             priority: The priority to give every asset. By default, all assets have a priority of 0.
