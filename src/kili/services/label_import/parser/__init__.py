@@ -57,6 +57,16 @@ class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-me
 
     @staticmethod
     def _parse(row) -> tuple[list[list[float]], int, Optional[float], str]:
+        # A segment line, `class x1 y1 ... xn yn` with n >= 3: its polygon as given.
+        if len(row) >= 7 and len(row) % 2 == 1:
+            coordinates = [float(value) for value in row[1:]]
+            return (
+                [coordinates[i : i + 2] for i in range(0, len(coordinates), 2)],
+                int(row[0]),
+                None,
+                JobTool.POLYGON.value,
+            )
+        # A box line, `class x y w h [confidence]`.
         try:
             class_id, x, y, width, height, proba = row
         except ValueError:
