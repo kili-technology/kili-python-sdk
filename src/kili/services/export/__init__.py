@@ -13,7 +13,13 @@ from kili.services.export.format.voc import VocExporter
 from kili.services.export.format.yolo import YoloExporter
 from kili.services.export.logger import get_logger
 from kili.services.export.repository import SDKContentRepository
-from kili.services.export.types import CocoAnnotationModifier, ExportType, LabelFormat, SplitOption
+from kili.services.export.types import (
+    CocoAnnotationModifier,
+    ExportType,
+    LabelFormat,
+    SplitOption,
+    YoloTask,
+)
 from kili.services.types import LogLevel
 
 if TYPE_CHECKING:
@@ -37,8 +43,13 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     normalized_coordinates: Optional[bool],
     label_type_in: Optional[list[str]],
     include_sent_back_labels: Optional[bool],
+    yolo_task: Optional[YoloTask] = None,
 ) -> Optional[list[dict[str, Union[list[str], str]]]]:
     """Export the selected assets into the required format, and save it into a file archive."""
+    if yolo_task is not None and yolo_task not in get_args(YoloTask):
+        raise ValueError(
+            f'yolo_task must be one of {get_args(YoloTask)} or None, got "{yolo_task}".'
+        )
     kili.kili_api_gateway.get_project(project_id, ["id"])
 
     include_sent_back_labels = (
@@ -59,6 +70,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         normalized_coordinates=normalized_coordinates,
         label_type_in=label_type_in,
         include_sent_back_labels=include_sent_back_labels,
+        yolo_task=yolo_task,
     )
 
     logger = get_logger(log_level)

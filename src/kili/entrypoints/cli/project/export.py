@@ -10,7 +10,7 @@ from kili.entrypoints.cli.common_args import Options
 from kili.entrypoints.cli.helpers import get_kili_client
 from kili.services.export import export_labels as service_export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
-from kili.services.export.types import LabelFormat, SplitOption
+from kili.services.export.types import LabelFormat, SplitOption, YoloTask
 
 
 @click.command(name="export")
@@ -53,6 +53,15 @@ from kili.services.export.types import LabelFormat, SplitOption
     default=None,
     help="Whether to use normalized coordinates or not.",
 )
+@click.option(
+    "--yolo-task",
+    type=click.Choice(get_args(YoloTask)),
+    default=None,
+    help=(
+        "YOLO v5, v7 and v8 only: 'detect' for box lines, 'segment' for polygon lines (polygons,"
+        " masks and boxes). Without it, box and polygon lines in the same file."
+    ),
+)
 @Options.api_key
 @Options.endpoint
 @Options.project_id
@@ -70,6 +79,7 @@ def export_labels(
     verbose: bool,
     with_assets: bool,
     normalized_coordinates: Optional[bool],
+    yolo_task: Optional[YoloTask],
 ) -> None:
     """Export the Kili labels of a project to a given format.
 
@@ -122,6 +132,7 @@ def export_labels(
             normalized_coordinates=normalized_coordinates,
             label_type_in=None,
             include_sent_back_labels=None,
+            yolo_task=yolo_task,
         )
     except NoCompatibleJobError as excp:
         print(str(excp))
