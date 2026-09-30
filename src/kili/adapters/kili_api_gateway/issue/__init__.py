@@ -19,6 +19,7 @@ from kili.core.utils.pagination import batcher
 from kili.domain.issue import IssueFilters, IssueId, IssueStatus, IssueType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
+from kili.exceptions import MutationOutcomeUnknownError
 from kili.utils import tqdm
 
 from .mappers import issue_where_mapper
@@ -37,6 +38,7 @@ class IssueOperationMixin(BaseOperationMixin):
     ) -> list[IssueId]:
         """Send a GraphQL request calling createIssues resolver."""
         created_issue_entities: list[IssueId] = []
+        first_index = 0
         with tqdm.tqdm(total=len(issues), desc=description) as pbar:
             for issues_batch in batcher(issues, batch_size=MUTATION_BATCH_SIZE):
                 payload = {
@@ -52,12 +54,16 @@ class IssueOperationMixin(BaseOperationMixin):
                     ],
                     "where": {"project": {"id": project_id}},
                 }
-                result = self.graphql_client.execute(GQL_CREATE_ISSUES, payload)
+                try:
+                    result = self.graphql_client.execute(GQL_CREATE_ISSUES, payload)
+                except MutationOutcomeUnknownError as err:
+                    raise err.at_index(first_index) from err.cause
                 batch_created_issues = result["data"]
                 created_issue_entities.extend(
                     [IssueId(issue["id"]) for issue in batch_created_issues]
                 )
                 pbar.update(len(issues_batch))
+                first_index += len(issues_batch)
         return created_issue_entities
 
     def count_issues(self, filters: IssueFilters) -> int:

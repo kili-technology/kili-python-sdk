@@ -1,8 +1,12 @@
 """Unit tests for core utils pagination module."""
 
-import pytest
+from unittest.mock import MagicMock
 
-from kili.core.utils.pagination import batch_object_builder, batcher
+import pytest
+from requests.exceptions import ReadTimeout
+
+from kili.core.utils.pagination import batch_object_builder, batcher, mutate_from_paginated_call
+from kili.exceptions import MutationOutcomeUnknownError
 
 
 @pytest.mark.parametrize(
@@ -118,3 +122,17 @@ def test_batch_object_builder(name, test_case):
     actual = batch_object_builder(test_case["properties_to_batch"], test_case["batch_size"])
     expected = test_case["expected_result"]
     assert all(a == b for a, b in zip(actual, expected, strict=False))
+
+
+def test_mutate_from_paginated_call_locates_a_batch_with_an_unknown_outcome():
+    kili = MagicMock()
+    unknown = MutationOutcomeUnknownError("updatePropertiesInAssets", ReadTimeout())
+    kili.graphql_client.execute.side_effect = [{"data": 1}, unknown]
+
+    with pytest.raises(MutationOutcomeUnknownError, match="before index 2 were applied") as raised:
+        mutate_from_paginated_call(
+            kili, {"ids": list(range(5))}, lambda batch: batch, "mutation", batch_size=2
+        )
+
+    assert raised.value.index == 2
+    assert isinstance(raised.value.cause, ReadTimeout)

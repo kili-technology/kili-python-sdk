@@ -2,6 +2,8 @@
 
 from typing import Optional
 
+from requests.exceptions import ConnectionError as RequestsConnectionError
+
 
 class GraphQLError(Exception):
     """Raised when the GraphQL call returns an error."""
@@ -21,6 +23,68 @@ class GraphQLError(Exception):
             super().__init__(f'GraphQL error: "{error_msg}"')
         else:
             super().__init__(f'GraphQL error at index {100*batch_number}: {error_msg}"')
+
+
+class MutationOutcomeUnknownError(RequestsConnectionError):
+    """Raised when a mutation failed in a way that does not tell whether the server applied it.
+
+    The request was sent but no answer came back (a timeout, a dropped connection), or a proxy
+    answered with a 5xx for the backend. The mutation is not resent, since it could be applied
+    twice: check its effect before running it again.
+
+    It is a requests ConnectionError, what a mutation that timed out raised before, so existing
+    `except requests.ConnectionError` and `except requests.RequestException` clauses catch it.
+
+    Attributes:
+        operation: the GraphQL field the mutation called.
+        cause: the error the request failed with.
+        index: when the mutation sent one batch of a longer list, the position in that list of
+            the batch's first item. The batches before it were applied.
+        external_ids: when an asset import sent one batch of the assets, the external ids of the
+            assets in that batch. The batches before it were applied. An index would not locate
+            it: the import filters and regroups the assets before sending them.
+    """
+
+    def __init__(
+        self,
+        operation: str,
+        cause: BaseException,
+        index: Optional[int] = None,
+        external_ids: Optional[list[str]] = None,
+    ) -> None:
+        self.operation = operation
+        self.cause = cause
+        self.index = index
+        self.external_ids = external_ids
+        super().__init__(
+            f"The request calling {operation} failed ({type(cause).__name__}: {cause}). It may"
+            " have been processed by the server anyway, so it was not sent again. Check its"
+            f" effect before retrying.{self._batch_message()}"
+        )
+
+    def _batch_message(self) -> str:
+        if self.index is not None:
+            return (
+                f" The items before index {self.index} were applied; the batch starting at index"
+                f" {self.index} may or may not have been, and the items after it were not sent."
+            )
+        if self.external_ids:
+            shown = ", ".join(self.external_ids[:5])
+            more = len(self.external_ids) - 5
+            listed = f"{shown} and {more} more" if more > 0 else shown
+            return (
+                f" The earlier batches were applied; the batch of the assets {listed} may or may"
+                " not have been, and the later ones were not sent."
+            )
+        return ""
+
+    def at_index(self, index: int) -> "MutationOutcomeUnknownError":
+        """The same error, located in the caller's list of items."""
+        return MutationOutcomeUnknownError(self.operation, self.cause, index=index)
+
+    def for_assets(self, external_ids: list[str]) -> "MutationOutcomeUnknownError":
+        """The same error, for the batch of assets with these external ids."""
+        return MutationOutcomeUnknownError(self.operation, self.cause, external_ids=external_ids)
 
 
 class NotFound(Exception):

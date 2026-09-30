@@ -18,16 +18,7 @@ from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
 from pyrate_limiter import Duration, Rate
 from pyrate_limiter.limiter import Limiter
-from tenacity import (
-    retry,
-    retry_all,
-    retry_any,
-    retry_if_exception_message,
-    retry_if_exception_type,
-    retry_if_not_exception_message,
-    stop_after_delay,
-    wait_exponential,
-)
+from tenacity import RetryCallState, Retrying, retry_if_exception, wait_random_exponential
 
 import kili.exceptions
 from kili import __version__
@@ -35,6 +26,19 @@ from kili.adapters.http_client import HttpClient
 from kili.core.constants import MAX_CALLS_PER_MINUTE
 from kili.core.graphql.clientnames import GraphQLClientName
 from kili.core.graphql.exceptions import extract_error_context
+from kili.core.graphql.retry import (
+    MAX_BACKOFF_SECONDS,
+    RETRY_DEADLINE_SECONDS,
+    Outcome,
+    attempts_allowed,
+    classify,
+    describe,
+    is_mutation,
+    operation_name,
+    retry_after_seconds,
+    should_retry,
+)
+from kili.log.logging import logger
 from kili.utils.logcontext import LogContext
 
 gql_requests_logger.setLevel(logging.WARNING)
@@ -49,6 +53,85 @@ _limiter = Limiter(Rate(MAX_CALLS_PER_MINUTE, Duration.MINUTE), max_delay=120 * 
 _execute_lock = threading.Lock()
 
 DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR = Path.home() / ".cache" / "kili" / "graphql"
+
+# full jitter: clients failing together do not retry together
+_backoff = wait_random_exponential(multiplier=1, max=MAX_BACKOFF_SECONDS)
+
+# Retries shorter than this stay silent: the user only hears about the ones that delay them.
+WARN_AFTER_RETRYING_SECONDS = 5
+
+
+class _RetryPolicy:
+    """Decides, for one operation, whether and when a failed attempt is sent again.
+
+    It warns once when retrying starts to delay the user, and tells when that ended well.
+    """
+
+    def __init__(self, operation: str, mutation: bool, with_retries: bool) -> None:
+        self.operation = operation
+        self.mutation = mutation
+        self.with_retries = with_retries
+        self.start = time.monotonic()
+        self.warned = False
+
+    def retrying(self) -> Retrying:
+        """The tenacity loop applying this policy."""
+        return Retrying(
+            reraise=True,
+            retry=retry_if_exception(lambda error: should_retry(error, self.mutation)),
+            stop=self.stop,
+            wait=self.wait,
+            before_sleep=self.before_sleep,
+        )
+
+    def stop(self, retry_state: RetryCallState) -> bool:
+        """Stop at the deadline, or once the error has had the attempts it allows.
+
+        The deadline is checked between attempts: one that starts just before it can end up to
+        a timeout later.
+        """
+        elapsed = retry_state.seconds_since_start or 0
+        if not self.with_retries or elapsed >= RETRY_DEADLINE_SECONDS:
+            return True
+        error = retry_state.outcome.exception() if retry_state.outcome else None
+        limit = attempts_allowed(error, self.mutation) if error is not None else 1
+        return limit is not None and retry_state.attempt_number >= limit
+
+    def wait(self, retry_state: RetryCallState) -> float:
+        """Honour Retry-After, otherwise back off with full jitter, never past the deadline."""
+        error = retry_state.outcome.exception() if retry_state.outcome else None
+        retry_after = retry_after_seconds(error) if error is not None else None
+        delay = retry_after if retry_after is not None else _backoff(retry_state)
+        remaining = RETRY_DEADLINE_SECONDS - (retry_state.seconds_since_start or 0)
+        return max(0.0, min(delay, remaining))
+
+    def before_sleep(self, retry_state: RetryCallState) -> None:
+        """Warn once, when the retries start to cost the user noticeable time."""
+        if self.warned:
+            return
+        sleep = retry_state.next_action.sleep if retry_state.next_action else 0
+        if time.monotonic() - self.start + sleep < WARN_AFTER_RETRYING_SECONDS:
+            return
+        error = retry_state.outcome.exception() if retry_state.outcome else None
+        limit = attempts_allowed(error, self.mutation) if error is not None else None
+        logger.warning(
+            "The Kili API could not process %s (%s). %s...",
+            self.operation,
+            describe(error) if error is not None else "unknown error",
+            f"Retrying for up to {RETRY_DEADLINE_SECONDS} s"
+            if limit is None
+            else f"Retrying, {limit - retry_state.attempt_number} attempt(s) left",
+        )
+        self.warned = True
+
+    def succeeded(self) -> None:
+        """Tell the user who was warned that the operation went through."""
+        if self.warned:
+            logger.warning(
+                "%s succeeded after %.0f s of retries.",
+                self.operation,
+                time.monotonic() - self.start,
+            )
 
 
 # pylint: disable=too-many-instance-attributes, too-few-public-methods
@@ -91,22 +174,13 @@ class GraphQLClient:
 
         self.ws_endpoint = self.endpoint.replace("http", "ws")
 
+        # no transport-level retry: _execute_with_retries decides, knowing query from mutation
         self._gql_transport = RequestsHTTPTransport(
             url=endpoint,
             headers=self._get_headers(),
             timeout=60,
             verify=verify,
-            retries=10,
-            retry_backoff_factor=0.1,  # last retry will take 0.1*2**10 = 100s
-            retry_status_forcelist=(
-                429,  # 429 Too Many Requests
-                502,  # 502 Bad Gateway
-                503,  # 503 Service Unavailable
-                504,  # 504 Gateway Timeout
-                520,  # Unknown Error: Generic response for an unexpected result.
-                521,  # Web Server Is Down
-                522,  # Connection Timed Out
-            ),
+            retries=0,
         )
 
         if self.enable_schema_caching is True:
@@ -187,7 +261,12 @@ class GraphQLClient:
         )
 
     def _get_graphql_schema_from_endpoint(self) -> str:
-        """Get the GraphQL schema from the endpoint."""
+        """Get the GraphQL schema from the endpoint, retried like any query."""
+        return self._run(
+            "the schema introspection", False, True, self._fetch_graphql_schema_from_endpoint
+        )
+
+    def _fetch_graphql_schema_from_endpoint(self) -> str:
         with Client(
             transport=self._gql_transport,
             fetch_schema_from_transport=True,
@@ -262,12 +341,10 @@ class GraphQLClient:
         document = query if isinstance(query, DocumentNode) else gql(query)
         variables = self._remove_nullable_inputs(variables) if variables else None
 
-        should_retry = kwargs.pop("retry", True)
+        with_retries = kwargs.pop("retry", True)
 
         try:
-            if should_retry:
-                return self._execute_with_retries(document, variables, **kwargs)
-            return self._raw_execute(document, variables, **kwargs)
+            return self._execute_with_retries(document, variables, with_retries, **kwargs)
 
         except graphql.GraphQLError:  # local validation error
             # the local schema might be outdated
@@ -275,7 +352,7 @@ class GraphQLClient:
             self._purge_graphql_schema_cache_dir()
             self._gql_client = self._initizalize_graphql_client()
             try:
-                return self._execute_with_retries(document, variables, **kwargs)
+                return self._execute_with_retries(document, variables, with_retries, **kwargs)
 
             except graphql.GraphQLError as err:
                 # even after updating the schema, the query is invalid , we crash
@@ -289,32 +366,26 @@ class GraphQLClient:
             context = extract_error_context(str(err.errors))
             raise kili.exceptions.GraphQLError(error=err.errors, context=context) from err
 
-    @retry(
-        reraise=True,  # re-raise the last exception
-        retry=retry_all(
-            retry_if_exception_type(  # error received from server
-                (exceptions.TransportQueryError, exceptions.TransportServerError)
-            ),
-            retry_if_not_exception_message(
-                match=r'.*Variable "(\$\w+)" of required type "(\w+!)" was not provided.*'
-            ),
-            retry_if_not_exception_message(match=r'.*Variable "(\$\w+)" got invalid value .*'),
-            retry_if_not_exception_message(
-                match=r'.*Field "(\w+)" is not defined by type "(\w+)".*'
-            ),
-            retry_any(
-                retry_if_exception_message(match=r".*Invalid request made to Flagsmith API.*"),
-                retry_if_exception_message(match=r".*Failed to fetch data connection.*"),
-                retry_if_exception_message(match=r".*Unauthorized for url.*"),
-            ),
-        ),
-        stop=stop_after_delay(3 * 60),
-        wait=wait_exponential(multiplier=0.5, min=1, max=10),
-    )
     def _execute_with_retries(
-        self, document: DocumentNode, variables: Optional[dict], **kwargs
+        self, document: DocumentNode, variables: Optional[dict], with_retries: bool, **kwargs
     ) -> dict[str, Any]:
-        return self._raw_execute(document, variables, **kwargs)
+        mutation = is_mutation(document)
+        name = operation_name(document)
+        try:
+            return self._run(
+                name, mutation, with_retries, self._raw_execute, document, variables, **kwargs
+            )
+        except Exception as err:
+            if mutation and classify(err) is Outcome.UNKNOWN:
+                raise kili.exceptions.MutationOutcomeUnknownError(name, err) from err
+            raise
+
+    @staticmethod
+    def _run(operation: str, mutation: bool, with_retries: bool, function, *args, **kwargs):
+        policy = _RetryPolicy(operation, mutation, with_retries)
+        result = policy.retrying()(function, *args, **kwargs)
+        policy.succeeded()
+        return result
 
     def _raw_execute(
         self, document: DocumentNode, variables: Optional[dict], **kwargs

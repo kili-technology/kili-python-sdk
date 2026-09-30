@@ -35,6 +35,7 @@ from kili.domain.notification import NotificationFilter, NotificationId
 from kili.domain.organization import OrganizationFilters
 from kili.domain.project import InputType, ProjectId
 from kili.domain.types import ListOrTuple
+from kili.exceptions import MutationOutcomeUnknownError
 from kili.services.asset_import.constants import (
     ALLOWED_EXTENSIONS_BY_INPUT_TYPE,
     IMPORT_BATCH_SIZE,
@@ -115,6 +116,17 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
         assets_ = self.loop_on_batch(self.fill_empty_fields)(assets)
+        try:
+            return self._import_prepared_batch(assets, assets_, verify)
+        except MutationOutcomeUnknownError as err:
+            # named by the external ids sent, defaults included: an index would not locate the
+            # batch, since the assets were filtered and regrouped before batching
+            external_ids = [asset["external_id"] for asset in assets_]
+            raise err.for_assets(external_ids) from err.cause
+
+    def _import_prepared_batch(
+        self, assets: ListOrTuple[AssetLike], assets_: list[KiliResolverAsset], verify: bool
+    ) -> list[str]:
         if self.is_asynchronous and verify:
             notification = self.import_to_kili(assets_)
             if isinstance(notification, list):

@@ -1,7 +1,9 @@
 from unittest.mock import MagicMock, call, patch
 
 import pytest
+from requests.exceptions import ReadTimeout
 
+from kili.exceptions import MutationOutcomeUnknownError
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
 from tests.unit.services.asset_import.base import ImportTestCase
@@ -198,3 +200,49 @@ class AsyncUploadTypeTestCase(ImportTestCase):
             "GEO_SATELLITE",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+
+
+@patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
+@patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
+@patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
+class UnknownOutcomeTestCase(ImportTestCase):
+    def test_a_batch_with_an_unknown_outcome_is_named_by_its_external_ids(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+        assets = [
+            {"content": "https://hosted-data", "external_id": f"asset {i}"} for i in range(150)
+        ]
+        unknown = MutationOutcomeUnknownError("appendManyAssets", ReadTimeout())
+
+        def graphql_execute_side_effect(*args, **_):
+            external_ids = args[1]["data"]["externalIDArray"]
+            if external_ids[0] == "asset 100":
+                raise unknown
+            return {"data": [{"id": f"id{i}"} for i in range(len(external_ids))]}
+
+        with patch.object(
+            self.kili.graphql_client, "execute", side_effect=graphql_execute_side_effect
+        ), pytest.raises(MutationOutcomeUnknownError, match="asset 100, asset 101") as raised:
+            import_assets(self.kili, self.project_id, assets)
+
+        assert raised.value.external_ids == [f"asset {i}" for i in range(100, 150)]
+        assert raised.value.index is None  # a position would not locate it once assets are filtered
+
+    def test_a_batch_without_external_ids_is_named_by_the_ids_it_was_sent_with(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+        assets = [{"content": "https://hosted-data"} for _ in range(150)]
+        unknown = MutationOutcomeUnknownError("appendManyAssets", ReadTimeout())
+        sent: list[list[str]] = []
+
+        def graphql_execute_side_effect(*args, **_):
+            sent.append(args[1]["data"]["externalIDArray"])
+            if len(sent) == 2:
+                raise unknown
+            return {"data": [{"id": f"id{i}"} for i in range(len(sent[-1]))]}
+
+        with patch.object(
+            self.kili.graphql_client, "execute", side_effect=graphql_execute_side_effect
+        ), pytest.raises(MutationOutcomeUnknownError) as raised:
+            import_assets(self.kili, self.project_id, assets)
+
+        assert raised.value.external_ids == sent[1]  # the generated ids, as the server got them
+        assert "None" not in raised.value.external_ids

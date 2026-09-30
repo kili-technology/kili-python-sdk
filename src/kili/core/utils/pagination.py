@@ -7,7 +7,7 @@ from typing import Any, Optional, TypeVar
 
 from kili.core.constants import MUTATION_BATCH_SIZE
 from kili.domain.types import ListOrTuple
-from kili.exceptions import GraphQLError
+from kili.exceptions import GraphQLError, MutationOutcomeUnknownError
 
 
 def batch_object_builder(
@@ -86,6 +86,8 @@ def mutate_from_paginated_call(
             result = kili.graphql_client.execute(request, payload)
         except GraphQLError as err:
             raise GraphQLError(error=err.error, batch_number=batch_number) from err
+        except MutationOutcomeUnknownError as err:
+            raise err.at_index(batch_number * batch_size) from err.cause
         results.append(result)
 
     sleep(1)  # wait for the backend to process the mutations

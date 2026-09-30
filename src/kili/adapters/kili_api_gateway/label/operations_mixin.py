@@ -19,6 +19,7 @@ from kili.domain.asset import AssetId
 from kili.domain.label import LabelFilters, LabelId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
+from kili.exceptions import MutationOutcomeUnknownError
 from kili.utils.tqdm import tqdm
 
 from .common import get_annotation_fragment
@@ -192,6 +193,7 @@ class LabelOperationMixin(BaseOperationMixin):
         query = get_append_many_labels_mutation(fragment=fragment)
 
         added_labels: list[dict] = []
+        first_index = 0
         with tqdm(total=nb_labels_to_add, desc="Adding labels", disable=disable_tqdm) as pbar:
             for batch_of_label_data in batcher(data.labels_data, batch_size=MUTATION_BATCH_SIZE):
                 variables = {
@@ -211,9 +213,13 @@ class LabelOperationMixin(BaseOperationMixin):
                     variables["where"]["project"] = {"id": project_id}
 
                 # we increase the timeout because the import can take a long time
-                batch_result = self.graphql_client.execute(query, variables, timeout=120)
+                try:
+                    batch_result = self.graphql_client.execute(query, variables, timeout=120)
+                except MutationOutcomeUnknownError as err:
+                    raise err.at_index(first_index) from err.cause
                 added_labels.extend(batch_result["data"])
                 pbar.update(len(batch_of_label_data))
+                first_index += len(batch_of_label_data)
 
         return added_labels
 
