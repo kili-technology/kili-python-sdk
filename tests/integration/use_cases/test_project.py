@@ -7,6 +7,7 @@ from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.project.types import ProjectDataKiliAPIGatewayInput
 from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
+from kili.exceptions import GraphQLError
 from kili.use_cases.project.project import ProjectUseCases
 
 interface = {
@@ -203,3 +204,56 @@ def test_given_a_project_when_update_its_properties_then_it_updates_project_prop
     # Then
     assert "id" in project
     assert project == {"title": "title_value", "id": "id_value"}
+
+
+def test_when_i_transfer_the_projects_of_an_author_then_the_refused_ones_are_reported(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    kili_api_gateway.list_projects.return_value = (
+        {"id": project_id} for project_id in ("project_1", "project_2", "project_3")
+    )
+    refusal = GraphQLError("Only project admins can be made project owners.")
+    kili_api_gateway.update_properties_in_project.side_effect = [{"id": "project_1"}, refusal, {}]
+
+    # When
+    outcome = ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
+        "former_author_id", "new_author_id"
+    )
+
+    # Then
+    assert outcome == {
+        "transferred": ["project_1", "project_3"],
+        "failed": [{"id": "project_2", "error": str(refusal)}],
+    }
+    filters = kili_api_gateway.list_projects.call_args.args[0]
+    assert filters.author_id == "former_author_id"
+    assert kili_api_gateway.update_properties_in_project.call_count == 3
+    for call in kili_api_gateway.update_properties_in_project.call_args_list:
+        assert call.args[1].author == "new_author_id"
+        assert call.args[2] == ("author.id", "id")
+
+
+def test_when_the_author_has_no_project_then_the_transfer_is_empty(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    kili_api_gateway.list_projects.return_value = iter([])
+
+    # When
+    outcome = ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
+        "former_author_id", "new_author_id"
+    )
+
+    # Then
+    assert outcome == {"transferred": [], "failed": []}
+    kili_api_gateway.update_properties_in_project.assert_not_called()
+
+
+def test_when_i_transfer_projects_to_their_own_author_then_it_is_refused(
+    kili_api_gateway: KiliAPIGateway,
+):
+    with pytest.raises(ValueError, match="must be different users"):
+        ProjectUseCases(kili_api_gateway).transfer_projects_authorship("user_id", "user_id")
+
+    kili_api_gateway.list_projects.assert_not_called()

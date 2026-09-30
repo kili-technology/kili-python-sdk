@@ -23,6 +23,9 @@ def project_where_mapper(filters: ProjectFilters) -> dict:
     }
     if filters.archived is not None:
         ret["archived"] = filters.archived
+    # only sent when set: a Kili server older than this filter rejects an unknown `where` key, even null
+    if filters.author_id is not None:
+        ret["authorId"] = filters.author_id
     return ret
 
 

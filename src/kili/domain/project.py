@@ -91,3 +91,18 @@ class ProjectFilters:
     organization_id: Optional[str] = None
     tag_ids: Optional[ListOrTuple["TagId"]] = None
     deleted: Optional[bool] = None
+    author_id: Optional[str] = None
+
+
+class ProjectAuthorshipFailure(TypedDict):
+    """A project whose author could not be changed."""
+
+    id: str
+    error: str
+
+
+class ProjectsAuthorshipTransfer(TypedDict):
+    """Outcome of handing the projects of an author over to another user."""
+
+    transferred: list[str]
+    failed: list[ProjectAuthorshipFailure]

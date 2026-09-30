@@ -18,11 +18,12 @@ from kili.domain.project import (
     InputType,
     ProjectFilters,
     ProjectId,
+    ProjectsAuthorshipTransfer,
     ProjectStep,
     WorkflowVersion,
 )
 from kili.domain.types import ListOrTuple
-from kili.exceptions import NotFound
+from kili.exceptions import GraphQLError, NotFound
 from kili.use_cases.base import BaseUseCases
 
 
@@ -132,6 +133,7 @@ class ProjectUseCases(BaseUseCases):
         metadata_properties: Optional[dict] = None,
         should_auto_assign: Optional[bool] = None,
         seconds_to_label_before_auto_assign: Optional[int] = None,
+        author: Optional[str] = None,
     ) -> dict[str, object]:
         """Update properties in a project."""
         if consensus_tot_coverage is not None and not 0 <= consensus_tot_coverage <= 100:
@@ -191,16 +193,44 @@ class ProjectUseCases(BaseUseCases):
             title=title,
             use_honeypot=use_honeypot,
             archived=None,
-            author=None,
+            author=author,
         )
 
+        # `author` is a user in the project's fragment: its id is the field to ask for
         fields = tuple(
-            name for name, val in project_data_mapper(project_data).items() if val is not None
+            "author.id" if name == "author" else name
+            for name, val in project_data_mapper(project_data).items()
+            if val is not None
         )
         if "id" not in fields:
             fields += ("id",)
 
         return self._kili_api_gateway.update_properties_in_project(project_id, project_data, fields)
+
+    def transfer_projects_authorship(
+        self, author_id: str, new_author_id: str
+    ) -> ProjectsAuthorshipTransfer:
+        """Hand the projects of an author over to another user, reporting those that refuse."""
+        if author_id == new_author_id:
+            raise ValueError("Arguments `author_id` and `new_author_id` must be different users.")
+
+        projects = list(
+            self.list_projects(
+                ProjectFilters(id=None, author_id=author_id),
+                ("id",),
+                options=QueryOptions(disable_tqdm=True),
+            )
+        )
+
+        outcome = ProjectsAuthorshipTransfer(transferred=[], failed=[])
+        for project in projects:
+            try:
+                self.update_properties_in_project(ProjectId(project["id"]), author=new_author_id)
+            except GraphQLError as error:
+                outcome["failed"].append({"id": project["id"], "error": str(error)})
+            else:
+                outcome["transferred"].append(project["id"])
+        return outcome
 
     def get_project_steps_and_version(
         self,
