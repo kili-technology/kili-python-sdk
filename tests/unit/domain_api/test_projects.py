@@ -5,6 +5,7 @@ from unittest.mock import Mock
 import pytest
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
+from kili.client import Kili as KiliLegacy
 from kili.domain_api.projects import ProjectsNamespace
 
 
@@ -14,9 +15,7 @@ class TestProjectsNamespaceAuthor:
     @pytest.fixture()
     def mock_client(self):
         """Create a mock Kili client."""
-        client = Mock()
-        client.__class__.__name__ = "Kili"
-        return client
+        return Mock(spec=KiliLegacy)
 
     @pytest.fixture()
     def projects_namespace(self, mock_client):

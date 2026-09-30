@@ -206,6 +206,10 @@ def test_given_a_project_when_update_its_properties_then_it_updates_project_prop
     assert project == {"title": "title_value", "id": "id_value"}
 
 
+def _updated(project_id: str, author_id: str = "new_author_id") -> dict:
+    return {"id": project_id, "author": {"id": author_id}}
+
+
 def test_when_i_transfer_the_projects_of_an_author_then_the_refused_ones_are_reported(
     kili_api_gateway: KiliAPIGateway,
 ):
@@ -214,7 +218,11 @@ def test_when_i_transfer_the_projects_of_an_author_then_the_refused_ones_are_rep
         {"id": project_id} for project_id in ("project_1", "project_2", "project_3")
     )
     refusal = GraphQLError("Only project admins can be made project owners.")
-    kili_api_gateway.update_properties_in_project.side_effect = [{"id": "project_1"}, refusal, {}]
+    kili_api_gateway.update_properties_in_project.side_effect = [
+        _updated("project_1"),
+        refusal,
+        _updated("project_3"),
+    ]
 
     # When
     outcome = ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
@@ -234,6 +242,51 @@ def test_when_i_transfer_the_projects_of_an_author_then_the_refused_ones_are_rep
         assert call.args[2] == ("author.id", "id")
 
 
+def test_when_a_project_fails_for_any_reason_then_the_others_are_still_transferred(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given a connection that drops on the first project
+    kili_api_gateway.list_projects.return_value = (
+        {"id": pid} for pid in ("project_1", "project_2")
+    )
+    kili_api_gateway.update_properties_in_project.side_effect = [
+        ConnectionError("connection dropped"),
+        _updated("project_2"),
+    ]
+
+    # When
+    outcome = ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
+        "former_author_id", "new_author_id"
+    )
+
+    # Then
+    assert outcome == {
+        "transferred": ["project_2"],
+        "failed": [{"id": "project_1", "error": "connection dropped"}],
+    }
+
+
+def test_when_the_server_does_not_apply_the_new_author_then_the_project_is_reported_failed(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given a server that answers OK and keeps the former author
+    kili_api_gateway.list_projects.return_value = iter([{"id": "project_1"}])
+    kili_api_gateway.update_properties_in_project.return_value = _updated(
+        "project_1", author_id="former_author_id"
+    )
+
+    # When
+    outcome = ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
+        "former_author_id", "new_author_id"
+    )
+
+    # Then
+    assert outcome["transferred"] == []
+    assert outcome["failed"] == [
+        {"id": "project_1", "error": "The server did not change the author."}
+    ]
+
+
 def test_when_the_author_has_no_project_then_the_transfer_is_empty(
     kili_api_gateway: KiliAPIGateway,
 ):
@@ -250,10 +303,19 @@ def test_when_the_author_has_no_project_then_the_transfer_is_empty(
     kili_api_gateway.update_properties_in_project.assert_not_called()
 
 
-def test_when_i_transfer_projects_to_their_own_author_then_it_is_refused(
-    kili_api_gateway: KiliAPIGateway,
+@pytest.mark.parametrize(
+    ("author_id", "new_author_id", "message"),
+    [
+        ("user_id", "user_id", "must be different users"),
+        ("user_id", "", "must be non-empty user ids"),
+        ("", "user_id", "must be non-empty user ids"),
+    ],
+)
+def test_when_the_users_of_a_transfer_are_not_two_users_then_it_is_refused_before_any_call(
+    kili_api_gateway: KiliAPIGateway, author_id: str, new_author_id: str, message: str
 ):
-    with pytest.raises(ValueError, match="must be different users"):
-        ProjectUseCases(kili_api_gateway).transfer_projects_authorship("user_id", "user_id")
+    with pytest.raises(ValueError, match=message):
+        ProjectUseCases(kili_api_gateway).transfer_projects_authorship(author_id, new_author_id)
 
     kili_api_gateway.list_projects.assert_not_called()
+    kili_api_gateway.update_properties_in_project.assert_not_called()

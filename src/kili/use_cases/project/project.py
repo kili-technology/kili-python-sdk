@@ -23,7 +23,7 @@ from kili.domain.project import (
     WorkflowVersion,
 )
 from kili.domain.types import ListOrTuple
-from kili.exceptions import GraphQLError, NotFound
+from kili.exceptions import NotFound
 from kili.use_cases.base import BaseUseCases
 
 
@@ -211,6 +211,10 @@ class ProjectUseCases(BaseUseCases):
         self, author_id: str, new_author_id: str
     ) -> ProjectsAuthorshipTransfer:
         """Hand the projects of an author over to another user, reporting those that refuse."""
+        if not author_id or not new_author_id:
+            raise ValueError(
+                "Arguments `author_id` and `new_author_id` must be non-empty user ids."
+            )
         if author_id == new_author_id:
             raise ValueError("Arguments `author_id` and `new_author_id` must be different users.")
 
@@ -224,12 +228,21 @@ class ProjectUseCases(BaseUseCases):
 
         outcome = ProjectsAuthorshipTransfer(transferred=[], failed=[])
         for project in projects:
+            project_id = ProjectId(project["id"])
             try:
-                self.update_properties_in_project(ProjectId(project["id"]), author=new_author_id)
-            except GraphQLError as error:
-                outcome["failed"].append({"id": project["id"], "error": str(error)})
+                updated = self.update_properties_in_project(project_id, author=new_author_id)
+            # one project failing, whatever the reason, must not lose the report of the others
+            except Exception as error:  # pylint: disable=broad-exception-caught
+                outcome["failed"].append({"id": project_id, "error": str(error)})
+                continue
+            # an older Kili server accepts the new author without applying it: the answer tells
+            author = updated.get("author")
+            if not isinstance(author, dict) or author.get("id") != new_author_id:
+                outcome["failed"].append(
+                    {"id": project_id, "error": "The server did not change the author."}
+                )
             else:
-                outcome["transferred"].append(project["id"])
+                outcome["transferred"].append(project_id)
         return outcome
 
     def get_project_steps_and_version(

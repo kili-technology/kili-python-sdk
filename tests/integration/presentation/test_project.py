@@ -1,5 +1,7 @@
+import pytest
 import pytest_mock
 
+from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.queries import fragment_builder
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.project.operations import (
@@ -7,6 +9,7 @@ from kili.adapters.kili_api_gateway.project.operations import (
     GQL_CREATE_PROJECT,
     get_update_properties_in_project_mutation,
 )
+from kili.core.graphql.graphql_client import GraphQLClient
 from kili.presentation.client.project import ProjectClientMethods
 
 
@@ -73,53 +76,54 @@ def test_when_updating_project_then_it_returns_updated_project(mocker: pytest_mo
     )
 
 
-def _kili_with_mocked_gateway(mocker: pytest_mock.MockerFixture) -> ProjectClientMethods:
+@pytest.fixture()
+def kili_with_mocked_gateway(
+    graphql_client: GraphQLClient, http_client: HttpClient
+) -> ProjectClientMethods:
     kili = ProjectClientMethods()
-    kili.kili_api_gateway = KiliAPIGateway(
-        graphql_client=mocker.MagicMock(), http_client=mocker.MagicMock()
-    )
+    kili.kili_api_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
     return kili
 
 
 def test_when_counting_projects_of_an_author_then_the_author_is_in_the_where(
-    mocker: pytest_mock.MockerFixture,
+    kili_with_mocked_gateway: ProjectClientMethods, graphql_client: GraphQLClient
 ):
-    kili = _kili_with_mocked_gateway(mocker)
-    kili.kili_api_gateway.graphql_client.execute.return_value = {"data": 0}
+    graphql_client.execute.return_value = {"data": 0}
 
     # When
-    count = kili.count_projects(author_id="colleague_id", archived=False)
+    count = kili_with_mocked_gateway.count_projects(author_id="colleague_id", archived=False)
 
     # Then
     assert count == 0
-    where = kili.kili_api_gateway.graphql_client.execute.call_args.args[1]["where"]
-    assert where["authorId"] == "colleague_id"
-    assert where["archived"] is False
-    assert kili.kili_api_gateway.graphql_client.execute.call_args.args[0] == GQL_COUNT_PROJECTS
+    query, variables = graphql_client.execute.call_args.args
+    assert query == GQL_COUNT_PROJECTS
+    assert variables["where"]["authorId"] == "colleague_id"
+    assert variables["where"]["archived"] is False
 
 
 def test_when_counting_projects_without_author_then_the_where_has_no_author_key(
-    mocker: pytest_mock.MockerFixture,
+    kili_with_mocked_gateway: ProjectClientMethods, graphql_client: GraphQLClient
 ):
-    kili = _kili_with_mocked_gateway(mocker)
-    kili.kili_api_gateway.graphql_client.execute.return_value = {"data": 3}
+    graphql_client.execute.return_value = {"data": 3}
 
     # When
-    kili.count_projects()
+    kili_with_mocked_gateway.count_projects()
 
     # Then an older Kili server, which does not know `authorId`, still accepts the call
-    where = kili.kili_api_gateway.graphql_client.execute.call_args.args[1]["where"]
-    assert "authorId" not in where
+    assert "authorId" not in graphql_client.execute.call_args.args[1]["where"]
 
 
 def test_when_listing_projects_of_an_author_then_the_author_is_in_the_where(
-    mocker: pytest_mock.MockerFixture,
+    kili_with_mocked_gateway: ProjectClientMethods, mocker: pytest_mock.MockerFixture
 ):
-    kili = _kili_with_mocked_gateway(mocker)
-    mocked_list = mocker.patch.object(kili.kili_api_gateway, "list_projects", return_value=iter([]))
+    mocked_list = mocker.patch.object(
+        kili_with_mocked_gateway.kili_api_gateway, "list_projects", return_value=iter([])
+    )
 
     # When
-    projects = kili.projects(author_id="colleague_id", fields=["id"], disable_tqdm=True)
+    projects = kili_with_mocked_gateway.projects(
+        author_id="colleague_id", fields=["id"], disable_tqdm=True
+    )
 
     # Then
     assert projects == []
@@ -127,20 +131,25 @@ def test_when_listing_projects_of_an_author_then_the_author_is_in_the_where(
 
 
 def test_when_transferring_a_project_then_the_mutation_sets_and_asks_for_the_author_id(
+    kili_with_mocked_gateway: ProjectClientMethods,
+    graphql_client: GraphQLClient,
     mocker: pytest_mock.MockerFixture,
 ):
-    kili = _kili_with_mocked_gateway(mocker)
-    mocker.patch.object(kili.kili_api_gateway, "list_projects", return_value=iter([{"id": "p1"}]))
-    kili.kili_api_gateway.graphql_client.execute.return_value = {
-        "data": {"id": "p1", "author": {"id": "new_author_id"}}
-    }
+    mocker.patch.object(
+        kili_with_mocked_gateway.kili_api_gateway,
+        "list_projects",
+        return_value=iter([{"id": "p1"}]),
+    )
+    graphql_client.execute.return_value = {"data": {"id": "p1", "author": {"id": "new_author_id"}}}
 
     # When
-    outcome = kili.transfer_projects_authorship("former_author_id", "new_author_id")
+    outcome = kili_with_mocked_gateway.transfer_projects_authorship(
+        "former_author_id", "new_author_id"
+    )
 
     # Then
     assert outcome == {"transferred": ["p1"], "failed": []}
-    mutation, variables = kili.kili_api_gateway.graphql_client.execute.call_args.args
+    mutation, variables = graphql_client.execute.call_args.args
     assert mutation == get_update_properties_in_project_mutation(
         fragment_builder(["author.id", "id"])
     )
