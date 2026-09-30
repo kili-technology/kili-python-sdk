@@ -258,6 +258,7 @@ def test_yolo_label_parser():
                             }
                         ],
                         "categories": [{"name": "B", "confidence": 100}],
+                        "type": "rectangle",
                     }
                 ]
             }

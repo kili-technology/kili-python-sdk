@@ -6,6 +6,8 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import Any, Optional
 
+from kili_formats.types import JobTool
+
 from kili.services.label_import.types import Classes
 
 
@@ -34,7 +36,7 @@ class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-me
             for row in csv_reader:
                 if len(row) == 0:
                     continue
-                vertices, category, proba = self._parse(row)
+                vertices, category, proba, tool = self._parse(row)
                 annotations.append(
                     {
                         "boundingPoly": [
@@ -46,13 +48,15 @@ class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-me
                                 "confidence": 100 if proba is None else int(100 * float(proba)),
                             }
                         ],
+                        # A label keeps its json response as imported, and the exports read the type.
+                        "type": tool,
                     }
                 )
 
         return {self.target_job: {"annotations": annotations}}
 
     @staticmethod
-    def _parse(row) -> tuple[list[list[float]], int, Optional[float]]:
+    def _parse(row) -> tuple[list[list[float]], int, Optional[float], str]:
         try:
             class_id, x, y, width, height, proba = row
         except ValueError:
@@ -72,6 +76,7 @@ class YoloLabelParser(AbstractLabelParser):  # pylint: disable=too-few-public-me
             ],
             _class_id,
             proba,
+            JobTool.RECTANGLE.value,
         )
 
 
