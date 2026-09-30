@@ -734,18 +734,16 @@ class ExportNamespace(DomainNamespace):
 
         Examples:
             >>> # Export all labels in COCO format
-            >>> kili.labels.export(
+            >>> kili.exports.coco(
             ...     project_id="my_project",
-            ...     fmt="coco",
-            ...     filename="export.zip"
+            ...     output_path="export.zip",
             ... )
 
             >>> # Export labels for specific assets
-            >>> kili.labels.export(
+            >>> kili.exports.kili(
             ...     project_id="my_project",
-            ...     fmt="kili",
-            ...     filename="filtered_export.zip",
-            ...     filter={"external_id_strictly_in": ["batch_1"]}
+            ...     output_path="filtered_export.zip",
+            ...     filter={"external_id_strictly_in": ["batch_1"]},
             ... )
         """
         workflow_version = self._get_workflow_version(project_id)
