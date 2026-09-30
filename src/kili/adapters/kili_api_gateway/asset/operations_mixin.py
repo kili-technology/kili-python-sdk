@@ -206,22 +206,17 @@ class AssetOperationMixin(BaseOperationMixin):
                 project_input_type=project_info["inputType"],
             )
             for asset in assets_gen:
+                labels_to_patch = []
                 if requested_latest_label_json_response and asset.get("latestLabel"):
-                    converter.patch_label_json_response(
-                        asset, asset["latestLabel"], asset["latestLabel"]["annotations"]
-                    )
-                    asset["latestLabel"].pop("annotations", None)
-
+                    labels_to_patch.append(asset["latestLabel"])
                 if requested_latest_labels_json_response:
-                    for label in asset.get("latestLabels") or []:
-                        if label is not None:
-                            converter.patch_label_json_response(asset, label, label["annotations"])
-                            label.pop("annotations", None)
-
+                    labels_to_patch.extend(asset.get("latestLabels") or [])
                 if requested_labels_json_response:
-                    for label in asset.get("labels", []):
-                        converter.patch_label_json_response(asset, label, label["annotations"])
-                        label.pop("annotations", None)
+                    labels_to_patch.extend(asset.get("labels", []))
+
+                for label in filter(None, labels_to_patch):
+                    converter.patch_label_json_response(asset, label, label["annotations"])
+                    label.pop("annotations", None)
                 yield asset
         else:
             yield from assets_gen
