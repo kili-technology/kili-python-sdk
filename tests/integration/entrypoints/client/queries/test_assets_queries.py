@@ -69,3 +69,16 @@ def test_count_assets_passes_replacement_filters_through(kili_api_gateway, repla
 
     filters = kili_api_gateway.count_assets.call_args[0][0]
     assert getattr(filters, replacement) == value
+
+
+@pytest.mark.parametrize(("replacement", "value"), REMOVED_FILTERS.values())
+def test_assets_passes_replacement_filters_through(kili_api_gateway, replacement, value):
+    kili_api_gateway.list_assets.return_value = iter([])
+    kili_api_gateway.get_project.return_value = {"steps": [], "workflowVersion": "V1"}
+    asset_client_methods = AssetClientMethods()
+    asset_client_methods.kili_api_gateway = kili_api_gateway
+
+    asset_client_methods.assets(project_id="project-id", **{replacement: value})
+
+    filters = kili_api_gateway.list_assets.call_args[0][0]
+    assert getattr(filters, replacement) == value

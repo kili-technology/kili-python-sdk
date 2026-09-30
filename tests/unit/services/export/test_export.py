@@ -1,6 +1,7 @@
 # pylint: disable=missing-module-docstring
 import glob
 import os
+import warnings
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -22,6 +23,7 @@ from kili.services.export.exceptions import (
 )
 from kili.services.export.format.kili import KiliExporter
 from kili.services.export.format.voc import VocExporter
+from kili.services.export.tools import fetch_assets
 from tests.fakes.fake_kili import (
     FakeKili,
     mocked_AssetQuery,
@@ -878,6 +880,38 @@ def test_export_with_asset_filter_kwargs(mocker):
     kili.kili_api_gateway.list_assets.assert_called_once_with(
         expected_where, expected_fields, expected_options
     )
+
+
+@pytest.mark.parametrize(
+    ("asset_filter_kwargs", "warned"),
+    [
+        ({"external_id_contains": ["asset-a"]}, True),
+        ({"external_id_strictly_in": ["asset-a"]}, False),
+        ({"external_id_strictly_in": ["asset-a"], "external_id_contains": ["asset-b"]}, True),
+    ],
+)
+def test_fetch_assets_warns_on_external_id_contains(mocker, asset_filter_kwargs, warned):
+    kili = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock(spec=KiliAPIGateway)
+    kili.kili_api_gateway.list_assets.return_value = iter([])
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        fetch_assets(
+            kili,
+            project_id="fake_proj_id",
+            asset_ids=None,
+            export_type="latest_from_last_step",
+            label_type_in=None,
+            disable_tqdm=True,
+            download_media=False,
+            local_media_dir=None,
+            asset_filter_kwargs=asset_filter_kwargs,
+        )
+
+    filters = kili.kili_api_gateway.list_assets.call_args[0][0]
+    assert filters.external_id_strictly_in == ["asset-a"]
+    assert any("external_id_contains is deprecated" in str(w.message) for w in caught) is warned
 
 
 def test_export_with_asset_filter_kwargs_unknown_arg(mocker, kili_api_gateway):
