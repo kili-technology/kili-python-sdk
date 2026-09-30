@@ -304,18 +304,119 @@ def test_when_the_author_has_no_project_then_the_transfer_is_empty(
 
 
 @pytest.mark.parametrize(
-    ("author_id", "new_author_id", "message"),
+    ("kwargs", "message"),
     [
-        ("user_id", "user_id", "must be different users"),
-        ("user_id", "", "must be non-empty user ids"),
-        ("", "user_id", "must be non-empty user ids"),
+        ({"author_id": "user_id", "new_author_id": "user_id"}, "must be different users"),
+        (
+            {"author_email": "Jane@Acme.com", "new_author_email": "jane@acme.COM"},
+            "must be different users",
+        ),
+        ({"author_id": "user_id", "new_author_id": ""}, "`new_author_id` must not be empty"),
+        ({"author_id": "", "new_author_id": "user_id"}, "`author_id` must not be empty"),
+        (
+            {"author_email": "", "new_author_id": "user_id"},
+            "`author_email` must not be empty",
+        ),
+        (
+            {"author_id": "a", "author_email": "a@acme.com", "new_author_id": "b"},
+            "`author_id` or as `author_email`, one of the two",
+        ),
+        (
+            {"author_id": "a", "new_author_id": "b", "new_author_email": "b@acme.com"},
+            "`new_author_id` or as `new_author_email`, one of the two",
+        ),
+        ({"author_id": "a"}, "`new_author_id` or as `new_author_email`, one of the two"),
+        ({"new_author_id": "b"}, "`author_id` or as `author_email`, one of the two"),
     ],
 )
 def test_when_the_users_of_a_transfer_are_not_two_users_then_it_is_refused_before_any_call(
-    kili_api_gateway: KiliAPIGateway, author_id: str, new_author_id: str, message: str
+    kili_api_gateway: KiliAPIGateway, kwargs: dict, message: str
 ):
     with pytest.raises(ValueError, match=message):
-        ProjectUseCases(kili_api_gateway).transfer_projects_authorship(author_id, new_author_id)
+        ProjectUseCases(kili_api_gateway).transfer_projects_authorship(**kwargs)
 
     kili_api_gateway.list_projects.assert_not_called()
     kili_api_gateway.update_properties_in_project.assert_not_called()
+
+
+def _project(project_id: str, members: dict[str, str], author: str = "former_author_id") -> dict:
+    """A project of the listing: its author and its members, by id and email."""
+    return {
+        "id": project_id,
+        "author": {"id": author},
+        "roles": [{"user": {"id": id_, "email": email}} for id_, email in members.items()],
+    }
+
+
+def test_when_i_transfer_by_email_then_the_author_is_listed_by_email_and_the_new_one_is_found_among_the_members(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given a project the new author, written in another case, is a member of
+    kili_api_gateway.list_projects.return_value = iter(
+        [_project("project_1", {"new_author_id": "New.Owner@Acme.com", "other_id": "o@acme.com"})]
+    )
+    kili_api_gateway.update_properties_in_project.return_value = _updated("project_1")
+
+    # When
+    outcome = ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
+        author_email="leaving@acme.com", new_author_email="new.owner@acme.com"
+    )
+
+    # Then
+    assert outcome == {"transferred": ["project_1"], "failed": []}
+    list_args = kili_api_gateway.list_projects.call_args
+    assert list_args.args[0].author_email == "leaving@acme.com"
+    assert list_args.args[0].author_id is None
+    assert list_args.args[1] == ("id", "author.id", "roles.user.id", "roles.user.email")
+    update_args = kili_api_gateway.update_properties_in_project.call_args.args
+    assert update_args[1].author == "new_author_id"
+
+
+def test_when_the_new_author_is_not_a_member_of_a_project_then_it_is_reported_and_left_alone(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given a first project the new author is a member of, and a second they are not
+    kili_api_gateway.list_projects.return_value = iter(
+        [
+            _project("project_1", {"new_author_id": "new.owner@acme.com"}),
+            _project("project_2", {"other_id": "other@acme.com"}),
+        ]
+    )
+    kili_api_gateway.update_properties_in_project.return_value = _updated("project_1")
+
+    # When
+    outcome = ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
+        author_id="former_author_id", new_author_email="new.owner@acme.com"
+    )
+
+    # Then
+    assert outcome["transferred"] == ["project_1"]
+    assert [failure["id"] for failure in outcome["failed"]] == ["project_2"]
+    assert "new.owner@acme.com" in outcome["failed"][0]["error"]
+    assert kili_api_gateway.update_properties_in_project.call_count == 1
+
+
+def test_when_the_new_author_already_is_the_author_of_a_project_then_it_is_reported(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given a project whose author is the user the email designates
+    kili_api_gateway.list_projects.return_value = iter(
+        [_project("project_1", {"new_author_id": "new.owner@acme.com"}, author="new_author_id")]
+    )
+
+    # When
+    outcome = ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
+        author_email="leaving@acme.com", new_author_email="new.owner@acme.com"
+    )
+
+    # Then
+    assert outcome["transferred"] == []
+    assert outcome["failed"] == [
+        {"id": "project_1", "error": "This user is already the author of the project."}
+    ]
+    kili_api_gateway.update_properties_in_project.assert_not_called()
+
+
+def test_when_both_an_id_and_an_email_name_the_author_of_the_projects_then_it_is_refused():
+    with pytest.raises(ValueError, match="`author_id` or as `author_email`, not both"):
+        ProjectFilters(id=None, author_id="user_id", author_email="user@acme.com")

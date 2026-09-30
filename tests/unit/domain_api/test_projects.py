@@ -61,6 +61,37 @@ class TestProjectsNamespaceAuthor:
         )
 
         mock_client.transfer_projects_authorship.assert_called_once_with(
-            author_id="former_author_id", new_author_id="new_author_id"
+            author_id="former_author_id",
+            new_author_id="new_author_id",
+            author_email=None,
+            new_author_email=None,
         )
         assert result["failed"] == [{"id": "p2", "error": "not an admin"}]
+
+    def test_list_and_count_pass_the_author_email_to_the_legacy_method(
+        self, projects_namespace, mock_client
+    ):
+        mock_client.projects.return_value = []
+        mock_client.count_projects.return_value = 0
+
+        projects_namespace.list(filter={"author_email": "jane@acme.com"})
+        projects_namespace.count(filter={"author_email": "jane@acme.com"})
+
+        assert mock_client.projects.call_args.kwargs["author_email"] == "jane@acme.com"
+        mock_client.count_projects.assert_called_once_with(author_email="jane@acme.com")
+
+    def test_transfer_authorship_passes_the_emails_to_the_legacy_method(
+        self, projects_namespace, mock_client
+    ):
+        mock_client.transfer_projects_authorship.return_value = {"transferred": [], "failed": []}
+
+        projects_namespace.transfer_authorship(
+            author_email="leaving@acme.com", new_author_email="new@acme.com"
+        )
+
+        mock_client.transfer_projects_authorship.assert_called_once_with(
+            author_id=None,
+            new_author_id=None,
+            author_email="leaving@acme.com",
+            new_author_email="new@acme.com",
+        )

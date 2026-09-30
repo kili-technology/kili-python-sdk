@@ -144,6 +144,7 @@ class ProjectClientMethods(BaseClientMethods):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         author_id: Optional[str] = None,
+        author_email: Optional[str] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[dict, None, None]:
@@ -180,6 +181,7 @@ class ProjectClientMethods(BaseClientMethods):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         author_id: Optional[str] = None,
+        author_email: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> list[dict]:
@@ -216,6 +218,7 @@ class ProjectClientMethods(BaseClientMethods):
         skip: int = 0,
         disable_tqdm: Optional[bool] = None,
         author_id: Optional[str] = None,
+        author_email: Optional[str] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[dict]:
@@ -242,8 +245,11 @@ class ProjectClientMethods(BaseClientMethods):
             disable_tqdm: If `True`, the progress bar will be disabled.
             as_generator: If `True`, a generator on the projects is returned.
             deleted: If `True`, all projects are returned (including deleted ones).
-            author_id: Returned projects should have this user as author, among the projects you can access.
-                The id of a colleague is given by `kili.users(email=...)`. `None` disables this filter.
+            author_id: Returned projects should have the user with this id as author, among the projects you
+                can access. `None` disables this filter.
+            author_email: Returned projects should have the user with this email address as author, among the
+                projects you can access; the case of the address does not matter. Give `author_id` or
+                `author_email`, not both.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -255,7 +261,8 @@ class ProjectClientMethods(BaseClientMethods):
             >>> # List all my projects
             >>> kili.projects()
             >>> # List the projects a colleague is the author of, archived ones apart
-            >>> colleague_id = kili.users(email="colleague@example.com", fields=["id"])[0]["id"]
+            >>> kili.projects(author_email="colleague@example.com", archived=False)
+            >>> # The same, with the id of the colleague
             >>> kili.projects(author_id=colleague_id, archived=False)
         """
         tag_ids = (
@@ -280,6 +287,7 @@ class ProjectClientMethods(BaseClientMethods):
                 tag_ids=tag_ids,
                 deleted=deleted,
                 author_id=author_id,
+                author_email=author_email,
             ),
             fields,
             options=QueryOptions(disable_tqdm=disable_tqdm, first=first, skip=skip),
@@ -472,6 +480,7 @@ class ProjectClientMethods(BaseClientMethods):
         starred: Optional[bool] = None,
         tags_in: Optional[ListOrTuple[str]] = None,
         author_id: Optional[str] = None,
+        author_email: Optional[str] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count the number of projects with a search_query.
@@ -493,8 +502,11 @@ class ProjectClientMethods(BaseClientMethods):
             starred: If `True`, only starred projects are returned, if `False`, only non-starred projects are returned.
                 None disable this filter.
             tags_in: Returned projects should have at least one tag that belongs to that list, if given.
-            author_id: Count the projects that have this user as author, among the projects you can access.
-                `None` disables this filter.
+            author_id: Count the projects that have the user with this id as author, among the projects you
+                can access. `None` disables this filter.
+            author_email: Count the projects that have the user with this email address as author, among the
+                projects you can access; the case of the address does not matter. Give `author_id` or
+                `author_email`, not both.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -504,6 +516,7 @@ class ProjectClientMethods(BaseClientMethods):
 
         Examples:
             >>> # How many projects a colleague is the author of, without downloading them
+            >>> kili.count_projects(author_email="colleague@example.com")
             >>> kili.count_projects(author_id=colleague_id)
         """
         tag_ids = (
@@ -522,25 +535,38 @@ class ProjectClientMethods(BaseClientMethods):
                 starred=starred,
                 tag_ids=tag_ids,
                 author_id=author_id,
+                author_email=author_email,
             )
         )
 
     @typechecked
+    # pylint: disable=too-many-arguments
     def transfer_projects_authorship(
-        self, author_id: str, new_author_id: str
+        self,
+        author_id: Optional[str] = None,
+        new_author_id: Optional[str] = None,
+        *,
+        author_email: Optional[str] = None,
+        new_author_email: Optional[str] = None,
     ) -> ProjectsAuthorshipTransfer:
         """Hand the projects a user is the author of over to another user.
 
-        The projects handed over are those that `author_id` is the author of, among the projects you
-        can access, archived ones included. `new_author_id` must be an admin of a project, in the
-        same organization as its current author, to become its author: a project that cannot be
-        handed over is reported and left untouched, and the others are still handed over.
-        You must be an admin of the project or of your organization to change its author.
+        Each user is given by id or by email address, one of the two. The projects handed over are
+        those the first user is the author of, among the projects you can access, archived ones
+        included. The new author must be an admin of a project, in the same organization as its
+        current author, to become its author: a project that cannot be handed over is reported and
+        left untouched, and the others are still handed over. You must be an admin of the project or
+        of your organization to change its author.
 
         Args:
             author_id: Identifier of the user whose projects are handed over, for example a colleague
-                who leaves the team. `kili.users(email=...)` gives the id of a user.
+                who leaves the team.
             new_author_id: Identifier of the user who becomes the author of these projects.
+            author_email: Email address of the user whose projects are handed over, instead of the id;
+                the case of the address does not matter.
+            new_author_email: Email address of the user who becomes the author of these projects,
+                instead of the id; the case of the address does not matter. A project this user is
+                not a member of is reported as failed.
 
         Returns:
             A dict with the ids of the projects handed over under `transferred`, and under `failed`
@@ -548,13 +574,19 @@ class ProjectClientMethods(BaseClientMethods):
 
         Examples:
             >>> outcome = kili.transfer_projects_authorship(
-            ...     author_id=leaving_colleague_id, new_author_id=new_author_id
+            ...     author_email="leaving.colleague@example.com",
+            ...     new_author_email="new.owner@example.com",
             ... )
             >>> outcome["transferred"]
             ['project-id-1', 'project-id-2']
             >>> outcome["failed"]
             [{'id': 'project-id-3', 'error': 'GraphQL error: "Only project admins who belong ..."'}]
+            >>> # The same, with user ids
+            >>> kili.transfer_projects_authorship(author_id=leaving_id, new_author_id=new_id)
         """
         return ProjectUseCases(self.kili_api_gateway).transfer_projects_authorship(
-            author_id, new_author_id
+            author_id,
+            new_author_id,
+            author_email=author_email,
+            new_author_email=new_author_email,
         )

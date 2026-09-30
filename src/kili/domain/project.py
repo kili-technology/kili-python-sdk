@@ -92,6 +92,12 @@ class ProjectFilters:
     tag_ids: Optional[ListOrTuple["TagId"]] = None
     deleted: Optional[bool] = None
     author_id: Optional[str] = None
+    author_email: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        """Refuse an author given twice: an id and an email could name two different users."""
+        if self.author_id is not None and self.author_email is not None:
+            raise ValueError("Give the author as `author_id` or as `author_email`, not both.")
 
 
 class ProjectAuthorshipFailure(TypedDict):

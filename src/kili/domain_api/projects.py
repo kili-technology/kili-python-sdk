@@ -49,7 +49,9 @@ class ProjectFilter(TypedDict, total=False):
 
     Attributes:
         archived: If True, only archived projects are returned. If False, only active projects are returned.
-        author_id: Filter projects that have this user as author, among the projects you can access.
+        author_id: Filter projects that have the user with this id as author, among the projects you can access.
+        author_email: Filter projects that have the user with this email address as author (the case of
+            the address does not matter), among the projects you can access. Not with `author_id`.
         deleted: If True, all projects are returned (including deleted ones).
         organization_id: Filter by organization ID.
         project_id: Filter by specific project ID.
@@ -62,6 +64,7 @@ class ProjectFilter(TypedDict, total=False):
 
     archived: Optional[bool]
     author_id: Optional[str]
+    author_email: Optional[str]
     deleted: Optional[bool]
     organization_id: Optional[str]
     project_id: Optional[str]
@@ -509,7 +512,7 @@ class ProjectsNamespace(DomainNamespace):
             disable_tqdm: If `True`, the progress bar will be disabled.
             filter: Optional filters for projects. See ProjectFilter for available fields:
                 project_id, search_query, archived, starred, tags_in, organization_id,
-                updated_at_gte, updated_at_lte, deleted, author_id.
+                updated_at_gte, updated_at_lte, deleted, author_id, author_email.
 
         Returns:
             A list of projects matching the filter criteria.
@@ -520,6 +523,8 @@ class ProjectsNamespace(DomainNamespace):
             >>> # List archived projects only
             >>> projects.list(filter={"archived": True})
             >>> # List the projects a colleague is the author of, archived ones apart
+            >>> projects.list(filter={"author_email": "colleague@example.com", "archived": False})
+            >>> # The same, with the id of the colleague
             >>> projects.list(filter={"author_id": colleague_id, "archived": False})
         """
         filter_kwargs = filter or {}
@@ -562,7 +567,7 @@ class ProjectsNamespace(DomainNamespace):
             disable_tqdm: If `True`, the progress bar will be disabled.
             filter: Optional filters for projects. See ProjectFilter for available fields:
                 project_id, search_query, archived, starred, tags_in, organization_id,
-                updated_at_gte, updated_at_lte, deleted, author_id.
+                updated_at_gte, updated_at_lte, deleted, author_id, author_email.
 
         Returns:
             A generator yielding projects matching the filter criteria.
@@ -595,13 +600,14 @@ class ProjectsNamespace(DomainNamespace):
         Args:
             filter: Optional filters for projects. See ProjectFilter for available fields:
                 project_id, search_query, archived, starred, tags_in, organization_id,
-                updated_at_gte, updated_at_lte, deleted, author_id.
+                updated_at_gte, updated_at_lte, deleted, author_id, author_email.
 
         Returns:
             The number of projects matching the filter criteria.
 
         Examples:
             >>> # How many projects a colleague is the author of, without downloading them
+            >>> projects.count(filter={"author_email": "colleague@example.com"})
             >>> projects.count(filter={"author_id": colleague_id})
         """
         filter_kwargs = filter or {}
@@ -883,19 +889,32 @@ class ProjectsNamespace(DomainNamespace):
         )
 
     @typechecked
-    def transfer_authorship(self, author_id: str, new_author_id: str) -> ProjectsAuthorshipTransfer:
+    def transfer_authorship(
+        self,
+        author_id: Optional[str] = None,
+        new_author_id: Optional[str] = None,
+        *,
+        author_email: Optional[str] = None,
+        new_author_email: Optional[str] = None,
+    ) -> ProjectsAuthorshipTransfer:
         """Hand the projects a user is the author of over to another user.
 
-        The projects handed over are those that `author_id` is the author of, among the projects you
-        can access, archived ones included. `new_author_id` must be an admin of a project, in the
-        same organization as its current author, to become its author: a project that cannot be
-        handed over is reported and left untouched, and the others are still handed over.
-        You must be an admin of the project or of your organization to change its author.
+        Each user is given by id or by email address, one of the two. The projects handed over are
+        those the first user is the author of, among the projects you can access, archived ones
+        included. The new author must be an admin of a project, in the same organization as its
+        current author, to become its author: a project that cannot be handed over is reported and
+        left untouched, and the others are still handed over. You must be an admin of the project or
+        of your organization to change its author.
 
         Args:
             author_id: Identifier of the user whose projects are handed over, for example a colleague
                 who leaves the team.
             new_author_id: Identifier of the user who becomes the author of these projects.
+            author_email: Email address of the user whose projects are handed over, instead of the id;
+                the case of the address does not matter.
+            new_author_email: Email address of the user who becomes the author of these projects,
+                instead of the id; the case of the address does not matter. A project this user is
+                not a member of is reported as failed.
 
         Returns:
             A dict with the ids of the projects handed over under `transferred`, and under `failed`
@@ -903,15 +922,21 @@ class ProjectsNamespace(DomainNamespace):
 
         Examples:
             >>> outcome = projects.transfer_authorship(
-            ...     author_id=leaving_colleague_id, new_author_id=new_author_id
+            ...     author_email="leaving.colleague@example.com",
+            ...     new_author_email="new.owner@example.com",
             ... )
             >>> outcome["transferred"]
             ['project-id-1', 'project-id-2']
             >>> outcome["failed"]
             [{'id': 'project-id-3', 'error': 'GraphQL error: "Only project admins who belong ..."'}]
+            >>> # The same, with user ids
+            >>> projects.transfer_authorship(author_id=leaving_id, new_author_id=new_id)
         """
         return self._client.transfer_projects_authorship(
-            author_id=author_id, new_author_id=new_author_id
+            author_id=author_id,
+            new_author_id=new_author_id,
+            author_email=author_email,
+            new_author_email=new_author_email,
         )
 
     @typechecked

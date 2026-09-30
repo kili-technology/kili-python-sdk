@@ -156,3 +156,47 @@ def test_when_transferring_a_project_then_the_mutation_sets_and_asks_for_the_aut
     assert "author{ id}" in mutation
     assert variables["where"] == {"id": "p1"}
     assert variables["data"]["author"] == "new_author_id"
+
+
+def test_when_listing_and_counting_projects_of_an_email_then_the_email_is_in_the_where(
+    kili_with_mocked_gateway: ProjectClientMethods,
+    graphql_client: GraphQLClient,
+    mocker: pytest_mock.MockerFixture,
+):
+    mocked_list = mocker.patch.object(
+        kili_with_mocked_gateway.kili_api_gateway, "list_projects", return_value=iter([])
+    )
+    graphql_client.execute.return_value = {"data": 0}
+
+    # When
+    kili_with_mocked_gateway.projects(
+        author_email="Jane@Acme.com", fields=["id"], disable_tqdm=True
+    )
+    kili_with_mocked_gateway.count_projects(author_email="Jane@Acme.com")
+
+    # Then the address goes to the server as it was written, and not as an id
+    assert mocked_list.call_args.args[0].author_email == "Jane@Acme.com"
+    where = graphql_client.execute.call_args.args[1]["where"]
+    assert where["authorEmail"] == "Jane@Acme.com"
+    assert "authorId" not in where
+
+
+def test_when_counting_projects_without_author_email_then_the_where_has_no_such_key(
+    kili_with_mocked_gateway: ProjectClientMethods, graphql_client: GraphQLClient
+):
+    graphql_client.execute.return_value = {"data": 3}
+
+    # When
+    kili_with_mocked_gateway.count_projects()
+
+    # Then an older Kili server, which does not know `authorEmail`, still accepts the call
+    assert "authorEmail" not in graphql_client.execute.call_args.args[1]["where"]
+
+
+def test_when_giving_an_id_and_an_email_for_the_author_then_it_is_refused(
+    kili_with_mocked_gateway: ProjectClientMethods, graphql_client: GraphQLClient
+):
+    with pytest.raises(ValueError, match="not both"):
+        kili_with_mocked_gateway.count_projects(author_id="user_id", author_email="a@acme.com")
+
+    graphql_client.execute.assert_not_called()

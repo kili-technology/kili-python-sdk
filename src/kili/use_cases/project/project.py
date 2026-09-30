@@ -27,6 +27,28 @@ from kili.exceptions import NotFound
 from kili.use_cases.base import BaseUseCases
 
 
+def _one_user(
+    id_name: str, user_id: Optional[str], email_name: str, user_email: Optional[str]
+) -> None:
+    """Check that a user is given by id or by email, one of the two and not empty."""
+    if (user_id is None) == (user_email is None):
+        raise ValueError(f"Give the user as `{id_name}` or as `{email_name}`, one of the two.")
+    user = user_id if user_id is not None else user_email
+    if not user:
+        raise ValueError(
+            f"Argument `{id_name if user_id is not None else email_name}` must not be empty."
+        )
+
+
+def _member_id_of_email(project: dict, email: str) -> Optional[str]:
+    """The id of the member of the project who has this email, whatever its case."""
+    for role in project.get("roles") or []:
+        user = role.get("user") or {}
+        if str(user.get("email") or "").lower() == email.lower():
+            return user.get("id")
+    return None
+
+
 class ProjectUseCases(BaseUseCases):
     """Project use cases."""
 
@@ -207,21 +229,37 @@ class ProjectUseCases(BaseUseCases):
 
         return self._kili_api_gateway.update_properties_in_project(project_id, project_data, fields)
 
+    # pylint: disable=too-many-arguments
     def transfer_projects_authorship(
-        self, author_id: str, new_author_id: str
+        self,
+        author_id: Optional[str] = None,
+        new_author_id: Optional[str] = None,
+        *,
+        author_email: Optional[str] = None,
+        new_author_email: Optional[str] = None,
     ) -> ProjectsAuthorshipTransfer:
-        """Hand the projects of an author over to another user, reporting those that refuse."""
-        if not author_id or not new_author_id:
-            raise ValueError(
-                "Arguments `author_id` and `new_author_id` must be non-empty user ids."
-            )
-        if author_id == new_author_id:
-            raise ValueError("Arguments `author_id` and `new_author_id` must be different users.")
+        """Hand the projects of an author over to another user, reporting those that refuse.
 
+        Each user is given by id or by email.
+        """
+        _one_user("author_id", author_id, "author_email", author_email)
+        _one_user("new_author_id", new_author_id, "new_author_email", new_author_email)
+        same_id = author_id is not None and author_id == new_author_id
+        same_email = (
+            author_email is not None
+            and new_author_email is not None
+            and author_email.lower() == new_author_email.lower()
+        )
+        if same_id or same_email:
+            raise ValueError("The author and the new author must be different users.")
+
+        fields = ("id", "author.id")
+        if new_author_email is not None:
+            fields += ("roles.user.id", "roles.user.email")
         projects = list(
             self.list_projects(
-                ProjectFilters(id=None, author_id=author_id),
-                ("id",),
+                ProjectFilters(id=None, author_id=author_id, author_email=author_email),
+                fields,
                 options=QueryOptions(disable_tqdm=True),
             )
         )
@@ -230,19 +268,27 @@ class ProjectUseCases(BaseUseCases):
         for project in projects:
             project_id = ProjectId(project["id"])
             try:
-                updated = self.update_properties_in_project(project_id, author=new_author_id)
+                target_id = new_author_id or _member_id_of_email(project, str(new_author_email))
+                if target_id is None:
+                    error = (
+                        f"No member of the project has the email {new_author_email}: the new author"
+                        " must be an admin of the project."
+                    )
+                elif target_id == (project.get("author") or {}).get("id"):
+                    error = "This user is already the author of the project."
+                else:
+                    updated = self.update_properties_in_project(project_id, author=target_id)
+                    # an older Kili server accepts the new author without applying it: the answer tells
+                    author = updated.get("author")
+                    changed = isinstance(author, dict) and author.get("id") == target_id
+                    error = None if changed else "The server did not change the author."
             # one project failing, whatever the reason, must not lose the report of the others
-            except Exception as error:  # pylint: disable=broad-exception-caught
-                outcome["failed"].append({"id": project_id, "error": str(error)})
-                continue
-            # an older Kili server accepts the new author without applying it: the answer tells
-            author = updated.get("author")
-            if not isinstance(author, dict) or author.get("id") != new_author_id:
-                outcome["failed"].append(
-                    {"id": project_id, "error": "The server did not change the author."}
-                )
-            else:
+            except Exception as exception:  # pylint: disable=broad-exception-caught
+                error = str(exception)
+            if error is None:
                 outcome["transferred"].append(project_id)
+            else:
+                outcome["failed"].append({"id": project_id, "error": error})
         return outcome
 
     def get_project_steps_and_version(
