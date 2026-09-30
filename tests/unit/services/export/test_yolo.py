@@ -3,12 +3,14 @@
 from pathlib import Path
 from zipfile import ZipFile
 
+import pytest
 import pytest_mock
 from kili_formats import convert_from_kili_to_yolo_format
 
 from kili.adapters.http_client import HttpClient
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import YoloExporter
+from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.format.yolo import (
     YoloExporter,
     _process_asset,
@@ -441,6 +443,113 @@ names: ['F', 'G']
                 Path(f"{extract_folder}/POLYGON_JOB/labels/trees.txt").read_text()
                 == "0 0.75 0.23 0.35 0.22 0.07 0.35\n"
             )
+
+
+def _mock_label_client(mocker: pytest_mock.MockerFixture) -> LabelClientMethods:
+    mocker.patch(
+        "kili.services.export.format.base.fetch_assets",
+        return_value=assets,
+    )
+    mocker.patch.object(YoloExporter, "_has_data_connection", return_value=False)
+
+    kili = LabelClientMethods()
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.kili_api_gateway.get_project.return_value = get_project_return_val
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    return kili
+
+
+def test_yolo_v8_detect_task(mocker: pytest_mock.MockerFixture):
+    kili = _mock_label_client(mocker)
+
+    with TemporaryDirectory() as export_folder, TemporaryDirectory() as extract_folder:
+        export_filename = str(Path(export_folder) / "export_yolo_v8.zip")
+        kili.export_labels(
+            "clktm4vzz001a0j324elr5dsy",
+            filename=export_filename,
+            fmt="yolo_v8",
+            layout="merged",
+            with_assets=False,
+            yolo_task="detect",
+        )
+        with ZipFile(export_filename, "r") as z_f:
+            z_f.extractall(extract_folder)
+
+        # the polygon-only job is left out, classes included
+        assert (
+            Path(f"{extract_folder}/data.yaml").read_text()
+            == """nc: 2
+names: ['OBJECT_DETECTION_JOB/A', 'OBJECT_DETECTION_JOB/B']
+"""
+        )
+        assert (
+            Path(f"{extract_folder}/labels/trees.txt").read_text()
+            == "0 0.65 0.1 0.5 0.09999999999999999\n"
+        )
+
+
+def test_yolo_v8_segment_task(mocker: pytest_mock.MockerFixture):
+    kili = _mock_label_client(mocker)
+
+    with TemporaryDirectory() as export_folder, TemporaryDirectory() as extract_folder:
+        export_filename = str(Path(export_folder) / "export_yolo_v8.zip")
+        kili.export_labels(
+            "clktm4vzz001a0j324elr5dsy",
+            filename=export_filename,
+            fmt="yolo_v8",
+            layout="merged",
+            with_assets=False,
+            yolo_task="segment",
+        )
+        with ZipFile(export_filename, "r") as z_f:
+            z_f.extractall(extract_folder)
+
+        assert (
+            Path(f"{extract_folder}/data.yaml").read_text()
+            == """nc: 4
+names: ['OBJECT_DETECTION_JOB/A', 'OBJECT_DETECTION_JOB/B', 'POLYGON_JOB/F', 'POLYGON_JOB/G']
+"""
+        )
+        label = Path(f"{extract_folder}/labels/trees.txt").read_text()
+
+    # bbox annotation as its four corners: class x1 y1 x2 y2 x3 y3 x4 y4
+    assert "0 0.4 0.15 0.4 0.05 0.9 0.05 0.9 0.15" in label
+    assert "2 0.75 0.23 0.35 0.22 0.07 0.35" in label
+    assert "0 0.65 0.1 0.5 0.09999999999999999" not in label
+
+
+def test_yolo_v4_refuses_the_segment_task(mocker: pytest_mock.MockerFixture):
+    kili = _mock_label_client(mocker)
+
+    with TemporaryDirectory() as export_folder, pytest.raises(
+        NotCompatibleOptions, match="YOLO v4 has no segmentation format"
+    ):
+        kili.export_labels(
+            "clktm4vzz001a0j324elr5dsy",
+            filename=str(Path(export_folder) / "export_yolo_v4.zip"),
+            fmt="yolo_v4",
+            layout="merged",
+            with_assets=False,
+            yolo_task="segment",
+        )
+
+
+def test_export_labels_refuses_an_unknown_yolo_task(mocker: pytest_mock.MockerFixture):
+    kili = _mock_label_client(mocker)
+
+    with TemporaryDirectory() as export_folder, pytest.raises(
+        ValueError, match="yolo_task must be"
+    ):
+        kili.export_labels(
+            "clktm4vzz001a0j324elr5dsy",
+            filename=str(Path(export_folder) / "export_yolo_v8.zip"),
+            fmt="yolo_v8",
+            with_assets=False,
+            yolo_task="SEGMENT",  # type: ignore
+        )
 
 
 def test_write_labels_to_file_with_external_id_containing_slash(tmp_path: Path):
