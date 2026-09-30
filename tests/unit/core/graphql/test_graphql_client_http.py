@@ -1,7 +1,10 @@
 """The GraphQL client against a local HTTP server, through the real transport, requests and urllib3."""
 
+import base64
+import gzip
 import http.server
 import json
+import os
 import socketserver
 import threading
 import time
@@ -33,13 +36,23 @@ class Backend:
         self.bodies: list[bytes] = []
         self.encodings: list[Optional[str]] = []
         self.replies: list[Callable[[http.server.BaseHTTPRequestHandler], None]] = []
+        self.read_bytes_per_second: Optional[int] = None  # None: read the body at once
 
     def handle(self, handler: http.server.BaseHTTPRequestHandler) -> None:
         length = int(handler.headers["Content-Length"])
-        self.bodies.append(handler.rfile.read(length))
+        self.bodies.append(self._read(handler, length))
         self.encodings.append(handler.headers.get("Content-Encoding"))
         reply = self.replies.pop(0) if self.replies else ok
         reply(handler)
+
+    def _read(self, handler: http.server.BaseHTTPRequestHandler, length: int) -> bytes:
+        if self.read_bytes_per_second is None:
+            return handler.rfile.read(length)
+        body = b""
+        while len(body) < length:
+            body += handler.rfile.read(min(65536, length - len(body)))
+            time.sleep(65536 / self.read_bytes_per_second)
+        return body
 
 
 def ok(handler: http.server.BaseHTTPRequestHandler) -> None:
@@ -88,13 +101,14 @@ def client_for(mocker: pytest_mock.MockerFixture) -> Callable[..., GraphQLClient
     mocker.patch.dict("os.environ", {"KILI_SDK_SKIP_CHECKS": "true"})  # no schema introspection
     mocker.patch("kili.core.graphql.graphql_client._backoff", return_value=0)
 
-    def build(endpoint: str) -> GraphQLClient:
+    def build(endpoint: str, disable_request_compression: bool = False) -> GraphQLClient:
         return GraphQLClient(
             endpoint=endpoint,
             api_key="key",
             client_name=GraphQLClientName.SDK,
             http_client=HttpClient(kili_endpoint=endpoint, api_key="key", verify=True),
             enable_schema_caching=False,
+            disable_request_compression=disable_request_compression,
         )
 
     return build
@@ -167,3 +181,42 @@ def test_a_mutation_that_drops_after_going_through_a_proxy_is_not_resent(client_
         proxy.shutdown()
 
     assert len(received) == 1
+
+
+def test_a_large_request_is_gzipped(backend, client_for):
+    state, endpoint = backend
+    metadata = "x" * 2_000_000
+
+    client_for(endpoint).execute(
+        "mutation($m: String) { appendManyAssets(data: {m: $m}) { id } }", {"m": metadata}
+    )
+
+    assert state.encodings == ["gzip"]
+    assert json.loads(gzip.decompress(state.bodies[0]))["variables"] == {"m": metadata}
+
+
+def test_a_slow_upload_is_given_the_time_to_arrive(backend, client_for):
+    state, endpoint = backend
+    state.read_bytes_per_second = 2_000_000  # 4 MB: about 2 s, well over the 0.5 s timeout
+    metadata = base64.b64encode(os.urandom(3_000_000)).decode()  # does not compress
+
+    client_for(endpoint, disable_request_compression=True).execute(
+        "mutation($m: String) { appendManyAssets(data: {m: $m}) { id } }",
+        {"m": metadata},
+        timeout=0.5,
+    )
+
+    assert len(state.bodies) == 1
+    assert json.loads(state.bodies[0])["variables"] == {"m": metadata}
+
+
+def test_a_client_without_compression_sends_large_requests_as_is(backend, client_for):
+    state, endpoint = backend
+    metadata = "x" * 2_000_000
+
+    client_for(endpoint, disable_request_compression=True).execute(
+        "mutation($m: String) { appendManyAssets(data: {m: $m}) { id } }", {"m": metadata}
+    )
+
+    assert state.encodings == [None]
+    assert json.loads(state.bodies[0])["variables"] == {"m": metadata}

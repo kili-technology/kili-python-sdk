@@ -49,6 +49,7 @@ class Kili:
         verify: Optional[Union[bool, str]] = None,
         graphql_client_params: Optional[GraphQLClientParams] = None,
         disable_tqdm: bool | None = None,
+        disable_request_compression: bool | None = None,
     ) -> None:
         """Initialize Kili client (domain mode).
 
@@ -78,6 +79,11 @@ class Kili:
                 Can be overridden by individual function calls.
                 Default to `KILI_DISABLE_TQDM` environment variable.
                 If not passed, default to `disable_tqdm` in config file or False.
+            disable_request_compression: Send request bodies uncompressed. By default, bodies
+                over 1 MB are gzipped, which the Kili API accepts; disable it only if a proxy
+                between you and Kili rejects compressed requests.
+                Default to `KILI_DISABLE_REQUEST_COMPRESSION` environment variable.
+                If not passed, default to `disable_request_compression` in config file or False.
 
         Returns:
             Instance of the Kili client.
@@ -108,6 +114,7 @@ class Kili:
             GraphQLClientName.SDK_DOMAIN,
             graphql_client_params,
             disable_tqdm,
+            disable_request_compression,
         )
 
     # Domain API Namespaces - Lazy loaded properties

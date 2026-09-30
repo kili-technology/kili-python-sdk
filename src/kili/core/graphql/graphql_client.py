@@ -13,7 +13,6 @@ import graphql
 from filelock import FileLock
 from gql import Client, gql
 from gql.transport import exceptions
-from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
 from pyrate_limiter import Duration, Rate
@@ -38,6 +37,7 @@ from kili.core.graphql.retry import (
     retry_after_seconds,
     should_retry,
 )
+from kili.core.graphql.transport import KiliRequestsHTTPTransport
 from kili.log.logging import logger
 from kili.utils.logcontext import LogContext
 
@@ -148,6 +148,7 @@ class GraphQLClient:
         verify: Union[bool, str] = True,
         enable_schema_caching: bool = True,
         graphql_schema_cache_dir: Optional[Union[str, Path]] = DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR,
+        disable_request_compression: bool = False,
     ) -> None:
         """Initialize the GraphQL client.
 
@@ -159,6 +160,7 @@ class GraphQLClient:
             verify: Whether to verify the SSL certificate.
             enable_schema_caching: Whether to cache the GraphQL schema on disk.
             graphql_schema_cache_dir: Directory where to cache the GraphQL schema.
+            disable_request_compression: Whether to send large request bodies uncompressed.
         """
         self.endpoint = endpoint
         self.api_key = api_key
@@ -175,12 +177,12 @@ class GraphQLClient:
         self.ws_endpoint = self.endpoint.replace("http", "ws")
 
         # no transport-level retry: _execute_with_retries decides, knowing query from mutation
-        self._gql_transport = RequestsHTTPTransport(
+        self._gql_transport = KiliRequestsHTTPTransport(
             url=endpoint,
             headers=self._get_headers(),
             timeout=60,
             verify=verify,
-            retries=0,
+            compress_requests=not disable_request_compression,
         )
 
         if self.enable_schema_caching is True:
