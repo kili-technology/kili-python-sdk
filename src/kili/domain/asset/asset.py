@@ -90,8 +90,8 @@ class AssetFailure(TypedDict):
     details: str | None
 
 
-class AssignAssetsOutcome(TypedDict):
-    """What an assign did. Every asset given comes back under exactly one key.
+class AssetActionOutcome(TypedDict):
+    """What an asset action did. Every asset given comes back under exactly one key.
 
     Why an asset was declined is not carried: the reasons read as noise next to the count, so
     every surface that reports these counts them without saying why.
