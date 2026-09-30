@@ -418,5 +418,88 @@ def test_when_the_new_author_already_is_the_author_of_a_project_then_it_is_repor
 
 
 def test_when_both_an_id_and_an_email_name_the_author_of_the_projects_then_it_is_refused():
+    # Given an id and an email for the author
+    # When the filters are built
+    # Then they are refused
     with pytest.raises(ValueError, match="`author_id` or as `author_email`, not both"):
         ProjectFilters(id=None, author_id="user_id", author_email="user@acme.com")
+
+
+def test_when_two_members_have_the_email_in_other_cases_then_the_exact_one_is_chosen_or_it_is_ambiguous(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given a project holding two users whose addresses differ by case, and one holding two other ones
+    kili_api_gateway.list_projects.return_value = iter(
+        [
+            _project("project_1", {"lower_id": "jane@acme.com", "upper_id": "Jane@acme.com"}),
+            _project("project_2", {"mixed_id": "JANE@acme.com", "upper_id": "Jane@acme.com"}),
+        ]
+    )
+    kili_api_gateway.update_properties_in_project.return_value = _updated("project_1", "lower_id")
+
+    # When the new author is given as the lower-case address
+    outcome = ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
+        author_id="former_author_id", new_author_email="jane@acme.com"
+    )
+
+    # Then the exact address wins where there is one, and the other project is reported ambiguous
+    assert outcome["transferred"] == ["project_1"]
+    assert kili_api_gateway.update_properties_in_project.call_args.args[1].author == "lower_id"
+    assert [failure["id"] for failure in outcome["failed"]] == ["project_2"]
+    assert "Several members" in outcome["failed"][0]["error"]
+
+
+def test_when_the_email_of_the_author_names_several_users_then_nothing_is_moved(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given projects authored by two users whose addresses differ only by case
+    kili_api_gateway.list_projects.return_value = iter(
+        [
+            _project("project_1", {}, author="lower_id"),
+            _project("project_2", {}, author="upper_id"),
+        ]
+    )
+
+    # When the hand-over is asked by that address
+    with pytest.raises(ValueError, match="Several users have the email"):
+        ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
+            author_email="jane@acme.com", new_author_id="new_author_id"
+        )
+
+    # Then no project was touched
+    kili_api_gateway.update_properties_in_project.assert_not_called()
+
+
+def test_when_the_author_is_given_by_email_and_is_the_new_author_by_id_then_it_is_reported(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given a project whose author is the user the new id designates
+    kili_api_gateway.list_projects.return_value = iter(
+        [_project("project_1", {}, author="new_author_id")]
+    )
+
+    # When the author is named by email and the new author by id
+    outcome = ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
+        author_email="leaving@acme.com", new_author_id="new_author_id"
+    )
+
+    # Then the project is reported and left alone
+    assert outcome["failed"] == [
+        {"id": "project_1", "error": "This user is already the author of the project."}
+    ]
+    kili_api_gateway.update_properties_in_project.assert_not_called()
+
+
+def test_when_the_users_are_given_by_id_then_the_members_of_the_projects_are_not_fetched(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    kili_api_gateway.list_projects.return_value = iter([])
+
+    # When
+    ProjectUseCases(kili_api_gateway).transfer_projects_authorship(
+        author_id="former_author_id", new_author_id="new_author_id"
+    )
+
+    # Then only what the hand-over reads is requested
+    assert kili_api_gateway.list_projects.call_args.args[1] == ("id", "author.id")

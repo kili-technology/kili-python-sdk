@@ -51,7 +51,8 @@ class ProjectFilter(TypedDict, total=False):
         archived: If True, only archived projects are returned. If False, only active projects are returned.
         author_id: Filter projects that have the user with this id as author, among the projects you can access.
         author_email: Filter projects that have the user with this email address as author (the case of
-            the address does not matter), among the projects you can access. Not with `author_id`.
+            the address does not matter, so two users whose addresses differ only by case are not told
+            apart: give `author_id` then), among the projects you can access. Not with `author_id`.
         deleted: If True, all projects are returned (including deleted ones).
         organization_id: Filter by organization ID.
         project_id: Filter by specific project ID.
@@ -911,7 +912,8 @@ class ProjectsNamespace(DomainNamespace):
                 who leaves the team.
             new_author_id: Identifier of the user who becomes the author of these projects.
             author_email: Email address of the user whose projects are handed over, instead of the id;
-                the case of the address does not matter.
+                the case of the address does not matter, and two users whose addresses differ only by
+                case are refused: give their ids then.
             new_author_email: Email address of the user who becomes the author of these projects,
                 instead of the id; the case of the address does not matter. A project this user is
                 not a member of is reported as failed.

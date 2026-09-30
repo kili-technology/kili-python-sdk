@@ -248,7 +248,8 @@ class ProjectClientMethods(BaseClientMethods):
             author_id: Returned projects should have the user with this id as author, among the projects you
                 can access. `None` disables this filter.
             author_email: Returned projects should have the user with this email address as author, among the
-                projects you can access; the case of the address does not matter. Give `author_id` or
+                projects you can access; the case of the address does not matter, so two users whose
+                addresses differ only by case are not told apart: give `author_id` then. Give `author_id` or
                 `author_email`, not both.
 
         !!! info "Dates format"
@@ -505,7 +506,8 @@ class ProjectClientMethods(BaseClientMethods):
             author_id: Count the projects that have the user with this id as author, among the projects you
                 can access. `None` disables this filter.
             author_email: Count the projects that have the user with this email address as author, among the
-                projects you can access; the case of the address does not matter. Give `author_id` or
+                projects you can access; the case of the address does not matter, so two users whose
+                addresses differ only by case are not told apart: give `author_id` then. Give `author_id` or
                 `author_email`, not both.
 
         !!! info "Dates format"
@@ -540,7 +542,6 @@ class ProjectClientMethods(BaseClientMethods):
         )
 
     @typechecked
-    # pylint: disable=too-many-arguments
     def transfer_projects_authorship(
         self,
         author_id: Optional[str] = None,
@@ -563,7 +564,8 @@ class ProjectClientMethods(BaseClientMethods):
                 who leaves the team.
             new_author_id: Identifier of the user who becomes the author of these projects.
             author_email: Email address of the user whose projects are handed over, instead of the id;
-                the case of the address does not matter.
+                the case of the address does not matter, and two users whose addresses differ only by
+                case are refused: give their ids then.
             new_author_email: Email address of the user who becomes the author of these projects,
                 instead of the id; the case of the address does not matter. A project this user is
                 not a member of is reported as failed.

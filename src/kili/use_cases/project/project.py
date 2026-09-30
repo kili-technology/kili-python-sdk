@@ -40,13 +40,28 @@ def _one_user(
         )
 
 
-def _member_id_of_email(project: dict, email: str) -> Optional[str]:
-    """The id of the member of the project who has this email, whatever its case."""
+def _member_of_email(project: dict, email: str) -> tuple[Optional[str], Optional[str]]:
+    """The id of the member of the project who has this email, whatever its case, else why not.
+
+    Two users may have addresses that differ by case only: the one with the exact address is chosen,
+    and a project with several members matching a different case is ambiguous.
+    """
+    matches: dict[str, str] = {}
     for role in project.get("roles") or []:
         user = role.get("user") or {}
-        if str(user.get("email") or "").lower() == email.lower():
-            return user.get("id")
-    return None
+        if str(user.get("email") or "").lower() == email.lower() and user.get("id"):
+            matches[user["id"]] = user["email"]
+    exact = [user_id for user_id, address in matches.items() if address == email]
+    if exact:
+        return exact[0], None
+    if len(matches) > 1:
+        return None, f"Several members of the project have the email {email}, in another case each."
+    if matches:
+        return next(iter(matches)), None
+    return None, (
+        f"No member of the project has the email {email}: the new author must be an admin of the"
+        " project."
+    )
 
 
 class ProjectUseCases(BaseUseCases):
@@ -229,7 +244,6 @@ class ProjectUseCases(BaseUseCases):
 
         return self._kili_api_gateway.update_properties_in_project(project_id, project_data, fields)
 
-    # pylint: disable=too-many-arguments
     def transfer_projects_authorship(
         self,
         author_id: Optional[str] = None,
@@ -264,20 +278,23 @@ class ProjectUseCases(BaseUseCases):
             )
         )
 
+        authors = {(project.get("author") or {}).get("id") for project in projects}
+        if author_email is not None and len(authors) > 1:
+            raise ValueError(
+                f"Several users have the email {author_email}, in another case each: give their ids."
+            )
+
         outcome = ProjectsAuthorshipTransfer(transferred=[], failed=[])
         for project in projects:
             project_id = ProjectId(project["id"])
             try:
-                target_id = new_author_id or _member_id_of_email(project, str(new_author_email))
-                if target_id is None:
-                    error = (
-                        f"No member of the project has the email {new_author_email}: the new author"
-                        " must be an admin of the project."
-                    )
-                elif target_id == (project.get("author") or {}).get("id"):
+                target_id, error = new_author_id, None
+                if new_author_email is not None:
+                    target_id, error = _member_of_email(project, new_author_email)
+                if error is None and target_id == (project.get("author") or {}).get("id"):
                     error = "This user is already the author of the project."
-                else:
-                    updated = self.update_properties_in_project(project_id, author=target_id)
+                if error is None:
+                    updated = self.update_properties_in_project(project_id, author=str(target_id))
                     # an older Kili server accepts the new author without applying it: the answer tells
                     author = updated.get("author")
                     changed = isinstance(author, dict) and author.get("id") == target_id

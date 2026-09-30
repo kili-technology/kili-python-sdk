@@ -196,7 +196,10 @@ def test_when_counting_projects_without_author_email_then_the_where_has_no_such_
 def test_when_giving_an_id_and_an_email_for_the_author_then_it_is_refused(
     kili_with_mocked_gateway: ProjectClientMethods, graphql_client: GraphQLClient
 ):
+    # Given an id and an email for the same author
+    # When the projects are counted
     with pytest.raises(ValueError, match="not both"):
         kili_with_mocked_gateway.count_projects(author_id="user_id", author_email="a@acme.com")
 
+    # Then it is refused before any call
     graphql_client.execute.assert_not_called()
