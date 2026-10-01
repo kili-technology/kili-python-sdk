@@ -65,3 +65,7 @@ class MissingArgumentError(ValueError):
 
 class IncompatibleArgumentsError(ValueError):
     """Raised when the user gave at least two incompatible arguments."""
+
+
+class DeprecatedArgumentError(ValueError):
+    """Raised when the user gave an argument that is no longer supported."""

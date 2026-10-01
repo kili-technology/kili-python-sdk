@@ -27,7 +27,7 @@ from kili.entrypoints.mutations.asset.queries import (
     GQL_UPDATE_PROPERTIES_IN_ASSETS,
 )
 from kili.entrypoints.mutations.exceptions import MutationError
-from kili.exceptions import MissingArgumentError
+from kili.exceptions import DeprecatedArgumentError, GraphQLError, MissingArgumentError
 from kili.services.asset_import import import_assets
 from kili.services.asset_import_csv import get_text_assets_from_csv
 from kili.utils.assets import PageResolution
@@ -59,6 +59,39 @@ def execute_asset_action(
         for key in ("declined", "failed", "succeeded"):
             outcome[key].extend(results["data"][key])
     return outcome
+
+
+# The backend's generic deprecation error: `extensions.code` is the generic
+# `OPERATION_RESOLUTION_FAILURE` shared by nearly every domain error, so the bracketed token is
+# the only usable discriminator. The rest of the message says what to use instead.
+DEPRECATED_ERROR_KEY = "[deprecated]"
+# The backend names its GraphQL mutations; the user knows the SDK methods.
+SDK_METHOD_BY_MUTATION = {
+    "createHoneypot": "create_honeypot",
+    "setAssetConsensus": "update_asset_consensus",
+    "updatePropertiesInAssets": "update_properties_in_assets",
+}
+
+
+def _to_sdk_method_names(message: str) -> str:
+    """Replace the backend mutation names of a message by the matching SDK methods."""
+    for mutation, method in SDK_METHOD_BY_MUTATION.items():
+        message = message.replace(f"`{mutation}`", f"`{method}`")
+    return message
+
+
+def _get_error_message_with_key(error: GraphQLError, key: str) -> Optional[str]:
+    """Return the message of the first GraphQL error raised by the backend with the given key.
+
+    Every element is scanned because `GraphQLError` only ever renders the first one, and the
+    backend may report several errors for a single batch.
+    """
+    errors = error.error if isinstance(error.error, list) else [error.error]
+    for item in errors:
+        message = item.get("message", "") if isinstance(item, dict) else str(item)
+        if message.startswith(key):
+            return message[len(key) :].strip()
+    return None
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -363,8 +396,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     to each frame of the video.
             status_array: DEPRECATED and does not have any effect.
             is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.
-                Only supported on legacy workflow V1 projects; on workflow V2/V3 projects use
-                `kili.assets.update_consensus()` instead.
+                Only supported on legacy workflow V1 projects; on workflow V2/V3 projects it raises
+                `DeprecatedArgumentError`, use `kili.update_asset_consensus()` instead.
             is_honeypot_array: Whether to use the asset for honeypot.
             project_id: The project ID. Only required if `external_ids` argument is provided.
             resolution_array: The resolution of each asset (for image and video assets).
@@ -377,6 +410,13 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         Returns:
             A list of dictionaries with the asset ids.
+
+        Raises:
+            DeprecatedArgumentError: If `is_used_for_consensus_array` is used on a multi-review
+                project. Use `kili.update_asset_consensus()` for those projects.
+            MissingArgumentError: If both `asset_ids` and `external_ids` are provided, or if
+                neither of them is.
+            GraphQLError: If the backend refuses the update for any other reason.
 
         Examples:
             >>> kili.update_properties_in_assets(
@@ -472,12 +512,18 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                 "dataArray": data_array,
             }
 
-        results = mutate_from_paginated_call(
-            self,
-            properties_to_batch,
-            generate_variables,
-            GQL_UPDATE_PROPERTIES_IN_ASSETS,
-        )
+        try:
+            results = mutate_from_paginated_call(
+                self,
+                properties_to_batch,
+                generate_variables,
+                GQL_UPDATE_PROPERTIES_IN_ASSETS,
+            )
+        except GraphQLError as err:
+            deprecation_message = _get_error_message_with_key(err, DEPRECATED_ERROR_KEY)
+            if deprecation_message is not None:
+                raise DeprecatedArgumentError(_to_sdk_method_names(deprecation_message)) from err
+            raise
         formated_results = [self.format_result("data", result, None) for result in results]
         return [item for batch_list in formated_results for item in batch_list]
 
