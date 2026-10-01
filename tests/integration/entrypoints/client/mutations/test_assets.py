@@ -124,6 +124,36 @@ def test_given_assets_in_several_batches_when_i_assign_them_it_merges_what_each_
     }
 
 
+def test_given_assets_and_their_labelers_when_i_assign_them_it_sends_each_labeler_set_its_assets(
+    mocker: pytest_mock.MockerFixture,
+):
+    """One call per set of labelers and batch of 100, an empty set unassigning its assets."""
+    # Given 101 assets for one labeler, so its call is split, and one asset for nobody
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.graphql_client.execute.return_value = {
+        "data": {"declined": [], "failed": [], "succeeded": []}
+    }
+    asset_ids = [f"asset_{index}" for index in range(101)]
+
+    # When
+    kili.assign_assets_to_labelers(
+        asset_ids=[*asset_ids, "asset_to_unassign"],
+        to_be_labeled_by_array=[["user_1"]] * 101 + [[]],
+    )
+
+    # Then each call names its labelers and its own assets, through the mutation that reports them
+    calls = [call_args for call_args, _ in kili.graphql_client.execute.call_args_list]
+    assert all("data: assignAssets(" in query for query, _ in calls)
+    assert [variables for _, variables in calls] == [
+        {"userIds": ["user_1"], "where": {"idIn": asset_ids[:100]}},
+        {"userIds": ["user_1"], "where": {"idIn": asset_ids[100:]}},
+        {"userIds": [], "where": {"idIn": ["asset_to_unassign"]}},
+    ]
+
+
 def test_given_no_asset_when_i_assign_it_reports_an_empty_outcome(
     mocker: pytest_mock.MockerFixture,
 ):
