@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import MagicMock, call, patch
 
 import pytest
@@ -68,6 +69,21 @@ class ImageTestCase(ImportTestCase):
         expected_parameters = self.get_expected_async_call(
             ["https://signed_url?id=id"],
             ["local ntf image"],
+            ["unique_id"],
+            ["{}"],
+            "GEO_SATELLITE",
+        )
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+
+    def test_upload_from_one_local_r0_image_to_a_geospatial_project(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "GEOSPATIAL"}
+        path_image = Path(self.test_dir) / "image.r0"
+        path_image.write_bytes(b"NITF02.10")
+        assets = [{"content": str(path_image), "external_id": "local r0 image"}]
+        import_assets(self.kili, self.project_id, assets)
+        expected_parameters = self.get_expected_async_call(
+            ["https://signed_url?id=id"],
+            ["local r0 image"],
             ["unique_id"],
             ["{}"],
             "GEO_SATELLITE",
