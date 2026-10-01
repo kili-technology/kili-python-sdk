@@ -124,19 +124,18 @@ For more information on consensus, refer to our [documentation](https://docs.kil
 Honeypot (or __gold standard__) is a tool for auditing the work of labelers by measuring the accuracy of their annotations.
 Honeypot works by interspersing assets with defined ground truth label in the annotation queue. This way you can measure the agreement level between your ground truth and the annotations made by labelers.
 
-First, we need to enable honeypot for our project:
+First, we need to enable honeypot on the labeling step of our project:
 
+
+```python
+kili.update_labeling_step_properties(project_id=project_id, step_name="Label", use_honeypot=True)
+```
+
+On projects still using workflow version 1, enable it on the project instead:
 
 ```python
 kili.update_properties_in_project(project_id=project_id, use_honeypot=True)
 ```
-
-
-
-
-    {'useHoneyPot': True, 'id': 'clnwvhuu000cz088xcqxz1dig'}
-
-
 
 You can now manually select specific project assets to be used as honeypots:
 
