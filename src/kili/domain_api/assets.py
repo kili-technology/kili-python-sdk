@@ -22,7 +22,7 @@ from kili.core.helpers import is_url
 from kili.domain.asset import (
     AssetStatus,
 )
-from kili.domain.asset.asset import StatusInStep
+from kili.domain.asset.asset import AssetActionOutcome, StatusInStep
 from kili.domain.issue import IssueStatus, IssueType
 from kili.domain.label import LabelType
 from kili.domain.types import ListOrTuple
@@ -1418,7 +1418,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_id: str,
         project_id: str = "",
-    ) -> Optional[dict[Literal["id"], str]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -1427,7 +1427,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[Literal["id"], str]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -1436,7 +1436,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_id: str,
         project_id: str = "",
-    ) -> Optional[dict[Literal["id"], str]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -1445,7 +1445,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[Literal["id"], str]]:
+    ) -> AssetActionOutcome:
         ...
 
     @typechecked
@@ -1457,8 +1457,11 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> Optional[dict[Literal["id"], str]]:
+    ) -> AssetActionOutcome:
         """Delete assets from a project.
+
+        An asset already deleted, given by its id, is reported under `succeeded`: it is in the state
+        that was asked for.
 
         Args:
             asset_id: The asset internal ID to delete.
@@ -1468,7 +1471,16 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             project_id: The project ID. Only required if `external_id(s)` argument is provided.
 
         Returns:
-            A dict object with the project `id`.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
 
         Examples:
             >>> # Delete single asset by internal ID
@@ -1924,6 +1936,9 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     ) -> str:
         """Skip an asset.
 
+        An asset used for consensus cannot be skipped: skipping it would remove the asset from
+        the queue for every labeler assigned to it, not just the one requesting the skip.
+
         Args:
             asset_id: ID of the asset you want to skip.
             project_id: The project ID.
@@ -1978,7 +1993,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_id: str,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -1987,7 +2002,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -1996,7 +2011,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_id: str,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2005,7 +2020,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @typechecked
@@ -2017,7 +2032,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         """Send assets back to queue (invalidate current step).
 
         This method sends assets back to the queue, effectively invalidating their
@@ -2031,8 +2046,16 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             project_id: The project ID. Only required if `external_id(s)` argument is provided.
 
         Returns:
-            A dict object with the project `id` and the `asset_ids` of assets moved to queue.
-            An error message if mutation failed.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
 
         Examples:
             >>> # Single asset
@@ -2061,7 +2084,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_id: str,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2070,7 +2093,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2079,7 +2102,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_id: str,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2088,7 +2111,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_ids: List[str],
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @typechecked
@@ -2100,7 +2123,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> Optional[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         """Move assets to the next workflow step (typically review).
 
         This method moves assets to the next step in the workflow, typically
@@ -2114,9 +2137,16 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             project_id: The project ID. Only required if `external_id(s)` argument is provided.
 
         Returns:
-            A dict object with the project `id` and the `asset_ids` of assets moved to review.
-            `None` if no assets have changed status (already had `TO_REVIEW` status for example).
-            An error message if mutation failed.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
 
         Examples:
             >>> # Single asset
@@ -2146,7 +2176,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by: List[str],
         asset_id: str,
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2156,7 +2186,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by_array: List[List[str]],
         asset_ids: List[str],
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2166,7 +2196,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by: List[str],
         external_id: str,
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @overload
@@ -2176,7 +2206,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         to_be_labeled_by_array: List[List[str]],
         external_ids: List[str],
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         ...
 
     @typechecked
@@ -2190,8 +2220,13 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
-    ) -> List[dict[str, Any]]:
+    ) -> AssetActionOutcome:
         """Assign a list of assets to a list of labelers.
+
+        Assigning an asset to nobody unassigns it. A labeler who has a label in progress on an
+        asset stays assigned to it whatever this asks for: unassigning them would leave them with
+        an interface they can no longer submit from, and the asset in progress with nobody to
+        finish it. Those assets are reported under `declined` rather than silently left out.
 
         Args:
             to_be_labeled_by: List of labeler user IDs to assign to a single asset.
@@ -2203,7 +2238,16 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             project_id: The project ID. Only required if `external_id(s)` argument is provided.
 
         Returns:
-            A list of dictionaries with the asset ids.
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
 
         Examples:
             >>> # Single asset
@@ -2295,6 +2339,10 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     ) -> List[dict[Literal["id"], str]]:
         """Update the priority of one or more assets.
 
+        !!! warning "Deprecated"
+            Use `kili.assets.set_priority()` instead, which reports the assets it could not be
+            applied to.
+
         Args:
             asset_id: The internal asset ID to modify.
             asset_ids: The internal asset IDs to modify.
@@ -2329,13 +2377,122 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         if priority is not None:
             priorities = [priority]
 
-        # Call the legacy method directly through the client
-        return self._client.update_properties_in_assets(
+        warnings.warn(
+            "update_priority is deprecated: it does not report the assets it could not be applied"
+            " to. Please use `kili.assets.set_priority()` method instead to prioritize assets",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        # The legacy method warns about `priorities` in its own terms, already said above
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore", message="priorities is deprecated", category=DeprecationWarning
+            )
+            return self._client.update_properties_in_assets(
+                asset_ids=asset_ids,
+                external_ids=external_ids,
+                project_id=project_id,
+                priorities=priorities if priorities is not None else [],
+                **kwargs,
+            )
+
+    @overload
+    def set_priority(
+        self,
+        *,
+        priority: int,
+        asset_id: str,
+        project_id: str = "",
+    ) -> AssetActionOutcome:
+        ...
+
+    @overload
+    def set_priority(
+        self,
+        *,
+        priority: int,
+        asset_ids: List[str],
+        project_id: str = "",
+    ) -> AssetActionOutcome:
+        ...
+
+    @overload
+    def set_priority(
+        self,
+        *,
+        priority: int,
+        external_id: str,
+        project_id: str = "",
+    ) -> AssetActionOutcome:
+        ...
+
+    @overload
+    def set_priority(
+        self,
+        *,
+        priority: int,
+        external_ids: List[str],
+        project_id: str = "",
+    ) -> AssetActionOutcome:
+        ...
+
+    @typechecked
+    def set_priority(
+        self,
+        *,
+        priority: int,
+        asset_id: Optional[str] = None,
+        asset_ids: Optional[List[str]] = None,
+        external_id: Optional[str] = None,
+        external_ids: Optional[List[str]] = None,
+        project_id: str = "",
+    ) -> AssetActionOutcome:
+        """Set the priority of one or more assets.
+
+        An asset whose current step is not waiting for work — in progress, done or skipped — is
+        reported under `declined` rather than silently left out.
+
+        Args:
+            priority: The priority to give every asset. By default, all assets have a priority of 0.
+            asset_id: The internal asset ID to prioritize.
+            asset_ids: The internal asset IDs to prioritize.
+            external_id: The external asset ID to prioritize.
+            external_ids: The external asset IDs to prioritize.
+            project_id: The project ID. Only required if `external_id(s)` argument is provided.
+
+        Returns:
+            A dictionary with three keys, each a list covering every asset given:
+
+            - `succeeded`: the assets that ended up in the state that was asked for, as
+              `{"assetId": ..., "externalId": ...}`.
+            - `declined`: the assets the request could not be applied to, as
+              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise
+              next to the count, so no surface reports them.
+            - `failed`: the assets whose write threw, as
+              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these
+              are worth retrying as is.
+
+        Examples:
+            >>> # Single asset
+            >>> kili.assets.set_priority(asset_id="ckg22d81r0jrg0885unmuswj8", priority=1)
+
+            >>> # Multiple assets
+            >>> kili.assets.set_priority(
+                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],
+                    priority=2,
+                )
+        """
+        # Convert singular to plural
+        if asset_id is not None:
+            asset_ids = [asset_id]
+        if external_id is not None:
+            external_ids = [external_id]
+
+        return self._client.set_assets_priority(
+            priority=priority,
             asset_ids=asset_ids,
             external_ids=external_ids,
             project_id=project_id,
-            priorities=priorities if priorities is not None else [],
-            **kwargs,
         )
 
     @overload
@@ -2380,6 +2537,13 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
 
         Raises:
             ValueError: If neither asset_id nor external_id is provided.
+            GraphQLError: If a server-side precondition is not met. The server accepts the
+                call only on workflow V2/V3 projects, while the asset sits on a labeling
+                (DEFAULT) step whose status is still TO_DO, when consensus is enabled on that
+                step, and when the caller is an admin or a team manager. Note that the TO_DO
+                window closes as soon as any labeler starts working on the asset (their first
+                autosave, not their submission), so the real precondition is that no labeler
+                has opened and started the asset yet.
 
         Examples:
             >>> # Activate consensus on an asset using asset_id

@@ -1,10 +1,9 @@
 """Organization client methods."""
 
 from collections.abc import Generator, Iterable
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Literal, Optional, overload
 
-import pytz
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -200,9 +199,9 @@ class OrganizationClientMethods(BaseClientMethods):
             A dictionary containing the metrics of the organization.
         """
         if start_date is None:
-            start_date = datetime.now(tz=pytz.UTC)
+            start_date = datetime.now(tz=timezone.utc)
         if end_date is None:
-            end_date = datetime.now(tz=pytz.UTC)
+            end_date = datetime.now(tz=timezone.utc)
         filters = OrganizationMetricsFilters(
             id=OrganizationId(organization_id), start_datetime=start_date, end_datetime=end_date
         )

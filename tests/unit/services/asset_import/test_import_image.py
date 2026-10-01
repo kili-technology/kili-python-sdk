@@ -55,7 +55,7 @@ class ImageTestCase(ImportTestCase):
             ["local jp2 image"],
             ["unique_id"],
             ["{}"],
-            "GEO_SATELLITE",
+            "TILED_IMAGE",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -70,7 +70,7 @@ class ImageTestCase(ImportTestCase):
             ["local ntf image"],
             ["unique_id"],
             ["{}"],
-            "GEO_SATELLITE",
+            "TILED_IMAGE",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -85,7 +85,7 @@ class ImageTestCase(ImportTestCase):
             ["local tiff image"],
             ["unique_id"],
             ["{}"],
-            "GEO_SATELLITE",
+            "TILED_IMAGE",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -117,7 +117,7 @@ class ImageTestCase(ImportTestCase):
             ["local tiff image"],
             ["unique_id"],
             ["{}"],
-            "GEO_SATELLITE",
+            "TILED_IMAGE",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
@@ -145,7 +145,7 @@ class ImageTestCase(ImportTestCase):
             ["local tiff image"],
             ["unique_id"],
             ["{}"],
-            "GEO_SATELLITE",
+            "TILED_IMAGE",
         )
         calls = [call(*expected_parameters_sync), call(*expected_parameters_async)]
         self.kili.graphql_client.execute.assert_has_calls(calls, any_order=True)
@@ -173,3 +173,28 @@ class ImageTestCase(ImportTestCase):
         assets = [{"content": path_image, "external_id": "local image"}]
         with pytest.raises(UploadFromLocalDataForbiddenError):
             import_assets(self.kili, self.project_id, assets)
+
+
+@patch("kili.utils.bucket.request_signed_urls", mocked_request_signed_urls)
+@patch("kili.utils.bucket.upload_data_via_rest", mocked_upload_data_via_rest)
+@patch("kili.utils.bucket.generate_unique_id", mocked_unique_id)
+class AsyncUploadTypeTestCase(ImportTestCase):
+    """Tests which uploadType the async import sends.
+
+    `GEOSPATIAL` keeps `GEO_SATELLITE`; every other async import is a tiled image.
+    """
+
+    def test_upload_to_geospatial_project_still_uses_geo_satellite(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "GEOSPATIAL"}
+        url = "https://storage.googleapis.com/label-public-staging/geotiffs/bogota.tif"
+        path_image = self.downloader(url)
+        assets = [{"content": path_image, "external_id": "local tiff image"}]
+        import_assets(self.kili, self.project_id, assets)
+        expected_parameters = self.get_expected_async_call(
+            ["https://signed_url?id=id"],
+            ["local tiff image"],
+            ["unique_id"],
+            ["{}"],
+            "GEO_SATELLITE",
+        )
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
