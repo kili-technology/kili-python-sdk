@@ -22,10 +22,12 @@ MIN_UPLOAD_BYTES_PER_SECOND = 100_000
 
 @dataclass(frozen=True)
 class Exchange:
-    """What one HTTP request cost, for the batch budget."""
+    """What one HTTP request cost, for the batch and page budgets."""
 
     payload_bytes: int  # request body, uncompressed
+    response_bytes: int  # response body, decompressed
     seconds: float  # from sending the request to having read the whole response, or failed
+    download_seconds: float  # reading the response body, once its headers arrived
     succeeded: bool  # answered with a 2xx
 
 
@@ -89,13 +91,16 @@ class KiliHTTPAdapter(HTTPAdapter):
                 cert=cert,
                 proxies=proxies,
             )
-            if not stream:
-                # requests would read the body right after anyway: reading it here times it too
-                _ = response.content
+            headers_received = time.perf_counter()
+            # requests would read the body right after anyway: reading it here times it too
+            response_bytes = 0 if stream else len(response.content or b"")
         except Exception:
-            self.last_exchange = Exchange(payload_bytes, time.perf_counter() - start, False)
+            self.last_exchange = Exchange(payload_bytes, 0, time.perf_counter() - start, 0.0, False)
             raise
-        self.last_exchange = Exchange(payload_bytes, time.perf_counter() - start, response.ok)
+        end = time.perf_counter()
+        self.last_exchange = Exchange(
+            payload_bytes, response_bytes, end - start, end - headers_received, response.ok
+        )
         return response
 
     @staticmethod

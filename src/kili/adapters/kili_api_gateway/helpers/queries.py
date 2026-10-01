@@ -8,6 +8,7 @@ from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.graphql_client import GraphQLClient
+from kili.core.utils.batching import query_page_sizer
 from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
@@ -79,10 +80,11 @@ class PaginatedGraphQLQuery:
                         break
 
                     skip = count_elements_retrieved + options.skip
+                    page_size = query_page_sizer.page_size(query, options.batch_size)
                     first = (
-                        min(options.batch_size, nb_elements_to_query - count_elements_retrieved)
+                        min(page_size, nb_elements_to_query - count_elements_retrieved)
                         if nb_elements_to_query is not None and unicity_field is None
-                        else options.batch_size
+                        else page_size
                     )
                     payload = {"where": where, "skip": skip, "first": first}
                     elements = self._graphql_client.execute(query, payload)["data"]
@@ -91,6 +93,9 @@ class PaginatedGraphQLQuery:
                             "PaginatedGraphQLQuery only support operations returning a list of"
                             " objects"
                         )
+                    response_bytes = self._graphql_client.last_response_bytes
+                    if isinstance(response_bytes, int):  # not measured behind a test double
+                        query_page_sizer.record_page(query, response_bytes, len(elements))
 
                     if len(elements) == 0:
                         break

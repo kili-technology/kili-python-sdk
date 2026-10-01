@@ -6,15 +6,17 @@ from pytest_mock import MockerFixture
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient
-from kili.core.utils.batching import mutation_batch_sizer
+from kili.core.utils.batching import mutation_batch_sizer, query_page_sizer
 
 
 @pytest.fixture(autouse=True)
-def _reset_mutation_batch_sizer():
-    """The batch budget is process-wide: a test must not inherit what another one measured."""
+def _reset_batch_and_page_budgets():
+    """The budgets are process-wide: a test must not inherit what another one measured."""
     mutation_batch_sizer.reset()
+    query_page_sizer.reset()
     yield
     mutation_batch_sizer.reset()
+    query_page_sizer.reset()
 
 
 @pytest.fixture()

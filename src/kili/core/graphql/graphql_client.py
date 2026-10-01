@@ -39,7 +39,7 @@ from kili.core.graphql.retry import (
     should_retry,
 )
 from kili.core.graphql.transport import Exchange, KiliRequestsHTTPTransport
-from kili.core.utils.batching import mutation_batch_sizer
+from kili.core.utils.batching import mutation_batch_sizer, query_page_sizer
 from kili.log.logging import logger
 from kili.utils.logcontext import LogContext
 
@@ -136,7 +136,7 @@ class _RetryPolicy:
             )
 
 
-# pylint: disable=too-many-instance-attributes, too-few-public-methods
+# pylint: disable=too-many-instance-attributes
 class GraphQLClient:
     """GraphQL client."""
 
@@ -171,6 +171,7 @@ class GraphQLClient:
         self.verify = verify
         self.enable_schema_caching = enable_schema_caching
         self.created_at = time.time()
+        self._local = threading.local()
         self.complexity_consumed = 0
         self.graphql_schema_cache_dir = (
             Path(graphql_schema_cache_dir) if graphql_schema_cache_dir else None
@@ -375,6 +376,7 @@ class GraphQLClient:
     ) -> dict[str, Any]:
         mutation = is_mutation(document)
         name = operation_name(document)
+        self._local.page_overload_recorded = False  # the page budget shrinks once per operation
         try:
             return self._run(
                 name, mutation, with_retries, self._raw_execute, document, variables, **kwargs
@@ -391,21 +393,46 @@ class GraphQLClient:
         policy.succeeded()
         return result
 
-    @staticmethod
-    def _account(
-        document: DocumentNode, exchange: Optional[Exchange], error: Optional[BaseException]
-    ) -> None:
-        """Feed what the request cost to the batch budget. Only mutations are sent in batches.
+    @property
+    def last_response_bytes(self) -> Optional[int]:
+        """Size of the response to the last request this thread sent, once decompressed."""
+        return getattr(self._local, "last_response_bytes", None)
 
-        A mutation is not retried when it overloaded the server, so it shrinks the budget once.
+    def _account(
+        self,
+        document: DocumentNode,
+        variables: Optional[dict],
+        exchange: Optional[Exchange],
+        error: Optional[BaseException],
+    ) -> None:
+        """Feed what the request cost to the budgets of mutation batches and query pages.
+
+        A request that may have been too heavy shrinks a budget once per operation: a mutation
+        is not retried then, and a query records only its first such failure.
         """
-        if exchange is None or not is_mutation(document):
+        self._local.last_response_bytes = exchange.response_bytes if exchange else None
+        if exchange is None:
             return
-        if error is None:
+        if is_mutation(document):
+            if error is None:
+                if exchange.succeeded:
+                    mutation_batch_sizer.record_success(exchange.payload_bytes, exchange.seconds)
+            elif is_overload(error):
+                mutation_batch_sizer.record_failure(exchange.payload_bytes)
+        elif error is None:
             if exchange.succeeded:
-                mutation_batch_sizer.record_success(exchange.payload_bytes, exchange.seconds)
-        elif is_overload(error):
-            mutation_batch_sizer.record_failure(exchange.payload_bytes)
+                # the download alone: the time the server takes to build a page is not a matter
+                # of its size, and would shrink pages on a fast link too
+                query_page_sizer.sizer.record_success(
+                    exchange.response_bytes, exchange.download_seconds
+                )
+        elif (
+            is_overload(error)
+            and "first" in (variables or {})  # a page: other queries say nothing of page sizes
+            and not getattr(self._local, "page_overload_recorded", False)
+        ):
+            query_page_sizer.sizer.record_failure()
+            self._local.page_overload_recorded = True
 
     def _raw_execute(
         self, document: DocumentNode, variables: Optional[dict], **kwargs
@@ -433,7 +460,7 @@ class GraphQLClient:
                 error = err
                 raise
             finally:
-                self._account(document, self._gql_transport.adapter.last_exchange, error)
+                self._account(document, variables, self._gql_transport.adapter.last_exchange, error)
 
             extensions = getattr(res, "extensions", None)
             if isinstance(extensions, dict):

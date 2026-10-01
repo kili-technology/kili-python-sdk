@@ -239,16 +239,19 @@ def test_a_large_mutation_feeds_the_batch_budget(backend, client_for, mocker):
     assert seconds > 0
 
 
-def test_a_query_does_not_feed_the_batch_budget(backend, client_for, mocker):
+def test_a_query_feeds_the_page_budget_not_the_batch_budget(backend, client_for, mocker):
     _, endpoint = backend
-    sizer = mocker.patch("kili.core.graphql.graphql_client.mutation_batch_sizer")
+    batches = mocker.patch("kili.core.graphql.graphql_client.mutation_batch_sizer")
+    pages = mocker.patch("kili.core.graphql.graphql_client.query_page_sizer")
+    client = client_for(endpoint)
 
-    client_for(endpoint).execute(
-        "query($m: String) { assets(where: {m: $m}) { id } }", {"m": LARGE}
-    )
+    client.execute("query($m: String) { assets(where: {m: $m}) { id } }", {"m": LARGE})
 
-    sizer.record_success.assert_not_called()
-    sizer.record_failure.assert_not_called()
+    batches.record_success.assert_not_called()
+    batches.record_failure.assert_not_called()
+    pages.sizer.record_success.assert_called_once()
+    response_bytes, _ = pages.sizer.record_success.call_args.args
+    assert response_bytes == client.last_response_bytes > 0
 
 
 def test_a_large_mutation_that_times_out_shrinks_the_batch_budget(backend, client_for, mocker):
@@ -295,3 +298,48 @@ def test_a_mutation_too_large_for_the_server_shrinks_the_batch_budget(backend, c
         )
 
     sizer.record_failure.assert_called_once()
+
+
+PAGE_QUERY = "query($first: Int, $skip: Int) { assets(first: $first, skip: $skip) { id } }"
+
+
+def slow_to_start(handler: http.server.BaseHTTPRequestHandler) -> None:
+    time.sleep(1)  # the server builds the page before the first byte
+    body = json.dumps({"data": {"assets": [{"id": "x" * 200_000}]}}).encode()
+    handler.send_response(200)
+    handler.send_header("Content-Length", str(len(body)))
+    handler.end_headers()
+    handler.wfile.write(body)
+
+
+def test_a_page_is_timed_on_its_download_not_on_the_server_work(backend, client_for, mocker):
+    state, endpoint = backend
+    state.replies = [slow_to_start]
+    pages = mocker.patch("kili.core.graphql.graphql_client.query_page_sizer")
+
+    client_for(endpoint).execute(PAGE_QUERY, {"first": 100, "skip": 0})
+
+    response_bytes, seconds = pages.sizer.record_success.call_args.args
+    assert response_bytes > 200_000
+    assert seconds < 0.5  # the second the server took before answering is left out
+
+
+def test_a_page_that_keeps_failing_shrinks_the_page_budget_once(backend, client_for, mocker):
+    state, endpoint = backend
+    state.replies = [envoy_503(b"")] * 3  # reset after forwarding: may have been too heavy
+    pages = mocker.patch("kili.core.graphql.graphql_client.query_page_sizer")
+
+    client_for(endpoint).execute(PAGE_QUERY, {"first": 100, "skip": 0})
+
+    assert len(state.bodies) == 4  # retried, since it is a query
+    pages.sizer.record_failure.assert_called_once()
+
+
+def test_a_query_that_is_not_a_page_leaves_the_page_budget(backend, client_for, mocker):
+    state, endpoint = backend
+    state.replies = [envoy_503(b"")]
+    pages = mocker.patch("kili.core.graphql.graphql_client.query_page_sizer")
+
+    client_for(endpoint).execute("query { countAssets }")
+
+    pages.sizer.record_failure.assert_not_called()

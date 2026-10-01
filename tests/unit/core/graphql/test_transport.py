@@ -92,13 +92,17 @@ def test_send_scales_both_timeouts_to_the_compressed_body(
 
 def test_send_measures_the_exchange(mocker: pytest_mock.MockerFixture):
     adapter = KiliHTTPAdapter()
-    mocker.patch.object(HTTPAdapter, "send", return_value=_response(200))
+    response = _response(200)
+    response._content = b"r" * 1234  # pylint: disable=protected-access
+    mocker.patch.object(HTTPAdapter, "send", return_value=response)
 
     adapter.send(_request(500_000), timeout=60)
 
     exchange = adapter.last_exchange
     assert exchange is not None
     assert exchange.payload_bytes == len(_request(500_000).body)  # type: ignore
+    assert exchange.response_bytes == 1234
+    assert 0 <= exchange.download_seconds <= exchange.seconds
     assert exchange.succeeded
 
 

@@ -1,9 +1,14 @@
 from kili.core.utils.batching import (
     INITIAL_BUDGET_BYTES,
     MAX_BUDGET_BYTES,
+    MAX_PAGE_BYTES,
+    MAX_REMEMBERED_QUERIES,
     MIN_BUDGET_BYTES,
+    MIN_PAGE_ITEMS,
+    MIN_PAGE_SAMPLE_BYTES,
     TARGET_REQUEST_SECONDS,
     AdaptiveBatchSizer,
+    PageSizer,
     json_size,
     size_aware_batcher,
     with_is_last,
@@ -101,3 +106,58 @@ def test_with_is_last():
     assert list(with_is_last([])) == []
     assert list(with_is_last(["a"])) == [("a", True)]
     assert list(with_is_last(["a", "b"])) == [("a", False), ("b", True)]
+
+
+def _page_budget() -> AdaptiveBatchSizer:
+    """Configured like the page budget of queries."""
+    return AdaptiveBatchSizer(
+        MAX_PAGE_BYTES, MAX_PAGE_BYTES, min_sample_bytes=MIN_PAGE_SAMPLE_BYTES, max_shrink_factor=0
+    )
+
+
+def test_page_size_follows_the_budget_and_the_measured_items():
+    pages = PageSizer(_page_budget())
+
+    assert pages.page_size("q", 100) == 100  # unknown items: the item cap
+    pages.record_page("q", 500_000, 10)  # 50 kB per item
+    assert pages.page_size("q", 100) == 100  # the budget starts unrestricted
+
+    pages.sizer.record_success(20_000_000, 300)  # a slow link: about 1 MB per page
+    assert pages.page_size("q", 100) == 20
+    assert pages.page_size("other query", 100) == 100
+
+
+def test_pages_keep_a_few_items_even_when_one_is_heavier_than_the_budget():
+    pages = PageSizer(_page_budget())
+    pages.sizer.record_success(20_000_000, 300)
+
+    pages.record_page("q", 100_000_000, 1)
+
+    assert pages.page_size("q", 100) == MIN_PAGE_ITEMS
+    assert pages.page_size("q", 3) == 3  # the caller's cap still wins
+
+
+def test_the_first_page_measured_sets_the_page_budget():
+    budget = _page_budget()
+
+    budget.record_success(20_000_000, 100)  # 200 kB/s
+
+    assert budget.budget_bytes == int(20_000_000 / 100 * TARGET_REQUEST_SECONDS)
+
+
+def test_a_small_page_does_not_move_the_page_budget():
+    budget = _page_budget()
+
+    budget.record_success(300_000, 0.3)  # a round trip more than a download
+
+    assert budget.budget_bytes == MAX_PAGE_BYTES
+
+
+def test_page_sizer_remembers_a_bounded_number_of_queries():
+    pages = PageSizer(AdaptiveBatchSizer())  # a 2 MB budget
+
+    for i in range(MAX_REMEMBERED_QUERIES + 10):
+        pages.record_page(f"query {i}", 100_000, 1)
+
+    assert pages.page_size("query 0", 100) == 100  # forgotten
+    assert pages.page_size(f"query {MAX_REMEMBERED_QUERIES + 9}", 100) == 20
