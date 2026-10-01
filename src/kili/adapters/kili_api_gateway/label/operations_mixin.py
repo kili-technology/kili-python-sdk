@@ -14,6 +14,7 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 )
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.constants import MUTATION_BATCH_SIZE
+from kili.core.utils.batching import json_size, size_aware_batcher
 from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetId
 from kili.domain.label import LabelFilters, LabelId
@@ -195,18 +196,21 @@ class LabelOperationMixin(BaseOperationMixin):
         added_labels: list[dict] = []
         first_index = 0
         with tqdm(total=nb_labels_to_add, desc="Adding labels", disable=disable_tqdm) as pbar:
-            for batch_of_label_data in batcher(data.labels_data, batch_size=MUTATION_BATCH_SIZE):
+            mapped_labels = (
+                (label.asset_id, append_label_data_mapper(label)) for label in data.labels_data
+            )
+            for batch_of_label_data in size_aware_batcher(
+                mapped_labels, MUTATION_BATCH_SIZE, item_size=lambda label: json_size(label[1])
+            ):
                 variables = {
                     "data": {
                         "labelType": data.label_type,
                         "stepName": data.step_name,
                         "overwrite": data.overwrite,
-                        "labelsData": [
-                            append_label_data_mapper(label) for label in batch_of_label_data
-                        ],
+                        "labelsData": [label_data for _, label_data in batch_of_label_data],
                     },
                     "where": {
-                        "idIn": [label.asset_id for label in batch_of_label_data],
+                        "idIn": [asset_id for asset_id, _ in batch_of_label_data],
                     },
                 }
                 if project_id is not None:

@@ -33,11 +33,13 @@ from kili.core.graphql.retry import (
     classify,
     describe,
     is_mutation,
+    is_overload,
     operation_name,
     retry_after_seconds,
     should_retry,
 )
-from kili.core.graphql.transport import KiliRequestsHTTPTransport
+from kili.core.graphql.transport import Exchange, KiliRequestsHTTPTransport
+from kili.core.utils.batching import mutation_batch_sizer
 from kili.log.logging import logger
 from kili.utils.logcontext import LogContext
 
@@ -389,6 +391,22 @@ class GraphQLClient:
         policy.succeeded()
         return result
 
+    @staticmethod
+    def _account(
+        document: DocumentNode, exchange: Optional[Exchange], error: Optional[BaseException]
+    ) -> None:
+        """Feed what the request cost to the batch budget. Only mutations are sent in batches.
+
+        A mutation is not retried when it overloaded the server, so it shrinks the budget once.
+        """
+        if exchange is None or not is_mutation(document):
+            return
+        if error is None:
+            if exchange.succeeded:
+                mutation_batch_sizer.record_success(exchange.payload_bytes, exchange.seconds)
+        elif is_overload(error):
+            mutation_batch_sizer.record_failure(exchange.payload_bytes)
+
     def _raw_execute(
         self, document: DocumentNode, variables: Optional[dict], **kwargs
     ) -> dict[str, Any]:
@@ -396,18 +414,26 @@ class GraphQLClient:
         log_context = LogContext()
         log_context.set_client_name(self.client_name)
         with _execute_lock:
-            res = self._gql_client.execute(
-                document=document,
-                variable_values=variables,
-                get_execution_result=True,
-                extra_args={
-                    "headers": {
-                        **(self._gql_transport.headers or {}),
-                        **log_context,
-                    }
-                },
-                **kwargs,
-            )
+            self._gql_transport.adapter.last_exchange = None
+            error: Optional[BaseException] = None
+            try:
+                res = self._gql_client.execute(
+                    document=document,
+                    variable_values=variables,
+                    get_execution_result=True,
+                    extra_args={
+                        "headers": {
+                            **(self._gql_transport.headers or {}),
+                            **log_context,
+                        }
+                    },
+                    **kwargs,
+                )
+            except Exception as err:
+                error = err
+                raise
+            finally:
+                self._account(document, self._gql_transport.adapter.last_exchange, error)
 
             extensions = getattr(res, "extensions", None)
             if isinstance(extensions, dict):

@@ -122,6 +122,17 @@ def _classify_status(error: exceptions.TransportServerError) -> Outcome:
     return Outcome.FAILED
 
 
+def is_overload(error: BaseException) -> bool:
+    """Whether the request may have been too heavy for the server: a lighter one could pass.
+
+    A timeout, a reset or a 5xx after the request reached the backend, or a 413. A request the
+    server did not process says nothing about its weight: a 429, a 503 Envoy could not forward.
+    """
+    if isinstance(error, exceptions.TransportServerError) and error.code == 413:
+        return True
+    return classify(error) is Outcome.UNKNOWN
+
+
 def attempts_allowed(error: BaseException, mutation: bool) -> Optional[int]:
     """How many attempts an operation that failed with this error gets, None for no limit.
 

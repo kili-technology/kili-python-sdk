@@ -220,3 +220,78 @@ def test_a_client_without_compression_sends_large_requests_as_is(backend, client
 
     assert state.encodings == [None]
     assert json.loads(state.bodies[0])["variables"] == {"m": metadata}
+
+
+LARGE = "x" * 200_000  # above the size at which a request tells something about throughput
+
+
+def test_a_large_mutation_feeds_the_batch_budget(backend, client_for, mocker):
+    _, endpoint = backend
+    sizer = mocker.patch("kili.core.graphql.graphql_client.mutation_batch_sizer")
+
+    client_for(endpoint).execute(
+        "mutation($m: String) { appendManyAssets(data: {m: $m}) { id } }", {"m": LARGE}
+    )
+
+    sizer.record_success.assert_called_once()
+    payload_bytes, seconds = sizer.record_success.call_args.args
+    assert payload_bytes > len(LARGE)
+    assert seconds > 0
+
+
+def test_a_query_does_not_feed_the_batch_budget(backend, client_for, mocker):
+    _, endpoint = backend
+    sizer = mocker.patch("kili.core.graphql.graphql_client.mutation_batch_sizer")
+
+    client_for(endpoint).execute(
+        "query($m: String) { assets(where: {m: $m}) { id } }", {"m": LARGE}
+    )
+
+    sizer.record_success.assert_not_called()
+    sizer.record_failure.assert_not_called()
+
+
+def test_a_large_mutation_that_times_out_shrinks_the_batch_budget(backend, client_for, mocker):
+    state, endpoint = backend
+    state.replies = [slow]
+    sizer = mocker.patch("kili.core.graphql.graphql_client.mutation_batch_sizer")
+    # keep the read timeout at 0.5 s: by default a 200 kB body is given 2 s to arrive
+    mocker.patch("kili.core.graphql.transport.MIN_UPLOAD_BYTES_PER_SECOND", 10**9)
+
+    with pytest.raises(MutationOutcomeUnknownError):
+        client_for(endpoint).execute(
+            "mutation($m: String) { appendManyAssets(data: {m: $m}) { id } }",
+            {"m": LARGE},
+            timeout=0.5,
+        )
+
+    sizer.record_failure.assert_called_once()
+    assert sizer.record_failure.call_args.args[0] > len(LARGE)
+
+
+def test_a_large_mutation_the_server_did_not_process_leaves_the_batch_budget(
+    backend, client_for, mocker
+):
+    state, endpoint = backend
+    state.replies = [envoy_503(ENVOY_REFUSED)]
+    sizer = mocker.patch("kili.core.graphql.graphql_client.mutation_batch_sizer")
+
+    client_for(endpoint).execute(
+        "mutation($m: String) { appendManyAssets(data: {m: $m}) { id } }", {"m": LARGE}
+    )
+
+    assert len(state.bodies) == 2  # resent, since Envoy never forwarded it
+    sizer.record_failure.assert_not_called()
+
+
+def test_a_mutation_too_large_for_the_server_shrinks_the_batch_budget(backend, client_for, mocker):
+    state, endpoint = backend
+    state.replies = [envoy_503(b"")]  # reset after forwarding: may have been too heavy
+    sizer = mocker.patch("kili.core.graphql.graphql_client.mutation_batch_sizer")
+
+    with pytest.raises(MutationOutcomeUnknownError):
+        client_for(endpoint).execute(
+            "mutation($m: String) { appendManyAssets(data: {m: $m}) { id } }", {"m": LARGE}
+        )
+
+    sizer.record_failure.assert_called_once()

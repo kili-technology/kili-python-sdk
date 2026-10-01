@@ -6,6 +6,7 @@ from time import sleep
 from typing import Any, Optional, TypeVar
 
 from kili.core.constants import MUTATION_BATCH_SIZE
+from kili.core.utils.batching import json_size, size_aware_batcher
 from kili.domain.types import ListOrTuple
 from kili.exceptions import GraphQLError, MutationOutcomeUnknownError
 
@@ -14,31 +15,32 @@ def batch_object_builder(
     properties_to_batch: dict[str, ListOrTuple[Any]],
     batch_size: int = MUTATION_BATCH_SIZE,
 ) -> Generator[dict[str, Any], None, None]:
-    """Generate a paginated iterator for several variables.
+    """Generate batches of several variables, capped by count and by payload size.
 
     Args:
-        properties_to_batch: a dictionary of properties to be batched.
-        batch_size: the size of the batches to produce
+        properties_to_batch: a dictionary of properties to be batched. A property set to None
+            stays None in every batch.
+        batch_size: the maximum number of objects in a batch
     """
-    if len(list(filter(None, properties_to_batch.values()))) == 0:
+    batched = {k: v for k, v in properties_to_batch.items() if v is not None}
+    if not any(batched.values()):
         yield properties_to_batch
         return
     # pylint: disable=stop-iteration-return
-    number_of_objects = len(next(v for v in properties_to_batch.values() if v is not None))
-    number_of_batches = len(range(0, number_of_objects, batch_size))
-    batched_properties = {
-        k: (
-            batcher(iterable=v, batch_size=batch_size)
-            if v is not None
-            else (item for item in [v] * number_of_batches)
-        )
-        for k, v in properties_to_batch.items()
-    }
-    batch_object_iterator = (
-        dict(zip(batched_properties, t, strict=False))
-        for t in zip(*batched_properties.values(), strict=False)
-    )
-    yield from batch_object_iterator
+    number_of_objects = len(next(v for v in batched.values() if v))
+
+    def object_size(index: int) -> int:
+        return json_size({k: v[index] for k, v in batched.items() if index < len(v)})
+
+    for indexes in size_aware_batcher(range(number_of_objects), batch_size, object_size):
+        yield {
+            k: (None if v is None else [v[i] for i in indexes if i < len(v)])
+            for k, v in properties_to_batch.items()
+        }
+
+
+def _batch_length(batch: dict[str, Any]) -> int:
+    return max((len(v) for v in batch.values() if isinstance(v, list)), default=0)
 
 
 # pylint: disable=missing-type-doc
@@ -80,15 +82,17 @@ def mutate_from_paginated_call(
     """
     results = []
     batch = None
-    for batch_number, batch in enumerate(batch_object_builder(properties_to_batch, batch_size)):
+    first_index = 0
+    for batch in batch_object_builder(properties_to_batch, batch_size):
         payload = generate_variables(batch)
         try:
             result = kili.graphql_client.execute(request, payload)
         except GraphQLError as err:
-            raise GraphQLError(error=err.error, batch_number=batch_number) from err
+            raise GraphQLError(error=err.error, index=first_index) from err
         except MutationOutcomeUnknownError as err:
-            raise err.at_index(batch_number * batch_size) from err.cause
+            raise err.at_index(first_index) from err.cause
         results.append(result)
+        first_index += _batch_length(batch)
 
     sleep(1)  # wait for the backend to process the mutations
     if batch and results and last_batch_callback:

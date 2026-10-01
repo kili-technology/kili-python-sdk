@@ -20,6 +20,7 @@ from kili.core.graphql.retry import (
     classify,
     describe,
     is_mutation,
+    is_overload,
     operation_name,
     parse_retry_after,
     retry_after_seconds,
@@ -358,6 +359,23 @@ def test_attempts_allowed(error: BaseException, query_attempts, mutation_attempt
 def test_should_retry(error: BaseException, retry_query: bool, retry_mutation: bool):
     assert should_retry(error, mutation=False) is retry_query
     assert should_retry(error, mutation=True) is retry_mutation
+
+
+@pytest.mark.parametrize(
+    ("error", "expected"),
+    [
+        (ReadTimeout(), True),
+        (_server_error(503, ENVOY_RESET_AFTER_FORWARD), True),
+        (_server_error(504), True),
+        (_server_error(413), True),
+        (_server_error(429), False),
+        (_server_error(503, ENVOY_REFUSED), False),
+        (_server_error(400), False),
+        (VALIDATION_ERROR, False),
+    ],
+)
+def test_is_overload(error: BaseException, expected: bool):
+    assert is_overload(error) is expected
 
 
 def test_retry_after_is_read_from_the_failed_response():

@@ -4,6 +4,7 @@ import pytest
 import pytest_mock
 from requests import PreparedRequest, Request, Response
 from requests.adapters import HTTPAdapter
+from requests.exceptions import ReadTimeout
 
 from kili.core.graphql.transport import (
     COMPRESSION_THRESHOLD_BYTES,
@@ -87,6 +88,41 @@ def test_send_scales_both_timeouts_to_the_compressed_body(
     connect, read = send.call_args.kwargs["timeout"]
     assert connect == 60
     assert read == pytest.approx(60, abs=0.1)  # a gzipped run of "x" is tiny
+
+
+def test_send_measures_the_exchange(mocker: pytest_mock.MockerFixture):
+    adapter = KiliHTTPAdapter()
+    mocker.patch.object(HTTPAdapter, "send", return_value=_response(200))
+
+    adapter.send(_request(500_000), timeout=60)
+
+    exchange = adapter.last_exchange
+    assert exchange is not None
+    assert exchange.payload_bytes == len(_request(500_000).body)  # type: ignore
+    assert exchange.succeeded
+
+
+@pytest.mark.parametrize("status", [413, 429, 503])
+def test_send_measures_an_error_status_as_a_failure(mocker: pytest_mock.MockerFixture, status: int):
+    adapter = KiliHTTPAdapter()
+    mocker.patch.object(HTTPAdapter, "send", return_value=_response(status))
+
+    adapter.send(_request(500_000), timeout=60)
+
+    assert adapter.last_exchange is not None
+    assert not adapter.last_exchange.succeeded
+
+
+def test_send_measures_a_request_that_raised(mocker: pytest_mock.MockerFixture):
+    adapter = KiliHTTPAdapter()
+    mocker.patch.object(HTTPAdapter, "send", side_effect=ReadTimeout())
+
+    with pytest.raises(ReadTimeout):
+        adapter.send(_request(500_000), timeout=60)
+
+    assert adapter.last_exchange is not None
+    assert adapter.last_exchange.payload_bytes > 500_000
+    assert not adapter.last_exchange.succeeded
 
 
 def test_a_redirect_that_drops_the_body_drops_its_encoding():

@@ -15,7 +15,7 @@ from kili.adapters.kili_api_gateway.issue.operations import (
 )
 from kili.adapters.kili_api_gateway.issue.types import IssueToCreateKiliAPIGatewayInput
 from kili.core.constants import MUTATION_BATCH_SIZE
-from kili.core.utils.pagination import batcher
+from kili.core.utils.batching import size_aware_batcher
 from kili.domain.issue import IssueFilters, IssueId, IssueStatus, IssueType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
@@ -40,18 +40,19 @@ class IssueOperationMixin(BaseOperationMixin):
         created_issue_entities: list[IssueId] = []
         first_index = 0
         with tqdm.tqdm(total=len(issues), desc=description) as pbar:
-            for issues_batch in batcher(issues, batch_size=MUTATION_BATCH_SIZE):
+            mapped_issues = (
+                {
+                    "labelID": issue.label_id,
+                    "objectMid": issue.object_mid,
+                    "type": type_,
+                    "assetId": issue.asset_id,
+                    "text": issue.text,
+                }
+                for issue in issues
+            )
+            for issues_batch in size_aware_batcher(mapped_issues, MUTATION_BATCH_SIZE):
                 payload = {
-                    "issues": [
-                        {
-                            "labelID": issue.label_id,
-                            "objectMid": issue.object_mid,
-                            "type": type_,
-                            "assetId": issue.asset_id,
-                            "text": issue.text,
-                        }
-                        for issue in issues_batch
-                    ],
+                    "issues": issues_batch,
                     "where": {"project": {"id": project_id}},
                 }
                 try:

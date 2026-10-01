@@ -5,8 +5,12 @@ from unittest.mock import MagicMock
 import pytest
 from requests.exceptions import ReadTimeout
 
-from kili.core.utils.pagination import batch_object_builder, batcher, mutate_from_paginated_call
-from kili.exceptions import MutationOutcomeUnknownError
+from kili.core.utils.pagination import (
+    batch_object_builder,
+    batcher,
+    mutate_from_paginated_call,
+)
+from kili.exceptions import GraphQLError, MutationOutcomeUnknownError
 
 
 @pytest.mark.parametrize(
@@ -38,15 +42,12 @@ def test_batch_iterator_builder(name, test_case):
             {
                 "batch_size": 3,
                 "properties_to_batch": {"a1": list(range(10))},
-                "expected_result": (
-                    i
-                    for i in [
-                        {"a1": [0, 1, 2]},
-                        {"a1": [3, 4, 5]},
-                        {"a1": [6, 7, 8]},
-                        {"a1": [9]},
-                    ]
-                ),
+                "expected_result": [
+                    {"a1": [0, 1, 2]},
+                    {"a1": [3, 4, 5]},
+                    {"a1": [6, 7, 8]},
+                    {"a1": [9]},
+                ],
             },
         ),
         (
@@ -58,22 +59,19 @@ def test_batch_iterator_builder(name, test_case):
                     "a2": list(range(10, 20)),
                     "a3": list(range(20, 30)),
                 },
-                "expected_result": (
-                    i
-                    for i in [
-                        {
-                            "a1": [0, 1, 2, 3],
-                            "a2": [10, 11, 12, 13],
-                            "a3": [20, 21, 22, 23],
-                        },
-                        {
-                            "a1": [4, 5, 6, 7],
-                            "a2": [14, 15, 16, 17],
-                            "a3": [24, 25, 26, 27],
-                        },
-                        {"a1": [8, 9], "a2": [18, 19], "a3": [28, 29]},
-                    ]
-                ),
+                "expected_result": [
+                    {
+                        "a1": [0, 1, 2, 3],
+                        "a2": [10, 11, 12, 13],
+                        "a3": [20, 21, 22, 23],
+                    },
+                    {
+                        "a1": [4, 5, 6, 7],
+                        "a2": [14, 15, 16, 17],
+                        "a3": [24, 25, 26, 27],
+                    },
+                    {"a1": [8, 9], "a2": [18, 19], "a3": [28, 29]},
+                ],
             },
         ),
         (
@@ -86,24 +84,21 @@ def test_batch_iterator_builder(name, test_case):
                     "a3": list(range(10, 20)),
                     "a4": None,
                 },
-                "expected_result": (
-                    i
-                    for i in [
-                        {
-                            "a1": [0, 1, 2, 3],
-                            "a2": None,
-                            "a3": [10, 11, 12, 13],
-                            "a4": None,
-                        },
-                        {
-                            "a1": [4, 5, 6, 7],
-                            "a2": None,
-                            "a3": [14, 15, 16, 17],
-                            "a4": None,
-                        },
-                        {"a1": [8, 9], "a2": None, "a3": [18, 19], "a4": None},
-                    ]
-                ),
+                "expected_result": [
+                    {
+                        "a1": [0, 1, 2, 3],
+                        "a2": None,
+                        "a3": [10, 11, 12, 13],
+                        "a4": None,
+                    },
+                    {
+                        "a1": [4, 5, 6, 7],
+                        "a2": None,
+                        "a3": [14, 15, 16, 17],
+                        "a4": None,
+                    },
+                    {"a1": [8, 9], "a2": None, "a3": [18, 19], "a4": None},
+                ],
             },
         ),
         (
@@ -111,7 +106,7 @@ def test_batch_iterator_builder(name, test_case):
             {
                 "batch_size": 2,
                 "properties_to_batch": {"a1": None, "a2": None, "a3": None},
-                "expected_result": (i for i in [{"a1": None, "a2": None, "a3": None}]),
+                "expected_result": [{"a1": None, "a2": None, "a3": None}],
             },
         ),
     ],
@@ -119,9 +114,27 @@ def test_batch_iterator_builder(name, test_case):
 def test_batch_object_builder(name, test_case):
     """Test batch iterator builder for several arrays in the same time."""
     _ = name
-    actual = batch_object_builder(test_case["properties_to_batch"], test_case["batch_size"])
-    expected = test_case["expected_result"]
-    assert all(a == b for a, b in zip(actual, expected, strict=False))
+    actual = list(batch_object_builder(test_case["properties_to_batch"], test_case["batch_size"]))
+    expected = list(test_case["expected_result"])
+    assert actual == expected
+
+
+def test_batch_object_builder_splits_large_payloads():
+    properties = {"ids": ["a", "b", "c"], "metadata": ["x" * 900_000] * 3, "unset": None}
+
+    batches = list(batch_object_builder(properties, 100))
+
+    assert [batch["ids"] for batch in batches] == [["a", "b"], ["c"]]
+    assert all(batch["unset"] is None for batch in batches)
+
+
+def test_mutate_from_paginated_call_reports_the_index_of_the_failed_batch():
+    kili = MagicMock()
+    kili.graphql_client.execute.side_effect = [{"data": 1}, GraphQLError("boom")]
+    properties = {"ids": list(range(5)), "metadata": ["x" * 900_000] * 5}
+
+    with pytest.raises(GraphQLError, match="at index 2"):
+        mutate_from_paginated_call(kili, properties, lambda batch: batch, "mutation")
 
 
 def test_mutate_from_paginated_call_locates_a_batch_with_an_unknown_outcome():

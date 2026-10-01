@@ -156,6 +156,28 @@ class ImageTestCase(ImportTestCase):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
         self.assert_upload_several_batches()
 
+    def test_upload_splits_batches_by_payload_size(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+        ocr = {"fullTextAnnotation": {"text": "x" * 600_000}}  # heavy OCR metadata per asset
+        assets = [
+            {"content": "https://hosted-data", "external_id": f"ocr {i}", "json_metadata": ocr}
+            for i in range(7)
+        ]
+
+        def graphql_execute_side_effect(*args, **_):
+            nb_asset_batch = len(args[1]["data"]["contentArray"])
+            return {"data": [{"id": f"id{i}"} for i in range(nb_asset_batch)]}
+
+        # self.kili is shared by every test: the patch must not outlive this one
+        with patch.object(
+            self.kili.graphql_client, "execute", side_effect=graphql_execute_side_effect
+        ) as execute:
+            import_assets(self.kili, self.project_id, assets)
+
+        batches = [c.args[1]["data"]["externalIDArray"] for c in execute.call_args_list]
+        # 3 assets of 600 kB fit the initial 2 MB budget, a 4th would not
+        assert batches == [["ocr 0", "ocr 1", "ocr 2"], ["ocr 3", "ocr 4", "ocr 5"], ["ocr 6"]]
+
     def test_upload_from_one_hosted_image_authorized_while_local_forbidden(self, *_):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
         self.kili.kili_api_gateway.list_organizations = MagicMock(

@@ -8,7 +8,7 @@ from requests.exceptions import ConnectionError as RequestsConnectionError
 class GraphQLError(Exception):
     """Raised when the GraphQL call returns an error."""
 
-    def __init__(self, error, batch_number=None, context=None) -> None:
+    def __init__(self, error, batch_number=None, context=None, index=None) -> None:
         self.error = error
         self.context = context
 
@@ -19,10 +19,12 @@ class GraphQLError(Exception):
         else:
             error_msg = str(error)
 
-        if batch_number is None:
+        if index is None and batch_number is not None:
+            index = 100 * batch_number
+        if index is None:
             super().__init__(f'GraphQL error: "{error_msg}"')
         else:
-            super().__init__(f'GraphQL error at index {100*batch_number}: {error_msg}"')
+            super().__init__(f'GraphQL error at index {index}: {error_msg}"')
 
 
 class MutationOutcomeUnknownError(RequestsConnectionError):

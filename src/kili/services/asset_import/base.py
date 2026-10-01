@@ -30,7 +30,7 @@ from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY,
 )
 from kili.core.helpers import T, format_result, get_mime_type, is_url
-from kili.core.utils.pagination import batcher
+from kili.core.utils.batching import json_size, size_aware_batcher, with_is_last
 from kili.domain.notification import NotificationFilter, NotificationId
 from kili.domain.organization import OrganizationFilters
 from kili.domain.project import InputType, ProjectId
@@ -104,6 +104,20 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         logging.basicConfig()
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
+
+    def fields_uploaded_to_bucket(self) -> frozenset[str]:
+        """Asset fields this importer uploads on their own, so that they are not in the body."""
+        return frozenset()
+
+    def payload_size(self, asset: AssetLike) -> int:
+        """Estimated size of the asset in the mutation body, before it is prepared."""
+        uploaded = self.fields_uploaded_to_bucket()
+        sent = {key: value for key, value in asset.items() if key not in uploaded}
+        metadata = sent.get("json_metadata")
+        if metadata is not None and not isinstance(metadata, str):
+            # sent as a JSON string, whose quotes are escaped once more in the body
+            sent["json_metadata"] = dumps(metadata, default=str)
+        return json_size(sent)
 
     def import_batch(  # pylint: disable=unused-argument
         self, assets: ListOrTuple[AssetLike], verify: bool, input_type: Optional[InputType] = None
@@ -325,6 +339,10 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
 class ContentBatchImporter(BaseBatchImporter):
     """Class defining the methods to import a batch of assets with content."""
 
+    def fields_uploaded_to_bucket(self) -> frozenset[str]:
+        """Local content, files or raw text, is uploaded to the bucket and sent as a URL."""
+        return frozenset() if self.is_hosted else frozenset({"content", "multi_layer_content"})
+
     def import_batch(
         self, assets: list[AssetLike], verify: bool, input_type: Optional[InputType] = None
     ):
@@ -423,6 +441,10 @@ class ContentBatchImporter(BaseBatchImporter):
 
 class JsonContentBatchImporter(BaseBatchImporter):
     """Class defining the import methods for a batch of assets twith json_content."""
+
+    def fields_uploaded_to_bucket(self) -> frozenset[str]:
+        """The json_content is always uploaded to the bucket and sent as a URL."""
+        return frozenset({"json_content"})
 
     @staticmethod
     def stringify_json_content(asset: AssetLike):
@@ -732,15 +754,18 @@ class BaseAbstractAssetImporter(abc.ABC):
         batch_size=IMPORT_BATCH_SIZE,
         input_type: Optional[InputType] = None,
     ):
-        """Split assets by batch and import them with a given batch importer."""
-        batch_generator = batcher(assets, batch_size)
-        nb_batch = (len(assets) - 1) // batch_size + 1
+        """Split assets by batch and import them with a given batch importer.
+
+        Batches are capped by batch_size and by their payload size, estimated on the assets as
+        given minus the fields the batch importer uploads to the bucket on its own.
+        """
+        batch_generator = size_aware_batcher(assets, batch_size, batch_importer.payload_size)
         self.pbar.total = len(assets)
         self.pbar.refresh()
 
         created_asset_ids: list[str] = []
-        for i, batch_assets in enumerate(batch_generator):
+        for batch_assets, is_last_batch in with_is_last(batch_generator):
             # check last batch only
-            verify = i == (nb_batch - 1) and self.verify
+            verify = is_last_batch and self.verify
             created_asset_ids += batch_importer.import_batch(batch_assets, verify, input_type)
         return created_asset_ids
