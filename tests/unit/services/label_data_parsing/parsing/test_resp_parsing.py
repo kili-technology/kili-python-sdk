@@ -2259,3 +2259,28 @@ def test_other_tasks_reject_the_file_attributes():
     for attribute in ("file_id", "file_name", "file_mime_type"):
         with pytest.raises(AttributeNotCompatibleWithJobError):
             _ = getattr(parsed_jobs["JOB_0"], attribute)
+
+
+@pytest.mark.xfail(
+    reason=(
+        "The parser routes a jsonResponse holding `assetLevel` away from the video path, so an"
+        " asset level job is unreachable. Pre-existing: asset level transcription and"
+        " classification fail the same way. Flips to passing when that is fixed."
+    ),
+    strict=True,
+)
+def test_parsing_file_job_on_video_reaches_the_asset_level():
+    """What the backend actually emits for a file job: FILE is offered on video only."""
+    json_interface = {"jobs": {"RENDER": {"mlTask": "FILE", "required": 0, "isChild": False}}}
+    json_response_dict = {
+        "0": {},
+        "1": {},
+        "assetLevel": {
+            "RENDER": {"fileId": "f1", "fileName": "render.mp4", "fileMimeType": "video/mp4"}
+        },
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="VIDEO")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
+
+    assert parsed_jobs["RENDER"].file_name == "render.mp4"
