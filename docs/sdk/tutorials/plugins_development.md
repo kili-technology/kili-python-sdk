@@ -62,7 +62,7 @@ Do not hesitate to reach out to us if you need more.
 %autoreload 2
 
 
-from kili.client import Kili
+from kili.client_domain import Kili
 
 kili = Kili(
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
@@ -189,16 +189,18 @@ Instantiate the plugin:
 
 
 ```python
-my_plugin_instance = PluginHandler(kili, project_id)
+my_plugin_instance = PluginHandler(
+    kili.legacy_client, project_id
+)  # plugins receive the legacy client
 
 
 def get_label(label_id, project_id):
     """Function to get the object Label with the same keys as it will be in the plugin"""
     label = list(
-        kili.labels(
+        kili.labels.list(
             project_id=project_id,
-            label_id=label_id,
             fields=["id", "jsonResponse", "author.id", "labelType", "createdAt", "secondsToLabel"],
+            filter={"label_id": label_id},
         )
     )[0]
 
@@ -241,7 +243,7 @@ plugin_name = "My first kili plugin"
 from kili.exceptions import GraphQLError
 
 try:
-    kili.upload_plugin(path_to_plugin, plugin_name)
+    kili.plugins.create(plugin_path=path_to_plugin, plugin_name=plugin_name)
 except GraphQLError as error:
     print(str(error))
 ```
@@ -250,7 +252,7 @@ Plugins must be activated in the project that you want them to run in. Be carefu
 
 
 ```python
-kili.activate_plugin_on_project(plugin_name, project_id=project_id)
+kili.plugins.activate(plugin_name=plugin_name, project_id=project_id)
 ```
 
 ## Monitoring the plugin
@@ -261,7 +263,7 @@ Additionally, you can get the logs of the runs:
 
 
 ```python
-kili.get_plugin_logs(project_id=project_id, plugin_name=plugin_name)
+kili.plugins.logs(project_id=project_id, plugin_name=plugin_name)
 ```
 
 You can set custom date rules for filtering your logs:
@@ -273,7 +275,7 @@ from datetime import date, datetime
 dt = date.today()  # You can change this date if needed
 start_date = datetime.combine(dt, datetime.min.time())
 
-kili.get_plugin_logs(project_id=project_id, plugin_name=plugin_name, start_date=start_date)
+kili.plugins.logs(project_id=project_id, plugin_name=plugin_name, start_date=start_date)
 ```
 
 ## Managing your plugin

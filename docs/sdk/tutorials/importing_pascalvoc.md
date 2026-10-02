@@ -27,7 +27,7 @@ from pathlib import Path
 
 import xmltodict
 
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 ## Download Pascal VOC format
@@ -159,7 +159,7 @@ Create a Kili project using the json interface.
 
 
 ```python
-project = kili.create_project(
+project = kili.projects.create(
     title="[Kili SDK Notebook]: PascalVOC 2012",
     input_type="IMAGE",
     json_interface=json_interface,
@@ -181,8 +181,10 @@ for image_id, image_name in enumerate(images_names):
 
 
 ```python
-kili.append_many_to_dataset(
-    project["id"], content_array=content_array, external_id_array=external_id_array
+kili.assets.create_image(
+    project_id=project["id"],
+    content_array=content_array,
+    external_id_array=external_id_array,
 )
 ```
 
@@ -255,8 +257,8 @@ for image_id, image_name in enumerate(images_names):
 
 
 ```python
-kili.append_labels(
-    asset_external_id_array=external_id_array,
+kili.labels.create_default(
+    external_id_array=external_id_array,
     project_id=project["id"],
     json_response_array=json_response_array,
 )
@@ -281,5 +283,5 @@ Remove the project from your Kili projects.
 
 
 ```python
-kili.delete_project(project_id=project["id"])
+kili.projects.delete(project_id=project["id"])
 ```

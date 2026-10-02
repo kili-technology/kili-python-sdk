@@ -61,16 +61,16 @@ interface = {
 }
 ```
 
-Now, we create the project using the `create_project` method, with type `LLM_INSTR_FOLLOWING`:
+Now, we create the project using the `kili.projects.create` method, with type `LLM_INSTR_FOLLOWING`:
 
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 kili = Kili(
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
 )
-project = kili.create_project(
+project = kili.projects.create(
     title="[Kili SDK Notebook]: LLM Dynamic",
     description="Project Description",
     input_type="LLM_INSTR_FOLLOWING",

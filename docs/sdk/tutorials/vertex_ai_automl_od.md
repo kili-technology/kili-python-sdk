@@ -44,7 +44,7 @@ from google.colab import auth
 from PIL import Image
 from tqdm import tqdm
 
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 We first initialize the Kili client.
@@ -98,21 +98,21 @@ In this particular example, we have annotated 150 assets on the Kili app.
 
 ### Retrieving and downloading labeled assets from Kili
 
-We first call the Kili Python SDK `assets` function in order to retrieve assets.
+We first call the Kili Python SDK `kili.assets.list` method in order to retrieve assets.
 
 The `download_media` argument allows to download the media (images here) in the folder given in the `local_media_dir` argument. When doing so, the `content` field will automatically be replaced by the local path of the downloaded asset.
 
-For each asset, we query its `id`, `externalId`, and the `jsonResponse` fields of its latest label (the last one submitted on Kili). For more information on the `assets` function or on other fields that you can query, you can have a look at the [function documentation](https://python-sdk-docs.kili-technology.com/2.147/sdk/asset/#kili.presentation.client.asset.AssetClientMethods.assets).
+For each asset, we query its `id`, `externalId`, and the `jsonResponse` fields of its latest label (the last one submitted on Kili). For more information on the `kili.assets.list` method or on other fields that you can query, you can have a look at the [function documentation](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/assets/#kili.domain_api.assets.AssetsNamespace.list).
 
 
 ```python
-assets = kili.assets(
+assets = kili.assets.list(
     project_id=project_id,
     download_media=True,
     local_media_dir="./images",
-    status_in=["LABELED"],
     fields=["latestLabel.jsonResponse", "content", "id", "externalId"],
     disable_tqdm=False,
+    filter={"status_in": ["LABELED"]},
 )
 ```
 
@@ -449,13 +449,13 @@ Now that our model is trained, we can download unlabeled data from Kili, upload 
 
 ```python
 # Retrieve and download unlabeled assets from Kili
-unlabeled_assets = kili.assets(
+unlabeled_assets = kili.assets.list(
     project_id=project_id,
     download_media=True,
     local_media_dir="./images",
-    status_in=["TODO"],
     fields=["content", "id", "externalId"],
     disable_tqdm=False,
+    filter={"status_in": ["TODO"]},
 )
 ```
 
@@ -730,10 +730,11 @@ with open(jsonl_file_path) as jsonl_file:
 
 
 ```python
-kili.create_predictions(
+kili.labels.create_prediction(
     project_id=project_id,
     json_response_array=json_response_array,
     external_id_array=external_id_array,
+    model_name="Vertex AI AutoML",
 )
 ```
 

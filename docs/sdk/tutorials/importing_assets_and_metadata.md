@@ -25,7 +25,7 @@ First, let's install and import the required modules.
 
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 Now, let's set up variables needed to create an instance of the Kili object.
@@ -66,7 +66,7 @@ interface = {
     }
 }
 
-project = kili.create_project(
+project = kili.projects.create(
     title="[Kili SDK Notebook]: Importing assets with metadata",
     description="Project Description",
     input_type="IMAGE",
@@ -99,7 +99,7 @@ url1 = "https://storage.googleapis.com/label-public-staging/car/car_2.jpg"
 url2 = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
 url3 = "https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg"
 
-assets = kili.append_many_to_dataset(
+assets = kili.assets.create_image(
     project_id=project_id,
     content_array=[url1, url2, url3],
     external_id_array=["image_1", "image_2", "image_3"],  # name to give to assets
@@ -114,7 +114,7 @@ If you prefer to add your own images, you can use a local file. The code to do t
 
 ```python
 project_id = 'project_id'
-assets = kili.append_many_to_dataset(
+assets = kili.assets.create_image(
     project_id=project_id,
     content_array=['./image_1.jpeg'], # Path to local image
     external_id_array=['image_1']
@@ -154,7 +154,7 @@ These properties allow you to control:
 
 
 ```python
-kili.update_properties_in_project(
+kili.projects.update_metadata_properties(
     project_id=project_id,
     metadata_properties={
         "customConsensus": {
@@ -208,10 +208,10 @@ Now we can add metadata to our assets:
 ```python
 external_ids = ["image_1", "image_2"]
 
-kili.update_properties_in_assets(
+kili.assets.set_metadata(
     project_id=project_id,
     external_ids=external_ids,
-    json_metadatas=[
+    json_metadata=[
         {
             "customConsensus": 10,
             "sensitiveData": "yes",
@@ -243,7 +243,7 @@ kili.update_properties_in_assets(
 
 
 
-> **Note** : alternatively, you can use `kili.set_metadata` or `kili.add_metadata` methods.
+> **Note** : alternatively, you can use `kili.assets.add_metadata` to add metadata without replacing the existing one.
 
 
 In the labeling interface, we can see that the assets have some metadata (note that `sensitiveData` will be hidden from labelers based on our settings).
@@ -260,7 +260,7 @@ We can remove the project that we created:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```
 
 ## Summary

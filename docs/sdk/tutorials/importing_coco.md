@@ -21,7 +21,7 @@ from pprint import pprint
 
 import numpy as np
 
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 ## Data collection
@@ -513,7 +513,7 @@ json_interface["jobs"]["POSE_ESTIMATION_JOB"] = {
 
 
 ```python
-project = kili.create_project(
+project = kili.projects.create(
     title="[Kili SDK Notebook]: COCO 2017",
     input_type="IMAGE",
     json_interface=json_interface,
@@ -535,8 +535,10 @@ for image in instances_val2017["images"]:
 
 
 ```python
-kili.append_many_to_dataset(
-    project["id"], content_array=content_array, external_id_array=external_id_array
+kili.assets.create_image(
+    project_id=project["id"],
+    content_array=content_array,
+    external_id_array=external_id_array,
 )
 ```
 
@@ -738,8 +740,8 @@ for image_id in external_id_array:
 
 
 ```python
-kili.append_labels(
-    asset_external_id_array=external_id_array,
+kili.labels.create_default(
+    external_id_array=external_id_array,
     project_id=project["id"],
     json_response_array=json_response_array,
 )
@@ -759,5 +761,5 @@ You can now use Kili to refine and review your annotations, in order to train yo
 
 
 ```python
-kili.delete_project(project_id=project["id"])
+kili.projects.delete(project_id=project["id"])
 ```

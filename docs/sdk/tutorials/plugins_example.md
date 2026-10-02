@@ -19,7 +19,7 @@ This notebook is an end-to-end example that you can follow to: create a project,
 
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 kili = Kili(
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
@@ -72,8 +72,11 @@ title = "[Kili SDK Notebook]: Plugins test project"
 description = "My first project with a plugin"
 input_type = "IMAGE"
 
-project = kili.create_project(
-    title=title, description=description, input_type=input_type, json_interface=json_interface
+project = kili.projects.create(
+    title=title,
+    description=description,
+    input_type=input_type,
+    json_interface=json_interface,
 )
 project_id = project["id"]
 
@@ -87,11 +90,13 @@ Upload an asset:
 content_array = ["https://storage.googleapis.com/label-public-staging/car/car_1.jpg"]
 names_array = ["landscape"]
 
-kili.append_many_to_dataset(
-    project_id=project_id, content_array=content_array, external_id_array=names_array
+kili.assets.create_image(
+    project_id=project_id,
+    content_array=content_array,
+    external_id_array=names_array,
 )
 
-asset_id = kili.assets(project_id=project_id, fields=["id"], disable_tqdm=True)[0]["id"]
+asset_id = kili.assets.list(project_id=project_id, fields=["id"], disable_tqdm=True)[0]["id"]
 ```
 
 This project has one job of bounding box creation with two categories.
@@ -208,14 +213,14 @@ plugin_name = "Plugin bbox count"
 from kili.exceptions import GraphQLError
 
 try:
-    kili.upload_plugin(plugin_folder, plugin_name)
+    kili.plugins.create(plugin_path=plugin_folder, plugin_name=plugin_name)
 except GraphQLError as error:
     print(str(error))
 ```
 
 
 ```python
-kili.activate_plugin_on_project(plugin_name=plugin_name, project_id=project_id)
+kili.plugins.activate(plugin_name=plugin_name, project_id=project_id)
 ```
 
 ## Step 4 bis: Upload the plugin from a .py file
@@ -231,14 +236,14 @@ path_to_plugin = Path(plugin_folder) / "main.py"
 plugin_name_file = "Plugin bbox count - file"
 
 try:
-    kili.upload_plugin(str(path_to_plugin), plugin_name_file)
+    kili.plugins.create(plugin_path=str(path_to_plugin), plugin_name=plugin_name_file)
 except GraphQLError as error:
     print(str(error))
 ```
 
 
 ```python
-kili.activate_plugin_on_project(plugin_name=plugin_name_file, project_id=project_id)
+kili.plugins.activate(plugin_name=plugin_name_file, project_id=project_id)
 ```
 
 ## Step 5: Plugin in action
@@ -309,8 +314,8 @@ json_response = {
 
 
 ```python
-kili.append_labels(
-    json_response_array=[json_response], asset_id_array=[asset_id], label_type="DEFAULT"
+kili.labels.create_default(
+    project_id=project_id, json_response_array=[json_response], asset_id_array=[asset_id]
 )
 ```
 
@@ -322,11 +327,15 @@ If you use the base plugin provided, the plugin should:
 
 ```python
 print(
-    kili.assets(project_id=project_id, asset_id=asset_id, fields=["status", "issues.comments.text"])
+    kili.assets.list(
+        project_id=project_id,
+        fields=["status", "issues.comments.text"],
+        filter={"asset_id_in": [asset_id]},
+    )
 )
 
 print(
-    f"Go to my project: {kili.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
+    f"Go to my project: {kili.legacy_client.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
 )
 ```
 
@@ -358,14 +367,16 @@ json_response = {
         ]
     }
 }
-kili.append_labels(
-    json_response_array=[json_response], asset_id_array=[asset_id], label_type="DEFAULT"
+kili.labels.create_default(
+    project_id=project_id, json_response_array=[json_response], asset_id_array=[asset_id]
 )
 
-print(kili.assets(project_id=project_id, asset_id=asset_id, fields=["status"]))
+print(
+    kili.assets.list(project_id=project_id, fields=["status"], filter={"asset_id_in": [asset_id]})
+)
 
 print(
-    f"Go to my project: {kili.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
+    f"Go to my project: {kili.legacy_client.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
 )
 ```
 
@@ -387,7 +398,7 @@ dt = (
 )  # You can change this date if needed, or omit it to set it at the plugin creation date
 start_date = datetime.combine(dt, datetime.min.time())
 
-logs = kili.get_plugin_logs(project_id=project_id, plugin_name=plugin_name, start_date=start_date)
+logs = kili.plugins.logs(project_id=project_id, plugin_name=plugin_name, start_date=start_date)
 
 logs_json = json.loads(logs)
 print(json.dumps(logs_json, indent=4))
@@ -401,7 +412,7 @@ Get the list of all uploaded plugins in your organization:
 
 
 ```python
-plugins = kili.list_plugins()
+plugins = kili.plugins.list()
 ```
 
 Update a plugin with new source code:
@@ -415,14 +426,14 @@ new_path_to_plugin = Path(plugin_folder) / "main.py"
 should_update = False
 
 if should_update:
-    kili.update_plugin(plugin_name=plugin_name, plugin_path=str(new_path_to_plugin))
+    kili.plugins.update(plugin_name=plugin_name, plugin_path=str(new_path_to_plugin))
 ```
 
 Deactivate the plugin on a certain project (the plugin can still be active for other projects):
 
 
 ```python
-kili.deactivate_plugin_on_project(plugin_name=plugin_name, project_id=project_id)
+kili.plugins.deactivate(plugin_name=plugin_name, project_id=project_id)
 ```
 
 Delete the plugin completely (deactivates the plugin from all projects):
@@ -430,5 +441,5 @@ Delete the plugin completely (deactivates the plugin from all projects):
 
 ```python
 if delete_plugin_from_org:
-    kili.delete_plugin(plugin_name=plugin_name)
+    kili.plugins.delete(plugin_name=plugin_name)
 ```

@@ -1,4 +1,4 @@
-"""Module for parsing labels returned by kili.labels()."""
+"""Module for parsing labels returned by kili.labels.list()."""
 
 from collections.abc import Generator, Iterable
 from copy import deepcopy
@@ -99,10 +99,10 @@ def parse_labels(
 def parse_labels(
     labels: Iterable[dict], json_interface: dict, input_type: InputType
 ) -> Iterable[ParsedLabel]:
-    """Parse labels returned by kili.labels().
+    """Parse labels returned by kili.labels.list().
 
     Args:
-        labels: List or generator of labels from kili.labels().
+        labels: List or generator of labels from kili.labels.list().
         json_interface: Json interface of the project.
         input_type: Type of assets of the project.
 

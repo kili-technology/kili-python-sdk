@@ -23,7 +23,7 @@ First, let's install and import the required modules.
 
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 Now, let's set up variables needed to create an instance of the Kili object.
@@ -74,7 +74,7 @@ interface = {
     }
 }
 
-project = kili.create_project(
+project = kili.projects.create(
     title="[Kili SDK Notebook]: Importing multi-layer Geospatial asset",
     description="Project Description",
     input_type="IMAGE",
@@ -145,7 +145,8 @@ json_content_array = [
     ]
 ]
 
-kili.append_many_to_dataset(
+# create_geospatial cannot flag a web layer as the base layer yet: the legacy client does it
+kili.legacy_client.append_many_to_dataset(
     project_id=project_id,
     multi_layer_content_array=multi_layer_content_array,
     json_metadata_array=json_metadata_array,
@@ -153,7 +154,7 @@ kili.append_many_to_dataset(
 )
 ```
 
-In this example 4 arguments are used for the `append_many_to_dataset` function :
+In this example 4 arguments are used for the `append_many_to_dataset` function of the legacy client (`kili.legacy_client`), the one that can flag a public tile layer as the base layer:
 
 1. `project_id`: the id of the project to which you want to add the asset
 1. `multi_layer_content_array`: it is a list of dictionnaries representing the layers created from geospatial files like GEOTIFFS. For each GEOTIFF you have to set the `path` to the GEOTIFF, the `name` that will be used in kili for the layer and the boolean `isBaseLayer` to define if it's a base layer (only one visible at a time) or an overlay layer (a layer that will be displayed on top of the base layer). This last one is optional and by default if no parameter is set, we consider it is a base layer.
@@ -168,5 +169,5 @@ We can remove the project that we created if needed:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```

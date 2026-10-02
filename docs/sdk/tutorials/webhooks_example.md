@@ -30,7 +30,7 @@ If you are looking for a more of-the-shelf capability, you can have a look at th
 
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 kili = Kili(
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
@@ -83,8 +83,11 @@ title = "[Kili SDK Notebook]: Webhooks example test project"
 description = "My first project with a webhook"
 input_type = "IMAGE"
 
-project = kili.create_project(
-    title=title, description=description, input_type=input_type, json_interface=json_interface
+project = kili.projects.create(
+    title=title,
+    description=description,
+    input_type=input_type,
+    json_interface=json_interface,
 )
 project_id = project["id"]
 
@@ -101,14 +104,14 @@ Upload an asset:
 content_array = ["https://storage.googleapis.com/label-public-staging/car/car_1.jpg"]
 names_array = ["car"]
 
-kili.append_many_to_dataset(
+kili.assets.create_image(
     project_id=project_id,
     content_array=content_array,
     external_id_array=names_array,
     disable_tqdm=True,
 )
 
-asset_id = kili.assets(project_id=project_id, fields=["id"], disable_tqdm=True)[0]["id"]
+asset_id = kili.assets.list(project_id=project_id, fields=["id"], disable_tqdm=True)[0]["id"]
 ```
 
 This project has one job of bounding box creation with two categories.
@@ -244,13 +247,13 @@ Note: Don't host it locally, it won't work as Kili can't call your localhost
 import os
 from typing import Dict
 from fastapi import FastAPI, HTTPException, Depends, Request
-from kili.client import Kili
+from kili.client_domain import Kili
 
 # Assuming your plugin is in a file  `plugin.py` in the same folder
 from plugin import PluginHandler
 
 app = FastAPI()
-kili = Kili()
+kili = Kili().legacy_client  # PluginHandler calls the legacy client's methods
 
 API_KEY = "secret-api-key"
 
@@ -368,8 +371,10 @@ print(webhook_url_from_browser)
 webhook_security_header = "secret-api-key"
 
 try:
-    kili.create_webhook(
-        plugin_name=webhook_name, webhook_url=webhook_url, header=webhook_security_header
+    kili.plugins.webhooks.create(
+        plugin_name=webhook_name,
+        webhook_url=webhook_url,
+        header=webhook_security_header,
     )
 except GraphQLError as error:
     print(str(error))
@@ -380,7 +385,7 @@ except GraphQLError as error:
 
 
 ```python
-kili.activate_plugin_on_project(plugin_name=webhook_name, project_id=project_id)
+kili.plugins.activate(plugin_name=webhook_name, project_id=project_id)
 ```
 
     Plugin with name "Webhook bbox count" activated on project "clfcblkni05pq0jrq8wgib142"
@@ -394,7 +399,7 @@ kili.activate_plugin_on_project(plugin_name=webhook_name, project_id=project_id)
 
 
 
-**Note**: Similar to plugins, you have access to the methods `kili.update_webhook` & `kili.deactivate_plugin_on_project` for iterations on your code.
+**Note**: Similar to plugins, you have access to the methods `kili.plugins.webhooks.update` & `kili.plugins.deactivate` for iterations on your code.
 
 ## Step 5: Webhook in action
 
@@ -463,8 +468,8 @@ json_response = {
 
 
 ```python
-kili.append_labels(
-    json_response_array=[json_response], asset_id_array=[asset_id], label_type="DEFAULT"
+kili.labels.create_default(
+    project_id=project_id, json_response_array=[json_response], asset_id_array=[asset_id]
 )
 ```
 
@@ -490,7 +495,7 @@ If you haven't deployed your webhook just yet, you can still visit the address h
 print(f"Go to my webhook: {webhook_url_from_browser}")
 try:
     # If your webhook is live !
-    kili.issues(project_id=project_id, fields=["comments.text", "objectMid"])
+    kili.issues.list(project_id=project_id, fields=["comments.text", "objectMid"])
 except GraphQLError as error:
     print(str(error))
 ```
@@ -526,8 +531,8 @@ json_response = {
         ]
     }
 }
-kili.append_labels(
-    json_response_array=[json_response], asset_id_array=[asset_id], label_type="DEFAULT"
+kili.labels.create_default(
+    project_id=project_id, json_response_array=[json_response], asset_id_array=[asset_id]
 )
 
 print(f"Go to my webhook: {webhook_url_from_browser}")
@@ -546,5 +551,5 @@ Well done! You can now iterate on the script. To learn how to avoid latency when
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```

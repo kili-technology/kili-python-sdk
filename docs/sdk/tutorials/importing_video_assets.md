@@ -31,7 +31,7 @@ First, let's install and import the required modules.
 
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 Now, let's set up variables needed to create an instance of the Kili object.
@@ -79,7 +79,7 @@ interface = {
     }
 }
 
-result = kili.create_project(
+result = kili.projects.create(
     title="[Kili SDK Notebook]: Importing Video Assets",
     description="Project Description",
     input_type="VIDEO",
@@ -125,8 +125,10 @@ Now, we can easily upload the video to our project:
 
 
 ```python
-assets = kili.append_many_to_dataset(
-    project_id=project_id, content_array=["./test.mp4"], external_id_array=["video_1_from_local"]
+assets = kili.assets.create_video_native(
+    project_id=project_id,
+    content_array=["./test.mp4"],
+    external_id_array=["video_1_from_local"],
 )
 ```
 
@@ -138,8 +140,10 @@ You can of course upload videos using URLs as well. To do so, simply replace `'.
 ```python
 url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
 
-assets = kili.append_many_to_dataset(
-    project_id=project_id, content_array=[url], external_id_array=["video_2_from_url"]
+assets = kili.assets.create_video_native(
+    project_id=project_id,
+    content_array=[url],
+    external_id_array=["video_2_from_url"],
 )
 ```
 
@@ -151,7 +155,8 @@ To upload your video and be able to label frames separately, as individual image
 ```python
 url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
 
-assets = kili.append_many_to_dataset(
+# shouldUseNativeVideo=False splits the video into frames; no create_* method takes this option yet
+assets = kili.assets.create_video_native(
     project_id=project_id,
     content_array=[url],
     external_id_array=["video_2_from_url_split_frames"],
@@ -183,7 +188,7 @@ Now, let's put them together as one video:
 
 
 ```python
-assets = kili.append_many_to_dataset(
+assets = kili.assets.create_video_frame(
     project_id=project_id,
     json_content_array=[["./image_1.jpg", "./image_2.jpg", "./image_3.jpg"]],
     external_id_array=["video_3_from_local_images"],
@@ -201,7 +206,7 @@ url1 = "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/vid
 url2 = "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000002.jpg"
 url3 = "https://storage.googleapis.com/label-public-staging/Frame/vid2_frame/video2-img000003.jpg"
 
-assets = kili.append_many_to_dataset(
+assets = kili.assets.create_video_frame(
     project_id=project_id,
     json_content_array=[[url1, url2, url3]],
     external_id_array=["video_4_from_image_urls"],
@@ -215,7 +220,7 @@ We can remove the project that we created:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```
 
 ## Summary

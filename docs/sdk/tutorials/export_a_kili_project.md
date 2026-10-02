@@ -16,8 +16,8 @@ The methods are illustrated with code snippets.
 
 With Kili, once you have annotated enough assets, you can export the data programmatically to train a machine learning algorithm with it. There are several ways to do it:
 
- * Fetch the assets and/or the labels one by one using [`.assets`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.queries.asset.__init__.QueriesAsset.assets) or [`.labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.labels), perform the data transformation yourself and then write the data to one or several output files.
- * Export the whole project as a dataset. To do that, use the [`.export_labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.export_labels) method that creates an archive containing the labels in your chosen format.
+ * Fetch the assets and/or the labels one by one using [`kili.assets.list`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/assets/#kili.domain_api.assets.AssetsNamespace.list) or [`kili.labels.list`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/labels/#kili.domain_api.labels.LabelsNamespace.list), perform the data transformation yourself and then write the data to one or several output files.
+ * Export the whole project as a dataset. To do that, use the [`kili.exports`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/exports/) method that creates an archive containing the labels in your chosen format.
 
 ## Preliminary steps
 
@@ -43,7 +43,7 @@ export KILI_API_KEY=<YOUR_API_KEY>
 ```python
 from pathlib import Path
 
-from kili.client import Kili
+from kili.client_domain import Kili
 
 kili = Kili(
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
@@ -61,8 +61,8 @@ First, fetch the assets:
 
 
 ```python
-assets = kili.assets(
-    your_project_id,
+assets = kili.assets.list(
+    project_id=your_project_id,
     fields=["externalId", "latestLabel.jsonResponse"],
     label_output_format="parsed_label",
 )
@@ -93,17 +93,19 @@ for asset in assets:
 
 ### Filtering specific labels per asset through the method filters
 
-You can specify label filters directly in the [`.assets`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.queries.asset.__init__.QueriesAsset.assets) and the [`.labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.labels) methods. The available filters are listed in the arguments list
+You can specify label filters directly in the [`kili.assets.list`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/assets/#kili.domain_api.assets.AssetsNamespace.list) and the [`kili.labels.list`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/labels/#kili.domain_api.labels.LabelsNamespace.list) methods. The available filters are listed in the arguments list
 for each one of these methods.
 
 When done, you can write the conversion code to get the data in the format that you need.
 
-**Get only the assets with a consensus mark above 0.5:**
+**Get only the assets with a consensus mark of at least 0.5:**
 
 
 ```python
-assets = kili.assets(
-    your_project_id, fields=["externalId", "id", "consensusMark"], consensus_mark_gt=0.5
+assets = kili.assets.list(
+    project_id=your_project_id,
+    fields=["externalId", "id", "consensusMark"],
+    filter={"consensus_mark_gte": 0.5},
 )
 print(assets)
 # + asset conversion code
@@ -120,10 +122,10 @@ print(assets)
 
 
 ```python
-labels = kili.labels(
-    your_project_id,
+labels = kili.labels.list(
+    project_id=your_project_id,
     fields=["labelOf.externalId", "honeypotMark", "author.email", "id"],
-    honeypot_mark_gte=0.1,
+    filter={"honeypot_mark_gte": 0.1},
 )
 print(labels)
 # + label conversion code
@@ -140,8 +142,10 @@ print(labels)
 
 
 ```python
-labels = kili.labels(
-    your_project_id, fields=["labelOf.externalId", "author.email", "id"], user_id=john_doe_id
+labels = kili.labels.list(
+    project_id=your_project_id,
+    fields=["labelOf.externalId", "author.email", "id"],
+    filter={"user_id": john_doe_id},
 )
 print(labels)
 # + label conversion code
@@ -166,8 +170,8 @@ You can also look for specific labels, for example the last "review" status labe
 ```python
 import json
 
-assets = kili.assets(
-    your_project_id,
+assets = kili.assets.list(
+    project_id=your_project_id,
     fields=["externalId", "labels.jsonResponse", "labels.isLatestReviewLabelForUser"],
 )
 
@@ -192,8 +196,8 @@ When working on a project with [consensus](https://docs.kili-technology.com/docs
 import tempfile
 from collections import defaultdict
 
-assets = kili.assets(
-    your_project_id,
+assets = kili.assets.list(
+    project_id=your_project_id,
     fields=[
         "externalId",
         "labels.author.email",
@@ -236,9 +240,9 @@ You can export your project data from the Kili UI (see [documentation](https://d
 | COCO          | ❌   | ✅             | ✅                      |
 | GeoJSON          | ❌   | ✅             | ✅                      |
 
-### The `.export_labels` method
+### The `kili.exports` methods
 
-The [`.export_labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.export_labels) method enables the export of a full project. It does the following preprocessing:
+The [`kili.exports`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/exports/) methods enable the export of a full project. They do the following preprocessing:
 
 * Only fetches the labels of types `"DEFAULT"` and `"REVIEW"` (see the [label types explanations](https://docs.kili-technology.com/reference/label-types)).
 * If specified, selects a subset of asset ids.
@@ -278,10 +282,10 @@ The following code snippet exports the whole asset payload and the associated la
 
 
 ```python
-kili.export_labels(
+kili.exports.kili(
     project_id=your_project_id,
-    filename="/tmp/export.zip",
-    fmt="kili",
+    output_path="/tmp/export.zip",
+    with_assets=True,
 )
 ```
 
@@ -295,10 +299,10 @@ This code snippet exports the whole asset payload and the associated labels as o
 
 
 ```python
-kili.export_labels(
+kili.exports.kili(
     project_id=your_project_id,
-    filename="/tmp/export.zip",
-    fmt="kili",
+    output_path="/tmp/export.zip",
+    with_assets=True,
     single_file=True,
 )
 ```
@@ -352,10 +356,9 @@ Here is how to export to YOLO (in this example, YOLOv5):
 
 
 ```python
-kili.export_labels(
+kili.exports.yolo_v5(
     project_id=your_project_id,
-    filename="/tmp/export.zip",
-    fmt="yolo_v5",
+    output_path="/tmp/export.zip",
 )
 ```
 
@@ -376,10 +379,9 @@ To export your data into the COCO format, run the following code:
 
 
 ```python
-kili.export_labels(
+kili.exports.coco(
     project_id=your_project_id,
-    filename="/tmp/export.zip",
-    fmt="coco",
+    output_path="/tmp/export.zip",
 )
 ```
 
@@ -400,12 +402,12 @@ We can remove the project that we created:
 
 
 ```python
-kili.delete_project(your_project_id)
+kili.projects.delete(project_id=your_project_id)
 ```
 
 ## Summary
 
 In this tutorial, we have seen several ways to export labels from a Kili project:
 
-* Using [`.assets`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.queries.asset.__init__.QueriesAsset.assets) and [`.labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.labels) and their filtering arguments, a subset of assets or labels can be selected and then exported.
-* Using [`.export_labels`](https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.export_labels), the whole project can be exported into a standard output format.
+* Using [`kili.assets.list`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/assets/#kili.domain_api.assets.AssetsNamespace.list) and [`kili.labels.list`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/labels/#kili.domain_api.labels.LabelsNamespace.list) and their filtering arguments, a subset of assets or labels can be selected and then exported.
+* Using [`kili.exports`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/exports/), the whole project can be exported into a standard output format.
