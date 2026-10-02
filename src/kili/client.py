@@ -38,6 +38,10 @@ from kili.presentation.client.user import UserClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
+# Attributed to the user's line, this one would fall under Python's default ignore outside __main__.
+warnings.filterwarnings(
+    "default", message=r"`kili\.client\.Kili` is deprecated", category=DeprecationWarning
+)
 
 
 class GraphQLClientParams(TypedDict, total=False):

@@ -131,8 +131,10 @@ def test_config_verify_env_over_file(mock_http_operations):
 
 
 def test_legacy_client_built_directly_is_deprecated(mock_http_operations):
-    with pytest.warns(DeprecationWarning, match="from kili.client_domain import Kili"):
+    with pytest.warns(DeprecationWarning, match="from kili.client_domain import Kili") as record:
         Kili(api_key="key", api_endpoint="https://endpoint.com")
+
+    assert record[0].filename == __file__  # the user's line, not kili's
 
 
 @pytest.mark.parametrize(

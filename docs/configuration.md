@@ -56,7 +56,7 @@ export KILI_API_KEY="your-api-key"
 
 **Example:**
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 # Method 1: Direct parameter
 kili = Kili(api_key="abc123")
@@ -94,7 +94,7 @@ export KILI_API_ENDPOINT="https://custom.kili.com/api/label/v2/graphql"
 
 **Example:**
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 # For on-premise installations
 kili = Kili(
@@ -139,7 +139,7 @@ export KILI_VERIFY=false  # or "true", "1", "yes"
 
 **Example:**
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 # Disable verification for local development (NOT RECOMMENDED FOR PRODUCTION)
 kili = Kili(
@@ -188,23 +188,23 @@ export KILI_DISABLE_TQDM=true  # or "false", "1", "yes"
 
 **Priority for Individual Operations:**
 
-1. Function parameter: `kili.assets(project_id="id", disable_tqdm=True)`
+1. Function parameter: `kili.assets.list(project_id="id", disable_tqdm=True)`
 2. Client global setting: `Kili(disable_tqdm=True)`
 3. Function default (usually `False` to show progress)
 
 **Example:**
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 # Disable progress bars globally for automated scripts
 kili = Kili(api_key="your-api-key", disable_tqdm=True)
 
 # All operations will have progress bars disabled
-assets = kili.assets(project_id="your-project-id")
-projects = kili.projects()
+assets = kili.assets.list(project_id="your-project-id")
+projects = kili.projects.list()
 
 # Override for specific operations
-labels = kili.labels(
+labels = kili.labels.list(
     project_id="your-project-id",
     disable_tqdm=False  # Show progress bar just for this call
 )
@@ -247,7 +247,7 @@ export KILI_API_KEY="your-production-key"
 ```
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 # Loads settings from env var and config file
 kili = Kili()

@@ -29,7 +29,7 @@ class ParsedLabel(dict):
             ```python
             from kili.utils.labels.parsing import ParsedLabel
 
-            my_label = kili.labels("project_id")[0]  # my_label is a dict
+            my_label = kili.labels.list(project_id="project_id")[0]  # my_label is a dict
 
             my_parsed_label = ParsedLabel(my_label, json_interface, input_type)  # ParsedLabel object
 
