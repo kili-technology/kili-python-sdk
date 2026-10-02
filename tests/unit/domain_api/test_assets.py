@@ -4,6 +4,7 @@ import warnings
 from unittest.mock import MagicMock
 
 import pytest
+from typeguard import TypeCheckError
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.client import Kili
@@ -242,6 +243,31 @@ class TestAssetsNamespaceCoreOperations:
             assets_namespace.count(
                 project_id="project_ext_count",
                 honeypot_mark_gt=0.2,
+            )
+
+    @pytest.mark.parametrize(
+        ("removed_filter", "value"),
+        [
+            ("consensus_mark_gt", 0.5),
+            ("consensus_mark_lt", 0.5),
+            ("honeypot_mark_gt", 0.5),
+            ("honeypot_mark_lt", 0.5),
+            ("label_consensus_mark_gt", 0.5),
+            ("label_consensus_mark_lt", 0.5),
+            ("label_created_at_gt", "2020-01-01"),
+            ("label_created_at_lt", "2020-01-01"),
+            ("label_honeypot_mark_gt", 0.5),
+            ("label_honeypot_mark_lt", 0.5),
+        ],
+    )
+    @pytest.mark.parametrize("method", ["list", "count"])
+    def test_assets_reject_removed_filter_keys(
+        self, assets_namespace, method, removed_filter, value
+    ):
+        """Ensure the `_gt`/`_lt` keys removed from `AssetFilter` are refused."""
+        with pytest.raises(TypeCheckError):
+            getattr(assets_namespace, method)(
+                project_id="project_filter", filter={removed_filter: value}
             )
 
     def test_list_assets_unknown_filter_raises(self, assets_namespace):

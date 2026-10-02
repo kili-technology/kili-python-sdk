@@ -1,6 +1,5 @@
 """Client presentation methods for assets."""
 
-# pylint: disable=too-many-lines
 import warnings
 from collections.abc import Generator, Iterable
 from typing import (
@@ -46,55 +45,6 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
-def _warn_deprecated_gt_lt_args(
-    consensus_mark_gt: Optional[float],
-    consensus_mark_lt: Optional[float],
-    honeypot_mark_gt: Optional[float],
-    honeypot_mark_lt: Optional[float],
-    label_consensus_mark_gt: Optional[float],
-    label_consensus_mark_lt: Optional[float],
-    label_created_at_gt: Optional[str],
-    label_created_at_lt: Optional[str],
-    label_honeypot_mark_gt: Optional[float],
-    label_honeypot_mark_lt: Optional[float],
-) -> None:
-    """Warn about deprecated _gt and _lt arguments."""
-    for arg_name, arg_value in zip(
-        (
-            "consensus_mark_gt",
-            "consensus_mark_lt",
-            "honeypot_mark_gt",
-            "honeypot_mark_lt",
-            "label_consensus_mark_gt",
-            "label_consensus_mark_lt",
-            "label_created_at_gt",
-            "label_created_at_lt",
-            "label_honeypot_mark_gt",
-            "label_honeypot_mark_lt",
-        ),
-        (
-            consensus_mark_gt,
-            consensus_mark_lt,
-            honeypot_mark_gt,
-            honeypot_mark_lt,
-            label_consensus_mark_gt,
-            label_consensus_mark_lt,
-            label_created_at_gt,
-            label_created_at_lt,
-            label_honeypot_mark_gt,
-            label_honeypot_mark_lt,
-        ),
-        strict=False,
-    ):
-        if arg_value:
-            warnings.warn(
-                f"'{arg_name}' is deprecated, please use"
-                f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-
-
 @for_all_methods(log_call, exclude=["__init__"])
 class AssetClientMethods(BaseClientMethods):
     """Methods attached to the Kili client, to run actions on assets."""
@@ -109,22 +59,11 @@ class AssetClientMethods(BaseClientMethods):
         fields: Optional[ListOrTuple[str]] = None,
         asset_id_in: Optional[list[str]] = None,
         asset_id_not_in: Optional[list[str]] = None,
-        consensus_mark_gt: Optional[float] = None,
-        consensus_mark_lt: Optional[float] = None,
         disable_tqdm: Optional[bool] = None,
-        external_id_contains: Optional[list[str]] = None,
         first: Optional[int] = None,
         format: Optional[str] = None,
-        honeypot_mark_gt: Optional[float] = None,
-        honeypot_mark_lt: Optional[float] = None,
         label_author_in: Optional[list[str]] = None,
-        label_consensus_mark_gt: Optional[float] = None,
-        label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
-        label_created_at_gt: Optional[str] = None,
-        label_created_at_lt: Optional[str] = None,
-        label_honeypot_mark_gt: Optional[float] = None,
-        label_honeypot_mark_lt: Optional[float] = None,
         label_type_in: Optional[list[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         updated_at_gte: Optional[str] = None,
@@ -181,22 +120,11 @@ class AssetClientMethods(BaseClientMethods):
         fields: Optional[ListOrTuple[str]] = None,
         asset_id_in: Optional[list[str]] = None,
         asset_id_not_in: Optional[list[str]] = None,
-        consensus_mark_gt: Optional[float] = None,
-        consensus_mark_lt: Optional[float] = None,
         disable_tqdm: Optional[bool] = None,
-        external_id_contains: Optional[list[str]] = None,
         first: Optional[int] = None,
         format: Optional[str] = None,
-        honeypot_mark_gt: Optional[float] = None,
-        honeypot_mark_lt: Optional[float] = None,
         label_author_in: Optional[list[str]] = None,
-        label_consensus_mark_gt: Optional[float] = None,
-        label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
-        label_created_at_gt: Optional[str] = None,
-        label_created_at_lt: Optional[str] = None,
-        label_honeypot_mark_gt: Optional[float] = None,
-        label_honeypot_mark_lt: Optional[float] = None,
         label_type_in: Optional[list[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         updated_at_gte: Optional[str] = None,
@@ -254,22 +182,11 @@ class AssetClientMethods(BaseClientMethods):
         fields: Optional[ListOrTuple[str]] = None,
         asset_id_in: Optional[list[str]] = None,
         asset_id_not_in: Optional[list[str]] = None,
-        consensus_mark_gt: Optional[float] = None,
-        consensus_mark_lt: Optional[float] = None,
         disable_tqdm: Optional[bool] = None,
-        external_id_contains: Optional[list[str]] = None,
         first: Optional[int] = None,
         format: Optional[str] = None,
-        honeypot_mark_gt: Optional[float] = None,
-        honeypot_mark_lt: Optional[float] = None,
         label_author_in: Optional[list[str]] = None,
-        label_consensus_mark_gt: Optional[float] = None,
-        label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
-        label_created_at_gt: Optional[str] = None,
-        label_created_at_lt: Optional[str] = None,
-        label_honeypot_mark_gt: Optional[float] = None,
-        label_honeypot_mark_lt: Optional[float] = None,
         label_type_in: Optional[list[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         updated_at_gte: Optional[str] = None,
@@ -327,21 +244,10 @@ class AssetClientMethods(BaseClientMethods):
             fields: All the fields to request among the possible fields for the assets.
                     See [the documentation](https://api-docs.kili-technology.com/types/objects/asset) for all possible fields.
             first: Maximum number of assets to return.
-            consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.
-            consensus_mark_lt: Deprecated. Use `consensus_mark_lte` instead.
-            external_id_contains: Deprecated. Use `external_id_strictly_in` instead.
             metadata_where: Filters by the values of the metadata of the asset.
-            honeypot_mark_gt: Deprecated. Use `honeypot_mark_gte` instead.
-            honeypot_mark_lt: Deprecated. Use `honeypot_mark_lte` instead.
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
             label_author_in: Returned assets should have a label whose author belongs to that list, if given. An author can be designated by the first name, the last name, or the first name + last name.
-            label_consensus_mark_gt: Deprecated. Use `label_consensus_mark_gte` instead.
-            label_consensus_mark_lt: Deprecated. Use `label_consensus_mark_lte` instead.
             label_created_at: Returned assets should have a label whose creation date is equal to this date.
-            label_created_at_gt: Deprecated. Use `label_created_at_gte` instead.
-            label_created_at_lt: Deprecated. Use `label_created_at_lte` instead.
-            label_honeypot_mark_gt: Deprecated. Use `label_honeypot_mark_gte` instead.
-            label_honeypot_mark_lt: Deprecated. Use `label_honeypot_mark_lte` instead.
             updated_at_gte: Returned assets should have an update date that is greater or equal to this date. The update date represents the last time a modification has been done at the asset level.
             updated_at_lte: Returned assets should have an update date that is lower or equal to this date. The update date represents the last time a modification has been done at the asset level.
             format: If equal to 'pandas', returns a pandas DataFrame
@@ -451,13 +357,6 @@ class AssetClientMethods(BaseClientMethods):
                 'Argument values as_generator==True and format=="pandas" are not compatible.'
             )
 
-        if external_id_contains is not None:
-            warnings.warn(
-                "external_id_contains is deprecated, use external_id_strictly_in instead",
-                DeprecationWarning,
-                stacklevel=1,
-            )
-
         if (step_status_in is not None and "DOING" in step_status_in) or (
             step_status_not_in is not None and "DOING" in step_status_not_in
         ):
@@ -474,19 +373,6 @@ class AssetClientMethods(BaseClientMethods):
                 DeprecationWarning,
                 stacklevel=1,
             )
-
-        _warn_deprecated_gt_lt_args(
-            consensus_mark_gt=consensus_mark_gt,
-            consensus_mark_lt=consensus_mark_lt,
-            honeypot_mark_gt=honeypot_mark_gt,
-            honeypot_mark_lt=honeypot_mark_lt,
-            label_consensus_mark_gt=label_consensus_mark_gt,
-            label_consensus_mark_lt=label_consensus_mark_lt,
-            label_created_at_gt=label_created_at_gt,
-            label_created_at_lt=label_created_at_lt,
-            label_honeypot_mark_gt=label_honeypot_mark_gt,
-            label_honeypot_mark_lt=label_honeypot_mark_lt,
-        )
 
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
@@ -570,26 +456,26 @@ class AssetClientMethods(BaseClientMethods):
             asset_id=AssetId(asset_id) if asset_id else None,
             asset_id_in=cast(list[AssetId], asset_id_in) if asset_id_in else None,
             asset_id_not_in=cast(list[AssetId], asset_id_not_in) if asset_id_not_in else None,
-            consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
-            consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
+            consensus_mark_gte=consensus_mark_gte,
+            consensus_mark_lte=consensus_mark_lte,
             external_id_strictly_in=(
-                cast(list[AssetExternalId], external_id_strictly_in or external_id_contains)
-                if external_id_strictly_in or external_id_contains
+                cast(list[AssetExternalId], external_id_strictly_in)
+                if external_id_strictly_in
                 else None
             ),
             external_id_in=cast(list[AssetExternalId], external_id_in) if external_id_in else None,
-            honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
-            honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
+            honeypot_mark_gte=honeypot_mark_gte,
+            honeypot_mark_lte=honeypot_mark_lte,
             inference_mark_gte=inference_mark_gte,
             inference_mark_lte=inference_mark_lte,
             label_author_in=label_author_in,
-            label_consensus_mark_gte=label_consensus_mark_gt or label_consensus_mark_gte,
-            label_consensus_mark_lte=label_consensus_mark_lt or label_consensus_mark_lte,
+            label_consensus_mark_gte=label_consensus_mark_gte,
+            label_consensus_mark_lte=label_consensus_mark_lte,
             label_created_at=label_created_at,
-            label_created_at_gte=label_created_at_gt or label_created_at_gte,
-            label_created_at_lte=label_created_at_lt or label_created_at_lte,
-            label_honeypot_mark_gte=label_honeypot_mark_gt or label_honeypot_mark_gte,
-            label_honeypot_mark_lte=label_honeypot_mark_lt or label_honeypot_mark_lte,
+            label_created_at_gte=label_created_at_gte,
+            label_created_at_lte=label_created_at_lte,
+            label_honeypot_mark_gte=label_honeypot_mark_gte,
+            label_honeypot_mark_lte=label_honeypot_mark_lte,
             label_type_in=label_type_in,
             metadata_where=metadata_where,
             skipped=skipped,
@@ -644,22 +530,11 @@ class AssetClientMethods(BaseClientMethods):
         asset_id: Optional[str] = None,
         asset_id_in: Optional[list[str]] = None,
         asset_id_not_in: Optional[list[str]] = None,
-        external_id_contains: Optional[list[str]] = None,
         metadata_where: Optional[dict] = None,
         status_in: Optional[list[AssetStatus]] = None,
-        consensus_mark_gt: Optional[float] = None,
-        consensus_mark_lt: Optional[float] = None,
-        honeypot_mark_gt: Optional[float] = None,
-        honeypot_mark_lt: Optional[float] = None,
         label_type_in: Optional[list[LabelType]] = None,
         label_author_in: Optional[list[str]] = None,
-        label_consensus_mark_gt: Optional[float] = None,
-        label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
-        label_created_at_gt: Optional[str] = None,
-        label_created_at_lt: Optional[str] = None,
-        label_honeypot_mark_gt: Optional[float] = None,
-        label_honeypot_mark_lt: Optional[float] = None,
         skipped: Optional[bool] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
@@ -707,22 +582,11 @@ class AssetClientMethods(BaseClientMethods):
             asset_id: The unique id of the asset to retrieve.
             asset_id_in: A list of the ids of the assets to retrieve.
             asset_id_not_in: A list of the ids of the assets to exclude.
-            external_id_contains: Deprecated. Use `external_id_strictly_in` instead.
             metadata_where: Filters by the values of the metadata of the asset.
             status_in: Returned assets should have a status that belongs to that list, if given. Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
-            consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.
-            consensus_mark_lt: Deprecated. Use `consensus_mark_lte` instead.
-            honeypot_mark_gt: Deprecated. Use `honeypot_mark_gte` instead.
-            honeypot_mark_lt: Deprecated. Use `honeypot_mark_lte` instead.
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
             label_author_in: Returned assets should have a label whose author belongs to that list, if given. An author can be designated by the first name, the last name, or the first name + last name.
-            label_consensus_mark_gt: Deprecated. Use `label_consensus_mark_gte` instead.
-            label_consensus_mark_lt: Deprecated. Use `label_consensus_mark_lte` instead.
             label_created_at: Returned assets should have a label whose creation date is equal to this date.
-            label_created_at_gt: Deprecated. Use `label_created_at_gte` instead.
-            label_created_at_lt: Deprecated. Use `label_created_at_lte` instead.
-            label_honeypot_mark_gt: Deprecated. Use `label_honeypot_mark_gte` instead.
-            label_honeypot_mark_lt: Deprecated. Use `label_honeypot_mark_lte` instead.
             skipped: Returned assets should be skipped.
             updated_at_gte: Returned assets should have an update date that is greated or equal to this date. The update date represents the last time a modification has been done at the asset level.
             updated_at_lte: Returned assets should have an update date that is lower or equal to this date. The update date represents the last time a modification has been done at the asset level.
@@ -791,13 +655,6 @@ class AssetClientMethods(BaseClientMethods):
             - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
         """
-        if external_id_contains is not None:
-            warnings.warn(
-                "external_id_contains is deprecated, use external_id_strictly_in instead",
-                DeprecationWarning,
-                stacklevel=1,
-            )
-
         if (step_status_in is not None and "DOING" in step_status_in) or (
             step_status_not_in is not None and "DOING" in step_status_not_in
         ):
@@ -814,19 +671,6 @@ class AssetClientMethods(BaseClientMethods):
                 DeprecationWarning,
                 stacklevel=1,
             )
-
-        _warn_deprecated_gt_lt_args(
-            consensus_mark_gt=consensus_mark_gt,
-            consensus_mark_lt=consensus_mark_lt,
-            honeypot_mark_gt=honeypot_mark_gt,
-            honeypot_mark_lt=honeypot_mark_lt,
-            label_consensus_mark_gt=label_consensus_mark_gt,
-            label_consensus_mark_lt=label_consensus_mark_lt,
-            label_created_at_gt=label_created_at_gt,
-            label_created_at_lt=label_created_at_lt,
-            label_honeypot_mark_gt=label_honeypot_mark_gt,
-            label_honeypot_mark_lt=label_honeypot_mark_lt,
-        )
 
         step_id_in = None
         step_id_not_in = None
@@ -891,16 +735,16 @@ class AssetClientMethods(BaseClientMethods):
             asset_id=AssetId(asset_id) if asset_id else None,
             asset_id_in=cast(list[AssetId], asset_id_in) if asset_id_in else None,
             asset_id_not_in=cast(list[AssetId], asset_id_not_in) if asset_id_not_in else None,
-            consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
-            consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
+            consensus_mark_gte=consensus_mark_gte,
+            consensus_mark_lte=consensus_mark_lte,
             external_id_strictly_in=(
-                cast(list[AssetExternalId], external_id_strictly_in or external_id_contains)
-                if external_id_strictly_in or external_id_contains
+                cast(list[AssetExternalId], external_id_strictly_in)
+                if external_id_strictly_in
                 else None
             ),
             external_id_in=cast(list[AssetExternalId], external_id_in) if external_id_in else None,
-            honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
-            honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
+            honeypot_mark_gte=honeypot_mark_gte,
+            honeypot_mark_lte=honeypot_mark_lte,
             inference_mark_gte=inference_mark_gte,
             inference_mark_lte=inference_mark_lte,
             label_author_in=label_author_in,
@@ -910,13 +754,13 @@ class AssetClientMethods(BaseClientMethods):
             label_reviewer_not_in=label_reviewer_not_in,
             assignee_in=assignee_in,
             assignee_not_in=assignee_not_in,
-            label_consensus_mark_gte=label_consensus_mark_gt or label_consensus_mark_gte,
-            label_consensus_mark_lte=label_consensus_mark_lt or label_consensus_mark_lte,
+            label_consensus_mark_gte=label_consensus_mark_gte,
+            label_consensus_mark_lte=label_consensus_mark_lte,
             label_created_at=label_created_at,
-            label_created_at_gte=label_created_at_gt or label_created_at_gte,
-            label_created_at_lte=label_created_at_lt or label_created_at_lte,
-            label_honeypot_mark_gte=label_honeypot_mark_gt or label_honeypot_mark_gte,
-            label_honeypot_mark_lte=label_honeypot_mark_lt or label_honeypot_mark_lte,
+            label_created_at_gte=label_created_at_gte,
+            label_created_at_lte=label_created_at_lte,
+            label_honeypot_mark_gte=label_honeypot_mark_gte,
+            label_honeypot_mark_lte=label_honeypot_mark_lte,
             label_type_in=label_type_in,
             metadata_where=metadata_where,
             skipped=skipped,

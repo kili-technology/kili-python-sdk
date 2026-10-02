@@ -104,6 +104,18 @@ THRESHOLD_WARN_MANY_ASSETS = 1000
 
 
 # pylint: disable=too-many-arguments, too-many-locals, too-many-branches, missing-type-doc
+def _pop_external_id_contains(asset_filter_kwargs: dict[str, object]) -> Optional[object]:
+    """Pop `external_id_contains`, deprecated in favour of `external_id_strictly_in`."""
+    external_id_contains = asset_filter_kwargs.pop("external_id_contains", None)
+    if external_id_contains is not None:
+        warnings.warn(
+            "external_id_contains is deprecated, use external_id_strictly_in instead",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+    return external_id_contains
+
+
 def fetch_assets(
     kili,
     project_id: str,
@@ -148,13 +160,14 @@ def fetch_assets(
     if additional_fields:
         fields = [*fields, *additional_fields]
     asset_filter_kwargs = asset_filter_kwargs or {}
+    external_id_contains = _pop_external_id_contains(asset_filter_kwargs)
     asset_where_params = {
         "project_id": project_id,
         "label_type_in": label_type_in,
         "consensus_mark_gte": asset_filter_kwargs.pop("consensus_mark_gte", None),
         "consensus_mark_lte": asset_filter_kwargs.pop("consensus_mark_lte", None),
         "external_id_strictly_in": asset_filter_kwargs.pop("external_id_strictly_in", None)
-        or asset_filter_kwargs.pop("external_id_contains", None),
+        or external_id_contains,
         "external_id_in": asset_filter_kwargs.pop("external_id_in", None),
         "honeypot_mark_gte": asset_filter_kwargs.pop("honeypot_mark_gte", None),
         "honeypot_mark_lte": asset_filter_kwargs.pop("honeypot_mark_lte", None),
