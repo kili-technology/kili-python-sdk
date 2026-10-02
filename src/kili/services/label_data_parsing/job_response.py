@@ -185,34 +185,44 @@ class JobPayload:
         self._json_data["text"] = text
 
     @property
-    def file_id(self) -> str:
-        """Returns the id of the file a file job answers with.
+    def file_id(self) -> Optional[str]:
+        """Returns the id of the file a file job answers with, or None if it holds none yet.
 
         The file is named by id, never by url, so resolving it into bytes goes through
         `kili.download_annotation_file`.
+
+        A deliverable that has not been produced yet is an ordinary state, so an unanswered job
+        that is not required answers None rather than raising, the way `categories` answers empty.
 
         Not reachable on a video label yet: the backend writes an asset level job under
         `assetLevel`, and the parser routes a response holding that key away from the video path.
         That limitation predates file jobs -- it hits asset level transcription and classification
         the same way -- and is tracked separately. Reading `jsonResponse` directly works today.
         """
-        if self._job_interface["mlTask"] != "FILE":
-            raise AttributeNotCompatibleWithJobError("file_id")
-        return self._json_data["fileId"]
+        return self._file_field("fileId", "file_id")
 
     @property
-    def file_name(self) -> str:
-        """Returns the name the file of a file job was uploaded under."""
-        if self._job_interface["mlTask"] != "FILE":
-            raise AttributeNotCompatibleWithJobError("file_name")
-        return self._json_data["fileName"]
+    def file_name(self) -> Optional[str]:
+        """Returns the name the file was uploaded under, or None if the job holds no file yet."""
+        return self._file_field("fileName", "file_name")
 
     @property
-    def file_mime_type(self) -> str:
-        """Returns the mime type of the file a file job answers with."""
+    def file_mime_type(self) -> Optional[str]:
+        """Returns the mime type of the file, or None if the job holds no file yet.
+
+        It is what tells a reader whether it can display the file.
+        """
+        return self._file_field("fileMimeType", "file_mime_type")
+
+    def _file_field(self, key: str, attribute_name: str) -> Optional[str]:
+        """One file field, absent when the job has not been answered and does not have to be."""
         if self._job_interface["mlTask"] != "FILE":
-            raise AttributeNotCompatibleWithJobError("file_mime_type")
-        return self._json_data["fileMimeType"]
+            raise AttributeNotCompatibleWithJobError(attribute_name)
+
+        if key not in self._json_data and not self._job_interface["required"]:
+            return None
+
+        return self._json_data[key]
 
     @property
     def is_key_frame(self) -> bool:
