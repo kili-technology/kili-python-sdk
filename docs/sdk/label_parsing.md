@@ -112,6 +112,41 @@ Retrieves the transcription text.
 label.jobs["TRANSCRIPTION_JOB"].text
 ```
 
+### File tasks
+
+A file job answers with one file, the way a transcription answers with one text. The file is named
+by id rather than by url, so downloading it goes through
+[`kili.download_annotation_file`](label.md).
+
+!!! warning
+    On a video project the backend stores an asset level job under `assetLevel`, which the parser
+    does not read yet, so these accessors are unavailable there for now. Reading the label's
+    `jsonResponse` directly works in the meantime.
+
+#### `.file_id`
+
+Retrieves the id of the stored file.
+
+```python
+label.jobs["RENDER"].file_id
+```
+
+#### `.file_name`
+
+Retrieves the name the file was uploaded under.
+
+```python
+label.jobs["RENDER"].file_name
+```
+
+#### `.file_mime_type`
+
+Retrieves the mime type of the file, which is what tells a reader whether it can display it.
+
+```python
+label.jobs["RENDER"].file_mime_type
+```
+
 ### Object detection tasks
 
 For more information about the different object detection tasks and their label formats, please refer to the [Kili documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation).
