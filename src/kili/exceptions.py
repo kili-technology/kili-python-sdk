@@ -24,7 +24,7 @@ class GraphQLError(Exception):
         if index is None:
             super().__init__(f'GraphQL error: "{error_msg}"')
         else:
-            super().__init__(f'GraphQL error at index {index}: {error_msg}"')
+            super().__init__(f'GraphQL error at index {index}: "{error_msg}"')
 
 
 class MutationOutcomeUnknownError(RequestsConnectionError):
@@ -79,6 +79,19 @@ class MutationOutcomeUnknownError(RequestsConnectionError):
                 " not have been, and the later ones were not sent."
             )
         return ""
+
+    def __reduce__(self):
+        """Rebuild from the attributes: args holds only the message, which __init__ cannot take.
+
+        Without it, the error cannot be unpickled, so a process pool running a mutation that
+        raised it breaks and loses the message. The message is kept as it was: the cause may
+        lose details once unpickled (urllib3 drops the connection pool from its errors).
+        """
+        return (
+            type(self),
+            (self.operation, self.cause, self.index, self.external_ids),
+            {"args": self.args},
+        )
 
     def at_index(self, index: int) -> "MutationOutcomeUnknownError":
         """The same error, located in the caller's list of items."""
