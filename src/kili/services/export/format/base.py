@@ -26,6 +26,7 @@ from kili.services.export.types import (
     ExportType,
     LabelFormat,
     SplitOption,
+    YoloTask,
 )
 from kili.utils.tempfile import TemporaryDirectory
 
@@ -49,6 +50,7 @@ class ExportParams(NamedTuple):
     normalized_coordinates: Optional[bool]
     label_type_in: Optional[list[str]]
     include_sent_back_labels: Optional[bool]
+    yolo_task: Optional[YoloTask] = None
 
 
 def reverse_rotation_vertices(normalized_vertices, rotation_angle) -> list[dict]:
@@ -101,6 +103,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.normalized_coordinates = export_params.normalized_coordinates
         self.label_type_in = export_params.label_type_in or ["DEFAULT", "REVIEW"]
         self.include_sent_back_labels = export_params.include_sent_back_labels
+        self.yolo_task: Optional[YoloTask] = export_params.yolo_task
 
         self.project = kili.kili_api_gateway.get_project(
             self.project_id, ["jsonInterface", "inputType", "title", "description", "id"]

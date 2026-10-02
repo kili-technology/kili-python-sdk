@@ -44,7 +44,13 @@ from kili.presentation.client.helpers.filter_conversion import (
 )
 from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
-from kili.services.export.types import CocoAnnotationModifier, ExportType, LabelFormat, SplitOption
+from kili.services.export.types import (
+    CocoAnnotationModifier,
+    ExportType,
+    LabelFormat,
+    SplitOption,
+    YoloTask,
+)
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.label import LabelUseCases
 from kili.use_cases.label.process_shapefiles import get_json_response_from_shapefiles
@@ -1383,6 +1389,7 @@ class LabelClientMethods(BaseClientMethods):
         label_type_in: Optional[list[str]] = None,
         include_sent_back_labels: Optional[bool] = None,
         export_type: ExportType = "latest",
+        yolo_task: Optional[YoloTask] = None,
     ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         # pylint: disable=line-too-long
         """Export the project labels with the requested format into the requested output path.
@@ -1445,6 +1452,13 @@ class LabelClientMethods(BaseClientMethods):
                 - `"latest_from_last_step"`: Export the latest label from each annotator for the last step.
                 - `"latest_from_all_steps"`: Export the latest label from each annotator for all steps.
                 - `"normal"`: Export all labels.
+            yolo_task: (For YOLO formats only) the Ultralytics task the label files are written for.
+                `"detect"`: a `class x y w h` line per bounding box, from the jobs with a bounding box tool.
+                `"segment"`: a `class x1 y1 ... xn yn` line per polygon, semantic part and bounding box
+                (its four corners), from the jobs with a bounding box, polygon or semantic tool;
+                not available for `yolo_v4`.
+                `None`, the default: box lines for bounding boxes and polygon lines for polygons
+                and masks, in the same file.
 
         !!! Info
             The supported formats are:
@@ -1538,6 +1552,7 @@ class LabelClientMethods(BaseClientMethods):
                 normalized_coordinates=normalized_coordinates,
                 label_type_in=label_type_in,
                 include_sent_back_labels=include_sent_back_labels,
+                yolo_task=yolo_task,
             )
         except NoCompatibleJobError as excp:
             warnings.warn(str(excp), stacklevel=2)
