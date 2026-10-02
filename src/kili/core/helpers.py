@@ -58,8 +58,9 @@ def get_mime_type(path: str):
     # guess_type does not recognize JP2 files on Windows
     if mime_type is None and path.endswith(".jp2"):
         return "image/jp2"
-    # guess_type provides a wrong mime type for NITF files on Ubuntu
-    if path.endswith((".ntf", ".nitf")) and mime_type != "application/vnd.nitf":
+    # guess_type provides a wrong mime type for NITF files on Ubuntu, and none for `.r0`,
+    # the full-resolution image of an NGA RSet
+    if path.endswith((".ntf", ".nitf", ".r0")) and mime_type != "application/vnd.nitf":
         return "application/vnd.nitf"
     return mime_type
 

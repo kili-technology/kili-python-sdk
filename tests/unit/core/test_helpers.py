@@ -12,6 +12,7 @@ from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.core.helpers import (
     RetryLongWaitWarner,
     format_result,
+    get_mime_type,
     validate_category_search_query,
 )
 from kili.domain.label import LabelId
@@ -265,3 +266,13 @@ def test_category_search_queries(case: str, query: str, raise_error: bool):
             validate_category_search_query(query)
     else:
         validate_category_search_query(query)
+
+
+@pytest.mark.parametrize("path", ["image.ntf", "image.nitf", "image.r0", "/rset/IMAGE.R0"])
+def test_get_mime_type_reads_nitf_and_rset_full_resolution_as_nitf(path):
+    assert get_mime_type(path) == "application/vnd.nitf"
+
+
+@pytest.mark.parametrize("path", ["image.r1", "image.r5", "image.r10"])
+def test_get_mime_type_does_not_read_rset_reduced_resolutions_as_nitf(path):
+    assert get_mime_type(path) != "application/vnd.nitf"
