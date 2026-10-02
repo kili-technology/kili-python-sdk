@@ -76,3 +76,20 @@ GQL_COPY_LABELS = """
     copyLabels(data: $data)
   }
 """
+
+
+GQL_ANNOTATION_FILE_URL = """
+  query AnnotationFileUrl($projectId: ID!, $assetId: ID!, $fileId: String!) {
+    data: annotationFileUrl(projectId: $projectId, assetId: $assetId, fileId: $fileId)
+  }
+"""
+
+
+GQL_CREATE_ANNOTATION_FILE_UPLOAD = """
+  mutation CreateAnnotationFileUpload($projectId: ID!, $assetId: ID!) {
+    data: createAnnotationFileUpload(projectId: $projectId, assetId: $assetId) {
+      fileId
+      uploadUrl
+    }
+  }
+"""

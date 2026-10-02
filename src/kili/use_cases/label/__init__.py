@@ -1,7 +1,9 @@
 """Label use cases."""
 
+import mimetypes
 from collections.abc import Generator
 from functools import partial
+from pathlib import Path
 from typing import TYPE_CHECKING, Literal, Optional, cast
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -50,6 +52,61 @@ class LabelUseCases(BaseUseCases):
     def count_labels(self, filters: LabelFilters) -> int:
         """Count labels."""
         return self._kili_api_gateway.count_labels(filters=filters)
+
+    def upload_annotation_file(
+        self, project_id: ProjectId, asset_id: AssetId, file_path: Path
+    ) -> dict:
+        """Upload a file and return what a file job answers with.
+
+        Two steps, as the tools that produce these files do them: the id is minted server side
+        along with a short lived url, then the bytes go straight to the bucket. Nothing references
+        the file until the returned answer is written into a label, so an upload that is never
+        referenced simply leaves an unused blob.
+
+        The mime type is what the file name suggests; the server fills it in the same way when it
+        is not given, so a name it does not recognise is left for the server to decide.
+        """
+        upload = self._kili_api_gateway.create_annotation_file_upload(
+            project_id=project_id, asset_id=asset_id
+        )
+
+        mime_type = mimetypes.guess_type(file_path.name)[0] or ""
+        with file_path.open("rb") as file:
+            response = self._kili_api_gateway.http_client.put(
+                upload["uploadUrl"],
+                data=file,
+                headers={"Content-Type": mime_type} if mime_type else {},
+                timeout=300,
+            )
+        response.raise_for_status()
+
+        return {
+            "fileId": upload["fileId"],
+            "fileName": file_path.name,
+            "fileMimeType": mime_type,
+        }
+
+    def download_annotation_file(
+        self, project_id: ProjectId, asset_id: AssetId, file_id: str, output_path: Path
+    ) -> str:
+        """Download the file a file annotation points at.
+
+        A file annotation stores an id, never a url: the url is signed when asked for and is short
+        lived, so it is fetched here rather than kept. Streamed in chunks because the files this
+        exists for -- renders, scene files -- are large.
+        """
+        url = self._kili_api_gateway.get_annotation_file_url(
+            project_id=project_id, asset_id=asset_id, file_id=file_id
+        )
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with self._kili_api_gateway.http_client.get(url, stream=True, timeout=30) as response:
+            response.raise_for_status()
+            with output_path.open("wb") as file:
+                for chunk in response.iter_content(chunk_size=1024 * 1024):
+                    file.write(chunk)
+
+        return str(output_path)
 
     def list_labels(
         self,

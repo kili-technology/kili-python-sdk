@@ -2206,3 +2206,104 @@ def test_pose_estimation_2():
     assert second_ann.points[1].code == "WITHERS"
 
     assert parsed_jobs.to_dict() == json_resp
+
+
+def test_parsing_file_job():
+    json_interface = {"jobs": {"RENDER": {"mlTask": "FILE", "required": 0, "isChild": False}}}
+    json_response_dict = {
+        "RENDER": {
+            "fileId": "cmul8o5kr00aeug4i6yng8ye7",
+            "fileName": "render.mp4",
+            "fileMimeType": "video/mp4",
+        }
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="VIDEO")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
+
+    assert parsed_jobs["RENDER"].file_id == "cmul8o5kr00aeug4i6yng8ye7"
+    assert parsed_jobs["RENDER"].file_name == "render.mp4"
+    assert parsed_jobs["RENDER"].file_mime_type == "video/mp4"
+
+
+def test_file_job_rejects_attributes_of_other_tasks():
+    json_interface = {"jobs": {"RENDER": {"mlTask": "FILE", "required": 0, "isChild": False}}}
+    json_response_dict = {
+        "RENDER": {"fileId": "f1", "fileName": "render.mp4", "fileMimeType": "video/mp4"}
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="VIDEO")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
+
+    with pytest.raises(AttributeNotCompatibleWithJobError):
+        _ = parsed_jobs["RENDER"].text
+
+    with pytest.raises(AttributeNotCompatibleWithJobError):
+        _ = parsed_jobs["RENDER"].categories
+
+    # A file job answers with a file, not with `annotations`: without this the parser would raise
+    # a KeyError rather than the error it uses for an attribute a job does not have.
+    with pytest.raises(AttributeNotCompatibleWithJobError):
+        _ = parsed_jobs["RENDER"].annotations
+
+
+def test_other_tasks_reject_the_file_attributes():
+    json_interface = {
+        "jobs": {"JOB_0": {"mlTask": "TRANSCRIPTION", "required": 1, "isChild": False}}
+    }
+    json_response_dict = {"JOB_0": {"text": "not a file"}}
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="TEXT")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
+
+    for attribute in ("file_id", "file_name", "file_mime_type"):
+        with pytest.raises(AttributeNotCompatibleWithJobError):
+            _ = getattr(parsed_jobs["JOB_0"], attribute)
+
+
+@pytest.mark.xfail(
+    reason=(
+        "The parser routes a jsonResponse holding `assetLevel` away from the video path, so an"
+        " asset level job is unreachable. Pre-existing: asset level transcription and"
+        " classification fail the same way. Flips to passing when that is fixed."
+    ),
+    strict=True,
+)
+def test_parsing_file_job_on_video_reaches_the_asset_level():
+    """What the backend actually emits for a file job: FILE is offered on video only."""
+    json_interface = {"jobs": {"RENDER": {"mlTask": "FILE", "required": 0, "isChild": False}}}
+    json_response_dict = {
+        "0": {},
+        "1": {},
+        "assetLevel": {
+            "RENDER": {"fileId": "f1", "fileName": "render.mp4", "fileMimeType": "video/mp4"}
+        },
+    }
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="VIDEO")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
+
+    assert parsed_jobs["RENDER"].file_name == "render.mp4"
+
+
+def test_file_job_not_answered_yet_reads_as_none():
+    """A deliverable that has not been produced is ordinary, so it is absent rather than an error."""
+    json_interface = {"jobs": {"RENDER": {"mlTask": "FILE", "required": 0, "isChild": False}}}
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response={"RENDER": {}}, project_info=project_info)
+
+    assert parsed_jobs["RENDER"].file_id is None
+    assert parsed_jobs["RENDER"].file_name is None
+    assert parsed_jobs["RENDER"].file_mime_type is None
+
+
+def test_required_file_job_does_not_hide_a_missing_answer():
+    """`categories` draws the same line: absent is only acceptable where the job is not required."""
+    json_interface = {"jobs": {"RENDER": {"mlTask": "FILE", "required": 1, "isChild": False}}}
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response={"RENDER": {}}, project_info=project_info)
+
+    with pytest.raises(KeyError):
+        _ = parsed_jobs["RENDER"].file_id
