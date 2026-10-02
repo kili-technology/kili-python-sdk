@@ -190,6 +190,11 @@ class JobPayload:
 
         The file is named by id, never by url, so resolving it into bytes goes through
         `kili.download_annotation_file`.
+
+        Not reachable on a video label yet: the backend writes an asset level job under
+        `assetLevel`, and the parser routes a response holding that key away from the video path.
+        That limitation predates file jobs -- it hits asset level transcription and classification
+        the same way -- and is tracked separately. Reading `jsonResponse` directly works today.
         """
         if self._job_interface["mlTask"] != "FILE":
             raise AttributeNotCompatibleWithJobError("file_id")
