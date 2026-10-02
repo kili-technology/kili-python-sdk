@@ -21,6 +21,7 @@ Because videos and Rich Text assets may be more complex to import, we’ve creat
 - For PDF assets, see [here](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_pdf_assets).
 - For Geospatial multi-layer assets, see [here](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_multilayer_geospatial_assets).
 - For LLM Static, see [here](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/llm_static/).
+- For audio assets, see the [audio projects tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/audio_projects/), which covers importing recordings along with the rest of the audio workflow.
 
 ## Importing labels
 
@@ -69,6 +70,10 @@ In [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutori
 For a more specific use case, follow [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/plugins_example/) on how to set up and use Kili plugins to monitor the quality of labels added to your project in real-time, without having to involve human reviewers.
 
 Webhooks are really similar to plugins, except they are self-hosted, and require a web service deployed at your end, callable by Kili. To learn how to use webhooks, follow [this tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/webhooks_example/).
+
+## Audio projects
+
+[This tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/audio_projects/) walks you through the whole life cycle of an audio transcription project: designing an interface with a segment-level transcription job and asset-level jobs, importing recordings, importing speaker-attributed pre-annotations, and exporting the result. It also explains how speakers work in the audio label format.
 
 ## LLM Dynamic Project
 

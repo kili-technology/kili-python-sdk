@@ -46,7 +46,14 @@ class AssetOperationMixin(BaseOperationMixin):
         options: QueryOptions,
     ) -> Generator[dict, None, None]:
         """List assets with given options."""
-        if "labels.jsonResponse" in fields or "latestLabel.jsonResponse" in fields:
+        if any(
+            field in fields
+            for field in (
+                "labels.jsonResponse",
+                "latestLabel.jsonResponse",
+                "latestLabels.jsonResponse",
+            )
+        ):
             # Check if we can get the jsonResponse of if we need to rebuild it.
             project_info = get_project(
                 self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
@@ -98,6 +105,7 @@ class AssetOperationMixin(BaseOperationMixin):
 
         requested_labels_json_response = "labels.jsonResponse" in fields
         requested_latest_label_json_response = "latestLabel.jsonResponse" in fields
+        requested_latest_labels_json_response = "latestLabels.jsonResponse" in fields
 
         required_fields = {"content", "jsonContent", "resolution.width", "resolution.height"}
         fields = list(fields)
@@ -106,6 +114,8 @@ class AssetOperationMixin(BaseOperationMixin):
             required_fields.add("labels.jsonResponseUrl")
         if requested_latest_label_json_response:
             required_fields.add("latestLabel.jsonResponseUrl")
+        if requested_latest_labels_json_response:
+            required_fields.add("latestLabels.jsonResponseUrl")
 
         for field in required_fields:
             if field not in fields:
@@ -140,7 +150,12 @@ class AssetOperationMixin(BaseOperationMixin):
 
         requested_labels_json_response = "labels.jsonResponse" in fields
         requested_latest_label_json_response = "latestLabel.jsonResponse" in fields
-        needs_json_response = requested_labels_json_response or requested_latest_label_json_response
+        requested_latest_labels_json_response = "latestLabels.jsonResponse" in fields
+        needs_json_response = (
+            requested_labels_json_response
+            or requested_latest_label_json_response
+            or requested_latest_labels_json_response
+        )
 
         if needs_json_response:
             nb_annotations = self.count_assets_annotations(filters)
@@ -164,7 +179,11 @@ class AssetOperationMixin(BaseOperationMixin):
                 {inner_annotation_fragment}
             }}
         """
-        static_fragments = {"labels": annotation_fragment, "latestLabel": annotation_fragment}
+        static_fragments = {
+            "labels": annotation_fragment,
+            "latestLabel": annotation_fragment,
+            "latestLabels": annotation_fragment,
+        }
 
         for field in required_fields:
             if field not in fields:
@@ -187,16 +206,17 @@ class AssetOperationMixin(BaseOperationMixin):
                 project_input_type=project_info["inputType"],
             )
             for asset in assets_gen:
+                labels_to_patch = []
                 if requested_latest_label_json_response and asset.get("latestLabel"):
-                    converter.patch_label_json_response(
-                        asset, asset["latestLabel"], asset["latestLabel"]["annotations"]
-                    )
-                    asset["latestLabel"].pop("annotations", None)
-
+                    labels_to_patch.append(asset["latestLabel"])
+                if requested_latest_labels_json_response:
+                    labels_to_patch.extend(asset.get("latestLabels") or [])
                 if requested_labels_json_response:
-                    for label in asset.get("labels", []):
-                        converter.patch_label_json_response(asset, label, label["annotations"])
-                        label.pop("annotations", None)
+                    labels_to_patch.extend(asset.get("labels", []))
+
+                for label in filter(None, labels_to_patch):
+                    converter.patch_label_json_response(asset, label, label["annotations"])
+                    label.pop("annotations", None)
                 yield asset
         else:
             yield from assets_gen

@@ -10,6 +10,7 @@ from kili_formats.types import Job, JobTool
 from kili.domain.ontology import JobMLTask
 from kili.services.export.exceptions import NotCompatibleInputType, NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.pixel_labeling import is_pixel_labeling_project
 from kili.services.export.tools import is_geotiff_asset_with_lat_lon_coords
 from kili.utils.tqdm import tqdm
 
@@ -41,6 +42,12 @@ class GeoJsonExporter(AbstractExporter):
             raise NotCompatibleInputType(
                 f"Project with input type '{self.project['inputType']}' not compatible with"
                 " GeoJson export format."
+            )
+
+        if is_pixel_labeling_project(self.project):
+            raise NotCompatibleInputType(
+                "GeoJson export is not available for projects labeled in image pixel"
+                " coordinates. Use the Kili format, which exports pixel coordinates."
             )
 
     def _is_job_compatible(self, job: Job) -> bool:

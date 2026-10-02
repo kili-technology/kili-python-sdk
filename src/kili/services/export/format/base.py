@@ -103,7 +103,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.include_sent_back_labels = export_params.include_sent_back_labels
 
         self.project = kili.kili_api_gateway.get_project(
-            self.project_id, ["jsonInterface", "inputType", "title", "description", "id"]
+            self.project_id,
+            ["jsonInterface", "inputType", "title", "description", "id", "geospatialSettings"],
         )
 
     @abstractmethod

@@ -609,6 +609,7 @@ class ProjectsNamespace(DomainNamespace):
         tags: Optional[ListOrTuple[str]] = None,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]] = None,
         from_demo_project: Optional[DemoProjectType] = None,
+        pixel_labeling: bool = False,
     ) -> dict[Literal["id"], str]:
         """Create a project.
 
@@ -624,6 +625,11 @@ class ProjectsNamespace(DomainNamespace):
                 the data being handled and the legal constraints associated with it.
                 Possible values are: `PHI` and `PII`.
             from_demo_project: Demo project type to create from.
+            pixel_labeling: `GEOSPATIAL` projects only. Label the images in their own
+                sensor pixel grid, with no reprojection: annotations are stored and
+                exported in pixel coordinates, and geographic coordinates come from your
+                pixel-to-geo conversion service. It can only be set at creation time, and
+                cannot be combined with `project_id` or `from_demo_project`.
 
         Returns:
             A dict with the id of the created project.
@@ -640,6 +646,7 @@ class ProjectsNamespace(DomainNamespace):
             tags=tags,
             compliance_tags=compliance_tags,
             from_demo_project=from_demo_project,
+            pixel_labeling=pixel_labeling,
         )
 
     @typechecked

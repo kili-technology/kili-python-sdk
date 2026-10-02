@@ -1,0 +1,115 @@
+"""Export of geospatial projects labeled in the image's own sensor pixel grid.
+
+Annotations are normalized against the image, as for an image asset, so the export adds
+the pixel coordinates beside them under the same keys: `vertices`, `pointPixels` and
+`polylinePixels`. The normalized values are left untouched. GeoJSON is not offered.
+"""
+
+import logging
+from collections.abc import Mapping
+from typing import Any, Optional
+
+logger = logging.getLogger(__name__)
+
+PIXEL_LABELING_CRS_CODE = "PIXEL"
+
+
+def is_pixel_labeling_project(project: Mapping[str, Any]) -> bool:
+    """Whether the project labels in the image's own pixel grid."""
+    geospatial_settings = project.get("geospatialSettings") or {}
+    return geospatial_settings.get("labelingCRSCode") == PIXEL_LABELING_CRS_CODE
+
+
+def get_asset_pixel_dimensions(asset: dict) -> Optional[tuple[int, int]]:
+    """Dimensions of the layer the annotations were normalized against.
+
+    The first layer, which the labeling grid is built from — never a later one: an asset
+    may carry a reference image of a different size, and unnormalizing against that would
+    silently move every annotation.
+    """
+    layers: list[dict] = asset.get("geospatialExportMetadata") or []
+    if not layers:
+        return None
+
+    width, height = layers[0].get("width"), layers[0].get("height")
+    if not width or not height:
+        return None
+
+    return int(width), int(height)
+
+
+def _scale_vertex(vertex: dict, width: int, height: int) -> dict:
+    return {**vertex, "x": vertex["x"] * width, "y": vertex["y"] * height}
+
+
+def _scale_ring(ring: dict, width: int, height: int) -> dict:
+    return {
+        **ring,
+        "vertices": [_scale_vertex(vertex, width, height) for vertex in ring["normalizedVertices"]],
+    }
+
+
+def _scale_bounding_poly(bounding_poly: list, width: int, height: int) -> list:
+    """Scales a `boundingPoly`, whichever of its two shapes it carries.
+
+    A geospatial semantic annotation holds every part of one object: its `boundingPoly` is
+    a list of polygon groups, each group a list of rings. Boxes and polygons are a flat
+    list of rings. Decided per element rather than from the first one, so a mixed list
+    cannot silently take the wrong branch.
+    """
+    return [
+        [_scale_ring(ring, width, height) for ring in group]
+        if isinstance(group, list)
+        else _scale_ring(group, width, height)
+        for group in bounding_poly
+    ]
+
+
+def _scale_annotation(annotation: dict, width: int, height: int) -> None:
+    """Adds the pixel coordinates beside the normalized ones, in place."""
+    # Bounding boxes, polygons, segmentation: `vertices` beside `normalizedVertices`.
+    bounding_poly = annotation.get("boundingPoly")
+    if bounding_poly is not None:
+        annotation["boundingPoly"] = _scale_bounding_poly(bounding_poly, width, height)
+
+    point = annotation.get("point")
+    if point is not None:
+        annotation["pointPixels"] = _scale_vertex(point, width, height)
+
+    polyline = annotation.get("polyline")
+    if polyline is not None:
+        annotation["polylinePixels"] = [_scale_vertex(vertex, width, height) for vertex in polyline]
+
+
+def _scale_json_response(json_response: dict, width: int, height: int) -> None:
+    for job_response in json_response.values():
+        if not isinstance(job_response, dict):
+            continue
+        for annotation in job_response.get("annotations", []):
+            _scale_annotation(annotation, width, height)
+
+
+def convert_to_pixel_coords(asset: dict) -> dict:
+    """Adds the image pixel coordinates of an asset's labels, beside the normalized ones."""
+    dimensions = get_asset_pixel_dimensions(asset)
+    if dimensions is None:
+        logger.warning(
+            "Asset %s has no recorded image dimensions: its labels carry no pixel coordinates",
+            asset.get("externalId") or asset.get("id"),
+        )
+        return asset
+
+    width, height = dimensions
+
+    labels = []
+    if asset.get("latestLabel"):
+        labels.append(asset["latestLabel"])
+    labels.extend(asset.get("labels") or [])
+    labels.extend(label for label in (asset.get("latestLabels") or []) if label)
+
+    for label in labels:
+        json_response = label.get("jsonResponse")
+        if json_response:
+            _scale_json_response(json_response, width, height)
+
+    return asset

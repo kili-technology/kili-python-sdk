@@ -25,6 +25,39 @@ from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 from kili.use_cases.base import BaseUseCases
 
+PIXEL_LABELING_CRS_CODE = "PIXEL"
+
+
+def _labels_in_image_pixels(project: dict) -> bool:
+    """Whether a project labels in the image's own sensor pixel grid."""
+    geospatial_settings = project.get("geospatialSettings") or {}
+    return geospatial_settings.get("labelingCRSCode") == PIXEL_LABELING_CRS_CODE
+
+
+def _validate_pixel_labeling(
+    project_id: Optional[ProjectId],
+    from_demo_project: Optional[DemoProjectType],
+    input_type: Optional[InputType],
+) -> None:
+    """Refuses every creation the pixel labeling mode cannot apply to.
+
+    Checked exhaustively, and on the single path every caller goes through: the mode is
+    settable at creation only, so a project silently created without it could never be
+    repaired afterwards.
+    """
+    if project_id is not None:
+        raise ValueError(
+            "`pixel_labeling` cannot be set when copying a project: the copy keeps"
+            " the labeling mode of the project it is copied from."
+        )
+    if from_demo_project is not None:
+        raise ValueError(
+            "`pixel_labeling` cannot be set when creating a project from a demo project:"
+            " none of them is geospatial."
+        )
+    if input_type != "GEOSPATIAL":
+        raise ValueError("`pixel_labeling` is only available for `GEOSPATIAL` projects.")
+
 
 class ProjectUseCases(BaseUseCases):
     """Project use cases."""
@@ -38,37 +71,20 @@ class ProjectUseCases(BaseUseCases):
         project_id: Optional[ProjectId] = None,
         input_type: Optional[InputType] = None,
         json_interface: Optional[dict] = None,
+        pixel_labeling: bool = False,
     ) -> ProjectId:
         """Create or copy a project if project_id is set."""
+        if pixel_labeling:
+            _validate_pixel_labeling(project_id, from_demo_project, input_type)
+
         if project_id is not None:
-            project_copied = self._kili_api_gateway.get_project(
-                project_id=project_id, fields=["jsonInterface", "instructions", "inputType"]
-            )
-            project_tag = self._kili_api_gateway.list_tags_by_project(
-                project_id=project_id, fields=["id"]
-            )
-            new_project_id = self._kili_api_gateway.create_project(
-                input_type=project_copied["inputType"],
-                json_interface=project_copied["jsonInterface"],
+            new_project_id = self._copy_project(
+                project_id,
                 title=title,
                 description=description,
                 compliance_tags=compliance_tags,
                 from_demo_project=from_demo_project,
             )
-            if project_copied["instructions"]:
-                self.update_properties_in_project(
-                    project_id=new_project_id,
-                    instructions=project_copied["instructions"],
-                )
-            tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
-            tags_of_orga_ids = [tag["id"] for tag in tags_of_orga]
-
-            for tag in project_tag:
-                if tag["id"] not in tags_of_orga_ids:
-                    raise ValueError(
-                        f"Tag {tag['id']} doesn't belong to your organization and was not copied."
-                    )
-                self._kili_api_gateway.check_tag(project_id=new_project_id, tag_id=tag["id"])
         elif from_demo_project is None and (input_type is None or json_interface is None):
             raise ValueError(
                 "Arguments `input_type` and `json_interface` must be set if neither "
@@ -82,6 +98,7 @@ class ProjectUseCases(BaseUseCases):
                 description=description,
                 compliance_tags=compliance_tags,
                 from_demo_project=from_demo_project,
+                pixel_labeling=pixel_labeling,
             )
 
         # The project is not immediately available after creation
@@ -95,6 +112,49 @@ class ProjectUseCases(BaseUseCases):
                 _ = self._kili_api_gateway.get_project(project_id=new_project_id, fields=("id",))
 
         return ProjectId(new_project_id)
+
+    def _copy_project(
+        self,
+        project_id: ProjectId,
+        *,
+        title: str,
+        description: str,
+        compliance_tags: Optional[ListOrTuple[ComplianceTag]],
+        from_demo_project: Optional[DemoProjectType],
+    ) -> ProjectId:
+        """Create a project from an existing one, carrying over its instructions and tags."""
+        project_copied = self._kili_api_gateway.get_project(
+            project_id=project_id,
+            fields=["jsonInterface", "instructions", "inputType", "geospatialSettings"],
+        )
+        project_tag = self._kili_api_gateway.list_tags_by_project(
+            project_id=project_id, fields=["id"]
+        )
+        new_project_id = self._kili_api_gateway.create_project(
+            input_type=project_copied["inputType"],
+            json_interface=project_copied["jsonInterface"],
+            title=title,
+            description=description,
+            compliance_tags=compliance_tags,
+            from_demo_project=from_demo_project,
+            pixel_labeling=_labels_in_image_pixels(project_copied),
+        )
+        if project_copied["instructions"]:
+            self.update_properties_in_project(
+                project_id=new_project_id,
+                instructions=project_copied["instructions"],
+            )
+
+        tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
+        tags_of_orga_ids = [tag["id"] for tag in tags_of_orga]
+        for tag in project_tag:
+            if tag["id"] not in tags_of_orga_ids:
+                raise ValueError(
+                    f"Tag {tag['id']} doesn't belong to your organization and was not copied."
+                )
+            self._kili_api_gateway.check_tag(project_id=new_project_id, tag_id=tag["id"])
+
+        return new_project_id
 
     def list_projects(
         self,
