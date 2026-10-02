@@ -2284,3 +2284,26 @@ def test_parsing_file_job_on_video_reaches_the_asset_level():
     parsed_jobs = ParsedJobs(json_response=json_response_dict, project_info=project_info)
 
     assert parsed_jobs["RENDER"].file_name == "render.mp4"
+
+
+def test_file_job_not_answered_yet_reads_as_none():
+    """A deliverable that has not been produced is ordinary, so it is absent rather than an error."""
+    json_interface = {"jobs": {"RENDER": {"mlTask": "FILE", "required": 0, "isChild": False}}}
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response={"RENDER": {}}, project_info=project_info)
+
+    assert parsed_jobs["RENDER"].file_id is None
+    assert parsed_jobs["RENDER"].file_name is None
+    assert parsed_jobs["RENDER"].file_mime_type is None
+
+
+def test_required_file_job_does_not_hide_a_missing_answer():
+    """`categories` draws the same line: absent is only acceptable where the job is not required."""
+    json_interface = {"jobs": {"RENDER": {"mlTask": "FILE", "required": 1, "isChild": False}}}
+
+    project_info = Project(jsonInterface=json_interface["jobs"], inputType="IMAGE")  # type: ignore
+    parsed_jobs = ParsedJobs(json_response={"RENDER": {}}, project_info=project_info)
+
+    with pytest.raises(KeyError):
+        _ = parsed_jobs["RENDER"].file_id

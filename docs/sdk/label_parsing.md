@@ -123,6 +123,8 @@ by id rather than by url, so downloading it goes through
     does not read yet, so these accessors are unavailable there for now. Reading the label's
     `jsonResponse` directly works in the meantime.
 
+Each accessor answers `None` while the job holds no file yet, as long as the job is not required.
+
 #### `.file_id`
 
 Retrieves the id of the stored file.
