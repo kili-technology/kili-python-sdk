@@ -94,11 +94,3 @@ class PluginHandler(PluginCore):
 ## Model for Plugins
 
 ::: kili.services.plugins.model.PluginCore
-
-## Queries
-
-::: kili.entrypoints.queries.plugins.__init__.QueriesPlugins
-
-## Mutations
-
-::: kili.entrypoints.mutations.plugins.__init__.MutationsPlugins

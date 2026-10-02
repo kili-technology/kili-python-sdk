@@ -43,7 +43,7 @@ The module `kili.utils.labels` provides a set of helpers to convert point, bound
     To check if your image asset has geospatial metadata, you can use the following code snippet:
 
     ```python
-    >>> asset = kili.assets(..., fields=["jsonContent"])[0]
+    >>> asset = kili.assets.list(..., fields=["jsonContent"])[0]
     >>> print(asset['jsonContent'])
 
     # asset without geospatial metadata

@@ -504,7 +504,7 @@ class LabelsNamespace(DomainNamespace):
             project_id=project_id,
             reviewed_label_id=None,
             reviewed_label_id_array=None,
-            step_name="Default",
+            step_name=None,  # the backend's labeling step, as append_labels does: steps are named per project
         )
 
     @overload

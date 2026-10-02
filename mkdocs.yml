@@ -15,16 +15,29 @@ nav:
       - Configuration: configuration.md
       - Tutorials: tutorials.md
       - Reference:
-          - Asset: sdk/asset.md
-          - Cloud Storage: sdk/cloud_storage.md
-          - Event: sdk/event.md
-          - Issue: sdk/issue.md
-          - Label: sdk/label.md
+          - Assets: sdk/domain/assets.md
+          - Events: sdk/event.md
+          - Exports: sdk/domain/exports.md
+          - Issues: sdk/domain/issues.md
+          - Labels: sdk/domain/labels.md
           - Label Utils: sdk/label_utils.md
           - Label Parsing: sdk/label_parsing.md
           - LLM: sdk/llm.md
+          - Organizations: sdk/domain/organizations.md
+          - Plugins: sdk/domain/plugins.md
+          - Plugin Development: sdk/plugins.md
+          - Projects: sdk/domain/projects.md
+          - Questions: sdk/domain/questions.md
+          - Storages: sdk/domain/storages.md
+          - Tags: sdk/domain/tags.md
+          - Users: sdk/domain/users.md
+      - Legacy Reference (deprecated):
+          - Asset: sdk/asset.md
+          - Cloud Storage: sdk/cloud_storage.md
+          - Issue: sdk/issue.md
+          - Label: sdk/label.md
           - Organization: sdk/organization.md
-          - Plugins: sdk/plugins.md
+          - Plugins: sdk/plugins_legacy.md
           - Project: sdk/project.md
           - Project User: sdk/project_user.md
           - Project Version: sdk/project_version.md

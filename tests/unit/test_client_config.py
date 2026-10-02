@@ -1,12 +1,16 @@
 import json
 import os
 import tempfile
+import warnings
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from kili.client import Kili
+from kili.client_domain import Kili as KiliDomain
+from kili.core.graphql.graphql_client import GraphQLClientName
+from kili.domain_api import PluginsNamespace
 
 
 @pytest.fixture()
@@ -124,3 +128,34 @@ def test_config_verify_env_over_file(mock_http_operations):
         finally:
             os.chdir(original_cwd)
             os.environ.pop("KILI_VERIFY", None)
+
+
+def test_legacy_client_built_directly_is_deprecated(mock_http_operations):
+    with pytest.warns(DeprecationWarning, match="from kili.client_domain import Kili") as record:
+        Kili(api_key="key", api_endpoint="https://endpoint.com")
+
+    assert record[0].filename == __file__  # the user's line, not kili's
+
+
+@pytest.mark.parametrize(
+    "build",
+    [
+        lambda: Kili(
+            api_key="key", api_endpoint="https://endpoint.com", client_name=GraphQLClientName.CLI
+        ),
+        lambda: KiliDomain(api_key="key", api_endpoint="https://endpoint.com"),
+    ],
+    ids=["cli", "domain"],
+)
+def test_clients_the_sdk_builds_itself_do_not_warn(mock_http_operations, build):
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        build()
+
+
+def test_domain_client_exposes_plugins_llm_and_events(mock_http_operations):
+    kili = KiliDomain(api_key="key", api_endpoint="https://endpoint.com")
+
+    assert isinstance(kili.plugins, PluginsNamespace)
+    assert kili.llm is kili.legacy_client.llm
+    assert kili.events is kili.legacy_client.events
