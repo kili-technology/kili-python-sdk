@@ -81,24 +81,21 @@ class YoloExporter(AbstractExporter):
                     f"that can be converted to the {self.label_format} format."
                 )
 
+    @property
+    def task(self) -> YoloTask:
+        """The task the lines are written for: no task is the detect export, as in the app."""
+        return self.yolo_task or "detect"
+
     def _is_job_compatible(self, job: Job) -> bool:
         """Check job compatibility with the YOLO format."""
         if "tools" not in job:
             return False
 
-        if self.yolo_task is not None:
-            # The export service's rule, so the SDK and the app export the same jobs.
-            return (
-                job["mlTask"] == JobMLTask.OBJECT_DETECTION
-                and not job.get("isModel")
-                and bool(_EXPORTED_TOOLS[self.yolo_task].intersection(job["tools"]))
-            )
-
-        compatible_tools = {JobTool.RECTANGLE, JobTool.POLYGON, JobTool.SEMANTIC}
-
-        return job["mlTask"] == JobMLTask.OBJECT_DETECTION and all(
-            tool in compatible_tools
-            for tool in job["tools"]  # pyright: ignore[reportGeneralTypeIssues]
+        # The export service's rule, so the SDK and the app export the same jobs.
+        return (
+            job["mlTask"] == JobMLTask.OBJECT_DETECTION
+            and not job.get("isModel")
+            and bool(_EXPORTED_TOOLS[self.task].intersection(job["tools"]))
         )
 
     def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
@@ -161,7 +158,7 @@ class YoloExporter(AbstractExporter):
                 self.content_repository,
                 self.with_assets,
                 self.project["inputType"],
-                self.yolo_task,
+                self.task,
             )
             if video_filenames:
                 video_metadata[asset["externalId"]] = video_filenames

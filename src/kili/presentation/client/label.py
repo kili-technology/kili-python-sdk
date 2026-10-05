@@ -1457,8 +1457,7 @@ class LabelClientMethods(BaseClientMethods):
                 `"segment"`: a `class x1 y1 ... xn yn` line per polygon, semantic part and bounding box
                 (its four corners), from the jobs with a bounding box, polygon or semantic tool;
                 not available for `yolo_v4`.
-                `None`, the default: box lines for bounding boxes and polygon lines for polygons
-                and masks, in the same file.
+                `None`, the default: `"detect"`.
 
         !!! Info
             The supported formats are:

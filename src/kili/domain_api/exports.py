@@ -390,7 +390,7 @@ class ExportNamespace(DomainNamespace):
                 `"detect"`: a `class x y w h` line per bounding box, from the jobs with a bounding
                 box tool. `"segment"`: a `class x1 y1 ... xn yn` line per polygon, semantic part and
                 bounding box (its four corners), from the jobs with a bounding box, polygon or
-                semantic tool. `None`, the default: box lines and polygon lines in the same file.
+                semantic tool. `None`, the default: `"detect"`.
 
         Returns:
             Export information or None if export failed.
@@ -458,7 +458,7 @@ class ExportNamespace(DomainNamespace):
                 `"detect"`: a `class x y w h` line per bounding box, from the jobs with a bounding
                 box tool. `"segment"`: a `class x1 y1 ... xn yn` line per polygon, semantic part and
                 bounding box (its four corners), from the jobs with a bounding box, polygon or
-                semantic tool. `None`, the default: box lines and polygon lines in the same file.
+                semantic tool. `None`, the default: `"detect"`.
 
         Returns:
             Export information or None if export failed.
@@ -526,7 +526,7 @@ class ExportNamespace(DomainNamespace):
                 `"detect"`: a `class x y w h` line per bounding box, from the jobs with a bounding
                 box tool. `"segment"`: a `class x1 y1 ... xn yn` line per polygon, semantic part and
                 bounding box (its four corners), from the jobs with a bounding box, polygon or
-                semantic tool. `None`, the default: box lines and polygon lines in the same file.
+                semantic tool. `None`, the default: `"detect"`.
 
         Returns:
             Export information or None if export failed.

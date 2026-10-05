@@ -59,7 +59,7 @@ from kili.services.export.types import LabelFormat, SplitOption, YoloTask
     default=None,
     help=(
         "YOLO v5, v7 and v8 only: 'detect' for box lines, 'segment' for polygon lines (polygons,"
-        " masks and boxes). Without it, box and polygon lines in the same file."
+        " masks and boxes). Without it, 'detect'."
     ),
 )
 @Options.api_key
