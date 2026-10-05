@@ -1,7 +1,7 @@
-from kili.plugins import PluginCore
+from kili.plugins import Plugin
 
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """Custom plugin instance."""
 
     @staticmethod
@@ -40,19 +40,19 @@ class PluginHandler(PluginCore):
         n_issues = len(text_issues_array)
 
         if n_issues:
-            self.kili.create_issues(
+            self.kili.issues.create(
                 project_id=project_id,
                 label_id_array=[label["id"]] * len(text_issues_array),
                 object_mid_array=mid_issues_array,
                 text_array=text_issues_array,
             )
 
-        self.kili.add_to_review(asset_ids=[asset_id])
+        self.kili.assets.move_to_next_step(project_id=project_id, asset_id=asset_id)
 
         n_annotations = len(label["jsonResponse"]["JOB_0"]["annotations"])
 
         accuracy = (1 - n_issues / n_annotations) * 100
 
-        self.kili.update_properties_in_assets(
-            asset_ids=[asset_id], json_metadatas=[f"{{'accuracy': {accuracy}}}"]
+        self.kili.assets.set_metadata(
+            project_id=project_id, asset_id=asset_id, json_metadata={"accuracy": accuracy}
         )

@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from kili.plugins import PluginCore
+from kili.plugins import Plugin
 
 
 def check_rules_on_label(label: dict) -> list[Optional[str]]:
@@ -19,7 +19,7 @@ def check_rules_on_label(label: dict) -> list[Optional[str]]:
     return [f"There are too many BBox ({counter}) - Only 1 BBox of Object A accepted"]
 
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """Custom plugin instance."""
 
     def on_submit(self, label: dict, asset_id: str) -> None:
@@ -33,7 +33,7 @@ class PluginHandler(PluginCore):
         if len(issues_array) > 0:
             print("Creating an issue...")
 
-            self.kili.create_issues(
+            self.kili.issues.create(
                 project_id=project_id,
                 label_id_array=[label["id"]] * len(issues_array),
                 text_array=issues_array,
@@ -41,4 +41,4 @@ class PluginHandler(PluginCore):
 
             print("Issue created!")
 
-            self.kili.send_back_to_queue(asset_ids=[asset_id])
+            self.kili.assets.invalidate(project_id=project_id, asset_id=asset_id)

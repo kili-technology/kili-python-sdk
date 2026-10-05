@@ -1,18 +1,34 @@
 """Develop Plugins for Kili."""
 
 import logging
-from typing import Optional
+import warnings
+from typing import Optional, Union
 
-from kili.client import Kili
+from typing_extensions import deprecated
+
+from kili.client import Kili as KiliLegacy
+from kili.client_domain import Kili
 from kili.services.plugins.helpers import get_logger
 
+# Attributed to the plugin author's class line, this one would fall under Python's default ignore
+# outside __main__, where plugins are written: a module imported by a notebook or the runner.
+warnings.filterwarnings(
+    "default", message=r"`kili\.plugins\.PluginCore` is deprecated", category=DeprecationWarning
+)
 
-class PluginCore:
-    """Kili Plugin core class.
+
+class Plugin:
+    """Kili plugin base class: a plugin is a class named `PluginHandler` that subclasses it.
+
+    `self.kili` is the domain client (`kili.assets.list(...)`, `kili.issues.create(...)`). Its
+    `legacy_client` attribute keeps the legacy client's methods, for a plugin moving from
+    `PluginCore` one call at a time.
 
     Args:
-        kili: kili instance that plugins can make use of
-        project_id: the project on which plugin is ran
+        kili: The client the plugin runner gives the plugin. A legacy client is wrapped without
+            signing in again; a domain client is used as is.
+        project_id: The project on which the plugin is run.
+        logger: The logger whose messages appear in the plugin's logs. Defaults to a local logger.
 
     Implements:
 
@@ -24,6 +40,19 @@ class PluginCore:
 
     !!! warning
         if using a custom init, be sure to call super().__init__()
+
+    !!! example
+        ```python
+        from kili.plugins import Plugin
+
+        class PluginHandler(Plugin):
+            def on_submit(self, label: Dict, asset_id: str):
+                self.kili.issues.create(
+                    project_id=self.project_id, label_id=label["id"], text="Check the boxes"
+                )
+                # a legacy call, kept until it is migrated
+                self.kili.legacy_client.send_back_to_queue(asset_ids=[asset_id])
+        ```
     """
 
     logger: logging.Logger
@@ -31,9 +60,12 @@ class PluginCore:
     project_id: str
 
     def __init__(
-        self, kili: Kili, project_id: str, logger: Optional[logging.Logger] = None
+        self,
+        kili: Union[Kili, KiliLegacy],
+        project_id: str,
+        logger: Optional[logging.Logger] = None,
     ) -> None:
-        self.kili = kili
+        self.kili = Kili.from_legacy(kili) if isinstance(kili, KiliLegacy) else kili
         self.project_id = project_id
         if logger:
             self.logger = logger
@@ -63,7 +95,7 @@ class PluginCore:
                 if label_is_respecting_business_rule(json_response):
                     return
                 else:
-                    self.kili.send_back_to_queue(asset_ids=[asset_id])
+                    self.kili.assets.invalidate(asset_id=asset_id, project_id=self.project_id)
             ```
         """
         # pylint: disable=unused-argument
@@ -92,7 +124,7 @@ class PluginCore:
                 if label_is_respecting_business_rule(json_response):
                     return
                 else:
-                    self.kili.send_back_to_queue(asset_ids=[asset_id])
+                    self.kili.assets.invalidate(asset_id=asset_id, project_id=self.project_id)
             ```
         """
         # pylint: disable=unused-argument
@@ -123,11 +155,9 @@ class PluginCore:
                 if !issue:
                     return
                 else:
-                    self.kili.create_issues(
-                            project_id=self.project_id,
-                            label_id_array=[label_id],
-                            text_array=[issue]
-                        )
+                    self.kili.issues.create(
+                        project_id=self.project_id, label_id=label_id, text=issue
+                    )
             ```
         """
         # pylint: disable=unused-argument
@@ -168,3 +198,32 @@ class PluginCore:
         """
         # pylint: disable=unused-argument
         self.logger.warning("Method not implemented. Define a custom on_event on your plugin")
+
+
+@deprecated(
+    "`kili.plugins.PluginCore` is deprecated and will be removed in a future major release."
+    " Subclass `kili.plugins.Plugin` instead: `self.kili` is then the domain client"
+    " (`self.kili.assets.list(...)`), and `self.kili.legacy_client` keeps this class's methods"
+    " while the plugin migrates."
+)
+class PluginCore(Plugin):
+    """Kili plugin base class giving the plugin the legacy client as `self.kili`.
+
+    !!! warning "Deprecated"
+        Subclass `kili.plugins.Plugin` instead: `self.kili` is then the
+        domain client, and `self.kili.legacy_client` keeps the methods used here while the plugin
+        migrates. `PluginCore` keeps working until a future major release.
+
+    Args:
+        kili: The legacy client the plugin runner gives the plugin, used as is.
+        project_id: The project on which the plugin is run.
+        logger: The logger whose messages appear in the plugin's logs. Defaults to a local logger.
+    """
+
+    kili: KiliLegacy  # pyright: ignore[reportIncompatibleVariableOverride]
+
+    def __init__(
+        self, kili: KiliLegacy, project_id: str, logger: Optional[logging.Logger] = None
+    ) -> None:
+        super().__init__(kili, project_id, logger)
+        self.kili = kili

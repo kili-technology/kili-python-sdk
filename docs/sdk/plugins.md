@@ -19,7 +19,7 @@ plugin_folder
     |__ helper.py
 ```
 
-The plugin you are going to upload has to contain a `class PluginHandler(PluginCore)` (in the case of the module type plugin it has to be inside `main.py`) that implements two methods for the different types of events:
+The plugin you are going to upload has to contain a `class PluginHandler(Plugin)` (in the case of the module type plugin it has to be inside `main.py`) that implements two methods for the different types of events:
 
 - `on_submit`
 - `on_review`
@@ -33,7 +33,7 @@ You can add custom methods in your class as well.
 
 Moreover, some attributes are directly available in the class:
 
-- `self.kili`
+- `self.kili`: the Kili client, to call `self.kili.assets.list(...)`, `self.kili.issues.create(...)`, etc.
 - `self.project_id`
 
 Therefore, the skeleton of the plugin (of `main.py` in the case of the module type plugin) should look like this:
@@ -42,12 +42,12 @@ Therefore, the skeleton of the plugin (of `main.py` in the case of the module ty
 from typing import Dict
 import numpy as np
 
-from kili.plugins import PluginCore
+from kili.plugins import Plugin
 
 def custom_function():
     # Do something...
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """Custom plugin"""
 
     def custom_method(self):
@@ -76,13 +76,13 @@ The plugins for the on-premise deployments work exactly the same as the plugins 
 ```python
 from logging import Logger
 from typing import Dict
-from kili.plugins import PluginCore
+from kili.plugins import Plugin
 
 def custom_function(label: Dict, logger: Logger):
     logger.info("Custom function called")
     # Do something...
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """Custom plugin"""
 
     def on_submit(self, label: Dict, asset_id: str) -> None:
@@ -91,6 +91,26 @@ class PluginHandler(PluginCore):
         custom_function(label, self.logger)
 ```
 
+## Moving a plugin from `PluginCore`
+
+Plugins written with `class PluginHandler(PluginCore)` keep working, but `PluginCore` is deprecated and will be removed in a future major release. There, `self.kili` is the legacy client (`self.kili.assets(...)`, `self.kili.create_issues(...)`).
+
+To move a plugin, change its base class to `Plugin`: `self.kili` becomes the client used everywhere else in this documentation, and `self.kili.legacy_client` keeps the legacy methods. Prefix the legacy calls with `legacy_client`, then convert them one at a time:
+
+```python
+from kili.plugins import Plugin
+
+
+class PluginHandler(Plugin):
+    def on_submit(self, label: Dict, asset_id: str) -> None:
+        self.kili.issues.create(project_id=self.project_id, label_id=label["id"], text="To check")
+        self.kili.legacy_client.send_back_to_queue(asset_ids=[asset_id])  # not migrated yet
+```
+
 ## Model for Plugins
+
+::: kili.services.plugins.model.Plugin
+
+## Legacy model for plugins (deprecated)
 
 ::: kili.services.plugins.model.PluginCore

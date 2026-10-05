@@ -109,6 +109,26 @@ class Kili:
             disable_tqdm,
         )
 
+    @classmethod
+    def from_legacy(cls, legacy_client: KiliLegacy) -> "Kili":
+        """Wrap an existing legacy client, without signing in again.
+
+        Args:
+            legacy_client: A `kili.client.Kili` instance, such as the one a plugin is given.
+
+        Returns:
+            A domain client making its calls through `legacy_client`.
+
+        Examples:
+            ```python
+            kili = Kili.from_legacy(legacy_kili)
+            kili.projects.list()
+            ```
+        """
+        kili = cls.__new__(cls)
+        kili.legacy_client = legacy_client
+        return kili
+
     # Domain API Namespaces - Lazy loaded properties
     @cached_property
     def assets(self) -> "AssetsNamespace":

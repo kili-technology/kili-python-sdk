@@ -108,7 +108,7 @@ To iterate on the plugin code, you can refer to the plugins_development.ipynb no
 ## Step 3: Write the plugin
 
 ```python
-from kili.plugins import PluginCore
+from kili.plugins import Plugin
 from typing import Dict, List, Optional
 
 def check_rules_on_label(label: Dict) -> List[Optional[str]]:
@@ -125,7 +125,7 @@ def check_rules_on_label(label: Dict) -> List[Optional[str]]:
     return [f"There are too many BBox ({counter}) - Only 1 BBox of Object A accepted"]
 
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """
     Custom plugin instance
     """
@@ -143,7 +143,7 @@ class PluginHandler(PluginCore):
         if len(issues_array) > 0:
             print("Creating an issue...")
 
-            self.kili.create_issues(
+            self.kili.issues.create(
                 project_id=project_id,
                 label_id_array=[label['id']] * len(issues_array),
                 text_array=issues_array,
@@ -151,7 +151,7 @@ class PluginHandler(PluginCore):
 
             print("Issue created!")
 
-            self.kili.send_back_to_queue(asset_ids=[asset_id])
+            self.kili.assets.invalidate(project_id=project_id, asset_id=asset_id)
 
 ```
 
@@ -173,7 +173,7 @@ urllib.request.urlretrieve(
 
 With the plugin defined in a separate `Python` file, you can create a folder containing:
 
-- A `main.py` file which is the entrypoint of the plugin and must have a `PluginHandler` class which implements a `PluginCore` class
+- A `main.py` file which is the entrypoint of the plugin and must have a `PluginHandler` class which subclasses the `Plugin` class
 - (optionally) a `requirements.txt` (if you need specific PyPi packages in your plugin)
 
 **Note:** The `requirements.txt` file can only be included for the SaaS version of the Kili platform, for on-premise deployments there is a pre-defined list of packages that can be used. For more details, see the [documentation of plugins](https://python-sdk-docs.kili-technology.com/latest/sdk/plugins/)

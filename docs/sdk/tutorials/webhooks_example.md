@@ -131,7 +131,7 @@ Custom module with basic plugin example
 """
 from typing import Dict
 
-from kili.plugins import PluginCore
+from kili.plugins import Plugin
 
 
 def check_rules_on_label(label: Dict):
@@ -165,7 +165,7 @@ def _get_area(bounding_box):
     return width * height
 
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """
     Custom plugin instance
     """
@@ -178,9 +178,9 @@ class PluginHandler(PluginCore):
         In this more complex use-case, we will \
             fetch the complete `jsonResponse`
         """
-        json_response = self.kili.labels(
-            asset_id=asset_id,
+        json_response = self.kili.labels.list(
             project_id=self.project_id,
+            filter={"asset_id": asset_id},
             fields=['jsonResponse'],
             disable_tqdm=True
         )[0]['jsonResponse']
@@ -216,7 +216,7 @@ class PluginHandler(PluginCore):
             for issue in issues_array:
                 print(issue)
 
-                self.kili.create_issues(
+                self.kili.issues.create(
                     label_id_array=[label['id']],
                     project_id=project_id,
                     text_array=[issue['text']],
@@ -225,7 +225,7 @@ class PluginHandler(PluginCore):
 
             self.logger.warning("Issue created!")
 
-            self.kili.send_back_to_queue(asset_ids=[asset_id])
+            self.kili.assets.invalidate(project_id=project_id, asset_id=asset_id)
 
         else:
             self.logger.info('No issues encountered')
@@ -253,7 +253,7 @@ from kili.client_domain import Kili
 from plugin import PluginHandler
 
 app = FastAPI()
-kili = Kili().legacy_client  # PluginHandler calls the legacy client's methods
+kili = Kili()
 
 API_KEY = "secret-api-key"
 

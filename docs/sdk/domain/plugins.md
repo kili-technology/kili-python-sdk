@@ -2,7 +2,7 @@
 
 Reached as `kili.plugins` and `kili.plugins.webhooks` on the client (`from kili.client_domain import Kili`).
 
-How to write a plugin, and its `PluginCore` base class: [Plugin Development](../plugins.md).
+How to write a plugin, and its `Plugin` base class: [Plugin Development](../plugins.md).
 
 ## `kili.plugins`
 
