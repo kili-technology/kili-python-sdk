@@ -1,11 +1,27 @@
 """Common fixtures for tests."""
 
+from unittest.mock import patch
+
 import pytest
 from pytest_mock import MockerFixture
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.core.graphql.graphql_client import GraphQLClient
+
+
+@pytest.fixture(autouse=True)
+def _no_pypi_call():
+    """Keep the SDK version check of every Kili client initialization away from PyPI.
+
+    A test that needs a version can patch `get_latest_sdk_version_from_pypi` itself. This
+    fixture does not use `mocker`, so that requesting it does not reorder the teardown of
+    the fixtures a test asks for.
+    """
+    with patch(
+        "kili.adapters.pypi.get_latest_sdk_version_from_pypi", return_value=None
+    ) as no_pypi_call:
+        yield no_pypi_call
 
 
 @pytest.fixture()
