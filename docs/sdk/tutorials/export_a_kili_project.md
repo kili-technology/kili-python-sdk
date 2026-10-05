@@ -315,7 +315,7 @@ kili.exports.kili(
 
 When you have at least one object etection job, you can also export to one of the following YOLO formats: `"yolo_v4"`, `"yolo_v5"`, `"yolo_v7"` or `"yolo_v8"`.
 The difference between each format is the structure of the metadata YAML file, which specifies the object classes.
-In all the cases, each asset gets one file per person who labeled it on its last workflow step, holding that person's latest label there. An asset labeled by two people gives two files, such as `car_1_label1.txt` and `car_1_label2.txt`.
+On a multi-review project, each asset gets one file per person who labeled it on its last workflow step, holding that person's latest label there: an asset labeled by two people gives two files, such as `car_1_label1.txt` and `car_1_label2.txt`. On other projects, each asset gets one file, holding its last created `DEFAULT` or `REVIEW` label.
 
 For bouding boxes, each YOLO label has the following shape:
 
