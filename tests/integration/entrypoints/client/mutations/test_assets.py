@@ -4,6 +4,7 @@ import pytest
 import pytest_mock
 
 from kili.entrypoints.mutations.asset import MutationsAsset, PageResolution
+from kili.exceptions import DeprecatedArgumentError, GraphQLError
 
 
 @pytest.mark.parametrize(
@@ -79,3 +80,290 @@ def test_given_asset_resolution_when_updating_resolution_then_it_works(
         "whereArray": [{"id": "asset_id_1"}],
         "dataArray": [{"resolution": {"width": 100, "height": 200}}],
     }
+
+
+def test_given_assets_in_several_batches_when_i_assign_them_it_merges_what_each_call_reported(
+    mocker: pytest_mock.MockerFixture,
+):
+    """The caller is told what happened to its assets, not how they were batched."""
+    # Given two assignee combinations, so the mutation is called twice
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+
+    kili.graphql_client.execute.side_effect = [
+        {
+            "data": {
+                "declined": [],
+                "failed": [],
+                "succeeded": [{"assetId": "asset_1", "externalId": "img_0001"}],
+            }
+        },
+        {
+            "data": {
+                "declined": [{"assetId": "asset_2", "externalId": "img_0042"}],
+                "failed": [],
+                "succeeded": [],
+            }
+        },
+    ]
+
+    # When
+    outcome = kili.assign_assets_to_labelers(
+        asset_ids=["asset_1", "asset_2"],
+        to_be_labeled_by_array=[["user_1"], ["user_2"]],
+    )
+
+    # Then the two calls come back as one outcome, the labeler kept at work among it
+    assert kili.graphql_client.execute.call_count == 2
+    assert outcome == {
+        "declined": [{"assetId": "asset_2", "externalId": "img_0042"}],
+        "failed": [],
+        "succeeded": [{"assetId": "asset_1", "externalId": "img_0001"}],
+    }
+
+
+def test_given_assets_and_their_labelers_when_i_assign_them_it_sends_each_labeler_set_its_assets(
+    mocker: pytest_mock.MockerFixture,
+):
+    """One call per set of labelers and batch of 100, an empty set unassigning its assets."""
+    # Given 101 assets for one labeler, so its call is split, and one asset for nobody
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.graphql_client.execute.return_value = {
+        "data": {"declined": [], "failed": [], "succeeded": []}
+    }
+    asset_ids = [f"asset_{index}" for index in range(101)]
+
+    # When
+    kili.assign_assets_to_labelers(
+        asset_ids=[*asset_ids, "asset_to_unassign"],
+        to_be_labeled_by_array=[["user_1"]] * 101 + [[]],
+    )
+
+    # Then each call names its labelers and its own assets, through the mutation that reports them
+    calls = [call_args for call_args, _ in kili.graphql_client.execute.call_args_list]
+    assert all("data: assignAssets(" in query for query, _ in calls)
+    assert [variables for _, variables in calls] == [
+        {"userIds": ["user_1"], "where": {"idIn": asset_ids[:100]}},
+        {"userIds": ["user_1"], "where": {"idIn": asset_ids[100:]}},
+        {"userIds": [], "where": {"idIn": ["asset_to_unassign"]}},
+    ]
+
+
+def test_given_no_asset_when_i_assign_it_reports_an_empty_outcome(
+    mocker: pytest_mock.MockerFixture,
+):
+    """The empty shortcut has to return what the caller will index into anyway."""
+    # Given
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+
+    # When
+    outcome = kili.assign_assets_to_labelers(asset_ids=[], to_be_labeled_by_array=[])
+
+    # Then
+    assert outcome == {"declined": [], "failed": [], "succeeded": []}
+    kili.graphql_client.execute.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("method", "mutation"),
+    [
+        ("delete_many_from_dataset", "deleteAssets"),
+        ("add_to_review", "addAssetsToReview"),
+        ("send_back_to_queue", "sendAssetsBackToQueue"),
+    ],
+)
+def test_given_more_assets_than_a_batch_when_i_run_a_queue_action_it_merges_what_each_call_reported(
+    mocker: pytest_mock.MockerFixture, method: str, mutation: str
+):
+    """The caller is told what happened to its assets, not how they were batched."""
+    # Given 101 assets, so the mutation is called twice
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    asset_ids = [f"asset_{index}" for index in range(101)]
+
+    kili.graphql_client.execute.side_effect = [
+        {
+            "data": {
+                "declined": [],
+                "failed": [{"assetId": "asset_0", "externalId": "img_0", "details": "Retry."}],
+                "succeeded": [{"assetId": "asset_1", "externalId": "img_1"}],
+            }
+        },
+        {
+            "data": {
+                "declined": [{"assetId": "asset_100", "externalId": "img_100"}],
+                "failed": [],
+                "succeeded": [],
+            }
+        },
+    ]
+
+    # When
+    outcome = getattr(kili, method)(asset_ids=asset_ids)
+
+    # Then each batch named its own assets, through the mutation that reports them
+    assert kili.graphql_client.execute.call_count == 2
+    (first_query, first_variables), _ = kili.graphql_client.execute.call_args_list[0]
+    (_, second_variables), _ = kili.graphql_client.execute.call_args_list[1]
+    assert f"{mutation}(where: $where)" in first_query
+    assert first_variables == {"where": {"idIn": asset_ids[:100]}}
+    assert second_variables == {"where": {"idIn": asset_ids[100:]}}
+    assert outcome == {
+        "declined": [{"assetId": "asset_100", "externalId": "img_100"}],
+        "failed": [{"assetId": "asset_0", "externalId": "img_0", "details": "Retry."}],
+        "succeeded": [{"assetId": "asset_1", "externalId": "img_1"}],
+    }
+
+
+def test_given_more_assets_than_a_batch_when_i_set_their_priority_it_merges_what_each_call_reported(
+    mocker: pytest_mock.MockerFixture,
+):
+    """Every batch carries the priority, and the caller gets one outcome back."""
+    # Given 101 assets, so the mutation is called twice
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    asset_ids = [f"asset_{index}" for index in range(101)]
+
+    kili.graphql_client.execute.side_effect = [
+        {
+            "data": {
+                "declined": [],
+                "failed": [],
+                "succeeded": [{"assetId": "asset_0", "externalId": "img_0"}],
+            }
+        },
+        {
+            "data": {
+                "declined": [{"assetId": "asset_100", "externalId": "img_100"}],
+                "failed": [],
+                "succeeded": [],
+            }
+        },
+    ]
+
+    # When
+    outcome = kili.set_assets_priority(priority=3, asset_ids=asset_ids)
+
+    # Then each batch named its own assets and the priority, through the mutation that reports them
+    assert kili.graphql_client.execute.call_count == 2
+    (first_query, first_variables), _ = kili.graphql_client.execute.call_args_list[0]
+    (_, second_variables), _ = kili.graphql_client.execute.call_args_list[1]
+    assert "setAssetsPriority(where: $where, priority: $priority)" in first_query
+    assert first_variables == {"priority": 3, "where": {"idIn": asset_ids[:100]}}
+    assert second_variables == {"priority": 3, "where": {"idIn": asset_ids[100:]}}
+    assert outcome == {
+        "declined": [{"assetId": "asset_100", "externalId": "img_100"}],
+        "failed": [],
+        "succeeded": [{"assetId": "asset_0", "externalId": "img_0"}],
+    }
+
+
+def test_given_priorities_when_i_update_properties_in_assets_it_still_works_but_warns(
+    mocker: pytest_mock.MockerFixture,
+):
+    """The old path keeps working, pointing to the one that reports what it left out."""
+    # Given
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+
+    # When
+    with pytest.warns(DeprecationWarning, match="set_assets_priority"):
+        kili.update_properties_in_assets(asset_ids=["asset_id_1"], priorities=[2])
+
+    # Then
+    kili.graphql_client.execute.assert_called_once()
+    assert kili.graphql_client.execute.call_args[0][1]["dataArray"] == [{"priority": 2}]
+
+
+def _backend_error(message: str) -> GraphQLError:
+    """Build the error the graphql client raises when the backend refuses the mutation."""
+    return GraphQLError(
+        error=[
+            {
+                "message": message,
+                "extensions": {
+                    "code": "OPERATION_RESOLUTION_FAILURE",
+                    "context": {"projectID": "project_id"},
+                },
+            }
+        ]
+    )
+
+
+def test_given_multi_review_project_when_i_use_is_used_for_consensus_then_i_get_a_clear_error(
+    mocker: pytest_mock.MockerFixture,
+):
+    # Given
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.graphql_client.execute.side_effect = _backend_error(
+        "[deprecated] `isUsedForConsensus` is deprecated in"
+        " `updatePropertiesInAssets`. Use `setAssetConsensus` instead to manage consensus"
+        " for this asset."
+    )
+
+    # When
+    with pytest.raises(DeprecatedArgumentError) as exc_info:
+        kili.update_properties_in_assets(
+            asset_ids=["asset_id_1"], is_used_for_consensus_array=[True]
+        )
+
+    # Then
+    assert str(exc_info.value) == (
+        "`isUsedForConsensus` is deprecated in `update_properties_in_assets`."
+        " Use `update_asset_consensus` instead to manage consensus for this asset."
+    )
+    assert isinstance(exc_info.value.__cause__, GraphQLError)
+    assert "[deprecated]" in str(exc_info.value.__cause__)
+
+
+def test_given_workflow_v1_project_when_i_use_is_used_for_consensus_then_the_field_is_sent(
+    mocker: pytest_mock.MockerFixture,
+):
+    # Given
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+
+    # When
+    kili.update_properties_in_assets(
+        asset_ids=["asset_id_1", "asset_id_2"], is_used_for_consensus_array=[True, False]
+    )
+
+    # Then
+    assert kili.graphql_client.execute.call_args[0][1] == {
+        "whereArray": [{"id": "asset_id_1"}, {"id": "asset_id_2"}],
+        "dataArray": [{"isUsedForConsensus": True}, {"isUsedForConsensus": False}],
+    }
+
+
+def test_given_an_unrelated_backend_error_when_i_update_properties_then_it_is_not_converted(
+    mocker: pytest_mock.MockerFixture,
+):
+    # Given
+    kili = MutationsAsset()
+    kili.graphql_client = mocker.MagicMock()
+    kili.http_client = mocker.MagicMock()
+    kili.kili_api_gateway = mocker.MagicMock()
+    kili.graphql_client.execute.side_effect = _backend_error("[somethingElse] Another failure")
+
+    # When / Then
+    with pytest.raises(GraphQLError):
+        kili.update_properties_in_assets(asset_ids=["asset_id_1"], priorities=[1])

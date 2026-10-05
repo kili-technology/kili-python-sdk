@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 
 [project]
 name = "kili"
-version = "26.1.15"
+version = "26.2.0"
 description = "Python client for Kili Technology labeling tool"
 readme = "README.md"
 authors = [{ name = "Kili Technology", email = "contact@kili-technology.com" }]
@@ -29,7 +29,6 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "pandas >= 1.0.0, < 3.0.0",
   "click >= 8.0.0, < 8.1.8",
   "requests >= 2.0.0, < 3.0.0",
   "tenacity >= 8.0.0, < 9.0.0",
@@ -44,7 +43,7 @@ dependencies = [
   "filelock >= 3.0.0, < 4.0.0",
   "pip-system-certs >= 4.0.0, < 5.0.0; platform_system=='Windows'",
   "pyrate-limiter >= 3, < 4",
-  "kili-formats == 1.4.0"
+  "kili-formats == 1.5.0"
 ]
 urls = { homepage = "https://github.com/kili-technology/kili-python-sdk" }
 
@@ -79,7 +78,7 @@ dev = [
   "nbconvert",
   "ipykernel",
   # optional dependencies
-  "kili-formats[all] == 1.4.0",
+  "kili-formats[all] == 1.5.0",
   "opencv-python >= 4.0.0, < 5.0.0",
   "azure-storage-blob >= 12.0.0, < 13.0.0",
   # optional dependencies gis
@@ -87,6 +86,8 @@ dev = [
   "shapely >= 1.8, < 3",
   # optional dependencies - cli
   "tabulate >= 0.9.0, < 0.10.0",
+  # optional dependencies - pandas
+  "pandas >= 1.0.0, < 3.0.0",
   # optional dependencies - yolo
   "pyyaml >= 6.0, < 7.0",
   # optional dependencies - image
@@ -95,8 +96,9 @@ dev = [
 all = [
   # aggregate all optional deps without dev
   "azure-storage-blob >= 12.0.0, < 13.0.0",
-  "kili-formats[all] == 1.4.0",
+  "kili-formats[all] == 1.5.0",
   "opencv-python >= 4.0.0, < 5.0.0",
+  "pandas >= 1.0.0, < 3.0.0",
   "Pillow >=10.0.0, <13.0.0",
   "pyproj == 3.7.1",
   "pyyaml >= 6.0, < 7.0",
@@ -105,10 +107,11 @@ all = [
 ]
 azure = ["azure-storage-blob >= 12.0.0, < 13.0.0"]
 cli = [
+  "pandas >= 1.0.0, < 3.0.0",
   "tabulate >= 0.9.0, < 0.10.0"
 ]
 coco = [
-  "kili-formats[coco] == 1.4.0"
+  "kili-formats[coco] == 1.5.0"
 ]
 gis = [
   "pyproj == 3.7.1",
@@ -116,12 +119,13 @@ gis = [
 ]
 image = [
   "Pillow >=10.0.0, <13.0.0",
-  "kili-formats[image] == 1.4.0"
+  "kili-formats[image] == 1.5.0"
 ]
 image-utils = ["opencv-python >= 4.0.0, < 5.0.0"]
+pandas = ["pandas >= 1.0.0, < 3.0.0"]
 
 video = [
-  "kili-formats[video] == 1.4.0"
+  "kili-formats[video] == 1.5.0"
 ]
 yolo = [
   "pyyaml >= 6.0, < 7.0"

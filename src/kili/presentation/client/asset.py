@@ -1,5 +1,6 @@
 """Client presentation methods for assets."""
 
+# pylint: disable=too-many-lines
 import warnings
 from collections.abc import Generator, Iterable
 from typing import (
@@ -627,8 +628,10 @@ class AssetClientMethods(BaseClientMethods):
         )
 
         if format == "pandas":
-            import pandas as pd  # pylint: disable=import-outside-toplevel
-
+            try:
+                import pandas as pd  # pylint: disable=import-outside-toplevel
+            except ImportError as e:
+                raise ImportError("Install `pip install kili[pandas]` for format='pandas'.") from e
             return pd.DataFrame(list(assets_gen))
 
         if as_generator:
@@ -949,6 +952,9 @@ class AssetClientMethods(BaseClientMethods):
     ) -> bool:
         """Activate or deactivate consensus on an asset.
 
+        This method is not compatible with projects using workflow version 1. On those projects,
+        use `kili.update_properties_in_assets()` with `is_used_for_consensus_array` instead.
+
         Args:
             project_id: The project ID.
             is_consensus: Whether to activate (True) or deactivate (False) consensus on the asset.
@@ -960,6 +966,13 @@ class AssetClientMethods(BaseClientMethods):
 
         Raises:
             ValueError: If neither asset_id nor external_id is provided.
+            GraphQLError: If a server-side precondition is not met. The server accepts the
+                call only on workflow V2/V3 projects, while the asset sits on a labeling
+                (DEFAULT) step whose status is still TO_DO, when consensus is enabled on that
+                step, and when the caller is an admin or a team manager. Note that the TO_DO
+                window closes as soon as any labeler starts working on the asset (their first
+                autosave, not their submission), so the real precondition is that no labeler
+                has opened and started the asset yet.
 
         Examples:
             >>> # Activate consensus on an asset using asset_id

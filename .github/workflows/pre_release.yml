@@ -10,6 +10,17 @@ on:
         required: true
         type: string
         default: "main"
+      release_type:
+        description: >
+          "Which part of the version to bump. 'minor' and 'major' are only allowed
+          when the target branch is main: release/XX.Y branches must use 'patch'."
+        required: false
+        type: choice
+        default: "patch"
+        options:
+          - patch
+          - minor
+          - major
 
 permissions:
   contents: write
@@ -20,6 +31,21 @@ jobs:
     name: Bump version & draft release
 
     steps:
+      - name: Check the release type is allowed on the target branch
+        shell: bash
+        env:
+          TARGET_BRANCH: ${{ github.event.inputs.target_branch }}
+          RELEASE_TYPE: ${{ github.event.inputs.release_type }}
+        run: |
+          set -euo pipefail
+
+          if [[ "$TARGET_BRANCH" != "main" && "$RELEASE_TYPE" != "patch" ]]; then
+            echo "::error::'$RELEASE_TYPE' bumps are only allowed on main. Maintenance branches such as '$TARGET_BRANCH' must use 'patch'."
+            exit 1
+          fi
+
+          echo "Bumping '$RELEASE_TYPE' version on '$TARGET_BRANCH'"
+
       - name: Checkout target branch
         uses: actions/checkout@v4
         with:
@@ -45,6 +71,7 @@ jobs:
       - name: Add the bump commit
         env:
           GH_TOKEN: ${{ secrets.RELEASE_BOT_PAT }}
+          RELEASE_TYPE: ${{ github.event.inputs.release_type }}
         shell: bash
         run: |
           set -euo pipefail
@@ -55,7 +82,7 @@ jobs:
           source ./utils.sh   # exposes bump_version
 
           # create bump commit (major / minor / patch)
-          new_version=$(bump_version commit patch)
+          new_version=$(bump_version commit "$RELEASE_TYPE")
           echo "New version (bump_version): $new_version"
 
           # Push back to the same branch explicitly

@@ -135,7 +135,7 @@ class TestCheckWarnEmptyList(TestCase):
             ),
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=[])
-        assert ret is None
+        assert ret == {"declined": [], "failed": [], "succeeded": []}
         mocked_mutate_from_paginated_call.assert_not_called()
 
     def test_args_empty(self, mocked_mutate_from_paginated_call):
@@ -148,7 +148,7 @@ class TestCheckWarnEmptyList(TestCase):
             ),
         ):
             ret = kili.add_to_review([], [])
-        assert ret is None
+        assert ret == {"declined": [], "failed": [], "succeeded": []}
         mocked_mutate_from_paginated_call.assert_not_called()
 
     def test_none(self, mocked_mutate_from_paginated_call):
@@ -170,7 +170,7 @@ class TestCheckWarnEmptyList(TestCase):
             ),
         ):
             ret = kili.add_to_review(asset_ids=None, external_ids=[], project_id="project_id")
-        assert ret is None
+        assert ret == {"declined": [], "failed": [], "succeeded": []}
         mocked_mutate_from_paginated_call.assert_not_called()
 
     def test_kwargs_one_empty_2(self, mocked_mutate_from_paginated_call):
@@ -183,7 +183,7 @@ class TestCheckWarnEmptyList(TestCase):
             ),
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=None)
-        assert ret is None
+        assert ret == {"declined": [], "failed": [], "succeeded": []}
         mocked_mutate_from_paginated_call.assert_not_called()
 
     def test_kwargs_no_warning_correct_input(self, mocked_mutate_from_paginated_call):
@@ -194,7 +194,7 @@ class TestCheckWarnEmptyList(TestCase):
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(asset_ids=["asset_id"], external_ids=None)
-        mocked_mutate_from_paginated_call.assert_called_once()
+        kili.graphql_client.execute.assert_called_once()
 
     def test_args_no_warning_correct_input(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
@@ -204,7 +204,7 @@ class TestCheckWarnEmptyList(TestCase):
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(["asset_id"], None)
-        mocked_mutate_from_paginated_call.assert_called_once()
+        kili.graphql_client.execute.assert_called_once()
 
     def test_warn_change_asset_external_ids(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()

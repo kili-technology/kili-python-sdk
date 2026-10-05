@@ -1,7 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
-import pytz
 from pytest_mock import MockerFixture
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -113,8 +112,8 @@ def test_given_organization_in_kili_when_I_call_organization_metrics_it_retrieve
     # When
     organization_metrics = kili_client.organization_metrics(
         organization_id=organization_id,
-        start_date=datetime(2022, 1, 1, tzinfo=pytz.UTC),
-        end_date=datetime(2022, 1, 5, tzinfo=pytz.UTC),
+        start_date=datetime(2022, 1, 1, tzinfo=timezone.utc),
+        end_date=datetime(2022, 1, 5, tzinfo=timezone.utc),
     )
 
     # Then
@@ -122,8 +121,8 @@ def test_given_organization_in_kili_when_I_call_organization_metrics_it_retrieve
     get_organizations_metrics_use_case.assert_called_with(
         OrganizationMetricsFilters(
             id=OrganizationId(organization_id),
-            start_datetime=datetime(2022, 1, 1, tzinfo=pytz.UTC),
-            end_datetime=datetime(2022, 1, 5, tzinfo=pytz.UTC),
+            start_datetime=datetime(2022, 1, 1, tzinfo=timezone.utc),
+            end_datetime=datetime(2022, 1, 5, tzinfo=timezone.utc),
         ),
         ("numberOfAnnotations", "numberOfHours", "numberOfLabeledAssets"),
     )
@@ -134,7 +133,7 @@ def test_given_organization_in_kili_when_I_call_update_properties_in_organizatio
 ):
     # Given
     test_organization_id = "fake_organization_id"
-    new_name = "new_name_{}".format(datetime.now(tz=pytz.UTC).strftime("%Y-%m-%d %H:%M:%S"))
+    new_name = "new_name_{}".format(datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S"))
     update_properties_in_organization_use_case = mocker.patch.object(
         OrganizationUseCases,
         "update_organization",

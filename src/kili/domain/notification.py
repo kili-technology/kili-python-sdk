@@ -1,10 +1,7 @@
 """Notification domain."""
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, NewType, Optional
-
-if TYPE_CHECKING:
-    from .user import UserFilter
+from typing import NewType, Optional
 
 NotificationId = NewType("NotificationId", str)
 
@@ -13,6 +10,4 @@ NotificationId = NewType("NotificationId", str)
 class NotificationFilter:
     """Notification filter."""
 
-    has_been_seen: Optional[bool]
     id: Optional[NotificationId]
-    user: Optional["UserFilter"]
