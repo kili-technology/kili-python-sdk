@@ -65,13 +65,17 @@ class PluginHandler(Plugin):
 !!! note
     The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run.
 
+!!! note "Kili version"
+    `Plugin` comes with the kili release that deprecates `PluginCore`: a plugin built on it needs that version or a later one where it runs. SaaS plugins are installed with the latest `kili` unless your `requirements.txt` pins an older one. On-premise, plugins run with the kili of your Kili deployment: until it includes `Plugin` (`from kili.plugins import Plugin` succeeds), keep `PluginCore`, described below.
+
 ## On-Premise deployment details
 
 The plugins for the on-premise deployments work exactly the same as the plugins for the SaaS version of Kili, with only a few small exceptions :
 
 1. It's not possible to add custom python packages to your plugin with the help of the `requirements.txt` file, but we selected a list of the most useful packages that you can directly use, including :
     * `numpy`, `pandas`, `scikit-learn`, `opencv-python-headless`, `Pillow`, `requests`, `uuid` and of course `kili`
-2. In order to save the logs during the execution of your plugin, you should only use the provided logger in the plugin class (the simple `print` function will not save the log). For an example, see the code below:
+2. As noted above, `Plugin` needs a kili that includes it: with an older on-premise deployment, write `class PluginHandler(PluginCore)` and call the legacy client's methods on `self.kili`.
+3. In order to save the logs during the execution of your plugin, you should only use the provided logger in the plugin class (the simple `print` function will not save the log). For an example, see the code below:
 
 ```python
 from logging import Logger
@@ -93,11 +97,13 @@ class PluginHandler(Plugin):
 
 ## Moving a plugin from `PluginCore`
 
-Plugins written with `class PluginHandler(PluginCore)` keep working, but `PluginCore` is deprecated and will be removed in a future major release. There, `self.kili` is the legacy client (`self.kili.assets(...)`, `self.kili.create_issues(...)`).
+Plugins written with `class PluginHandler(PluginCore)` keep working, but `PluginCore` is deprecated and will be removed in a future major release: uploading one, and each of its runs, logs a deprecation warning. There, `self.kili` is the legacy client (`self.kili.assets(...)`, `self.kili.create_issues(...)`).
 
 To move a plugin, change its base class to `Plugin`: `self.kili` becomes the client used everywhere else in this documentation, and `self.kili.legacy_client` keeps the legacy methods. Prefix the legacy calls with `legacy_client`, then convert them one at a time:
 
 ```python
+from typing import Dict
+
 from kili.plugins import Plugin
 
 
@@ -110,6 +116,8 @@ class PluginHandler(Plugin):
 ## Model for Plugins
 
 ::: kili.services.plugins.model.Plugin
+    options:
+      inherited_members: true
 
 ## Legacy model for plugins (deprecated)
 

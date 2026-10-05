@@ -173,7 +173,7 @@ urllib.request.urlretrieve(
 
 With the plugin defined in a separate `Python` file, you can create a folder containing:
 
-- A `main.py` file which is the entrypoint of the plugin and must have a `PluginHandler` class which subclasses the `Plugin` class
+- A `main.py` file which is the entrypoint of the plugin and must have a `PluginHandler` class which subclasses the `Plugin` class (it needs the kili release that brings `Plugin`; for an older on-premise deployment, see the [Plugin Development](https://python-sdk-docs.kili-technology.com/latest/sdk/plugins/) page)
 - (optionally) a `requirements.txt` (if you need specific PyPi packages in your plugin)
 
 **Note:** The `requirements.txt` file can only be included for the SaaS version of the Kili platform, for on-premise deployments there is a pre-defined list of packages that can be used. For more details, see the [documentation of plugins](https://python-sdk-docs.kili-technology.com/latest/sdk/plugins/)
