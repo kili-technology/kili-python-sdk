@@ -245,7 +245,7 @@ You can export your project data from the Kili UI (see [documentation](https://d
 The [`kili.exports`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/exports/) methods enable the export of a full project. They do the following preprocessing:
 
 * Only fetches the labels of types `"DEFAULT"` and `"REVIEW"` (see the [label types explanations](https://docs.kili-technology.com/reference/label-types)).
-* If a `filter` is given, keeps only the matching assets (by external id, status, workflow step, labeler and more).
+* If a `filter` is given, keeps only the matching assets (by external id, status, labeler and more).
 * Exports labels to one of the standard formats (only available for a restricted set of ML tasks).
 * Using various method arguments, you can decide:
     * Whether or not to include the assets in the export
