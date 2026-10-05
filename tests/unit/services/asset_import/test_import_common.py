@@ -1,3 +1,4 @@
+import re
 from unittest.mock import MagicMock, patch
 from uuid import UUID
 
@@ -117,6 +118,12 @@ class TestFileExtensionValidation(ImportTestCase):
         assets = [{"content": "https://example.com/geo.tif", "external_id": "ok", "id": "uid"}]
         import_assets(self.kili, ProjectId(self.project_id), assets)
 
+    def test_image_project_rejects_r0_extension(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "IMAGE"}
+        assets = [{"content": "https://example.com/rset/geo.r0", "external_id": "wrong"}]
+        with pytest.raises(ImportValidationError, match=r"\.r0"):
+            import_assets(self.kili, ProjectId(self.project_id), assets)
+
     # --- VIDEO ---
     def test_video_project_rejects_image_extension(self, *_):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
@@ -197,6 +204,21 @@ class TestFileExtensionValidation(ImportTestCase):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "GEOSPATIAL"}
         assets = [{"content": "https://example.com/geo.jp2", "external_id": "ok"}]
         import_assets(self.kili, ProjectId(self.project_id), assets)
+
+    def test_geospatial_project_accepts_r0_extension(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "GEOSPATIAL"}
+        assets = [{"content": "https://example.com/rset/geo.r0", "external_id": "ok"}]
+        import_assets(self.kili, ProjectId(self.project_id), assets)
+
+    def test_geospatial_project_rejects_rset_reduced_resolution_extensions(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "GEOSPATIAL"}
+        for extension in (".r1", ".r2", ".r3", ".r4", ".r5"):
+            with self.subTest(extension=extension):
+                assets = [
+                    {"content": f"https://example.com/rset/geo{extension}", "external_id": "x"}
+                ]
+                with pytest.raises(ImportValidationError, match=re.escape(extension)):
+                    import_assets(self.kili, ProjectId(self.project_id), assets)
 
     def test_geospatial_project_rejects_wrong_extension_in_multi_layer(self, *_):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "GEOSPATIAL"}
