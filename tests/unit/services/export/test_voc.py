@@ -217,3 +217,32 @@ def test_process_asset_image_with_latest_labels(tmp_path: Path):
     # Should create two XML files with label suffixes
     assert Path(label_path / "multi_label_label1.xml").is_file()
     assert Path(label_path / "multi_label_label2.xml").is_file()
+
+
+JOBS_BY_SHAPE = {
+    "box": {"mlTask": "OBJECT_DETECTION", "tools": ["rectangle"]},
+    "polygon only": {"mlTask": "OBJECT_DETECTION", "tools": ["polygon"]},
+    "mask": {"mlTask": "OBJECT_DETECTION", "tools": ["semantic"]},
+    "point": {"mlTask": "OBJECT_DETECTION", "tools": ["marker"]},
+    "line": {"mlTask": "OBJECT_DETECTION", "tools": ["polyline"]},
+    "model box": {"mlTask": "OBJECT_DETECTION", "tools": ["rectangle"], "isModel": True},
+    "classification": {"mlTask": "CLASSIFICATION"},
+}
+
+
+@pytest.mark.parametrize(
+    ("shape", "compatible"),
+    [
+        ("box", True),
+        ("polygon only", True),
+        ("mask", True),
+        ("point", False),
+        ("line", False),
+        ("model box", False),
+        ("classification", False),
+    ],
+)
+def test_the_voc_export_takes_the_jobs_with_a_shape(shape: str, compatible: bool):
+    exporter = VocExporter.__new__(VocExporter)
+
+    assert exporter._is_job_compatible(JOBS_BY_SHAPE[shape]) is compatible  # pylint: disable=protected-access

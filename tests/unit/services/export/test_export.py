@@ -16,7 +16,6 @@ from kili.domain.project import ProjectId
 from kili.presentation.client.label import LabelClientMethods
 from kili.services.export import AbstractExporter, export_labels
 from kili.services.export.exceptions import (
-    NoCompatibleJobError,
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
@@ -737,17 +736,6 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
                 },
             },
             NotCompatibleInputType,
-        ),
-        (
-            "Export semantic segmentation to pascal format to throw error",
-            {
-                "export_kwargs": {
-                    "project_id": "semantic_segmentation",
-                    "label_format": "pascal_voc",
-                    "split_option": "merged",
-                },
-            },
-            NoCompatibleJobError,
         ),
         (
             "When exporting, given an unexisting format, it throws an error",

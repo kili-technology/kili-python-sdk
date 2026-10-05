@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, NamedTuple, Optional, Union
 
-from kili_formats.types import Job
+from kili_formats.types import Job, JobTool
 
 from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
@@ -29,6 +29,9 @@ from kili.services.export.types import (
     YoloTask,
 )
 from kili.utils.tempfile import TemporaryDirectory
+
+# The tools whose annotations have a shape: what the COCO and Pascal VOC exports write
+SHAPE_TOOLS = (JobTool.RECTANGLE, JobTool.POLYGON, JobTool.SEMANTIC)
 
 if TYPE_CHECKING:
     from kili.client import Kili
