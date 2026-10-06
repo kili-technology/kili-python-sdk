@@ -474,3 +474,35 @@ def test_add_labelers_to_step_requires_emails(mocker: pytest_mock.MockerFixture)
 
     with pytest.raises(ValueError, match="emails is required"):
         kili.add_labelers_to_step("proj", step_id="step-g1")
+
+
+def test_add_review_step_in_the_group_named(mocker: pytest_mock.MockerFixture):
+    kili = _client(mocker)
+    members = [_member("rev@kili.com", "u-rev", "REVIEWER")]
+    steps = [
+        {"id": "label-1", "name": "Label", "type": "DEFAULT", "stepGroupId": "grp-1"},
+        {"id": "label-2", "name": "Label", "type": "DEFAULT", "stepGroupId": "grp-2"},
+    ]
+    step_groups = [{"id": "grp-1", "name": "Group 1"}, {"id": "grp-2", "name": "Group 2"}]
+    kili.kili_api_gateway.graphql_client.execute.side_effect = [
+        *_project_users_results(members),
+        _context_result("V3", steps, step_groups),
+        _context_result("V3", steps, step_groups),
+        {
+            "data": {
+                "steps": [
+                    {"id": "final-1", "name": "Final", "stepGroupId": "grp-1"},
+                    {"id": "final-2", "name": "Final", "stepGroupId": "grp-2"},
+                ]
+            }
+        },
+    ]
+
+    step = kili.add_review_step(
+        "proj", "Final", ["rev@kili.com"], send_back_to_step="Label", group_name="Group 2"
+    )
+
+    sent = kili.kili_api_gateway.graphql_client.execute.call_args_list[-1].args[1]["input"]
+    assert sent["stepGroupId"] == "grp-2"
+    assert sent["sendBackStepId"] == "label-2"
+    assert step["id"] == "final-2"

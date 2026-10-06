@@ -407,6 +407,7 @@ class ProjectWorkflowUseCases(BaseUseCases):
         step_coverage: int | None = None,
         use_honeypot: bool | None = None,
         send_back_to_step: str | None = None,
+        group_name: str | None = None,
     ) -> dict[str, object]:
         """Add a review step to a project workflow."""
         if step_coverage and not 0 <= step_coverage <= 100:
@@ -418,6 +419,7 @@ class ProjectWorkflowUseCases(BaseUseCases):
             step_coverage=step_coverage,
             use_honeypot=use_honeypot,
             send_back_to_step=send_back_to_step,
+            group_name=group_name,
         )
         return self._kili_api_gateway.add_review_step(data)
 

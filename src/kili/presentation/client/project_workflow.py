@@ -264,8 +264,9 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
         step_coverage: int | None = None,
         use_honeypot: bool | None = None,
         send_back_to_step: str | None = None,
+        group_name: str | None = None,
     ) -> dict[str, Any]:
-        """Add a review step to a project workflow.
+        """Add a review step to a project workflow, at the end of its group.
 
         Args:
             project_id: Id of the project.
@@ -273,7 +274,9 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             assignees: List of user emails to assign as reviewers.
             step_coverage: Percentage of assets to be reviewed in this step (0-100).
             use_honeypot: Whether to use honeypot on this step.
-            send_back_to_step: Name of the step to send assets back to.
+            send_back_to_step: Name of the step to send assets back to, in the same group.
+            group_name: Name of the workflow V3 group to add the step to.
+                Required when the project has several groups.
 
         Returns:
             A dict with the created step data (id, name).
@@ -285,6 +288,7 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             step_coverage=step_coverage,
             use_honeypot=use_honeypot,
             send_back_to_step=send_back_to_step,
+            group_name=group_name,
         )
 
     @typechecked

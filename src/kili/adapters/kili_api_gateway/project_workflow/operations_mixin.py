@@ -13,7 +13,7 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
-from .common import get_assignees_to_add_ids, resolve_step
+from .common import find_step_group_by_name, get_assignees_to_add_ids, resolve_step
 from .mappers import (
     add_review_step_input_mapper,
     delete_step_input_mapper,
@@ -319,18 +319,27 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         existing_members = self.list_activated_project_users(data.project_id)
         assignees_to_add = get_assignees_to_add_ids(existing_members, data.assignees)
         data.assignees = assignees_to_add
-        steps = self.get_steps(data.project_id, fields=["steps.id", "steps.name"])
-        send_back_to_step = next(
-            (step.get("id") for step in steps if step.get("name") == data.send_back_to_step), None
-        )
-        if not send_back_to_step:
-            raise ValueError("The sendBackToStep name given does not exist")
-        data.send_back_to_step = send_back_to_step
+        if data.group_name is not None:
+            data.step_group_id = find_step_group_by_name(
+                self.get_project_workflow_context(data.project_id), data.group_name
+            )["id"]
+        if data.send_back_to_step is not None:
+            data.send_back_to_step = self.get_step(
+                data.project_id, step_name=data.send_back_to_step, group_name=data.group_name
+            )["id"]
         variables = {"input": add_review_step_input_mapper(data)}
         mutation = get_add_review_step_mutation()
         result = self.graphql_client.execute(mutation, variables)
         steps = result.get("data", {}).get("steps", [])
-        step = next((step for step in steps if step.get("name") == data.step_name), None)
+        step = next(
+            (
+                step
+                for step in steps
+                if step.get("name") == data.step_name
+                and data.step_group_id in (None, step.get("stepGroupId"))
+            ),
+            None,
+        )
         if not step:
             raise NotFound(f"Could not find the stepId of the step {data.step_name}.")
         return step

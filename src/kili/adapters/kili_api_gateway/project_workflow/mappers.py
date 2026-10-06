@@ -69,6 +69,8 @@ def add_review_step_input_mapper(data: AddReviewStepInput) -> dict:
         result["useHoneypot"] = data.use_honeypot
     if data.send_back_to_step is not None:
         result["sendBackStepId"] = data.send_back_to_step
+    if data.step_group_id is not None:
+        result["stepGroupId"] = data.step_group_id
     return result
 
 
