@@ -111,6 +111,8 @@ class AssetWorkflowFilters(TypedDict, total=False):
     step_name_and_status_not_in: Optional[list[tuple[str, StatusInStep]]]
     step_name_in: Optional[ListOrTuple[str]]
     step_name_not_in: Optional[ListOrTuple[str]]
+    # Whether a step filter was given by id: the rules of the filters by name apply to it.
+    has_step_id_filter: Optional[bool]
     step_status_in: Optional[ListOrTuple[StatusInStep]]
     step_status_not_in: Optional[ListOrTuple[StatusInStep]]
     group_name_in: Optional[ListOrTuple[str]]

@@ -85,6 +85,7 @@ class LlmClientMethods:
         step_status_in: Optional[list[StatusInStep]] = None,
         group_name_in: Optional[list[str]] = None,
         group_name_not_in: Optional[list[str]] = None,
+        step_id_in: Optional[list[str]] = None,
     ) -> Optional[Union[list[Conversation], list[dict[str, Union[list[str], str]]]]]:
         """Returns an export of llm conversations with valid labels.
 
@@ -98,7 +99,11 @@ class LlmClientMethods:
             status_in: Returned assets should have a status that belongs to that list, if given.
                 Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
             step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project is in WorkflowV2. Exclusive with `step_id_in`.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
+            step_id_in: Returned assets are in a step whose id belong to that list, if given.
+                Exclusive with `step_name_in`.
             step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .
                 Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
@@ -140,7 +145,10 @@ class LlmClientMethods:
 
         label_type_in = label_type_in or ["DEFAULT", "REVIEW"]
 
-        step_id_in = None
+        if step_id_in is not None and step_name_in is not None:
+            raise ValueError(
+                "Filters step_id_in and step_name_in both given: use only one of them."
+            )
 
         if (
             status_in is not None

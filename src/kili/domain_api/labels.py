@@ -42,6 +42,8 @@ class LabelFilter(TypedDict, total=False):
         asset_id: Identifier of the asset.
         asset_status_in: Returned labels should have a status that belongs to that list, if given.
         asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
+        asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.
+            Exclusive with `asset_step_name_in`.
         asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
         author_in: Returned labels should have been made by authors in that list, if given.
         category_search: Query to filter labels based on the content of their jsonResponse.
@@ -61,6 +63,7 @@ class LabelFilter(TypedDict, total=False):
     asset_id: Optional[str]
     asset_status_in: Optional[list[AssetStatus]]
     asset_step_name_in: Optional[list[str]]
+    asset_step_id_in: Optional[list[str]]
     asset_step_status_in: Optional[list[StatusInStep]]
     author_in: Optional[list[str]]
     category_search: Optional[str]

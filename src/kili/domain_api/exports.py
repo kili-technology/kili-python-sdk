@@ -48,6 +48,7 @@ class ExportAssetFilter(TypedDict, total=False):
     skipped: Optional[bool]
     status_in: Optional[list[AssetStatus]]
     step_name_in: Optional[list[str]]
+    step_id_in: Optional[list[str]]
     step_status_in: Optional[list[StatusInStep]]
     group_name_in: Optional[list[str]]
     group_name_not_in: Optional[list[str]]

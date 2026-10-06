@@ -547,3 +547,22 @@ class TestAssetsNamespaceGroupNameFilter:
 
 if __name__ == "__main__":
     pytest.main([__file__])
+
+
+def test_labels_create_default_sends_no_step():
+    """create_default leaves the step to the asset: no step name is sent on its behalf."""
+    from unittest.mock import MagicMock
+
+    from kili.client import Kili
+    from kili.domain_api.labels import LabelsNamespace
+
+    client = MagicMock(spec=Kili)
+    client.append_labels = MagicMock(return_value=[])
+    LabelsNamespace(client, MagicMock()).create_default(
+        asset_id="asset", json_response={}, project_id="project"
+    )
+
+    kwargs = client.append_labels.call_args.kwargs
+    assert kwargs["step_name"] is None
+    assert kwargs["step_id"] is None
+    assert kwargs["group_name"] is None
