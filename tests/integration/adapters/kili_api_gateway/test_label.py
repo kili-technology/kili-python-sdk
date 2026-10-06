@@ -8,6 +8,8 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 )
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.label.operations import (
+    GQL_ANNOTATION_FILE_URL,
+    GQL_CREATE_ANNOTATION_FILE_UPLOAD,
     GQL_DELETE_LABELS,
     get_append_many_labels_mutation,
     get_labels_query,
@@ -267,3 +269,47 @@ def test_given_project_with_new_annotations_when_calling_list_labels_it_converts
     # Then
     assert labels[0]["jsonResponse"] == test_case.expected_json_resp
     assert "jsonResponseUrl" not in labels[0]
+
+
+def test_given_kili_gateway_when_asking_for_an_annotation_file_url__it_reads_the_aliased_field(
+    graphql_client: GraphQLClient,
+    http_client: HttpClient,
+):
+    """The resolvers alias their field as `data`, so a query that does not is read as a KeyError."""
+    # Given
+    kili_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
+    graphql_client.execute.return_value = {"data": "https://bucket.example.com/signed"}
+
+    # When
+    url = kili_gateway.get_annotation_file_url(
+        project_id="project_id", asset_id="asset_id", file_id="file_id"
+    )
+
+    # Then
+    assert url == "https://bucket.example.com/signed"
+    graphql_client.execute.assert_called_once_with(
+        GQL_ANNOTATION_FILE_URL,
+        {"projectId": "project_id", "assetId": "asset_id", "fileId": "file_id"},
+    )
+
+
+def test_given_kili_gateway_when_reserving_a_file_upload__it_reads_the_aliased_field(
+    graphql_client: GraphQLClient,
+    http_client: HttpClient,
+):
+    # Given
+    kili_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
+    graphql_client.execute.return_value = {
+        "data": {"fileId": "file_id", "uploadUrl": "https://bucket.example.com/put"}
+    }
+
+    # When
+    upload = kili_gateway.create_annotation_file_upload(
+        project_id="project_id", asset_id="asset_id"
+    )
+
+    # Then
+    assert upload == {"fileId": "file_id", "uploadUrl": "https://bucket.example.com/put"}
+    graphql_client.execute.assert_called_once_with(
+        GQL_CREATE_ANNOTATION_FILE_UPLOAD, {"projectId": "project_id", "assetId": "asset_id"}
+    )

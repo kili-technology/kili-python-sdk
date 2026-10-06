@@ -740,3 +740,84 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
     assert root_kili["exportDate"]
 
     assert output == geojson_project_asset
+
+
+def _exporter_for_files(mocker: pytest_mock.MockerFixture, tmp_path) -> KiliExporter:
+    mocker.patch.object(KiliExporter, "__init__", return_value=None)
+    exporter = KiliExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
+    exporter.kili = mocker.MagicMock()
+    exporter.project_id = "project_id"
+    return exporter
+
+
+def test_kili_exporter_puts_a_file_job_s_file_beside_its_label(
+    mocker: pytest_mock.MockerFixture, tmp_path
+):
+    """A file job stores an id, so without this the archive names a render and does not hold it."""
+    # Given
+    exporter = _exporter_for_files(mocker, tmp_path)
+    download = mocker.patch(
+        "kili.use_cases.label.LabelUseCases.download_annotation_file", return_value="written"
+    )
+    assets = [
+        {
+            "id": "asset_id",
+            "externalId": "short video",
+            "latestLabel": {
+                "jsonResponse": {
+                    "assetLevel": {
+                        "RENDER": {"fileId": "file_id", "fileName": "render.mp4"},
+                    }
+                }
+            },
+        }
+    ]
+
+    # When
+    exporter._download_annotation_files(assets, tmp_path / "labels")
+
+    # Then the file is named for the asset and job that produced it, which is unique
+    _, kwargs = download.call_args
+    assert kwargs["output_path"].parent.name == "short_video"
+    assert kwargs["output_path"].name == "RENDER_render.mp4"
+    assert kwargs["file_id"] == "file_id"
+    assert kwargs["asset_id"] == "asset_id"
+
+    # and the label points at it
+    answer = assets[0]["latestLabel"]["jsonResponse"]["assetLevel"]["RENDER"]
+    assert answer["filePath"] == "labels/short_video/RENDER_render.mp4"
+
+
+def test_kili_exporter_finds_a_file_job_outside_video(mocker: pytest_mock.MockerFixture, tmp_path):
+    """Only video puts an asset level job under `assetLevel`; elsewhere it sits at the root."""
+    exporter = _exporter_for_files(mocker, tmp_path)
+    mocker.patch("kili.use_cases.label.LabelUseCases.download_annotation_file", return_value="w")
+    assets = [
+        {
+            "id": "asset_id",
+            "externalId": "image",
+            "latestLabel": {"jsonResponse": {"RENDER": {"fileId": "file_id"}}},
+        }
+    ]
+
+    exporter._download_annotation_files(assets, tmp_path / "labels")
+
+    assert "filePath" in assets[0]["latestLabel"]["jsonResponse"]["RENDER"]
+
+
+def test_kili_exporter_downloads_nothing_for_a_label_without_files(
+    mocker: pytest_mock.MockerFixture, tmp_path
+):
+    exporter = _exporter_for_files(mocker, tmp_path)
+    download = mocker.patch("kili.use_cases.label.LabelUseCases.download_annotation_file")
+    assets = [
+        {
+            "id": "asset_id",
+            "externalId": "image",
+            "latestLabel": {"jsonResponse": {"JOB": {"categories": []}}},
+        }
+    ]
+
+    exporter._download_annotation_files(assets, tmp_path / "labels")
+
+    download.assert_not_called()
