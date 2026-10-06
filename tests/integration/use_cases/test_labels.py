@@ -9,6 +9,7 @@ from kili.adapters.kili_api_gateway.label.types import (
     AppendLabelData,
     AppendManyLabelsData,
 )
+from kili.adapters.kili_api_gateway.project_workflow.common import resolve_step
 from kili.domain.asset import AssetExternalId
 from kili.domain.asset.asset import AssetId
 from kili.domain.project import ProjectId
@@ -735,3 +736,84 @@ def test_download_annotation_file_says_which_file_is_missing(
     assert "asset_id" in message
     # A signed url is a credential, so it has no business in the caller's logs.
     assert "X-Amz-Signature" not in message
+
+
+# Two groups using the same step names: a name alone designates no step.
+TWO_GROUP_WORKFLOW = {
+    "workflowVersion": "V3",
+    "stepGroups": [{"id": "group_1", "name": "Team 1"}, {"id": "group_2", "name": "Team 2"}],
+    "steps": [
+        {"id": "review_1", "name": "Review", "stepGroupId": "group_1"},
+        {"id": "review_2", "name": "Review", "stepGroupId": "group_2"},
+    ],
+}
+
+
+def _append_review_label(kili_api_gateway: KiliAPIGateway, project_id, **step_designation):
+    kili_api_gateway.get_step.side_effect = (
+        lambda project_id, step_id=None, step_name=None, group_name=None: resolve_step(
+            TWO_GROUP_WORKFLOW, step_id, step_name, group_name
+        )
+    )
+    kili_api_gateway.get_asset_project_id.return_value = ProjectId("project_of_the_asset")
+    LabelUseCases(kili_api_gateway).append_labels(
+        labels=[
+            LabelToCreateUseCaseInput(
+                asset_id=AssetId("asset_id_1"),
+                asset_external_id=None,
+                label_type="REVIEW",
+                json_response=json_response,
+                seconds_to_label=None,
+                author_id=None,
+                model_name=None,
+                referenced_label_id=None,
+            )
+        ],
+        label_type="REVIEW",
+        overwrite=False,
+        project_id=project_id,
+        fields=("id",),
+        disable_tqdm=True,
+        **step_designation,
+    )
+
+
+@pytest.mark.parametrize(
+    ("step_designation", "step_id"),
+    [
+        ({"step_name": "Review", "group_name": "Team 2"}, "review_2"),
+        ({"step_id": "review_1"}, "review_1"),
+    ],
+)
+def test_import_labels_on_a_step_sends_its_id(
+    kili_api_gateway: KiliAPIGateway, step_designation: dict, step_id: str
+):
+    _append_review_label(kili_api_gateway, ProjectId("project_id"), **step_designation)
+
+    assert kili_api_gateway.append_many_labels.call_args.kwargs["data"].step_id == step_id
+
+
+def test_import_labels_on_a_step_without_project_id_resolves_it_in_the_project_of_the_asset(
+    kili_api_gateway: KiliAPIGateway,
+):
+    _append_review_label(kili_api_gateway, None, step_name="Review", group_name="Team 1")
+
+    kili_api_gateway.get_asset_project_id.assert_called_once_with(AssetId("asset_id_1"))
+    assert kili_api_gateway.get_step.call_args.args[0] == "project_of_the_asset"
+    assert kili_api_gateway.append_many_labels.call_args.kwargs["data"].step_id == "review_1"
+
+
+@pytest.mark.parametrize(
+    ("step_designation", "error"),
+    [
+        ({"step_name": "Review"}, "Multiple steps named 'Review'"),
+        ({"step_id": "review_1", "step_name": "Review"}, "not both"),
+        ({"step_id": "review_1", "group_name": "Team 1"}, "group_name goes with step_name only"),
+        ({"group_name": "Team 1"}, "not both"),
+    ],
+)
+def test_import_labels_on_a_step_given_either_by_id_or_by_name(
+    kili_api_gateway: KiliAPIGateway, step_designation: dict, error: str
+):
+    with pytest.raises(ValueError, match=error):
+        _append_review_label(kili_api_gateway, ProjectId("project_id"), **step_designation)

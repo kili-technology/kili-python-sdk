@@ -1044,6 +1044,8 @@ class LabelClientMethods(BaseClientMethods):
         overwrite: bool = False,
         step_name: Optional[str] = None,
         reviewed_label_id_array: Optional[list[str]] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> list[dict[Literal["id"], str]]:
         """Append labels to assets.
 
@@ -1064,7 +1066,11 @@ class LabelClientMethods(BaseClientMethods):
             reviewed_label_id_array: list of IDs of labels being reviewed.
                 Only useful when uploading REVIEW labels.
             step_name: Name of the step to which the labels belong.
-                The label_type must match accordingly.
+                The label_type must match accordingly. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
 
         Returns:
             A list of dictionaries with the label ids.
@@ -1135,6 +1141,8 @@ class LabelClientMethods(BaseClientMethods):
             disable_tqdm=disable_tqdm,
             label_type=label_type,
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
             labels=labels,
             overwrite=overwrite,
             project_id=ProjectId(project_id) if project_id else None,
@@ -1558,6 +1566,8 @@ class LabelClientMethods(BaseClientMethods):
         label_type: LabelType = "DEFAULT",
         step_name: Optional[str] = None,
         model_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ):
         """Import and convert shapefiles into annotations for a specific asset in a Kili project.
 
@@ -1578,7 +1588,11 @@ class LabelClientMethods(BaseClientMethods):
                        All geometries will be transformed to EPSG:4326 before being added to Kili.
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
             step_name: Name of the step to which the labels belong.
-                The label_type must match accordingly.
+                The label_type must match accordingly. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
             model_name: Name of the model that generated the labels.
                 Only useful when uploading PREDICTION or INFERENCE labels.
 
@@ -1604,6 +1618,8 @@ class LabelClientMethods(BaseClientMethods):
             asset_external_id_array=[asset_external_id],
             label_type=label_type,
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
             model_name=model_name,
         )
 
@@ -1619,6 +1635,8 @@ class LabelClientMethods(BaseClientMethods):
         label_type: LabelType = "DEFAULT",
         step_name: Optional[str] = None,
         model_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ):
         """Import and convert GeoJSON files into annotations for a specific asset in a Kili project.
 
@@ -1650,7 +1668,11 @@ class LabelClientMethods(BaseClientMethods):
                 Each category must exist in the corresponding job's ontology.
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
             step_name: Name of the step to which the labels belong.
-                The label_type must match accordingly.
+                The label_type must match accordingly. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
             model_name: Name of the model that generated the labels.
                 Only useful when uploading PREDICTION or INFERENCE labels.
 
@@ -1761,5 +1783,7 @@ class LabelClientMethods(BaseClientMethods):
             asset_external_id_array=[asset_external_id],
             label_type=label_type,
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
             model_name=model_name,
         )

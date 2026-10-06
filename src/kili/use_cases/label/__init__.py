@@ -244,6 +244,8 @@ class LabelUseCases(BaseUseCases):
         fields: ListOrTuple[str],
         disable_tqdm: Optional[bool],
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> list[dict]:
         """Append labels."""
         check_input_labels(labels)
@@ -281,9 +283,19 @@ class LabelUseCases(BaseUseCases):
             for label, asset_id in zip(labels, resolved_asset_ids, strict=False)
         ]
 
+        if step_id is not None or step_name is not None or group_name is not None:
+            # A step is sent by id: one given by name, and group when several groups use that
+            # name, is resolved first, in the project of the labelled assets.
+            step_id = self._kili_api_gateway.get_step(
+                project_id or self._kili_api_gateway.get_asset_project_id(resolved_asset_ids[0]),
+                step_id=step_id,
+                step_name=step_name,
+                group_name=group_name,
+            )["id"]
+
         data = AppendManyLabelsData(
             label_type=label_type,
-            step_name=step_name,
+            step_id=step_id,
             overwrite=overwrite,
             labels_data=labels_to_add,
         )
