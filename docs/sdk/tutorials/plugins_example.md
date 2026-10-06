@@ -335,7 +335,7 @@ print(
 )
 
 print(
-    f"Go to my project: {kili.legacy_client.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
+    f"Go to my project: {kili.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
 )
 ```
 
@@ -376,7 +376,7 @@ print(
 )
 
 print(
-    f"Go to my project: {kili.legacy_client.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
+    f"Go to my project: {kili.api_endpoint.split('/api')[0]}/label/projects/{project_id}/menu/queue"
 )
 ```
 

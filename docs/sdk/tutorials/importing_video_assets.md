@@ -149,18 +149,16 @@ assets = kili.assets.create_video_native(
 
 ### Uploading a video asset to label each frame separately
 
-To upload your video and be able to label frames separately, as individual images, refer to this code:
+To upload your video and be able to label frames separately, as individual images, give it to `kili.assets.create_video_frame` as `content`: Kili splits it into frames.
 
 
 ```python
 url = "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
 
-# shouldUseNativeVideo=False splits the video into frames; no create_* method takes this option yet
-assets = kili.assets.create_video_native(
+assets = kili.assets.create_video_frame(
     project_id=project_id,
-    content_array=[url],
-    external_id_array=["video_2_from_url_split_frames"],
-    json_metadata_array=[{"processingParameters": {"shouldUseNativeVideo": False}}],
+    content=url,
+    external_id="video_2_from_url_split_frames",
 )
 ```
 

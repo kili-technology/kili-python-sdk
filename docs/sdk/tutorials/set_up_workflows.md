@@ -154,22 +154,26 @@ For more information on honeypot, refer to our [documentation](https://docs.kili
 
 ## Assigning labelers to assets
 
-You can assign specific labelers to specific assets in your project. You can do that by assigning users' IDs to the selected assets. Remember that you can assign more than one user to a specific asset.
+You can assign specific labelers to specific assets in your project. You can do that by assigning users' emails or IDs to the selected assets. Remember that you can assign more than one user to a specific asset.
 
 
 ```python
 kili.assets.assign(
     project_id=project_id,
     external_ids=["1.jpg", "2.jpg", "3.jpg"],
-    to_be_labeled_by_array=[[user_id] for user_id in project_user_ids],
+    to_be_labeled_by_array=[
+        ["example1@example.com"],
+        ["example2@example.com"],
+        ["example3@example.com"],
+    ],
 )
 ```
 
-The `to_be_labeled_by_array` argument is a list of lists. Each of the sub-lists can contain several user IDs, such as the ones `kili.projects.users.create` returned above, or `kili.projects.users.list(project_id=project_id, fields=["user.id", "user.email"])`. This way you can assign several labelers to one asset.
+The `to_be_labeled_by_array` argument is a list of lists. Each of the sub-lists can contain several emails or user IDs. This way you can assign several labelers to one asset.
 
 For example:
 
-`to_be_labeled_by_array = [[user_id_1], [user_id_1, user_id_2], [user_id_3]]`
+`to_be_labeled_by_array = [["example1@example.com"], ["example1@example.com", "example2@example.com"], ["example3@example.com"]]`
 
 For information on how to add users and assign them to your project, refer to the [basic project setup](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/basic_project_setup/) tutorial.
 For information on assigning assets to users, refer to our [documentation](https://docs.kili-technology.com/docs/queue-prioritization).

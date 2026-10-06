@@ -159,3 +159,9 @@ def test_domain_client_exposes_plugins_llm_and_events(mock_http_operations):
     assert isinstance(kili.plugins, PluginsNamespace)
     assert kili.llm is kili.legacy_client.llm
     assert kili.events is kili.legacy_client.events
+
+
+def test_domain_client_exposes_its_api_endpoint(mock_http_operations):
+    kili = KiliDomain(api_key="key", api_endpoint="https://endpoint.com/api/label/v2/graphql")
+
+    assert kili.api_endpoint == "https://endpoint.com/api/label/v2/graphql"

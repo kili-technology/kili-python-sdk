@@ -129,6 +129,18 @@ class Kili:
         kili.legacy_client = legacy_client
         return kili
 
+    @property
+    def api_endpoint(self) -> str:
+        """The GraphQL endpoint this client calls.
+
+        Examples:
+            ```python
+            kili = Kili()
+            app_url = kili.api_endpoint.split("/api")[0]
+            ```
+        """
+        return self.legacy_client.api_endpoint
+
     # Domain API Namespaces - Lazy loaded properties
     @cached_property
     def assets(self) -> "AssetsNamespace":

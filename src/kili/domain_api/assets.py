@@ -18,6 +18,7 @@ from typing import (
 from typeguard import typechecked
 from typing_extensions import deprecated
 
+from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import is_url
 from kili.domain.asset import (
     AssetStatus,
@@ -26,6 +27,7 @@ from kili.domain.asset.asset import AssetActionOutcome, StatusInStep
 from kili.domain.issue import IssueStatus, IssueType
 from kili.domain.label import LabelType
 from kili.domain.types import ListOrTuple
+from kili.domain.user import UserFilter
 from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
 
@@ -137,10 +139,18 @@ class GeospatialLayerParam(ImageLayerParam, total=False):
         name: Optional name for the layer
         bounds: Optional bounding box coordinates [[minX, minY], [maxX, maxY]]
         epsg: Optional coordinate reference system (EPSG3857 or EPSG4326)
+        is_base_layer: Whether the layer is a base layer, only one of which shows at a time, or
+            an overlay shown on top of it. Defaults to a base layer for a file and to an overlay
+            for a URL.
+        min_zoom: Optional lowest zoom level to request tiles at, for a URL
+        max_zoom: Optional highest zoom level to request tiles at, for a URL
     """
 
     bounds: Optional[list[list[float]]]
     epsg: Optional[Literal["EPSG3857", "EPSG4326"]]
+    is_base_layer: bool
+    min_zoom: int
+    max_zoom: int
 
 
 def convert_to_web_layer(layer: GeospatialLayerParam) -> dict[str, Any]:
@@ -158,8 +168,12 @@ def convert_to_web_layer(layer: GeospatialLayerParam) -> dict[str, Any]:
         "name": layer.get("name"),
         "tileLayerUrl": layer.get("path"),
         "useClassicCoordinates": False,
-        "isBaseLayer": False,
+        "isBaseLayer": layer.get("is_base_layer", False),
     }
+    if "min_zoom" in layer:
+        res["minZoom"] = layer["min_zoom"]
+    if "max_zoom" in layer:
+        res["maxZoom"] = layer["max_zoom"]
     return res
 
 
@@ -182,10 +196,17 @@ def convert_to_local_layer(layer: GeospatialLayerParam) -> dict[str, Any]:
             "Forced epsg are not yet supported for local layers.",
             stacklevel=1,
         )
-    res = {
+    if "min_zoom" in layer or "max_zoom" in layer:
+        warnings.warn(
+            "Zoom levels of local layers are set by json_metadata's processingParameters.",
+            stacklevel=1,
+        )
+    res: dict[str, Any] = {
         "name": layer.get("name"),
         "path": layer.get("path"),
     }
+    if "is_base_layer" in layer:
+        res["isBaseLayer"] = layer["is_base_layer"]
     return res
 
 
@@ -803,6 +824,35 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
         ...
 
+    @overload
+    def create_video_frame(
+        self,
+        *,
+        project_id: str,
+        content: str,
+        processing_parameters: Optional[VideoProcessingParameters] = None,
+        external_id: Optional[str] = None,
+        json_metadata: Optional[dict] = None,
+        wait_until_availability: bool = True,
+        **kwargs,
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+        ...
+
+    @overload
+    def create_video_frame(
+        self,
+        *,
+        project_id: str,
+        content_array: List[str],
+        processing_parameters_array: Optional[List[VideoProcessingParameters]] = None,
+        external_id_array: Optional[List[str]] = None,
+        json_metadata_array: Optional[List[dict]] = None,
+        disable_tqdm: Optional[bool] = None,
+        wait_until_availability: bool = True,
+        **kwargs,
+    ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
+        ...
+
     @typechecked
     def create_video_frame(
         self,
@@ -810,6 +860,8 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         project_id: str,
         json_content: Optional[Union[List[Union[dict, str]], None]] = None,
         json_content_array: Optional[List[Union[List[Union[dict, str]], None]]] = None,
+        content: Optional[str] = None,
+        content_array: Optional[List[str]] = None,
         processing_parameters: Optional[VideoProcessingParameters] = None,
         processing_parameters_array: Optional[List[VideoProcessingParameters]] = None,
         external_id: Optional[str] = None,
@@ -820,7 +872,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         wait_until_availability: bool = True,
         **kwargs,
     ) -> dict[Literal["id", "asset_ids"], Union[str, List[str]]]:
-        """Create video assets from frame sequences in a project.
+        """Create video assets from frame sequences, or from video files split into frames.
 
         If processing parameters are incomplete, Kili will probe the videos to determine missing parameters.
 
@@ -828,6 +880,8 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             project_id: Identifier of the project
             json_content: Sequence of frames (list of URLs or paths to images)
             json_content_array: List of frame sequences for each video
+            content: URL or local file path to a video file, which Kili splits into frames
+            content_array: List of URLs or local file paths to video files, each split into frames
             processing_parameters: Video processing configuration
             processing_parameters_array: List of video processing configurations for each asset
             external_id: External id to identify the asset
@@ -863,16 +917,27 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             ...         ["https://example.com/video2/frame1.png", "https://example.com/video2/frame2.png"]
             ...     ]
             ... )
+
+            >>> # Split a video file into frames
+            >>> result = kili.assets.create_video_frame(
+            ...     project_id="my_project",
+            ...     content="https://example.com/video.mp4"
+            ... )
         """
         # Convert singular to plural
         if json_content is not None:
             json_content_array = [json_content]
+        if content is not None:
+            content_array = [content]
         if external_id is not None:
             external_id_array = [external_id]
         if json_metadata is not None:
             json_metadata_array = [json_metadata]
         if processing_parameters is not None:
             processing_parameters_array = [processing_parameters]
+        if content_array is not None and processing_parameters_array is None:
+            # a video file is split only when its processing parameters say shouldUseNativeVideo False
+            processing_parameters_array = [{} for _ in content_array]
 
         # Merge processing parameters into json_metadata
         if processing_parameters_array is not None:
@@ -880,13 +945,15 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
                 json_metadata_array = [{} for _ in processing_parameters_array]
             for i, params in enumerate(processing_parameters_array):
                 if i < len(json_metadata_array):
-                    json_metadata_array[i][
-                        "processingParameters"
-                    ] = _prepare_video_processing_parameters(params, use_native_video=False)
+                    json_metadata_array[i]["processingParameters"] = {
+                        **json_metadata_array[i].get("processingParameters", {}),
+                        **_prepare_video_processing_parameters(params, use_native_video=False),
+                    }
 
         # Call the legacy method directly through the client
         return self._client.append_many_to_dataset(
             project_id=project_id,
+            content_array=content_array,
             json_content_array=json_content_array,
             external_id_array=external_id_array,
             json_metadata_array=json_metadata_array,
@@ -961,6 +1028,22 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             ...     layer_array=[
             ...         {"path": "/path/to/layer1.tif"},
             ...         {"path": "/path/to/layer2.tif"}
+            ...     ]
+            ... )
+
+            >>> # A GeoTIFF overlay on top of a tile server's base layer
+            >>> result = kili.assets.create_geospatial(
+            ...     project_id="my_project",
+            ...     layer_array=[
+            ...         {"path": "/path/to/layer1.tif", "is_base_layer": False},
+            ...         {
+            ...             "path": "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            ...             "name": "osm",
+            ...             "bounds": [[11.17, 44.30], [13.67, 46.54]],
+            ...             "min_zoom": 10,
+            ...             "max_zoom": 18,
+            ...             "is_base_layer": True,
+            ...         },
             ...     ]
             ... )
 
@@ -2229,8 +2312,9 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         finish it. Those assets are reported under `declined` rather than silently left out.
 
         Args:
-            to_be_labeled_by: List of labeler user IDs to assign to a single asset.
-            to_be_labeled_by_array: Array of lists of labelers to assign per asset (list of userIds).
+            to_be_labeled_by: The labelers to assign to a single asset, as user IDs or emails.
+            to_be_labeled_by_array: The labelers to assign to each asset, as lists of user IDs or
+                emails.
             asset_id: The internal asset ID to assign.
             asset_ids: The internal asset IDs to assign.
             external_id: The external asset ID to assign (if `asset_id` is not already provided).
@@ -2262,6 +2346,12 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
                     to_be_labeled_by_array=[['cm3yja6kv0i698697gcil9rtk','cm3yja6kv0i000000gcil9rtk'],
                                             ['cm3yja6kv0i698697gcil9rtk']]
                 )
+
+            >>> # By email
+            >>> kili.assets.assign(
+                    asset_id="ckg22d81r0jrg0885unmuswj8",
+                    to_be_labeled_by=["labeler@example.com"]
+                )
         """
         # Convert singular to plural
         if asset_id is not None:
@@ -2277,8 +2367,25 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             asset_ids=asset_ids,
             external_ids=external_ids,
             project_id=project_id,
-            to_be_labeled_by_array=to_be_labeled_by_array,
+            to_be_labeled_by_array=self._user_ids(to_be_labeled_by_array),
         )
+
+    def _user_ids(self, labelers_array: List[List[str]]) -> List[List[str]]:
+        """Replace each email by its user's id: the mutation takes ids only."""
+        emails = {labeler for labelers in labelers_array for labeler in labelers if "@" in labeler}
+        ids = {}
+        for email in emails:
+            users = list(
+                self._gateway.list_users(
+                    UserFilter(id=None, email=email.lower()),  # stored lowercased
+                    ("id",),
+                    QueryOptions(disable_tqdm=True, first=1),
+                )
+            )
+            if not users:
+                raise ValueError(f"No user has the email {email}.")
+            ids[email] = users[0]["id"]
+        return [[ids.get(labeler, labeler) for labeler in labelers] for labelers in labelers_array]
 
     @overload
     def update_priority(
