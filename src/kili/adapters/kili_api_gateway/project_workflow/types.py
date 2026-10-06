@@ -13,6 +13,7 @@ class ProjectWorkflowDataKiliAPIGatewayInput:
     enforce_step_separation: Optional[bool]
     create_steps: Optional[list[WorkflowStepCreate]]
     update_steps: Optional[list[WorkflowStepUpdate]]
+    # Step ids only: names are resolved to ids before the request is built.
     delete_steps: Optional[list[str]]
     null_fields: frozenset[str] = frozenset()
 

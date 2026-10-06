@@ -17,6 +17,7 @@ from kili.domain.project import (
     InputType,
     ProjectId,
     WorkflowStepCreate,
+    WorkflowStepDesignation,
     WorkflowStepUpdate,
 )
 from kili.domain.types import ListOrTuple
@@ -241,7 +242,7 @@ class WorkflowNamespace:
         enforce_step_separation: Optional[bool] = None,
         create_steps: Optional[list[WorkflowStepCreate]] = None,
         update_steps: Optional[list[WorkflowStepUpdate]] = None,
-        delete_steps: Optional[list[str]] = None,
+        delete_steps: Optional[list[str | WorkflowStepDesignation]] = None,
     ) -> dict[str, Any]:
         """Update properties of a project workflow.
 
@@ -250,9 +251,13 @@ class WorkflowNamespace:
             enforce_step_separation: Prevents the same user from being assigned to
                 multiple steps in the workflow for a same asset,
                 ensuring independent review and labeling processes
-            create_steps: List of steps to create in the project workflow.
-            update_steps: List of steps to update in the project workflow.
-            delete_steps: List of step IDs to delete from the project workflow.
+            create_steps: List of steps to create in the project workflow. On a workflow V3
+                project, each step gives the `step_group_id` of the group to create it in.
+            update_steps: List of steps to update in the project workflow, each given by its `id`,
+                or by its `name` with `group_name` when several groups use that name.
+            delete_steps: List of steps to delete from the project workflow, each given by its ID,
+                by its name, or as `{"name": ..., "group_name": ...}` when several groups use
+                that name.
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
@@ -282,57 +287,70 @@ class WorkflowNamespace:
     def add_reviewers(
         self,
         project_id: str,
-        step_name: str,
-        emails: List[str],
+        step_name: Optional[str] = None,
+        emails: Optional[List[str]] = None,
         group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> List[str]:
         """Add reviewers to a specific step.
 
         Args:
             project_id: Id of the project.
-            step_name: Name of the step.
+            step_name: Name of the step. Exclusive with `step_id`.
             emails: List of emails to add.
-            group_name: Name of the workflow V3 group containing the step.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
                 Required when several groups have a step with the same name.
+            step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
         Returns:
             A list with emails added to the step.
         """
         return self._client.add_reviewers_to_step(
-            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+            project_id=project_id,
+            step_name=step_name,
+            emails=emails,
+            group_name=group_name,
+            step_id=step_id,
         )
 
     @typechecked
     def remove_reviewers(
         self,
         project_id: str,
-        step_name: str,
-        emails: List[str],
+        step_name: Optional[str] = None,
+        emails: Optional[List[str]] = None,
         group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> List[str]:
         """Remove reviewers from a specific step.
 
         Args:
             project_id: Id of the project.
-            step_name: Name of the step.
+            step_name: Name of the step. Exclusive with `step_id`.
             emails: List of emails to remove.
-            group_name: Name of the workflow V3 group containing the step.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
                 Required when several groups have a step with the same name.
+            step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
         Returns:
             A list with emails removed from the step.
         """
         return self._client.remove_reviewers_from_step(
-            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+            project_id=project_id,
+            step_name=step_name,
+            emails=emails,
+            group_name=group_name,
+            step_id=step_id,
         )
 
     @typechecked
     def add_labelers(
         self,
         project_id: str,
-        step_name: str,
-        emails: List[str],
+        step_name: Optional[str] = None,
+        emails: Optional[List[str]] = None,
         group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> List[str]:
         """Add labelers to a specific labeling step.
 
@@ -341,25 +359,31 @@ class WorkflowNamespace:
 
         Args:
             project_id: Id of the project.
-            step_name: Name of the labeling step.
+            step_name: Name of the labeling step. Exclusive with `step_id`.
             emails: List of emails to add.
-            group_name: Name of the workflow V3 group containing the step.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
                 Required when several groups have a step with the same name.
+            step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
         Returns:
             A list with emails added to the step.
         """
         return self._client.add_labelers_to_step(
-            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+            project_id=project_id,
+            step_name=step_name,
+            emails=emails,
+            group_name=group_name,
+            step_id=step_id,
         )
 
     @typechecked
     def remove_labelers(
         self,
         project_id: str,
-        step_name: str,
-        emails: List[str],
+        step_name: Optional[str] = None,
+        emails: Optional[List[str]] = None,
         group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> List[str]:
         """Remove labelers from a specific labeling step.
 
@@ -369,16 +393,21 @@ class WorkflowNamespace:
 
         Args:
             project_id: Id of the project.
-            step_name: Name of the labeling step.
+            step_name: Name of the labeling step. Exclusive with `step_id`.
             emails: List of emails to remove.
-            group_name: Name of the workflow V3 group containing the step.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
                 Required when several groups have a step with the same name.
+            step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
         Returns:
             A list with emails removed from the step.
         """
         return self._client.remove_labelers_from_step(
-            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+            project_id=project_id,
+            step_name=step_name,
+            emails=emails,
+            group_name=group_name,
+            step_id=step_id,
         )
 
     @typechecked

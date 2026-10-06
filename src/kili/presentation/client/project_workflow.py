@@ -1,14 +1,28 @@
 """Client presentation methods for project workflow."""
 
-from typing import Any, Optional
+from typing import Any, Optional, TypeVar
 
 from typeguard import typechecked
 
-from kili.domain.project import ProjectId, WorkflowStepCreate, WorkflowStepUpdate
+from kili.domain.project import (
+    ProjectId,
+    WorkflowStepCreate,
+    WorkflowStepDesignation,
+    WorkflowStepUpdate,
+)
 from kili.use_cases.project_workflow import ProjectWorkflowUseCases
 
 from ...domain.types import ListOrTuple
 from .base import BaseClientMethods
+
+T = TypeVar("T")
+
+
+def _required(value: Optional[T], name: str) -> T:
+    """The value of an argument that only has a default so that `step_name` can have one."""
+    if value is None:
+        raise ValueError(f"{name} is required")
+    return value
 
 
 class ProjectWorkflowClientMethods(BaseClientMethods):
@@ -21,7 +35,7 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
         enforce_step_separation: Optional[bool] = None,
         create_steps: Optional[list[WorkflowStepCreate]] = None,
         update_steps: Optional[list[WorkflowStepUpdate]] = None,
-        delete_steps: Optional[list[str]] = None,
+        delete_steps: Optional[list[str | WorkflowStepDesignation]] = None,
     ) -> dict[str, Any]:
         """Update properties of a project workflow.
 
@@ -30,9 +44,13 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             enforce_step_separation: Prevents the same user from being assigned to
                 multiple steps in the workflow for a same asset,
                 ensuring independent review and labeling processes
-            create_steps: List of steps to create in the project workflow.
-            update_steps: List of steps to update in the project workflow.
-            delete_steps: List of step IDs or names to delete from the project workflow.
+            create_steps: List of steps to create in the project workflow. On a workflow V3
+                project, each step gives the `step_group_id` of the group to create it in.
+            update_steps: List of steps to update in the project workflow, each given by its `id`,
+                or by its `name` with `group_name` when several groups use that name.
+            delete_steps: List of steps to delete from the project workflow, each given by its ID,
+                by its name, or as `{"name": ..., "group_name": ...}` when several groups use
+                that name.
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
@@ -54,6 +72,7 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             "steps.type",
             "steps.name",
             "steps.id",
+            "steps.stepGroupId",
             "steps.assignees.email",
             "steps.assignees.id",
         ),
@@ -76,57 +95,70 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
     def add_reviewers_to_step(
         self,
         project_id: str,
-        step_name: str,
-        emails: list[str],
+        step_name: Optional[str] = None,
+        emails: Optional[list[str]] = None,
         group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> list[str]:
         """Add reviewers to a specific step.
 
         Args:
             project_id: Id of the project.
-            step_name: Name of the step.
+            step_name: Name of the step. Exclusive with `step_id`.
             emails: List of emails to add.
-            group_name: Name of the workflow V3 group containing the step.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
                 Required when several groups have a step with the same name.
+            step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
         Returns:
             A list with the added emails.
         """
         return ProjectWorkflowUseCases(self.kili_api_gateway).add_reviewers_to_step(
-            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+            project_id=project_id,
+            step_name=step_name,
+            emails=_required(emails, "emails"),
+            group_name=group_name,
+            step_id=step_id,
         )
 
     @typechecked
     def remove_reviewers_from_step(
         self,
         project_id: str,
-        step_name: str,
-        emails: list[str],
+        step_name: Optional[str] = None,
+        emails: Optional[list[str]] = None,
         group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> list[str]:
         """Remove reviewers from a specific step.
 
         Args:
             project_id: Id of the project.
-            step_name: Name of the step.
+            step_name: Name of the step. Exclusive with `step_id`.
             emails: List of emails to remove.
-            group_name: Name of the workflow V3 group containing the step.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
                 Required when several groups have a step with the same name.
+            step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
         Returns:
             A list with the removed emails.
         """
         return ProjectWorkflowUseCases(self.kili_api_gateway).remove_reviewers_from_step(
-            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+            project_id=project_id,
+            step_name=step_name,
+            emails=_required(emails, "emails"),
+            group_name=group_name,
+            step_id=step_id,
         )
 
     @typechecked
     def add_labelers_to_step(
         self,
         project_id: str,
-        step_name: str,
-        emails: list[str],
+        step_name: Optional[str] = None,
+        emails: Optional[list[str]] = None,
         group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> list[str]:
         """Add labelers to a specific labeling step.
 
@@ -135,25 +167,31 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
 
         Args:
             project_id: Id of the project.
-            step_name: Name of the labeling step.
+            step_name: Name of the labeling step. Exclusive with `step_id`.
             emails: List of emails to add.
-            group_name: Name of the workflow V3 group containing the step.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
                 Required when several groups have a step with the same name.
+            step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
         Returns:
             A list with the added emails.
         """
         return ProjectWorkflowUseCases(self.kili_api_gateway).add_labelers_to_step(
-            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+            project_id=project_id,
+            step_name=step_name,
+            emails=_required(emails, "emails"),
+            group_name=group_name,
+            step_id=step_id,
         )
 
     @typechecked
     def remove_labelers_from_step(
         self,
         project_id: str,
-        step_name: str,
-        emails: list[str],
+        step_name: Optional[str] = None,
+        emails: Optional[list[str]] = None,
         group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> list[str]:
         """Remove labelers from a specific labeling step.
 
@@ -163,16 +201,21 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
 
         Args:
             project_id: Id of the project.
-            step_name: Name of the labeling step.
+            step_name: Name of the labeling step. Exclusive with `step_id`.
             emails: List of emails to remove.
-            group_name: Name of the workflow V3 group containing the step.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
                 Required when several groups have a step with the same name.
+            step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
         Returns:
             A list with the removed emails.
         """
         return ProjectWorkflowUseCases(self.kili_api_gateway).remove_labelers_from_step(
-            project_id=project_id, step_name=step_name, emails=emails, group_name=group_name
+            project_id=project_id,
+            step_name=step_name,
+            emails=_required(emails, "emails"),
+            group_name=group_name,
+            step_id=step_id,
         )
 
     @typechecked
@@ -248,19 +291,24 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
     def update_labeling_step_properties(
         self,
         project_id: str,
-        step_name: str,
+        step_name: str | None = None,
         consensus_coverage: int | None = None,
         number_of_expected_labels_for_consensus: int | None = None,
         use_honeypot: bool | None = None,
+        group_name: str | None = None,
+        step_id: str | None = None,
     ) -> dict[str, Any]:
         """Update properties of a labeling step.
 
         Args:
             project_id: Id of the project.
-            step_name: Name of the labeling step to update.
+            step_name: Name of the labeling step to update. Exclusive with `step_id`.
             consensus_coverage: Percentage of assets to be labeled for consensus (0-100).
             number_of_expected_labels_for_consensus: Number of expected labels for consensus.
             use_honeypot: Whether to use honeypot on this step.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
+            step_id: Id of the step to update. Exclusive with `step_name` and `group_name`.
 
         Returns:
             A dict with the updated step data (id, name).
@@ -271,27 +319,34 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             consensus_coverage=consensus_coverage,
             number_of_expected_labels_for_consensus=number_of_expected_labels_for_consensus,
             use_honeypot=use_honeypot,
+            group_name=group_name,
+            step_id=step_id,
         )
 
     @typechecked
     def update_review_step_properties(
         self,
         project_id: str,
-        step_name: str,
+        step_name: str | None = None,
         assignees: list[str] | None = None,
         step_coverage: int | None = None,
         send_back_to_step: str | None = None,
         use_honeypot: bool | None = None,
+        group_name: str | None = None,
+        step_id: str | None = None,
     ) -> dict[str, Any]:
         """Update properties of a review step.
 
         Args:
             project_id: Id of the project.
-            step_name: Name of the review step to update.
+            step_name: Name of the review step to update. Exclusive with `step_id`.
             assignees: List of emails to assign to the step.
             step_coverage: Percentage of assets to be reviewed in this step (0-100).
             send_back_to_step: Id of the step to send assets back to when rejected.
             use_honeypot: Whether to use honeypot on this step.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
+            step_id: Id of the step to update. Exclusive with `step_name` and `group_name`.
 
         Returns:
             A dict with the updated step data (id, name).
@@ -303,6 +358,8 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             step_coverage=step_coverage,
             send_back_to_step=send_back_to_step,
             use_honeypot=use_honeypot,
+            group_name=group_name,
+            step_id=step_id,
         )
 
     @typechecked
@@ -326,15 +383,20 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
     def rename_step(
         self,
         project_id: str,
-        step_name: str,
-        new_name: str,
+        step_name: str | None = None,
+        new_name: str | None = None,
+        group_name: str | None = None,
+        step_id: str | None = None,
     ) -> dict[str, Any]:
         """Rename a step in a project workflow.
 
         Args:
             project_id: Id of the project.
-            step_name: Name of the step.
+            step_name: Name of the step. Exclusive with `step_id`.
             new_name: New name for the step.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
+            step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
         Returns:
             A dict with the renamed step data (id, name).
@@ -342,5 +404,7 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
         return ProjectWorkflowUseCases(self.kili_api_gateway).rename_step(
             project_id=project_id,
             step_name=step_name,
-            new_name=new_name,
+            new_name=_required(new_name, "new_name"),
+            group_name=group_name,
+            step_id=step_id,
         )

@@ -425,3 +425,52 @@ def test_remove_labelers_from_step_on_v2_project_raises(mocker: pytest_mock.Mock
 
     with pytest.raises(ValueError, match="requires a workflow V3 project"):
         kili.remove_labelers_from_step("proj", "Labeling", ["a@kili.com"])
+
+
+def test_add_labelers_to_step_designated_by_id(mocker: pytest_mock.MockerFixture):
+    kili = _client(mocker)
+    members = [_member("lab@kili.com", "u-lab", "LABELER")]
+    # Both groups name their labeling step the same: the id tells them apart.
+    steps = [
+        {"id": "step-g1", "name": "Labeling", "type": "DEFAULT", "stepGroupId": "grp-1"},
+        {
+            "id": "step-g2",
+            "name": "Labeling",
+            "type": "DEFAULT",
+            "stepGroupId": "grp-2",
+            "assignees": [{"id": "u-existing"}],
+        },
+    ]
+    step_groups = [{"id": "grp-1", "name": "Group 1"}, {"id": "grp-2", "name": "Group 2"}]
+    kili.kili_api_gateway.graphql_client.execute.side_effect = [
+        _context_result("V3", steps, step_groups),
+        *_project_users_results(members),
+        _MUTATION_RESULT,
+    ]
+
+    added = kili.add_labelers_to_step("proj", emails=["lab@kili.com"], step_id="step-g2")
+
+    assert added == ["lab@kili.com"]
+    assert _last_update_variables(kili)["steps"]["updates"] == [
+        {"id": "step-g2", "assignees": ["u-existing", "u-lab"]}
+    ]
+
+
+def test_add_labelers_to_step_refuses_both_a_step_id_and_a_step_name(
+    mocker: pytest_mock.MockerFixture,
+):
+    kili = _client(mocker)
+    steps = [{"id": "step-g1", "name": "Labeling", "type": "DEFAULT", "stepGroupId": "grp-1"}]
+    kili.kili_api_gateway.graphql_client.execute.side_effect = [
+        _context_result("V3", steps, [{"id": "grp-1", "name": "Group 1"}]),
+    ]
+
+    with pytest.raises(ValueError, match="not both"):
+        kili.add_labelers_to_step("proj", "Labeling", ["lab@kili.com"], step_id="step-g1")
+
+
+def test_add_labelers_to_step_requires_emails(mocker: pytest_mock.MockerFixture):
+    kili = _client(mocker)
+
+    with pytest.raises(ValueError, match="emails is required"):
+        kili.add_labelers_to_step("proj", step_id="step-g1")

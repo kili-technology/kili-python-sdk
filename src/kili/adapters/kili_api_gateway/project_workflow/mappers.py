@@ -47,6 +47,7 @@ def update_step_mapper(
         "type": "type",
         "assignees": "assignees",
         "sendBackStepId": "send_back_step_id",
+        "stepGroupId": "step_group_id",
     }
     return {
         gql_key: data[py_key]
