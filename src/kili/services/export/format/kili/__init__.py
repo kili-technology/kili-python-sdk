@@ -7,6 +7,8 @@ from kili_formats import clean_json_response, convert_to_pixel_coords
 from kili_formats.media.video import cut_video
 from kili_formats.types import Job, ProjectDict
 
+from kili.domain.asset import AssetId
+from kili.domain.project import ProjectId
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.format.pixel_labeling import (
     convert_to_pixel_coords as convert_to_pixel_coords_for_pixel_labeling,
@@ -20,6 +22,63 @@ class KiliExporter(AbstractExporter):
     project: ProjectDict  # Ensure self.project is typed as ProjectDict
 
     ASSETS_DIR_NAME = "assets"
+
+    def _download_annotation_files(self, assets: list[dict], labels_folder: Path) -> None:
+        """Put the files a label\'s file jobs answer with in a folder of their own, one per asset.
+
+        A file job stores an id, so without this the archive says a render exists and does not
+        contain it. Each asset gets `labels/<externalId>/`, beside its `labels/<externalId>.json`,
+        so the deliverables of one asset stay together however many jobs produced them.
+
+        The job name prefixes the file because two jobs may answer with the same file name, and
+        reading which job produced what is worth more than a bare name.
+
+        The answer gains a `filePath` relative to the archive root, the way an asset\'s `content`
+        becomes a path once downloaded.
+        """
+        if not any(self._file_answers_of(asset) for asset in assets):
+            return
+
+        from kili.use_cases.label import LabelUseCases  # - avoids an import cycle
+
+        use_cases = LabelUseCases(self.kili.kili_api_gateway)
+
+        for asset in assets:
+            external_id = str(asset.get("externalId", asset["id"])).replace(" ", "_")
+            asset_folder = labels_folder / external_id
+
+            for job_name, answer in self._file_answers_of(asset):
+                file_name = f"{job_name}_{answer.get('fileName', answer['fileId'])}"
+                use_cases.download_annotation_file(
+                    project_id=ProjectId(self.project_id),
+                    asset_id=AssetId(asset["id"]),
+                    asset_external_id=None,
+                    file_id=answer["fileId"],
+                    output_path=asset_folder / file_name,
+                )
+                answer["filePath"] = str(Path("labels") / external_id / file_name)
+
+    @staticmethod
+    def _file_answers_of(asset: dict) -> list[tuple[str, dict]]:
+        """Every file job answer of every label on the asset, with the job it answers."""
+        labels = [
+            asset.get("latestLabel"),
+            *(asset.get("labels") or asset.get("latestLabels") or []),
+        ]
+        answers = []
+        for label in labels:
+            if not isinstance(label, dict):
+                continue
+            json_response = label.get("jsonResponse") or {}
+            # A file has no frame, so on video a file job sits under `assetLevel`.
+            asset_level = json_response.get("assetLevel")
+            jobs = asset_level if isinstance(asset_level, dict) else json_response
+            answers.extend(
+                (job_name, answer)
+                for job_name, answer in jobs.items()
+                if isinstance(answer, dict) and "fileId" in answer
+            )
+        return answers
 
     def _check_arguments_compatibility(self) -> None:
         """Check if the export label format is compatible with the export options."""
@@ -42,13 +101,17 @@ class KiliExporter(AbstractExporter):
 
             assets = self._clean_filepaths(assets)
 
+        # Before the json is written, so that each answer carries the path of the file beside it.
+        # A label holding no file downloads nothing, so this costs an export without them nothing.
+        labels_folder = self.base_folder / "labels"
+        self._download_annotation_files(assets, labels_folder)
+
         if self.single_file:
             project_json = json.dumps(assets, sort_keys=True, indent=4)
             self.base_folder.mkdir(parents=True, exist_ok=True)
             with (self.base_folder / "data.json").open("wb") as output_file:
                 output_file.write(project_json.encode("utf-8"))
         else:
-            labels_folder = self.base_folder / "labels"
             labels_folder.mkdir(parents=True, exist_ok=True)
             for asset in assets:
                 external_id = asset["externalId"].replace(" ", "_")

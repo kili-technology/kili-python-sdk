@@ -115,14 +115,25 @@ class LabelUseCases(BaseUseCases):
         )
 
         mime_type = mimetypes.guess_type(file_path.name)[0] or ""
+        headers = {"Content-Length": str(file_path.stat().st_size)}
+        if mime_type:
+            headers["Content-Type"] = mime_type
+
         with file_path.open("rb") as file:
             response = self._kili_api_gateway.http_client.put(
                 upload["uploadUrl"],
                 data=file,
-                headers={"Content-Type": mime_type} if mime_type else {},
+                headers=headers,
                 timeout=300,
             )
-        response.raise_for_status()
+
+        # The bucket answers an upload it refuses with a reason in the body, which
+        # `raise_for_status` drops -- leaving a bare status and the signed url.
+        if not response.ok:
+            raise GraphQLError(
+                f"Uploading {file_path.name} failed with {response.status_code}:"
+                f" {response.text[:500]}"
+            )
 
         return {
             "fileId": upload["fileId"],

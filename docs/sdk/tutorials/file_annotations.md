@@ -25,12 +25,10 @@ means several jobs, all in the same label.
 
 ```python
 %pip install kili
-
 ```
 
 
 ```python
-import os
 from pathlib import Path
 
 from kili.client import Kili
@@ -39,7 +37,6 @@ kili = Kili(
     # api_endpoint='https://cloud.kili-technology.com/api/label/v2/graphql',
     # the line above can be uncommented and changed if you are working with an on-premise version of Kili
 )
-
 ```
 
 ## Creating a project with file jobs
@@ -51,45 +48,45 @@ kili = Kili(
 
 ```python
 json_interface = {
-    'jobs': {
-        'RENDER': {
-            'mlTask': 'FILE',
-            'instruction': 'Rendered video',
-            'required': 0,
-            'isChild': False,
-            'content': {},
+    "jobs": {
+        "RENDER": {
+            "mlTask": "FILE",
+            "instruction": "Rendered video",
+            "required": 0,
+            "isChild": False,
+            "content": {},
         },
-        'SCENE': {
-            'mlTask': 'FILE',
-            'instruction': 'Scene file',
-            'required': 0,
-            'isChild': False,
-            'content': {},
+        "SCENE": {
+            "mlTask": "FILE",
+            "instruction": "Scene file",
+            "required": 0,
+            "isChild": False,
+            "content": {},
         },
     }
 }
 
 project = kili.create_project(
-    input_type='VIDEO',
+    input_type="VIDEO",
     json_interface=json_interface,
-    title='[Kili SDK Notebook]: File annotations',
+    title="[Kili SDK Notebook]: File annotations",
 )
-project_id = project['id']
+project_id = project["id"]
 project_id
-
 ```
 
 
 ```python
 kili.append_many_to_dataset(
     project_id=project_id,
-    content_array=['https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4'],
-    external_id_array=['short_video'],
+    content_array=[
+        "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
+    ],
+    external_id_array=["short_video"],
 )
 
-asset_id = kili.assets(project_id=project_id, fields=['id'])[0]['id']
+asset_id = kili.assets(project_id=project_id, fields=["id"])[0]["id"]
 asset_id
-
 ```
 
 ## Submitting a label that names the files
@@ -105,17 +102,14 @@ rather than inside one.
 
 
 ```python
-Path('render.mp4').write_bytes(b'not really a video, but enough for the recipe')
-Path('scene.blend').write_bytes(b'not really a scene either')
+Path("render.mp4").write_bytes(b"not really a video, but enough for the recipe")
+Path("scene.blend").write_bytes(b"not really a scene either")
 
 kili.append_labels(
     project_id=project_id,
     asset_id_array=[asset_id],
-    json_response_array=[
-        {'assetLevel': {'RENDER': 'render.mp4', 'SCENE': 'scene.blend'}}
-    ],
+    json_response_array=[{"assetLevel": {"RENDER": "render.mp4", "SCENE": "scene.blend"}}],
 )
-
 ```
 
 ## Reading the files back
@@ -123,9 +117,8 @@ kili.append_labels(
 
 
 ```python
-label = kili.labels(project_id=project_id, asset_id=asset_id, fields=['jsonResponse'])[-1]
-label['jsonResponse']['assetLevel']
-
+label = kili.labels(project_id=project_id, asset_id=asset_id, fields=["jsonResponse"])[-1]
+label["jsonResponse"]["assetLevel"]
 ```
 
 Each path has been replaced by what was stored: the file's id, the name it was uploaded under,
@@ -133,24 +126,21 @@ and its mime type. `render.mp4` resolves to `video/mp4`, while `.blend` is not a
 knows, so it comes back empty and Kili fills it in from the file name.
 
 
-The id is resolved into bytes on demand:
+## Getting the files out
 
 
 
 ```python
-for job_name, answer in label['jsonResponse']['assetLevel'].items():
-    path = kili.download_annotation_file(
-        project_id=project_id,
-        external_id='short_video',  # or asset_id=asset_id
-        file_id=answer['fileId'],
-        output_path=f"downloaded_{answer['fileName']}",
-    )
-    print(f"{job_name}: {path}")
-
+kili.export_labels(
+    project_id=project_id,
+    filename="export.zip",
+    fmt="kili",
+)
 ```
 
-The download url is signed when asked for and is short lived, so it is fetched per call rather
-than stored -- no url is ever persisted in a label.
+An export brings the files along: each asset gets a folder of its own,
+`labels/<externalId>/`, beside its `labels/<externalId>.json`, holding every file its jobs
+answered with. Each answer gains a `filePath` pointing at it.
 
 
 !!! warning
@@ -166,9 +156,7 @@ than stored -- no url is ever persisted in a label.
 ```python
 kili.delete_project(project_id=project_id)
 
-Path('render.mp4').unlink(missing_ok=True)
-Path('scene.blend').unlink(missing_ok=True)
-for name in ('downloaded_render.mp4', 'downloaded_scene.blend'):
-    Path(name).unlink(missing_ok=True)
-
+Path("render.mp4").unlink(missing_ok=True)
+Path("scene.blend").unlink(missing_ok=True)
+Path("export.zip").unlink(missing_ok=True)
 ```

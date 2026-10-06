@@ -13,7 +13,7 @@ from kili.domain.asset import AssetExternalId
 from kili.domain.asset.asset import AssetId
 from kili.domain.project import ProjectId
 from kili.domain.user import UserId
-from kili.exceptions import IncompatibleArgumentsError, NotFound
+from kili.exceptions import GraphQLError, IncompatibleArgumentsError, NotFound
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.label import LabelUseCases
 from kili.use_cases.label.types import LabelToCreateUseCaseInput
@@ -474,7 +474,9 @@ def test_upload_annotation_file_returns_the_job_answer(kili_api_gateway: KiliAPI
         project_id="project_id", asset_id="asset_id"
     )
     _, kwargs = kili_api_gateway.http_client.put.call_args
-    assert kwargs["headers"] == {"Content-Type": "video/mp4"}
+    # Content-Length matters: without it requests may send the body chunked, which a presigned
+    # PUT signed with UNSIGNED-PAYLOAD is refused for.
+    assert kwargs["headers"] == {"Content-Length": "6", "Content-Type": "video/mp4"}
 
 
 def test_upload_annotation_file_leaves_an_unknown_type_to_the_server(
@@ -497,7 +499,7 @@ def test_upload_annotation_file_leaves_an_unknown_type_to_the_server(
     # Then
     assert answer["fileMimeType"] == ""
     _, kwargs = kili_api_gateway.http_client.put.call_args
-    assert kwargs["headers"] == {}
+    assert kwargs["headers"] == {"Content-Length": "5"}
 
 
 def test_upload_annotation_file_raises_when_the_bucket_refuses(
@@ -508,12 +510,15 @@ def test_upload_annotation_file_raises_when_the_bucket_refuses(
         "fileId": "file_id",
         "uploadUrl": "https://bucket.example.com/put",
     }
-    kili_api_gateway.http_client.put.return_value.raise_for_status.side_effect = RuntimeError("403")
+    refused = kili_api_gateway.http_client.put.return_value
+    refused.ok = False
+    refused.status_code = 400
+    refused.text = "<Error><Code>UnexpectedContent</Code></Error>"
     file_path = tmp_path / "render.mp4"
     file_path.write_bytes(b"render")
 
-    # When / Then a failed upload is not reported as a usable answer
-    with pytest.raises(RuntimeError):
+    # When / Then a failed upload is not reported as a usable answer, and says why
+    with pytest.raises(GraphQLError, match="UnexpectedContent"):
         LabelUseCases(kili_api_gateway).upload_annotation_file(
             project_id=ProjectId("project_id"), asset_id=AssetId("asset_id"), file_path=file_path
         )

@@ -115,8 +115,8 @@ label.jobs["TRANSCRIPTION_JOB"].text
 ### File tasks
 
 A file job answers with one file, the way a transcription answers with one text. The file is named
-by id rather than by url, so downloading it goes through
-[`kili.download_annotation_file`](label.md).
+by id rather than by url; to get the bytes, export the project: each asset gets a folder in the
+archive holding the files its jobs answered with.
 
 !!! warning
     On a video project the backend stores an asset level job under `assetLevel`, which the parser
