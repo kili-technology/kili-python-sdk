@@ -1,7 +1,7 @@
 """Common code for the Kili exporter."""
 
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from kili_formats import clean_json_response, convert_to_pixel_coords
 from kili_formats.media.video import cut_video
@@ -55,7 +55,9 @@ class KiliExporter(AbstractExporter):
                     file_id=answer["fileId"],
                     output_path=asset_folder / file_name,
                 )
-                answer["filePath"] = str(Path("labels") / external_id / file_name)
+                # Posix, not the host's separator: this names an entry of the archive, which
+                # a reader on another platform has to be able to follow.
+                answer["filePath"] = str(PurePosixPath("labels") / external_id / file_name)
 
     @staticmethod
     def _file_answers_of(asset: dict) -> list[tuple[str, dict]]:
