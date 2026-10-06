@@ -31,6 +31,7 @@ _SOURCE_STEP_FIELDS = (
     "steps.numberOfExpectedLabelsForConsensus",
     "steps.stepCoverage",
     "steps.sendBackStepId",
+    "steps.stepGroupId",
 )
 
 
@@ -198,6 +199,8 @@ class ProjectWorkflowUseCases(BaseUseCases):
 
         if not source_steps:
             raise ValueError(f"Source project {source_project_id} has no workflow steps to copy.")
+
+        _validate_source_has_one_group(source_project_id, source_steps)
 
         step_names = [step["name"] for step in source_steps]
         if len(step_names) != len(set(step_names)):
@@ -507,6 +510,22 @@ class ProjectWorkflowUseCases(BaseUseCases):
         )["id"]
         data = RenameStepInput(project_id=project_id, step_id=str(step_id), new_name=new_name)
         return self._kili_api_gateway.rename_step(data)
+
+
+def _validate_source_has_one_group(
+    source_project_id: ProjectId, source_steps: list[dict[str, object]]
+) -> None:
+    """Validate that the source workflow has a single group.
+
+    The destination is a single-group workflow: several groups cannot be copied into it without
+    losing which step belongs to which.
+    """
+    source_group_ids = {step.get("stepGroupId") for step in source_steps}
+    if len(source_group_ids) > 1:
+        raise ValueError(
+            f"Source project {source_project_id} has {len(source_group_ids)} step groups:"
+            " only a workflow with a single group can be copied."
+        )
 
 
 def _make_create_step(step: dict[str, object], assignees: list[str]) -> WorkflowStepCreate:
