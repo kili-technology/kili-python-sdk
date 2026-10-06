@@ -217,51 +217,13 @@ class LabelClientMethods(BaseClientMethods):
         return LabelUseCases(self.kili_api_gateway).count_labels(filters=filters)
 
     @typechecked
-    def upload_annotation_file(
-        self,
-        project_id: str,
-        asset_id: str,
-        file_path: Union[str, Path],
-    ) -> dict:
-        """Upload a file so that a file job can answer with it.
-
-        Returns the answer to write into a label: a file job holds one file, so the returned
-        dictionary is the whole of that job's `jsonResponse`.
-
-        Args:
-            project_id: Id of the project the file belongs to.
-            asset_id: Id of the asset the file was produced for.
-            file_path: The file to upload.
-
-        Returns:
-            `{"fileId": ..., "fileName": ..., "fileMimeType": ...}`.
-
-        !!! example "Recipe"
-            ```python
-            answer = kili.upload_annotation_file(
-                project_id=project_id, asset_id=asset_id, file_path="render.mp4"
-            )
-            kili.append_labels(
-                project_id=project_id,
-                asset_id_array=[asset_id],
-                # On video an asset level job sits under `assetLevel`.
-                json_response_array=[{"assetLevel": {"RENDER": answer}}],
-            )
-            ```
-        """
-        return LabelUseCases(self.kili_api_gateway).upload_annotation_file(
-            project_id=ProjectId(project_id),
-            asset_id=AssetId(asset_id),
-            file_path=Path(file_path),
-        )
-
-    @typechecked
     def download_annotation_file(
         self,
         project_id: str,
-        asset_id: str,
         file_id: str,
         output_path: Union[str, "Path"],
+        asset_id: Optional[str] = None,
+        external_id: Optional[str] = None,
     ) -> str:
         """Download the file held by a file annotation.
 
@@ -271,9 +233,10 @@ class LabelClientMethods(BaseClientMethods):
 
         Args:
             project_id: Id of the project the file belongs to.
-            asset_id: Id of the asset the file was produced for.
             file_id: `fileId` read from the file job of a label's `jsonResponse`.
             output_path: Where to write the file. Parent directories are created.
+            asset_id: Id of the asset the file was produced for. Either this or `external_id`.
+            external_id: External id of that asset, resolved for you.
 
         Returns:
             The path the file was written to.
@@ -292,7 +255,8 @@ class LabelClientMethods(BaseClientMethods):
         """
         return LabelUseCases(self.kili_api_gateway).download_annotation_file(
             project_id=ProjectId(project_id),
-            asset_id=AssetId(asset_id),
+            asset_id=AssetId(asset_id) if asset_id else None,
+            asset_external_id=AssetExternalId(external_id) if external_id else None,
             file_id=file_id,
             output_path=Path(output_path),
         )
