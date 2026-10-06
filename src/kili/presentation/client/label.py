@@ -1093,6 +1093,10 @@ class LabelClientMethods(BaseClientMethods):
     ) -> list[dict[Literal["id"], str]]:
         """Append labels to assets.
 
+        Note:
+            On a workflow V3 project, the jobs a step group allows are enforced by the labeling
+            app only: labels created through the SDK are not checked against them.
+
         Args:
             asset_id_array: list of asset internal ids to append labels on.
             json_response_array: list of labels to append.

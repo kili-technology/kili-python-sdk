@@ -45,7 +45,8 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
                 multiple steps in the workflow for a same asset,
                 ensuring independent review and labeling processes
             create_steps: List of steps to create in the project workflow. On a workflow V3
-                project, each step gives the `step_group_id` of the group to create it in.
+                project, each step gives the `step_group_id` of the group to create it in, and
+                consensus can only be set on the labeling step of the first group.
             update_steps: List of steps to update in the project workflow, each given by its `id`,
                 or by its `name` with `group_name` when several groups use that name.
             delete_steps: List of steps to delete from the project workflow, each given by its ID,
@@ -308,6 +309,8 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             project_id: Id of the project.
             step_name: Name of the labeling step to update. Exclusive with `step_id`.
             consensus_coverage: Percentage of assets to be labeled for consensus (0-100).
+                On a workflow V3 project, consensus can only be set on the labeling step of the
+                first group.
             number_of_expected_labels_for_consensus: Number of expected labels for consensus.
             use_honeypot: Whether to use honeypot on this step.
             group_name: Name of the workflow V3 group containing the step named `step_name`.

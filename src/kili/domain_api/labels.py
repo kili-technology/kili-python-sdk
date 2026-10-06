@@ -87,6 +87,9 @@ class LabelsNamespace(DomainNamespace):
     including creating, updating, querying, and managing labels and annotations.
     It also provides nested namespaces for specialized operations on predictions,
     inferences, honeypots, and events.
+
+    On a workflow V3 project, the jobs a step group allows are enforced by the labeling app only:
+    labels created through the SDK are not checked against them.
     """
 
     def __init__(self, client: "KiliLegacy", gateway) -> None:

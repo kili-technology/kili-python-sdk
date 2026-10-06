@@ -252,7 +252,8 @@ class WorkflowNamespace:
                 multiple steps in the workflow for a same asset,
                 ensuring independent review and labeling processes
             create_steps: List of steps to create in the project workflow. On a workflow V3
-                project, each step gives the `step_group_id` of the group to create it in.
+                project, each step gives the `step_group_id` of the group to create it in, and
+                consensus can only be set on the labeling step of the first group.
             update_steps: List of steps to update in the project workflow, each given by its `id`,
                 or by its `name` with `group_name` when several groups use that name.
             delete_steps: List of steps to delete from the project workflow, each given by its ID,
