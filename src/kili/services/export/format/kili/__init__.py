@@ -14,6 +14,7 @@ from kili.services.export.format.pixel_labeling import (
     convert_to_pixel_coords as convert_to_pixel_coords_for_pixel_labeling,
 )
 from kili.services.export.format.pixel_labeling import is_pixel_labeling_project
+from kili.use_cases.label import LabelUseCases
 
 
 class KiliExporter(AbstractExporter):
@@ -38,8 +39,6 @@ class KiliExporter(AbstractExporter):
         """
         if not any(self._file_answers_of(asset) for asset in assets):
             return
-
-        from kili.use_cases.label import LabelUseCases  # - avoids an import cycle
 
         use_cases = LabelUseCases(self.kili.kili_api_gateway)
 
