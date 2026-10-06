@@ -143,7 +143,7 @@ class LabelUseCases(BaseUseCases):
 
     def download_annotation_file(
         self,
-        project_id: Optional[ProjectId],
+        project_id: ProjectId,
         asset_id: Optional[AssetId],
         asset_external_id: Optional[AssetExternalId],
         file_id: str,
@@ -154,6 +154,9 @@ class LabelUseCases(BaseUseCases):
         A file annotation stores an id, never a url: the url is signed when asked for and is short
         lived, so it is fetched here rather than kept. Streamed in chunks because the files this
         exists for -- renders, scene files -- are large.
+
+        The asset is named by either identifier, but the project always has to be given: the file
+        lives under the project in the bucket, so there is no addressing it without one.
         """
         check_asset_identifier_arguments(
             project_id,
