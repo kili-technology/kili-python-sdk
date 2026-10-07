@@ -62,6 +62,7 @@ YOLO_V4_TEST_CASE = {
                                         }
                                     ],
                                     "categories": [{"name": "B", "confidence": 100}],
+                                    "type": "rectangle",
                                 },
                                 {
                                     "boundingPoly": [
@@ -87,6 +88,7 @@ YOLO_V4_TEST_CASE = {
                                         }
                                     ],
                                     "categories": [{"name": "D", "confidence": 100}],
+                                    "type": "rectangle",
                                 },
                             ]
                         }
@@ -182,6 +184,7 @@ TEST_CASES = [
                                             }
                                         ],
                                         "categories": [{"name": "B", "confidence": 100}],
+                                        "type": "rectangle",
                                     },
                                     {
                                         "boundingPoly": [
@@ -207,6 +210,7 @@ TEST_CASES = [
                                             }
                                         ],
                                         "categories": [{"name": "D", "confidence": 100}],
+                                        "type": "rectangle",
                                     },
                                 ]
                             }
@@ -284,6 +288,7 @@ TEST_CASES = [
                                             }
                                         ],
                                         "categories": [{"name": "B", "confidence": 100}],
+                                        "type": "rectangle",
                                     },
                                     {
                                         "boundingPoly": [
@@ -309,6 +314,7 @@ TEST_CASES = [
                                             }
                                         ],
                                         "categories": [{"name": "D", "confidence": 100}],
+                                        "type": "rectangle",
                                     },
                                 ]
                             }
@@ -386,6 +392,7 @@ TEST_CASES = [
                                             }
                                         ],
                                         "categories": [{"name": "B", "confidence": 100}],
+                                        "type": "rectangle",
                                     },
                                     {
                                         "boundingPoly": [
@@ -411,6 +418,7 @@ TEST_CASES = [
                                             }
                                         ],
                                         "categories": [{"name": "D", "confidence": 100}],
+                                        "type": "rectangle",
                                     },
                                 ]
                             }

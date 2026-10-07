@@ -12,7 +12,13 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
-from kili.services.export.types import CocoAnnotationModifier, ExportType, LabelFormat, SplitOption
+from kili.services.export.types import (
+    CocoAnnotationModifier,
+    ExportType,
+    LabelFormat,
+    SplitOption,
+    YoloTask,
+)
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -346,6 +352,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
+        task: Optional[YoloTask] = None,
     ):
         """Export project labels in YOLO v5 format.
 
@@ -379,6 +386,11 @@ class ExportNamespace(DomainNamespace):
                 - `"latest"`: exports the latest label for each asset
                   (deprecated, use `"latest_from_last_step"` instead).
                 - `"normal"`: exports all labels for each asset.
+            task: The Ultralytics task the label files are written for.
+                `"detect"`: a `class x y w h` line per bounding box, from the jobs with a bounding
+                box tool. `"segment"`: a `class x1 y1 ... xn yn` line per polygon, semantic part and
+                bounding box (its four corners), from the jobs with a bounding box, polygon or
+                semantic tool. `None`, the default: `"detect"`.
 
         Returns:
             Export information or None if export failed.
@@ -394,6 +406,7 @@ class ExportNamespace(DomainNamespace):
             layout=layout,
             fmt="yolo_v5",
             export_type=export_type,
+            yolo_task=task,
         )
 
     def yolo_v7(
@@ -407,6 +420,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
+        task: Optional[YoloTask] = None,
     ):
         """Export project labels in YOLO v7 format.
 
@@ -440,6 +454,11 @@ class ExportNamespace(DomainNamespace):
                 - `"latest"`: exports the latest label for each asset
                   (deprecated, use `"latest_from_last_step"` instead).
                 - `"normal"`: exports all labels for each asset.
+            task: The Ultralytics task the label files are written for.
+                `"detect"`: a `class x y w h` line per bounding box, from the jobs with a bounding
+                box tool. `"segment"`: a `class x1 y1 ... xn yn` line per polygon, semantic part and
+                bounding box (its four corners), from the jobs with a bounding box, polygon or
+                semantic tool. `None`, the default: `"detect"`.
 
         Returns:
             Export information or None if export failed.
@@ -455,6 +474,7 @@ class ExportNamespace(DomainNamespace):
             layout=layout,
             fmt="yolo_v7",
             export_type=export_type,
+            yolo_task=task,
         )
 
     def yolo_v8(
@@ -468,6 +488,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
+        task: Optional[YoloTask] = None,
     ):
         """Export project labels in YOLO v8 format.
 
@@ -501,6 +522,11 @@ class ExportNamespace(DomainNamespace):
                 - `"latest"`: exports the latest label for each asset
                   (deprecated, use `"latest_from_last_step"` instead).
                 - `"normal"`: exports all labels for each asset.
+            task: The Ultralytics task the label files are written for.
+                `"detect"`: a `class x y w h` line per bounding box, from the jobs with a bounding
+                box tool. `"segment"`: a `class x1 y1 ... xn yn` line per polygon, semantic part and
+                bounding box (its four corners), from the jobs with a bounding box, polygon or
+                semantic tool. `None`, the default: `"detect"`.
 
         Returns:
             Export information or None if export failed.
@@ -516,6 +542,7 @@ class ExportNamespace(DomainNamespace):
             layout=layout,
             fmt="yolo_v8",
             export_type=export_type,
+            yolo_task=task,
         )
 
     def pascal_voc(
@@ -702,6 +729,7 @@ class ExportNamespace(DomainNamespace):
         single_file: bool = False,
         with_assets: Optional[bool] = True,
         export_type: Optional[ExportType] = None,
+        yolo_task: Optional[YoloTask] = None,
     ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export the project labels with the requested format into the requested output path.
 
@@ -731,6 +759,7 @@ class ExportNamespace(DomainNamespace):
                 whose type belongs to that list.
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that have been sent back.
+            yolo_task: (For YOLO formats only) the Ultralytics task: see the `yolo_v*` methods.
 
         Returns:
             Export information or None if export failed.
@@ -773,4 +802,5 @@ class ExportNamespace(DomainNamespace):
             label_type_in=list(label_type_in) if label_type_in else None,
             include_sent_back_labels=include_sent_back_labels,
             export_type=export_type,
+            yolo_task=yolo_task,
         )

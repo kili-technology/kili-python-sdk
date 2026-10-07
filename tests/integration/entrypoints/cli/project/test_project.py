@@ -3,6 +3,7 @@
 import csv
 import os
 from pathlib import Path
+from typing import Optional
 from unittest.mock import ANY, patch
 
 import pytest
@@ -434,3 +435,18 @@ def test_export(name: str, test_case: list[str], mocker: pytest_mock.MockerFixtu
         )
         debug_subprocess_pytest(result)
         assert result.output.count("export.zip")
+
+
+@pytest.mark.parametrize("yolo_task", ["detect", "segment", None])
+def test_export_passes_the_yolo_task(yolo_task: Optional[str], mocker: pytest_mock.MockerFixture):
+    mocker.patch.dict("os.environ", {"KILI_API_KEY": "toto", "KILI_SDK_SKIP_CHECKS": "True"})
+    service = mocker.patch("kili.entrypoints.cli.project.export.service_export_labels")
+    arguments = ["--output-format", "yolo_v8", "--output-file", "export.zip", "--project-id", "p"]
+    arguments += ["--api-key", "toto", "--endpoint", "localhost"]
+    if yolo_task:
+        arguments += ["--yolo-task", yolo_task]
+
+    result = CliRunner().invoke(export_labels, arguments)
+
+    debug_subprocess_pytest(result)
+    assert service.call_args.kwargs["yolo_task"] == yolo_task

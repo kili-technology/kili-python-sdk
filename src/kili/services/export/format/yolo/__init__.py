@@ -2,6 +2,7 @@
 
 import logging
 from pathlib import Path
+from typing import Optional
 
 from kili_formats import convert_from_kili_to_yolo_format
 from kili_formats.media.video import cut_video
@@ -15,10 +16,16 @@ from kili.services.export.exceptions import (
 )
 from kili.services.export.format.base import AbstractExporter
 from kili.services.export.repository import AbstractContentRepository, DownloadError
-from kili.services.export.types import LabelFormat, SplitOption
+from kili.services.export.types import LabelFormat, SplitOption, YoloTask
 from kili.utils.tqdm import tqdm
 
 IMAGE_EXTENSIONS = {".jpeg", ".jpg", ".png", ".bmp", ".gif", ".webp", ".ico"}
+
+# The tools whose annotations each task exports, as the json interface spells them.
+_EXPORTED_TOOLS: dict[YoloTask, set[str]] = {
+    "detect": {JobTool.RECTANGLE.value},
+    "segment": {JobTool.RECTANGLE.value, JobTool.POLYGON.value, JobTool.SEMANTIC.value},
+}
 
 
 class YoloExporter(AbstractExporter):
@@ -42,6 +49,12 @@ class YoloExporter(AbstractExporter):
         if self.normalized_coordinates is False:
             raise NotCompatibleOptions(
                 "The YOLO annotation format does not support pixel coordinates."
+            )
+
+        if self.yolo_task == "segment" and self.label_format == "yolo_v4":
+            raise NotCompatibleOptions(
+                "YOLO v4 has no segmentation format. Export with yolo_v5, yolo_v7 or yolo_v8"
+                ' to use yolo_task="segment".'
             )
 
     def _check_project_compatibility(self) -> None:
@@ -68,16 +81,21 @@ class YoloExporter(AbstractExporter):
                     f"that can be converted to the {self.label_format} format."
                 )
 
+    @property
+    def task(self) -> YoloTask:
+        """The task the lines are written for: no task is the detect export, as in the app."""
+        return self.yolo_task or "detect"
+
     def _is_job_compatible(self, job: Job) -> bool:
         """Check job compatibility with the YOLO format."""
         if "tools" not in job:
             return False
 
-        compatible_tools = {JobTool.RECTANGLE, JobTool.POLYGON, JobTool.SEMANTIC}
-
-        return job["mlTask"] == JobMLTask.OBJECT_DETECTION and all(
-            tool in compatible_tools
-            for tool in job["tools"]  # pyright: ignore[reportGeneralTypeIssues]
+        # The export service's rule, so the SDK and the app export the same jobs.
+        return (
+            job["mlTask"] == JobMLTask.OBJECT_DETECTION
+            and not job.get("isModel")
+            and bool(_EXPORTED_TOOLS[self.task].intersection(job["tools"]))
         )
 
     def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
@@ -140,6 +158,7 @@ class YoloExporter(AbstractExporter):
                 self.content_repository,
                 self.with_assets,
                 self.project["inputType"],
+                self.task,
             )
             if video_filenames:
                 video_metadata[asset["externalId"]] = video_filenames
@@ -274,6 +293,7 @@ def _process_frame(
     content_repository: AbstractContentRepository,
     with_assets: bool,
     all_video_filenames: list[str],
+    yolo_task: Optional[YoloTask] = None,
 ) -> list[tuple[str, str, str]]:
     """Process a single frame and return asset remote content."""
     asset_remote_content = []
@@ -285,7 +305,7 @@ def _process_frame(
     else:
         filename = asset["externalId"] + label_suffix
 
-    frame_labels = _get_frame_labels(frame, job_ids, category_ids)
+    frame_labels = _get_frame_labels(frame, job_ids, category_ids, yolo_task)
     _write_labels_to_file(labels_folder, filename, frame_labels)
 
     # no need to write asset urls since they are already downloaded
@@ -318,6 +338,7 @@ def _process_asset(
     content_repository: AbstractContentRepository,
     with_assets: bool,
     project_input_type: str,
+    yolo_task: Optional[YoloTask] = None,
 ) -> tuple[list[tuple[str, str, str]], list[str]]:
     # pylint: disable=too-many-locals, too-many-arguments
     """Process an asset for all job_ids of category_ids."""
@@ -384,6 +405,7 @@ def _process_asset(
                 content_repository,
                 with_assets,
                 all_video_filenames,
+                yolo_task,
             )
             asset_remote_content.extend(frame_remote_content)
 
@@ -428,12 +450,15 @@ def _write_class_file(
 
 
 def _get_frame_labels(
-    frame: dict, job_ids: set[str], category_ids: dict[str, JobCategory]
+    frame: dict,
+    job_ids: set[str],
+    category_ids: dict[str, JobCategory],
+    yolo_task: Optional[YoloTask] = None,
 ) -> list[tuple]:
     annotations = []
     for job_id in job_ids:
         job_annotations = convert_from_kili_to_yolo_format(
-            job_id, frame["latestLabel"], category_ids
+            job_id, frame["latestLabel"], category_ids, task=yolo_task
         )
         annotations += job_annotations
 

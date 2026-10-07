@@ -258,9 +258,53 @@ def test_yolo_label_parser():
                             }
                         ],
                         "categories": [{"name": "B", "confidence": 100}],
+                        "type": "rectangle",
                     }
                 ]
             }
         }
 
         assert expected == yolo_parser.parse(label_file)
+
+
+def test_yolo_label_parser_segment_lines():
+    with TemporaryDirectory() as label_dir:
+        label_file = Path(label_dir) / "label.txt"
+        _generate_label_file(
+            [
+                [0, 0.1, 0.1, 0.3, 0.1, 0.2, 0.3],
+                [1, 0.5, 0.5, 0.2, 0.2],
+            ],
+            str(label_file),
+        )
+        yolo_parser = YoloLabelParser(Classes({0: "A", 1: "B"}), "JOB_0")
+
+        annotations = yolo_parser.parse(label_file)["JOB_0"]["annotations"]
+
+        assert annotations[0] == {
+            "boundingPoly": [
+                {
+                    "normalizedVertices": [
+                        {"x": 0.1, "y": 0.1},
+                        {"x": 0.3, "y": 0.1},
+                        {"x": 0.2, "y": 0.3},
+                    ],
+                }
+            ],
+            "categories": [{"name": "A", "confidence": 100}],
+            "type": "polygon",
+        }
+        # a box line next to it reads as before
+        assert annotations[1]["type"] == "rectangle"
+        assert len(annotations[1]["boundingPoly"][0]["normalizedVertices"]) == 4
+
+
+def test_yolo_label_parser_refuses_a_line_neither_box_nor_segment():
+    with TemporaryDirectory() as label_dir:
+        label_file = Path(label_dir) / "label.txt"
+        # a class and 7 coordinates: an odd count is no polygon
+        _generate_label_file([[0, 0.1, 0.1, 0.3, 0.1, 0.2, 0.3, 0.4]], str(label_file))
+        yolo_parser = YoloLabelParser(Classes({0: "A"}), "JOB_0")
+
+        with pytest.raises(ValueError):
+            yolo_parser.parse(label_file)

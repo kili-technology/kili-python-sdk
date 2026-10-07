@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from zipfile import ZipFile
 
+import pytest
 import pytest_mock
 from kili_formats import convert_from_kili_to_coco_format
 from kili_formats.types import JobTool
@@ -246,3 +247,32 @@ def test_expand_assets_with_multiple_labels():
         expanded[2]["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]["categories"][0]["name"]
         == "C"
     )
+
+
+JOBS_BY_SHAPE = {
+    "box": {"mlTask": "OBJECT_DETECTION", "tools": ["rectangle"]},
+    "polygon only": {"mlTask": "OBJECT_DETECTION", "tools": ["polygon"]},
+    "mask": {"mlTask": "OBJECT_DETECTION", "tools": ["semantic"]},
+    "point": {"mlTask": "OBJECT_DETECTION", "tools": ["marker"]},
+    "line": {"mlTask": "OBJECT_DETECTION", "tools": ["polyline"]},
+    "model box": {"mlTask": "OBJECT_DETECTION", "tools": ["rectangle"], "isModel": True},
+    "classification": {"mlTask": "CLASSIFICATION"},
+}
+
+
+@pytest.mark.parametrize(
+    ("shape", "compatible"),
+    [
+        ("box", True),
+        ("polygon only", True),
+        ("mask", True),
+        ("point", False),
+        ("line", False),
+        ("model box", False),
+        ("classification", False),
+    ],
+)
+def test_the_coco_export_takes_the_jobs_with_a_shape(shape: str, compatible: bool):
+    exporter = CocoExporter.__new__(CocoExporter)
+
+    assert exporter._is_job_compatible(JOBS_BY_SHAPE[shape]) is compatible  # pylint: disable=protected-access

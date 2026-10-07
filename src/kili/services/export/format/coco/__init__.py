@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 from kili_formats import convert_from_kili_to_coco_format
-from kili_formats.types import Job, JobTool
+from kili_formats.types import Job
 
 from kili.domain.ontology import JobMLTask
 from kili.services.export.exceptions import (
@@ -13,7 +13,7 @@ from kili.services.export.exceptions import (
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.base import SHAPE_TOOLS, AbstractExporter
 from kili.services.export.types import CocoAnnotationModifier
 
 DATA_SUBDIR = "data"
@@ -148,8 +148,11 @@ class CocoExporter(AbstractExporter):
                 json.dump(labels_json, outfile)
 
     def _is_job_compatible(self, job: Job) -> bool:
+        """The shapes' jobs, polygon-only jobs included, as the app's COCO export takes them."""
         if "tools" not in job:
             return False
-        return (JobTool.SEMANTIC in job["tools"] or JobTool.RECTANGLE in job["tools"]) and job[
-            "mlTask"
-        ] == JobMLTask.OBJECT_DETECTION
+        return (
+            job["mlTask"] == JobMLTask.OBJECT_DETECTION
+            and any(tool in job["tools"] for tool in SHAPE_TOOLS)
+            and not job.get("isModel")
+        )

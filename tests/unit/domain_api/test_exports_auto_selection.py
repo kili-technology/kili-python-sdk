@@ -381,3 +381,21 @@ class TestExportTypeValidation:
 
         # Should have fetched workflow version only once
         mock_gateway.get_project.assert_called_once()
+
+
+class TestYoloTask:
+    """Test that the YOLO export methods pass the task on."""
+
+    @pytest.mark.parametrize("export_method", ["yolo_v5", "yolo_v7", "yolo_v8"])
+    @pytest.mark.parametrize("task", ["detect", "segment", None])
+    def test_yolo_methods_pass_the_task(
+        self, export_namespace, mock_client, mock_gateway, export_method, task
+    ):
+        """Test that the task given to a YOLO method reaches the client as yolo_task."""
+        mock_gateway.get_project.return_value = {"id": "test-project", "workflowVersion": "V2"}
+
+        getattr(export_namespace, export_method)(
+            project_id="test-project", output_path="/tmp/export.zip", task=task
+        )
+
+        assert mock_client.export_labels.call_args.kwargs["yolo_task"] == task

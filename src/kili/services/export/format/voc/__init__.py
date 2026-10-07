@@ -6,7 +6,7 @@ from pathlib import Path
 from kili_formats import convert_from_kili_to_voc_format
 from kili_formats.media.image import get_frame_dimensions, get_image_dimensions
 from kili_formats.media.video import cut_video, get_video_dimensions
-from kili_formats.types import Job, JobTool
+from kili_formats.types import Job
 
 from kili.domain.ontology import JobMLTask
 from kili.services.export.exceptions import (
@@ -14,7 +14,7 @@ from kili.services.export.exceptions import (
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.base import SHAPE_TOOLS, AbstractExporter
 from kili.utils.tqdm import tqdm
 
 
@@ -48,14 +48,19 @@ class VocExporter(AbstractExporter):
 
         if len(self.compatible_jobs) == 0:
             raise NoCompatibleJobError(
-                f"Project needs at least one {JobMLTask.OBJECT_DETECTION} task with bounding boxes."
+                f"Project needs at least one {JobMLTask.OBJECT_DETECTION} task with bounding boxes"
+                " or segmentations."
             )
 
     def _is_job_compatible(self, job: Job) -> bool:
-        """Check job compatibility with the Pascal VOC format."""
+        """The shapes' jobs, written as their boxes, as the app's Pascal VOC export takes them."""
         if "tools" not in job:
             return False
-        return JobTool.RECTANGLE in job["tools"] and job["mlTask"] == JobMLTask.OBJECT_DETECTION
+        return (
+            job["mlTask"] == JobMLTask.OBJECT_DETECTION
+            and any(tool in job["tools"] for tool in SHAPE_TOOLS)
+            and not job.get("isModel")
+        )
 
     def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
         """Save the assets and annotations to a zip file in the Pascal VOC format."""

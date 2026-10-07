@@ -5,6 +5,8 @@ from typing import Literal
 
 ExportType = Literal["latest", "latest_from_last_step", "latest_from_all_steps", "normal"]
 SplitOption = Literal["split", "merged"]
+# The Ultralytics task a YOLO export is written for: "detect" (boxes) or "segment" (polygons).
+YoloTask = Literal["detect", "segment"]
 LabelFormat = Literal[
     "raw",
     "kili",
