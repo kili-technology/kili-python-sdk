@@ -478,8 +478,9 @@ class PluginsNamespace(DomainNamespace):
                 - a folder containing a main.py (mandatory) and a requirements.txt (optional)
                 - a .py file
             plugin_name: Name of your plugin, if not provided, it will be the name from your file
-            event_pattern: Event pattern for which the plugin should be called.
-            event_matcher: List of events for which the plugin should be called.
+            event_pattern: A single `event_matcher`.
+            event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
+                using `@on_kili_event` leaves it out: its events come from the decorators.
             verbose: If false, minimal logs are displayed
 
         Returns:
@@ -492,18 +493,11 @@ class PluginsNamespace(DomainNamespace):
             >>> # Upload a plugin from a single file
             >>> result = kili.plugins.create(plugin_path="./path/to/my/file.py")
 
-            >>> # Upload with custom name and single event pattern
+            >>> # Upload with custom name, a plugin overriding on_event
             >>> result = kili.plugins.create(
             ...     plugin_path="./my_plugin/",
             ...     plugin_name="custom_plugin_name",
-            ...     event_pattern="onSubmit"
-            ... )
-
-            >>> # Upload with custom name and multiple event matchers
-            >>> result = kili.plugins.create(
-            ...     plugin_path="./my_plugin/",
-            ...     plugin_name="custom_plugin_name",
-            ...     event_matcher=["onSubmit", "onReview"]
+            ...     event_matcher=["asset.skipped", "label.workflow.*"]
             ... )
         """
         # Convert singular to plural
@@ -528,8 +522,9 @@ class PluginsNamespace(DomainNamespace):
                 - a folder containing a main.py (mandatory) and a requirements.txt (optional)
                 - a .py file
             plugin_name: Name of the plugin to update
-            event_pattern: Event pattern for which the plugin should be called.
-            event_matcher: List of events names and/or globs for which the plugin should be called.
+            event_pattern: A single `event_matcher`.
+            event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
+                using `@on_kili_event` leaves it out: its events come from the decorators.
             verbose: If false, minimal logs are displayed
 
         Returns:

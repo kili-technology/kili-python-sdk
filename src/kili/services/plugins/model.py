@@ -3,7 +3,10 @@
 import logging
 from typing import Optional
 
+from kili_events import UnknownEventError, matches_subject, parse_event
+
 from kili.client import Kili
+from kili.services.plugins.events import subscribed_methods
 from kili.services.plugins.helpers import get_logger
 
 
@@ -20,7 +23,9 @@ class PluginCore:
         on_review(self, label: Dict, asset_id: str)
         on_custom_interface_click(self, label: Dict, asset_id: str)
         on_send_back_to_queue(self, asset_id: str)
-        on_event(self, payload: Dict)
+
+    or methods decorated with `@on_kili_event`, which receive the Kili events they
+    subscribe to as kili_events models.
 
     !!! warning
         if using a custom init, be sure to call super().__init__()
@@ -161,10 +166,35 @@ class PluginCore:
         self,
         payload: dict,
     ) -> None:
-        """Handler for all events, triggered when an event is triggered.
+        """Receives every event of the plugin, and calls the methods subscribed to it.
+
+        The event is parsed into its kili_events model, then passed to each method whose
+        `@on_kili_event` matches it. Decorate methods rather than overriding this one.
 
         Args:
-            payload: Dict.
+            payload: The event as Kili sends it: `event` (its subject, e.g. `asset.skipped`),
+                `organizationId`, `projectId`, `userId` and `payload`, for the fields the
+                event declares.
         """
-        # pylint: disable=unused-argument
-        self.logger.warning("Method not implemented. Define a custom on_event on your plugin")
+        subject = payload.get("event")
+        subscriptions = subscribed_methods(type(self))
+        handlers = [
+            name
+            for name, patterns in subscriptions.items()
+            if isinstance(subject, str) and any(matches_subject(p, subject) for p in patterns)
+        ]
+        if not handlers:
+            self.logger.warning(
+                f"No method of the plugin subscribes to the event '{subject}' "
+                f"(subscriptions: {subscriptions or 'none'})."
+            )
+            return
+
+        try:
+            event = parse_event(payload)
+        except UnknownEventError as error:
+            self.logger.warning(f"{error} The event is ignored.")
+            return
+
+        for name in handlers:
+            getattr(self, name)(event)

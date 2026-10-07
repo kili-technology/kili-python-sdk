@@ -37,7 +37,8 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
                 - a folder containing a main.py (mandatory) and a requirements.txt (optional)
                 - a .py file
             plugin_name: name of your plugin, if not provided, it will be the name from your file
-            event_matcher: List of events for which the plugin should be called.
+            event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
+                using `@on_kili_event` leaves it out: its events come from the decorators.
             verbose: If false, minimal logs are displayed
 
         Returns:
@@ -223,7 +224,8 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
                 - a folder containing a main.py (mandatory) and a requirements.txt (optional)
                 - a .py file
             plugin_name: Name of the plugin
-            event_matcher: List of events names and/or globs for which the plugin should be called.
+            event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
+                using `@on_kili_event` leaves it out: its events come from the decorators.
             verbose: If false, minimal logs are displayed
 
         Returns:
