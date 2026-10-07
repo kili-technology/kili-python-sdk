@@ -29,11 +29,11 @@ Some attributes are available in the class:
 Therefore, the skeleton of the plugin should look like this:
 
 ```python
-from kili.plugins import PluginCore
+from kili.plugins import Plugin
 from typing import Dict
 import numpy as np
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """Custom plugin"""
 
     def on_review(self, label: Dict, asset_id: str) -> None:
@@ -62,7 +62,7 @@ Do not hesitate to reach out to us if you need more.
 %autoreload 2
 
 
-from kili.client import Kili
+from kili.client_domain import Kili
 
 kili = Kili(
     # api_endpoint="https://cloud.kili-technology.com/api/label/v2/graphql",
@@ -88,7 +88,7 @@ We recommend using a modern IDE like VScode to get type hints and autocompletion
 ```python
 import numpy as np
 
-from kili.plugins import PluginCore
+from kili.plugins import Plugin
 
 
 def custom_function(label: dict):
@@ -96,7 +96,7 @@ def custom_function(label: dict):
     print(f"My custom function for review of label with id {label_id}")
 
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """Custom plugin instance"""
 
     def custom_method(self, project_id, label_id):
@@ -105,7 +105,7 @@ class PluginHandler(PluginCore):
         if random_seed > 0.5:
             self.logger.warning("Generating issue")
             # Use kili for actions with self.kili
-            self.kili.create_issues(
+            self.kili.issues.create(
                 project_id=project_id,
                 label_id_array=[label_id],
                 text_array=["Random issue generated for this label"],
@@ -195,10 +195,10 @@ my_plugin_instance = PluginHandler(kili, project_id)
 def get_label(label_id, project_id):
     """Function to get the object Label with the same keys as it will be in the plugin"""
     label = list(
-        kili.labels(
+        kili.labels.list(
             project_id=project_id,
-            label_id=label_id,
             fields=["id", "jsonResponse", "author.id", "labelType", "createdAt", "secondsToLabel"],
+            filter={"label_id": label_id},
         )
     )[0]
 
@@ -241,7 +241,7 @@ plugin_name = "My first kili plugin"
 from kili.exceptions import GraphQLError
 
 try:
-    kili.upload_plugin(path_to_plugin, plugin_name)
+    kili.plugins.create(plugin_path=path_to_plugin, plugin_name=plugin_name)
 except GraphQLError as error:
     print(str(error))
 ```
@@ -250,7 +250,7 @@ Plugins must be activated in the project that you want them to run in. Be carefu
 
 
 ```python
-kili.activate_plugin_on_project(plugin_name, project_id=project_id)
+kili.plugins.activate(plugin_name=plugin_name, project_id=project_id)
 ```
 
 ## Monitoring the plugin
@@ -261,7 +261,7 @@ Additionally, you can get the logs of the runs:
 
 
 ```python
-kili.get_plugin_logs(project_id=project_id, plugin_name=plugin_name)
+kili.plugins.logs(project_id=project_id, plugin_name=plugin_name)
 ```
 
 You can set custom date rules for filtering your logs:
@@ -273,7 +273,7 @@ from datetime import date, datetime
 dt = date.today()  # You can change this date if needed
 start_date = datetime.combine(dt, datetime.min.time())
 
-kili.get_plugin_logs(project_id=project_id, plugin_name=plugin_name, start_date=start_date)
+kili.plugins.logs(project_id=project_id, plugin_name=plugin_name, start_date=start_date)
 ```
 
 ## Managing your plugin

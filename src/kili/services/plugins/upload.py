@@ -2,6 +2,7 @@
 
 import ast
 import time
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional, Union
 from zipfile import ZipFile
@@ -23,6 +24,7 @@ from kili.core.graphql.operations.plugin.mutations import (
 )
 from kili.core.graphql.operations.plugin.queries import GQL_GET_PLUGIN_RUNNER_STATUS
 from kili.core.helpers import get_mime_type
+from kili.services.plugins.helpers import PLUGIN_CORE_DEPRECATION
 from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
 from kili.utils.tempfile import TemporaryDirectory
@@ -84,6 +86,11 @@ def check_file_contains_handler(path: Path) -> tuple[bool, Optional[list[str]], 
         module = ast.parse(file.read())
     for node in module.body:
         if isinstance(node, ast.ClassDef) and node.name == "PluginHandler":
+            if any(
+                getattr(base, "id", getattr(base, "attr", None)) == "PluginCore"
+                for base in node.bases
+            ):
+                warnings.warn(PLUGIN_CORE_DEPRECATION, DeprecationWarning, stacklevel=2)
             handlers = [
                 POSSIBLE_HANDLERS[child.name]
                 for child in node.body

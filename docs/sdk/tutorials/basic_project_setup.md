@@ -23,7 +23,7 @@ First, let's install and import the required modules.
 
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 Now, let's set up variables needed to create an instance of the Kili object.
@@ -64,7 +64,7 @@ interface = {
     }
 }
 
-result = kili.create_project(
+result = kili.projects.create(
     title="[Kili SDK Notebook]: Basic Project Setup",
     description="Project Description",
     input_type="IMAGE",
@@ -98,7 +98,7 @@ url1 = "https://storage.googleapis.com/label-public-staging/car/car_2.jpg"
 url2 = "https://storage.googleapis.com/label-public-staging/car/car_1.jpg"
 url3 = "https://storage.googleapis.com/label-public-staging/recipes/inference/black_car.jpg"
 
-assets = kili.append_many_to_dataset(
+assets = kili.assets.create_image(
     project_id=project_id,
     content_array=[url1, url2, url3],
     external_id_array=["image_1", "image_2", "image_3"],
@@ -116,13 +116,19 @@ For more info on roles in an organization, refer to [https://docs.kili-technolog
 firstname = "Jane"
 lastname = "Doe"
 email = "no.such.email@no.such.domain.com"
-password = "12345"
+password = "ChangeMe1234"  # at least 8 characters, a letter and a number
 organization_role = "USER"
 
 from kili.exceptions import GraphQLError
 
 try:
-    kili.create_user(email, password, organization_role, firstname, lastname)
+    kili.users.create(
+        email=email,
+        password=password,
+        organization_role=organization_role,
+        firstname=firstname,
+        lastname=lastname,
+    )
 except GraphQLError as err:
     print(str(err))
 ```
@@ -136,14 +142,14 @@ If you already have users in your organization, here's how you can easily access
 
 
 ```python
-org_id = kili.organizations()[0]["id"]
+org_id = kili.organizations.list()[0]["id"]
 ```
 
 2) Then, based on your org ID, retrieve the full list of org users, with their e-mails:
 
 
 ```python
-all_org_users = kili.users(organization_id=org_id)
+all_org_users = kili.users.list(filter={"organization_id": org_id})
 
 all_emails = [i["email"] for i in all_org_users]
 ```
@@ -152,7 +158,9 @@ all_emails = [i["email"] for i in all_org_users]
 
 
 ```python
-user = kili.append_to_roles(project_id, "no.such.email@no.such.domain.com", role="LABELER")
+user = kili.projects.users.create(
+    project_id=project_id, email="no.such.email@no.such.domain.com", role="LABELER"
+)
 print(user)
 ```
 
@@ -165,7 +173,7 @@ We can remove the project that we created:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```
 
 ## Summary

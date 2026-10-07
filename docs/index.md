@@ -36,9 +36,13 @@ pip install kili
 - Instantiate the Kili client:
 
   ```python
-  from kili.client import Kili
+  from kili.client_domain import Kili
   kili = Kili()
+  kili.projects.list(first=10)
   ```
+
+  Each entity has its namespace — `kili.assets`, `kili.labels`, `kili.projects`, `kili.exports`… —
+  described in the [Reference](sdk/domain/assets.md).
 
 !!! info
     You can also pass the API key as an argument during `Kili` initialization:
@@ -46,6 +50,11 @@ pip install kili
     ```python
     kili = Kili(api_key='<you api key value here>')
     ```
+
+!!! warning "The legacy client is deprecated"
+    `from kili.client import Kili`, whose methods are called directly on the client
+    (`kili.assets(...)`, `kili.count_assets(...)`), still works but is deprecated and will be removed
+    in a future major release. Its methods are documented in the Legacy Reference.
 
 !!! success "Great!"
     You can now begin to use the Kili Python SDK! 🎉

@@ -36,7 +36,7 @@ from random import randint
 import cv2
 import matplotlib.pyplot as plt
 
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 Let's authenticate to Kili:
@@ -77,7 +77,7 @@ json_interface = {
 
 
 ```python
-project = kili.create_project(
+project = kili.projects.create(
     description="COCO dataset",
     input_type="IMAGE",
     json_interface=json_interface,
@@ -94,11 +94,10 @@ Then, we upload the image to the project:
 external_id = "moto"
 content = "https://farm7.staticflickr.com/6153/6181981748_6a225c275d_z.jpg"
 
-kili.append_many_to_dataset(
+kili.assets.create_image(
     project_id=project_id,
     content_array=[content],
     external_id_array=[external_id],
-    json_content_array=None,
 )
 ```
 
@@ -157,7 +156,7 @@ json_response = {"JOB_0": {"annotations": annotations}}
 
 
 ```python
-kili.create_predictions(
+kili.labels.create_prediction(
     project_id=project_id,
     external_id_array=[external_id],
     json_response_array=[json_response],
@@ -193,8 +192,10 @@ Then, we can retrieve the json response and plot the mask:
 
 
 ```python
-labels = kili.labels(
-    project_id=project_id, asset_external_id_in=[external_id], fields=["jsonResponse"]
+labels = kili.labels.list(
+    project_id=project_id,
+    fields=["jsonResponse"],
+    filter={"asset_external_id_in": [external_id]},
 )
 label = labels[0]
 json_response = label["jsonResponse"]
@@ -223,9 +224,9 @@ We can remove the project that we created:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```
 
 ## Conclusion
 
-You can now try uploading your own predictions using `kili.create_predictions()`!
+You can now try uploading your own predictions using `kili.labels.create_prediction()`!

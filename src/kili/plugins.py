@@ -1,5 +1,5 @@
 """Develop Plugins for Kili."""
 
-from kili.services.plugins.model import PluginCore
+from kili.services.plugins.model import Plugin, PluginCore
 
-__all__ = ["PluginCore"]
+__all__ = ["Plugin", "PluginCore"]

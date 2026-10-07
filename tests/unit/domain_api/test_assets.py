@@ -398,6 +398,77 @@ class TestAssetsNamespaceCoreOperations:
             external_id=None,
         )
 
+    def test_assign_resolves_emails_to_user_ids(self, assets_namespace, mock_client, mock_gateway):
+        mock_gateway.list_users.return_value = iter([{"id": "user-1"}])
+
+        assets_namespace.assign(
+            asset_ids=["asset1", "asset2"],
+            to_be_labeled_by_array=[["Labeler@Example.com", "user-2"], ["user-2"]],
+        )
+
+        assert mock_gateway.list_users.call_args.args[0].email == "labeler@example.com"
+        mock_client.assign_assets_to_labelers.assert_called_once_with(
+            asset_ids=["asset1", "asset2"],
+            external_ids=None,
+            project_id="",
+            to_be_labeled_by_array=[["user-1", "user-2"], ["user-2"]],
+        )
+
+    def test_assign_refuses_an_unknown_email(self, assets_namespace, mock_client, mock_gateway):
+        mock_gateway.list_users.return_value = iter([])
+
+        with pytest.raises(ValueError, match="nobody@example.com"):
+            assets_namespace.assign(asset_id="asset1", to_be_labeled_by=["nobody@example.com"])
+        mock_client.assign_assets_to_labelers.assert_not_called()
+
+    def test_create_geospatial_sends_base_layer_and_zoom(self, assets_namespace, mock_client):
+        tiles = "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        assets_namespace.create_geospatial(
+            project_id="project_123",
+            layer_array=[
+                {"path": "a.tiff", "name": "Layer 1", "is_base_layer": False},
+                {
+                    "path": tiles,
+                    "name": "osm",
+                    "min_zoom": 10,
+                    "max_zoom": 18,
+                    "is_base_layer": True,
+                },
+            ],
+        )
+
+        kwargs = mock_client.append_many_to_dataset.call_args.kwargs
+        assert kwargs["multi_layer_content_array"] == [
+            [{"name": "Layer 1", "path": "a.tiff", "isBaseLayer": False}]
+        ]
+        assert kwargs["json_content_array"] == [
+            [
+                {
+                    "bounds": None,
+                    "epsg": "EPSG3857",
+                    "name": "osm",
+                    "tileLayerUrl": tiles,
+                    "useClassicCoordinates": False,
+                    "isBaseLayer": True,
+                    "minZoom": 10,
+                    "maxZoom": 18,
+                }
+            ]
+        ]
+
+    def test_create_video_frame_splits_a_video_file(self, assets_namespace, mock_client):
+        assets_namespace.create_video_frame(
+            project_id="project_123",
+            content="https://example.com/video.mp4",
+            json_metadata={"processingParameters": {"framesPlayedPerSecond": 25}},
+        )
+
+        kwargs = mock_client.append_many_to_dataset.call_args.kwargs
+        assert kwargs["content_array"] == ["https://example.com/video.mp4"]
+        assert kwargs["json_metadata_array"] == [
+            {"processingParameters": {"framesPlayedPerSecond": 25, "shouldUseNativeVideo": False}}
+        ]
+
 
 class TestAssetsNamespaceContractCompatibility:
     """Contract tests to ensure domain API matches legacy API behavior."""

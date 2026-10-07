@@ -16,7 +16,7 @@ When dealing with textual data, style can convey a lot of meaning. If you annota
 ```python
 from random import random
 
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 
@@ -70,25 +70,25 @@ Next, we create a project:
 
 
 ```python
-project_id = kili.create_project(
+project_id = kili.projects.create(
     json_interface=json_interface,
     input_type="TEXT",
     title="[Kili SDK Notebook]: Import text assets",
 )["id"]
 ```
 
-The method to use for adding assets to your Kili project is the [`kili.append_many_to_dataset()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.mutations.asset.__init__.MutationsAsset.append_many_to_dataset) method.
+The methods to use for adding text assets to your Kili project are [`kili.assets.create_text()`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/assets/#kili.domain_api.assets.AssetsNamespace.create_text) and [`kili.assets.create_rich_text()`](https://python-sdk-docs.kili-technology.com/latest/sdk/domain/assets/#kili.domain_api.assets.AssetsNamespace.create_rich_text).
 
-In case of rich text, you need to use the `json_content_array` argument:
+In case of rich text, use `create_rich_text` and its `json_content_array` argument:
 
 ```python
-kili.append_many_to_dataset(
+kili.assets.create_rich_text(
     project_id=project_id,
     json_content_array=[json_content_1, json_content_2, etc...],
 )
 ```
 
-Note that the `content_array` parameter of this method is used for uploading standard text assets.
+Standard text assets go through `create_text` and its `content_array` argument.
 
 A `json_content` object is a Python dict that contains nodes as keys.
 
@@ -189,7 +189,7 @@ json_content = [
     }
 ]
 
-kili.append_many_to_dataset(
+kili.assets.create_rich_text(
     project_id=project_id,
     json_content_array=[json_content],
 )
@@ -216,7 +216,7 @@ json_content = [
     }
 ]
 
-kili.append_many_to_dataset(
+kili.assets.create_rich_text(
     project_id=project_id,
     json_content_array=[json_content],
 )
@@ -263,7 +263,7 @@ json_content = [
     }
 ]
 
-kili.append_many_to_dataset(
+kili.assets.create_rich_text(
     project_id=project_id,
     json_content_array=[json_content],
 )
@@ -396,7 +396,7 @@ json_content = [
     },
 ]
 
-kili.append_many_to_dataset(
+kili.assets.create_rich_text(
     project_id=project_id,
     json_content_array=[json_content],
 )
@@ -480,7 +480,7 @@ Finally, we upload it to our Kili project:
 
 
 ```python
-kili.append_many_to_dataset(
+kili.assets.create_rich_text(
     project_id=project_id,
     json_content_array=[json_content],
 )
@@ -502,5 +502,5 @@ We can remove the project that we created:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```

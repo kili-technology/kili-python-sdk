@@ -290,7 +290,7 @@ Now that we have both the data and the pre-annotations, we can import them to a 
 
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 
@@ -349,7 +349,7 @@ Let's now create the project with its ontology:
 
 
 ```python
-project = kili.create_project(
+project = kili.projects.create(
     title="[Kili SDK Notebook]: CoNLL Named Entity Recognition with OpenAI pre-annotations",
     input_type="TEXT",
     json_interface=json_interface,
@@ -378,8 +378,10 @@ print(external_id_array[:3])
 
 
 ```python
-kili.append_many_to_dataset(
-    project_id=project_id, content_array=content_array, external_id_array=external_id_array
+kili.assets.create_text(
+    project_id=project_id,
+    content_array=content_array,
+    external_id_array=external_id_array,
 )
 ```
 
@@ -435,12 +437,12 @@ print(json_response_array[0])
     {'NAMED_ENTITIES_RECOGNITION_JOB': {'annotations': [{'categories': [{'name': 'ORGANIZATION'}], 'beginOffset': 0, 'content': 'EU'}, {'categories': [{'name': 'ORGANIZATION'}], 'beginOffset': 11, 'content': 'German'}, {'categories': [{'name': 'LOCATION'}], 'beginOffset': 34, 'content': 'British'}, {'categories': [{'name': 'MISCELLANEOUS'}], 'beginOffset': 42, 'content': 'lamb'}]}}
 
 
-We then import the annotations using the `kili.create_predictions()` method:
+We then import the annotations using the `kili.labels.create_prediction()` method:
 
 
 ```python
-kili.create_predictions(
-    project_id,
+kili.labels.create_prediction(
+    project_id=project_id,
     external_id_array=external_id_array,
     json_response_array=json_response_array,
     model_name=openai_query_params["model"],

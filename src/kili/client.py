@@ -38,6 +38,12 @@ from kili.presentation.client.user import UserClientMethods
 from kili.use_cases.api_key import ApiKeyUseCases
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
+if not sys.warnoptions:  # -W and PYTHONWARNINGS win
+    # Attributed to the user's line, this one would fall under Python's default ignore outside
+    # __main__.
+    warnings.filterwarnings(
+        "default", message=r"`kili\.client\.Kili` is deprecated", category=DeprecationWarning
+    )
 
 
 class GraphQLClientParams(TypedDict, total=False):
@@ -56,6 +62,19 @@ class FilterPoolFullWarning(logging.Filter):
 
 
 logging.getLogger("urllib3.connectionpool").addFilter(FilterPoolFullWarning())
+
+
+def _warn_when_built_directly(client_name: GraphQLClientName) -> None:
+    """Warn a user who builds this client: the domain client (SDK_DOMAIN) and the CLI build their own."""
+    if client_name is GraphQLClientName.SDK:
+        warnings.warn(
+            "`kili.client.Kili` is deprecated and will be removed in a future major release. "
+            "Use `from kili.client_domain import Kili` instead, e.g. `kili.assets.list(...)` "
+            "rather than `kili.assets(...)`. A method the domain client does not offer yet "
+            "stays reachable as `kili.legacy_client.<method>(...)`.",
+            DeprecationWarning,
+            stacklevel=3,  # the caller of Kili(...), past this helper and __init__
+        )
 
 
 class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
@@ -92,8 +111,9 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     ) -> None:
         """Initialize Kili client.
 
-        This client provides access to methods through mixin inheritance.
-        For the domain-based API, use `from kili.client_domain import Kili` instead.
+        !!! warning "Deprecated"
+            This client is deprecated and will be removed in a future major release.
+            Use the domain client instead: `from kili.client_domain import Kili`.
 
         Args:
             api_key: User API key generated
@@ -138,6 +158,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             kili = Kili(disable_tqdm=True)
             ```
         """
+        _warn_when_built_directly(client_name)
         config_file = load_config_from_file()
 
         api_key = api_key or os.getenv("KILI_API_KEY") or config_file.get("api_key")

@@ -1,10 +1,10 @@
-from kili.plugins import PluginCore
+from kili.plugins import Plugin
 
 # Aggregate labels labeled from multiple labelers labeling the same assets through consensus
 # Caution - Only working for classification and object detection job - If needed could be extended easily
 
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """Custom plugin instance."""
 
     def aggregate_classification_label(self, classif_job_key, labels_array):
@@ -35,8 +35,8 @@ class PluginHandler(PluginCore):
         """Dedicated handler for Submit action."""
         project_id = self.project_id
 
-        project_info = self.kili.projects(
-            project_id=project_id, fields=["minConsensusSize", "jsonInterface"]
+        project_info = self.kili.projects.list(
+            filter={"project_id": project_id}, fields=["minConsensusSize", "jsonInterface"]
         )[0]
 
         json_interface = project_info["jsonInterface"]
@@ -49,10 +49,9 @@ class PluginHandler(PluginCore):
             k for k, v in json_interface["jobs"].items() if v["mlTask"] == "OBJECT_DETECTION"
         ]
 
-        labels_array = self.kili.labels(
+        labels_array = self.kili.labels.list(
             project_id=project_id,
-            asset_id=asset_id,
-            type_in=["DEFAULT"],
+            filter={"asset_id": asset_id, "type_in": ["DEFAULT"]},
             fields=[
                 "id",
                 "jsonResponse",
@@ -70,6 +69,6 @@ class PluginHandler(PluginCore):
                 self.aggregate_classification_label(classif_job_key, latest_labels)
             )
 
-            self.kili.append_labels(
-                asset_id_array=[asset_id], json_response_array=[json_response_array]
+            self.kili.labels.create_default(
+                project_id=project_id, asset_id=asset_id, json_response=json_response_array
             )

@@ -25,7 +25,7 @@ To work with this notebook, you will have to install and instantiate Kili.
 
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 
@@ -46,7 +46,7 @@ You can set up the percentage of assets that will automatically appear in the re
 
 
 ```python
-kili.update_properties_in_project(project_id=project_id, review_coverage=50)
+kili.legacy_client.update_properties_in_project(project_id=project_id, review_coverage=50)
 ```
 
 
@@ -70,7 +70,7 @@ Let's set the percentage of the project dataset that will be annotated several t
 
 
 ```python
-kili.update_properties_in_project(
+kili.legacy_client.update_properties_in_project(
     project_id=project_id,
     consensus_tot_coverage=1,
     min_consensus_size=3,
@@ -91,23 +91,23 @@ kili.update_properties_in_project(
 You can manually select specific project assets to be used for computing consensus KPIs.
 
 The method to use depends on the workflow version of your project. On multi-review
-projects, use `update_asset_consensus`, one call per asset:
+projects, use `kili.assets.update_consensus`, one call per asset:
 
 
 ```python
 for external_id in ["1.jpg", "2.jpg", "3.jpg"]:
-    kili.update_asset_consensus(
+    kili.assets.update_consensus(
         project_id=project_id,
         external_id=external_id,
         is_consensus=True,
     )
 ```
 
-On projects still using workflow version 1, `update_asset_consensus` is not available.
-Use `update_properties_in_assets` with `is_used_for_consensus_array` instead:
+On projects still using workflow version 1, `kili.assets.update_consensus` is not available.
+Use the legacy client's `update_properties_in_assets` with `is_used_for_consensus_array` instead:
 
 ```python
-kili.update_properties_in_assets(
+kili.legacy_client.update_properties_in_assets(
     project_id=project_id,
     external_ids=["1.jpg", "2.jpg", "3.jpg"],
     is_used_for_consensus_array=[True] * 3,
@@ -128,20 +128,22 @@ First, we need to enable honeypot on the labeling step of our project:
 
 
 ```python
-kili.update_labeling_step_properties(project_id=project_id, step_name="Label", use_honeypot=True)
+kili.legacy_client.update_labeling_step_properties(
+    project_id=project_id, step_name="Label", use_honeypot=True
+)
 ```
 
 On projects still using workflow version 1, enable it on the project instead:
 
 ```python
-kili.update_properties_in_project(project_id=project_id, use_honeypot=True)
+kili.legacy_client.update_properties_in_project(project_id=project_id, use_honeypot=True)
 ```
 
 You can now manually select specific project assets to be used as honeypots:
 
 
 ```python
-kili.create_honeypot(
+kili.legacy_client.create_honeypot(
     project_id=project_id,
     asset_external_id="1.jpg",
     json_response={"JOB_0": {"categories": [{"confidence": 100, "name": "OBJECT_B"}]}},
@@ -152,11 +154,11 @@ For more information on honeypot, refer to our [documentation](https://docs.kili
 
 ## Assigning labelers to assets
 
-You can assign specific labelers to specific assets in your project. You can do that by assigning users' emails to the selected asset IDs. Remember that you can assign more than one user to a specific asset.
+You can assign specific labelers to specific assets in your project. You can do that by assigning users' emails or IDs to the selected assets. Remember that you can assign more than one user to a specific asset.
 
 
 ```python
-kili.update_properties_in_assets(
+kili.assets.assign(
     project_id=project_id,
     external_ids=["1.jpg", "2.jpg", "3.jpg"],
     to_be_labeled_by_array=[
@@ -167,16 +169,7 @@ kili.update_properties_in_assets(
 )
 ```
 
-
-
-
-    [{'id': 'clnwvhvo00000gsvzinsato00'},
-     {'id': 'clnwvhvo00001gsvzsiqcx5dc'},
-     {'id': 'clnwvhvo00002gsvzzbjtyuif'}]
-
-
-
-The `to_be_labeled_by_array` argument is a list of lists. Each of the sub-lists can contain several e-mails. This way you can assign several labelers to one asset.
+The `to_be_labeled_by_array` argument is a list of lists. Each of the sub-lists can contain several emails or user IDs. This way you can assign several labelers to one asset.
 
 For example:
 
@@ -191,19 +184,9 @@ If you have certain assets that you need to have labeled earlier or later than t
 
 
 ```python
-kili.update_properties_in_assets(
-    project_id=project_id, external_ids=["1.jpg", "2.jpg", "3.jpg"], priorities=[1, 5, 10]
-)
+for external_id, priority in zip(["1.jpg", "2.jpg", "3.jpg"], [1, 5, 10], strict=False):
+    kili.assets.set_priority(project_id=project_id, external_id=external_id, priority=priority)
 ```
-
-
-
-
-    [{'id': 'clnwvhvo00000gsvzinsato00'},
-     {'id': 'clnwvhvo00001gsvzsiqcx5dc'},
-     {'id': 'clnwvhvo00002gsvzzbjtyuif'}]
-
-
 
 For information on setting asset priorities, refer to our [documentation](https://docs.kili-technology.com/docs/queue-prioritization).
 
@@ -215,11 +198,10 @@ The method will return the list of newly-added label IDs.
 
 
 ```python
-kili.append_labels(
+kili.labels.create_default(
     project_id=project_id,
-    asset_external_id_array=["4.jpg"],
+    external_id_array=["4.jpg"],
     json_response_array=[{"JOB_0": {"categories": [{"confidence": 100, "name": "OBJECT_B"}]}}],
-    label_type="DEFAULT",
 )
 ```
 
@@ -227,7 +209,7 @@ Now, let's place some assets in the review queue. The method will return a proje
 
 
 ```python
-kili.add_to_review(project_id=project_id, external_ids=["4.jpg"])
+kili.assets.move_to_next_step(project_id=project_id, external_ids=["4.jpg"])
 ```
 
 For more information on asset statuses, refer to our [documentation](https://docs.kili-technology.com/docs/workflow-configuration).
@@ -238,7 +220,7 @@ You can also send specific labeled assets back to the labeling queue.
 
 
 ```python
-kili.send_back_to_queue(project_id=project_id, external_ids=["4.jpg"])
+kili.assets.invalidate(project_id=project_id, external_ids=["4.jpg"])
 ```
 
 
@@ -256,7 +238,7 @@ We can remove the project that we created:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```
 
 
