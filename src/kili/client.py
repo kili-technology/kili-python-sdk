@@ -58,6 +58,22 @@ class FilterPoolFullWarning(logging.Filter):
 logging.getLogger("urllib3.connectionpool").addFilter(FilterPoolFullWarning())
 
 
+def _resolve_flag(
+    value: Optional[bool],
+    env_var: str,
+    config_file: dict,
+    config_key: str,
+    default: Optional[bool] = None,
+) -> Optional[bool]:
+    """A boolean option: the argument, else the environment variable, else the config file."""
+    if value is not None:
+        return value
+    env_value = os.getenv(env_var)
+    if env_value is not None:
+        return env_value.lower() in ("true", "1", "yes")
+    return config_file.get(config_key, default)
+
+
 class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
     MutationsAsset,
     MutationsIssue,
@@ -89,6 +105,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         client_name: GraphQLClientName = GraphQLClientName.SDK,
         graphql_client_params: Optional[GraphQLClientParams] = None,
         disable_tqdm: bool | None = None,
+        disable_request_compression: bool | None = None,
     ) -> None:
         """Initialize Kili client.
 
@@ -120,6 +137,12 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
                 Can be overridden by individual function calls.
                 Default to `KILI_DISABLE_TQDM` environment variable.
                 If not passed, default to `disable_tqdm` in config file or False.
+            disable_request_compression: Send request bodies uncompressed. By default, bodies
+                over 1 MB are gzipped, which the Kili API accepts. When a proxy between you and
+                Kili refuses a compressed request, it is sent again uncompressed and compression
+                is turned off; disabling it skips that refused first attempt.
+                Default to `KILI_DISABLE_REQUEST_COMPRESSION` environment variable.
+                If not passed, default to `disable_request_compression` in config file or False.
 
         Returns:
             Instance of the Kili client.
@@ -163,14 +186,15 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             else:
                 verify = True
 
-        # Load disable_tqdm from env or config if not explicitly provided
-        if disable_tqdm is None:
-            disable_tqdm_env = os.getenv("KILI_DISABLE_TQDM")
-            if disable_tqdm_env is not None:
-                disable_tqdm = disable_tqdm_env.lower() in ("true", "1", "yes")
-            elif "disable_tqdm" in config_file:
-                disable_tqdm = config_file["disable_tqdm"]
-            # Otherwise keep as None to let individual functions use their own defaults
+        # None by default, to let individual functions use their own defaults
+        disable_tqdm = _resolve_flag(disable_tqdm, "KILI_DISABLE_TQDM", config_file, "disable_tqdm")
+        disable_request_compression = _resolve_flag(
+            disable_request_compression,
+            "KILI_DISABLE_REQUEST_COMPRESSION",
+            config_file,
+            "disable_request_compression",
+            default=False,
+        )
 
         assert api_endpoint is not None
         assert verify is not None
@@ -183,6 +207,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         self.verify = verify
         self.client_name = client_name
         self.disable_tqdm = disable_tqdm
+        self.disable_request_compression = bool(disable_request_compression)
         self.http_client = HttpClient(kili_endpoint=api_endpoint, verify=verify, api_key=api_key)
         skip_checks = os.getenv("KILI_SDK_SKIP_CHECKS") is not None
         if not skip_checks and not is_api_key_valid(
@@ -200,6 +225,7 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
             client_name=client_name,
             verify=self.verify,
             http_client=self.http_client,
+            disable_request_compression=self.disable_request_compression,
             **(graphql_client_params or {}),
         )
         self.kili_api_gateway = KiliAPIGateway(self.graphql_client, self.http_client)
