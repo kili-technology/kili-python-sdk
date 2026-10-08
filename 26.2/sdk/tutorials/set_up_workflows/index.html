@@ -1761,9 +1761,51 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../file_annotations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Attaching Files to a Label
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../audio_projects/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Audio Projects
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1807,10 +1849,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
         
           
-          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1821,8 +1863,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_9">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_10">
             <span class="md-nav__icon md-icon"></span>
             Setting Up Plugins
           </label>
@@ -1937,10 +1979,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_11" >
         
           
-          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_11" id="__nav_3_11_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1951,8 +1993,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_10">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_11">
             <span class="md-nav__icon md-icon"></span>
             Integrations
           </label>
@@ -2258,25 +2300,35 @@ For information on how to add users and assign them to your project, refer to th
 </code></pre>
 <h3 id="setting-consensus-for-specific-assets-to-compute-consensus-kpis">Setting consensus for specific assets to compute consensus KPIs</h3>
 <p>You can manually select specific project assets to be used for computing consensus KPIs.</p>
+<p>The method to use depends on the workflow version of your project. On multi-review
+projects, use <code>update_asset_consensus</code>, one call per asset:</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">external_id</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"1.jpg"</span><span class="p">,</span> <span class="s2">"2.jpg"</span><span class="p">,</span> <span class="s2">"3.jpg"</span><span class="p">]:</span>
+    <span class="n">kili</span><span class="o">.</span><span class="n">update_asset_consensus</span><span class="p">(</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">external_id</span><span class="o">=</span><span class="n">external_id</span><span class="p">,</span>
+        <span class="n">is_consensus</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p>On projects still using workflow version 1, <code>update_asset_consensus</code> is not available.
+Use <code>update_properties_in_assets</code> with <code>is_used_for_consensus_array</code> instead:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
     <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"1.jpg"</span><span class="p">,</span> <span class="s2">"2.jpg"</span><span class="p">,</span> <span class="s2">"3.jpg"</span><span class="p">],</span>
     <span class="n">is_used_for_consensus_array</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
-<pre><code>[{'id': 'clnwvhvo00000gsvzinsato00'},
- {'id': 'clnwvhvo00001gsvzsiqcx5dc'},
- {'id': 'clnwvhvo00002gsvzzbjtyuif'}]
-</code></pre>
+<p>Using <code>is_used_for_consensus_array</code> on a multi-review project raises
+<code>DeprecatedArgumentError</code>.</p>
 <p>For more information on consensus, refer to our <a href="https://docs.kili-technology.com/docs/consensus-overview">documentation</a>.</p>
 <h2 id="setting-up-honeypot">Setting up honeypot</h2>
 <p>Honeypot (or <strong>gold standard</strong>) is a tool for auditing the work of labelers by measuring the accuracy of their annotations.
 Honeypot works by interspersing assets with defined ground truth label in the annotation queue. This way you can measure the agreement level between your ground truth and the annotations made by labelers.</p>
-<p>First, we need to enable honeypot for our project:</p>
+<p>First, we need to enable honeypot on the labeling step of our project:</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_labeling_step_properties</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="s2">"Label"</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<p>On projects still using workflow version 1, enable it on the project instead:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_project</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
-<pre><code>{'useHoneyPot': True, 'id': 'clnwvhuu000cz088xcqxz1dig'}
-</code></pre>
 <p>You can now manually select specific project assets to be used as honeypots:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">create_honeypot</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>

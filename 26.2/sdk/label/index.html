@@ -1763,9 +1763,51 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/file_annotations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Attaching Files to a Label
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/audio_projects/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Audio Projects
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1809,10 +1851,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
         
           
-          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1823,8 +1865,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_9">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_10">
             <span class="md-nav__icon md-icon"></span>
             Setting Up Plugins
           </label>
@@ -1939,10 +1981,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_11" >
         
           
-          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_11" id="__nav_3_11_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1953,8 +1995,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_10">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_11">
             <span class="md-nav__icon md-icon"></span>
             Integrations
           </label>
@@ -3589,6 +3631,9 @@
 <span class="sd">            normalized_coordinates: This parameter is only effective on the Kili (a.k.a raw) format.</span>
 <span class="sd">                If True, the coordinates of the `(x, y)` vertices are normalized between 0 and 1.</span>
 <span class="sd">                If False, the json response will contain additional fields with coordinates in absolute values, that is, in pixels.</span>
+<span class="sd">                On a `GEOSPATIAL` project labeled in image pixel coordinates the absolute values are</span>
+<span class="sd">                the default, since they are what that mode exists for: `None` and `False` both add</span>
+<span class="sd">                them, and only `True` leaves the fractions alone.</span>
 <span class="sd">            label_type_in: Optional list of label type. Exported assets should have a label whose type belongs to that list.</span>
 <span class="sd">                By default, only `DEFAULT` and `REVIEW` labels are exported.</span>
 <span class="sd">            include_sent_back_labels: If True, the export will include the labels that have been sent back.</span>
@@ -5698,7 +5743,10 @@ and add it to the COCO annotation (see example).</p></td>
         <td><code>Optional[bool]</code></td>
         <td><p>This parameter is only effective on the Kili (a.k.a raw) format.
 If True, the coordinates of the <code>(x, y)</code> vertices are normalized between 0 and 1.
-If False, the json response will contain additional fields with coordinates in absolute values, that is, in pixels.</p></td>
+If False, the json response will contain additional fields with coordinates in absolute values, that is, in pixels.
+On a <code>GEOSPATIAL</code> project labeled in image pixel coordinates the absolute values are
+the default, since they are what that mode exists for: <code>None</code> and <code>False</code> both add
+them, and only <code>True</code> leaves the fractions alone.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -5832,6 +5880,9 @@ By default, only <code>DEFAULT</code> and <code>REVIEW</code> labels are exporte
 <span class="sd">        normalized_coordinates: This parameter is only effective on the Kili (a.k.a raw) format.</span>
 <span class="sd">            If True, the coordinates of the `(x, y)` vertices are normalized between 0 and 1.</span>
 <span class="sd">            If False, the json response will contain additional fields with coordinates in absolute values, that is, in pixels.</span>
+<span class="sd">            On a `GEOSPATIAL` project labeled in image pixel coordinates the absolute values are</span>
+<span class="sd">            the default, since they are what that mode exists for: `None` and `False` both add</span>
+<span class="sd">            them, and only `True` leaves the fractions alone.</span>
 <span class="sd">        label_type_in: Optional list of label type. Exported assets should have a label whose type belongs to that list.</span>
 <span class="sd">            By default, only `DEFAULT` and `REVIEW` labels are exported.</span>
 <span class="sd">        include_sent_back_labels: If True, the export will include the labels that have been sent back.</span>

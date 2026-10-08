@@ -626,6 +626,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kili.entrypoints.mutations.asset.__init__.MutationsAsset.set_assets_priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_assets_priority()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.entrypoints.mutations.asset.__init__.MutationsAsset.set_metadata" class="md-nav__link">
     <span class="md-ellipsis">
       set_metadata()
@@ -1754,9 +1763,51 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/file_annotations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Attaching Files to a Label
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/audio_projects/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Audio Projects
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1800,10 +1851,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
         
           
-          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1814,8 +1865,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_9">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_10">
             <span class="md-nav__icon md-icon"></span>
             Setting Up Plugins
           </label>
@@ -1930,10 +1981,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_11" >
         
           
-          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_11" id="__nav_3_11_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1944,8 +1995,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_10">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_11">
             <span class="md-nav__icon md-icon"></span>
             Integrations
           </label>
@@ -2138,6 +2189,15 @@
   <a href="#kili.entrypoints.mutations.asset.__init__.MutationsAsset.send_back_to_queue" class="md-nav__link">
     <span class="md-ellipsis">
       send_back_to_queue()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.entrypoints.mutations.asset.__init__.MutationsAsset.set_assets_priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_assets_priority()
     </span>
   </a>
   
@@ -2428,6 +2488,8 @@
 <span class="sd">            skip: Number of assets to skip (they are ordered by their date of creation, first to last).</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the assets.</span>
 <span class="sd">                    See [the documentation](https://api-docs.kili-technology.com/types/objects/asset) for all possible fields.</span>
+<span class="sd">                    `resolution` is empty on a `GEOSPATIAL` asset: its dimensions are per layer,</span>
+<span class="sd">                    carried by `geospatialExportMetadata` with the CRS the layer is labeled in.</span>
 <span class="sd">            first: Maximum number of assets to return.</span>
 <span class="sd">            consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.</span>
 <span class="sd">            consensus_mark_lt: Deprecated. Use `consensus_mark_lte` instead.</span>
@@ -3052,6 +3114,9 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Activate or deactivate consensus on an asset.</span>
 
+<span class="sd">        This method is not compatible with projects using workflow version 1. On those projects,</span>
+<span class="sd">        use `kili.update_properties_in_assets()` with `is_used_for_consensus_array` instead.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: The project ID.</span>
 <span class="sd">            is_consensus: Whether to activate (True) or deactivate (False) consensus on the asset.</span>
@@ -3181,7 +3246,9 @@
         <td><code>fields</code></td>
         <td><code>Union[list[str], tuple[str, ...]]</code></td>
         <td><p>All the fields to request among the possible fields for the assets.
-    See <a href="https://api-docs.kili-technology.com/types/objects/asset">the documentation</a> for all possible fields.</p></td>
+    See <a href="https://api-docs.kili-technology.com/types/objects/asset">the documentation</a> for all possible fields.
+    <code>resolution</code> is empty on a <code>GEOSPATIAL</code> asset: its dimensions are per layer,
+    carried by <code>geospatialExportMetadata</code> with the CRS the layer is labeled in.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -3698,6 +3765,8 @@ with the assets (and not only the ones matching the criteria)</p>
 <span class="sd">        skip: Number of assets to skip (they are ordered by their date of creation, first to last).</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the assets.</span>
 <span class="sd">                See [the documentation](https://api-docs.kili-technology.com/types/objects/asset) for all possible fields.</span>
+<span class="sd">                `resolution` is empty on a `GEOSPATIAL` asset: its dimensions are per layer,</span>
+<span class="sd">                carried by `geospatialExportMetadata` with the CRS the layer is labeled in.</span>
 <span class="sd">        first: Maximum number of assets to return.</span>
 <span class="sd">        consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.</span>
 <span class="sd">        consensus_mark_lt: Deprecated. Use `consensus_mark_lte` instead.</span>
@@ -4751,6 +4820,8 @@ Only applicable if the project is in WorkflowV3.</p></td>
     <div class="doc doc-contents ">
 
       <p>Activate or deactivate consensus on an asset.</p>
+<p>This method is not compatible with projects using workflow version 1. On those projects,
+use <code>kili.update_properties_in_assets()</code> with <code>is_used_for_consensus_array</code> instead.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -4865,6 +4936,9 @@ has opened and started the asset yet.</p></td>
     <span class="n">external_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Activate or deactivate consensus on an asset.</span>
+
+<span class="sd">    This method is not compatible with projects using workflow version 1. On those projects,</span>
+<span class="sd">    use `kili.update_properties_in_assets()` with `is_used_for_consensus_array` instead.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: The project ID.</span>
@@ -5127,7 +5201,7 @@ has opened and started the asset yet.</p></td>
         <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssignAssetsOutcome</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssetActionOutcome</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Assign a list of assets to a list of labelers.</span>
 
 <span class="sd">        Assigning an asset to nobody unassigns it. A labeler who has a label in progress on an</span>
@@ -5169,7 +5243,7 @@ has opened and started the asset yet.</p></td>
         <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
             <span class="s2">"assign_assets_to_labelers"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
         <span class="p">)</span> <span class="ow">and</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"assign_assets_to_labelers"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">"declined"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"failed"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"succeeded"</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">return</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="kc">None</span>
@@ -5192,16 +5266,17 @@ has opened and started the asset yet.</p></td>
                 <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset_id</span><span class="p">)</span>
 
-        <span class="c1"># One call per group of 100, so the outcome is merged rather than returned per call: which</span>
-        <span class="c1"># batch an asset happened to land in says nothing to the caller.</span>
-        <span class="n">outcome</span><span class="p">:</span> <span class="n">AssignAssetsOutcome</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"declined"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"failed"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"succeeded"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="n">outcome</span> <span class="o">=</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">user_ids_tuple</span><span class="p">,</span> <span class="n">ids_for_group</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids_for_group</span><span class="p">),</span> <span class="mi">100</span><span class="p">):</span>
-                <span class="n">chunk</span> <span class="o">=</span> <span class="n">ids_for_group</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">100</span><span class="p">]</span>
-                <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"userIds"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">user_ids_tuple</span><span class="p">),</span> <span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"idIn"</span><span class="p">:</span> <span class="n">chunk</span><span class="p">}}</span>
-                <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ASSIGN_ASSETS</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"declined"</span><span class="p">,</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="s2">"succeeded"</span><span class="p">):</span>
-                    <span class="n">outcome</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">"data"</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+            <span class="n">group_outcome</span> <span class="o">=</span> <span class="n">execute_asset_action</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span>
+                <span class="n">GQL_ASSIGN_ASSETS</span><span class="p">,</span>
+                <span class="n">ids_for_group</span><span class="p">,</span>
+                <span class="p">{</span><span class="s2">"userIds"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">user_ids_tuple</span><span class="p">)},</span>
+            <span class="p">)</span>
+            <span class="n">outcome</span><span class="p">[</span><span class="s2">"declined"</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">group_outcome</span><span class="p">[</span><span class="s2">"declined"</span><span class="p">])</span>
+            <span class="n">outcome</span><span class="p">[</span><span class="s2">"failed"</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">group_outcome</span><span class="p">[</span><span class="s2">"failed"</span><span class="p">])</span>
+            <span class="n">outcome</span><span class="p">[</span><span class="s2">"succeeded"</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">group_outcome</span><span class="p">[</span><span class="s2">"succeeded"</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">outcome</span>
 
     <span class="nd">@typechecked</span>
@@ -5230,7 +5305,8 @@ has opened and started the asset yet.</p></td>
 <span class="sd">        Args:</span>
 <span class="sd">            asset_ids: The internal asset IDs to modify.</span>
 <span class="sd">            external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).</span>
-<span class="sd">            priorities: You can change the priority of the assets.</span>
+<span class="sd">            priorities: DEPRECATED, use `kili.set_assets_priority()` instead, which reports the</span>
+<span class="sd">                assets it could not be applied to. You can change the priority of the assets.</span>
 <span class="sd">                By default, all assets have a priority of 0.</span>
 <span class="sd">            json_metadatas: The metadata given to an asset should be stored</span>
 <span class="sd">                in a json like dict with keys `imageUrl`, `text`, `url`:</span>
@@ -5248,8 +5324,8 @@ has opened and started the asset yet.</p></td>
 <span class="sd">                    to each frame of the video.</span>
 <span class="sd">            status_array: DEPRECATED and does not have any effect.</span>
 <span class="sd">            is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.</span>
-<span class="sd">                Only supported on legacy workflow V1 projects; on workflow V2/V3 projects use</span>
-<span class="sd">                `kili.assets.update_consensus()` instead.</span>
+<span class="sd">                Only supported on legacy workflow V1 projects; on workflow V2/V3 projects it raises</span>
+<span class="sd">                `DeprecatedArgumentError`, use `kili.update_asset_consensus()` instead.</span>
 <span class="sd">            is_honeypot_array: Whether to use the asset for honeypot.</span>
 <span class="sd">            project_id: The project ID. Only required if `external_ids` argument is provided.</span>
 <span class="sd">            resolution_array: The resolution of each asset (for image and video assets).</span>
@@ -5263,6 +5339,13 @@ has opened and started the asset yet.</p></td>
 <span class="sd">        Returns:</span>
 <span class="sd">            A list of dictionaries with the asset ids.</span>
 
+<span class="sd">        Raises:</span>
+<span class="sd">            DeprecatedArgumentError: If `is_used_for_consensus_array` is used on a multi-review</span>
+<span class="sd">                project. Use `kili.update_asset_consensus()` for those projects.</span>
+<span class="sd">            MissingArgumentError: If both `asset_ids` and `external_ids` are provided, or if</span>
+<span class="sd">                neither of them is.</span>
+<span class="sd">            GraphQLError: If the backend refuses the update for any other reason.</span>
+
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.update_properties_in_assets(</span>
 <span class="sd">                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],</span>
@@ -5271,7 +5354,6 @@ has opened and started the asset yet.</p></td>
 <span class="sd">                    honeypot_marks=[0.8, 0.5],</span>
 <span class="sd">                    is_honeypot_array=[True, True],</span>
 <span class="sd">                    is_used_for_consensus_array=[True, False],</span>
-<span class="sd">                    priorities=[None, 2],</span>
 <span class="sd">                    to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],</span>
 <span class="sd">                )</span>
 
@@ -5323,6 +5405,14 @@ has opened and started the asset yet.</p></td>
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">priorities</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">"priorities is deprecated: it does not report the assets it could not be applied"</span>
+                <span class="s2">" to. Please use `kili.set_assets_priority()` method instead to prioritize assets"</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_asset_ids</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
         <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="n">process_update_properties_in_assets_parameters</span><span class="p">(</span>
@@ -5350,12 +5440,18 @@ has opened and started the asset yet.</p></td>
                 <span class="s2">"dataArray"</span><span class="p">:</span> <span class="n">data_array</span><span class="p">,</span>
             <span class="p">}</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="n">mutate_from_paginated_call</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">properties_to_batch</span><span class="p">,</span>
-            <span class="n">generate_variables</span><span class="p">,</span>
-            <span class="n">GQL_UPDATE_PROPERTIES_IN_ASSETS</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">mutate_from_paginated_call</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">properties_to_batch</span><span class="p">,</span>
+                <span class="n">generate_variables</span><span class="p">,</span>
+                <span class="n">GQL_UPDATE_PROPERTIES_IN_ASSETS</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">deprecation_message</span> <span class="o">=</span> <span class="n">_get_error_message_with_key</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">DEPRECATED_ERROR_KEY</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">deprecation_message</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DeprecatedArgumentError</span><span class="p">(</span><span class="n">_to_sdk_method_names</span><span class="p">(</span><span class="n">deprecation_message</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+            <span class="k">raise</span>
         <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">batch_list</span> <span class="ow">in</span> <span class="n">formated_results</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch_list</span><span class="p">]</span>
 
@@ -5574,8 +5670,12 @@ has opened and started the asset yet.</p></td>
         <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssetActionOutcome</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Delete assets from a project.</span>
+
+<span class="sd">        A batch whose write failed is reported under `failed` rather than failing the call. An asset</span>
+<span class="sd">        already deleted, given by its id, is reported under `succeeded`: it is in the state that was</span>
+<span class="sd">        asked for.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            asset_ids: The list of asset internal IDs to delete.</span>
@@ -5583,54 +5683,33 @@ has opened and started the asset yet.</p></td>
 <span class="sd">            project_id: The project ID. Only required if `external_ids` argument is provided.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A dict object with the project `id`.</span>
+<span class="sd">            A dictionary with three keys, each a list covering every asset given:</span>
+
+<span class="sd">            - `succeeded`: the assets that ended up in the state that was asked for, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ...}`.</span>
+<span class="sd">            - `declined`: the assets the request could not be applied to, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise</span>
+<span class="sd">              next to the count, so no surface reports them.</span>
+<span class="sd">            - `failed`: the assets whose write threw, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these</span>
+<span class="sd">              are worth retrying as is.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.delete_many_from_dataset(</span>
+<span class="sd">                    asset_ids=[</span>
+<span class="sd">                        "ckg22d81r0jrg0885unmuswj8",</span>
+<span class="sd">                        "ckg22d81s0jrh0885pdxfd03n",</span>
+<span class="sd">                    ],</span>
+<span class="sd">                )</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
             <span class="s2">"delete_many_from_dataset"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
         <span class="p">)</span> <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"delete_many_from_dataset"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
 
         <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_asset_ids</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
-        <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"asset_ids"</span><span class="p">:</span> <span class="n">resolved_asset_ids</span><span class="p">}</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"idIn"</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">]}}</span>
-
-        <span class="nd">@retry</span><span class="p">(</span>
-            <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
-            <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
-            <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">            </span><span class="sd">"""Check that all assets in the last batch have been deleted."""</span>
-            <span class="k">if</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">project_id_</span> <span class="o">=</span> <span class="n">project_id</span>
-            <span class="c1"># in some case the results is [{'data': None}]</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">):</span>
-                <span class="n">project_id_</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span>
-
-            <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
-
-            <span class="n">nb_assets_in_kili</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">count_assets</span><span class="p">(</span>
-                <span class="n">AssetFilters</span><span class="p">(</span>
-                    <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id_</span><span class="p">),</span>
-                    <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="n">nb_assets_in_kili</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">"Failed to delete some assets."</span><span class="p">)</span>
-
-        <span class="n">results</span> <span class="o">=</span> <span class="n">mutate_from_paginated_call</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">properties_to_batch</span><span class="p">,</span>
-            <span class="n">generate_variables</span><span class="p">,</span>
-            <span class="n">GQL_DELETE_MANY_FROM_DATASET</span><span class="p">,</span>
-            <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">execute_asset_action</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="n">GQL_DELETE_ASSETS</span><span class="p">,</span> <span class="n">resolved_asset_ids</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_to_review</span><span class="p">(</span>
@@ -5638,11 +5717,11 @@ has opened and started the asset yet.</p></td>
         <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssetActionOutcome</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Add assets to review.</span>
 
-<span class="sd">        !!! warning</span>
-<span class="sd">            Assets without any label will be ignored.</span>
+<span class="sd">        An asset without any label, or that cannot move on yet — its step is not done, someone is</span>
+<span class="sd">        labeling it — is reported under `declined` rather than silently left out.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            asset_ids: The asset internal IDs to add to review.</span>
@@ -5650,9 +5729,16 @@ has opened and started the asset yet.</p></td>
 <span class="sd">            project_id: The project ID. Only required if `external_ids` argument is provided.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A dict object with the project `id` and the `asset_ids` of assets moved to review.</span>
-<span class="sd">            `None` if no assets have changed status (already had `TO_REVIEW` status for example).</span>
-<span class="sd">            An error message if mutation failed.</span>
+<span class="sd">            A dictionary with three keys, each a list covering every asset given:</span>
+
+<span class="sd">            - `succeeded`: the assets that ended up in the state that was asked for, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ...}`.</span>
+<span class="sd">            - `declined`: the assets the request could not be applied to, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise</span>
+<span class="sd">              next to the count, so no surface reports them.</span>
+<span class="sd">            - `failed`: the assets whose write threw, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these</span>
+<span class="sd">              are worth retrying as is.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.add_to_review(</span>
@@ -5665,63 +5751,13 @@ has opened and started the asset yet.</p></td>
         <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
             <span class="s2">"add_to_review"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
         <span class="p">)</span> <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"add_to_review"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
 
         <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_asset_ids</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
-        <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"asset_ids"</span><span class="p">:</span> <span class="n">resolved_asset_ids</span><span class="p">}</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"idIn"</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">]}}</span>
-
-        <span class="nd">@retry</span><span class="p">(</span>
-            <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
-            <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
-            <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="k">return</span> <span class="n">execute_asset_action</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="n">GQL_ADD_ASSETS_TO_REVIEW</span><span class="p">,</span> <span class="n">resolved_asset_ids</span>
         <span class="p">)</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">            </span><span class="sd">"""Check that all assets in the last batch have been sent to review."""</span>
-            <span class="k">if</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">project_id_</span> <span class="o">=</span> <span class="n">project_id</span>
-            <span class="c1"># in some case the results is [{'data': None}]</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">):</span>
-                <span class="n">project_id_</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span>
-
-            <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
-            <span class="n">nb_assets_in_review</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">count_assets</span><span class="p">(</span>
-                <span class="n">AssetFilters</span><span class="p">(</span>
-                    <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id_</span><span class="p">),</span>
-                    <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
-                    <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"TO_REVIEW"</span><span class="p">],</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nb_assets_in_review</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">"Failed to send some assets to review"</span><span class="p">)</span>
-
-        <span class="n">results</span> <span class="o">=</span> <span class="n">mutate_from_paginated_call</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">properties_to_batch</span><span class="p">,</span>
-            <span class="n">generate_variables</span><span class="p">,</span>
-            <span class="n">GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW</span><span class="p">,</span>
-            <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="c1"># unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID</span>
-        <span class="c1"># it happens when no assets have been sent to review</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"id"</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="n">assets_in_review</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">list_assets</span><span class="p">(</span>
-                <span class="n">AssetFilters</span><span class="p">(</span>
-                    <span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
-                    <span class="n">asset_id_in</span><span class="o">=</span><span class="n">resolved_asset_ids</span><span class="p">,</span>
-                    <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"TO_REVIEW"</span><span class="p">],</span>
-                <span class="p">),</span>
-                <span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
-                <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-            <span class="p">)</span>
-            <span class="n">result</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_in_review</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">result</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">send_back_to_queue</span><span class="p">(</span>
@@ -5729,8 +5765,11 @@ has opened and started the asset yet.</p></td>
         <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssetActionOutcome</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Send assets back to queue.</span>
+
+<span class="sd">        An asset the send back does not apply to — one still to be labeled, or, on Workflow V2,</span>
+<span class="sd">        one skipped — is reported under `declined` rather than silently left out.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            asset_ids: List of internal IDs of assets to send back to queue.</span>
@@ -5738,8 +5777,16 @@ has opened and started the asset yet.</p></td>
 <span class="sd">            project_id: The project ID. Only required if `external_ids` argument is provided.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A dict object with the project `id` and the `asset_ids` of assets moved to queue.</span>
-<span class="sd">            An error message if mutation failed.</span>
+<span class="sd">            A dictionary with three keys, each a list covering every asset given:</span>
+
+<span class="sd">            - `succeeded`: the assets that ended up in the state that was asked for, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ...}`.</span>
+<span class="sd">            - `declined`: the assets the request could not be applied to, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise</span>
+<span class="sd">              next to the count, so no surface reports them.</span>
+<span class="sd">            - `failed`: the assets whose write threw, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these</span>
+<span class="sd">              are worth retrying as is.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.send_back_to_queue(</span>
@@ -5752,61 +5799,67 @@ has opened and started the asset yet.</p></td>
         <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
             <span class="s2">"send_back_to_queue"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
         <span class="p">)</span> <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"send_back_to_queue"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
 
         <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_asset_ids</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
-        <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"asset_ids"</span><span class="p">:</span> <span class="n">resolved_asset_ids</span><span class="p">}</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"idIn"</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">]}}</span>
-
-        <span class="nd">@retry</span><span class="p">(</span>
-            <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
-            <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
-            <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="k">return</span> <span class="n">execute_asset_action</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="n">GQL_SEND_ASSETS_BACK_TO_QUEUE</span><span class="p">,</span> <span class="n">resolved_asset_ids</span>
         <span class="p">)</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">            </span><span class="sd">"""Check that all assets in the last batch have been sent back to queue."""</span>
-            <span class="k">if</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">project_id_</span> <span class="o">=</span> <span class="n">project_id</span>
-            <span class="c1"># in some case the results is [{'data': None}]</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">):</span>
-                <span class="n">project_id_</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span>
 
-            <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check lastest asset of the batch only</span>
-            <span class="n">nb_assets_in_queue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">count_assets</span><span class="p">(</span>
-                <span class="n">AssetFilters</span><span class="p">(</span>
-                    <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id_</span><span class="p">),</span>
-                    <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
-                    <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"ONGOING"</span><span class="p">],</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nb_assets_in_queue</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">"Failed to send some assets back to queue"</span><span class="p">)</span>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_assets_priority</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">priority</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssetActionOutcome</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Set the priority of assets.</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="n">mutate_from_paginated_call</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">properties_to_batch</span><span class="p">,</span>
-            <span class="n">generate_variables</span><span class="p">,</span>
-            <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span><span class="p">,</span>
-            <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
+<span class="sd">        An asset whose current step is not waiting for work — in progress, done or skipped — is</span>
+<span class="sd">        reported under `declined` rather than silently left out.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            priority: The priority to give every asset. By default, all assets have a priority of 0.</span>
+<span class="sd">            asset_ids: The internal IDs of the assets to prioritize.</span>
+<span class="sd">            external_ids: The external IDs of the assets to prioritize.</span>
+<span class="sd">            project_id: The project ID. Only required if `external_ids` argument is provided.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary with three keys, each a list covering every asset given:</span>
+
+<span class="sd">            - `succeeded`: the assets that ended up in the state that was asked for, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ...}`.</span>
+<span class="sd">            - `declined`: the assets the request could not be applied to, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise</span>
+<span class="sd">              next to the count, so no surface reports them.</span>
+<span class="sd">            - `failed`: the assets whose write threw, as</span>
+<span class="sd">              `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these</span>
+<span class="sd">              are worth retrying as is.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.set_assets_priority(</span>
+<span class="sd">                    priority=2,</span>
+<span class="sd">                    asset_ids=[</span>
+<span class="sd">                        "ckg22d81r0jrg0885unmuswj8",</span>
+<span class="sd">                        "ckg22d81s0jrh0885pdxfd03n",</span>
+<span class="sd">                        ],</span>
+<span class="sd">                )</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
+            <span class="s2">"set_assets_priority"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
+        <span class="p">)</span> <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"set_assets_priority"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
+
+        <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_asset_ids</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">execute_asset_action</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span>
+            <span class="n">GQL_SET_ASSETS_PRIORITY</span><span class="p">,</span>
+            <span class="n">resolved_asset_ids</span><span class="p">,</span>
+            <span class="p">{</span><span class="s2">"priority"</span><span class="p">:</span> <span class="n">priority</span><span class="p">},</span>
         <span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"id"</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">list_assets</span><span class="p">(</span>
-                <span class="n">AssetFilters</span><span class="p">(</span>
-                    <span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
-                    <span class="n">asset_id_in</span><span class="o">=</span><span class="n">resolved_asset_ids</span><span class="p">,</span>
-                    <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"ONGOING"</span><span class="p">],</span>
-                <span class="p">),</span>
-                <span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
-                <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-            <span class="p">)</span>
-            <span class="n">result</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_in_queue</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">skip_or_unskip</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -6045,10 +6098,8 @@ Each dictionary contains key/value pairs to be added to the asset's metadata.</p
     <div class="doc doc-contents ">
 
       <p>Add assets to review.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Assets without any label will be ignored.</p>
-</div>
+<p>An asset without any label, or that cannot move on yet — its step is not done, someone is
+labeling it — is reported under <code>declined</code> rather than silently left out.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -6091,10 +6142,17 @@ Each dictionary contains key/value pairs to be added to the asset's metadata.</p
   </thead>
   <tbody>
     <tr>
-      <td><code>Optional[dict[str, Any]]</code></td>
-      <td><p>A dict object with the project <code>id</code> and the <code>asset_ids</code> of assets moved to review.
-<code>None</code> if no assets have changed status (already had <code>TO_REVIEW</code> status for example).
-An error message if mutation failed.</p></td>
+      <td><code>A dictionary with three keys, each a list covering every asset given</code></td>
+      <td><ul>
+<li><code>succeeded</code>: the assets that ended up in the state that was asked for, as
+  <code>{"assetId": ..., "externalId": ...}</code>.</li>
+<li><code>declined</code>: the assets the request could not be applied to, as
+  <code>{"assetId": ..., "externalId": ...}</code>. Why is not carried: the reasons read as noise
+  next to the count, so no surface reports them.</li>
+<li><code>failed</code>: the assets whose write threw, as
+  <code>{"assetId": ..., "externalId": ..., "details": ...}</code>. Unlike a declined asset, these
+  are worth retrying as is.</li>
+</ul></td>
     </tr>
   </tbody>
 </table>
@@ -6114,11 +6172,11 @@ An error message if mutation failed.</p></td>
     <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssetActionOutcome</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Add assets to review.</span>
 
-<span class="sd">    !!! warning</span>
-<span class="sd">        Assets without any label will be ignored.</span>
+<span class="sd">    An asset without any label, or that cannot move on yet — its step is not done, someone is</span>
+<span class="sd">    labeling it — is reported under `declined` rather than silently left out.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        asset_ids: The asset internal IDs to add to review.</span>
@@ -6126,9 +6184,16 @@ An error message if mutation failed.</p></td>
 <span class="sd">        project_id: The project ID. Only required if `external_ids` argument is provided.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A dict object with the project `id` and the `asset_ids` of assets moved to review.</span>
-<span class="sd">        `None` if no assets have changed status (already had `TO_REVIEW` status for example).</span>
-<span class="sd">        An error message if mutation failed.</span>
+<span class="sd">        A dictionary with three keys, each a list covering every asset given:</span>
+
+<span class="sd">        - `succeeded`: the assets that ended up in the state that was asked for, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ...}`.</span>
+<span class="sd">        - `declined`: the assets the request could not be applied to, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise</span>
+<span class="sd">          next to the count, so no surface reports them.</span>
+<span class="sd">        - `failed`: the assets whose write threw, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these</span>
+<span class="sd">          are worth retrying as is.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.add_to_review(</span>
@@ -6141,63 +6206,13 @@ An error message if mutation failed.</p></td>
     <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
         <span class="s2">"add_to_review"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
     <span class="p">)</span> <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"add_to_review"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
 
     <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_asset_ids</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
-    <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"asset_ids"</span><span class="p">:</span> <span class="n">resolved_asset_ids</span><span class="p">}</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"idIn"</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">]}}</span>
-
-    <span class="nd">@retry</span><span class="p">(</span>
-        <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
-        <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
-        <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="k">return</span> <span class="n">execute_asset_action</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="n">GQL_ADD_ASSETS_TO_REVIEW</span><span class="p">,</span> <span class="n">resolved_asset_ids</span>
     <span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Check that all assets in the last batch have been sent to review."""</span>
-        <span class="k">if</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">project_id_</span> <span class="o">=</span> <span class="n">project_id</span>
-        <span class="c1"># in some case the results is [{'data': None}]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">):</span>
-            <span class="n">project_id_</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span>
-
-        <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
-        <span class="n">nb_assets_in_review</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">count_assets</span><span class="p">(</span>
-            <span class="n">AssetFilters</span><span class="p">(</span>
-                <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id_</span><span class="p">),</span>
-                <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
-                <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"TO_REVIEW"</span><span class="p">],</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nb_assets_in_review</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">"Failed to send some assets to review"</span><span class="p">)</span>
-
-    <span class="n">results</span> <span class="o">=</span> <span class="n">mutate_from_paginated_call</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">properties_to_batch</span><span class="p">,</span>
-        <span class="n">generate_variables</span><span class="p">,</span>
-        <span class="n">GQL_ADD_ALL_LABELED_ASSETS_TO_REVIEW</span><span class="p">,</span>
-        <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="c1"># unlike send_back_to_queue, the add_to_review mutation doesn't always return the project ID</span>
-    <span class="c1"># it happens when no assets have been sent to review</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"id"</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-        <span class="n">assets_in_review</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">list_assets</span><span class="p">(</span>
-            <span class="n">AssetFilters</span><span class="p">(</span>
-                <span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
-                <span class="n">asset_id_in</span><span class="o">=</span><span class="n">resolved_asset_ids</span><span class="p">,</span>
-                <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"TO_REVIEW"</span><span class="p">],</span>
-            <span class="p">),</span>
-            <span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
-            <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_in_review</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>
@@ -6664,7 +6679,7 @@ finish it. Those assets are reported under <code>declined</code> rather than sil
     <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssignAssetsOutcome</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssetActionOutcome</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Assign a list of assets to a list of labelers.</span>
 
 <span class="sd">    Assigning an asset to nobody unassigns it. A labeler who has a label in progress on an</span>
@@ -6706,7 +6721,7 @@ finish it. Those assets are reported under <code>declined</code> rather than sil
     <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
         <span class="s2">"assign_assets_to_labelers"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
     <span class="p">)</span> <span class="ow">and</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"assign_assets_to_labelers"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">"declined"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"failed"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"succeeded"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="k">return</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
         <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="kc">None</span>
@@ -6729,16 +6744,17 @@ finish it. Those assets are reported under <code>declined</code> rather than sil
             <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset_id</span><span class="p">)</span>
 
-    <span class="c1"># One call per group of 100, so the outcome is merged rather than returned per call: which</span>
-    <span class="c1"># batch an asset happened to land in says nothing to the caller.</span>
-    <span class="n">outcome</span><span class="p">:</span> <span class="n">AssignAssetsOutcome</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"declined"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"failed"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"succeeded"</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">outcome</span> <span class="o">=</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">user_ids_tuple</span><span class="p">,</span> <span class="n">ids_for_group</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids_for_group</span><span class="p">),</span> <span class="mi">100</span><span class="p">):</span>
-            <span class="n">chunk</span> <span class="o">=</span> <span class="n">ids_for_group</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">100</span><span class="p">]</span>
-            <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"userIds"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">user_ids_tuple</span><span class="p">),</span> <span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"idIn"</span><span class="p">:</span> <span class="n">chunk</span><span class="p">}}</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">GQL_ASSIGN_ASSETS</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"declined"</span><span class="p">,</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="s2">"succeeded"</span><span class="p">):</span>
-                <span class="n">outcome</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">"data"</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+        <span class="n">group_outcome</span> <span class="o">=</span> <span class="n">execute_asset_action</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span>
+            <span class="n">GQL_ASSIGN_ASSETS</span><span class="p">,</span>
+            <span class="n">ids_for_group</span><span class="p">,</span>
+            <span class="p">{</span><span class="s2">"userIds"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">user_ids_tuple</span><span class="p">)},</span>
+        <span class="p">)</span>
+        <span class="n">outcome</span><span class="p">[</span><span class="s2">"declined"</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">group_outcome</span><span class="p">[</span><span class="s2">"declined"</span><span class="p">])</span>
+        <span class="n">outcome</span><span class="p">[</span><span class="s2">"failed"</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">group_outcome</span><span class="p">[</span><span class="s2">"failed"</span><span class="p">])</span>
+        <span class="n">outcome</span><span class="p">[</span><span class="s2">"succeeded"</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">group_outcome</span><span class="p">[</span><span class="s2">"succeeded"</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">outcome</span>
 </code></pre></div>
         </details>
@@ -6898,6 +6914,9 @@ finish it. Those assets are reported under <code>declined</code> rather than sil
     <div class="doc doc-contents ">
 
       <p>Delete assets from a project.</p>
+<p>A batch whose write failed is reported under <code>failed</code> rather than failing the call. An asset
+already deleted, given by its id, is reported under <code>succeeded</code>: it is in the state that was
+asked for.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -6940,11 +6959,29 @@ finish it. Those assets are reported under <code>declined</code> rather than sil
   </thead>
   <tbody>
     <tr>
-      <td><code>Optional[dict[Literal[&#39;id&#39;], str]]</code></td>
-      <td><p>A dict object with the project <code>id</code>.</p></td>
+      <td><code>A dictionary with three keys, each a list covering every asset given</code></td>
+      <td><ul>
+<li><code>succeeded</code>: the assets that ended up in the state that was asked for, as
+  <code>{"assetId": ..., "externalId": ...}</code>.</li>
+<li><code>declined</code>: the assets the request could not be applied to, as
+  <code>{"assetId": ..., "externalId": ...}</code>. Why is not carried: the reasons read as noise
+  next to the count, so no surface reports them.</li>
+<li><code>failed</code>: the assets whose write threw, as
+  <code>{"assetId": ..., "externalId": ..., "details": ...}</code>. Unlike a declined asset, these
+  are worth retrying as is.</li>
+</ul></td>
     </tr>
   </tbody>
 </table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">delete_many_from_dataset</span><span class="p">(</span>
+        <span class="n">asset_ids</span><span class="o">=</span><span class="p">[</span>
+            <span class="s2">"ckg22d81r0jrg0885unmuswj8"</span><span class="p">,</span>
+            <span class="s2">"ckg22d81s0jrh0885pdxfd03n"</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+</code></pre></div>
+
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/asset/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_many_from_dataset</span><span class="p">(</span>
@@ -6952,8 +6989,12 @@ finish it. Those assets are reported under <code>declined</code> rather than sil
     <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssetActionOutcome</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Delete assets from a project.</span>
+
+<span class="sd">    A batch whose write failed is reported under `failed` rather than failing the call. An asset</span>
+<span class="sd">    already deleted, given by its id, is reported under `succeeded`: it is in the state that was</span>
+<span class="sd">    asked for.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        asset_ids: The list of asset internal IDs to delete.</span>
@@ -6961,54 +7002,33 @@ finish it. Those assets are reported under <code>declined</code> rather than sil
 <span class="sd">        project_id: The project ID. Only required if `external_ids` argument is provided.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A dict object with the project `id`.</span>
+<span class="sd">        A dictionary with three keys, each a list covering every asset given:</span>
+
+<span class="sd">        - `succeeded`: the assets that ended up in the state that was asked for, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ...}`.</span>
+<span class="sd">        - `declined`: the assets the request could not be applied to, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise</span>
+<span class="sd">          next to the count, so no surface reports them.</span>
+<span class="sd">        - `failed`: the assets whose write threw, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these</span>
+<span class="sd">          are worth retrying as is.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.delete_many_from_dataset(</span>
+<span class="sd">                asset_ids=[</span>
+<span class="sd">                    "ckg22d81r0jrg0885unmuswj8",</span>
+<span class="sd">                    "ckg22d81s0jrh0885pdxfd03n",</span>
+<span class="sd">                ],</span>
+<span class="sd">            )</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
         <span class="s2">"delete_many_from_dataset"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
     <span class="p">)</span> <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"delete_many_from_dataset"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
 
     <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_asset_ids</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
-    <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"asset_ids"</span><span class="p">:</span> <span class="n">resolved_asset_ids</span><span class="p">}</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"idIn"</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">]}}</span>
-
-    <span class="nd">@retry</span><span class="p">(</span>
-        <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
-        <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
-        <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Check that all assets in the last batch have been deleted."""</span>
-        <span class="k">if</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">project_id_</span> <span class="o">=</span> <span class="n">project_id</span>
-        <span class="c1"># in some case the results is [{'data': None}]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">):</span>
-            <span class="n">project_id_</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span>
-
-        <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check last asset of the batch only</span>
-
-        <span class="n">nb_assets_in_kili</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">count_assets</span><span class="p">(</span>
-            <span class="n">AssetFilters</span><span class="p">(</span>
-                <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id_</span><span class="p">),</span>
-                <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">nb_assets_in_kili</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">"Failed to delete some assets."</span><span class="p">)</span>
-
-    <span class="n">results</span> <span class="o">=</span> <span class="n">mutate_from_paginated_call</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">properties_to_batch</span><span class="p">,</span>
-        <span class="n">generate_variables</span><span class="p">,</span>
-        <span class="n">GQL_DELETE_MANY_FROM_DATASET</span><span class="p">,</span>
-        <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">execute_asset_action</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="n">GQL_DELETE_ASSETS</span><span class="p">,</span> <span class="n">resolved_asset_ids</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -7030,6 +7050,8 @@ finish it. Those assets are reported under <code>declined</code> rather than sil
     <div class="doc doc-contents ">
 
       <p>Send assets back to queue.</p>
+<p>An asset the send back does not apply to — one still to be labeled, or, on Workflow V2,
+one skipped — is reported under <code>declined</code> rather than silently left out.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -7072,9 +7094,17 @@ finish it. Those assets are reported under <code>declined</code> rather than sil
   </thead>
   <tbody>
     <tr>
-      <td><code>Optional[dict[str, Any]]</code></td>
-      <td><p>A dict object with the project <code>id</code> and the <code>asset_ids</code> of assets moved to queue.
-An error message if mutation failed.</p></td>
+      <td><code>A dictionary with three keys, each a list covering every asset given</code></td>
+      <td><ul>
+<li><code>succeeded</code>: the assets that ended up in the state that was asked for, as
+  <code>{"assetId": ..., "externalId": ...}</code>.</li>
+<li><code>declined</code>: the assets the request could not be applied to, as
+  <code>{"assetId": ..., "externalId": ...}</code>. Why is not carried: the reasons read as noise
+  next to the count, so no surface reports them.</li>
+<li><code>failed</code>: the assets whose write threw, as
+  <code>{"assetId": ..., "externalId": ..., "details": ...}</code>. Unlike a declined asset, these
+  are worth retrying as is.</li>
+</ul></td>
     </tr>
   </tbody>
 </table>
@@ -7094,8 +7124,11 @@ An error message if mutation failed.</p></td>
     <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssetActionOutcome</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Send assets back to queue.</span>
+
+<span class="sd">    An asset the send back does not apply to — one still to be labeled, or, on Workflow V2,</span>
+<span class="sd">    one skipped — is reported under `declined` rather than silently left out.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        asset_ids: List of internal IDs of assets to send back to queue.</span>
@@ -7103,8 +7136,16 @@ An error message if mutation failed.</p></td>
 <span class="sd">        project_id: The project ID. Only required if `external_ids` argument is provided.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A dict object with the project `id` and the `asset_ids` of assets moved to queue.</span>
-<span class="sd">        An error message if mutation failed.</span>
+<span class="sd">        A dictionary with three keys, each a list covering every asset given:</span>
+
+<span class="sd">        - `succeeded`: the assets that ended up in the state that was asked for, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ...}`.</span>
+<span class="sd">        - `declined`: the assets the request could not be applied to, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise</span>
+<span class="sd">          next to the count, so no surface reports them.</span>
+<span class="sd">        - `failed`: the assets whose write threw, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these</span>
+<span class="sd">          are worth retrying as is.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.send_back_to_queue(</span>
@@ -7117,61 +7158,162 @@ An error message if mutation failed.</p></td>
     <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
         <span class="s2">"send_back_to_queue"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
     <span class="p">)</span> <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"send_back_to_queue"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
 
     <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_asset_ids</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
-    <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"asset_ids"</span><span class="p">:</span> <span class="n">resolved_asset_ids</span><span class="p">}</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">generate_variables</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">"where"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"idIn"</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">]}}</span>
-
-    <span class="nd">@retry</span><span class="p">(</span>
-        <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
-        <span class="n">retry</span><span class="o">=</span><span class="n">retry_if_exception_type</span><span class="p">(</span><span class="n">MutationError</span><span class="p">),</span>
-        <span class="n">reraise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="k">return</span> <span class="n">execute_asset_action</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span> <span class="n">GQL_SEND_ASSETS_BACK_TO_QUEUE</span><span class="p">,</span> <span class="n">resolved_asset_ids</span>
     <span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">verify_last_batch</span><span class="p">(</span><span class="n">last_batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Check that all assets in the last batch have been sent back to queue."""</span>
-        <span class="k">if</span> <span class="n">project_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">project_id_</span> <span class="o">=</span> <span class="n">project_id</span>
-        <span class="c1"># in some case the results is [{'data': None}]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">):</span>
-            <span class="n">project_id_</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"data"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span>
+</code></pre></div>
+        </details>
+    </div>
 
-        <span class="n">asset_ids</span> <span class="o">=</span> <span class="n">last_batch</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># check lastest asset of the batch only</span>
-        <span class="n">nb_assets_in_queue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">count_assets</span><span class="p">(</span>
-            <span class="n">AssetFilters</span><span class="p">(</span>
-                <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id_</span><span class="p">),</span>
-                <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_ids</span><span class="p">,</span>
-                <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"ONGOING"</span><span class="p">],</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nb_assets_in_queue</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MutationError</span><span class="p">(</span><span class="s2">"Failed to send some assets back to queue"</span><span class="p">)</span>
+  </div>
 
-    <span class="n">results</span> <span class="o">=</span> <span class="n">mutate_from_paginated_call</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">properties_to_batch</span><span class="p">,</span>
-        <span class="n">generate_variables</span><span class="p">,</span>
-        <span class="n">GQL_SEND_BACK_ASSETS_TO_QUEUE</span><span class="p">,</span>
-        <span class="n">last_batch_callback</span><span class="o">=</span><span class="n">verify_last_batch</span><span class="p">,</span>
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kili.entrypoints.mutations.asset.__init__.MutationsAsset.set_assets_priority" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">set_assets_priority</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">priority</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Set the priority of assets.</p>
+<p>An asset whose current step is not waiting for work — in progress, done or skipped — is
+reported under <code>declined</code> rather than silently left out.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>priority</code></td>
+        <td><code>int</code></td>
+        <td><p>The priority to give every asset. By default, all assets have a priority of 0.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>asset_ids</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>The internal IDs of the assets to prioritize.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>external_ids</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>The external IDs of the assets to prioritize.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>The project ID. Only required if <code>external_ids</code> argument is provided.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>A dictionary with three keys, each a list covering every asset given</code></td>
+      <td><ul>
+<li><code>succeeded</code>: the assets that ended up in the state that was asked for, as
+  <code>{"assetId": ..., "externalId": ...}</code>.</li>
+<li><code>declined</code>: the assets the request could not be applied to, as
+  <code>{"assetId": ..., "externalId": ...}</code>. Why is not carried: the reasons read as noise
+  next to the count, so no surface reports them.</li>
+<li><code>failed</code>: the assets whose write threw, as
+  <code>{"assetId": ..., "externalId": ..., "details": ...}</code>. Unlike a declined asset, these
+  are worth retrying as is.</li>
+</ul></td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">set_assets_priority</span><span class="p">(</span>
+        <span class="n">priority</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">asset_ids</span><span class="o">=</span><span class="p">[</span>
+            <span class="s2">"ckg22d81r0jrg0885unmuswj8"</span><span class="p">,</span>
+            <span class="s2">"ckg22d81s0jrh0885pdxfd03n"</span><span class="p">,</span>
+            <span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"id"</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-        <span class="n">assets_in_queue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">list_assets</span><span class="p">(</span>
-            <span class="n">AssetFilters</span><span class="p">(</span>
-                <span class="n">project_id</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
-                <span class="n">asset_id_in</span><span class="o">=</span><span class="n">resolved_asset_ids</span><span class="p">,</span>
-                <span class="n">status_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"ONGOING"</span><span class="p">],</span>
-            <span class="p">),</span>
-            <span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
-            <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">"asset_ids"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">asset</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets_in_queue</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/entrypoints/mutations/asset/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_assets_priority</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">priority</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AssetActionOutcome</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Set the priority of assets.</span>
+
+<span class="sd">    An asset whose current step is not waiting for work — in progress, done or skipped — is</span>
+<span class="sd">    reported under `declined` rather than silently left out.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        priority: The priority to give every asset. By default, all assets have a priority of 0.</span>
+<span class="sd">        asset_ids: The internal IDs of the assets to prioritize.</span>
+<span class="sd">        external_ids: The external IDs of the assets to prioritize.</span>
+<span class="sd">        project_id: The project ID. Only required if `external_ids` argument is provided.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary with three keys, each a list covering every asset given:</span>
+
+<span class="sd">        - `succeeded`: the assets that ended up in the state that was asked for, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ...}`.</span>
+<span class="sd">        - `declined`: the assets the request could not be applied to, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ...}`. Why is not carried: the reasons read as noise</span>
+<span class="sd">          next to the count, so no surface reports them.</span>
+<span class="sd">        - `failed`: the assets whose write threw, as</span>
+<span class="sd">          `{"assetId": ..., "externalId": ..., "details": ...}`. Unlike a declined asset, these</span>
+<span class="sd">          are worth retrying as is.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.set_assets_priority(</span>
+<span class="sd">                priority=2,</span>
+<span class="sd">                asset_ids=[</span>
+<span class="sd">                    "ckg22d81r0jrg0885unmuswj8",</span>
+<span class="sd">                    "ckg22d81s0jrh0885pdxfd03n",</span>
+<span class="sd">                    ],</span>
+<span class="sd">            )</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span>
+        <span class="s2">"set_assets_priority"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span>
+    <span class="p">)</span> <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"set_assets_priority"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">empty_asset_action_outcome</span><span class="p">()</span>
+
+    <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_asset_ids</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">execute_asset_action</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graphql_client</span><span class="p">,</span>
+        <span class="n">GQL_SET_ASSETS_PRIORITY</span><span class="p">,</span>
+        <span class="n">resolved_asset_ids</span><span class="p">,</span>
+        <span class="p">{</span><span class="s2">"priority"</span><span class="p">:</span> <span class="n">priority</span><span class="p">},</span>
+    <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -7521,7 +7663,8 @@ the queue for every labeler assigned to it, not just the one requesting the skip
       <tr>
         <td><code>priorities</code></td>
         <td><code>Optional[list[int]]</code></td>
-        <td><p>You can change the priority of the assets.
+        <td><p>DEPRECATED, use <code>kili.set_assets_priority()</code> instead, which reports the
+assets it could not be applied to. You can change the priority of the assets.
 By default, all assets have a priority of 0.</p></td>
         <td><code>None</code></td>
       </tr>
@@ -7583,8 +7726,8 @@ is a text formatted using RichText.</li>
         <td><code>is_used_for_consensus_array</code></td>
         <td><code>Optional[list[bool]]</code></td>
         <td><p>Whether to use the asset to compute consensus kpis or not.
-Only supported on legacy workflow V1 projects; on workflow V2/V3 projects use
-<code>kili.assets.update_consensus()</code> instead.</p></td>
+Only supported on legacy workflow V1 projects; on workflow V2/V3 projects it raises
+<code>DeprecatedArgumentError</code>, use <code>kili.update_asset_consensus()</code> instead.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -7633,6 +7776,31 @@ corresponding asset. Each resolution can be passed as a
     </tr>
   </tbody>
 </table>
+<p><strong>Exceptions:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>DeprecatedArgumentError</code></td>
+        <td><p>If <code>is_used_for_consensus_array</code> is used on a multi-review
+project. Use <code>kili.update_asset_consensus()</code> for those projects.</p></td>
+      </tr>
+      <tr>
+        <td><code>MissingArgumentError</code></td>
+        <td><p>If both <code>asset_ids</code> and <code>external_ids</code> are provided, or if
+neither of them is.</p></td>
+      </tr>
+      <tr>
+        <td><code>GraphQLError</code></td>
+        <td><p>If the backend refuses the update for any other reason.</p></td>
+      </tr>
+  </tbody>
+</table>
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
         <span class="n">asset_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"ckg22d81r0jrg0885unmuswj8"</span><span class="p">,</span> <span class="s2">"ckg22d81s0jrh0885pdxfd03n"</span><span class="p">],</span>
@@ -7641,7 +7809,6 @@ corresponding asset. Each resolution can be passed as a
         <span class="n">honeypot_marks</span><span class="o">=</span><span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
         <span class="n">is_honeypot_array</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
         <span class="n">is_used_for_consensus_array</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
-        <span class="n">priorities</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
         <span class="n">to_be_labeled_by_array</span><span class="o">=</span><span class="p">[[</span><span class="s1">'test+pierre@kili-technology.com'</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
     <span class="p">)</span>
 </code></pre></div>
@@ -7689,7 +7856,8 @@ corresponding asset. Each resolution can be passed as a
 <span class="sd">    Args:</span>
 <span class="sd">        asset_ids: The internal asset IDs to modify.</span>
 <span class="sd">        external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).</span>
-<span class="sd">        priorities: You can change the priority of the assets.</span>
+<span class="sd">        priorities: DEPRECATED, use `kili.set_assets_priority()` instead, which reports the</span>
+<span class="sd">            assets it could not be applied to. You can change the priority of the assets.</span>
 <span class="sd">            By default, all assets have a priority of 0.</span>
 <span class="sd">        json_metadatas: The metadata given to an asset should be stored</span>
 <span class="sd">            in a json like dict with keys `imageUrl`, `text`, `url`:</span>
@@ -7707,8 +7875,8 @@ corresponding asset. Each resolution can be passed as a
 <span class="sd">                to each frame of the video.</span>
 <span class="sd">        status_array: DEPRECATED and does not have any effect.</span>
 <span class="sd">        is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.</span>
-<span class="sd">            Only supported on legacy workflow V1 projects; on workflow V2/V3 projects use</span>
-<span class="sd">            `kili.assets.update_consensus()` instead.</span>
+<span class="sd">            Only supported on legacy workflow V1 projects; on workflow V2/V3 projects it raises</span>
+<span class="sd">            `DeprecatedArgumentError`, use `kili.update_asset_consensus()` instead.</span>
 <span class="sd">        is_honeypot_array: Whether to use the asset for honeypot.</span>
 <span class="sd">        project_id: The project ID. Only required if `external_ids` argument is provided.</span>
 <span class="sd">        resolution_array: The resolution of each asset (for image and video assets).</span>
@@ -7722,6 +7890,13 @@ corresponding asset. Each resolution can be passed as a
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of dictionaries with the asset ids.</span>
 
+<span class="sd">    Raises:</span>
+<span class="sd">        DeprecatedArgumentError: If `is_used_for_consensus_array` is used on a multi-review</span>
+<span class="sd">            project. Use `kili.update_asset_consensus()` for those projects.</span>
+<span class="sd">        MissingArgumentError: If both `asset_ids` and `external_ids` are provided, or if</span>
+<span class="sd">            neither of them is.</span>
+<span class="sd">        GraphQLError: If the backend refuses the update for any other reason.</span>
+
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.update_properties_in_assets(</span>
 <span class="sd">                asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"],</span>
@@ -7730,7 +7905,6 @@ corresponding asset. Each resolution can be passed as a
 <span class="sd">                honeypot_marks=[0.8, 0.5],</span>
 <span class="sd">                is_honeypot_array=[True, True],</span>
 <span class="sd">                is_used_for_consensus_array=[True, False],</span>
-<span class="sd">                priorities=[None, 2],</span>
 <span class="sd">                to_be_labeled_by_array=[['test+pierre@kili-technology.com'], None],</span>
 <span class="sd">            )</span>
 
@@ -7782,6 +7956,14 @@ corresponding asset. Each resolution can be passed as a
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">priorities</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">"priorities is deprecated: it does not report the assets it could not be applied"</span>
+            <span class="s2">" to. Please use `kili.set_assets_priority()` method instead to prioritize assets"</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+
     <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_asset_ids</span><span class="p">(</span><span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="n">project_id</span><span class="p">)</span>
 
     <span class="n">properties_to_batch</span> <span class="o">=</span> <span class="n">process_update_properties_in_assets_parameters</span><span class="p">(</span>
@@ -7809,12 +7991,18 @@ corresponding asset. Each resolution can be passed as a
             <span class="s2">"dataArray"</span><span class="p">:</span> <span class="n">data_array</span><span class="p">,</span>
         <span class="p">}</span>
 
-    <span class="n">results</span> <span class="o">=</span> <span class="n">mutate_from_paginated_call</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">properties_to_batch</span><span class="p">,</span>
-        <span class="n">generate_variables</span><span class="p">,</span>
-        <span class="n">GQL_UPDATE_PROPERTIES_IN_ASSETS</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">mutate_from_paginated_call</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">properties_to_batch</span><span class="p">,</span>
+            <span class="n">generate_variables</span><span class="p">,</span>
+            <span class="n">GQL_UPDATE_PROPERTIES_IN_ASSETS</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="n">GraphQLError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">deprecation_message</span> <span class="o">=</span> <span class="n">_get_error_message_with_key</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">DEPRECATED_ERROR_KEY</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">deprecation_message</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DeprecatedArgumentError</span><span class="p">(</span><span class="n">_to_sdk_method_names</span><span class="p">(</span><span class="n">deprecation_message</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+        <span class="k">raise</span>
     <span class="n">formated_results</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">format_result</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">batch_list</span> <span class="ow">in</span> <span class="n">formated_results</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch_list</span><span class="p">]</span>
 </code></pre></div>

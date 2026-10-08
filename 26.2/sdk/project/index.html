@@ -1754,9 +1754,51 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/file_annotations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Attaching Files to a Label
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/audio_projects/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Audio Projects
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1800,10 +1842,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
         
           
-          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1814,8 +1856,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_9">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_10">
             <span class="md-nav__icon md-icon"></span>
             Setting Up Plugins
           </label>
@@ -1930,10 +1972,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_11" >
         
           
-          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_11" id="__nav_3_11_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1944,8 +1986,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_10">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_11">
             <span class="md-nav__icon md-icon"></span>
             Integrations
           </label>
@@ -2213,6 +2255,7 @@
         <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">compliance_tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="n">ComplianceTag</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">from_demo_project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DemoProjectType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pixel_labeling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Create a project.</span>
 
@@ -2227,6 +2270,12 @@
 <span class="sd">                Compliance tags are used to categorize projects based on the sensitivity of</span>
 <span class="sd">                the data being handled and the legal constraints associated with it.</span>
 <span class="sd">                Possible values are: `PHI` and `PII`.</span>
+<span class="sd">            pixel_labeling: `GEOSPATIAL` projects only. Label the images in their own</span>
+<span class="sd">                sensor pixel grid, with no reprojection: annotations are stored and</span>
+<span class="sd">                exported in pixel coordinates, and geographic coordinates come from your</span>
+<span class="sd">                pixel-to-geo conversion service. It can only be set at creation time, and</span>
+<span class="sd">                cannot be combined with `project_id` — a copy keeps the labeling mode of</span>
+<span class="sd">                the project it is copied from — nor with `from_demo_project`.</span>
 <span class="sd">            from_demo_project: Currently, one of:</span>
 
 <span class="sd">                - `DEMO_COMPUTER_VISION_TUTORIAL`</span>
@@ -2258,6 +2307,7 @@
 <span class="sd">                see [the recipe](https://docs.kili-technology.com/recipes/creating-a-project).</span>
 <span class="sd">        """</span>
         <span class="n">project_id</span> <span class="o">=</span> <span class="n">ProjectUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
+            <span class="n">pixel_labeling</span><span class="o">=</span><span class="n">pixel_labeling</span><span class="p">,</span>
             <span class="n">input_type</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span>
             <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
             <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
@@ -2869,7 +2919,7 @@ None disable this filter.</p></td>
 
 
 <h3 id="kili.presentation.client.project.ProjectClientMethods.create_project" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compliance_tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">from_demo_project</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_interface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compliance_tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">from_demo_project</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pixel_labeling</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2935,6 +2985,17 @@ Possible values are: <code>PHI</code> and <code>PII</code>.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
+        <td><code>pixel_labeling</code></td>
+        <td><code>bool</code></td>
+        <td><p><code>GEOSPATIAL</code> projects only. Label the images in their own
+sensor pixel grid, with no reprojection: annotations are stored and
+exported in pixel coordinates, and geographic coordinates come from your
+pixel-to-geo conversion service. It can only be set at creation time, and
+cannot be combined with <code>project_id</code> — a copy keeps the labeling mode of
+the project it is copied from — nor with <code>from_demo_project</code>.</p></td>
+        <td><code>False</code></td>
+      </tr>
+      <tr>
         <td><code>from_demo_project</code></td>
         <td><code>Optional[Literal[&#39;DEMO_COMPUTER_VISION_TUTORIAL&#39;, &#39;DEMO_TEXT_TUTORIAL&#39;, &#39;DEMO_PDF_TUTORIAL&#39;, &#39;VIDEO_FRAME_OBJECT_TRACKING&#39;, &#39;DEMO_SEGMENTATION_COCO&#39;, &#39;DEMO_NER&#39;, &#39;DEMO_ID_OCR&#39;, &#39;DEMO_REVIEWS&#39;, &#39;DEMO_OCR&#39;, &#39;DEMO_NER_TWEETS&#39;, &#39;DEMO_PLASTIC&#39;, &#39;DEMO_CHATBOT&#39;, &#39;DEMO_PDF&#39;, &#39;DEMO_ANIMALS&#39;, &#39;DEMO_LLM&#39;, &#39;DEMO_LLM_INSTR_FOLLOWING&#39;, &#39;DEMO_SEGMENTATION&#39;]]</code></td>
         <td><p>Currently, one of:</p>
@@ -2997,6 +3058,7 @@ Possible values are: <code>PHI</code> and <code>PII</code>.</p></td>
     <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">compliance_tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ListOrTuple</span><span class="p">[</span><span class="n">ComplianceTag</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">from_demo_project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DemoProjectType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pixel_labeling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Create a project.</span>
 
@@ -3011,6 +3073,12 @@ Possible values are: <code>PHI</code> and <code>PII</code>.</p></td>
 <span class="sd">            Compliance tags are used to categorize projects based on the sensitivity of</span>
 <span class="sd">            the data being handled and the legal constraints associated with it.</span>
 <span class="sd">            Possible values are: `PHI` and `PII`.</span>
+<span class="sd">        pixel_labeling: `GEOSPATIAL` projects only. Label the images in their own</span>
+<span class="sd">            sensor pixel grid, with no reprojection: annotations are stored and</span>
+<span class="sd">            exported in pixel coordinates, and geographic coordinates come from your</span>
+<span class="sd">            pixel-to-geo conversion service. It can only be set at creation time, and</span>
+<span class="sd">            cannot be combined with `project_id` — a copy keeps the labeling mode of</span>
+<span class="sd">            the project it is copied from — nor with `from_demo_project`.</span>
 <span class="sd">        from_demo_project: Currently, one of:</span>
 
 <span class="sd">            - `DEMO_COMPUTER_VISION_TUTORIAL`</span>
@@ -3042,6 +3110,7 @@ Possible values are: <code>PHI</code> and <code>PII</code>.</p></td>
 <span class="sd">            see [the recipe](https://docs.kili-technology.com/recipes/creating-a-project).</span>
 <span class="sd">    """</span>
     <span class="n">project_id</span> <span class="o">=</span> <span class="n">ProjectUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">create_project</span><span class="p">(</span>
+        <span class="n">pixel_labeling</span><span class="o">=</span><span class="n">pixel_labeling</span><span class="p">,</span>
         <span class="n">input_type</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span>
         <span class="n">json_interface</span><span class="o">=</span><span class="n">json_interface</span><span class="p">,</span>
         <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
