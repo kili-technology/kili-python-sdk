@@ -431,7 +431,9 @@ class GraphQLClient:
             and "first" in (variables or {})  # a page: other queries say nothing of page sizes
             and not getattr(self._local, "page_overload_recorded", False)
         ):
-            query_page_sizer.sizer.record_failure()
+            # the key PaginatedGraphQLQuery measured the page's items under: its query string
+            query = document.loc.source.body if document.loc else ""
+            query_page_sizer.record_failure(query, (variables or {})["first"])
             self._local.page_overload_recorded = True
 
     def _raw_execute(

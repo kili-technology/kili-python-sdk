@@ -16,6 +16,12 @@ import pytest_mock
 
 from kili.adapters.http_client import HttpClient
 from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
+from kili.core.utils.batching import (
+    MAX_PAGE_BYTES,
+    MIN_PAGE_SAMPLE_BYTES,
+    AdaptiveBatchSizer,
+    PageSizer,
+)
 from kili.exceptions import MutationOutcomeUnknownError
 
 MUTATION = "mutation { appendManyAssets(data: {}) { id } }"
@@ -332,7 +338,7 @@ def test_a_page_that_keeps_failing_shrinks_the_page_budget_once(backend, client_
     client_for(endpoint).execute(PAGE_QUERY, {"first": 100, "skip": 0})
 
     assert len(state.bodies) == 4  # retried, since it is a query
-    pages.sizer.record_failure.assert_called_once()
+    pages.record_failure.assert_called_once_with(PAGE_QUERY, 100)
 
 
 def test_a_query_that_is_not_a_page_leaves_the_page_budget(backend, client_for, mocker):
@@ -342,4 +348,26 @@ def test_a_query_that_is_not_a_page_leaves_the_page_budget(backend, client_for, 
 
     client_for(endpoint).execute("query { countAssets }")
 
-    pages.sizer.record_failure.assert_not_called()
+    pages.record_failure.assert_not_called()
+
+
+def test_a_failed_page_shrinks_the_pages_of_its_query_as_the_paginator_measured_them(
+    backend, client_for, mocker
+):
+    # the client and PaginatedGraphQLQuery must agree on the key of the query
+    state, endpoint = backend
+    state.replies = [envoy_503(b""), ok]
+    pages = PageSizer(
+        AdaptiveBatchSizer(
+            MAX_PAGE_BYTES,
+            MAX_PAGE_BYTES,
+            min_sample_bytes=MIN_PAGE_SAMPLE_BYTES,
+            max_shrink_factor=0,
+        )
+    )
+    mocker.patch("kili.core.graphql.graphql_client.query_page_sizer", pages)
+    pages.record_page(PAGE_QUERY, 20_000_000, 100)  # an earlier page: items of 200 kB
+
+    client_for(endpoint).execute(PAGE_QUERY, {"first": 100, "skip": 100})
+
+    assert pages.page_size(PAGE_QUERY, 100) == 50

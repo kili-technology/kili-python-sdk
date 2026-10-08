@@ -75,7 +75,7 @@ class AdaptiveBatchSizer:
     Throughput is measured on the uncompressed payload over the whole request, so it folds in
     the client's uplink, the compression ratio and the time the backend spends on the batch:
     a slow link and a heavy mutation both shrink the next batch. The budget grows by at most
-    MAX_GROWTH_FACTOR per request and halves on a failure.
+    MAX_GROWTH_FACTOR per request, and a failure halves the request that failed.
     """
 
     def __init__(
@@ -119,15 +119,24 @@ class AdaptiveBatchSizer:
             )
 
     def record_failure(self, payload_bytes: Optional[int] = None) -> None:
-        """Halve the budget after a request timed out or overloaded the server.
+        """Shrink the budget after a request timed out or overloaded the server.
+
+        The budget drops to half the size of the request that failed, or half the budget when
+        it was larger: batches and pages are mostly closed by their item count, well under the
+        budget, so halving the budget alone would often send the same request again.
 
         When payload_bytes is given, a small request is ignored: its failure says nothing about
-        the size of batches.
+        the size of batches. Without it, the budget is halved.
         """
         if payload_bytes is not None and payload_bytes < self._min_sample_bytes:
             return
         with self._lock:
-            self._budget_bytes = self._clamp(self._budget_bytes / 2)
+            failed = (
+                self._budget_bytes
+                if payload_bytes is None
+                else min(self._budget_bytes, payload_bytes)
+            )
+            self._budget_bytes = self._clamp(failed / 2)
 
     def reset(self) -> None:
         """Forget what was measured."""
@@ -168,6 +177,15 @@ class PageSizer:
             self._bytes_per_item.move_to_end(query)
             while len(self._bytes_per_item) > MAX_REMEMBERED_QUERIES:
                 self._bytes_per_item.popitem(last=False)
+
+    def record_failure(self, query: str, nb_items: int) -> None:
+        """Shrink the page budget after a page of this query that may have been too heavy failed.
+
+        The page's size is estimated from the size of the items this query returned before.
+        Without one, the budget alone is halved, which leaves this query's pages full.
+        """
+        bytes_per_item = self._bytes_per_item.get(query)
+        self.sizer.record_failure(int(bytes_per_item * nb_items) if bytes_per_item else None)
 
     def reset(self) -> None:
         """Forget what was measured."""
