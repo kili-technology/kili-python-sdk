@@ -218,7 +218,9 @@ kili = Kili(api_key="your-api-key")  # Progress bars disabled
 
 ### 5. Disable Request Compression (`disable_request_compression`)
 
-Request bodies larger than 1 MB, such as imports of assets with heavy metadata, are compressed (gzip) before being sent, which the Kili API accepts. Disable it only if a proxy between you and Kili rejects compressed requests.
+Request bodies larger than 1 MB, such as imports of assets with heavy metadata, are compressed (gzip) before being sent, which the Kili API accepts.
+
+If a proxy between you and Kili refuses a compressed request (an HTTP 415, or a 400 because it dropped the `Content-Encoding` header), the SDK sends that request again uncompressed, stops compressing for the rest of the client's life, and logs a warning once. Disable compression to skip that refused first attempt, for instance when your proxy is known to refuse compressed requests.
 
 **Values:**
 

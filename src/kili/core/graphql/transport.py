@@ -9,6 +9,8 @@ from gql.transport.requests import RequestsHTTPTransport
 from requests import PreparedRequest, Response
 from requests.adapters import HTTPAdapter
 
+from kili.log.logging import logger
+
 # Below 1 MB a body uploads in a few seconds even on a slow link, so compressing it gains little.
 # Above, large JSON payloads (metadata, label json responses) compress several times over, which
 # saves most of their upload time.
@@ -29,6 +31,25 @@ class Exchange:
     seconds: float  # from sending the request to having read the whole response, or failed
     download_seconds: float  # reading the response body, once its headers arrived
     succeeded: bool  # answered with a 2xx
+
+
+def rejects_compression(response: Response) -> bool:
+    """Whether the answer to a compressed request says that its encoding was refused.
+
+    Either a 415, or a 400 that is not a GraphQL answer: a proxy dropped Content-Encoding and
+    forwarded the gzipped bytes, which the backend could not parse as JSON. In both cases no
+    resolver ran, so the request can be sent again uncompressed. A GraphQL error is a JSON
+    answer with "errors", and is not mistaken for one.
+    """
+    if response.status_code == 415:
+        return True
+    if response.status_code != 400:
+        return False
+    try:
+        answer = response.json()
+    except ValueError:
+        return True
+    return not (isinstance(answer, dict) and ("data" in answer or "errors" in answer))
 
 
 def scale_timeout(timeout: Any, body_bytes: int) -> Any:
@@ -77,23 +98,48 @@ class KiliHTTPAdapter(HTTPAdapter):
         cert: Any = None,
         proxies: Any = None,  # typed differently by requests' own hints and by its stubs
     ) -> Response:
-        """Send the request and, unless it is streamed, read the response."""
-        self.last_exchange = None
+        """Send the request and, unless it is streamed, read the response.
+
+        A compressed request refused for its encoding, by a proxy between the client and Kili,
+        is sent again uncompressed. When that goes through, compression stays off for the
+        requests after it, and the user is told once how to skip the refused attempt.
+        """
+        original_body = request.body
         payload_bytes = self._compress(request, self.compress_requests)
+        options = {"stream": stream, "verify": verify, "cert": cert, "proxies": proxies}
+        response = self._send_measured(request, payload_bytes, timeout, options)
+        if request.body is original_body or not rejects_compression(response):
+            return response
+
+        response.close()
+        request.body = original_body
+        del request.headers["Content-Encoding"]
+        request.headers["Content-Length"] = str(payload_bytes)
+        refused_status = response.status_code
+        response = self._send_measured(request, payload_bytes, timeout, options)
+        if response.ok:
+            self.compress_requests = False
+            logger.warning(
+                "A proxy between you and Kili refused a compressed request (HTTP %s). It was"
+                " sent again uncompressed, and requests are no longer compressed. To skip the"
+                " refused attempt, create the client with disable_request_compression=True or"
+                " set KILI_DISABLE_REQUEST_COMPRESSION=true.",
+                refused_status,
+            )
+        return response
+
+    def _send_measured(
+        self, request: PreparedRequest, payload_bytes: int, timeout: Any, options: dict[str, Any]
+    ) -> Response:
+        """Send the request, read its response unless streamed, and record what it cost."""
+        self.last_exchange = None
         wire_bytes = len(request.body) if isinstance(request.body, (bytes, str)) else 0
         start = time.perf_counter()  # monotonic() ticks every ~15 ms on Windows
         try:
-            response = super().send(
-                request,
-                stream=stream,
-                timeout=scale_timeout(timeout, wire_bytes),
-                verify=verify,
-                cert=cert,
-                proxies=proxies,
-            )
+            response = super().send(request, timeout=scale_timeout(timeout, wire_bytes), **options)
             headers_received = time.perf_counter()
             # requests would read the body right after anyway: reading it here times it too
-            response_bytes = 0 if stream else len(response.content or b"")
+            response_bytes = 0 if options["stream"] else len(response.content or b"")
         except Exception:
             self.last_exchange = Exchange(payload_bytes, 0, time.perf_counter() - start, 0.0, False)
             raise

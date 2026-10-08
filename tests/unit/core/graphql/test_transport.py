@@ -10,6 +10,7 @@ from kili.core.graphql.transport import (
     COMPRESSION_THRESHOLD_BYTES,
     KiliHTTPAdapter,
     KiliRequestsHTTPTransport,
+    rejects_compression,
     scale_timeout,
 )
 
@@ -18,10 +19,32 @@ def _request(body_bytes: int) -> PreparedRequest:
     return Request("POST", "https://kili/graphql", json={"q": "x" * body_bytes}).prepare()
 
 
-def _response(status: int) -> Response:
+def _response(status: int, content: bytes = b"") -> Response:
     response = Response()
     response.status_code = status
+    response._content = content  # pylint: disable=protected-access
+    response.encoding = "utf-8"
     return response
+
+
+def _recording_send(mocker: pytest_mock.MockerFixture, *responses: Response) -> list[dict]:
+    """Patch the base adapter to answer these responses, recording each request as sent."""
+    sent: list[dict] = []
+    answers = iter(responses)
+
+    def send(_adapter, request, **_kwargs):
+        sent.append({"body": request.body, "headers": dict(request.headers)})
+        return next(answers)
+
+    mocker.patch.object(HTTPAdapter, "send", autospec=True, side_effect=send)
+    return sent
+
+
+# what express answers when a proxy dropped Content-Encoding and forwarded the gzipped bytes
+EXPRESS_PARSE_ERROR = (
+    b"<!DOCTYPE html><html><body><pre>SyntaxError: Unexpected token</pre></body></html>"
+)
+GRAPHQL_ERROR = b'{"errors": [{"message": "Cannot query field"}]}'
 
 
 @pytest.mark.parametrize(
@@ -161,3 +184,89 @@ def test_the_mounted_adapter_never_retries_by_itself():
     # a urllib3 retry would resend mutations behind the client's back
     assert adapter.max_retries.total == 0
     assert adapter.max_retries.read is False
+
+
+@pytest.mark.parametrize(
+    ("status", "content", "expected"),
+    [
+        (415, b"Unsupported Media Type", True),
+        (400, EXPRESS_PARSE_ERROR, True),
+        (400, b"", True),
+        (400, b'{"message": "bad request"}', True),
+        (400, GRAPHQL_ERROR, False),
+        (400, b'{"data": null}', False),
+        (200, b'{"data": {}}', False),
+        (413, b"too large", False),
+        (500, b"<html></html>", False),
+    ],
+)
+def test_rejects_compression(status: int, content: bytes, expected: bool):
+    assert rejects_compression(_response(status, content)) is expected
+
+
+@pytest.mark.parametrize(
+    "refusal", [_response(415, b"Unsupported Media Type"), _response(400, EXPRESS_PARSE_ERROR)]
+)
+def test_a_refused_compressed_request_is_sent_again_uncompressed_and_compression_stops(
+    mocker: pytest_mock.MockerFixture, refusal: Response
+):
+    warning = mocker.patch("kili.core.graphql.transport.logger.warning")
+    sent = _recording_send(mocker, refusal, _response(200, b'{"data": {}}'), _response(200))
+    adapter = KiliHTTPAdapter()
+    request = _request(COMPRESSION_THRESHOLD_BYTES)
+    raw = request.body
+    assert isinstance(raw, bytes)
+
+    response = adapter.send(request, timeout=60)
+
+    assert response.status_code == 200
+    assert [s["headers"].get("Content-Encoding") for s in sent] == ["gzip", None]
+    assert sent[1]["body"] == raw
+    assert sent[1]["headers"]["Content-Length"] == str(len(raw))
+    assert adapter.compress_requests is False
+    assert adapter.last_exchange is not None
+    assert adapter.last_exchange.succeeded
+    warning.assert_called_once()
+    assert "disable_request_compression=True" in warning.call_args.args[0]
+
+    adapter.send(_request(COMPRESSION_THRESHOLD_BYTES), timeout=60)
+
+    assert len(sent) == 3
+    assert "Content-Encoding" not in sent[2]["headers"]
+
+
+def test_compression_stays_on_when_the_uncompressed_request_is_refused_too(
+    mocker: pytest_mock.MockerFixture,
+):
+    # the encoding was not what the proxy refused: compressing is not to blame
+    warning = mocker.patch("kili.core.graphql.transport.logger.warning")
+    sent = _recording_send(mocker, _response(415), _response(415))
+    adapter = KiliHTTPAdapter()
+
+    response = adapter.send(_request(COMPRESSION_THRESHOLD_BYTES), timeout=60)
+
+    assert response.status_code == 415
+    assert len(sent) == 2
+    assert adapter.compress_requests is True
+    warning.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("body_bytes", "answer"),
+    [
+        (1_000, _response(415)),  # not compressed: nothing to take back
+        (COMPRESSION_THRESHOLD_BYTES, _response(400, GRAPHQL_ERROR)),  # parsed, then refused
+        (COMPRESSION_THRESHOLD_BYTES, _response(413)),
+    ],
+)
+def test_other_failures_are_not_sent_again(
+    mocker: pytest_mock.MockerFixture, body_bytes: int, answer: Response
+):
+    sent = _recording_send(mocker, answer)
+    adapter = KiliHTTPAdapter()
+
+    response = adapter.send(_request(body_bytes), timeout=60)
+
+    assert response is answer
+    assert len(sent) == 1
+    assert adapter.compress_requests is True
