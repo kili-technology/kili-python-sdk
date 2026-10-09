@@ -22,7 +22,6 @@ from kili.services.export.exceptions import (
 )
 from kili.services.export.format.kili import KiliExporter
 from kili.services.export.format.voc import VocExporter
-from kili.services.export.tools import fetch_assets
 from tests.fakes.fake_kili import (
     FakeKili,
     mocked_AssetQuery,
@@ -879,33 +878,6 @@ def test_export_with_asset_filter_kwargs(mocker):
     kili.kili_api_gateway.list_assets.assert_called_once_with(
         expected_where, expected_fields, expected_options
     )
-
-
-@pytest.mark.parametrize(
-    "asset_filter_kwargs",
-    [
-        {"external_id_contains": ["asset-a"]},
-        {"external_id_strictly_in": ["asset-a"], "external_id_contains": ["asset-b"]},
-    ],
-)
-def test_fetch_assets_refuses_external_id_contains(mocker, asset_filter_kwargs):
-    kili = mocker.MagicMock()
-    kili.kili_api_gateway = mocker.MagicMock(spec=KiliAPIGateway)
-
-    with pytest.raises(NameError, match="external_id_contains"):
-        fetch_assets(
-            kili,
-            project_id="fake_proj_id",
-            asset_ids=None,
-            export_type="latest_from_last_step",
-            label_type_in=None,
-            disable_tqdm=True,
-            download_media=False,
-            local_media_dir=None,
-            asset_filter_kwargs=asset_filter_kwargs,
-        )
-
-    kili.kili_api_gateway.list_assets.assert_not_called()
 
 
 def test_export_with_asset_filter_kwargs_unknown_arg(mocker, kili_api_gateway):

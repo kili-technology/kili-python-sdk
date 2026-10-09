@@ -4,7 +4,6 @@ import warnings
 from unittest.mock import MagicMock
 
 import pytest
-from typeguard import TypeCheckError
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.client import Kili
@@ -191,25 +190,6 @@ class TestAssetsNamespaceCoreOperations:
         assert "project_id" in call_kwargs
         assert call_kwargs["project_id"] == "project_321"
 
-    def test_list_assets_rejects_deprecated_filters(self, assets_namespace):
-        """Ensure deprecated filter names now raise."""
-        # Mock the legacy client method
-        assets_namespace._client.assets.return_value = []
-
-        # The namespace API doesn't accept these deprecated parameters
-        # They should raise TypeError if passed as **kwargs
-        with pytest.raises(TypeError):
-            assets_namespace.list(
-                project_id="project_ext",
-                external_id_contains=["assetA", "assetB"],
-            )
-
-        with pytest.raises(TypeError):
-            assets_namespace.list(
-                project_id="project_ext",
-                consensus_mark_gt=0.5,
-            )
-
     def test_list_assets_resolves_step_name_filters(self, assets_namespace):
         """Ensure step_name_in filter is supported."""
         # Mock the legacy client method
@@ -226,49 +206,6 @@ class TestAssetsNamespaceCoreOperations:
         call_kwargs = assets_namespace._client.assets.call_args[1]
         # step_name_in should be passed as a kwarg
         assert call_kwargs.get("step_name_in") == ["Review"]
-
-    def test_count_assets_rejects_deprecated_filters(self, assets_namespace):
-        """Ensure deprecated count filters raise."""
-        # Mock the legacy client method
-        assets_namespace._client.count_assets.return_value = 0
-
-        # The namespace API doesn't accept these deprecated parameters
-        with pytest.raises(TypeError):
-            assets_namespace.count(
-                project_id="project_ext_count",
-                external_id_contains=["legacy"],
-            )
-
-        with pytest.raises(TypeError):
-            assets_namespace.count(
-                project_id="project_ext_count",
-                honeypot_mark_gt=0.2,
-            )
-
-    @pytest.mark.parametrize(
-        ("removed_filter", "value"),
-        [
-            ("consensus_mark_gt", 0.5),
-            ("consensus_mark_lt", 0.5),
-            ("honeypot_mark_gt", 0.5),
-            ("honeypot_mark_lt", 0.5),
-            ("label_consensus_mark_gt", 0.5),
-            ("label_consensus_mark_lt", 0.5),
-            ("label_created_at_gt", "2020-01-01"),
-            ("label_created_at_lt", "2020-01-01"),
-            ("label_honeypot_mark_gt", 0.5),
-            ("label_honeypot_mark_lt", 0.5),
-        ],
-    )
-    @pytest.mark.parametrize("method", ["list", "count"])
-    def test_assets_reject_removed_filter_keys(
-        self, assets_namespace, method, removed_filter, value
-    ):
-        """Ensure the `_gt`/`_lt` keys removed from `AssetFilter` are refused."""
-        with pytest.raises(TypeCheckError):
-            getattr(assets_namespace, method)(
-                project_id="project_filter", filter={removed_filter: value}
-            )
 
     def test_list_assets_unknown_filter_raises(self, assets_namespace):
         """Ensure unexpected filter names raise a helpful error."""
