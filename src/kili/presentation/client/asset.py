@@ -33,8 +33,7 @@ from kili.presentation.client.helpers.common_validators import (
     resolve_disable_tqdm,
 )
 from kili.presentation.client.helpers.filter_conversion import (
-    extract_step_id_and_status_filters_from_project_steps,
-    extract_step_ids_from_project_steps,
+    resolve_step_filters,
 )
 from kili.use_cases.asset import AssetUseCases
 from kili.use_cases.project.project import ProjectUseCases
@@ -169,6 +168,10 @@ class AssetClientMethods(BaseClientMethods):
         group_name_not_in: Optional[list[str]] = None,
         *,
         as_generator: Literal[True],
+        step_id_in: Optional[list[str]] = None,
+        step_id_not_in: Optional[list[str]] = None,
+        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
     ) -> Generator[dict, None, None]:
         ...
 
@@ -241,6 +244,10 @@ class AssetClientMethods(BaseClientMethods):
         group_name_not_in: Optional[list[str]] = None,
         *,
         as_generator: Literal[False] = False,
+        step_id_in: Optional[list[str]] = None,
+        step_id_not_in: Optional[list[str]] = None,
+        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
     ) -> list[dict]:
         ...
 
@@ -314,6 +321,10 @@ class AssetClientMethods(BaseClientMethods):
         group_name_not_in: Optional[list[str]] = None,
         *,
         as_generator: bool = False,
+        step_id_in: Optional[list[str]] = None,
+        step_id_not_in: Optional[list[str]] = None,
+        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
     ) -> Union[Iterable[dict], "pd.DataFrame"]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
@@ -385,12 +396,31 @@ class AssetClientMethods(BaseClientMethods):
                 Only applicable if the project is in the WorkflowV1 (legacy).
             step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.
                 Only applicable if the project is in WorkflowV2.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.
                 Only applicable if the project is in WorkflowV2.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             step_name_in: Returned assets are in the step whose name belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             step_name_not_in: Returned assets are in the step whose name does not belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
+            step_id_in: Returned assets are in the step whose id belong to that list, if given.
+                Exclusive with `step_name_in`. Only applicable if the project is in WorkflowV2 or V3.
+            step_id_not_in: Returned assets are in the step whose id does not belong to that list,
+                if given. Exclusive with `step_name_not_in`.
+                Only applicable if the project is in WorkflowV2 or V3.
+            step_id_and_status_in: Returned assets match at least one of the given
+                (step_id, step_status) pairs. Exclusive with `step_name_and_status_in`.
+                Only applicable if the project is in WorkflowV2 or V3.
+            step_id_and_status_not_in: Returned assets do not match any of the given
+                (step_id, step_status) pairs. Exclusive with `step_name_and_status_not_in`.
+                Only applicable if the project is in WorkflowV2 or V3.
             step_status_in: Returned assets have the status in their step that belongs to that list, if given.
                 Only applicable if the project is in WorkflowV2.
             step_status_not_in: Returned assets have the status in their step that does not belong to that list, if given.
@@ -510,12 +540,12 @@ class AssetClientMethods(BaseClientMethods):
                 stacklevel=1,
             )
 
-        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None
-        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None
-        step_id_in = None
-        step_id_not_in = None
         has_step_or_status_filters = (
-            step_name_in is not None
+            step_id_in is not None
+            or step_id_not_in is not None
+            or step_id_and_status_in is not None
+            or step_id_and_status_not_in is not None
+            or step_name_in is not None
             or step_name_not_in is not None
             or step_name_and_status_in is not None
             or step_name_and_status_not_in is not None
@@ -533,6 +563,15 @@ class AssetClientMethods(BaseClientMethods):
                     "skipped": skipped,
                     "status_in": status_in,
                     "step_name_in": step_name_in,
+                    "has_step_id_filter": any(
+                        f is not None
+                        for f in (
+                            step_id_in,
+                            step_id_not_in,
+                            step_id_and_status_in,
+                            step_id_and_status_not_in,
+                        )
+                    ),
                     "step_name_not_in": step_name_not_in,
                     "step_status_in": step_status_in,
                     "step_status_not_in": step_status_not_in,
@@ -542,25 +581,22 @@ class AssetClientMethods(BaseClientMethods):
                     "group_name_not_in": group_name_not_in,
                 },
             )
-            if project_workflow_version in ("V2", "V3") and step_name_in is not None:
-                step_id_in = extract_step_ids_from_project_steps(
-                    project_steps=project_steps,
+            if project_workflow_version in ("V2", "V3"):
+                (
+                    step_id_in,
+                    step_id_not_in,
+                    step_id_and_status_in,
+                    step_id_and_status_not_in,
+                ) = resolve_step_filters(
+                    project_steps,
+                    step_id_in=step_id_in,
+                    step_id_not_in=step_id_not_in,
+                    step_id_and_status_in=step_id_and_status_in,
+                    step_id_and_status_not_in=step_id_and_status_not_in,
                     step_name_in=step_name_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_not_in is not None:
-                step_id_not_in = extract_step_ids_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_in=step_name_not_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_and_status_in is not None:
-                step_id_and_status_in = extract_step_id_and_status_filters_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_and_status_filters=step_name_and_status_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_and_status_not_in is not None:
-                step_id_and_status_not_in = extract_step_id_and_status_filters_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_and_status_filters=step_name_and_status_not_in,
+                    step_name_not_in=step_name_not_in,
+                    step_name_and_status_in=step_name_and_status_in,
+                    step_name_and_status_not_in=step_name_and_status_not_in,
                 )
 
         # Resolve disable_tqdm: function parameter > client global setting > function default
@@ -698,6 +734,10 @@ class AssetClientMethods(BaseClientMethods):
         step_name_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
         group_name_in: Optional[list[str]] = None,
         group_name_not_in: Optional[list[str]] = None,
+        step_id_in: Optional[list[str]] = None,
+        step_id_not_in: Optional[list[str]] = None,
+        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count and return the number of assets with the given constraints.
@@ -756,8 +796,23 @@ class AssetClientMethods(BaseClientMethods):
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
             step_name_in: Returned assets are in a step whose name belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             step_name_not_in: Returned assets are in a step whose name does not belong to that list, if given.
                 Only applicable if the project is in WorkflowV2.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
+            step_id_in: Returned assets are in the step whose id belong to that list, if given.
+                Exclusive with `step_name_in`. Only applicable if the project is in WorkflowV2 or V3.
+            step_id_not_in: Returned assets are in the step whose id does not belong to that list,
+                if given. Exclusive with `step_name_not_in`.
+                Only applicable if the project is in WorkflowV2 or V3.
+            step_id_and_status_in: Returned assets match at least one of the given
+                (step_id, step_status) pairs. Exclusive with `step_name_and_status_in`.
+                Only applicable if the project is in WorkflowV2 or V3.
+            step_id_and_status_not_in: Returned assets do not match any of the given
+                (step_id, step_status) pairs. Exclusive with `step_name_and_status_not_in`.
+                Only applicable if the project is in WorkflowV2 or V3.
             step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
                 Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
@@ -766,8 +821,12 @@ class AssetClientMethods(BaseClientMethods):
                 Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.
                 Only applicable if the project is in WorkflowV2.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.
                 Only applicable if the project is in WorkflowV2.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
                 Only applicable if the project is in WorkflowV3.
             group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
@@ -830,12 +889,12 @@ class AssetClientMethods(BaseClientMethods):
             label_honeypot_mark_lt=label_honeypot_mark_lt,
         )
 
-        step_id_in = None
-        step_id_not_in = None
-        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None
-        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None
         has_step_or_status_filters = (
-            step_name_in is not None
+            step_id_in is not None
+            or step_id_not_in is not None
+            or step_id_and_status_in is not None
+            or step_id_and_status_not_in is not None
+            or step_name_in is not None
             or step_name_not_in is not None
             or step_name_and_status_in is not None
             or step_name_and_status_not_in is not None
@@ -856,6 +915,15 @@ class AssetClientMethods(BaseClientMethods):
                 asset_workflow_filters={
                     "skipped": skipped,
                     "step_name_in": step_name_in,
+                    "has_step_id_filter": any(
+                        f is not None
+                        for f in (
+                            step_id_in,
+                            step_id_not_in,
+                            step_id_and_status_in,
+                            step_id_and_status_not_in,
+                        )
+                    ),
                     "step_name_and_status_in": step_name_and_status_in,
                     "step_name_and_status_not_in": step_name_and_status_not_in,
                     "step_name_not_in": step_name_not_in,
@@ -867,25 +935,22 @@ class AssetClientMethods(BaseClientMethods):
                 },
             )
 
-            if project_workflow_version in ("V2", "V3") and step_name_in is not None:
-                step_id_in = extract_step_ids_from_project_steps(
-                    project_steps=project_steps,
+            if project_workflow_version in ("V2", "V3"):
+                (
+                    step_id_in,
+                    step_id_not_in,
+                    step_id_and_status_in,
+                    step_id_and_status_not_in,
+                ) = resolve_step_filters(
+                    project_steps,
+                    step_id_in=step_id_in,
+                    step_id_not_in=step_id_not_in,
+                    step_id_and_status_in=step_id_and_status_in,
+                    step_id_and_status_not_in=step_id_and_status_not_in,
                     step_name_in=step_name_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_not_in is not None:
-                step_id_not_in = extract_step_ids_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_in=step_name_not_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_and_status_in is not None:
-                step_id_and_status_in = extract_step_id_and_status_filters_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_and_status_filters=step_name_and_status_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_and_status_not_in is not None:
-                step_id_and_status_not_in = extract_step_id_and_status_filters_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_and_status_filters=step_name_and_status_not_in,
+                    step_name_not_in=step_name_not_in,
+                    step_name_and_status_in=step_name_and_status_in,
+                    step_name_and_status_not_in=step_name_and_status_not_in,
                 )
 
         filters = AssetFilters(

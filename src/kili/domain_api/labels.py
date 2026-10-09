@@ -42,6 +42,8 @@ class LabelFilter(TypedDict, total=False):
         asset_id: Identifier of the asset.
         asset_status_in: Returned labels should have a status that belongs to that list, if given.
         asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
+        asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.
+            Exclusive with `asset_step_name_in`.
         asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
         author_in: Returned labels should have been made by authors in that list, if given.
         category_search: Query to filter labels based on the content of their jsonResponse.
@@ -61,6 +63,7 @@ class LabelFilter(TypedDict, total=False):
     asset_id: Optional[str]
     asset_status_in: Optional[list[AssetStatus]]
     asset_step_name_in: Optional[list[str]]
+    asset_step_id_in: Optional[list[str]]
     asset_step_status_in: Optional[list[StatusInStep]]
     author_in: Optional[list[str]]
     category_search: Optional[str]
@@ -84,6 +87,9 @@ class LabelsNamespace(DomainNamespace):
     including creating, updating, querying, and managing labels and annotations.
     It also provides nested namespaces for specialized operations on predictions,
     inferences, honeypots, and events.
+
+    On a workflow V3 project, the jobs a step group allows are enforced by the labeling app only:
+    labels created through the SDK are not checked against them.
     """
 
     def __init__(self, client: "KiliLegacy", gateway) -> None:
@@ -375,6 +381,8 @@ class LabelsNamespace(DomainNamespace):
         reviewed_label_id_array: Optional[List[str]],
         reviewed_label_id: Optional[str],
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> List[dict[Literal["id"], str]]:
         """Create labels to assets.
 
@@ -394,7 +402,11 @@ class LabelsNamespace(DomainNamespace):
                 it will overwrite existing labels with the same model name
                 and of the same label type, on the targeted assets.
             step_name: Name of the step to which the labels belong.
-                The label_type must match accordingly.
+                The label_type must match accordingly. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
 
         Returns:
             A list of dictionaries with the label ids.
@@ -420,6 +432,8 @@ class LabelsNamespace(DomainNamespace):
             project_id=project_id,
             reviewed_label_id_array=reviewed_label_id_array,
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
         )
 
     @overload
@@ -429,6 +443,9 @@ class LabelsNamespace(DomainNamespace):
         asset_id: str,
         json_response: dict,
         project_id: str,
+        step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> List[dict[Literal["id"], str]]:
         ...
 
@@ -440,6 +457,9 @@ class LabelsNamespace(DomainNamespace):
         json_response_array: ListOrTuple[dict],
         disable_tqdm: Optional[bool] = None,
         project_id: str,
+        step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> List[dict[Literal["id"], str]]:
         ...
 
@@ -450,6 +470,9 @@ class LabelsNamespace(DomainNamespace):
         external_id: str,
         json_response: dict,
         project_id: str,
+        step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> List[dict[Literal["id"], str]]:
         ...
 
@@ -461,6 +484,9 @@ class LabelsNamespace(DomainNamespace):
         json_response_array: ListOrTuple[dict],
         disable_tqdm: Optional[bool] = None,
         project_id: str,
+        step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> List[dict[Literal["id"], str]]:
         ...
 
@@ -476,6 +502,9 @@ class LabelsNamespace(DomainNamespace):
         json_response_array: Optional[ListOrTuple[dict]] = None,
         json_response: Optional[dict] = None,
         project_id: str,
+        step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> List[dict[Literal["id"], str]]:
         """Create DEFAULT labels to assets.
 
@@ -488,6 +517,12 @@ class LabelsNamespace(DomainNamespace):
             external_id: Asset external id to append label on.
             external_id_array: List of asset external ids to append labels on.
             disable_tqdm: Disable tqdm progress bar.
+            step_name: Name of the labeling step to which the labels belong.
+                Exclusive with `step_id`.
+            step_id: Id of the labeling step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
 
         Returns:
             A list of dictionaries with the label ids.
@@ -504,7 +539,9 @@ class LabelsNamespace(DomainNamespace):
             project_id=project_id,
             reviewed_label_id=None,
             reviewed_label_id_array=None,
-            step_name="Default",
+            step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
         )
 
     @overload
@@ -517,6 +554,8 @@ class LabelsNamespace(DomainNamespace):
         project_id: str,
         model_name: Optional[str] = None,
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> List[dict[Literal["id"], str]]:
         ...
 
@@ -531,6 +570,8 @@ class LabelsNamespace(DomainNamespace):
         project_id: str,
         reviewed_label_id_array: List[str],
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> List[dict[Literal["id"], str]]:
         ...
 
@@ -544,6 +585,8 @@ class LabelsNamespace(DomainNamespace):
         project_id: str,
         reviewed_label_id: str,
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> List[dict[Literal["id"], str]]:
         ...
 
@@ -558,6 +601,8 @@ class LabelsNamespace(DomainNamespace):
         project_id: str,
         reviewed_label_id_array: List[str],
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> List[dict[Literal["id"], str]]:
         ...
 
@@ -577,6 +622,8 @@ class LabelsNamespace(DomainNamespace):
         reviewed_label_id_array: Optional[List[str]] = None,
         reviewed_label_id: Optional[str] = None,
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> List[dict[Literal["id"], str]]:
         """Create REVIEW labels to assets.
 
@@ -592,7 +639,11 @@ class LabelsNamespace(DomainNamespace):
             disable_tqdm: Disable tqdm progress bar.
             reviewed_label_id: ID of the label being reviewed (for single asset).
             reviewed_label_id_array: List of IDs of labels being reviewed (for multiple assets).
-            step_name: Name of the step to which the labels belong.
+            step_name: Name of the step to which the labels belong. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
 
         Returns:
             A list of dictionaries with the label ids.
@@ -611,6 +662,8 @@ class LabelsNamespace(DomainNamespace):
             model_name=model_name,
             project_id=project_id,
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
         )
 
     @overload
@@ -769,6 +822,8 @@ class LabelsNamespace(DomainNamespace):
         category_names: Optional[List[str]] = None,
         label_type: LabelType = "DEFAULT",
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
         model_name: Optional[str] = None,
     ) -> None:
         """Import and convert GeoJSON files into annotations for a specific asset in a Kili project.
@@ -786,7 +841,11 @@ class LabelsNamespace(DomainNamespace):
             category_name: Category name.
             category_names: Optional list of category names, one for each GeoJSON file.
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
-            step_name: Name of the step to which the labels belong.
+            step_name: Name of the step to which the labels belong. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
             model_name: Name of the model that generated the labels.
         """
         return self._client.append_labels_from_geojson_files(
@@ -797,6 +856,8 @@ class LabelsNamespace(DomainNamespace):
             category_names=category_names,
             label_type=label_type,
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
             model_name=model_name,
         )
 
@@ -810,6 +871,8 @@ class LabelsNamespace(DomainNamespace):
         job_names: Optional[List[str]] = None,
         category_names: Optional[List[str]] = None,
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> None:
         """Import and convert GeoJSON files into DEFAULT annotations for a specific asset in a Kili project.
 
@@ -822,7 +885,11 @@ class LabelsNamespace(DomainNamespace):
             geojson_file_paths: List of file paths to the GeoJSON files to be processed.
             job_names: Optional list of job names in the Kili project, one for each GeoJSON file.
             category_names: Optional list of category names, one for each GeoJSON file.
-            step_name: Name of the step to which the labels belong.
+            step_name: Name of the step to which the labels belong. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
         """
         return self.__create_from_geojson(
             project_id=project_id,
@@ -832,6 +899,8 @@ class LabelsNamespace(DomainNamespace):
             category_names=category_names,
             label_type="DEFAULT",
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
         )
 
     @typechecked
@@ -914,6 +983,8 @@ class LabelsNamespace(DomainNamespace):
         from_epsgs: Optional[List[int]] = None,
         label_type: LabelType = "DEFAULT",
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
         model_name: Optional[str] = None,
     ) -> None:
         """Import and convert shapefiles into annotations for a specific asset in a Kili project.
@@ -934,7 +1005,11 @@ class LabelsNamespace(DomainNamespace):
             from_epsgs: Optional list of EPSG codes specifying the coordinate reference systems
                        of the shapefiles. If not provided, EPSG:4326 (WGS84) is assumed for all files.
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
-            step_name: Name of the step to which the labels belong.
+            step_name: Name of the step to which the labels belong. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
             model_name: Name of the model that generated the labels.
         """
         return self._client.append_labels_from_shapefiles(
@@ -946,6 +1021,8 @@ class LabelsNamespace(DomainNamespace):
             from_epsgs=from_epsgs,
             label_type=label_type,
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
             model_name=model_name,
         )
 
@@ -960,6 +1037,8 @@ class LabelsNamespace(DomainNamespace):
         category_names: List[str],
         from_epsgs: Optional[List[int]] = None,
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> None:
         """Import and convert shapefiles into DEFAULT annotations for a specific asset in a Kili project.
 
@@ -974,7 +1053,11 @@ class LabelsNamespace(DomainNamespace):
             category_names: List of category names corresponding to each shapefile.
             from_epsgs: Optional list of EPSG codes specifying the coordinate reference systems
                        of the shapefiles. If not provided, EPSG:4326 (WGS84) is assumed for all files.
-            step_name: Name of the step to which the labels belong.
+            step_name: Name of the step to which the labels belong. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the workflow V3 group containing the step named `step_name`.
+                Required when several groups have a step with the same name.
         """
         return self.__create_from_shapefile(
             project_id=project_id,
@@ -985,6 +1068,8 @@ class LabelsNamespace(DomainNamespace):
             from_epsgs=from_epsgs,
             label_type="DEFAULT",
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
         )
 
     @typechecked

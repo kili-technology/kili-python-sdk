@@ -313,3 +313,37 @@ def test_given_kili_gateway_when_reserving_a_file_upload__it_reads_the_aliased_f
     graphql_client.execute.assert_called_once_with(
         GQL_CREATE_ANNOTATION_FILE_UPLOAD, {"projectId": "project_id", "assetId": "asset_id"}
     )
+
+
+def test_given_kili_gateway_when_adding_labels_on_a_step_then_it_sends_the_step_id_only(
+    graphql_client: GraphQLClient, http_client: HttpClient
+):
+    # Given
+    kili_gateway = KiliAPIGateway(graphql_client=graphql_client, http_client=http_client)
+    label = AppendLabelData(
+        asset_id=AssetId("fake_asset_id"),
+        json_response={},
+        author_id=None,
+        client_version=None,
+        seconds_to_label=None,
+        model_name=None,
+        referenced_label_id=None,
+    )
+
+    # When
+    for step_id in (None, "step-id"):
+        kili_gateway.append_many_labels(
+            data=AppendManyLabelsData(
+                label_type="REVIEW", overwrite=False, labels_data=[label], step_id=step_id
+            ),
+            fields=("id",),
+            disable_tqdm=True,
+            project_id=None,
+        )
+
+    # Then: a step given by name was resolved to its id before; with none, no step field at all.
+    without_step, with_step = (call[0][1]["data"] for call in graphql_client.execute.call_args_list)
+    assert "stepId" not in without_step
+    assert with_step["stepId"] == "step-id"
+    assert "stepName" not in with_step
+    assert "stepName" not in without_step

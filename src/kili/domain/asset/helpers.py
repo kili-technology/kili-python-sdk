@@ -36,6 +36,7 @@ def check_asset_workflow_arguments(
     step_name_and_status_in = asset_workflow_filters.get("step_name_and_status_in")
     step_name_and_status_not_in = asset_workflow_filters.get("step_name_and_status_not_in")
     step_name_in = asset_workflow_filters.get("step_name_in")
+    has_step_id_filter = asset_workflow_filters.get("has_step_id_filter")
     step_status_in = asset_workflow_filters.get("step_status_in")
     status_in = asset_workflow_filters.get("status_in")
     skipped = asset_workflow_filters.get("skipped")
@@ -55,6 +56,10 @@ def check_asset_workflow_arguments(
             raise ValueError(
                 "Filters step_status_in and status_in both given : only use filter step_status_in for this project."
             )
+        if has_step_id_filter and status_in is not None:
+            raise ValueError(
+                "Filters by step id and status_in both given : use filter step_status_in instead of status_in for this project."  # pylint: disable=line-too-long
+            )
         if step_name_in is not None and status_in is not None:
             raise ValueError(
                 "Filters step_name_in and status_in both given : use filter step_status_in instead of status_in for this project."  # pylint: disable=line-too-long
@@ -72,6 +77,8 @@ def check_asset_workflow_arguments(
         return
 
     # project workflow v1
+    if has_step_id_filter:
+        raise ValueError("Filters by step id given : use filter status_in for this project.")
     if step_name_in is not None or step_status_in is not None:
         raise ValueError(
             "Filters step_name_in and/or step_status_in given : use filter status_in for this project."

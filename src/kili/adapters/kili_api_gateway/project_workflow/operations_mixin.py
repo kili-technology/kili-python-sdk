@@ -13,7 +13,7 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.exceptions import NotFound
 
-from .common import find_step_by_name, get_assignees_to_add_ids
+from .common import find_step_group_by_name, get_assignees_to_add_ids, resolve_step
 from .mappers import (
     add_review_step_input_mapper,
     delete_step_input_mapper,
@@ -117,6 +117,17 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
 
         return project[0]
 
+    def get_step(
+        self,
+        project_id: str,
+        step_id: Optional[str] = None,
+        step_name: Optional[str] = None,
+        group_name: Optional[str] = None,
+    ) -> dict:
+        """Get the workflow step given either by its id, or by its name and group."""
+        context = self.get_project_workflow_context(project_id)
+        return resolve_step(context, step_id, step_name, group_name)
+
     def count_activated_project_users(self, project_id: str) -> int:
         """Count project users with ACTIVATED status."""
         where = ProjectUserWhere(project_id=project_id, status="ACTIVATED", deleted=False)
@@ -134,7 +145,12 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         )
 
     def add_reviewers_to_step(
-        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
+        self,
+        project_id: str,
+        step_name: Optional[str],
+        emails: list[str],
+        group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> list[str]:
         """Add reviewers to a specific step."""
         assignees_to_add, assignees_added = self._resolve_assignees_to_add(
@@ -144,18 +160,23 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
             not_added_warning_prefix="These emails were not added (not found or can not review): ",
         )
         context = self.get_project_workflow_context(project_id)
-        target_step = find_step_by_name(context, step_name, group_name)
+        target_step = resolve_step(context, step_id, step_name, group_name)
         if target_step.get("type") == "DEFAULT":
             raise ValueError("The step must be a review step, can't add reviewers to a label step")
         self._apply_added_assignees(project_id, target_step, assignees_to_add)
         return assignees_added
 
     def remove_reviewers_from_step(
-        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
+        self,
+        project_id: str,
+        step_name: Optional[str],
+        emails: list[str],
+        group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> list[str]:
         """Remove reviewers from a specific step."""
         context = self.get_project_workflow_context(project_id, include_assignee_emails=True)
-        target_step = find_step_by_name(context, step_name, group_name)
+        target_step = resolve_step(context, step_id, step_name, group_name)
         if target_step.get("type") == "DEFAULT":
             raise ValueError(
                 "The step must be a review step, can't remove reviewers from a label step"
@@ -163,13 +184,18 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         return self._remove_assignees_from_step(project_id, target_step, emails)
 
     def add_labelers_to_step(
-        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
+        self,
+        project_id: str,
+        step_name: Optional[str],
+        emails: list[str],
+        group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> list[str]:
         """Add labelers to a specific labeling step of a workflow V3 project."""
         context = self.get_project_workflow_context(project_id)
         if context.get("workflowVersion") != "V3":
             raise ValueError("Assigning labelers to a step requires a workflow V3 project")
-        target_step = find_step_by_name(context, step_name, group_name)
+        target_step = resolve_step(context, step_id, step_name, group_name)
         if target_step.get("type") != "DEFAULT":
             raise ValueError(
                 "The step must be a labeling step, can't add labelers to a review step"
@@ -184,13 +210,18 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         return assignees_added
 
     def remove_labelers_from_step(
-        self, project_id: str, step_name: str, emails: list[str], group_name: Optional[str] = None
+        self,
+        project_id: str,
+        step_name: Optional[str],
+        emails: list[str],
+        group_name: Optional[str] = None,
+        step_id: Optional[str] = None,
     ) -> list[str]:
         """Remove labelers from a specific labeling step of a workflow V3 project."""
         context = self.get_project_workflow_context(project_id, include_assignee_emails=True)
         if context.get("workflowVersion") != "V3":
             raise ValueError("Assigning labelers to a step requires a workflow V3 project")
-        target_step = find_step_by_name(context, step_name, group_name)
+        target_step = resolve_step(context, step_id, step_name, group_name)
         if target_step.get("type") != "DEFAULT":
             raise ValueError(
                 "The step must be a labeling step, can't remove labelers from a review step"
@@ -288,18 +319,27 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         existing_members = self.list_activated_project_users(data.project_id)
         assignees_to_add = get_assignees_to_add_ids(existing_members, data.assignees)
         data.assignees = assignees_to_add
-        steps = self.get_steps(data.project_id, fields=["steps.id", "steps.name"])
-        send_back_to_step = next(
-            (step.get("id") for step in steps if step.get("name") == data.send_back_to_step), None
-        )
-        if not send_back_to_step:
-            raise ValueError("The sendBackToStep name given does not exist")
-        data.send_back_to_step = send_back_to_step
+        if data.group_name is not None:
+            data.step_group_id = find_step_group_by_name(
+                self.get_project_workflow_context(data.project_id), data.group_name
+            )["id"]
+        if data.send_back_to_step is not None:
+            data.send_back_to_step = self.get_step(
+                data.project_id, step_name=data.send_back_to_step, group_name=data.group_name
+            )["id"]
         variables = {"input": add_review_step_input_mapper(data)}
         mutation = get_add_review_step_mutation()
         result = self.graphql_client.execute(mutation, variables)
         steps = result.get("data", {}).get("steps", [])
-        step = next((step for step in steps if step.get("name") == data.step_name), None)
+        step = next(
+            (
+                step
+                for step in steps
+                if step.get("name") == data.step_name
+                and data.step_group_id in (None, step.get("stepGroupId"))
+            ),
+            None,
+        )
         if not step:
             raise NotFound(f"Could not find the stepId of the step {data.step_name}.")
         return step

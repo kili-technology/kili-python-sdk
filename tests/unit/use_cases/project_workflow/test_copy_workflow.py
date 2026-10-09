@@ -446,3 +446,17 @@ class TestCopyWorkflowFromProject:
                 source_project_id=source_id,
                 destination_project_id=dest_id,
             )
+
+
+def test_copy_workflow_refuses_a_source_with_several_groups(use_cases, mock_gateway):
+    """A single-group destination cannot tell which group each copied step came from."""
+    source_steps = _make_source_steps()
+    source_steps[0]["stepGroupId"] = "group-1"
+    source_steps[1]["stepGroupId"] = "group-2"
+    mock_gateway.get_steps.return_value = source_steps
+
+    with pytest.raises(ValueError, match="has 2 step groups"):
+        use_cases.copy_workflow_from_project(
+            source_project_id=ProjectId("source-project"),
+            destination_project_id=ProjectId("dest-project"),
+        )

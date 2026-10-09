@@ -207,9 +207,9 @@ class LabelOperationMixin(BaseOperationMixin):
                 variables = {
                     "data": {
                         "labelType": data.label_type,
-                        "stepName": data.step_name,
                         "overwrite": data.overwrite,
                         "labelsData": [label_data for _, label_data in batch_of_label_data],
+                        **({"stepId": data.step_id} if data.step_id is not None else {}),
                     },
                     "where": {
                         "idIn": [asset_id for asset_id, _ in batch_of_label_data],
