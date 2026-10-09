@@ -541,6 +541,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#5-disable-request-compression-disable_request_compression" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Disable Request Compression (disable_request_compression)
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2184,6 +2193,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#5-disable-request-compression-disable_request_compression" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Disable Request Compression (disable_request_compression)
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2412,6 +2430,39 @@
 <span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">"your-api-key"</span><span class="p">)</span>  <span class="c1"># Progress bars disabled</span>
 </code></pre></div></p>
 <hr />
+<h3 id="5-disable-request-compression-disable_request_compression">5. Disable Request Compression (<code>disable_request_compression</code>)</h3>
+<p>Request bodies larger than 1 MB, such as imports of assets with heavy metadata, are compressed (gzip) before being sent, which the Kili API accepts.</p>
+<p>If a proxy between you and Kili refuses a compressed request (an HTTP 415, or a 400 because it dropped the <code>Content-Encoding</code> header), the SDK sends that request again uncompressed, stops compressing for the rest of the client's life, and logs a warning once. Disable compression to skip that refused first attempt, for instance when your proxy is known to refuse compressed requests.</p>
+<p><strong>Values:</strong></p>
+<ul>
+<li><code>False</code> (default): Compress request bodies larger than 1 MB</li>
+<li><code>True</code>: Send every request body uncompressed</li>
+</ul>
+<p><strong>Configuration Methods:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Function parameter (highest priority)</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">disable_request_compression</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 2. Environment variable</span>
+<span class="n">export</span> <span class="n">KILI_DISABLE_REQUEST_COMPRESSION</span><span class="o">=</span><span class="n">true</span>  <span class="c1"># or "false", "1", "yes"</span>
+
+<span class="c1"># 3. Configuration file</span>
+<span class="p">{</span>
+  <span class="s2">"disable_request_compression"</span><span class="p">:</span> <span class="n">true</span>
+<span class="p">}</span>
+
+<span class="c1"># 4. Default: False</span>
+</code></pre></div></p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kili</span>
+
+<span class="c1"># Behind a proxy that rejects compressed requests</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">"your-api-key"</span><span class="p">,</span> <span class="n">disable_request_compression</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Or via environment variable</span>
+<span class="c1"># $ export KILI_DISABLE_REQUEST_COMPRESSION=true</span>
+<span class="n">kili</span> <span class="o">=</span> <span class="n">Kili</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">"your-api-key"</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
 <h2 id="environment-variables-reference">Environment Variables Reference</h2>
 <table>
 <thead>
@@ -2446,6 +2497,12 @@
 <td>boolean</td>
 <td>None</td>
 <td>Disable progress bars globally</td>
+</tr>
+<tr>
+<td><code>KILI_DISABLE_REQUEST_COMPRESSION</code></td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Send request bodies uncompressed</td>
 </tr>
 </tbody>
 </table>
@@ -2499,6 +2556,7 @@
 <li><code>api_endpoint</code>: <code>https://cloud.kili-technology.com/api/label/v2/graphql</code></li>
 <li><code>verify</code>: <code>True</code></li>
 <li><code>disable_tqdm</code>: <code>None</code></li>
+<li><code>disable_request_compression</code>: <code>False</code></li>
 </ul>
 </li>
 </ol>
