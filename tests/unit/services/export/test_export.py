@@ -1,7 +1,6 @@
 # pylint: disable=missing-module-docstring
 import glob
 import os
-import warnings
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -883,20 +882,17 @@ def test_export_with_asset_filter_kwargs(mocker):
 
 
 @pytest.mark.parametrize(
-    ("asset_filter_kwargs", "warned"),
+    "asset_filter_kwargs",
     [
-        ({"external_id_contains": ["asset-a"]}, True),
-        ({"external_id_strictly_in": ["asset-a"]}, False),
-        ({"external_id_strictly_in": ["asset-a"], "external_id_contains": ["asset-b"]}, True),
+        {"external_id_contains": ["asset-a"]},
+        {"external_id_strictly_in": ["asset-a"], "external_id_contains": ["asset-b"]},
     ],
 )
-def test_fetch_assets_warns_on_external_id_contains(mocker, asset_filter_kwargs, warned):
+def test_fetch_assets_refuses_external_id_contains(mocker, asset_filter_kwargs):
     kili = mocker.MagicMock()
     kili.kili_api_gateway = mocker.MagicMock(spec=KiliAPIGateway)
-    kili.kili_api_gateway.list_assets.return_value = iter([])
 
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
+    with pytest.raises(NameError, match="external_id_contains"):
         fetch_assets(
             kili,
             project_id="fake_proj_id",
@@ -909,9 +905,7 @@ def test_fetch_assets_warns_on_external_id_contains(mocker, asset_filter_kwargs,
             asset_filter_kwargs=asset_filter_kwargs,
         )
 
-    filters = kili.kili_api_gateway.list_assets.call_args[0][0]
-    assert filters.external_id_strictly_in == ["asset-a"]
-    assert any("external_id_contains is deprecated" in str(w.message) for w in caught) is warned
+    kili.kili_api_gateway.list_assets.assert_not_called()
 
 
 def test_export_with_asset_filter_kwargs_unknown_arg(mocker, kili_api_gateway):
