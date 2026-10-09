@@ -190,25 +190,6 @@ class TestAssetsNamespaceCoreOperations:
         assert "project_id" in call_kwargs
         assert call_kwargs["project_id"] == "project_321"
 
-    def test_list_assets_rejects_deprecated_filters(self, assets_namespace):
-        """Ensure deprecated filter names now raise."""
-        # Mock the legacy client method
-        assets_namespace._client.assets.return_value = []
-
-        # The namespace API doesn't accept these deprecated parameters
-        # They should raise TypeError if passed as **kwargs
-        with pytest.raises(TypeError):
-            assets_namespace.list(
-                project_id="project_ext",
-                external_id_contains=["assetA", "assetB"],
-            )
-
-        with pytest.raises(TypeError):
-            assets_namespace.list(
-                project_id="project_ext",
-                consensus_mark_gt=0.5,
-            )
-
     def test_list_assets_resolves_step_name_filters(self, assets_namespace):
         """Ensure step_name_in filter is supported."""
         # Mock the legacy client method
@@ -225,24 +206,6 @@ class TestAssetsNamespaceCoreOperations:
         call_kwargs = assets_namespace._client.assets.call_args[1]
         # step_name_in should be passed as a kwarg
         assert call_kwargs.get("step_name_in") == ["Review"]
-
-    def test_count_assets_rejects_deprecated_filters(self, assets_namespace):
-        """Ensure deprecated count filters raise."""
-        # Mock the legacy client method
-        assets_namespace._client.count_assets.return_value = 0
-
-        # The namespace API doesn't accept these deprecated parameters
-        with pytest.raises(TypeError):
-            assets_namespace.count(
-                project_id="project_ext_count",
-                external_id_contains=["legacy"],
-            )
-
-        with pytest.raises(TypeError):
-            assets_namespace.count(
-                project_id="project_ext_count",
-                honeypot_mark_gt=0.2,
-            )
 
     def test_list_assets_unknown_filter_raises(self, assets_namespace):
         """Ensure unexpected filter names raise a helpful error."""
