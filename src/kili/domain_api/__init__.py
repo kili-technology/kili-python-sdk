@@ -13,6 +13,7 @@ from .organizations import OrganizationsNamespace
 from .plugins import PluginsNamespace
 from .projects import ProjectsNamespace
 from .questions import QuestionsNamespace
+from .queue import QueueAsset, QueueNamespace
 from .storages import StoragesNamespace
 from .tags import TagsNamespace
 from .users import UsersNamespace
@@ -27,6 +28,8 @@ __all__ = [
     "PluginsNamespace",
     "ProjectsNamespace",
     "QuestionsNamespace",
+    "QueueAsset",
+    "QueueNamespace",
     "StoragesNamespace",
     "TagsNamespace",
     "UsersNamespace",

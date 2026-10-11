@@ -18,6 +18,7 @@ if TYPE_CHECKING:
         OrganizationsNamespace,
         ProjectsNamespace,
         QuestionsNamespace,
+        QueueNamespace,
         StoragesNamespace,
         TagsNamespace,
         UsersNamespace,
@@ -246,6 +247,23 @@ class Kili:
         from kili.domain_api import QuestionsNamespace  # pylint: disable=import-outside-toplevel
 
         return QuestionsNamespace(self.legacy_client, self.legacy_client.kili_api_gateway)
+
+    @cached_property
+    def queue(self) -> "QueueNamespace":
+        """Get the queue domain namespace: your assets to label or review, served one at a time.
+
+        Returns:
+            QueueNamespace: Queue domain namespace with lazy loading
+
+        Examples:
+            ```python
+            kili = Kili()
+            asset = kili.queue.next_to_label(project_id="my_project")
+            ```
+        """
+        from kili.domain_api import QueueNamespace  # pylint: disable=import-outside-toplevel
+
+        return QueueNamespace(self.legacy_client, self.legacy_client.kili_api_gateway)
 
     @cached_property
     def tags(self) -> "TagsNamespace":

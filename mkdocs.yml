@@ -29,6 +29,7 @@ nav:
           - Project User: sdk/project_user.md
           - Project Version: sdk/project_version.md
           - Project Workflow: sdk/project_workflow.md
+          - Queue: sdk/queue.md
           - Tag: sdk/tag.md
           - User: sdk/user.md
   - Command Line Interface:

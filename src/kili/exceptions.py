@@ -148,3 +148,11 @@ class IncompatibleArgumentsError(ValueError):
 
 class DeprecatedArgumentError(ValueError):
     """Raised when the user gave an argument that is no longer supported."""
+
+
+class QueueError(Exception):
+    """Raised when a member cannot be served their queue, or cannot do what they ask with an asset.
+
+    The message says why — their role, the workflow steps they are on, a project setting, the
+    asset no longer theirs — and what to do about it.
+    """
