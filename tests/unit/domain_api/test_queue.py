@@ -1,5 +1,6 @@
 """The queue namespace hands over held assets, and lets them go as the interface does."""
 
+import signal
 import time
 from unittest.mock import MagicMock
 
@@ -483,3 +484,138 @@ def test_the_loop_says_why_the_account_cannot_review(queue, gateway):
     with pytest.raises(QueueError, match="is LABELER on project"):
         next(queue.iter_to_review(project_id="project"))
     gateway.get_next_asset_to_work_on.assert_not_called()
+
+
+class _Clock:
+    """A monotonic clock the test moves on: `sleep` advances it instead of waiting."""
+
+    def __init__(self) -> None:
+        self.now = 1000.0
+        self.slept: list[float] = []
+
+    def monotonic(self) -> float:
+        return self.now
+
+    def sleep(self, seconds: float) -> None:
+        self.slept.append(seconds)
+        self.now += seconds
+
+
+@pytest.fixture()
+def clock(monkeypatch: pytest.MonkeyPatch) -> _Clock:
+    fake = _Clock()
+    monkeypatch.setattr(queue_module, "time", fake)
+    return fake
+
+
+def test_the_loop_stops_after_max_assets(queue, gateway):
+    # Given
+    _serve(gateway, "a", "b", "c")
+
+    # When
+    served = []
+    for asset in queue.iter_to_label(project_id="project", max_assets=2):
+        served.append(asset.id)
+        asset.submit(json_response={})
+
+    # Then
+    assert served == ["a", "b"]
+    assert gateway.get_next_asset_to_work_on.call_count == 2
+
+
+def test_the_loop_hands_over_nothing_once_its_time_is_spent(queue, gateway, clock):
+    # Given assets that take the bot 4 s each, and a budget of 10 s
+    _serve(gateway, "a", "b", "c", "d")
+
+    # When
+    served = []
+    for asset in queue.iter_to_review(project_id="project", max_seconds=10):
+        served.append(asset.id)
+        clock.sleep(4)
+        asset.release()
+
+    # Then the asset handed over at 8 s is finished, none is asked for at 12 s
+    assert served == ["a", "b", "c"]
+    assert gateway.get_next_asset_to_work_on.call_count == 3
+    assert gateway.delete_asset_locks.call_count == 3
+
+
+def test_the_time_budget_bounds_the_wait_on_an_empty_queue(queue, gateway, clock, monkeypatch):
+    # Given an empty queue, asked again every second as the queue page does
+    monkeypatch.setattr(queue_module, "EMPTY_QUEUE_CHECK_EVERY_SECONDS", 1.0)
+    _serve(gateway)
+
+    # When
+    served = list(queue.iter_to_label(project_id="project", max_seconds=2.5))
+
+    # Then
+    assert served == []
+    assert clock.slept == [1.0, 1.0, 0.5]
+    assert gateway.get_next_asset_to_work_on.call_count == 3
+
+
+@pytest.mark.parametrize(
+    ("limits", "message"),
+    [
+        ({"max_assets": 0}, "max_assets must be 1 or more"),
+        ({"max_seconds": 0}, "max_seconds must be more than 0"),
+    ],
+)
+def test_the_loop_refuses_limits_that_are_not_positive(queue, gateway, limits, message):
+    # When / Then
+    with pytest.raises(ValueError, match=message):
+        queue.iter_to_label(project_id="project", **limits)
+    gateway.get_current_user.assert_not_called()
+
+
+def test_the_loop_gives_the_asset_back_on_ctrl_c(queue, gateway):
+    # Given
+    _serve(gateway, "a", "b")
+
+    # When
+    with pytest.raises(KeyboardInterrupt):
+        for _asset in queue.iter_to_label(project_id="project"):
+            raise KeyboardInterrupt
+
+    # Then
+    gateway.delete_asset_locks.assert_called_once_with("project", "a")
+
+
+def _ctrl_c_while_kili_locks_the_next_asset(gateway: MagicMock) -> None:
+    """Ctrl-C pressed during the next-asset request: Kili locks "a" before the SDK learns of it."""
+    answers = ["a", "b"]
+
+    def next_asset(**_):
+        if not gateway.delete_asset_locks.called and answers == ["a", "b"]:
+            signal.raise_signal(signal.SIGINT)
+        return answers.pop(0) if answers else None
+
+    gateway.get_next_asset_to_work_on.side_effect = next_asset
+
+
+@pytest.fixture()
+def ctrl_c_raises():
+    """Ctrl-C raising KeyboardInterrupt, as in a bot's process — not in a pytest-xdist worker's."""
+    previous = signal.signal(signal.SIGINT, signal.default_int_handler)
+    yield
+    signal.signal(signal.SIGINT, previous)
+
+
+@pytest.mark.parametrize("via", ["next_to_label", "iter_to_label"])
+@pytest.mark.usefixtures("ctrl_c_raises")
+def test_ctrl_c_while_an_asset_changes_hands_leaves_it_held_by_nobody(queue, gateway, via):
+    # Given
+    _ctrl_c_while_kili_locks_the_next_asset(gateway)
+
+    # When
+    with pytest.raises(KeyboardInterrupt):
+        if via == "next_to_label":
+            queue.next_to_label(project_id="project")
+        else:
+            for _asset in queue.iter_to_label(project_id="project"):
+                pytest.fail("the loop body ran: the interrupt was let through too late")
+
+    # Then the hand-over finished, then the asset was given back, then the interrupt went on
+    gateway.get_asset_by_id.assert_called_once()
+    gateway.delete_asset_locks.assert_called_once_with("project", "a")
+    assert signal.getsignal(signal.SIGINT) is signal.default_int_handler

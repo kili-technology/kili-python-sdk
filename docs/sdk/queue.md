@@ -88,6 +88,26 @@ for asset in kili.queue.iter_to_review(project_id=PROJECT_ID):
         asset.send_back()  # back to the labelers who made it
 ```
 
+## A bot on a schedule
+
+A bot run by cron every hour stops on its own before the next run starts: `max_assets` caps the
+assets one run hands over, `max_seconds` its time. Past `max_seconds`, the loop hands over no
+new asset; the one your code is working on is not cut short, so leave it room.
+
+```python
+# crontab: 0 * * * * python label_queue.py
+for asset in kili.queue.iter_to_label(
+    project_id=PROJECT_ID,
+    max_assets=500,  # at most 500 assets a run
+    max_seconds=50 * 60,  # no new asset after 50 minutes
+):
+    asset.submit(json_response=predict(asset))
+```
+
+However the loop stops — its queue empty, a limit reached, an exception, Ctrl-C — the asset it
+was handling goes back to the queue, and the next run, or a person, is served it. Ctrl-C pressed
+while Kili is handing an asset over waits for the hand-over to end, then gives the asset back.
+
 ## One asset at a time
 
 `next_to_label` and `next_to_review` hand over a single asset, or `None` when the queue is empty.

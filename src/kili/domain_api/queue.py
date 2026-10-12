@@ -7,10 +7,13 @@ through the same requests, so people and scripts can work on one project side by
 
 import atexit
 import json
+import signal
+import threading
 import time
 import warnings
 import weakref
-from collections.abc import Generator
+from collections.abc import Generator, Iterator
+from contextlib import contextmanager
 from types import TracebackType
 from typing import Any, Optional
 
@@ -46,6 +49,31 @@ def _release_held_assets() -> None:
                 asset.release()
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # exiting: the lock expires on its own within minutes
+
+
+@contextmanager
+def _interrupts_deferred() -> Iterator[None]:
+    """Hold Ctrl-C back while an asset changes hands, then let it through.
+
+    Kili locks an asset as it answers a next-asset request: a KeyboardInterrupt raised before the
+    SDK knows which asset that is would leave it locked to nobody's code until the lock expires.
+    Signals are only handled in the main thread: elsewhere this changes nothing.
+    """
+    if threading.current_thread() is not threading.main_thread():
+        yield
+        return
+    previous = signal.getsignal(signal.SIGINT)
+    if previous is None:  # a handler installed outside Python: left as it is
+        yield
+        return
+    interrupted: list[int] = []
+    signal.signal(signal.SIGINT, lambda signum, _frame: interrupted.append(signum))
+    try:
+        yield
+    finally:
+        signal.signal(signal.SIGINT, previous)
+        if interrupted:
+            signal.raise_signal(signal.SIGINT)
 
 
 def _parsed(value: Any) -> Any:
@@ -314,6 +342,20 @@ class _QueueSession:
             return QueueAsset(self._use_cases, self._context, asset, label)
 
 
+def _hand_over(session: _QueueSession) -> Optional[QueueAsset]:
+    """The session's next asset, handed over whole or given back, whatever interrupts it."""
+    asset = None
+    try:
+        with _interrupts_deferred():
+            asset = session.hand_over()
+    except BaseException:
+        if asset is not None and asset.held:
+            with _interrupts_deferred():
+                asset.release()
+        raise
+    return asset
+
+
 class QueueNamespace(DomainNamespace):
     """Your project queue, served to your script as the labeling interface serves it to you.
 
@@ -360,7 +402,7 @@ class QueueNamespace(DomainNamespace):
             QueueError: When your account cannot label on the project — not a member, or on none
                 of its labeling steps.
         """
-        return self._session(ProjectId(project_id), "label").hand_over()
+        return _hand_over(self._session(ProjectId(project_id), "label"))
 
     @typechecked
     def next_to_review(self, project_id: str) -> Optional[QueueAsset]:
@@ -379,28 +421,39 @@ class QueueNamespace(DomainNamespace):
             QueueError: When your account cannot review on the project — a labeler role, or on
                 none of its review steps.
         """
-        return self._session(ProjectId(project_id), "review").hand_over()
+        return _hand_over(self._session(ProjectId(project_id), "review"))
 
     @typechecked
-    def iter_to_label(self, project_id: str) -> Generator[QueueAsset, None, None]:
+    def iter_to_label(
+        self,
+        project_id: str,
+        max_assets: Optional[int] = None,
+        max_seconds: Optional[float] = None,
+    ) -> Generator[QueueAsset, None, None]:
         """Go through your labeling queue, one asset after the other, until it is empty.
 
         The loop ends once Kili has had nothing for you five times in five seconds, as the queue
-        page asks again before it greys out its button. Each asset is yours while your code works
-        on it. Submit or skip it in the loop's body;
-        one left undecided, or released, is given back and not served again in this loop. If
-        your code raises, the asset is given back at once and the exception goes on — when the
-        loop runs over the call itself, as below. A loop kept in a variable is only closed once
-        the variable goes: give the asset back with `with asset:` around the body instead.
+        page asks again before it greys out its button — or earlier, after `max_assets` assets,
+        or once `max_seconds` have passed: a bot run on a schedule stops on its own. Each asset is
+        yours while your code works on it. Submit or skip it in the loop's body; one left
+        undecided, or released, is given back and not served again in this loop. If your code
+        raises — Ctrl-C included — the asset is given back at once and the exception goes on,
+        when the loop runs over the call itself, as below. A loop kept in a variable is only
+        closed once the variable goes: give the asset back with `with asset:` around the body
+        instead.
 
         Args:
             project_id: The project's id.
+            max_assets: The most assets the loop hands over. None: no limit.
+            max_seconds: No asset is handed over once this many seconds have passed since the
+                loop started; the asset your code is working on is not cut short. None: no limit.
 
-        Yields:
-            Your assets to label, one at a time.
+        Returns:
+            An iterator over your assets to label, handed over one at a time.
 
         Raises:
             QueueError: When your account cannot label on the project.
+            ValueError: When `max_assets` or `max_seconds` is not positive.
 
         Examples:
             >>> for asset in kili.queue.iter_to_label(project_id="my_project"):
@@ -409,50 +462,105 @@ class QueueNamespace(DomainNamespace):
             ...         asset.skip(reason="Unreadable document")
             ...     else:
             ...         asset.submit(json_response=prediction)
+
+            Run every hour, a bot that stops after 500 assets or 50 minutes:
+
+            >>> for asset in kili.queue.iter_to_label(
+            ...     project_id="my_project", max_assets=500, max_seconds=50 * 60
+            ... ):
+            ...     asset.submit(json_response=my_model(asset.content))
         """
-        yield from self._iterate(ProjectId(project_id), "label")
+        return self._iterate(ProjectId(project_id), "label", max_assets, max_seconds)
 
     @typechecked
-    def iter_to_review(self, project_id: str) -> Generator[QueueAsset, None, None]:
+    def iter_to_review(
+        self,
+        project_id: str,
+        max_assets: Optional[int] = None,
+        max_seconds: Optional[float] = None,
+    ) -> Generator[QueueAsset, None, None]:
         """Go through your review queue, one asset after the other, until it is empty.
 
         Approve or send back each asset in the loop's body; one left undecided, or released, is
-        given back. If your code raises, the asset is given back at once and the exception goes
-        on — when the loop runs over the call itself, as for `iter_to_label`.
+        given back. If your code raises — Ctrl-C included — the asset is given back at once and
+        the exception goes on, when the loop runs over the call itself, as for `iter_to_label`.
+        `max_assets` and `max_seconds` stop the loop earlier, as for `iter_to_label`.
 
         Args:
             project_id: The project's id.
+            max_assets: The most assets the loop hands over. None: no limit.
+            max_seconds: No asset is handed over once this many seconds have passed since the
+                loop started; the asset your code is working on is not cut short. None: no limit.
 
-        Yields:
-            Your assets to review, one at a time, each with the label to review in `label`.
+        Returns:
+            An iterator over your assets to review, handed over one at a time, each with the
+            label to review in `label`.
 
         Raises:
             QueueError: When your account cannot review on the project.
+            ValueError: When `max_assets` or `max_seconds` is not positive.
         """
-        yield from self._iterate(ProjectId(project_id), "review")
+        return self._iterate(ProjectId(project_id), "review", max_assets, max_seconds)
 
     def _session(self, project_id: ProjectId, mode: QueueMode) -> _QueueSession:
         use_cases = QueueUseCases(self._gateway)
         return _QueueSession(use_cases, use_cases.get_context(project_id, mode))
 
-    def _iterate(self, project_id: ProjectId, mode: QueueMode) -> Generator[QueueAsset, None, None]:
+    def _iterate(
+        self,
+        project_id: ProjectId,
+        mode: QueueMode,
+        max_assets: Optional[int],
+        max_seconds: Optional[float],
+    ) -> Generator[QueueAsset, None, None]:
+        # checked as the loop is made, not at its first turn
+        if max_assets is not None and max_assets < 1:
+            raise ValueError(f"max_assets must be 1 or more, not {max_assets}.")
+        if max_seconds is not None and max_seconds <= 0:
+            raise ValueError(f"max_seconds must be more than 0, not {max_seconds}.")
+        return self._loop(project_id, mode, max_assets, max_seconds)
+
+    def _loop(
+        self,
+        project_id: ProjectId,
+        mode: QueueMode,
+        max_assets: Optional[int],
+        max_seconds: Optional[float],
+    ) -> Generator[QueueAsset, None, None]:
         session = self._session(project_id, mode)
-        while True:
-            asset = session.hand_over()
-            for _ in range(EMPTY_QUEUE_CHECKS):
-                if asset is not None:
-                    break
-                time.sleep(EMPTY_QUEUE_CHECK_EVERY_SECONDS)
-                asset = session.hand_over()
-            if asset is None:
-                return
+        deadline = None if max_seconds is None else time.monotonic() + max_seconds
+        handed = 0
+        while max_assets is None or handed < max_assets:
+            asset = None
             try:
+                asset = _next_before(session, deadline)
+                if asset is None:
+                    return
+                handed += 1
                 yield asset
             finally:
                 # reached when the body moves on, raises or breaks: an asset left undecided is
                 # given back, and the next calls pass it over as the interface passes over one
                 # left without a submit
-                if asset.held:
-                    asset.release()
-                if asset.outcome == "released":
-                    session.given_back.append(asset.id)
+                if asset is not None:
+                    with _interrupts_deferred():
+                        if asset.held:
+                            asset.release()
+                    if asset.outcome == "released":
+                        session.given_back.append(asset.id)
+
+
+def _next_before(session: _QueueSession, deadline: Optional[float]) -> Optional[QueueAsset]:
+    """The next asset, asked again a few times before the queue is called empty; None past the deadline."""
+    for check in range(EMPTY_QUEUE_CHECKS + 1):
+        if check:
+            pause = EMPTY_QUEUE_CHECK_EVERY_SECONDS
+            if deadline is not None:
+                pause = min(pause, max(0.0, deadline - time.monotonic()))
+            time.sleep(pause)
+        if deadline is not None and time.monotonic() >= deadline:
+            return None
+        asset = _hand_over(session)
+        if asset is not None:
+            return asset
+    return None
