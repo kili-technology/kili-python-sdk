@@ -51,13 +51,24 @@ def _release_held_assets() -> None:
                 pass  # exiting: the lock expires on its own within minutes
 
 
+def _deliver(handler: Any, signum: int, frame: Any) -> None:
+    """Run a SIGINT handler as the interpreter would have run it, once."""
+    if callable(handler):
+        handler(signum, frame)
+    elif handler == signal.SIG_DFL:
+        signal.raise_signal(signum)
+    # SIG_IGN: the process ignores Ctrl-C
+
+
 @contextmanager
 def _interrupts_deferred() -> Iterator[None]:
-    """Hold Ctrl-C back while an asset changes hands, then let it through.
+    """Hold the first Ctrl-C back while an asset changes hands, then let it through.
 
-    Kili locks an asset as it answers a next-asset request: a KeyboardInterrupt raised before the
-    SDK knows which asset that is would leave it locked to nobody's code until the lock expires.
-    Signals are only handled in the main thread: elsewhere this changes nothing.
+    Kili locks an asset as it answers a next-asset request and frees it as it answers a release:
+    a KeyboardInterrupt raised before the SDK knows the asset, or before the release has left,
+    would leave it locked to nobody's code until the lock expires. A second Ctrl-C goes through at
+    once, for whoever cannot wait. Signals are only handled in the main thread: elsewhere this
+    changes nothing.
     """
     if threading.current_thread() is not threading.main_thread():
         yield
@@ -66,14 +77,41 @@ def _interrupts_deferred() -> Iterator[None]:
     if previous is None:  # a handler installed outside Python: left as it is
         yield
         return
-    interrupted: list[int] = []
-    signal.signal(signal.SIGINT, lambda signum, _frame: interrupted.append(signum))
+    pressed: list = []
+
+    def hold_back(signum: int, frame: Any) -> None:
+        pressed.append(frame)
+        if len(pressed) == 1:
+            warnings.warn(
+                "Ctrl-C: the asset changing hands is given back first, then the loop stops."
+                " Press Ctrl-C again to stop at once: its lock then expires within 5 minutes.",
+                stacklevel=2,
+            )
+            return
+        signal.signal(signal.SIGINT, previous)
+        _deliver(previous, signum, frame)
+
+    signal.signal(signal.SIGINT, hold_back)
     try:
         yield
     finally:
         signal.signal(signal.SIGINT, previous)
-        if interrupted:
-            signal.raise_signal(signal.SIGINT)
+        if len(pressed) == 1:
+            _deliver(previous, signal.SIGINT, pressed[0])
+
+
+def _give_back(asset: "Optional[QueueAsset]") -> None:
+    """Give a held asset back; a failure is warned of, never raised over the exception under way."""
+    if asset is None or not asset.held:
+        return
+    try:
+        asset.release()
+    except Exception as error:  # pylint: disable=broad-exception-caught
+        warnings.warn(
+            f"Asset {asset.id} could not be given back: {error}. Its lock expires within 5"
+            " minutes.",
+            stacklevel=2,
+        )
 
 
 def _parsed(value: Any) -> Any:
@@ -250,9 +288,11 @@ class QueueAsset:  # pylint: disable=too-many-instance-attributes
         """Give the asset back without labeling it: the next member who asks is served it at once."""
         if not self.held:
             raise QueueError(f"Asset {self.id} was already {self.outcome}: it is no longer yours.")
-        self._keeper.stop()
-        self.outcome = "released"
-        self._use_cases.release(self._context, self.id)
+        with _interrupts_deferred():
+            self._keeper.stop()
+            self._use_cases.release(self._context, self.id)
+            # set once the release went through: a release that failed is tried again
+            self.outcome = "released"
 
     def __enter__(self) -> "QueueAsset":
         """Hold the asset for the block."""
@@ -301,7 +341,8 @@ class QueueAsset:  # pylint: disable=too-many-instance-attributes
         self._keeper.stop()
         self.outcome = outcome
         try:
-            self._use_cases.release(self._context, self.id)
+            with _interrupts_deferred():
+                self._use_cases.release(self._context, self.id)
         except Exception as error:  # pylint: disable=broad-exception-caught
             # the action went through: a lock left behind expires on its own within minutes
             warnings.warn(
@@ -318,6 +359,9 @@ class _QueueSession:
         self._context = context
         self.viewed: list[AssetId] = []
         self.given_back: list[AssetId] = []
+        # the asset handed over last, kept here before anything else can be interrupted: whatever
+        # stops the loop gives it back from here
+        self.current: Optional[QueueAsset] = None
 
     def hand_over(self) -> Optional[QueueAsset]:
         """The next asset, locked and read, or None when the queue is empty."""
@@ -339,21 +383,20 @@ class _QueueSession:
                 self.given_back.append(asset_id)
                 continue
             asset, label = read
-            return QueueAsset(self._use_cases, self._context, asset, label)
+            self.current = QueueAsset(self._use_cases, self._context, asset, label)
+            return self.current
 
 
 def _hand_over(session: _QueueSession) -> Optional[QueueAsset]:
     """The session's next asset, handed over whole or given back, whatever interrupts it."""
-    asset = None
+    session.current = None
     try:
         with _interrupts_deferred():
-            asset = session.hand_over()
+            session.hand_over()
     except BaseException:
-        if asset is not None and asset.held:
-            with _interrupts_deferred():
-                asset.release()
+        _give_back(session.current)
         raise
-    return asset
+    return session.current
 
 
 class QueueNamespace(DomainNamespace):
@@ -445,8 +488,9 @@ class QueueNamespace(DomainNamespace):
         Args:
             project_id: The project's id.
             max_assets: The most assets the loop hands over. None: no limit.
-            max_seconds: No asset is handed over once this many seconds have passed since the
-                loop started; the asset your code is working on is not cut short. None: no limit.
+            max_seconds: No new hand-over starts once this many seconds have passed since the
+                loop's first turn; one under way ends, and the asset your code is working on is
+                not cut short. None: no limit.
 
         Returns:
             An iterator over your assets to label, handed over one at a time.
@@ -489,8 +533,9 @@ class QueueNamespace(DomainNamespace):
         Args:
             project_id: The project's id.
             max_assets: The most assets the loop hands over. None: no limit.
-            max_seconds: No asset is handed over once this many seconds have passed since the
-                loop started; the asset your code is working on is not cut short. None: no limit.
+            max_seconds: No new hand-over starts once this many seconds have passed since the
+                loop's first turn; one under way ends, and the asset your code is working on is
+                not cut short. None: no limit.
 
         Returns:
             An iterator over your assets to review, handed over one at a time, each with the
@@ -531,7 +576,6 @@ class QueueNamespace(DomainNamespace):
         deadline = None if max_seconds is None else time.monotonic() + max_seconds
         handed = 0
         while max_assets is None or handed < max_assets:
-            asset = None
             try:
                 asset = _next_before(session, deadline)
                 if asset is None:
@@ -539,15 +583,14 @@ class QueueNamespace(DomainNamespace):
                 handed += 1
                 yield asset
             finally:
-                # reached when the body moves on, raises or breaks: an asset left undecided is
-                # given back, and the next calls pass it over as the interface passes over one
-                # left without a submit
-                if asset is not None:
-                    with _interrupts_deferred():
-                        if asset.held:
-                            asset.release()
-                    if asset.outcome == "released":
-                        session.given_back.append(asset.id)
+                # reached when the body moves on, raises or breaks — or an interrupt lands before
+                # the asset is in hand: the session's last asset, left undecided, is given back,
+                # and the next calls pass it over as the interface passes over one left without
+                # a submit
+                current = session.current
+                _give_back(current)
+                if current is not None and current.outcome == "released":
+                    session.given_back.append(current.id)
 
 
 def _next_before(session: _QueueSession, deadline: Optional[float]) -> Optional[QueueAsset]:

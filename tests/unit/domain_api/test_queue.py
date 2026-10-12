@@ -2,6 +2,7 @@
 
 import signal
 import time
+from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import MagicMock
 
 import pytest
@@ -608,7 +609,7 @@ def test_ctrl_c_while_an_asset_changes_hands_leaves_it_held_by_nobody(queue, gat
     _ctrl_c_while_kili_locks_the_next_asset(gateway)
 
     # When
-    with pytest.raises(KeyboardInterrupt):
+    with pytest.raises(KeyboardInterrupt), pytest.warns(UserWarning, match="given back first"):
         if via == "next_to_label":
             queue.next_to_label(project_id="project")
         else:
@@ -619,3 +620,134 @@ def test_ctrl_c_while_an_asset_changes_hands_leaves_it_held_by_nobody(queue, gat
     gateway.get_asset_by_id.assert_called_once()
     gateway.delete_asset_locks.assert_called_once_with("project", "a")
     assert signal.getsignal(signal.SIGINT) is signal.default_int_handler
+
+
+def _ctrl_c_before_the_first_release_leaves(gateway: MagicMock) -> list:
+    """Ctrl-C pressed as the first release is about to be sent; the releases that went out."""
+    sent: list = []
+
+    def delete(project_id, asset_id):
+        if not sent and not getattr(delete, "pressed", False):
+            delete.pressed = True  # type: ignore[attr-defined]
+            signal.raise_signal(signal.SIGINT)
+        sent.append(asset_id)
+
+    gateway.delete_asset_locks.side_effect = delete
+    return sent
+
+
+@pytest.mark.parametrize("way", ["release in the body", "with block", "left undecided"])
+@pytest.mark.usefixtures("ctrl_c_raises")
+def test_ctrl_c_as_an_asset_is_given_back_still_gives_it_back(queue, gateway, way):
+    # Given
+    _serve(gateway, "a", "b")
+    sent = _ctrl_c_before_the_first_release_leaves(gateway)
+
+    # When
+    with pytest.raises(KeyboardInterrupt), pytest.warns(UserWarning, match="given back first"):
+        for asset in queue.iter_to_label(project_id="project"):
+            if way == "release in the body":
+                asset.release()
+            elif way == "with block":
+                with asset:
+                    pass
+
+    # Then the release went out before the interrupt
+    assert sent == ["a"]
+
+
+@pytest.mark.usefixtures("ctrl_c_raises")
+def test_a_second_ctrl_c_stops_at_once(queue, gateway):
+    # Given Ctrl-C pressed twice while Kili locks the next asset
+    def next_asset(**_):
+        signal.raise_signal(signal.SIGINT)
+        signal.raise_signal(signal.SIGINT)
+        return "a"
+
+    gateway.get_next_asset_to_work_on.side_effect = next_asset
+
+    # When / Then the hand-over is not waited for
+    with pytest.raises(KeyboardInterrupt), pytest.warns(UserWarning, match="Press Ctrl-C again"):
+        queue.next_to_label(project_id="project")
+    gateway.get_asset_by_id.assert_not_called()
+
+
+def test_a_custom_ctrl_c_handler_runs_once(queue, gateway):
+    # Given a program with its own Ctrl-C handler
+    calls: list = []
+    previous = signal.signal(signal.SIGINT, lambda signum, frame: calls.append(signum))
+    _ctrl_c_while_kili_locks_the_next_asset(gateway)
+
+    # When
+    try:
+        with pytest.warns(UserWarning, match="given back first"):
+            asset = queue.next_to_label(project_id="project")
+    finally:
+        signal.signal(signal.SIGINT, previous)
+
+    # Then
+    assert calls == [signal.SIGINT]
+    assert asset is not None
+    asset.release()
+
+
+@pytest.mark.usefixtures("ctrl_c_raises")
+def test_a_failed_give_back_does_not_hide_the_interrupt(queue, gateway):
+    # Given
+    _ctrl_c_while_kili_locks_the_next_asset(gateway)
+    gateway.delete_asset_locks.side_effect = ConnectionError("network down")
+
+    # When / Then
+    with pytest.raises(KeyboardInterrupt), pytest.warns(UserWarning) as warned:
+        queue.next_to_label(project_id="project")
+    assert any("could not be given back: network down" in str(w.message) for w in warned)
+
+
+def test_an_interrupt_once_the_asset_is_handed_over_still_gives_it_back(
+    queue, gateway, monkeypatch
+):
+    # Given an interrupt landing after the hand-over, before the loop holds the asset
+    _serve(gateway, "a", "b")
+    hand_over = queue_module._hand_over  # pylint: disable=protected-access
+
+    def interrupted(session):
+        hand_over(session)
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(queue_module, "_hand_over", interrupted)
+
+    # When
+    with pytest.raises(KeyboardInterrupt):
+        for _asset in queue.iter_to_label(project_id="project"):
+            pytest.fail("the loop body ran")
+
+    # Then
+    gateway.delete_asset_locks.assert_called_once_with("project", "a")
+
+
+def test_it_hands_over_from_a_worker_thread(queue, gateway):
+    # Given
+    _serve(gateway, "a")
+
+    # When
+    with ThreadPoolExecutor(1) as pool:
+        asset = pool.submit(queue.next_to_label, project_id="project").result()
+
+    # Then
+    assert asset is not None
+    assert asset.id == "a"
+    asset.release()
+
+
+def test_max_assets_counts_the_assets_handed_over_not_those_submitted(queue, gateway):
+    # Given
+    _serve(gateway, "a", "b", "c")
+
+    # When
+    served = []
+    for asset in queue.iter_to_label(project_id="project", max_assets=2):
+        served.append(asset.id)
+        asset.release()
+
+    # Then
+    assert served == ["a", "b"]

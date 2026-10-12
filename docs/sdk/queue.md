@@ -91,8 +91,9 @@ for asset in kili.queue.iter_to_review(project_id=PROJECT_ID):
 ## A bot on a schedule
 
 A bot run by cron every hour stops on its own before the next run starts: `max_assets` caps the
-assets one run hands over, `max_seconds` its time. Past `max_seconds`, the loop hands over no
-new asset; the one your code is working on is not cut short, so leave it room.
+assets one run hands over, `max_seconds` the time during which it asks for new ones. Past
+`max_seconds`, no new hand-over starts; one under way ends, and the asset your code is working on
+is not cut short — so leave room for one asset's work.
 
 ```python
 # crontab: 0 * * * * python label_queue.py
@@ -106,7 +107,10 @@ for asset in kili.queue.iter_to_label(
 
 However the loop stops — its queue empty, a limit reached, an exception, Ctrl-C — the asset it
 was handling goes back to the queue, and the next run, or a person, is served it. Ctrl-C pressed
-while Kili is handing an asset over waits for the hand-over to end, then gives the asset back.
+while an asset changes hands waits for the hand-over or the release to end, then gives the asset
+back; a second Ctrl-C stops at once, and that asset's lock expires within 5 minutes. A bot its
+scheduler kills — `timeout`, `docker stop` and Kubernetes send SIGTERM — stops outright: its asset
+is freed when its lock expires, within 5 minutes.
 
 ## One asset at a time
 
