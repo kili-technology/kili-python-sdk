@@ -47,7 +47,7 @@ for asset in kili.queue.iter_to_label(project_id=PROJECT_ID):
         try:
             asset.skip(reason="The bot could not tell what kind of document this is.")
             skipped += 1
-        except QueueError:  # the project does not let its members skip
+        except QueueError:  # skipping not allowed on this project, or on this asset
             asset.release()  # back to the queue, for a person to label
         continue
     asset.submit(json_response={"CLASSIFICATION_JOB": {"categories": [{"name": category}]}})
@@ -58,15 +58,19 @@ print(f"Queue empty: {labeled} labeled, {skipped} skipped.")
 
 What each line does, as in the labeling interface:
 
-- `iter_to_label` hands the assets over one after another until the queue is empty. Each one is
-  locked to the bot while the loop's body runs, and the lock is renewed in the background.
+- `iter_to_label` hands the assets over one after another until the queue is empty — once Kili
+  has had nothing for the bot five times in five seconds, as the queue page asks again before it
+  greys out its button. Each asset is locked to the bot while the loop's body runs, and the lock is
+  renewed in the background.
 - `asset.content`, `asset.json_content` and `asset.metadata` hold the asset; `read_content()`
-  downloads its file. `asset.label` holds the label it comes back with, when a reviewer sent it back
-  for correction.
+  downloads its file. `asset.label` holds the label the interface would open it with: the bot's own,
+  when a reviewer sent the asset back for correction, or a model's prediction.
 - `submit` creates the bot's label, with the time it held the asset, and moves the asset on in its
   workflow: to its next step, or done.
 - `skip` skips the asset with a reason, as the interface's Skip: the asset leaves the queue —
-  everyone's — until someone unskips it.
+  everyone's — until someone unskips it. It raises a `QueueError` where the interface would not
+  skip: the project does not let its members skip, or the asset is on a consensus step or sent
+  back for rework.
 - `release` gives the asset back: the next member who asks is served it at once. An asset the
   loop's body leaves undecided is released too, and not served again in that loop.
 - If the body raises, the asset is given back at once and the exception stops the loop.
@@ -97,7 +101,12 @@ if asset is not None:
         asset.submit(json_response=predict(asset))
 ```
 
-Assets still held when the Python process exits are given back.
+An asset your code drops without acting on it is given back within 30 seconds, and the assets
+still held when Python exits — the script's end, an exception, Ctrl-C — at once. A process killed
+outright leaves its locks to expire, within 5 minutes.
+
+`next_to_label` starts afresh each time, as the interface's Start Labeling does: an asset you just
+released is the next one you are served again. The loops pass over the assets they gave back.
 
 ::: kili.domain_api.queue.QueueNamespace
 ::: kili.domain_api.queue.QueueAsset

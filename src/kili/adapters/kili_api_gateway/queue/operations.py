@@ -60,6 +60,14 @@ mutation deleteLocks($input: DeleteLocksInput!) {
 }
 """
 
+GQL_SUBMIT_LABEL = """
+mutation frontendAppendToLabels($data: AppendToLabelsData!, $where: AssetWhere!) {
+  data: frontendAppendToLabels(data: $data, where: $where) {
+    id
+  }
+}
+"""
+
 GQL_SKIP_ASSET = """
 mutation skipAsset($where: AssetWhere!, $reason: String) {
   data: skipAsset(where: $where, reason: $reason) {

@@ -8,6 +8,7 @@ a script working through its queue is, to Kili and to the people beside it, one 
 import threading
 import time
 import warnings
+import weakref
 from dataclasses import dataclass, field
 from typing import Literal, Optional
 
@@ -17,8 +18,7 @@ from kili.domain.project import ProjectId
 from kili.domain.user import UserId
 from kili.exceptions import GraphQLError, QueueError
 from kili.use_cases.base import BaseUseCases
-from kili.use_cases.label import LOCK_ERRORS, LabelUseCases
-from kili.use_cases.label.types import LabelToCreateUseCaseInput
+from kili.use_cases.label import LOCK_ERRORS
 
 QueueMode = Literal["label", "review"]
 
@@ -44,6 +44,8 @@ LABEL_FIELDS = (
     "author.id",
     "author.email",
     "isSentBackToQueue",
+    "isCorrected",
+    "referencedLabel.id",
     "createdAt",
 )
 
@@ -192,46 +194,23 @@ class QueueUseCases(BaseUseCases):
         asset_id: AssetId,
         json_response: dict,
         seconds_to_label: float,
-        reviewed_label_id: Optional[LabelId] = None,
+        referenced_label_id: Optional[LabelId],
     ) -> dict:
-        """Submit the member's label — DEFAULT when labeling, REVIEW when reviewing.
+        """Submit the member's label — DEFAULT when labeling, REVIEW when reviewing — as the
+        interface submits it, which moves the asset on in its workflow.
 
-        Either moves the asset on in its workflow as the interface's submit does. A label goes
-        through `appendToLabels`, addressed by the asset's id as the interface addresses it: the
-        mutations addressing assets by a list of ids only reach those a labeler already labeled.
-        A review goes through the mutation of `kili.labels.create_review`, which links it to the
-        label it reviews. A lock someone else holds is refused by both.
+        A lock someone else holds, or a step the member is not on, is refused by the backend; the
+        refusal is said in words.
         """
-        label_use_cases = LabelUseCases(self._kili_api_gateway)
         try:
-            if context.mode == "label":
-                return label_use_cases.append_to_labels(
-                    author_id=context.user_id,
-                    json_response=json_response,
-                    label_type="DEFAULT",
-                    seconds_to_label=round(seconds_to_label),
-                    asset_id=asset_id,
-                    fields=("id",),
-                )
-            return label_use_cases.append_labels(
-                labels=[
-                    LabelToCreateUseCaseInput(
-                        asset_external_id=None,
-                        asset_id=asset_id,
-                        author_id=context.user_id,
-                        json_response=json_response,
-                        label_type="REVIEW",
-                        model_name=None,
-                        referenced_label_id=reviewed_label_id,
-                        seconds_to_label=round(seconds_to_label),
-                    )
-                ],
-                label_type="REVIEW",
-                overwrite=False,
-                project_id=context.project_id,
-                fields=("id",),
-                disable_tqdm=True,
-            )[0]
+            return self._kili_api_gateway.submit_label(
+                asset_id=asset_id,
+                author_id=context.user_id,
+                json_response=json_response,
+                label_type="REVIEW" if context.mode == "review" else "DEFAULT",
+                seconds_to_label=round(seconds_to_label),
+                referenced_label_id=referenced_label_id,
+            )
         except GraphQLError as error:
             reason = (error.context or {}).get("reason")
             if reason in LOCK_ERRORS:
@@ -255,7 +234,14 @@ class QueueUseCases(BaseUseCases):
             )
         if not reason.strip():
             raise QueueError("A skip needs a reason: say why the asset cannot be labeled.")
-        self._kili_api_gateway.skip_asset_with_reason(context.project_id, asset_id, reason)
+        try:
+            self._kili_api_gateway.skip_asset_with_reason(context.project_id, asset_id, reason)
+        except GraphQLError as error:
+            # the backend refuses an asset of a consensus step, or one sent back for rework
+            raise QueueError(
+                f"Asset {asset_id} cannot be skipped: {error}. Submit a label, or give it back"
+                " with release()."
+            ) from error
 
     def send_back(
         self, context: QueueContext, asset_id: AssetId, label_id: Optional[LabelId]
@@ -285,20 +271,24 @@ class LockKeeper:
     """Keeps a held asset locked to the member while their code works on it, however long it takes.
 
     The interface renews its lock every 30 s while the asset is open; a script's code may run for
-    minutes on one asset, so a daemon thread does the renewing until the asset is let go.
+    minutes on one asset, so a daemon thread does the renewing until the asset is let go — or until
+    the object holding it is gone, when nobody can act on the asset any more: then it is given back.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         use_cases: QueueUseCases,
         context: QueueContext,
         asset_id: AssetId,
-        every_seconds: float = RENEW_LOCK_EVERY_SECONDS,
+        owner: object,
+        every_seconds: Optional[float] = None,
     ) -> None:
         self._use_cases = use_cases
         self._context = context
         self._asset_id = asset_id
-        self._every_seconds = every_seconds
+        # weak: the thread must not keep alive the object whose disappearance it watches for
+        self._owner = weakref.ref(owner)
+        self._every_seconds = RENEW_LOCK_EVERY_SECONDS if every_seconds is None else every_seconds
         self._stopped = threading.Event()
         self._thread: Optional[threading.Thread] = None
         self.lost_reasons: list[str] = []
@@ -318,6 +308,9 @@ class LockKeeper:
 
     def _run(self) -> None:
         while not self._stopped.wait(self._every_seconds):
+            if self._owner() is None:
+                self._give_back()
+                return
             try:
                 reasons = self._use_cases.renew_lock(self._context, self._asset_id)
             except Exception as error:  # pylint: disable=broad-exception-caught
@@ -328,13 +321,22 @@ class LockKeeper:
                     stacklevel=1,
                 )
                 continue
-            if reasons and not self.lost_reasons:
+            if self._stopped.is_set():
+                return  # a renewal sent as the asset was let go answers for an asset no longer held
+            if reasons:
                 self.lost_reasons = reasons
                 warnings.warn(
                     f"Asset {self._asset_id} is no longer yours: {describe_lock_refusal(reasons)}."
-                    " Submitting it will be refused; give it back with release().",
+                    " Give it back with release() and ask for your next asset.",
                     stacklevel=1,
                 )
+                return  # renewing again would take back an asset the SDK refuses to act on
+
+    def _give_back(self) -> None:
+        try:
+            self._use_cases.release(self._context, self._asset_id)
+        except Exception:  # pylint: disable=broad-exception-caught
+            pass  # nobody is left to tell: the lock expires on its own within minutes
 
 
 def seconds_since(started_at: float) -> float:

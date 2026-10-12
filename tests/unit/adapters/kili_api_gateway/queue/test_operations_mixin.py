@@ -12,6 +12,7 @@ from kili.adapters.kili_api_gateway.queue.operations import (
     GQL_RENEW_LOCK,
     GQL_SEND_ASSET_BACK_TO_QUEUE,
     GQL_SKIP_ASSET,
+    GQL_SUBMIT_LABEL,
 )
 from kili.core.graphql.graphql_client import GraphQLClient
 from kili.domain.asset import AssetId
@@ -41,7 +42,7 @@ def test_it_asks_the_project_for_the_first_asset_to_label(graphql_client, http_c
     assert "doLock: true" in GQL_GET_NEXT_ASSET_FROM_PROJECT
 
 
-def test_it_asks_from_the_assets_seen_for_the_next_ones_leaving_out_those_given_back(
+def test_it_asks_from_the_last_asset_seen_for_the_next_ones_leaving_out_those_given_back(
     graphql_client, http_client
 ):
     # Given
@@ -51,7 +52,7 @@ def test_it_asks_from_the_assets_seen_for_the_next_ones_leaving_out_those_given_
     asset_id = _gateway(graphql_client, http_client).get_next_asset_to_work_on(
         ProjectId("project"),
         review=False,
-        viewed_asset_ids=[AssetId("a"), AssetId("b")],
+        viewed_asset_ids=[AssetId("a"), AssetId("b"), AssetId("c")],
         given_back_asset_ids=[AssetId("b")],
     )
 
@@ -59,7 +60,7 @@ def test_it_asks_from_the_assets_seen_for_the_next_ones_leaving_out_those_given_
     assert asset_id is None
     graphql_client.execute.assert_called_once_with(
         GQL_GET_NEXT_ASSET_FROM_LABEL,
-        {"labelAssetIDs": ["a", "b"], "nonSubmittedViewedAssetIds": ["b"], "projectId": "project"},
+        {"labelAssetIDs": ["c"], "nonSubmittedViewedAssetIds": ["b"], "projectId": "project"},
     )
 
 
@@ -75,16 +76,16 @@ def test_it_asks_the_review_queue_when_reviewing(graphql_client, http_client):
     gateway.get_next_asset_to_work_on(
         ProjectId("project"),
         review=True,
-        viewed_asset_ids=[AssetId("a")],
-        given_back_asset_ids=[],
+        viewed_asset_ids=[AssetId("a"), AssetId("b"), AssetId("c")],
+        given_back_asset_ids=[AssetId("a"), AssetId("c")],
     )
 
-    # Then
+    # Then the last asset seen locates the project, and it and those given back are passed over
     first, second = graphql_client.execute.call_args_list
     assert first.args == (GQL_GET_NEXT_ASSET_FOR_REVIEW_FROM_PROJECT, {"projectID": "project"})
     assert second.args == (
         GQL_GET_NEXT_ASSET_FOR_REVIEW_FROM_LABEL,
-        {"labelAssetIDs": ["a"], "projectId": "project"},
+        {"labelAssetIDs": ["c", "a"], "projectId": "project"},
     )
 
 
@@ -205,3 +206,32 @@ def test_it_reads_the_member_of_the_project(graphql_client, http_client):
         GQL_GET_PROJECT_USER,
         {"where": {"project": {"id": "project"}, "user": {"id": "me"}, "deleted": False}},
     )
+
+
+def test_it_submits_as_the_interface_with_the_label_it_refers_to(graphql_client, http_client):
+    # Given
+    graphql_client.execute.side_effect = [{"data": {"id": "l2"}}, {"data": {"id": "l3"}}]
+    gateway = _gateway(graphql_client, http_client)
+
+    # When
+    with_reference = gateway.submit_label(
+        AssetId("a"), UserId("me"), {"JOB": {}}, "DEFAULT", 12, LabelId("l1")
+    )
+    without = gateway.submit_label(AssetId("b"), UserId("me"), {}, "REVIEW", 3, None)
+
+    # Then
+    assert (with_reference, without) == ({"id": "l2"}, {"id": "l3"})
+    assert graphql_client.execute.call_args_list[0].args == (
+        GQL_SUBMIT_LABEL,
+        {
+            "data": {
+                "authorID": "me",
+                "jsonResponse": '{"JOB": {}}',
+                "labelType": "DEFAULT",
+                "secondsToLabel": 12,
+                "referencedLabelId": "l1",
+            },
+            "where": {"id": "a"},
+        },
+    )
+    assert "referencedLabelId" not in graphql_client.execute.call_args_list[1].args[1]["data"]

@@ -1,5 +1,6 @@
 """The queue namespace hands over held assets, and lets them go as the interface does."""
 
+import time
 from unittest.mock import MagicMock
 
 import pytest
@@ -35,8 +36,7 @@ def gateway() -> MagicMock:
         "jsonMetadata": '{"source": "scanner"}',
     }
     gateway.get_label_opened_with.return_value = None
-    gateway.append_to_labels.return_value = {"id": "label-1"}
-    gateway.append_many_labels.return_value = [{"id": "review-1"}]
+    gateway.submit_label.return_value = {"id": "label-1"}
     return gateway
 
 
@@ -151,7 +151,42 @@ def test_a_submit_records_the_label_then_leaves_the_asset(queue, gateway):
     assert label_id == "label-1"
     assert asset.outcome == "submitted"
     assert not asset.held
+    submitted = gateway.submit_label.call_args.kwargs
+    assert (submitted["label_type"], submitted["referenced_label_id"]) == ("DEFAULT", None)
     gateway.delete_asset_locks.assert_called_once_with("project", "a")
+
+
+@pytest.mark.parametrize(
+    ("opened_with", "referenced"),
+    [
+        ({"id": "l1", "labelType": "DEFAULT", "isCorrected": False}, "l1"),
+        ({"id": "p1", "labelType": "PREDICTION"}, "p1"),
+        ({"id": "a1", "labelType": "AUTOSAVE", "referencedLabel": {"id": "l0"}}, "l0"),
+        (
+            {
+                "id": "c1",
+                "labelType": "DEFAULT",
+                "isCorrected": True,
+                "referencedLabel": {"id": "l0"},
+            },
+            "l0",
+        ),
+    ],
+)
+def test_a_submit_refers_to_the_label_the_interface_would_refer_to(
+    queue, gateway, opened_with, referenced
+):
+    # Given
+    _serve(gateway, "a")
+    gateway.get_label_opened_with.return_value = {"jsonResponse": "{}", **opened_with}
+    asset = queue.next_to_label(project_id="project")
+    assert asset is not None
+
+    # When
+    asset.submit(json_response={"JOB": {}})
+
+    # Then
+    assert gateway.submit_label.call_args.kwargs["referenced_label_id"] == referenced
 
 
 def test_an_approval_without_corrections_approves_the_label_under_review(queue, gateway):
@@ -165,9 +200,10 @@ def test_an_approval_without_corrections_approves_the_label_under_review(queue, 
     review_id = asset.approve()
 
     # Then
-    assert review_id == "review-1"
-    label = gateway.append_many_labels.call_args.kwargs["data"].labels_data[0]
-    assert (label.json_response, label.referenced_label_id) == ({"JOB": 1}, "label-0")
+    assert review_id == "label-1"
+    submitted = gateway.submit_label.call_args.kwargs
+    assert (submitted["label_type"], submitted["json_response"]) == ("REVIEW", {"JOB": 1})
+    assert submitted["referenced_label_id"] == "label-0"
     assert asset.outcome == "approved"
 
 
@@ -182,8 +218,44 @@ def test_an_approval_with_corrections_submits_them(queue, gateway):
     asset.approve(json_response={"JOB": 2})
 
     # Then
-    label = gateway.append_many_labels.call_args.kwargs["data"].labels_data[0]
-    assert label.json_response == {"JOB": 2}
+    assert gateway.submit_label.call_args.kwargs["json_response"] == {"JOB": 2}
+
+
+def test_an_approval_needs_a_label(queue, gateway):
+    # Given
+    _serve(gateway, "a")
+    asset = queue.next_to_review(project_id="project")
+    assert asset is not None
+
+    # When / Then
+    with pytest.raises(QueueError, match="carries no label to approve"):
+        asset.approve()
+    gateway.submit_label.assert_not_called()
+    assert asset.held
+    asset.release()
+
+
+def test_an_asset_whose_lock_was_lost_is_not_acted_on(queue, gateway, monkeypatch):
+    # Given the lock refused at its next renewal
+    monkeypatch.setattr("kili.use_cases.queue.RENEW_LOCK_EVERY_SECONDS", 0.01)
+    _serve(gateway, "a")
+    gateway.renew_asset_lock.side_effect = [
+        {"lockSucceeded": True, "reasons": None},
+        {"lockSucceeded": False, "reasons": ["AlreadyLocked"]},
+    ]
+    with pytest.warns(UserWarning, match="no longer yours"):
+        asset = queue.next_to_label(project_id="project")
+        assert asset is not None
+        for _ in range(500):
+            if asset._keeper.lost_reasons:  # pylint: disable=protected-access
+                break
+            time.sleep(0.01)
+
+    # When / Then
+    with pytest.raises(QueueError, match="no longer yours: someone else is working on the asset"):
+        asset.submit(json_response={})
+    gateway.submit_label.assert_not_called()
+    asset.release()
 
 
 def test_a_send_back_sends_the_label_under_review_back(queue, gateway):
@@ -253,7 +325,7 @@ def test_an_asset_let_go_cannot_be_acted_on_again(queue, gateway):
         asset.submit(json_response={})
     with pytest.raises(QueueError, match="was already submitted"):
         asset.release()
-    gateway.append_to_labels.assert_called_once()
+    gateway.submit_label.assert_called_once()
 
 
 def test_the_context_manager_gives_the_asset_back_when_the_code_fails(queue, gateway):
@@ -378,6 +450,29 @@ def test_the_assets_still_held_are_given_back_when_the_process_exits(queue, gate
     # Then
     gateway.delete_asset_locks.assert_called_once_with("project", "a")
     assert held.outcome == "released"
+
+
+def test_the_loop_gives_the_asset_back_when_the_code_breaks_out(queue, gateway):
+    # Given
+    _serve(gateway, "a", "b")
+
+    # When
+    for _asset in queue.iter_to_label(project_id="project"):
+        break
+
+    # Then
+    gateway.delete_asset_locks.assert_called_once_with("project", "a")
+
+
+def test_it_releases_an_asset_whose_first_renewal_failed(queue, gateway):
+    # Given
+    _serve(gateway, "a")
+    gateway.renew_asset_lock.side_effect = KeyboardInterrupt
+
+    # When / Then
+    with pytest.raises(KeyboardInterrupt):
+        queue.next_to_label(project_id="project")
+    gateway.delete_asset_locks.assert_called_once_with("project", "a")
 
 
 def test_the_loop_says_why_the_account_cannot_review(queue, gateway):

@@ -58,12 +58,15 @@ def _parsed(value: Any) -> Any:
     return value
 
 
+# the asset's own fields, the ones the interface shows, are its attributes
 class QueueAsset:  # pylint: disable=too-many-instance-attributes
     """An asset of your queue, yours until you submit, approve, send back, skip or release it.
 
     While you hold it, nobody else is served it: its lock is renewed in the background, as the
     labeling interface renews it while a person has the asset open — for as long as your code
-    takes. Use it as a context manager to give it back if your code raises.
+    takes. Use it as a context manager to give it back if your code raises. An asset your code
+    drops without acting on it is given back within 30 s, and those still held when Python exits
+    at once.
 
     Attributes:
         id: The asset's id.
@@ -72,10 +75,10 @@ class QueueAsset:  # pylint: disable=too-many-instance-attributes
             the text itself.
         json_content: The asset's JSON content (rich text, video frames, ...), decoded, or None.
         metadata: The asset's metadata, as a dict.
-        label: The label the asset comes with, or None: when labeling, your own label sent back
-            to you for correction; when reviewing, the label to review. A dict with `id`,
-            `json_response`, `label_type`, `author` (`id`, `email`), `is_sent_back_to_queue`
-            and `created_at`.
+        label: The label the interface opens the asset with, or None: when labeling, your own
+            label sent back to you for correction, or a model's prediction; when reviewing, the
+            label to review. A dict with `id`, `json_response`, `label_type`, `author` (`id`,
+            `email`), `is_sent_back_to_queue` and `created_at`.
         project_id: The project the asset belongs to.
         mode: `"label"` for an asset to label, `"review"` for one to review.
         outcome: None while you hold the asset, then what you did with it: `"submitted"`,
@@ -110,10 +113,17 @@ class QueueAsset:  # pylint: disable=too-many-instance-attributes
             if label
             else None
         )
+        # what a submit refers to, as the interface decides it (appendToLabels.ts): the label the
+        # asset was opened with — or, for an autosave or a correction, the label that one is based on
+        self._reference_id: Optional[LabelId] = None
+        if label:
+            based_on = (label.get("referencedLabel") or {}).get("id")
+            is_derived = label.get("labelType") == "AUTOSAVE" or label.get("isCorrected")
+            self._reference_id = LabelId(based_on if is_derived and based_on else label["id"])
         self.project_id: ProjectId = context.project_id
         self.mode: QueueMode = context.mode
         self.outcome: Optional[str] = None
-        self._keeper = LockKeeper(use_cases, context, self.id)
+        self._keeper = LockKeeper(use_cases, context, self.id, owner=self)
         self._keeper.start()
         _HELD_ASSETS.add(self)
 
@@ -150,7 +160,11 @@ class QueueAsset:  # pylint: disable=too-many-instance-attributes
         """
         self._check_held("submit", "label")
         label = self._use_cases.submit(
-            self._context, self.id, json_response, seconds_to_label=self.seconds_held
+            self._context,
+            self.id,
+            json_response,
+            seconds_to_label=self.seconds_held,
+            referenced_label_id=self._reference_id,
         )
         self._let_go("submitted")
         return label["id"]
@@ -177,7 +191,7 @@ class QueueAsset:  # pylint: disable=too-many-instance-attributes
             self.id,
             json_response if json_response is not None else reviewed,
             seconds_to_label=self.seconds_held,
-            reviewed_label_id=LabelId(self.label["id"]) if self.label else None,
+            referenced_label_id=self._reference_id,
         )
         self._let_go("approved")
         return label["id"]
@@ -284,17 +298,19 @@ class _QueueSession:
             if asset_id is None:
                 return None
             self.viewed.append(asset_id)
-            # the interface renews the lock as it opens the asset; on a consensus step, that is
-            # where the number of labels the asset takes is decided
-            if self._use_cases.renew_lock(self._context, asset_id):
+            try:
+                # the interface renews the lock as it opens the asset; on a consensus step, that
+                # is where the number of labels the asset takes is decided
+                refused = self._use_cases.renew_lock(self._context, asset_id)
+                read = None if refused else self._use_cases.read_asset(self._context, asset_id)
+            except BaseException:  # a failure or an interrupt: the asset is locked, give it back
+                self._use_cases.release(self._context, asset_id)
+                raise
+            if read is None:
                 self._use_cases.release(self._context, asset_id)
                 self.given_back.append(asset_id)
                 continue
-            try:
-                asset, label = self._use_cases.read_asset(self._context, asset_id)
-            except Exception:
-                self._use_cases.release(self._context, asset_id)
-                raise
+            asset, label = read
             return QueueAsset(self._use_cases, self._context, asset, label)
 
 
@@ -328,7 +344,9 @@ class QueueNamespace(DomainNamespace):
         """Get your next asset to label, held by you until you act on it.
 
         The asset is the one the labeling interface would open for you now. Give it back with
-        `release()` if you do not label it: until then, nobody else is served it.
+        `release()` if you do not label it: until then, nobody else is served it. Each call starts
+        afresh, as the interface's Start Labeling: an asset just released is the next one served
+        again — the `iter_*` loops pass over what they gave back.
 
         Args:
             project_id: The project's id.

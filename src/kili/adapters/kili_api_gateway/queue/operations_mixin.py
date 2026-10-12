@@ -1,5 +1,6 @@
 """Mixin extending Kili API Gateway class with the requests serving a member their queue."""
 
+import json
 from typing import Optional
 
 from kili.adapters.kili_api_gateway.base import BaseOperationMixin
@@ -20,6 +21,7 @@ from .operations import (
     GQL_RENEW_LOCK,
     GQL_SEND_ASSET_BACK_TO_QUEUE,
     GQL_SKIP_ASSET,
+    GQL_SUBMIT_LABEL,
     get_asset_query,
     get_label_for_user_query,
     get_label_to_review_query,
@@ -39,7 +41,8 @@ class QueueOperationMixin(BaseOperationMixin):
         """Ask for the member's next asset, locked to them, as the labeling interface asks for it.
 
         The interface's first asset comes from the project; every later one from the assets seen
-        so far, the ones left without a submit excluded (labeling) or every one seen (review).
+        so far, the ones left without a submit passed over. The interface sends every asset of its
+        session; a script's session can be the whole queue, so only what the backend reads is sent.
         """
         if not viewed_asset_ids:
             query = (
@@ -49,12 +52,17 @@ class QueueOperationMixin(BaseOperationMixin):
             )
             variables: dict = {"projectID": project_id}
         elif review:
+            # every id sent is passed over: the last one seen — the first, which locates the
+            # project — and those given back
             query = GQL_GET_NEXT_ASSET_FOR_REVIEW_FROM_LABEL
-            variables = {"labelAssetIDs": list(viewed_asset_ids), "projectId": project_id}
+            ignored = [viewed_asset_ids[-1], *given_back_asset_ids]
+            variables = {"labelAssetIDs": list(dict.fromkeys(ignored)), "projectId": project_id}
         else:
+            # the seen assets only locate the project, the last one is enough; those given back
+            # are passed over
             query = GQL_GET_NEXT_ASSET_FROM_LABEL
             variables = {
-                "labelAssetIDs": list(viewed_asset_ids),
+                "labelAssetIDs": [viewed_asset_ids[-1]],
                 "nonSubmittedViewedAssetIds": list(given_back_asset_ids),
                 "projectId": project_id,
             }
@@ -97,6 +105,36 @@ class QueueOperationMixin(BaseOperationMixin):
         """Release the member's lock on the asset."""
         variables = {"input": {"assetId": asset_id, "projectId": project_id}}
         self.graphql_client.execute(GQL_DELETE_LOCKS, variables)
+
+    # pylint: disable=too-many-arguments
+    def submit_label(
+        self,
+        asset_id: AssetId,
+        author_id: UserId,
+        json_response: dict,
+        label_type: str,
+        seconds_to_label: int,
+        referenced_label_id: Optional[LabelId],
+    ) -> dict:
+        """Submit a label as the labeling and review interfaces submit it.
+
+        `frontendAppendToLabels` addressed by the asset's id, with the label the asset was opened
+        with as its reference: the mutations addressing assets by a list of ids only reach those a
+        labeler already labeled, and `appendToLabels` drops the reference that limits a step
+        group's allowed-jobs check to what the label changes.
+        """
+        data: dict = {
+            "authorID": author_id,
+            "jsonResponse": json.dumps(json_response),
+            "labelType": label_type,
+            "secondsToLabel": seconds_to_label,
+        }
+        if referenced_label_id is not None:
+            data["referencedLabelId"] = referenced_label_id
+        result = self.graphql_client.execute(
+            GQL_SUBMIT_LABEL, {"data": data, "where": {"id": asset_id}}
+        )
+        return result["data"]
 
     def skip_asset_with_reason(self, project_id: ProjectId, asset_id: AssetId, reason: str) -> None:
         """Skip the asset, with the reason the labeling interface's skip asks for."""
