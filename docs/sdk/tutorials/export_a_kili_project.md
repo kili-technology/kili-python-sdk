@@ -98,12 +98,12 @@ for each one of these methods.
 
 When done, you can write the conversion code to get the data in the format that you need.
 
-**Get only the assets with a consensus mark above 0.5:**
+**Get only the assets with a consensus mark of at least 0.5:**
 
 
 ```python
 assets = kili.assets(
-    your_project_id, fields=["externalId", "id", "consensusMark"], consensus_mark_gt=0.5
+    your_project_id, fields=["externalId", "id", "consensusMark"], consensus_mark_gte=0.5
 )
 print(assets)
 # + asset conversion code
