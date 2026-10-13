@@ -101,8 +101,9 @@ The union can also be written `AssetWorkflowEvent | LabelWorkflowEvent`, as in `
 event. Events that share no family, such as every `….started` event, are received with a union of their models or
 families. `on_kili_event` takes no arguments, and is the only decorator of the method.
 
-Every method whose annotation matches an event receives it, in the alphabetical order of their names; an exception in
-one stops the others. Upload the plugin without `event_matcher`: the events it receives are read from the annotations.
+Every method whose annotation matches an event receives it, in the alphabetical order of their names; when one raises,
+the others still run, its error is logged, and the run fails with the first error. Upload the plugin without
+`event_matcher`: the events it receives are read from the annotations.
 
 ```python
 kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin")
@@ -135,7 +136,7 @@ declares them — no event id or timestamp.
 Overriding `on_event` with an `event_matcher` still works, but is deprecated in favour of `on_kili_event`. **`on_event` now
 receives the whole event**: the fields it received before are under `payload["payload"]`, beside `event`,
 `organizationId`, `projectId` and `userId`. Its `event_matcher` takes subjects and patterns, where `*` stands for one or
-more names (`label.workflow.*`, `asset.*.started`).
+more names (`label.workflow.*`, `project.workflow.bulkAction.*.started`).
 
 Before:
 

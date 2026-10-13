@@ -264,3 +264,26 @@ def test_on_event_logs_an_event_that_does_not_match_its_model():
     assert plugin.received == []
     message = logger.error.call_args.args[0]
     assert "'asset.skipped' does not match its kili_events model" in message
+
+
+def test_on_event_runs_every_method_when_one_raises_then_fails_with_the_first_error():
+    class Plugin(PluginCore):
+        received: list[tuple[str, KiliEvent]]
+
+        @on_kili_event
+        def a_failing(self, event: AssetSkippedEvent) -> None:
+            raise RuntimeError("boom")
+
+        @on_kili_event
+        def b_working(self, event: AnyEvent) -> None:
+            self.received.append(("b_working", event))
+
+    logger = MagicMock(spec=logging.Logger)
+    plugin = Plugin(kili=MagicMock(spec=Kili), project_id="project_id", logger=logger)
+    plugin.received = []
+
+    with pytest.raises(RuntimeError, match="boom"):
+        plugin.on_event(payload=SKIPPED)
+
+    assert [name for name, _ in plugin.received] == ["b_working"]
+    assert "a_failing failed on 'asset.skipped'" in logger.error.call_args.args[0]

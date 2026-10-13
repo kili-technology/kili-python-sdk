@@ -199,5 +199,13 @@ class PluginCore:
             )
             return
 
+        # Each method runs even when another one fails, then the run fails with the first error.
+        errors: list[Exception] = []
         for name in handlers:
-            getattr(self, name)(event)
+            try:
+                getattr(self, name)(event)
+            except Exception as error:  # pylint: disable=broad-exception-caught
+                self.logger.error(f"{name} failed on '{event.event}': {error!r}")
+                errors.append(error)
+        if errors:
+            raise errors[0]
