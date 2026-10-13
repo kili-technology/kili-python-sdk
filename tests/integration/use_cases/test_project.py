@@ -203,3 +203,89 @@ def test_given_a_project_when_update_its_properties_then_it_updates_project_prop
     # Then
     assert "id" in project
     assert project == {"title": "title_value", "id": "id_value"}
+
+
+@pytest.mark.parametrize(
+    ("workflow_version", "workflow"),
+    [("V2", "multi-step workflow"), ("V3", "multi-group workflow")],
+)
+@pytest.mark.parametrize(
+    ("settings", "refused", "instead"),
+    [
+        (
+            {"review_coverage": 30, "use_honeypot": True},
+            "`review_coverage` and `use_honeypot` cannot be set",
+            "`update_review_step_properties(project_id=..., step_name=..., step_coverage=...)`;"
+            " the honeypot of a step with `update_labeling_step_properties(",
+        ),
+        ({"review_coverage": 30}, "`review_coverage` cannot be set", "step_coverage=...)`."),
+        ({"review_coverage": 0}, "`review_coverage` cannot be set", "step_coverage=...)`."),
+        ({"use_honeypot": True}, "`use_honeypot` cannot be set", "use_honeypot=...)`"),
+        ({"use_honeypot": False}, "`use_honeypot` cannot be set", "use_honeypot=...)`"),
+    ],
+)
+def test_given_a_project_with_step_settings_when_setting_review_coverage_or_honeypot_on_it_then_it_is_refused(
+    kili_api_gateway: KiliAPIGateway,
+    workflow_version: str,
+    workflow: str,
+    settings: dict,
+    refused: str,
+    instead: str,
+):
+    # Given
+    kili_api_gateway.get_project.return_value = {"workflowVersion": workflow_version}
+
+    # When / Then
+    with pytest.raises(ValueError, match="cannot be set") as error:
+        ProjectUseCases(kili_api_gateway).update_properties_in_project(
+            project_id=ProjectId("fake_proj_id"), title="new_title", **settings
+        )
+    assert str(error.value).startswith(f"{refused} on project fake_proj_id: it uses a {workflow},")
+    assert "Nothing was changed." in str(error.value)
+    assert instead in str(error.value)
+    kili_api_gateway.get_project.assert_called_once_with(
+        project_id="fake_proj_id", fields=["workflowVersion"]
+    )
+    kili_api_gateway.update_properties_in_project.assert_not_called()
+
+
+def test_given_a_legacy_workflow_project_when_setting_review_coverage_and_honeypot_then_they_are_sent(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    kili_api_gateway.get_project.return_value = {"workflowVersion": "V1"}
+
+    # When
+    ProjectUseCases(kili_api_gateway).update_properties_in_project(
+        project_id=ProjectId("fake_proj_id"), review_coverage=30, use_honeypot=True
+    )
+
+    # Then
+    project_id, project_data, fields = kili_api_gateway.update_properties_in_project.call_args[0]
+    assert project_id == "fake_proj_id"
+    assert (project_data.review_coverage, project_data.use_honeypot) == (30, True)
+    assert set(fields) == {"reviewCoverage", "useHoneyPot", "id"}
+
+
+def test_given_a_project_when_updating_neither_review_coverage_nor_honeypot_then_its_workflow_is_not_read(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # When
+    ProjectUseCases(kili_api_gateway).update_properties_in_project(
+        project_id=ProjectId("fake_proj_id"), title="new_title", consensus_tot_coverage=10
+    )
+
+    # Then
+    kili_api_gateway.get_project.assert_not_called()
+    kili_api_gateway.update_properties_in_project.assert_called_once()
+
+
+def test_given_an_out_of_range_review_coverage_then_its_range_is_refused_before_the_workflow_is_read(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # When / Then
+    with pytest.raises(ValueError, match="must be comprised between 0 and 100"):
+        ProjectUseCases(kili_api_gateway).update_properties_in_project(
+            project_id=ProjectId("fake_proj_id"), review_coverage=101
+        )
+    kili_api_gateway.get_project.assert_not_called()

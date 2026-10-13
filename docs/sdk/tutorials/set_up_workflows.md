@@ -42,19 +42,25 @@ For information on how to set up a Kili project, refer to the [basic project set
 
 ### Placing a specific percentage of project assets in the review queue
 
-You can set up the percentage of assets that will automatically appear in the review queue (1-100%).
+You can set up the percentage of assets that will automatically appear in the queue of a review step (1-100%):
 
 
 ```python
-kili.update_properties_in_project(project_id=project_id, review_coverage=50)
+kili.update_review_step_properties(project_id=project_id, step_name="Review", step_coverage=50)
 ```
 
 
 
 
-    {'reviewCoverage': 50, 'id': 'clnwvhuu000cz088xcqxz1dig'}
+    {'id': 'clnwvhuu000cz088xcqxz1dih', 'name': 'Review'}
 
 
+
+On legacy workflow projects, set it on the project instead:
+
+```python
+kili.update_properties_in_project(project_id=project_id, review_coverage=50)
+```
 
 ## Setting up consensus
 
@@ -131,7 +137,7 @@ First, we need to enable honeypot on the labeling step of our project:
 kili.update_labeling_step_properties(project_id=project_id, step_name="Label", use_honeypot=True)
 ```
 
-On projects still using workflow version 1, enable it on the project instead:
+On legacy workflow projects, enable it on the project instead:
 
 ```python
 kili.update_properties_in_project(project_id=project_id, use_honeypot=True)

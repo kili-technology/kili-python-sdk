@@ -330,11 +330,17 @@ class ProjectClientMethods(BaseClientMethods):
                 Number of people that will annotate the same asset, for consensus computation.
             review_coverage: Allow to set the percentage of assets
                 that will be queued in the review interface.
-                Should be between 0 and 100
+                Should be between 0 and 100.
+                Legacy workflow projects only: on a multi-step or multi-group workflow project,
+                review coverage is set on each review step with `update_review_step_properties`,
+                and this argument raises a `ValueError`.
             should_relaunch_kpi_computation: Technical field, added to indicate changes
                 in honeypot or consensus settings
             title: Title of the project
-            use_honeypot: Activate / Deactivate the use of honeypot in the project
+            use_honeypot: Activate / Deactivate the use of honeypot in the project.
+                Legacy workflow projects only: on a multi-step or multi-group workflow project,
+                honeypot is set on each step with `update_labeling_step_properties` or
+                `update_review_step_properties`, and this argument raises a `ValueError`.
             metadata_types: DEPRECATED. Types of the project metadata.
                 Should be a `dict` of metadata fields name as keys and metadata types as values.
                 Currently, possible types are: `string`, `number`

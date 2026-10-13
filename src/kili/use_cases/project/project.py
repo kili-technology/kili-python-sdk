@@ -27,6 +27,16 @@ from kili.use_cases.base import BaseUseCases
 
 PIXEL_LABELING_CRS_CODE = "PIXEL"
 
+# The workflows whose review coverage and honeypot are settings of each step, not of the project.
+STEP_LEVEL_SETTINGS_WORKFLOWS = {"V2": "multi-step workflow", "V3": "multi-group workflow"}
+STEP_LEVEL_SETTINGS_INSTEAD = {
+    "review_coverage": "the review coverage of a review step with"
+    " `update_review_step_properties(project_id=..., step_name=..., step_coverage=...)`",
+    "use_honeypot": "the honeypot of a step with"
+    " `update_labeling_step_properties(project_id=..., step_name=..., use_honeypot=...)`,"
+    " or `update_review_step_properties` for a review step",
+}
+
 
 def _labels_in_image_pixels(project: dict) -> bool:
     """Whether a project labels in the image's own sensor pixel grid."""
@@ -205,6 +215,10 @@ class ProjectUseCases(BaseUseCases):
         if review_coverage is not None and not 0 <= review_coverage <= 100:
             raise ValueError("Argument `review_coverage` must be comprised between 0 and 100.")
 
+        self._refuse_step_level_settings(
+            project_id, review_coverage=review_coverage, use_honeypot=use_honeypot
+        )
+
         # if should_auto_assign is True or false use it, else use seconds_to_label_before_auto_assign
         if should_auto_assign is None and seconds_to_label_before_auto_assign is not None:
             should_auto_assign = seconds_to_label_before_auto_assign is not None
@@ -261,6 +275,42 @@ class ProjectUseCases(BaseUseCases):
             fields += ("id",)
 
         return self._kili_api_gateway.update_properties_in_project(project_id, project_data, fields)
+
+    def _refuse_step_level_settings(
+        self,
+        project_id: ProjectId,
+        *,
+        review_coverage: Optional[int],
+        use_honeypot: Optional[bool],
+    ) -> None:
+        """Refuses the project's review coverage and honeypot on a project that sets them per step.
+
+        The backend stores them there and answers them back, but no step reads them: the call
+        would report a change that never happens. Refused before anything is written.
+        """
+        given = [
+            name
+            for name, value in (
+                ("review_coverage", review_coverage),
+                ("use_honeypot", use_honeypot),
+            )
+            if value is not None
+        ]
+        if not given:
+            return
+        project = self._kili_api_gateway.get_project(
+            project_id=project_id, fields=["workflowVersion"]
+        )
+        workflow = STEP_LEVEL_SETTINGS_WORKFLOWS.get(project["workflowVersion"])
+        if workflow is None:
+            return
+        raise ValueError(
+            " and ".join(f"`{name}`" for name in given)
+            + f" cannot be set on project {project_id}: it uses a {workflow}, where review"
+            " coverage and honeypot are settings of each step. Nothing was changed. Set instead "
+            + "; ".join(STEP_LEVEL_SETTINGS_INSTEAD[name] for name in given)
+            + "."
+        )
 
     def get_project_steps_and_version(
         self,
