@@ -301,19 +301,19 @@ class AssetClientMethods(BaseClientMethods):
                 Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
                 Only applicable if the project uses the legacy workflow.
             step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_name_in: Returned assets are in the step whose name belong to that list, if given.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_name_not_in: Returned assets are in the step whose name does not belong to that list, if given.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_id_in: Returned assets are in the step whose id belong to that list, if given.
@@ -328,10 +328,10 @@ class AssetClientMethods(BaseClientMethods):
                 (step_id, step_status) pairs. Exclusive with `step_name_and_status_not_in`.
                 Only applicable if the project uses the multi-step or multi-group workflow.
             step_status_in: Returned assets have the status in their step that belongs to that list, if given.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             step_status_not_in: Returned assets have the status in their step that does not belong to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .
-                Only applicable if the project uses the multi-step workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
                 Only applicable if the project uses the multi-group workflow.
             group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
@@ -659,11 +659,11 @@ class AssetClientMethods(BaseClientMethods):
             external_id_in: Returned assets should have external ids that partially match the ones in the list.
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
             step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_name_not_in: Returned assets are in a step whose name does not belong to that list, if given.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_id_in: Returned assets are in the step whose id belong to that list, if given.
@@ -679,16 +679,16 @@ class AssetClientMethods(BaseClientMethods):
                 Only applicable if the project uses the multi-step or multi-group workflow.
             step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project uses the multi-step workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             step_status_not_in: Returned assets have the status of their step that does not belong to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project uses the multi-step workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.

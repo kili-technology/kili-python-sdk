@@ -103,7 +103,7 @@ class LabelClientMethods(BaseClientMethods):
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.
@@ -111,7 +111,7 @@ class LabelClientMethods(BaseClientMethods):
                 Only applicable if the project uses the multi-step or multi-group workflow.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project uses the multi-step workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             asset_group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
                 Only applicable if the project uses the multi-group workflow.
             asset_group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
@@ -449,7 +449,7 @@ class LabelClientMethods(BaseClientMethods):
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.
@@ -457,7 +457,7 @@ class LabelClientMethods(BaseClientMethods):
                 Only applicable if the project uses the multi-step or multi-group workflow.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project uses the multi-step workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             asset_group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
                 Only applicable if the project uses the multi-group workflow.
             asset_group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
@@ -733,7 +733,7 @@ class LabelClientMethods(BaseClientMethods):
                 Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.
@@ -741,7 +741,7 @@ class LabelClientMethods(BaseClientMethods):
                 Only applicable if the project uses the multi-step or multi-group workflow.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project uses the multi-step workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -949,7 +949,7 @@ class LabelClientMethods(BaseClientMethods):
                 Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project uses the multi-step workflow.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.
@@ -957,7 +957,7 @@ class LabelClientMethods(BaseClientMethods):
                 Only applicable if the project uses the multi-step or multi-group workflow.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project uses the multi-step workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -1487,8 +1487,8 @@ class LabelClientMethods(BaseClientMethods):
                 - `inference_mark_gte`
                 - `inference_mark_lte`
                 - `metadata_where`
-                - `step_name_in`: only applicable if the project uses the multi-step workflow.
-                - `step_status_in`: only applicable if the project uses the multi-step workflow.
+                - `step_name_in`: only applicable if the project uses the multi-step or multi-group workflow.
+                - `step_status_in`: only applicable if the project uses the multi-step or multi-group workflow.
 
                 See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.
             normalized_coordinates: This parameter is only effective on the Kili (a.k.a raw) format.

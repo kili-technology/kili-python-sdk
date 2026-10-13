@@ -842,8 +842,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         """Send assets back to queue.
 
         An asset the send back does not apply to — one still to be labeled, or, in the multi-step
-        workflow, one skipped — comes back under `declined`, and one whose write failed under
-        `failed`.
+        and multi-group workflows, one skipped — comes back under `declined`, and one whose write
+        failed under `failed`.
 
         Args:
             asset_ids: List of internal IDs of assets to send back to queue.
