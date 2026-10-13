@@ -2,6 +2,7 @@
 
 import ast
 import time
+from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional, Union
 from zipfile import ZipFile
@@ -44,6 +45,8 @@ POSSIBLE_HANDLERS = {
 
 DECORATOR_NAME = "on_kili_event"
 DECORATOR_MODULES = ("kili.plugins", "kili.services.plugins.events")
+TYPING_MODULES = ("typing", "typing_extensions")
+_EXAMPLE = "def on_skip(self, event: AssetSkippedEvent)"
 
 
 def check_file_mime_type(
@@ -100,101 +103,206 @@ def check_file_contains_handler(path: Path) -> tuple[bool, Optional[list[str]], 
     return False, None, False
 
 
-class _ImportedNames:
-    """What the imports of a plugin file bind the decorator and the kili_events names to."""
+def _run_before(statements: list[ast.stmt], line: int) -> Iterator[ast.stmt]:
+    """The statements that run when the module is imported, up to `line`.
 
-    def __init__(self, module: ast.Module) -> None:
+    Those of the module and of its `if`, `try` and `with` blocks, in order — not those of a
+    function or a class, nor those under `if TYPE_CHECKING`.
+    """
+    for statement in statements:
+        if statement.lineno >= line:
+            return
+        yield statement
+        if isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            continue
+        type_checking = isinstance(statement, ast.If) and ast.unparse(statement.test) in (
+            "TYPE_CHECKING",
+            "typing.TYPE_CHECKING",
+        )
+        blocks = [] if type_checking else list(getattr(statement, "body", []))
+        blocks += getattr(statement, "orelse", []) + getattr(statement, "finalbody", [])
+        for handler in getattr(statement, "handlers", []):
+            blocks += handler.body
+        yield from _run_before(blocks, line)
+
+
+class _ImportedNames:
+    """What the plugin file binds the decorator, the kili_events names and `Union` to.
+
+    Only what is bound when the class is defined counts: the methods are decorated then, and
+    their annotations read.
+    """
+
+    def __init__(self, module: ast.Module, class_line: int) -> None:
         self.decorators: set[str] = set()
         self.events: dict[str, str] = {}
         self.event_modules: set[str] = set()
         self.star_events = False
-        for node in ast.walk(module):
+        self.unions: set[str] = set()
+        # module-level `Name = <annotation>`, followed when an annotation names it
+        self.aliases: dict[str, ast.expr] = {}
+        for node in _run_before(module.body, class_line):
             if isinstance(node, ast.ImportFrom):
-                for alias in node.names:
-                    local_name = alias.asname or alias.name
-                    if node.module in DECORATOR_MODULES and alias.name in (DECORATOR_NAME, "*"):
-                        self.decorators.add(DECORATOR_NAME if alias.name == "*" else local_name)
-                    elif node.module == "kili_events" and alias.name == "*":
-                        self.star_events = True
-                    elif node.module == "kili" and alias.name == "plugins":
-                        self.decorators.add(f"{local_name}.{DECORATOR_NAME}")
-                    elif node.module == "kili_events":
-                        self.events[local_name] = alias.name
+                self._read_import_from(node)
             elif isinstance(node, ast.Import):
-                for alias in node.names:
-                    if alias.name in DECORATOR_MODULES:
-                        self.decorators.add(f"{alias.asname or alias.name}.{DECORATOR_NAME}")
-                    elif alias.name == "kili_events":
-                        self.event_modules.add(alias.asname or alias.name)
+                self._read_import(node)
+            elif isinstance(node, ast.Assign) and len(node.targets) == 1:
+                self._read_alias(node.targets[0], node.value)
+            elif isinstance(node, ast.AnnAssign) and node.value is not None:
+                self._read_alias(node.target, node.value)
 
-    def event_name(self, argument: ast.expr) -> Optional[str]:
-        """The kili_events name an argument refers to, if it is one."""
-        if isinstance(argument, ast.Name):
-            return self.events.get(argument.id) or (argument.id if self.star_events else None)
+    def _read_alias(self, target: ast.expr, value: ast.expr) -> None:
+        if isinstance(target, ast.Name):
+            self.aliases[target.id] = value
+            self.events.pop(target.id, None)
+
+    def _read_import_from(self, node: ast.ImportFrom) -> None:
+        for alias in node.names:
+            local_name = alias.asname or alias.name
+            if node.module in DECORATOR_MODULES and alias.name in (DECORATOR_NAME, "*"):
+                self.decorators.add(DECORATOR_NAME if alias.name == "*" else local_name)
+            elif node.module == "kili_events" and alias.name == "*":
+                self.star_events = True
+            elif node.module == "kili" and alias.name == "plugins":
+                self.decorators.add(f"{local_name}.{DECORATOR_NAME}")
+            elif node.module == "kili_events":
+                self.events[local_name] = alias.name
+                self.aliases.pop(local_name, None)
+            elif node.module in TYPING_MODULES and alias.name == "Union":
+                self.unions.add(local_name)
+
+    def _read_import(self, node: ast.Import) -> None:
+        for alias in node.names:
+            local_name = alias.asname or alias.name
+            if alias.name in DECORATOR_MODULES:
+                self.decorators.add(f"{local_name}.{DECORATOR_NAME}")
+            elif alias.name == "kili_events":
+                self.event_modules.add(local_name)
+            elif alias.name in TYPING_MODULES:
+                self.unions.add(f"{local_name}.Union")
+
+    def event_names(
+        self, annotation: ast.expr, followed: frozenset[str] = frozenset()
+    ) -> list[str]:
+        """The kili_events names an annotation is made of, read without running it.
+
+        Raises:
+            ValueError: A part of the annotation is no name imported from kili_events.
+        """
+        parts = self._parts(annotation)
+        if parts is not None:
+            return [name for part in parts for name in self.event_names(part, followed)]
         if (
-            isinstance(argument, ast.Attribute)
-            and isinstance(argument.value, ast.Name)
-            and argument.value.id in self.event_modules
+            isinstance(annotation, ast.Name)
+            and annotation.id in self.aliases
+            and annotation.id not in followed
         ):
-            return argument.attr
+            return self.event_names(self.aliases[annotation.id], followed | {annotation.id})
+        name = self._event_name(annotation)
+        if name is None:
+            raise ValueError(
+                f"'{ast.unparse(annotation)}' is not a kili_events name, so the events it stands"
+                " for cannot be read from the plugin's code. Annotate the event with models or"
+                " families imported from kili_events (AssetSkippedEvent, AssetWorkflowEvent), or"
+                " a union of them (AssetWorkflowEvent | LabelWorkflowEvent)."
+            )
+        return [name]
+
+    def _parts(self, annotation: ast.expr) -> Optional[list[ast.expr]]:
+        """What a string annotation or a union is made of; None for anything else."""
+        if isinstance(annotation, ast.Constant) and isinstance(annotation.value, str):
+            return [ast.parse(annotation.value, mode="eval").body]
+        if isinstance(annotation, ast.BinOp) and isinstance(annotation.op, ast.BitOr):
+            return [annotation.left, annotation.right]
+        if isinstance(annotation, ast.Subscript) and ast.unparse(annotation.value) in self.unions:
+            members = annotation.slice
+            return list(members.elts) if isinstance(members, ast.Tuple) else [members]
+        return None
+
+    def _event_name(self, annotation: ast.expr) -> Optional[str]:
+        """The kili_events name a name or an attribute refers to, if it is one."""
+        if isinstance(annotation, ast.Name):
+            return self.events.get(annotation.id) or (annotation.id if self.star_events else None)
+        if (
+            isinstance(annotation, ast.Attribute)
+            and isinstance(annotation.value, ast.Name)
+            and annotation.value.id in self.event_modules
+        ):
+            return annotation.attr
         return None
 
 
-def _argument_patterns(argument: ast.expr, names: _ImportedNames) -> list[str]:
-    """The patterns one argument of @on_kili_event subscribes to, read without running it."""
+def _event_patterns(name: str) -> list[str]:
+    """The patterns sent for a kili_events name: a model's subject, a family's folder pattern.
+
+    A family is sent as the pattern of its folder, so the plugin also receives the events Kili
+    adds to the folder later.
+    """
     # Imported here, not at the top: kili_events loads a pydantic model per event, which only
     # a plugin upload needs — not every `import kili`.
     import kili_events  # pylint: disable=import-outside-toplevel
 
     from kili.services.plugins.events import (  # pylint: disable=import-outside-toplevel
-        event_patterns,
         plugin_receives,
     )
 
-    if isinstance(argument, ast.Constant) and isinstance(argument.value, str):
-        patterns = event_patterns(argument.value)
-        matching = kili_events.events_matching(argument.value)
-        if not matching:
-            raise ValueError(f"'{argument.value}' matches no Kili event. Is there a typo?")
-        if not any(plugin_receives(subject) for subject in matching):
-            raise ValueError(
-                f"'{argument.value}' matches only events Kili never sends to plugins (system"
-                " events, or events of no project)."
-            )
-        return list(patterns)
+    def receives_any(pattern: str) -> bool:
+        return any(plugin_receives(subject) for subject in kili_events.events_matching(pattern))
 
-    event_name = names.event_name(argument)
-    event = getattr(kili_events, event_name, None) if event_name else None
-    if event is None:
+    if name == "AnyEvent":
+        # every top-level family ('asset.*', 'label.*'…): a pattern starts with a name
+        top_level = sorted(p for p in kili_events.FAMILY_PATTERNS.values() if p.count(".") == 1)
+        return [pattern for pattern in top_level if receives_any(pattern)]
+    if name in kili_events.FAMILY_PATTERNS:
+        patterns = [kili_events.FAMILY_PATTERNS[name]]
+    else:
+        event = getattr(kili_events, name, None)
+        if not (isinstance(event, type) and issubclass(event, kili_events.KiliEvent)) or (
+            event is kili_events.KiliEvent
+        ):
+            raise ValueError(
+                f"'{name}' is not a kili_events model or family of events: annotate the event"
+                " with models (AssetSkippedEvent) or families (AssetWorkflowEvent)."
+            )
+        patterns = [event.subject()]
+    if not receives_any(patterns[0]):
         raise ValueError(
-            f"'{ast.unparse(argument)}' is not a kili_events name, so the events it stands for"
-            " cannot be read from the plugin's code. Pass a model or a family imported from"
-            " kili_events (AssetSkippedEvent, AssetWorkflowEvent), or a pattern string"
-            " ('label.workflow.*')."
+            f"Kili never sends {name} to plugins: system events, and events of no project, do"
+            " not reach them."
         )
-    # The subjects themselves are sent, so the ones plugins never receive are left out: the
-    # event matcher refuses system events.
-    subjects = [subject for subject in event_patterns(event) if plugin_receives(subject)]
-    if not subjects:
+    return patterns
+
+
+def _method_patterns(method: ast.FunctionDef, names: _ImportedNames) -> list[str]:
+    """The patterns of a method decorated with @on_kili_event, read from its annotation."""
+    positional = method.args.posonlyargs + method.args.args
+    if len(positional) != 2 or method.args.vararg or method.args.kwarg or method.args.kwonlyargs:
+        raise ValueError(f"it takes self and the event, e.g. `{_EXAMPLE}`.")
+    annotation = positional[1].annotation
+    if annotation is None:
         raise ValueError(
-            f"Kili never sends {ast.unparse(argument)} to plugins: system events, and events of"
-            " no project, do not reach them."
+            f"annotate the event parameter with the events to receive, e.g. `{_EXAMPLE}`."
         )
-    return subjects
+    return list(
+        dict.fromkeys(
+            pattern for name in names.event_names(annotation) for pattern in _event_patterns(name)
+        )
+    )
 
 
 def find_event_subscriptions(path: Path) -> dict[str, list[str]]:
-    """Return the patterns each method of PluginHandler subscribes to with @on_kili_event.
+    """Return the patterns each method of PluginHandler decorated with @on_kili_event receives.
 
-    The plugin's code is read, never run: the arguments must be kili_events names or strings.
+    The plugin's code is read, never run: the event parameter's annotation must be made of names
+    imported from kili_events.
     """
     with path.open(encoding="utf-8") as file:
         module = ast.parse(file.read())
-    names = _ImportedNames(module)
     subscriptions: dict[str, list[str]] = {}
     for node in module.body:
         if not (isinstance(node, ast.ClassDef) and node.name == "PluginHandler"):
             continue
+        names = _ImportedNames(module, node.lineno)
         for method in node.body:
             if not isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 continue
@@ -202,25 +310,22 @@ def find_event_subscriptions(path: Path) -> dict[str, list[str]]:
                 target = decorator.func if isinstance(decorator, ast.Call) else decorator
                 if ast.unparse(target) not in names.decorators:
                     continue
+                if isinstance(decorator, ast.Call):
+                    raise ValueError(
+                        f"PluginHandler.{method.name}: @{DECORATOR_NAME} takes no arguments:"
+                        " annotate the event parameter with the events to receive, e.g."
+                        f" `{_EXAMPLE}`."
+                    )
                 if isinstance(method, ast.AsyncFunctionDef):
                     raise ValueError(
                         f"PluginHandler.{method.name}: @{DECORATOR_NAME} decorates plain methods,"
                         " and this one is async: a plugin would never await it."
                     )
-                if not isinstance(decorator, ast.Call) or not decorator.args:
-                    raise ValueError(
-                        f"PluginHandler.{method.name}: @{DECORATOR_NAME} needs the events to"
-                        f" receive, e.g. @{DECORATOR_NAME}(AssetSkippedEvent)."
-                    )
                 try:
-                    patterns = [
-                        pattern
-                        for argument in decorator.args
-                        for pattern in _argument_patterns(argument, names)
-                    ]
-                except (TypeError, ValueError) as error:
+                    patterns = _method_patterns(method, names)
+                except (SyntaxError, ValueError) as error:
                     raise ValueError(f"PluginHandler.{method.name}: {error}") from error
-                subscriptions.setdefault(method.name, []).extend(patterns)
+                subscriptions[method.name] = patterns
         bases = [ast.unparse(base) for base in node.bases]
         if subscriptions and any(base.split(".")[-1] != "PluginCore" for base in bases):
             get_logger().warning(
@@ -357,8 +462,8 @@ class PluginUploader:
                 )
             if self.event_matcher:
                 raise ValueError(
-                    "The events come from the @on_kili_event decorators: upload without"
-                    " event_matcher."
+                    "The events come from the annotations of the @on_kili_event methods:"
+                    " upload without event_matcher."
                 )
             self.event_matcher = sorted(
                 {pattern for patterns in subscriptions.values() for pattern in patterns}

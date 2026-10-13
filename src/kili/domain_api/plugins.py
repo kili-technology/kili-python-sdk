@@ -480,7 +480,7 @@ class PluginsNamespace(DomainNamespace):
             plugin_name: Name of your plugin, if not provided, it will be the name from your file
             event_pattern: A single `event_matcher`.
             event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
-                using `@on_kili_event` leaves it out: its events come from the decorators.
+                using `@on_kili_event` leaves it out: its events come from the annotations.
             verbose: If false, minimal logs are displayed
 
         Returns:
@@ -524,7 +524,7 @@ class PluginsNamespace(DomainNamespace):
             plugin_name: Name of the plugin to update
             event_pattern: A single `event_matcher`.
             event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
-                using `@on_kili_event` leaves it out: its events come from the decorators.
+                using `@on_kili_event` leaves it out: its events come from the annotations.
             verbose: If false, minimal logs are displayed
 
         Returns:

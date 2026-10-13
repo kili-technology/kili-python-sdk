@@ -67,12 +67,12 @@ class PluginHandler(PluginCore):
 
 ## Receiving Kili events
 
-Instead of `on_submit` and `on_review`, a plugin can receive any Kili event:
-decorate a method of `PluginHandler` with `on_kili_event`, and it is called with each event it subscribes to, parsed into its
-[`kili_events`](https://pypi.org/project/kili-events/) model — typed fields, completion in your IDE.
+Instead of `on_submit` and `on_review`, a plugin can receive any Kili event: decorate a method of `PluginHandler` with
+`on_kili_event`, and annotate its event parameter with the events to receive. The method is called with each of them,
+parsed into its [`kili_events`](https://pypi.org/project/kili-events/) model — typed fields, completion in your IDE.
 
 ```python
-from kili_events import AssetSkippedEvent, AssetWorkflowEvent
+from kili_events import AssetSkippedEvent, AssetWorkflowEvent, LabelWorkflowEvent
 
 from kili.plugins import PluginCore, on_kili_event
 
@@ -80,26 +80,28 @@ from kili.plugins import PluginCore, on_kili_event
 class PluginHandler(PluginCore):
     """Custom plugin"""
 
-    @on_kili_event(AssetSkippedEvent)
+    @on_kili_event
     def on_skip(self, event: AssetSkippedEvent) -> None:
         self.logger.info(f"Asset {event.payload.asset_id} skipped by {event.user_id}")
 
-    @on_kili_event(AssetWorkflowEvent, "label.workflow.*")
-    def on_workflow(self, event) -> None:
+    @on_kili_event
+    def on_workflow(self, event: AssetWorkflowEvent | LabelWorkflowEvent) -> None:
         self.logger.info(f"Received {event.event} on project {event.project_id}")
 ```
 
-`on_kili_event` takes any mix of:
+The annotation is the subscription, and is one of:
 
-| Argument | Receives | Example |
+| Annotation | Receives | Example |
 | --- | --- | --- |
 | an event model | that event | `AssetSkippedEvent` |
-| a family of events | every event of the family | `AssetWorkflowEvent`: every `asset.workflow.…` event |
-| a pattern | every event it matches: `*` stands for one or more names | `"label.workflow.*"`, `"project.workflow.bulkAction.*"` |
+| a family of events | every event of the family, including those Kili adds to it later | `AssetWorkflowEvent`: every `asset.workflow.…` event |
+| a union of them | every event of each | `Union[AssetSkippedEvent, LabelWorkflowEvent]`, as in `on_workflow` above |
 
-A method receives an event once, even when several of its arguments match it. Every method matching an event receives it,
-in the alphabetical order of their names; an exception in one stops the others.
-Upload the plugin without `event_matcher`: the events it receives are read from the decorators.
+`AnyEvent` receives every event. Events that share no family, such as every `….started` event, are received with a union
+of their models or families. `on_kili_event` takes no arguments.
+
+Every method whose annotation matches an event receives it, in the alphabetical order of their names; an exception in
+one stops the others. Upload the plugin without `event_matcher`: the events it receives are read from the annotations.
 
 ```python
 kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin")
@@ -108,23 +110,27 @@ kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin")
 The upload reads your code without running it, so:
 
 - the decorated methods are those of the `PluginHandler` class of the plugin file (of `main.py` for a folder) — not the
-  ones it inherits — and plain methods, not `async` ones;
-- the arguments are names imported from `kili_events`, or strings — a name the upload cannot trace to `kili_events`, or a
-  pattern that matches no event (`"label.wokflow.*"`), stops the upload with the reason;
-- Kili never sends plugins its system events, nor the events of no project (`assetStorage.integration.…`): a family
-  is sent without them, and a model or a pattern with nothing else stops the upload;
+  ones it inherits — and plain methods taking `self` and the event, not `async` ones;
+- the annotation is made of names imported from `kili_events`, or a module-level alias of them — anything else stops
+  the upload with the reason;
+- Kili never sends plugins its system events, nor the events of no project (`assetStorage.integration.…`): an
+  annotation made only of those stops the upload;
 - a plugin receives events either with `on_kili_event` or with `on_submit`, `on_review`, `on_custom_interface_click` and
   `on_send_back_to_queue`, not both.
 
-An event the plugin's version of `kili_events` does not know yet (Kili added it after you installed the package) is logged
-and skipped. The event carries its subject (`event.event`), `organization_id`, `project_id`, `user_id` and `payload`, as its
-model declares them — no event id or timestamp.
+A family is uploaded as the pattern of its folder (`asset.workflow.*`), so an event Kili adds to it later reaches the
+plugin without a new upload: the method receives it once the plugin runs with a version of `kili_events` that knows it.
+Until then, like any event the plugin's version of `kili_events` does not know yet, it is logged and skipped.
+
+The event carries its subject (`event.event`), `organization_id`, `project_id`, `user_id` and `payload`, as its model
+declares them — no event id or timestamp.
 
 ### Migrating from `on_event`
 
 Overriding `on_event` with an `event_matcher` still works, but is deprecated in favour of `on_kili_event`. **`on_event` now
 receives the whole event**: the fields it received before are under `payload["payload"]`, beside `event`,
-`organizationId`, `projectId` and `userId`.
+`organizationId`, `projectId` and `userId`. Its `event_matcher` takes subjects and patterns, where `*` stands for one or
+more names (`label.workflow.*`, `asset.*.started`).
 
 Before:
 
@@ -141,7 +147,7 @@ After, with `on_kili_event`:
 
 ```python
 class PluginHandler(PluginCore):
-    @on_kili_event(AssetSkippedEvent)
+    @on_kili_event
     def on_skip(self, event: AssetSkippedEvent) -> None:
         self.logger.info(f"Asset {event.payload.asset_id} skipped")
 

@@ -3,7 +3,7 @@
 import logging
 from typing import Optional
 
-from kili_events import UnknownEventError, matches_subject, parse_event
+from kili_events import UnknownEventError, parse_event
 
 from kili.client import Kili
 from kili.services.plugins.events import subscribed_methods
@@ -24,8 +24,8 @@ class PluginCore:
         on_custom_interface_click(self, label: Dict, asset_id: str)
         on_send_back_to_queue(self, asset_id: str)
 
-    or methods decorated with `@on_kili_event`, which receive the Kili events they
-    subscribe to as kili_events models.
+    or methods decorated with `@on_kili_event`, which receive the Kili events their
+    parameter's annotation names, as kili_events models.
 
     !!! warning
         if using a custom init, be sure to call super().__init__()
@@ -168,32 +168,28 @@ class PluginCore:
     ) -> None:
         """Receives every event of the plugin, and calls the methods subscribed to it.
 
-        The event is parsed into its kili_events model, then passed to each method whose
-        `@on_kili_event` matches it. Decorate methods rather than overriding this one.
+        The event is parsed into its kili_events model, then passed to each method decorated
+        with `@on_kili_event` whose annotation it is an instance of. Decorate methods rather than
+        overriding this one.
 
         Args:
             payload: The event as Kili sends it: `event` (its subject, e.g. `asset.skipped`),
                 `organizationId`, `projectId`, `userId` and `payload`, for the fields the
                 event declares.
         """
-        subject = payload.get("event")
-        subscriptions = subscribed_methods(type(self))
-        handlers = [
-            name
-            for name, patterns in subscriptions.items()
-            if isinstance(subject, str) and any(matches_subject(p, subject) for p in patterns)
-        ]
-        if not handlers:
-            self.logger.warning(
-                f"No method of the plugin subscribes to the event '{subject}' "
-                f"(subscriptions: {subscriptions or 'none'})."
-            )
-            return
-
         try:
             event = parse_event(payload)
         except UnknownEventError as error:
             self.logger.warning(f"{error} The event is ignored.")
+            return
+
+        subscriptions = subscribed_methods(type(self))
+        handlers = [name for name, models in subscriptions.items() if isinstance(event, models)]
+        if not handlers:
+            self.logger.warning(
+                f"No method of the plugin receives the event '{event.event}' (methods decorated"
+                f" with @on_kili_event: {', '.join(subscriptions) or 'none'})."
+            )
             return
 
         for name in handlers:

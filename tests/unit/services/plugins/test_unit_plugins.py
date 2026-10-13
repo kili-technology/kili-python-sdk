@@ -285,7 +285,7 @@ def _plugin_file(tmp_path, source):
 
 
 SUBSCRIBED_PLUGIN = """
-    from kili_events import AssetSkippedEvent, AssetIssueEvent
+    from kili_events import AssetIssueEvent, AssetSkippedEvent, LabelWorkflowEvent
 
     from kili.plugins import PluginCore, on_kili_event
 
@@ -295,12 +295,12 @@ SUBSCRIBED_PLUGIN = """
 
 
     class PluginHandler(PluginCore):
-        @on_kili_event(AssetSkippedEvent)
-        def on_skip(self, event):
+        @on_kili_event
+        def on_skip(self, event: AssetSkippedEvent) -> None:
             pass
 
-        @on_kili_event(AssetIssueEvent, "label.workflow.*")
-        def on_issue_or_label(self, event):
+        @on_kili_event
+        def on_issue_or_label(self, event: AssetIssueEvent | LabelWorkflowEvent) -> None:
             pass
 
         def not_subscribed(self):
@@ -308,37 +308,48 @@ SUBSCRIBED_PLUGIN = """
 """
 
 
-def test_find_event_subscriptions_reads_models_families_and_patterns(tmp_path):
+def test_find_event_subscriptions_reads_the_annotations_a_model_as_its_subject_a_family_as_its_pattern(
+    tmp_path,
+):
     plugin_path = _plugin_file(tmp_path, SUBSCRIBED_PLUGIN)
 
     assert find_event_subscriptions(plugin_path) == {
         "on_skip": ["asset.skipped"],
-        "on_issue_or_label": [
-            "asset.issue.cancelled",
-            "asset.issue.created",
-            "asset.issue.resolved",
-            "label.workflow.*",
-        ],
+        "on_issue_or_label": ["asset.issue.*", "label.workflow.*"],
     }
 
 
-def test_find_event_subscriptions_follows_import_aliases(tmp_path):
+def test_find_event_subscriptions_follows_import_aliases_and_every_way_to_write_a_union(tmp_path):
     plugin_path = _plugin_file(
         tmp_path,
         """
+        from __future__ import annotations
+
+        import typing
         import kili_events as ke
-        from kili_events import AssetSkippedEvent as Skipped
+        from typing import Union as U
+        from kili_events import AssetSkippedEvent as Skipped, AssetUnskippedEvent
         from kili import plugins
         from kili.plugins import PluginCore, on_kili_event as subscribe
 
+        SkipEvents = U[Skipped, AssetUnskippedEvent]
+
 
         class PluginHandler(PluginCore):
-            @subscribe(Skipped)
-            def on_skip(self, event):
+            @subscribe
+            def on_skip(self, event: Skipped):
                 pass
 
-            @plugins.on_kili_event(ke.AssetUnskippedEvent)
-            def on_unskip(self, event):
+            @plugins.on_kili_event
+            def on_unskip(self, event: ke.AssetUnskippedEvent):
+                pass
+
+            @subscribe
+            def on_either(self, event: typing.Union[Skipped, "ke.LabelWorkflowEvent"]):
+                pass
+
+            @subscribe
+            def on_alias(self, event: SkipEvents):
                 pass
         """,
     )
@@ -346,31 +357,114 @@ def test_find_event_subscriptions_follows_import_aliases(tmp_path):
     assert find_event_subscriptions(plugin_path) == {
         "on_skip": ["asset.skipped"],
         "on_unskip": ["asset.unskipped"],
+        "on_either": ["asset.skipped", "label.workflow.*"],
+        "on_alias": ["asset.skipped", "asset.unskipped"],
     }
 
 
+def test_find_event_subscriptions_sends_any_event_as_the_top_level_families(tmp_path):
+    plugin_path = _plugin_file(
+        tmp_path,
+        """
+        from kili_events import AnyEvent
+        from kili.plugins import PluginCore, on_kili_event
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event
+            def on_anything(self, event: AnyEvent):
+                pass
+        """,
+    )
+
+    patterns = find_event_subscriptions(plugin_path)["on_anything"]
+
+    assert {"asset.*", "label.*", "project.*"} <= set(patterns)
+    assert all(pattern.count(".") == 1 and pattern.endswith(".*") for pattern in patterns)
+
+
 @pytest.mark.parametrize(
-    ("arguments", "message"),
+    ("decorator", "signature", "message"),
     [
-        ('"label.wokflow.*"', "'label.wokflow.\\*' matches no Kili event"),
-        ('"asset.>"', "Invalid event pattern 'asset.>'"),
-        ("MY_EVENTS", "'MY_EVENTS' is not a kili_events name"),
-        ("", "needs the events to receive"),
+        (
+            "@on_kili_event(AssetSkippedEvent)",
+            "def on_something(self, event: AssetSkippedEvent):",
+            "takes no arguments",
+        ),
+        (
+            '@on_kili_event("asset.*")',
+            "def on_something(self, event: AssetSkippedEvent):",
+            "takes no arguments",
+        ),
+        (
+            "@on_kili_event()",
+            "def on_something(self, event: AssetSkippedEvent):",
+            "takes no arguments",
+        ),
+        ("@on_kili_event", "def on_something(self, event):", "annotate the event parameter"),
+        (
+            "@on_kili_event",
+            "def on_something(self, event: dict):",
+            "'dict' is not a kili_events name",
+        ),
+        (
+            "@on_kili_event",
+            "def on_something(self, event: MY_EVENTS):",
+            "is not a kili_events name",
+        ),
+        (
+            "@on_kili_event",
+            "def on_something(self, event: Optional[AssetSkippedEvent]):",
+            "is not a kili_events name",
+        ),
+        (
+            "@on_kili_event",
+            "def on_something(self, event: KiliEvent):",
+            "'KiliEvent' is not a kili_events model",
+        ),
+        ("@on_kili_event", "def on_something(self):", "takes self and the event"),
+        (
+            "@on_kili_event",
+            "def on_something(self, event: AssetSkippedEvent, other):",
+            "takes self and the event",
+        ),
+        (
+            "@on_kili_event",
+            "async def on_something(self, event: AssetSkippedEvent):",
+            "async",
+        ),
     ],
-    ids=["typo", "malformed", "unresolvable", "empty"],
+    ids=[
+        "a model argument",
+        "a pattern argument",
+        "parentheses",
+        "no annotation",
+        "not from kili_events",
+        "a module constant",
+        "Optional",
+        "KiliEvent",
+        "no event parameter",
+        "two parameters",
+        "async",
+    ],
 )
-def test_find_event_subscriptions_rejects_what_cannot_fire(tmp_path, arguments, message):
+def test_find_event_subscriptions_refuses_what_cannot_be_read_or_fire(
+    tmp_path, decorator, signature, message
+):
     plugin_path = _plugin_file(
         tmp_path,
         f"""
+        from typing import Optional
+
+        from kili_events import AssetSkippedEvent, KiliEvent
         from kili.plugins import PluginCore, on_kili_event
 
         MY_EVENTS = ["asset.skipped"]
 
 
         class PluginHandler(PluginCore):
-            @on_kili_event({arguments})
-            def on_something(self, event):
+            {decorator}
+            {signature}
                 pass
         """,
     )
@@ -379,7 +473,35 @@ def test_find_event_subscriptions_rejects_what_cannot_fire(tmp_path, arguments, 
         find_event_subscriptions(plugin_path)
 
 
-def test_upload_sends_the_patterns_of_the_decorators_as_event_matcher(kili, tmp_path):
+@pytest.mark.parametrize(
+    "annotation",
+    [
+        "AssetAnalyticsLabelMetricEvent",
+        "AssetStorageIntegrationEvent",
+        "LabelAnalyticsMetricsSaveStartedEvent",
+    ],
+    ids=["a family of system events", "a family of events of no project", "a system event"],
+)
+def test_find_event_subscriptions_refuses_events_plugins_never_receive(tmp_path, annotation):
+    plugin_path = _plugin_file(
+        tmp_path,
+        f"""
+        from kili_events import *
+        from kili.plugins import PluginCore, on_kili_event
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event
+            def on_something(self, event: {annotation}):
+                pass
+        """,
+    )
+
+    with pytest.raises(ValueError, match=f"Kili never sends {annotation} to plugins"):
+        find_event_subscriptions(plugin_path)
+
+
+def test_upload_sends_the_patterns_of_the_annotations_as_event_matcher(kili, tmp_path):
     uploader = _uploader(kili, _plugin_file(tmp_path, SUBSCRIBED_PLUGIN))
 
     uploader._retrieve_plugin_src()
@@ -389,13 +511,7 @@ def test_upload_sends_the_patterns_of_the_decorators_as_event_matcher(kili, tmp_
     assert kili.graphql_client.execute.call_args.args[1] == {
         "pluginName": PLUGIN_NAME,
         "handlerTypes": None,
-        "eventMatcher": [
-            "asset.issue.cancelled",
-            "asset.issue.created",
-            "asset.issue.resolved",
-            "asset.skipped",
-            "label.workflow.*",
-        ],
+        "eventMatcher": ["asset.issue.*", "asset.skipped", "label.workflow.*"],
     }
 
 
@@ -448,78 +564,6 @@ def test_upload_of_an_on_event_plugin_warns_it_is_deprecated(kili, caplog):
     assert "Overriding on_event is deprecated" in caplog.text
 
 
-def test_upload_leaves_out_the_events_of_a_family_plugins_never_receive(kili, tmp_path):
-    uploader = _uploader(
-        kili,
-        _plugin_file(
-            tmp_path,
-            """
-            from kili_events import AssetEvent
-
-            from kili.plugins import PluginCore, on_kili_event
-
-
-            class PluginHandler(PluginCore):
-                @on_kili_event(AssetEvent)
-                def on_asset(self, event):
-                    pass
-            """,
-        ),
-    )
-
-    uploader._retrieve_plugin_src()
-
-    assert uploader.event_matcher is not None
-    assert "asset.skipped" in uploader.event_matcher
-    assert not [s for s in uploader.event_matcher if s.startswith("asset.analytics.labelMetric.")]
-    assert len(uploader.event_matcher) == 22
-
-
-@pytest.mark.parametrize(
-    "arguments",
-    ["AssetAnalyticsLabelMetricEvent", "AssetStorageIntegrationEvent", '"asset.*.started"'],
-    ids=["system events", "events of no project", "pattern of system events"],
-)
-def test_find_event_subscriptions_rejects_events_plugins_never_receive(tmp_path, arguments):
-    plugin_path = _plugin_file(
-        tmp_path,
-        f"""
-        from kili_events import AssetAnalyticsLabelMetricEvent, AssetStorageIntegrationEvent
-
-        from kili.plugins import PluginCore, on_kili_event
-
-
-        class PluginHandler(PluginCore):
-            @on_kili_event({arguments})
-            def on_something(self, event):
-                pass
-        """,
-    )
-
-    with pytest.raises(ValueError, match="never sends"):
-        find_event_subscriptions(plugin_path)
-
-
-def test_find_event_subscriptions_rejects_an_async_method(tmp_path):
-    plugin_path = _plugin_file(
-        tmp_path,
-        """
-        from kili_events import AssetSkippedEvent
-
-        from kili.plugins import PluginCore, on_kili_event
-
-
-        class PluginHandler(PluginCore):
-            @on_kili_event(AssetSkippedEvent)
-            async def on_skip(self, event):
-                pass
-        """,
-    )
-
-    with pytest.raises(ValueError, match="PluginHandler.on_skip: .* async"):
-        find_event_subscriptions(plugin_path)
-
-
 def test_find_event_subscriptions_follows_star_imports(tmp_path):
     plugin_path = _plugin_file(
         tmp_path,
@@ -529,8 +573,8 @@ def test_find_event_subscriptions_follows_star_imports(tmp_path):
 
 
         class PluginHandler(PluginCore):
-            @on_kili_event(AssetSkippedEvent)
-            def on_skip(self, event):
+            @on_kili_event
+            def on_skip(self, event: AssetSkippedEvent):
                 pass
         """,
     )
@@ -549,8 +593,8 @@ def test_find_event_subscriptions_warns_of_inherited_handlers(tmp_path, caplog):
 
 
         class PluginHandler(MyBase):
-            @on_kili_event(AssetSkippedEvent)
-            def on_skip(self, event):
+            @on_kili_event
+            def on_skip(self, event: AssetSkippedEvent):
                 pass
         """,
     )
@@ -570,3 +614,73 @@ def test_upload_refuses_a_plugin_without_handler(kili):
 
     with pytest.raises(ValueError, match="PluginHandler has no handler"):
         _uploader(kili, plugin_path)._retrieve_plugin_src()
+
+
+@pytest.mark.parametrize(
+    ("before", "after"),
+    [
+        ("", "E = AssetSkippedEvent"),
+        ("if TYPE_CHECKING:\n            E = AssetSkippedEvent", ""),
+        ("def helper():\n            E = AssetSkippedEvent", ""),
+    ],
+    ids=["an alias bound after the class", "under TYPE_CHECKING", "in a function"],
+)
+def test_find_event_subscriptions_reads_only_what_is_bound_when_the_class_is_defined(
+    tmp_path, before, after
+):
+    # the methods are decorated when the class is defined: a name bound later, or never at
+    # runtime, fails to resolve then
+    plugin_path = _plugin_file(
+        tmp_path,
+        f"""
+        from __future__ import annotations
+
+        from typing import TYPE_CHECKING
+
+        from kili_events import AssetSkippedEvent
+        from kili.plugins import PluginCore, on_kili_event
+
+        {before}
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event
+            def on_something(self, event: E):
+                pass
+
+        {after}
+        """,
+    )
+
+    with pytest.raises(ValueError, match="'E' is not a kili_events name"):
+        find_event_subscriptions(plugin_path)
+
+
+def test_find_event_subscriptions_reads_imports_in_try_blocks_and_annotated_aliases(tmp_path):
+    plugin_path = _plugin_file(
+        tmp_path,
+        """
+        from typing import Union
+
+        from typing_extensions import TypeAlias
+
+        try:
+            from kili_events import AssetSkippedEvent, AssetUnskippedEvent
+        except ImportError:
+            raise
+
+        from kili.plugins import PluginCore, on_kili_event
+
+        SkipEvents: TypeAlias = Union[AssetSkippedEvent, AssetUnskippedEvent]
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event
+            def on_something(self, event: SkipEvents):
+                pass
+        """,
+    )
+
+    assert find_event_subscriptions(plugin_path) == {
+        "on_something": ["asset.skipped", "asset.unskipped"]
+    }

@@ -278,9 +278,9 @@ kili.get_plugin_logs(project_id=project_id, plugin_name=plugin_name, start_date=
 
 ## Receiving Kili events
 
-Beyond `on_submit` and `on_review`, a plugin can receive any Kili event: decorate a method with `on_kili_event`, and it is called with each event it subscribes to, parsed into its [`kili_events`](https://pypi.org/project/kili-events/) model.
+Beyond `on_submit` and `on_review`, a plugin can receive any Kili event: decorate a method with `on_kili_event` and annotate its event parameter with the events to receive. It is called with each of them, parsed into its [`kili_events`](https://pypi.org/project/kili-events/) model.
 
-`on_kili_event` takes event models (`AssetSkippedEvent`), families of events (`AssetWorkflowEvent`: every `asset.workflow.…` event) and patterns, where `*` stands for one or more names (`"label.workflow.*"`).
+The annotation is an event model (`AssetSkippedEvent`), a family of events (`LabelWorkflowEvent`: every `label.workflow.…` event), or a union of them (`AssetSkippedEvent | LabelWorkflowEvent`).
 
 This cell should be the contents of the `.py` file of the plugin:
 
@@ -294,20 +294,20 @@ from kili.plugins import PluginCore, on_kili_event
 class PluginHandler(PluginCore):
     """Plugin receiving Kili events"""
 
-    @on_kili_event(AssetSkippedEvent)
+    @on_kili_event
     def on_skip(self, event: AssetSkippedEvent) -> None:
         """Called with every asset skipped in the project"""
         self.logger.info(f"Asset {event.payload.asset_id} skipped by user {event.user_id}")
 
-    @on_kili_event(LabelWorkflowEvent)
-    def on_label_workflow(self, event) -> None:
+    @on_kili_event
+    def on_label_workflow(self, event: LabelWorkflowEvent) -> None:
         """Called with every label.workflow.… event"""
         self.logger.info(f"{event.event} on asset {event.payload.asset_id}")
 ```
 
 ### Testing an event handler locally
 
-Kili calls `on_event` with the event, and `on_event` calls the methods subscribed to it. To test the plugin, call it with an event as Kili sends it:
+Kili calls `on_event` with the event, and `on_event` calls the methods whose annotation the event matches. To test the plugin, call it with an event as Kili sends it:
 
 
 ```python
@@ -326,7 +326,7 @@ my_event_plugin.on_event(
 
 ### Uploading it
 
-The events the plugin receives are read from its decorators, so it is uploaded without `event_matcher`:
+The events the plugin receives are read from the annotations of its decorated methods, so it is uploaded without `event_matcher`:
 
 
 ```python
