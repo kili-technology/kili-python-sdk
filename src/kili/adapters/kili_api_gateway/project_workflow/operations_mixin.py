@@ -77,7 +77,8 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
 
         if len(steps) == 0:
             raise NotFound(
-                f"project ID: {project_id}. The workflow v2 is not activated on this project."
+                f"project ID: {project_id}. The project uses the legacy workflow, which has no"
+                " steps."
             )
 
         return steps
@@ -112,7 +113,8 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
 
         if len(steps) == 0:
             raise NotFound(
-                f"project ID: {project_id}. The workflow v2 is not activated on this project."
+                f"project ID: {project_id}. The project uses the legacy workflow, which has no"
+                " steps."
             )
 
         return project[0]
@@ -194,7 +196,7 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         """Add labelers to a specific labeling step of a workflow V3 project."""
         context = self.get_project_workflow_context(project_id)
         if context.get("workflowVersion") != "V3":
-            raise ValueError("Assigning labelers to a step requires a workflow V3 project")
+            raise ValueError("Assigning labelers to a step requires the multi-group workflow")
         target_step = resolve_step(context, step_id, step_name, group_name)
         if target_step.get("type") != "DEFAULT":
             raise ValueError(
@@ -220,7 +222,7 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         """Remove labelers from a specific labeling step of a workflow V3 project."""
         context = self.get_project_workflow_context(project_id, include_assignee_emails=True)
         if context.get("workflowVersion") != "V3":
-            raise ValueError("Assigning labelers to a step requires a workflow V3 project")
+            raise ValueError("Assigning labelers to a step requires the multi-group workflow")
         target_step = resolve_step(context, step_id, step_name, group_name)
         if target_step.get("type") != "DEFAULT":
             raise ValueError(

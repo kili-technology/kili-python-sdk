@@ -88,8 +88,8 @@ class LabelsNamespace(DomainNamespace):
     It also provides nested namespaces for specialized operations on predictions,
     inferences, honeypots, and events.
 
-    On a workflow V3 project, the jobs a step group allows are enforced by the labeling app only:
-    labels created through the SDK are not checked against them.
+    In the multi-group workflow, the jobs a step group allows are enforced by the labeling app
+    only: labels created through the SDK are not checked against them.
     """
 
     def __init__(self, client: "KiliLegacy", gateway) -> None:
@@ -405,7 +405,8 @@ class LabelsNamespace(DomainNamespace):
                 The label_type must match accordingly. Exclusive with `step_id`.
             step_id: Id of the step to which the labels belong.
                 Exclusive with `step_name` and `group_name`.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
 
         Returns:
@@ -521,7 +522,8 @@ class LabelsNamespace(DomainNamespace):
                 Exclusive with `step_id`.
             step_id: Id of the labeling step to which the labels belong.
                 Exclusive with `step_name` and `group_name`.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
 
         Returns:
@@ -642,7 +644,8 @@ class LabelsNamespace(DomainNamespace):
             step_name: Name of the step to which the labels belong. Exclusive with `step_id`.
             step_id: Id of the step to which the labels belong.
                 Exclusive with `step_name` and `group_name`.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
 
         Returns:
@@ -844,7 +847,8 @@ class LabelsNamespace(DomainNamespace):
             step_name: Name of the step to which the labels belong. Exclusive with `step_id`.
             step_id: Id of the step to which the labels belong.
                 Exclusive with `step_name` and `group_name`.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             model_name: Name of the model that generated the labels.
         """
@@ -888,7 +892,8 @@ class LabelsNamespace(DomainNamespace):
             step_name: Name of the step to which the labels belong. Exclusive with `step_id`.
             step_id: Id of the step to which the labels belong.
                 Exclusive with `step_name` and `group_name`.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
         """
         return self.__create_from_geojson(
@@ -1008,7 +1013,8 @@ class LabelsNamespace(DomainNamespace):
             step_name: Name of the step to which the labels belong. Exclusive with `step_id`.
             step_id: Id of the step to which the labels belong.
                 Exclusive with `step_name` and `group_name`.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             model_name: Name of the model that generated the labels.
         """
@@ -1056,7 +1062,8 @@ class LabelsNamespace(DomainNamespace):
             step_name: Name of the step to which the labels belong. Exclusive with `step_id`.
             step_id: Id of the step to which the labels belong.
                 Exclusive with `step_name` and `group_name`.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
         """
         return self.__create_from_shapefile(

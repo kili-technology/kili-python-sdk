@@ -333,8 +333,8 @@ class ProjectWorkflowUseCases(BaseUseCases):
         version = project.get("workflowVersion")
         if version != "V2":
             raise ValueError(
-                f"Destination project {destination_project_id} uses workflow version"
-                f" '{version}'. Only workflow V2 projects support multi-step workflows."
+                f"Destination project {destination_project_id} does not use the multi-step"
+                " workflow, the only one a workflow can be copied to."
             )
 
     def _validate_destination_has_no_labels(self, destination_project_id: ProjectId) -> None:

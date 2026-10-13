@@ -161,7 +161,7 @@ class TestCopyWorkflowFromProject:
             {"workflowVersion": "V1"},  # destination V2 validation
         ]
 
-        with pytest.raises(ValueError, match="workflow version"):
+        with pytest.raises(ValueError, match="does not use the multi-step workflow"):
             use_cases.copy_workflow_from_project(
                 source_project_id=source_id,
                 destination_project_id=dest_id,

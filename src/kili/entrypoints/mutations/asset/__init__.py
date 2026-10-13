@@ -396,8 +396,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
                     to each frame of the video.
             status_array: DEPRECATED and does not have any effect.
             is_used_for_consensus_array: Whether to use the asset to compute consensus kpis or not.
-                Only supported on legacy workflow V1 projects; on workflow V2/V3 projects it raises
-                `DeprecatedArgumentError`, use `kili.update_asset_consensus()` instead.
+                Only supported in the legacy workflow; in the multi-step and multi-group workflows it
+                raises `DeprecatedArgumentError`, use `kili.update_asset_consensus()` instead.
             is_honeypot_array: Whether to use the asset for honeypot.
             project_id: The project ID. Only required if `external_ids` argument is provided.
             resolution_array: The resolution of each asset (for image and video assets).
@@ -412,8 +412,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
             A list of dictionaries with the asset ids.
 
         Raises:
-            DeprecatedArgumentError: If `is_used_for_consensus_array` is used on a multi-review
-                project. Use `kili.update_asset_consensus()` for those projects.
+            DeprecatedArgumentError: If `is_used_for_consensus_array` is used on a multi-step or
+                multi-group workflow project. Use `kili.update_asset_consensus()` for those
+                projects.
             MissingArgumentError: If both `asset_ids` and `external_ids` are provided, or if
                 neither of them is.
             GraphQLError: If the backend refuses the update for any other reason.
@@ -840,8 +841,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     ) -> AssetActionOutcome:
         """Send assets back to queue.
 
-        An asset the send back does not apply to — one still to be labeled, or, on Workflow V2,
-        one skipped — is reported under `declined` rather than silently left out.
+        An asset the send back does not apply to — one still to be labeled, or, in the multi-step
+        workflow, one skipped — comes back under `declined`, and one whose write failed under
+        `failed`.
 
         Args:
             asset_ids: List of internal IDs of assets to send back to queue.
