@@ -4,6 +4,7 @@ import logging
 from typing import Optional
 
 from kili_events import UnknownEventError, parse_event
+from pydantic import ValidationError
 
 from kili.client import Kili
 from kili.services.plugins.events import subscribed_methods
@@ -181,6 +182,12 @@ class PluginCore:
             event = parse_event(payload)
         except UnknownEventError as error:
             self.logger.warning(f"{error} The event is ignored.")
+            return
+        except ValidationError as error:
+            self.logger.error(
+                f"The event '{payload.get('event')}' does not match its kili_events model, so no"
+                f" method receives it: {error}"
+            )
             return
 
         subscriptions = subscribed_methods(type(self))

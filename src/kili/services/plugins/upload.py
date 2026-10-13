@@ -103,6 +103,14 @@ def check_file_contains_handler(path: Path) -> tuple[bool, Optional[list[str]], 
     return False, None, False
 
 
+def _is_type_checking(statement: ast.stmt) -> bool:
+    """Whether the statement is an `if TYPE_CHECKING:`, whose body never runs."""
+    return isinstance(statement, ast.If) and ast.unparse(statement.test) in (
+        "TYPE_CHECKING",
+        "typing.TYPE_CHECKING",
+    )
+
+
 def _run_before(statements: list[ast.stmt], line: int) -> Iterator[ast.stmt]:
     """The statements that run when the module is imported, up to `line`.
 
@@ -115,15 +123,16 @@ def _run_before(statements: list[ast.stmt], line: int) -> Iterator[ast.stmt]:
         yield statement
         if isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             continue
-        type_checking = isinstance(statement, ast.If) and ast.unparse(statement.test) in (
-            "TYPE_CHECKING",
-            "typing.TYPE_CHECKING",
-        )
-        blocks = [] if type_checking else list(getattr(statement, "body", []))
+        blocks = [] if _is_type_checking(statement) else list(getattr(statement, "body", []))
         blocks += getattr(statement, "orelse", []) + getattr(statement, "finalbody", [])
         for handler in getattr(statement, "handlers", []):
             blocks += handler.body
         yield from _run_before(blocks, line)
+
+
+def _is_events_module(module: Optional[str]) -> bool:
+    """kili_events, or one of its modules (`kili_events.AssetSkippedEvent`)."""
+    return module == "kili_events" or (module or "").startswith("kili_events.")
 
 
 class _ImportedNames:
@@ -141,8 +150,17 @@ class _ImportedNames:
         self.unions: set[str] = set()
         # module-level `Name = <annotation>`, followed when an annotation names it
         self.aliases: dict[str, ast.expr] = {}
+        # kili_events names imported only for type checkers, to say why they do not count
+        self.type_checking_only: set[str] = set()
         for node in _run_before(module.body, class_line):
-            if isinstance(node, ast.ImportFrom):
+            if _is_type_checking(node):
+                self.type_checking_only.update(
+                    alias.asname or alias.name
+                    for child in ast.walk(node)
+                    if isinstance(child, ast.ImportFrom) and _is_events_module(child.module)
+                    for alias in child.names
+                )
+            elif isinstance(node, ast.ImportFrom):
                 self._read_import_from(node)
             elif isinstance(node, ast.Import):
                 self._read_import(node)
@@ -165,7 +183,7 @@ class _ImportedNames:
                 self.star_events = True
             elif node.module == "kili" and alias.name == "plugins":
                 self.decorators.add(f"{local_name}.{DECORATOR_NAME}")
-            elif node.module == "kili_events":
+            elif _is_events_module(node.module) and alias.name != "*":
                 self.events[local_name] = alias.name
                 self.aliases.pop(local_name, None)
             elif node.module in TYPING_MODULES and alias.name == "Union":
@@ -199,6 +217,11 @@ class _ImportedNames:
         ):
             return self.event_names(self.aliases[annotation.id], followed | {annotation.id})
         name = self._event_name(annotation)
+        if name is None and ast.unparse(annotation) in self.type_checking_only:
+            raise ValueError(
+                f"'{ast.unparse(annotation)}' is imported under `if TYPE_CHECKING:` only, so it is"
+                " not bound when the methods are decorated: import it at the top of the file."
+            )
         if name is None:
             raise ValueError(
                 f"'{ast.unparse(annotation)}' is not a kili_events name, so the events it stands"
@@ -310,6 +333,11 @@ def find_event_subscriptions(path: Path) -> dict[str, list[str]]:
                 target = decorator.func if isinstance(decorator, ast.Call) else decorator
                 if ast.unparse(target) not in names.decorators:
                     continue
+                if len(method.decorator_list) > 1:
+                    raise ValueError(
+                        f"PluginHandler.{method.name}: @{DECORATOR_NAME} is the only decorator of"
+                        " the method it marks — Kili calls it with the event, nothing else."
+                    )
                 if isinstance(decorator, ast.Call):
                     raise ValueError(
                         f"PluginHandler.{method.name}: @{DECORATOR_NAME} takes no arguments:"

@@ -225,3 +225,42 @@ def test_a_union_of_families_flattens_into_their_models():
         *get_args(AssetIssueEvent),
         *get_args(LabelWorkflowEvent),
     )
+
+
+def test_on_kili_event_resolves_the_event_annotation_alone():
+    namespace: dict = {}
+    exec(  # pylint: disable=exec-used
+        "from __future__ import annotations\n"
+        "from kili_events import AssetSkippedEvent\n"
+        "from kili.plugins import PluginCore, on_kili_event\n"
+        "class PluginHandler(PluginCore):\n"
+        "    @on_kili_event\n"
+        "    def on_skip(self: PluginHandler, event: AssetSkippedEvent = None) -> NotImported:\n"
+        "        pass\n",
+        namespace,
+    )
+
+    assert subscribed_methods(namespace["PluginHandler"])["on_skip"] == (AssetSkippedEvent,)
+
+
+def test_on_kili_event_refuses_a_subclass_of_a_model():
+    class MySkip(AssetSkippedEvent):
+        pass
+
+    def on_skip(self, event: MySkip) -> None:
+        pass
+
+    # parse_event builds AssetSkippedEvent, never MySkip: the method would never run
+    with pytest.raises(TypeError, match="on_skip: The event parameter is annotated with"):
+        on_kili_event(on_skip)
+
+
+def test_on_event_logs_an_event_that_does_not_match_its_model():
+    logger = MagicMock(spec=logging.Logger)
+    plugin = PluginHandler(logger)
+
+    plugin.on_event(payload={**SKIPPED, "payload": {"assetId": "asset_id"}})
+
+    assert plugin.received == []
+    message = logger.error.call_args.args[0]
+    assert "'asset.skipped' does not match its kili_events model" in message

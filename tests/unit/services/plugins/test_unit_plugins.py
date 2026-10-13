@@ -684,3 +684,147 @@ def test_find_event_subscriptions_reads_imports_in_try_blocks_and_annotated_alia
     assert find_event_subscriptions(plugin_path) == {
         "on_something": ["asset.skipped", "asset.unskipped"]
     }
+
+
+def test_find_event_subscriptions_follows_an_import_that_rebinds_an_alias(tmp_path):
+    plugin_path = _plugin_file(
+        tmp_path,
+        """
+        from kili_events import AssetSkippedEvent
+
+        AssetUnskippedEvent = AssetSkippedEvent
+
+        from kili_events import AssetUnskippedEvent
+        from kili.plugins import PluginCore, on_kili_event
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event
+            def on_unskip(self, event: AssetUnskippedEvent):
+                pass
+        """,
+    )
+
+    assert find_event_subscriptions(plugin_path) == {"on_unskip": ["asset.unskipped"]}
+
+
+def test_find_event_subscriptions_sends_a_one_event_family_as_its_folder_pattern(tmp_path):
+    # the family of a folder holding one event is that event's model: the name says which
+    plugin_path = _plugin_file(
+        tmp_path,
+        """
+        from kili_events import (
+            ProjectWorkflowBulkActionPrioritizeEvent,
+            ProjectWorkflowBulkActionPrioritizeStartedEvent,
+        )
+        from kili.plugins import PluginCore, on_kili_event
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event
+            def on_family(self, event: ProjectWorkflowBulkActionPrioritizeEvent):
+                pass
+
+            @on_kili_event
+            def on_model(self, event: ProjectWorkflowBulkActionPrioritizeStartedEvent):
+                pass
+        """,
+    )
+
+    assert find_event_subscriptions(plugin_path) == {
+        "on_family": ["project.workflow.bulkAction.prioritize.*"],
+        "on_model": ["project.workflow.bulkAction.prioritize.started"],
+    }
+
+
+def test_find_event_subscriptions_reads_an_import_from_a_kili_events_module(tmp_path):
+    plugin_path = _plugin_file(
+        tmp_path,
+        """
+        from kili_events.AssetSkippedEvent import AssetSkippedEvent
+        from kili.plugins import PluginCore, on_kili_event
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event
+            def on_skip(self, event: AssetSkippedEvent):
+                pass
+        """,
+    )
+
+    assert find_event_subscriptions(plugin_path) == {"on_skip": ["asset.skipped"]}
+
+
+def test_find_event_subscriptions_says_a_type_checking_import_does_not_count(tmp_path):
+    plugin_path = _plugin_file(
+        tmp_path,
+        """
+        from __future__ import annotations
+
+        from typing import TYPE_CHECKING
+
+        from kili.plugins import PluginCore, on_kili_event
+
+        if TYPE_CHECKING:
+            from kili_events import AssetSkippedEvent
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event
+            def on_skip(self, event: AssetSkippedEvent):
+                pass
+        """,
+    )
+
+    with pytest.raises(ValueError, match="imported under `if TYPE_CHECKING:` only"):
+        find_event_subscriptions(plugin_path)
+
+
+@pytest.mark.parametrize("other", ["@staticmethod", "@functools.lru_cache"])
+def test_find_event_subscriptions_refuses_another_decorator(tmp_path, other):
+    plugin_path = _plugin_file(
+        tmp_path,
+        f"""
+        import functools
+
+        from kili_events import AssetSkippedEvent
+        from kili.plugins import PluginCore, on_kili_event
+
+
+        class PluginHandler(PluginCore):
+            {other}
+            @on_kili_event
+            def on_skip(self, event: AssetSkippedEvent):
+                pass
+        """,
+    )
+
+    with pytest.raises(ValueError, match="is the only decorator"):
+        find_event_subscriptions(plugin_path)
+
+
+def test_find_event_subscriptions_reads_only_the_event_annotation(tmp_path):
+    # the return annotation names what the import never binds: the upload ignores it, like the
+    # decorator, which resolves the event's annotation alone
+    plugin_path = _plugin_file(
+        tmp_path,
+        """
+        from __future__ import annotations
+
+        from typing import TYPE_CHECKING
+
+        from kili_events import AssetSkippedEvent
+        from kili.plugins import PluginCore, on_kili_event
+
+        if TYPE_CHECKING:
+            from reports import Report
+
+
+        class PluginHandler(PluginCore):
+            @on_kili_event
+            def on_skip(self: PluginHandler, event: AssetSkippedEvent = None) -> Report:
+                pass
+        """,
+    )
+
+    assert find_event_subscriptions(plugin_path) == {"on_skip": ["asset.skipped"]}

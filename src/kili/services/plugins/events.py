@@ -34,11 +34,8 @@ def event_models(annotation: object) -> tuple[type[KiliEvent], ...]:
         members = typing.get_args(annotation)
     else:
         members = (annotation,)
-    models = tuple(
-        member
-        for member in dict.fromkeys(members)
-        if isinstance(member, type) and issubclass(member, KiliEvent) and member is not KiliEvent
-    )
+    known = set(EVENT_MODELS.values())
+    models = tuple(member for member in dict.fromkeys(members) if member in known)
     if len(models) == len(set(members)):
         return models
     raise TypeError(
@@ -123,16 +120,23 @@ def _subscription(method: object) -> tuple[type[KiliEvent], ...]:
         for parameter in parameters
     ):
         raise TypeError(f"{name} takes self and the event, e.g. `{_EXAMPLE}`.")
+    event = parameters[1].name
+    if event not in method.__annotations__:
+        raise TypeError(
+            f"{name}: annotate the event parameter with the events to receive, e.g. `{_EXAMPLE}`."
+        )
+    # The event's annotation alone: the others (self, the return) are none of the plugin's
+    # subscription, and may name what is not bound yet. Not the method itself either, whose
+    # `= None` default would turn the annotation into an Optional on Python 3.10.
+    only_event = types.SimpleNamespace(__annotations__={event: method.__annotations__[event]})
     try:
-        annotation = typing.get_type_hints(method, include_extras=True).get(parameters[1].name)
+        annotation = typing.get_type_hints(
+            only_event, globalns=inspect.unwrap(method).__globals__, include_extras=True
+        )[event]
     except NameError as error:
         raise TypeError(
             f"{name}: the annotation of the event cannot be resolved: {error}."
         ) from error
-    if annotation is None:
-        raise TypeError(
-            f"{name}: annotate the event parameter with the events to receive, e.g. `{_EXAMPLE}`."
-        )
     try:
         return event_models(annotation)
     except TypeError as error:

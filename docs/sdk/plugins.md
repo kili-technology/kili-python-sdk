@@ -95,10 +95,11 @@ The annotation is the subscription, and is one of:
 | --- | --- | --- |
 | an event model | that event | `AssetSkippedEvent` |
 | a family of events | every event of the family, including those Kili adds to it later | `AssetWorkflowEvent`: every `asset.workflow.…` event |
-| a union of them | every event of each | `Union[AssetSkippedEvent, LabelWorkflowEvent]`, as in `on_workflow` above |
+| a union of them | every event of each | `Union[AssetSkippedEvent, LabelWorkflowEvent]` |
 
-`AnyEvent` receives every event. Events that share no family, such as every `….started` event, are received with a union
-of their models or families. `on_kili_event` takes no arguments.
+The union can also be written `AssetWorkflowEvent | LabelWorkflowEvent`, as in `on_workflow`. `AnyEvent` receives every
+event. Events that share no family, such as every `….started` event, are received with a union of their models or
+families. `on_kili_event` takes no arguments, and is the only decorator of the method.
 
 Every method whose annotation matches an event receives it, in the alphabetical order of their names; an exception in
 one stops the others. Upload the plugin without `event_matcher`: the events it receives are read from the annotations.
@@ -111,16 +112,20 @@ The upload reads your code without running it, so:
 
 - the decorated methods are those of the `PluginHandler` class of the plugin file (of `main.py` for a folder) — not the
   ones it inherits — and plain methods taking `self` and the event, not `async` ones;
-- the annotation is made of names imported from `kili_events`, or a module-level alias of them — anything else stops
-  the upload with the reason;
+- the annotation is made of names imported from `kili_events` when the class is defined (not under
+  `if TYPE_CHECKING:` — with ruff, list `kili.plugins.on_kili_event` in `runtime-evaluated-decorators`), or a
+  module-level alias of them — anything else stops the upload with the reason;
 - Kili never sends plugins its system events, nor the events of no project (`assetStorage.integration.…`): an
-  annotation made only of those stops the upload;
+  annotation naming a model or a family made only of those stops the upload;
 - a plugin receives events either with `on_kili_event` or with `on_submit`, `on_review`, `on_custom_interface_click` and
   `on_send_back_to_queue`, not both.
 
 A family is uploaded as the pattern of its folder (`asset.workflow.*`), so an event Kili adds to it later reaches the
-plugin without a new upload: the method receives it once the plugin runs with a version of `kili_events` that knows it.
-Until then, like any event the plugin's version of `kili_events` does not know yet, it is logged and skipped.
+plugin without changing its code. The method receives it once the plugin runs with a version of `kili_events` that
+knows it: on Kili's cloud, the packages are installed when the plugin is uploaded, so update the plugin
+(`kili.update_plugin`); on-premise, they are those of the plugins runner. Until then, like any event the plugin's
+version of `kili_events` does not know, it is logged and skipped; an event that does not match its model is logged as
+an error and skipped.
 
 The event carries its subject (`event.event`), `organization_id`, `project_id`, `user_id` and `payload`, as its model
 declares them — no event id or timestamp.
