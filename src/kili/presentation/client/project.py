@@ -362,7 +362,7 @@ class ProjectClientMethods(BaseClientMethods):
 
         Raises:
             DeprecatedArgumentError: If `review_coverage` or `use_honeypot` is given for a
-                multi-step or multi-group workflow project (`workflowVersion` `V2` or `V3`),
+                multi-step or multi-group workflow project (`workflowVersion` is `V2` or `V3`),
                 whose steps hold these settings. Nothing is changed then, other arguments included.
 
         !!! example "Change Metadata Properties"
