@@ -241,7 +241,10 @@ def test_given_a_project_with_step_settings_when_setting_review_coverage_or_hone
         ProjectUseCases(kili_api_gateway).update_properties_in_project(
             project_id=ProjectId("fake_proj_id"), title="new_title", **settings
         )
-    assert str(error.value).startswith(f"{refused} on project fake_proj_id: it uses a {workflow},")
+    assert str(error.value).startswith(
+        f"{refused} on project fake_proj_id: it uses a {workflow}"
+        f" (`workflowVersion` is `{workflow_version}`),"
+    )
     assert "Nothing was changed." in str(error.value)
     assert instead in str(error.value)
     kili_api_gateway.get_project.assert_called_once_with(

@@ -302,13 +302,16 @@ class ProjectUseCases(BaseUseCases):
         project = self._kili_api_gateway.get_project(
             project_id=project_id, fields=["workflowVersion"]
         )
-        workflow = STEP_LEVEL_SETTINGS_WORKFLOWS.get(project["workflowVersion"])
+        workflow_version = project["workflowVersion"]
+        workflow = STEP_LEVEL_SETTINGS_WORKFLOWS.get(workflow_version)
         if workflow is None:
             return
+        # named as the project's `workflowVersion` shows it, the value a user who queried it knows
         raise DeprecatedArgumentError(
             " and ".join(f"`{name}`" for name in given)
-            + f" cannot be set on project {project_id}: it uses a {workflow}, where review"
-            " coverage and honeypot are settings of each step. Nothing was changed. Set instead "
+            + f" cannot be set on project {project_id}: it uses a {workflow}"
+            f" (`workflowVersion` is `{workflow_version}`), where review coverage and honeypot"
+            " are settings of each step. Nothing was changed. Set instead "
             + "; ".join(STEP_LEVEL_SETTINGS_INSTEAD[name] for name in given)
             + "."
         )
