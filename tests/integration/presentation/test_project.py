@@ -40,7 +40,9 @@ def test_when_updating_project_then_it_returns_updated_project(mocker: pytest_mo
     )
     # Given
     project_id = "fake_proj_id"
-    kili.kili_api_gateway.get_project = mocker.MagicMock(return_value={"workflowVersion": "V1"})
+    mocker.patch.object(
+        kili.kili_api_gateway, "get_project", autospec=True, return_value={"workflowVersion": "V1"}
+    )
 
     # When
     kili.update_properties_in_project(project_id, review_coverage=42)

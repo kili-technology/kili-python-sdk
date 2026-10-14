@@ -7,6 +7,7 @@ from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.adapters.kili_api_gateway.project.types import ProjectDataKiliAPIGatewayInput
 from kili.domain.project import ProjectFilters, ProjectId
 from kili.domain.types import ListOrTuple
+from kili.exceptions import DeprecatedArgumentError
 from kili.use_cases.project.project import ProjectUseCases
 
 interface = {
@@ -236,7 +237,7 @@ def test_given_a_project_with_step_settings_when_setting_review_coverage_or_hone
     kili_api_gateway.get_project.return_value = {"workflowVersion": workflow_version}
 
     # When / Then
-    with pytest.raises(ValueError, match="cannot be set") as error:
+    with pytest.raises(DeprecatedArgumentError, match="cannot be set") as error:
         ProjectUseCases(kili_api_gateway).update_properties_in_project(
             project_id=ProjectId("fake_proj_id"), title="new_title", **settings
         )

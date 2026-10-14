@@ -22,7 +22,7 @@ from kili.domain.project import (
     WorkflowVersion,
 )
 from kili.domain.types import ListOrTuple
-from kili.exceptions import NotFound
+from kili.exceptions import DeprecatedArgumentError, NotFound
 from kili.use_cases.base import BaseUseCases
 
 PIXEL_LABELING_CRS_CODE = "PIXEL"
@@ -285,8 +285,9 @@ class ProjectUseCases(BaseUseCases):
     ) -> None:
         """Refuses the project's review coverage and honeypot on a project that sets them per step.
 
-        The backend stores them there and answers them back, but no step reads them: the call
-        would report a change that never happens. Refused before anything is written.
+        The backend writes both on the project row, which no step reads: review coverage is
+        answered back as if it were set, honeypot is answered from the steps — either way nothing
+        changes. Refused before anything is written.
         """
         given = [
             name
@@ -304,7 +305,7 @@ class ProjectUseCases(BaseUseCases):
         workflow = STEP_LEVEL_SETTINGS_WORKFLOWS.get(project["workflowVersion"])
         if workflow is None:
             return
-        raise ValueError(
+        raise DeprecatedArgumentError(
             " and ".join(f"`{name}`" for name in given)
             + f" cannot be set on project {project_id}: it uses a {workflow}, where review"
             " coverage and honeypot are settings of each step. Nothing was changed. Set instead "

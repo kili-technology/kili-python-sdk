@@ -333,14 +333,15 @@ class ProjectClientMethods(BaseClientMethods):
                 Should be between 0 and 100.
                 Legacy workflow projects only: on a multi-step or multi-group workflow project,
                 review coverage is set on each review step with `update_review_step_properties`,
-                and this argument raises a `ValueError`.
+                and this argument raises a `DeprecatedArgumentError`.
             should_relaunch_kpi_computation: Technical field, added to indicate changes
                 in honeypot or consensus settings
             title: Title of the project
             use_honeypot: Activate / Deactivate the use of honeypot in the project.
                 Legacy workflow projects only: on a multi-step or multi-group workflow project,
                 honeypot is set on each step with `update_labeling_step_properties` or
-                `update_review_step_properties`, and this argument raises a `ValueError`.
+                `update_review_step_properties`, and this argument raises a
+                `DeprecatedArgumentError`.
             metadata_types: DEPRECATED. Types of the project metadata.
                 Should be a `dict` of metadata fields name as keys and metadata types as values.
                 Currently, possible types are: `string`, `number`
@@ -358,6 +359,11 @@ class ProjectClientMethods(BaseClientMethods):
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
                 else an error message.
+
+        Raises:
+            DeprecatedArgumentError: If `review_coverage` or `use_honeypot` is given for a
+                multi-step or multi-group workflow project, whose steps hold these settings.
+                Nothing is changed then, other arguments included.
 
         !!! example "Change Metadata Properties"
             The metadata properties of the project have to be defined to allow for application filters on
