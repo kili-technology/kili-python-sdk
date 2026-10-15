@@ -2520,7 +2520,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     ) -> bool:
         """Activate or deactivate consensus on an asset.
 
-        This method is not compatible with projects using workflow version 1. On those projects,
+        This method is not compatible with projects using the legacy workflow. On those projects,
         use the legacy client (`kili.client.Kili`) and its `update_properties_in_assets()` with
         `is_used_for_consensus_array` instead.
 
@@ -2536,9 +2536,9 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         Raises:
             ValueError: If neither asset_id nor external_id is provided.
             GraphQLError: If a server-side precondition is not met. The server accepts the
-                call only on workflow V2/V3 projects, while the asset sits on a labeling
-                (DEFAULT) step whose status is still TO_DO, when consensus is enabled on that
-                step, and when the caller is an admin or a team manager. Note that the TO_DO
+                call only on multi-step or multi-group workflow projects, while the asset sits on
+                a labeling (DEFAULT) step whose status is still TO_DO, when consensus is enabled
+                on that step, and when the caller is an admin or a team manager. Note that the TO_DO
                 window closes as soon as any labeler starts working on the asset (their first
                 autosave, not their submission), so the real precondition is that no labeler
                 has opened and started the asset yet.

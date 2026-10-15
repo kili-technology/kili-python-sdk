@@ -251,8 +251,8 @@ class WorkflowNamespace:
             enforce_step_separation: Prevents the same user from being assigned to
                 multiple steps in the workflow for a same asset,
                 ensuring independent review and labeling processes
-            create_steps: List of steps to create in the project workflow. On a workflow V3
-                project, each step gives the `step_group_id` of the group to create it in, and
+            create_steps: List of steps to create in the project workflow. In the multi-group
+                workflow, each step gives the `step_group_id` of the group to create it in, and
                 consensus can only be set on the labeling step of the first group.
             update_steps: List of steps to update in the project workflow, each given by its `id`,
                 or by its `name` with `group_name` when several groups use that name.
@@ -299,7 +299,8 @@ class WorkflowNamespace:
             project_id: Id of the project.
             step_name: Name of the step. Exclusive with `step_id`.
             emails: List of emails to add.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
@@ -329,7 +330,8 @@ class WorkflowNamespace:
             project_id: Id of the project.
             step_name: Name of the step. Exclusive with `step_id`.
             emails: List of emails to remove.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
@@ -355,14 +357,15 @@ class WorkflowNamespace:
     ) -> List[str]:
         """Add labelers to a specific labeling step.
 
-        Only workflow V3 projects support assigning labelers to a step, and the target step must
-        be a labeling step.
+        Only the multi-group workflow supports assigning labelers to a step, and the target step
+        must be a labeling step.
 
         Args:
             project_id: Id of the project.
             step_name: Name of the labeling step. Exclusive with `step_id`.
             emails: List of emails to add.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
@@ -388,15 +391,16 @@ class WorkflowNamespace:
     ) -> List[str]:
         """Remove labelers from a specific labeling step.
 
-        Only workflow V3 projects support removing labelers from a step, and the target step must
-        be a labeling step. Removing a labeler also clears their asset-step assignments and step
-        queue for that step.
+        Only the multi-group workflow supports removing labelers from a step, and the target step
+        must be a labeling step. Removing a labeler also clears their asset-step assignments and
+        step queue for that step.
 
         Args:
             project_id: Id of the project.
             step_name: Name of the labeling step. Exclusive with `step_id`.
             emails: List of emails to remove.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 

@@ -48,7 +48,7 @@ def check_asset_workflow_arguments(
     ):
         raise ValueError(
             "Filters group_name_in and/or group_name_not_in given : they are only applicable to"
-            " WorkflowV3 projects."
+            " the multi-group workflow."
         )
 
     if project_workflow_version in ("V2", "V3"):

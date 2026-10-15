@@ -296,46 +296,46 @@ class AssetClientMethods(BaseClientMethods):
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
             label_output_format: If `parsed_label`, the labels in the assets will be parsed. More information on parsed labels in the [documentation](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/).
             skipped: Returned assets should be skipped
-                Only applicable if the project is in WorkflowV1 (legacy).
+                Only applicable if the project uses the legacy workflow.
             status_in: Returned assets should have a status that belongs to that list, if given.
                 Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
-                Only applicable if the project is in the WorkflowV1 (legacy).
+                Only applicable if the project uses the legacy workflow.
             step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_name_in: Returned assets are in the step whose name belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_name_not_in: Returned assets are in the step whose name does not belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_id_in: Returned assets are in the step whose id belong to that list, if given.
-                Exclusive with `step_name_in`. Only applicable if the project is in WorkflowV2 or V3.
+                Exclusive with `step_name_in`. Only applicable if the project uses the multi-step or multi-group workflow.
             step_id_not_in: Returned assets are in the step whose id does not belong to that list,
                 if given. Exclusive with `step_name_not_in`.
-                Only applicable if the project is in WorkflowV2 or V3.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             step_id_and_status_in: Returned assets match at least one of the given
                 (step_id, step_status) pairs. Exclusive with `step_name_and_status_in`.
-                Only applicable if the project is in WorkflowV2 or V3.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             step_id_and_status_not_in: Returned assets do not match any of the given
                 (step_id, step_status) pairs. Exclusive with `step_name_and_status_not_in`.
-                Only applicable if the project is in WorkflowV2 or V3.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             step_status_in: Returned assets have the status in their step that belongs to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             step_status_not_in: Returned assets have the status in their step that does not belong to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .
-                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
             group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -659,42 +659,42 @@ class AssetClientMethods(BaseClientMethods):
             external_id_in: Returned assets should have external ids that partially match the ones in the list.
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
             step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_name_not_in: Returned assets are in a step whose name does not belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_id_in: Returned assets are in the step whose id belong to that list, if given.
-                Exclusive with `step_name_in`. Only applicable if the project is in WorkflowV2 or V3.
+                Exclusive with `step_name_in`. Only applicable if the project uses the multi-step or multi-group workflow.
             step_id_not_in: Returned assets are in the step whose id does not belong to that list,
                 if given. Exclusive with `step_name_not_in`.
-                Only applicable if the project is in WorkflowV2 or V3.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             step_id_and_status_in: Returned assets match at least one of the given
                 (step_id, step_status) pairs. Exclusive with `step_name_and_status_in`.
-                Only applicable if the project is in WorkflowV2 or V3.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             step_id_and_status_not_in: Returned assets do not match any of the given
                 (step_id, step_status) pairs. Exclusive with `step_name_and_status_not_in`.
-                Only applicable if the project is in WorkflowV2 or V3.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             step_status_not_in: Returned assets have the status of their step that does not belong to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
                 Step names are unique per group only: a name several groups use matches the step
                 of each of them, unless `group_name_in` narrows it down.
             group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
             group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -861,7 +861,7 @@ class AssetClientMethods(BaseClientMethods):
     ) -> bool:
         """Activate or deactivate consensus on an asset.
 
-        This method is not compatible with projects using workflow version 1. On those projects,
+        This method is not compatible with projects using the legacy workflow. On those projects,
         use `kili.update_properties_in_assets()` with `is_used_for_consensus_array` instead.
 
         Args:
@@ -876,9 +876,9 @@ class AssetClientMethods(BaseClientMethods):
         Raises:
             ValueError: If neither asset_id nor external_id is provided.
             GraphQLError: If a server-side precondition is not met. The server accepts the
-                call only on workflow V2/V3 projects, while the asset sits on a labeling
-                (DEFAULT) step whose status is still TO_DO, when consensus is enabled on that
-                step, and when the caller is an admin or a team manager. Note that the TO_DO
+                call only on multi-step or multi-group workflow projects, while the asset sits on
+                a labeling (DEFAULT) step whose status is still TO_DO, when consensus is enabled
+                on that step, and when the caller is an admin or a team manager. Note that the TO_DO
                 window closes as soon as any labeler starts working on the asset (their first
                 autosave, not their submission), so the real precondition is that no labeler
                 has opened and started the asset yet.

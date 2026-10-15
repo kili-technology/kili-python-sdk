@@ -55,7 +55,9 @@ def test_find_step_by_name_with_group_scopes_to_group():
 
 
 def test_find_step_by_name_with_group_on_v2_raises():
-    with pytest.raises(ValueError, match="group_name is only supported on workflow V3 projects"):
+    with pytest.raises(
+        ValueError, match="group_name is only supported in the multi-group workflow"
+    ):
         find_step_by_name(_v2_project(), "Review", "Group 1")
 
 

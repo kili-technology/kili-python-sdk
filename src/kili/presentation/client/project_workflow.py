@@ -44,8 +44,8 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             enforce_step_separation: Prevents the same user from being assigned to
                 multiple steps in the workflow for a same asset,
                 ensuring independent review and labeling processes
-            create_steps: List of steps to create in the project workflow. On a workflow V3
-                project, each step gives the `step_group_id` of the group to create it in, and
+            create_steps: List of steps to create in the project workflow. In the multi-group
+                workflow, each step gives the `step_group_id` of the group to create it in, and
                 consensus can only be set on the labeling step of the first group.
             update_steps: List of steps to update in the project workflow, each given by its `id`,
                 or by its `name` with `group_name` when several groups use that name.
@@ -107,7 +107,8 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             project_id: Id of the project.
             step_name: Name of the step. Exclusive with `step_id`.
             emails: List of emails to add.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
@@ -137,7 +138,8 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             project_id: Id of the project.
             step_name: Name of the step. Exclusive with `step_id`.
             emails: List of emails to remove.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
@@ -163,14 +165,15 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
     ) -> list[str]:
         """Add labelers to a specific labeling step.
 
-        Only workflow V3 projects support assigning labelers to a step, and the target step must
-        be a labeling step.
+        Only the multi-group workflow supports assigning labelers to a step, and the target step
+        must be a labeling step.
 
         Args:
             project_id: Id of the project.
             step_name: Name of the labeling step. Exclusive with `step_id`.
             emails: List of emails to add.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
@@ -196,15 +199,16 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
     ) -> list[str]:
         """Remove labelers from a specific labeling step.
 
-        Only workflow V3 projects support removing labelers from a step, and the target step must
-        be a labeling step. Removing a labeler also clears their asset-step assignments and step
-        queue for that step.
+        Only the multi-group workflow supports removing labelers from a step, and the target step
+        must be a labeling step. Removing a labeler also clears their asset-step assignments and
+        step queue for that step.
 
         Args:
             project_id: Id of the project.
             step_name: Name of the labeling step. Exclusive with `step_id`.
             emails: List of emails to remove.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 
@@ -276,7 +280,7 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             step_coverage: Percentage of assets to be reviewed in this step (0-100).
             use_honeypot: Whether to use honeypot on this step.
             send_back_to_step: Name of the step to send assets back to, in the same group.
-            group_name: Name of the workflow V3 group to add the step to.
+            group_name: Name of the group to add the step to, in the multi-group workflow.
                 Required when the project has several groups.
 
         Returns:
@@ -309,11 +313,12 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             project_id: Id of the project.
             step_name: Name of the labeling step to update. Exclusive with `step_id`.
             consensus_coverage: Percentage of assets to be labeled for consensus (0-100).
-                On a workflow V3 project, consensus can only be set on the labeling step of the
-                first group.
+                In the multi-group workflow, consensus can only be set on the labeling step of
+                the first group.
             number_of_expected_labels_for_consensus: Number of expected labels for consensus.
             use_honeypot: Whether to use honeypot on this step.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             step_id: Id of the step to update. Exclusive with `step_name` and `group_name`.
 
@@ -351,7 +356,8 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             step_coverage: Percentage of assets to be reviewed in this step (0-100).
             send_back_to_step: Id of the step to send assets back to when rejected.
             use_honeypot: Whether to use honeypot on this step.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             step_id: Id of the step to update. Exclusive with `step_name` and `group_name`.
 
@@ -401,7 +407,8 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             project_id: Id of the project.
             step_name: Name of the step. Exclusive with `step_id`.
             new_name: New name for the step.
-            group_name: Name of the workflow V3 group containing the step named `step_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
                 Required when several groups have a step with the same name.
             step_id: Id of the step. Exclusive with `step_name` and `group_name`.
 

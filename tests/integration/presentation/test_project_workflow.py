@@ -315,7 +315,9 @@ def test_add_reviewers_to_step_group_name_on_v2_raises(mocker: pytest_mock.Mocke
         _context_result("V2", steps, []),
     ]
 
-    with pytest.raises(ValueError, match="group_name is only supported on workflow V3"):
+    with pytest.raises(
+        ValueError, match="group_name is only supported in the multi-group workflow"
+    ):
         kili.add_reviewers_to_step("proj", "Review", ["rev@kili.com"], group_name="Group 1")
 
 
@@ -380,7 +382,7 @@ def test_add_labelers_to_step_on_v2_project_raises(mocker: pytest_mock.MockerFix
     ]
     kili.kili_api_gateway.graphql_client.execute.side_effect = [_context_result("V2", steps, [])]
 
-    with pytest.raises(ValueError, match="requires a workflow V3 project"):
+    with pytest.raises(ValueError, match="requires the multi-group workflow"):
         kili.add_labelers_to_step("proj", "Labeling", ["lab@kili.com"])
 
 
@@ -423,7 +425,7 @@ def test_remove_labelers_from_step_on_v2_project_raises(mocker: pytest_mock.Mock
     ]
     kili.kili_api_gateway.graphql_client.execute.side_effect = [_context_result("V2", steps, [])]
 
-    with pytest.raises(ValueError, match="requires a workflow V3 project"):
+    with pytest.raises(ValueError, match="requires the multi-group workflow"):
         kili.remove_labelers_from_step("proj", "Labeling", ["a@kili.com"])
 
 

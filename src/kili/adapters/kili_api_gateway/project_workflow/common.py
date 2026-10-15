@@ -29,7 +29,7 @@ def get_assignees_to_add_ids(existing_members: list[dict], assignees: list[str])
 def find_step_group_by_name(project: dict, group_name: str) -> dict:
     """Find a step group of a workflow V3 project by its name."""
     if project.get("workflowVersion") != "V3":
-        raise ValueError("group_name is only supported on workflow V3 projects")
+        raise ValueError("group_name is only supported in the multi-group workflow")
     group = next(
         (
             step_group
