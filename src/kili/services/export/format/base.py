@@ -1,14 +1,21 @@
 """Base class for all formatters and other utility classes."""
 
 import csv
-import json
 import logging
 import shutil
 from abc import ABC, abstractmethod
-from datetime import datetime
+from collections.abc import Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, NamedTuple, Optional, Union
 
+from kili_formats.layout import (
+    README_FILE,
+    REMOTE_ASSETS_FILE,
+    REMOTE_ASSETS_HEADER,
+    VIDEO_METADATA_FILE,
+    readme,
+)
+from kili_formats.layout import video_metadata as layout_video_metadata
 from kili_formats.types import Job
 
 from kili.domain.asset import AssetId
@@ -26,6 +33,7 @@ from kili.services.export.types import (
     ExportType,
     LabelFormat,
     SplitOption,
+    YoloBoundingBoxes,
 )
 from kili.utils.tempfile import TemporaryDirectory
 
@@ -49,6 +57,17 @@ class ExportParams(NamedTuple):
     normalized_coordinates: Optional[bool]
     label_type_in: Optional[list[str]]
     include_sent_back_labels: Optional[bool]
+    bbox_as: YoloBoundingBoxes = "box"
+
+
+def keep_only_images(images_folder: Path, images: set[Path]) -> None:
+    """Remove the downloaded media no label file describes: a frame without a shape, a native
+    video once cut, the image of an asset without a label.
+    """
+    kept = {image.resolve() for image in images}
+    for file in list(images_folder.rglob("*")):
+        if file.is_file() and file.resolve() not in kept and file.name != REMOTE_ASSETS_FILE:
+            file.unlink()
 
 
 def reverse_rotation_vertices(normalized_vertices, rotation_angle) -> list[dict]:
@@ -89,6 +108,7 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.label_format: LabelFormat = export_params.label_format
         self.single_file: bool = export_params.single_file
         self.split_option: SplitOption = export_params.split_option
+        self.bbox_as: YoloBoundingBoxes = export_params.bbox_as
         self.disable_tqdm: Optional[bool] = disable_tqdm
         self.kili = kili
         self.logger: logging.Logger = logger
@@ -144,35 +164,30 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         shutil.copy(path_archive, output_filename)
         return output_filename
 
-    def create_readme_kili_file(self, root_folder: Path) -> None:
+    def create_readme_kili_file(self, root_folder: Path, notes: Sequence[str] = ()) -> None:
         """Create a README.kili.txt file to give information about exported labels."""
-        readme_file_name = root_folder / self.project_id / "README.kili.txt"
+        readme_file_name = root_folder / self.project_id / README_FILE
         readme_file_name.parent.mkdir(parents=True, exist_ok=True)
-        with readme_file_name.open("wb") as fout:
-            fout.write(b"Exported Labels from KILI\n=========================\n\n")
-            fout.write(f"- Project name: {self.project['title']}\n".encode())
-            fout.write(f"- Project identifier: {self.project['id']}\n".encode())
-            fout.write(f"- Project description: {self.project.get('description', '')}\n".encode())
-            fout.write(f'- Export date: {datetime.now().strftime(r"%Y%m%d-%H%M%S")}\n'.encode())
-            fout.write(f"- Exported format: {self.label_format}\n".encode())
-            fout.write(f"- Exported labels: {self.export_type}\n".encode())
+        readme_file_name.write_text(
+            readme(self.project, self.label_format, self.export_type, notes=notes),  # type: ignore
+            encoding="utf8",
+            newline="",
+        )
 
     @staticmethod
     def write_video_metadata_file(video_metadata: dict, base_folder: Path) -> None:
         """Write video metadata file."""
-        video_metadata_json = json.dumps(video_metadata, sort_keys=True, indent=4)
-        if video_metadata_json is not None:
-            with (base_folder / "video_meta.json").open("wb") as output_file:
-                output_file.write(video_metadata_json.encode("utf-8"))
+        (base_folder / VIDEO_METADATA_FILE).write_text(
+            layout_video_metadata(video_metadata), encoding="utf-8", newline=""
+        )
 
     @staticmethod
-    def write_remote_content_file(remote_content: list[str], images_folder: Path) -> None:
+    def write_remote_content_file(remote_content: list[list[str]], images_folder: Path) -> None:
         """Write remote content file."""
-        remote_content_header = ["external id", "url", "label file"]
         # newline="" to disable universal newlines translation (bug fix for windows)
-        with (images_folder / "remote_assets.csv").open("w", newline="", encoding="utf8") as file:
+        with (images_folder / REMOTE_ASSETS_FILE).open("w", newline="", encoding="utf8") as file:
             writer = csv.writer(file)
-            writer.writerow(remote_content_header)
+            writer.writerow(REMOTE_ASSETS_HEADER)
             writer.writerows(remote_content)
 
     def export_project(
