@@ -309,9 +309,29 @@ kili.export_labels(
 
 ### YOLO formats
 
-When you have at least one object etection job, you can also export to one of the following YOLO formats: `"yolo_v4"`, `"yolo_v5"`, `"yolo_v7"` or `"yolo_v8"`.
-The difference between each format is the structure of the metadata YAML file, which specifies the object classes.
-In all the cases, one file per asset is produced, containing the last created `DEFAULT` or `REVIEW` label.
+When you have at least one object detection job with a bounding box, polygon or semantic tool, you can also export to one of the following YOLO formats: `"yolo_v4"`, `"yolo_v5"`, `"yolo_v7"` or `"yolo_v8"`.
+`"yolo_v5"`, `"yolo_v7"` and `"yolo_v8"` give the Ultralytics dataset format, which every YOLO version from v5 to YOLO26 reads: they differ by the structure of the metadata YAML file, which specifies the object classes.
+In all the cases, a label file is produced per asset and label, containing the labels the export type selects: with several, each file is suffixed `_label<n>`, beside the asset's image, written once. A video gets a label file per frame holding a shape; frames without any are left out.
+Each dataset's `data.yaml` lists its classes and its images for training and validation. With a folder per task or per job, the images are shared in `images/` at the root: to train on one dataset, put its `labels/` beside `images/`.
+
+The export writes a dataset for each Ultralytics task the project's jobs give:
+
+| Task | Written when the project has | One line per |
+| --- | --- | --- |
+| The bounding boxes' task, by `bbox_as` | a bounding box job | bounding box |
+| Segment (not in `"yolo_v4"`) | a polygon or semantic job | polygon and semantic segmentation part |
+
+`bbox_as` chooses how `"yolo_v5"`, `"yolo_v7"` and `"yolo_v8"` write the bounding boxes; `"yolo_v4"` has Detect only:
+
+| `bbox_as` | Task | A bounding box is written as |
+| --- | --- | --- |
+| `"box"` (default) | Detect | the upright box around it: a rotated box loses its angle |
+| `"obb"` | OBB | its four corners: a rotated box keeps its angle |
+| `"polygon"` | Segment, beside the polygons | its four corners |
+
+With `layout="split"` (one folder per job), each job's folder is written for its own task: Segment for a job with a polygon or semantic tool, its bounding boxes as polygons; the bounding boxes' task otherwise.
+With `layout="merged"` and two tasks, each dataset goes in its own folder, `detect/` or `obb/`, and `segment/`, each with its `labels/` and metadata file, beside the shared `images/`. With one task, it is at the root of the archive.
+Points, lines, pose and classification are not exported.
 
 For bouding boxes, each YOLO label has the following shape:
 
@@ -342,6 +362,8 @@ where:
 - `class` is the class index in the classes list contained in the YOLO metadata file.
 - `xi` is the x-coordinate relative to the image width (between 0.0 and 1.0) of the i-th point of the polygon.
 - `yi` is the y-coordinate relative to the image height (between 0.0 and 1.0) of the i-th point of the polygon.
+
+For oriented bounding boxes (`bbox_as="obb"`), each YOLO label holds the box's four corners, in the same shape with exactly 4 points: `class x1 y1 x2 y2 x3 y3 x4 y4`.
 
 
 Here is an example of a YOLO annotation over an image:
