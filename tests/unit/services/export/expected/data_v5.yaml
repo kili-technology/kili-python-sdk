@@ -1,3 +1,5 @@
+train: images
+val: images
 names:
-  0: OBJECT_A
-  1: OBJECT_B
+  0: "OBJECT_A"
+  1: "OBJECT_B"

@@ -9,8 +9,8 @@ from kili.domain.project import ProjectId
 from kili.entrypoints.cli.common_args import Options
 from kili.entrypoints.cli.helpers import get_kili_client
 from kili.services.export import export_labels as service_export_labels
-from kili.services.export.exceptions import NoCompatibleJobError
-from kili.services.export.types import LabelFormat, SplitOption
+from kili.services.export.exceptions import NoCompatibleJobError, NotCompatibleOptions
+from kili.services.export.types import LabelFormat, SplitOption, YoloBoundingBoxes
 
 
 @click.command(name="export")
@@ -53,6 +53,15 @@ from kili.services.export.types import LabelFormat, SplitOption
     default=None,
     help="Whether to use normalized coordinates or not.",
 )
+@click.option(
+    "--bbox-as",
+    type=click.Choice(get_args(YoloBoundingBoxes)),
+    default="box",
+    help=(
+        "YOLO v5, v7 and v8 only: write the bounding boxes for the Detect task ('box'), the OBB"
+        " task ('obb'), or as polygons in the Segment task ('polygon')."
+    ),
+)
 @Options.api_key
 @Options.endpoint
 @Options.project_id
@@ -70,6 +79,7 @@ def export_labels(
     verbose: bool,
     with_assets: bool,
     normalized_coordinates: Optional[bool],
+    bbox_as: YoloBoundingBoxes,
 ) -> None:
     """Export the Kili labels of a project to a given format.
 
@@ -77,10 +87,11 @@ def export_labels(
     !!! Info
         The supported formats are:
 
-        - Yolo V4, V5, V7, V8 for object detection tasks.
+        - Yolo V4, V5, V7, V8 for object detection tasks; V5, V7 and V8 write the bounding boxes
+          for Detect, OBB or Segment (`--bbox-as`).
         - Kili (a.k.a raw) for all tasks.
-        - COCO for object detection tasks (bounding box and semantic segmentation).
-        - Pascal VOC for object detection tasks (bounding box).
+        - COCO for object detection tasks (bounding box, polygon and semantic segmentation).
+        - Pascal VOC for object detection tasks (bounding box only).
     \b
     \b
     !!! warning "Cloud storage"
@@ -122,6 +133,9 @@ def export_labels(
             normalized_coordinates=normalized_coordinates,
             label_type_in=None,
             include_sent_back_labels=None,
+            bbox_as=bbox_as,
         )
     except NoCompatibleJobError as excp:
         print(str(excp))
+    except NotCompatibleOptions as excp:
+        raise click.UsageError(str(excp)) from excp
