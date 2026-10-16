@@ -349,15 +349,16 @@ def get_file_tree(folder: str):
                     "split_option": "merged",
                 },
                 "file_tree_expected": {
+                    # The frames holding a shape alone, the cut native video left out
                     "images": {
-                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(130)},
-                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(28)},
-                        "short_video.mp4": {},
+                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(2)},
+                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(2)},
                     },
                     "labels": {
-                        **{f"video2_{str(i+1).zfill(3)}.xml": {} for i in range(130)},
-                        **{f"short_video_{str(i+1).zfill(2)}.xml": {} for i in range(28)},
+                        **{f"video2_{str(i+1).zfill(3)}.xml": {} for i in range(2)},
+                        **{f"short_video_{str(i+1).zfill(2)}.xml": {} for i in range(2)},
                     },
+                    "video_meta.json": {},
                     "README.kili.txt": {},
                 },
             },
@@ -374,7 +375,6 @@ def get_file_tree(folder: str):
                     "data": {
                         **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(130)},
                         **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(28)},
-                        "short_video.mp4": {},
                     },
                     "JOB_0": {
                         "labels.json": {},
@@ -395,7 +395,6 @@ def get_file_tree(folder: str):
                     "data": {
                         **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(130)},
                         **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(28)},
-                        "short_video.mp4": {},
                     },
                     "labels.json": {},
                     "README.kili.txt": {},
