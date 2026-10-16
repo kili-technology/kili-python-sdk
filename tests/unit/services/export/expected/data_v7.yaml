@@ -1,2 +1,4 @@
+train: images
+val: images
 nc: 2
-names: ['OBJECT_A', 'OBJECT_B']
+names: ["OBJECT_A", "OBJECT_B"]

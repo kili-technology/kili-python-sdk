@@ -434,10 +434,10 @@ def get_file_tree(folder: str):
                     "with_assets": True,
                 },
                 "file_tree_expected": {
+                    # The frames holding a shape alone, the cut native video left out
                     "images": {
-                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(130)},
-                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(28)},
-                        "short_video.mp4": {},
+                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(2)},
+                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(2)},
                     },
                     "labels": {
                         "video2_001.txt": {},
@@ -461,10 +461,10 @@ def get_file_tree(folder: str):
                     "with_assets": True,
                 },
                 "file_tree_expected": {
+                    # The frames holding a shape alone, the cut native video left out
                     "images": {
-                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(130)},
-                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(28)},
-                        "short_video.mp4": {},
+                        **{f"video2_{str(i+1).zfill(3)}.jpg": {} for i in range(2)},
+                        **{f"short_video_{str(i+1).zfill(2)}.jpg": {} for i in range(2)},
                     },
                     "labels": {
                         "video2_001.txt": {},
@@ -1181,3 +1181,94 @@ def test_when_exporting_asset_with_include_sent_back_labels_parameter_it_filter_
 
     # Then
     process_and_save_mock.assert_called_once()
+
+
+def _asset_labelled(external_id: str, sent_back: bool) -> dict:
+    box = [{"x": 0.1, "y": 0.1}, {"x": 0.1, "y": 0.2}, {"x": 0.2, "y": 0.2}, {"x": 0.2, "y": 0.1}]
+    return {
+        "latestLabel": {
+            "author": {"id": "u", "email": "a@b.c", "firstname": "A", "lastname": "B"},
+            "jsonResponse": {
+                "JOB": {
+                    "annotations": [
+                        {
+                            "children": {},
+                            "boundingPoly": [{"normalizedVertices": box}],
+                            "categories": [{"name": "CLASS_A"}],
+                            "mid": "box",
+                            "type": "rectangle",
+                        }
+                    ]
+                }
+            },
+            "createdAt": "2026-10-16T09:00:00.000Z",
+            "isLatestLabelForUser": True,
+            "isSentBackToQueue": sent_back,
+            "labelType": "DEFAULT",
+            "modelName": None,
+        },
+        "resolution": {"width": 100, "height": 100},
+        "pageResolutions": None,
+        "id": external_id,
+        "externalId": external_id,
+        "content": f"https://storage.example/{external_id}.jpg",
+        "jsonContent": None,
+        "jsonMetadata": {},
+    }
+
+
+@pytest.mark.parametrize(
+    ("fmt", "label_file"), [("yolo_v8", "labels/{}.txt"), ("pascal_voc", "labels/{}.xml")]
+)
+@pytest.mark.parametrize("include_sent_back_labels", [False, True])
+def test_yolo_and_voc_leave_out_the_sent_back_labels_when_asked(
+    mocker: pytest_mock.MockerFixture, tmp_path, fmt, label_file, include_sent_back_labels
+):
+    mocker.patch(
+        "kili.services.export.format.base.fetch_assets",
+        return_value=[_asset_labelled("kept", False), _asset_labelled("sent", True)],
+    )
+    kili = mock_kili(mocker, with_data_connection=False)
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+
+    kili.export_labels(
+        project_id="fake_proj_id",
+        filename=str(tmp_path / "export.zip"),
+        fmt=fmt,  # type: ignore
+        layout="merged",
+        with_assets=False,
+        include_sent_back_labels=include_sent_back_labels,
+    )
+
+    names = ZipFile(tmp_path / "export.zip").namelist()
+    assert label_file.format("kept") in names
+    assert (label_file.format("sent") in names) is include_sent_back_labels
+
+
+def test_the_export_refuses_a_bounding_boxes_choice_it_does_not_know(mocker):
+    kili = mock_kili(mocker, with_data_connection=False)
+
+    with pytest.raises(ValueError, match='bbox_as="OBB" is none of box, obb, polygon'):
+        export_labels(
+            kili,  # type: ignore
+            asset_ids=None,
+            project_id="fake_proj_id",  # type: ignore
+            export_type="latest",
+            label_format="yolo_v8",
+            split_option="merged",
+            single_file=False,
+            output_file="export.zip",
+            disable_tqdm=True,
+            log_level="WARNING",
+            with_assets=False,
+            annotation_modifier=None,
+            asset_filter_kwargs=None,
+            normalized_coordinates=None,
+            label_type_in=None,
+            include_sent_back_labels=None,
+            bbox_as="OBB",  # type: ignore
+        )
+    kili.kili_api_gateway.get_project.assert_not_called()

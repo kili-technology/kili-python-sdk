@@ -381,3 +381,16 @@ class TestExportTypeValidation:
 
         # Should have fetched workflow version only once
         mock_gateway.get_project.assert_called_once()
+
+
+@pytest.mark.parametrize("method", ["yolo_v5", "yolo_v7", "yolo_v8"])
+def test_the_yolo_exports_pass_how_to_write_the_bounding_boxes(
+    export_namespace, mock_client, mock_gateway, method
+):
+    mock_gateway.get_project.return_value = {"id": "test-project", "workflowVersion": "V2"}
+
+    getattr(export_namespace, method)(
+        project_id="test-project", output_path="/tmp/export.zip", bbox_as="obb"
+    )
+
+    assert mock_client.export_labels.call_args.kwargs["bbox_as"] == "obb"
