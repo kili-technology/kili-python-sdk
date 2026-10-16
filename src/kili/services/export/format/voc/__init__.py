@@ -2,11 +2,13 @@
 
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Optional
 
 from kili_formats import convert_from_kili_to_voc_format
+from kili_formats.layout import asset_label_files, exported_jobs
 from kili_formats.media.image import get_frame_dimensions, get_image_dimensions
 from kili_formats.media.video import cut_video, get_video_dimensions
-from kili_formats.types import Job, JobTool
+from kili_formats.types import Job
 
 from kili.domain.ontology import JobMLTask
 from kili.services.export.exceptions import (
@@ -14,7 +16,7 @@ from kili.services.export.exceptions import (
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from kili.services.export.format.base import AbstractExporter
+from kili.services.export.format.base import AbstractExporter, keep_only_images
 from kili.utils.tqdm import tqdm
 
 
@@ -52,10 +54,8 @@ class VocExporter(AbstractExporter):
             )
 
     def _is_job_compatible(self, job: Job) -> bool:
-        """Check job compatibility with the Pascal VOC format."""
-        if "tools" not in job:
-            return False
-        return JobTool.RECTANGLE in job["tools"] and job["mlTask"] == JobMLTask.OBJECT_DETECTION
+        """The bounding box jobs: Pascal VOC holds rectangles only, as the app's export takes them."""
+        return bool(exported_jobs({"jobs": {"job": job}}, "pascal_voc"))
 
     def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
         """Save the assets and annotations to a zip file in the Pascal VOC format."""
@@ -64,108 +64,90 @@ class VocExporter(AbstractExporter):
         labels_folder = self.base_folder / "labels"
         labels_folder.mkdir(parents=True, exist_ok=True)
 
-        for asset in tqdm(assets, disable=self.disable_tqdm):
-            _process_asset(asset, labels_folder, self.project["inputType"], self.compatible_jobs)
+        images: set[Path] = set()
+        frames_by_asset: dict[str, list[str]] = {}
+        for asset in tqdm(self.preprocess_assets(assets), disable=self.disable_tqdm):
+            asset_images, frame_names = _process_asset(
+                asset,
+                labels_folder,
+                self.project["inputType"],
+                self.compatible_jobs,
+                self.project["jsonInterface"],
+                self.images_folder,
+            )
+            images |= asset_images
+            if frame_names:
+                frames_by_asset[asset["externalId"]] = frame_names
 
+        if frames_by_asset:
+            self.write_video_metadata_file(frames_by_asset, self.base_folder)
+        if self.with_assets:
+            keep_only_images(self.images_folder, images)
         self.create_readme_kili_file(self.export_root_folder)
         self.make_archive(self.export_root_folder, output_filename)
 
         self.logger.warning(output_filename)
 
 
-# pylint: disable=too-many-locals
-def _process_video_asset(
-    asset: dict,
-    latest_label: dict,
-    labels_folder: Path,
-    label_suffix: str,
-    valid_jobs: Sequence[str],
-) -> None:
-    """Process a video asset and save annotations."""
-    nbr_frames = len(latest_label.get("jsonResponse", {}))
-    if nbr_frames < 1:
-        return
-    leading_zeros = len(str(nbr_frames))
-
-    width = height = 0
-    frame_ext = ""
-    # jsonContent with frames
-    if isinstance(asset["jsonContent"], list) and Path(asset["jsonContent"][0]).is_file():
-        width, height = get_frame_dimensions(asset)
-        frame_ext = Path(asset["jsonContent"][0]).suffix
-
-    # video with shouldUseNativeVideo set to True (no frames available)
-    elif Path(asset["content"]).is_file():
-        try:
-            width, height = get_video_dimensions(asset)
-            cut_video(asset["content"], asset, leading_zeros, Path(asset["content"]).parent)
-            frame_ext = ".jpg"
-        except ImportError as e:
-            raise ImportError("Install with `pip install kili[video]` to use this feature.") from e
-
-    else:
-        raise FileNotFoundError(f"Could not find frames or video for asset {asset}")
-
-    for frame_id, json_response in latest_label["jsonResponse"].items():
-        frame_name = (
-            f'{asset["externalId"]}_{str(int(frame_id)+1).zfill(leading_zeros)}{label_suffix}'
-        )
-        parameters = {"filename": f"{frame_name}{frame_ext}"}
-        annotations = convert_from_kili_to_voc_format(
-            json_response, width, height, parameters, valid_jobs
-        )
-        filepath = labels_folder / f"{frame_name}.xml"
-        filepath.parent.mkdir(parents=True, exist_ok=True)
-        with open(filepath, "wb") as fout:
-            fout.write(f"{annotations}\n".encode())
-
-
-def _process_image_asset(
-    asset: dict,
-    latest_label: dict,
-    labels_folder: Path,
-    label_suffix: str,
-    valid_jobs: Sequence[str],
-) -> None:
-    """Process an image asset and save annotations."""
-    json_response = latest_label["jsonResponse"]
-    width, height = get_image_dimensions(asset)
-    filename = (
-        Path(asset["content"]).name if Path(asset["content"]).is_file() else asset["externalId"]
-    )
-    parameters = {"filename": filename}
-    annotations = convert_from_kili_to_voc_format(
-        json_response, width, height, parameters, valid_jobs
-    )
-    xml_filename = f'{asset["externalId"]}{label_suffix}.xml'
-    filepath = labels_folder / xml_filename
-    filepath.parent.mkdir(parents=True, exist_ok=True)
-    with open(filepath, "wb") as fout:
-        fout.write(f"{annotations}\n".encode())
-
-
 def _process_asset(
-    asset: dict, labels_folder: Path, project_input_type: str, valid_jobs: Sequence[str]
-) -> None:
-    """Process an asset."""
-    # Collect all labels to process (handle both latestLabel and latestLabels)
-    labels_to_process = []
-    if "latestLabel" in asset and asset["latestLabel"]:
-        labels_to_process.append(asset["latestLabel"])
-    if "latestLabels" in asset and asset["latestLabels"]:
-        for label in asset["latestLabels"]:
-            if label is not None:
-                labels_to_process.append(label)
+    asset: dict,
+    labels_folder: Path,
+    project_input_type: str,
+    valid_jobs: Sequence[str],
+    json_interface: Optional[dict] = None,
+    images_folder: Optional[Path] = None,
+) -> tuple[set[Path], list[str]]:
+    """Write an asset's Pascal VOC files, as kili-formats lays them out, each naming the image it
+    describes.
 
-    if not labels_to_process:
-        return
+    Return the downloaded images they describe, and the names of the video's frames.
+    """
+    content = Path(str(asset["content"]))
+    frames = (
+        [Path(path) for path in asset["jsonContent"]]
+        if isinstance(asset.get("jsonContent"), list)
+        else []
+    )
+    if project_input_type == "VIDEO":
+        if frames and frames[0].is_file():
+            width, height = get_frame_dimensions(asset)
+        # video with shouldUseNativeVideo set to True (no frames available)
+        elif content.is_file():
+            try:
+                width, height = get_video_dimensions(asset)
+                frames = cut_video(content, asset, 0, content.parent)
+            except ImportError as e:
+                raise ImportError(
+                    "Install with `pip install kili[video]` to use this feature."
+                ) from e
+        else:
+            raise FileNotFoundError(f"Could not find frames or video for asset {asset}")
+    else:
+        width, height = get_image_dimensions(asset)
 
-    # Process each label
-    for label_idx, latest_label in enumerate(labels_to_process, start=1):
-        # Add label suffix if we have multiple labels
-        label_suffix = f"_label{label_idx}" if len(labels_to_process) > 1 else ""
-
-        if project_input_type == "VIDEO":
-            _process_video_asset(asset, latest_label, labels_folder, label_suffix, valid_jobs)
-        elif project_input_type == "IMAGE":
-            _process_image_asset(asset, latest_label, labels_folder, label_suffix, valid_jobs)
+    images: set[Path] = set()
+    files = asset_label_files(asset, project_input_type, valid_jobs, len(frames), json_interface)
+    for file in files:
+        if file.frame is None:
+            image_name = asset["externalId"]
+            if content.is_file():
+                images.add(content)
+                # Its path in the images folder, as the app names it: an external id holding a
+                # slash puts it in a subfolder
+                image_name = (
+                    content.resolve().relative_to(images_folder.resolve()).as_posix()
+                    if images_folder and content.resolve().is_relative_to(images_folder.resolve())
+                    else content.name
+                )
+        elif file.frame < len(frames):
+            image_name = frames[file.frame].name
+            images.add(frames[file.frame])
+        else:
+            image_name = f"{file.image}.jpg"
+        annotations = convert_from_kili_to_voc_format(
+            file.json_response, width, height, {"filename": image_name}, valid_jobs
+        )
+        filepath = labels_folder / f"{file.stem}.xml"
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        filepath.write_text(f"{annotations}\n", encoding="utf8", newline="")
+    return images, sorted({file.image for file in files if file.frame is not None})
