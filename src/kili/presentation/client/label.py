@@ -44,7 +44,13 @@ from kili.presentation.client.helpers.filter_conversion import (
 )
 from kili.services.export import export_labels
 from kili.services.export.exceptions import NoCompatibleJobError
-from kili.services.export.types import CocoAnnotationModifier, ExportType, LabelFormat, SplitOption
+from kili.services.export.types import (
+    CocoAnnotationModifier,
+    ExportType,
+    LabelFormat,
+    SplitOption,
+    YoloBoundingBoxes,
+)
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.label import LabelUseCases
 from kili.use_cases.label.process_shapefiles import get_json_response_from_shapefiles
@@ -1440,6 +1446,7 @@ class LabelClientMethods(BaseClientMethods):
         label_type_in: Optional[list[str]] = None,
         include_sent_back_labels: Optional[bool] = None,
         export_type: ExportType = "latest",
+        bbox_as: YoloBoundingBoxes = "box",
     ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         # pylint: disable=line-too-long
         """Export the project labels with the requested format into the requested output path.
@@ -1505,14 +1512,28 @@ class LabelClientMethods(BaseClientMethods):
                 - `"latest_from_last_step"`: Export the latest label from each annotator for the last step.
                 - `"latest_from_all_steps"`: Export the latest label from each annotator for all steps.
                 - `"normal"`: Export all labels.
+            bbox_as: How the YOLO v5, v7 and v8 formats write the bounding boxes:
+                - `"box"`: the upright box around each, for the Detect task.
+                - `"obb"`: their four corners, for the OBB task: a rotated box keeps its angle.
+                - `"polygon"`: their four corners, in the Segment task, beside the polygons and
+                    semantic segmentations.
 
         !!! Info
             The supported formats are:
 
-            - Yolo V4, V5, V7, V8 for object detection tasks.
+            - Yolo V5, V7, V8 for object detection: a dataset per Ultralytics task the project's
+                jobs give: the bounding boxes' task, Detect, OBB or Segment by `bbox_as`, and
+                Segment (polygons and semantic segmentations). Split by job, each job's folder
+                holds its own task; merged, a project with two gets a folder per task, `detect/`
+                or `obb/`, and `segment/`. Points, lines, pose and classification are not
+                exported.
+            - Yolo V4 for object detection: Detect only (bounding boxes).
             - Kili (a.k.a raw) for all tasks.
-            - COCO for object detection tasks (bounding box and semantic segmentation).
-            - Pascal VOC for object detection tasks (bounding box).
+            - COCO for object detection tasks (bounding box, polygon and semantic segmentation).
+            - Pascal VOC for object detection tasks (bounding box only: polygons and semantic
+                segmentations are not exported).
+            An asset with several labels gets a file per label, suffixed `_label<n>`, beside its
+            image, written once; a video, a file per frame holding a shape.
 
         !!! warning "Cloud storage"
             Export with asset download (`with_assets=True`) is not allowed for projects connected to a cloud storage.
@@ -1606,6 +1627,7 @@ class LabelClientMethods(BaseClientMethods):
                 normalized_coordinates=normalized_coordinates,
                 label_type_in=label_type_in,
                 include_sent_back_labels=include_sent_back_labels,
+                bbox_as=bbox_as,
             )
         except NoCompatibleJobError as excp:
             warnings.warn(str(excp), stacklevel=2)
