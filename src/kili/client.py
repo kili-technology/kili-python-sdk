@@ -237,4 +237,4 @@ class Kili(  # pylint: disable=too-many-ancestors,too-many-instance-attributes
         if not skip_checks:
             api_key_use_cases = ApiKeyUseCases(self.kili_api_gateway)
             api_key_use_cases.check_expiry_of_key_is_close(api_key)
-            warn_if_sdk_version_is_outdated(self.http_client)
+            warn_if_sdk_version_is_outdated(self.http_client, self.api_endpoint)
