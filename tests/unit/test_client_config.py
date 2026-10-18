@@ -179,6 +179,7 @@ def test_the_legacy_client_warning_shows_outside_main_unless_silenced(tmp_path, 
         "    pass\n"
     )
     env = {k: v for k, v in os.environ.items() if not k.startswith(("KILI_", "PYTHONWARNINGS"))}
+    env["HOME"] = env["USERPROFILE"] = str(tmp_path)  # no kili-sdk-config.json of the developer's
 
     result = subprocess.run(
         [sys.executable, *flags, "-c", "import my_module"],

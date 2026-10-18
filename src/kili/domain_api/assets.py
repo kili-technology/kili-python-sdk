@@ -18,7 +18,6 @@ from typing import (
 from typeguard import typechecked
 from typing_extensions import deprecated
 
-from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.helpers import is_url
 from kili.domain.asset import (
     AssetStatus,
@@ -27,9 +26,9 @@ from kili.domain.asset.asset import AssetActionOutcome, StatusInStep
 from kili.domain.issue import IssueStatus, IssueType
 from kili.domain.label import LabelType
 from kili.domain.types import ListOrTuple
-from kili.domain.user import UserFilter
 from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
+from kili.use_cases.user import UserUseCases
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -2361,25 +2360,10 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             asset_ids=asset_ids,
             external_ids=external_ids,
             project_id=project_id,
-            to_be_labeled_by_array=self._user_ids(to_be_labeled_by_array),
+            to_be_labeled_by_array=UserUseCases(self._gateway).replace_emails_by_ids(
+                to_be_labeled_by_array
+            ),
         )
-
-    def _user_ids(self, labelers_array: List[List[str]]) -> List[List[str]]:
-        """Replace each email by its user's id: the mutation takes ids only."""
-        emails = {labeler for labelers in labelers_array for labeler in labelers if "@" in labeler}
-        ids = {}
-        for email in emails:
-            users = list(
-                self._gateway.list_users(
-                    UserFilter(id=None, email=email.lower()),  # stored lowercased
-                    ("id",),
-                    QueryOptions(disable_tqdm=True, first=1),
-                )
-            )
-            if not users:
-                raise ValueError(f"No user has the email {email}.")
-            ids[email] = users[0]["id"]
-        return [[ids.get(labeler, labeler) for labeler in labelers] for labelers in labelers_array]
 
     @overload
     def update_priority(

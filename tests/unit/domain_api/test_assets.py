@@ -369,7 +369,9 @@ class TestAssetsNamespaceCoreOperations:
             to_be_labeled_by_array=[["Labeler@Example.com", "user-2"], ["user-2"]],
         )
 
-        assert mock_gateway.list_users.call_args.args[0].email == "labeler@example.com"
+        assert (
+            mock_gateway.list_users.call_args.kwargs["user_filters"].email == "labeler@example.com"
+        )
         mock_client.assign_assets_to_labelers.assert_called_once_with(
             asset_ids=["asset1", "asset2"],
             external_ids=None,
@@ -380,9 +382,21 @@ class TestAssetsNamespaceCoreOperations:
     def test_assign_refuses_an_unknown_email(self, assets_namespace, mock_client, mock_gateway):
         mock_gateway.list_users.return_value = iter([])
 
-        with pytest.raises(ValueError, match="nobody@example.com"):
+        with pytest.raises(ValueError, match="nobody@example.com: check it, or pass the user's id"):
             assets_namespace.assign(asset_id="asset1", to_be_labeled_by=["nobody@example.com"])
         mock_client.assign_assets_to_labelers.assert_not_called()
+
+    def test_create_geospatial_warns_that_a_file_layer_takes_no_zoom(
+        self, assets_namespace, mock_client
+    ):
+        with pytest.warns(UserWarning, match="Zoom levels of local layers"):
+            assets_namespace.create_geospatial(
+                project_id="project_123",
+                layer_array=[{"path": "a.tiff", "name": "Layer 1", "min_zoom": 10, "max_zoom": 18}],
+            )
+
+        kwargs = mock_client.append_many_to_dataset.call_args.kwargs
+        assert kwargs["multi_layer_content_array"] == [[{"name": "Layer 1", "path": "a.tiff"}]]
 
     def test_create_geospatial_sends_base_layer_and_zoom(self, assets_namespace, mock_client):
         tiles = "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png"

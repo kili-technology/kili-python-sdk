@@ -66,7 +66,8 @@ class PluginHandler(Plugin):
     The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run.
 
 !!! note "Kili version"
-    `Plugin` comes with the kili release that deprecates `PluginCore`: a plugin built on it needs that version or a later one where it runs. SaaS plugins are installed with the latest `kili` unless your `requirements.txt` pins an older one. On-premise, plugins run with the kili of your Kili deployment: until it includes `Plugin` (`from kili.plugins import Plugin` succeeds), keep `PluginCore`, described below.
+    `Plugin` comes with the kili release that deprecates `PluginCore`: a plugin built on it needs that version or a later one where it runs. On Kili's EU cloud (`cloud.kili-technology.com`), plugins are installed with the latest `kili` unless your `requirements.txt` pins an older one. On Kili's US cloud (`cloud.eastus.kili-technology.com`) and on-premise, plugins run with the `kili` of the plugins runner: until it includes `Plugin` (`from kili.plugins import Plugin` succeeds there), keep `PluginCore`, described below.
+
 ## Receiving Kili events
 
 Instead of `on_submit` and `on_review`, a plugin can receive any Kili event: decorate a method of `PluginHandler` with
@@ -125,8 +126,8 @@ The upload reads your code without running it, so:
 
 A family is uploaded as the pattern of its folder (`asset.workflow.*`), so an event Kili adds to it later reaches the
 plugin without changing its code. The method receives it once the plugin runs with a version of `kili_events` that
-knows it: on Kili's cloud, the packages are installed when the plugin is uploaded, so update the plugin
-(`kili.plugins.update`); on-premise, they are those of the plugins runner. Until then, like any event the plugin's
+knows it: on Kili's EU cloud, the packages are installed when the plugin is uploaded, so update the plugin
+(`kili.plugins.update`); on Kili's US cloud and on-premise, they are those of the plugins runner. Until then, like any event the plugin's
 version of `kili_events` does not know, it is logged and skipped; an event that does not match its model is logged as
 an error and skipped.
 
@@ -180,7 +181,7 @@ The plugins for the on-premise deployments work exactly the same as the plugins 
 
     `on_kili_event` needs the version of `kili` that introduces it, and `kili-events`: until your plugins-runner ships them,
     receive events with `on_submit` and `on_review`.
-2. As noted above, `Plugin` needs a kili that includes it: with an older on-premise deployment, write `class PluginHandler(PluginCore)` and call the legacy client's methods on `self.kili`.
+2. As noted above, `Plugin` needs a kili that includes it: while your plugins runner's does not, write `class PluginHandler(PluginCore)` and call the legacy client's methods on `self.kili`.
 3. In order to save the logs during the execution of your plugin, you should only use the provided logger in the plugin class (the simple `print` function will not save the log). For an example, see the code below:
 
 ```python

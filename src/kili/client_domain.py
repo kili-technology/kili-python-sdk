@@ -350,7 +350,8 @@ class Kili:
             webhooks = kili.plugins.webhooks
             ```
         """
-        from kili.domain_api import PluginsNamespace  # pylint: disable=import-outside-toplevel
+        # pylint: disable-next=import-outside-toplevel  # loaded on first use, as every namespace
+        from kili.domain_api import PluginsNamespace
 
         return PluginsNamespace(self.legacy_client, self.legacy_client.kili_api_gateway)
 
