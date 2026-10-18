@@ -8,6 +8,7 @@ from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
 from kili.core.graphql.graphql_client import GraphQLClient
+from kili.core.utils.batching import query_page_sizer
 from kili.domain.types import ListOrTuple
 from kili.utils.tqdm import tqdm
 
@@ -79,10 +80,11 @@ class PaginatedGraphQLQuery:
                         break
 
                     skip = count_elements_retrieved + options.skip
+                    page_size = query_page_sizer.page_size(query, options.batch_size)
                     first = (
-                        min(options.batch_size, nb_elements_to_query - count_elements_retrieved)
+                        min(page_size, nb_elements_to_query - count_elements_retrieved)
                         if nb_elements_to_query is not None and unicity_field is None
-                        else options.batch_size
+                        else page_size
                     )
                     payload = {"where": where, "skip": skip, "first": first}
                     elements = self._graphql_client.execute(query, payload)["data"]
@@ -91,6 +93,9 @@ class PaginatedGraphQLQuery:
                             "PaginatedGraphQLQuery only support operations returning a list of"
                             " objects"
                         )
+                    response_bytes = self._graphql_client.last_response_bytes
+                    if isinstance(response_bytes, int):  # not measured behind a test double
+                        query_page_sizer.record_page(query, response_bytes, len(elements))
 
                     if len(elements) == 0:
                         break
@@ -99,26 +104,47 @@ class PaginatedGraphQLQuery:
                         yield from elements
                         pbar.update(len(elements))
                     else:
-                        check_unicity_field_presence(unicity_field, elements[0])
-
-                        for element in elements:
-                            unicity_value = element[unicity_field]
-
-                            if unicity_value not in unicity_values:
-                                yield element
-                                unicity_values[unicity_value] = True
-                                pbar.update(1)
-
-                                if (
-                                    options.first is not None
-                                    and len(unicity_values) >= options.first
-                                ):
-                                    break
+                        yield from self._yield_unique_elements(
+                            elements, unicity_field, unicity_values, options.first, pbar
+                        )
 
                     count_elements_retrieved += len(elements)
 
+                    if (
+                        unicity_field is not None
+                        and options.first is not None
+                        and len(unicity_values) >= options.first
+                    ):
+                        break
+
                     if len(elements) < first:
                         break
+
+    @staticmethod
+    def _yield_unique_elements(
+        elements: list[dict],
+        unicity_field: str,
+        unicity_values: dict[Any, bool],
+        first: Optional[int],
+        pbar: tqdm,
+    ) -> Generator[dict, None, None]:
+        """Yield elements not already seen, tracking them in unicity_values.
+
+        Stops early once `first` unique elements have been yielded in total.
+        """
+        check_unicity_field_presence(unicity_field, elements[0])
+
+        for element in elements:
+            unicity_value = element[unicity_field]
+            if unicity_value in unicity_values:
+                continue
+
+            yield element
+            unicity_values[unicity_value] = True
+            pbar.update(1)
+
+            if first is not None and len(unicity_values) >= first:
+                return
 
     def get_number_of_elements_to_query(
         self,

@@ -26,8 +26,10 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 from kili.adapters.kili_api_gateway.label.common import get_annotation_fragment
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.graphql.operations.asset.mutations import GQL_SET_ASSET_CONSENSUS
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetFilters, AssetId
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
+from kili.exceptions import NotFound
 
 # Threshold for batching based on number of annotations
 # This is used to determine whether to use a single batch or multiple batches
@@ -39,6 +41,17 @@ THRESHOLD_FOR_BATCHING = 200
 class AssetOperationMixin(BaseOperationMixin):
     """Mixin extending Kili API Gateway class with Assets related operations."""
 
+    def get_asset_project_id(self, asset_id: AssetId) -> ProjectId:
+        """The project an asset belongs to."""
+        query = get_assets_query(fragment_builder(["project.id"]))
+        result = self.graphql_client.execute(
+            query, {"where": {"id": asset_id}, "first": 1, "skip": 0}
+        )
+        assets = result["data"]
+        if not assets:
+            raise NotFound(f"asset ID: {asset_id}. The asset does not exist.")
+        return ProjectId(assets[0]["project"]["id"])
+
     def list_assets(
         self,
         filters: AssetFilters,
@@ -46,7 +59,14 @@ class AssetOperationMixin(BaseOperationMixin):
         options: QueryOptions,
     ) -> Generator[dict, None, None]:
         """List assets with given options."""
-        if "labels.jsonResponse" in fields or "latestLabel.jsonResponse" in fields:
+        if any(
+            field in fields
+            for field in (
+                "labels.jsonResponse",
+                "latestLabel.jsonResponse",
+                "latestLabels.jsonResponse",
+            )
+        ):
             # Check if we can get the jsonResponse of if we need to rebuild it.
             project_info = get_project(
                 self.graphql_client, filters.project_id, ("inputType", "jsonInterface")
@@ -98,6 +118,7 @@ class AssetOperationMixin(BaseOperationMixin):
 
         requested_labels_json_response = "labels.jsonResponse" in fields
         requested_latest_label_json_response = "latestLabel.jsonResponse" in fields
+        requested_latest_labels_json_response = "latestLabels.jsonResponse" in fields
 
         required_fields = {"content", "jsonContent", "resolution.width", "resolution.height"}
         fields = list(fields)
@@ -106,6 +127,8 @@ class AssetOperationMixin(BaseOperationMixin):
             required_fields.add("labels.jsonResponseUrl")
         if requested_latest_label_json_response:
             required_fields.add("latestLabel.jsonResponseUrl")
+        if requested_latest_labels_json_response:
+            required_fields.add("latestLabels.jsonResponseUrl")
 
         for field in required_fields:
             if field not in fields:
@@ -140,7 +163,12 @@ class AssetOperationMixin(BaseOperationMixin):
 
         requested_labels_json_response = "labels.jsonResponse" in fields
         requested_latest_label_json_response = "latestLabel.jsonResponse" in fields
-        needs_json_response = requested_labels_json_response or requested_latest_label_json_response
+        requested_latest_labels_json_response = "latestLabels.jsonResponse" in fields
+        needs_json_response = (
+            requested_labels_json_response
+            or requested_latest_label_json_response
+            or requested_latest_labels_json_response
+        )
 
         if needs_json_response:
             nb_annotations = self.count_assets_annotations(filters)
@@ -164,7 +192,11 @@ class AssetOperationMixin(BaseOperationMixin):
                 {inner_annotation_fragment}
             }}
         """
-        static_fragments = {"labels": annotation_fragment, "latestLabel": annotation_fragment}
+        static_fragments = {
+            "labels": annotation_fragment,
+            "latestLabel": annotation_fragment,
+            "latestLabels": annotation_fragment,
+        }
 
         for field in required_fields:
             if field not in fields:
@@ -187,16 +219,17 @@ class AssetOperationMixin(BaseOperationMixin):
                 project_input_type=project_info["inputType"],
             )
             for asset in assets_gen:
+                labels_to_patch = []
                 if requested_latest_label_json_response and asset.get("latestLabel"):
-                    converter.patch_label_json_response(
-                        asset, asset["latestLabel"], asset["latestLabel"]["annotations"]
-                    )
-                    asset["latestLabel"].pop("annotations", None)
-
+                    labels_to_patch.append(asset["latestLabel"])
+                if requested_latest_labels_json_response:
+                    labels_to_patch.extend(asset.get("latestLabels") or [])
                 if requested_labels_json_response:
-                    for label in asset.get("labels", []):
-                        converter.patch_label_json_response(asset, label, label["annotations"])
-                        label.pop("annotations", None)
+                    labels_to_patch.extend(asset.get("labels", []))
+
+                for label in filter(None, labels_to_patch):
+                    converter.patch_label_json_response(asset, label, label["annotations"])
+                    label.pop("annotations", None)
                 yield asset
         else:
             yield from assets_gen

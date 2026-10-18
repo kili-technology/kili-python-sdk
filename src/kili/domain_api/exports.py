@@ -48,6 +48,7 @@ class ExportAssetFilter(TypedDict, total=False):
     skipped: Optional[bool]
     status_in: Optional[list[AssetStatus]]
     step_name_in: Optional[list[str]]
+    step_id_in: Optional[list[str]]
     step_status_in: Optional[list[StatusInStep]]
     group_name_in: Optional[list[str]]
     group_name_not_in: Optional[list[str]]
@@ -124,10 +125,10 @@ class ExportNamespace(DomainNamespace):
 
         if workflow_version == "V1":
             raise ValueError(
-                f"Export type '{export_type}' is not compatible with Workflow V1 projects. "
-                f"Workflow V1 projects should use export_type='latest' or 'normal'. "
-                f"The '{export_type}' export type is designed for Workflow V2 projects "
-                f"with multi-step workflows."
+                f"Export type '{export_type}' is not compatible with the legacy workflow. "
+                f"Legacy workflow projects should use export_type='latest' or 'normal'. "
+                f"The '{export_type}' export type is designed for the multi-step and "
+                f"multi-group workflows."
             )
 
     @deprecated(
@@ -182,8 +183,9 @@ class ExportNamespace(DomainNamespace):
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             single_file: If True, all labels are exported in a single JSON file.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -246,8 +248,9 @@ class ExportNamespace(DomainNamespace):
             layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -308,8 +311,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -369,8 +373,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -430,8 +435,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -491,8 +497,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -549,8 +556,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -607,8 +615,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -724,6 +733,9 @@ class ExportNamespace(DomainNamespace):
                 If True, the coordinates of the `(x, y)` vertices are normalized between 0 and 1.
                 If False, the json response will contain additional fields with coordinates in
                 absolute values, that is, in pixels.
+                On a `GEOSPATIAL` project labeled in image pixel coordinates the absolute values
+                are the default, since they are what that mode exists for: `None` and `False` both
+                add them, and only `True` leaves the fractions alone.
             label_type_in: Optional list of label type. Exported assets should have a label
                 whose type belongs to that list.
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
@@ -734,18 +746,16 @@ class ExportNamespace(DomainNamespace):
 
         Examples:
             >>> # Export all labels in COCO format
-            >>> kili.labels.export(
+            >>> kili.exports.coco(
             ...     project_id="my_project",
-            ...     fmt="coco",
-            ...     filename="export.zip"
+            ...     output_path="export.zip",
             ... )
 
             >>> # Export labels for specific assets
-            >>> kili.labels.export(
+            >>> kili.exports.kili(
             ...     project_id="my_project",
-            ...     fmt="kili",
-            ...     filename="filtered_export.zip",
-            ...     filter={"external_id_contains": ["batch_1"]}
+            ...     output_path="filtered_export.zip",
+            ...     filter={"external_id_strictly_in": ["batch_1"]},
             ... )
         """
         workflow_version = self._get_workflow_version(project_id)

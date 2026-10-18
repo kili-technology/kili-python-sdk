@@ -32,8 +32,7 @@ from kili.presentation.client.helpers.common_validators import (
     resolve_disable_tqdm,
 )
 from kili.presentation.client.helpers.filter_conversion import (
-    extract_step_id_and_status_filters_from_project_steps,
-    extract_step_ids_from_project_steps,
+    resolve_step_filters,
 )
 from kili.use_cases.asset import AssetUseCases
 from kili.use_cases.project.project import ProjectUseCases
@@ -43,55 +42,6 @@ from .base import BaseClientMethods
 
 if TYPE_CHECKING:
     import pandas as pd
-
-
-def _warn_deprecated_gt_lt_args(
-    consensus_mark_gt: Optional[float],
-    consensus_mark_lt: Optional[float],
-    honeypot_mark_gt: Optional[float],
-    honeypot_mark_lt: Optional[float],
-    label_consensus_mark_gt: Optional[float],
-    label_consensus_mark_lt: Optional[float],
-    label_created_at_gt: Optional[str],
-    label_created_at_lt: Optional[str],
-    label_honeypot_mark_gt: Optional[float],
-    label_honeypot_mark_lt: Optional[float],
-) -> None:
-    """Warn about deprecated _gt and _lt arguments."""
-    for arg_name, arg_value in zip(
-        (
-            "consensus_mark_gt",
-            "consensus_mark_lt",
-            "honeypot_mark_gt",
-            "honeypot_mark_lt",
-            "label_consensus_mark_gt",
-            "label_consensus_mark_lt",
-            "label_created_at_gt",
-            "label_created_at_lt",
-            "label_honeypot_mark_gt",
-            "label_honeypot_mark_lt",
-        ),
-        (
-            consensus_mark_gt,
-            consensus_mark_lt,
-            honeypot_mark_gt,
-            honeypot_mark_lt,
-            label_consensus_mark_gt,
-            label_consensus_mark_lt,
-            label_created_at_gt,
-            label_created_at_lt,
-            label_honeypot_mark_gt,
-            label_honeypot_mark_lt,
-        ),
-        strict=False,
-    ):
-        if arg_value:
-            warnings.warn(
-                f"'{arg_name}' is deprecated, please use"
-                f" '{arg_name.replace('_gt', '_gte').replace('_lt', '_lte')}' instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -108,22 +58,11 @@ class AssetClientMethods(BaseClientMethods):
         fields: Optional[ListOrTuple[str]] = None,
         asset_id_in: Optional[list[str]] = None,
         asset_id_not_in: Optional[list[str]] = None,
-        consensus_mark_gt: Optional[float] = None,
-        consensus_mark_lt: Optional[float] = None,
         disable_tqdm: Optional[bool] = None,
-        external_id_contains: Optional[list[str]] = None,
         first: Optional[int] = None,
         format: Optional[str] = None,
-        honeypot_mark_gt: Optional[float] = None,
-        honeypot_mark_lt: Optional[float] = None,
         label_author_in: Optional[list[str]] = None,
-        label_consensus_mark_gt: Optional[float] = None,
-        label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
-        label_created_at_gt: Optional[str] = None,
-        label_created_at_lt: Optional[str] = None,
-        label_honeypot_mark_gt: Optional[float] = None,
-        label_honeypot_mark_lt: Optional[float] = None,
         label_type_in: Optional[list[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         updated_at_gte: Optional[str] = None,
@@ -168,6 +107,10 @@ class AssetClientMethods(BaseClientMethods):
         group_name_not_in: Optional[list[str]] = None,
         *,
         as_generator: Literal[True],
+        step_id_in: Optional[list[str]] = None,
+        step_id_not_in: Optional[list[str]] = None,
+        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
     ) -> Generator[dict, None, None]:
         ...
 
@@ -180,22 +123,11 @@ class AssetClientMethods(BaseClientMethods):
         fields: Optional[ListOrTuple[str]] = None,
         asset_id_in: Optional[list[str]] = None,
         asset_id_not_in: Optional[list[str]] = None,
-        consensus_mark_gt: Optional[float] = None,
-        consensus_mark_lt: Optional[float] = None,
         disable_tqdm: Optional[bool] = None,
-        external_id_contains: Optional[list[str]] = None,
         first: Optional[int] = None,
         format: Optional[str] = None,
-        honeypot_mark_gt: Optional[float] = None,
-        honeypot_mark_lt: Optional[float] = None,
         label_author_in: Optional[list[str]] = None,
-        label_consensus_mark_gt: Optional[float] = None,
-        label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
-        label_created_at_gt: Optional[str] = None,
-        label_created_at_lt: Optional[str] = None,
-        label_honeypot_mark_gt: Optional[float] = None,
-        label_honeypot_mark_lt: Optional[float] = None,
         label_type_in: Optional[list[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         updated_at_gte: Optional[str] = None,
@@ -240,6 +172,10 @@ class AssetClientMethods(BaseClientMethods):
         group_name_not_in: Optional[list[str]] = None,
         *,
         as_generator: Literal[False] = False,
+        step_id_in: Optional[list[str]] = None,
+        step_id_not_in: Optional[list[str]] = None,
+        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
     ) -> list[dict]:
         ...
 
@@ -253,22 +189,11 @@ class AssetClientMethods(BaseClientMethods):
         fields: Optional[ListOrTuple[str]] = None,
         asset_id_in: Optional[list[str]] = None,
         asset_id_not_in: Optional[list[str]] = None,
-        consensus_mark_gt: Optional[float] = None,
-        consensus_mark_lt: Optional[float] = None,
         disable_tqdm: Optional[bool] = None,
-        external_id_contains: Optional[list[str]] = None,
         first: Optional[int] = None,
         format: Optional[str] = None,
-        honeypot_mark_gt: Optional[float] = None,
-        honeypot_mark_lt: Optional[float] = None,
         label_author_in: Optional[list[str]] = None,
-        label_consensus_mark_gt: Optional[float] = None,
-        label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
-        label_created_at_gt: Optional[str] = None,
-        label_created_at_lt: Optional[str] = None,
-        label_honeypot_mark_gt: Optional[float] = None,
-        label_honeypot_mark_lt: Optional[float] = None,
         label_type_in: Optional[list[LabelType]] = None,
         metadata_where: Optional[dict] = None,
         updated_at_gte: Optional[str] = None,
@@ -313,6 +238,10 @@ class AssetClientMethods(BaseClientMethods):
         group_name_not_in: Optional[list[str]] = None,
         *,
         as_generator: bool = False,
+        step_id_in: Optional[list[str]] = None,
+        step_id_not_in: Optional[list[str]] = None,
+        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
     ) -> Union[Iterable[dict], "pd.DataFrame"]:
         # pylint: disable=line-too-long
         """Get an asset list, an asset generator or a pandas DataFrame that match a set of constraints.
@@ -325,22 +254,13 @@ class AssetClientMethods(BaseClientMethods):
             skip: Number of assets to skip (they are ordered by their date of creation, first to last).
             fields: All the fields to request among the possible fields for the assets.
                     See [the documentation](https://api-docs.kili-technology.com/types/objects/asset) for all possible fields.
+                    `resolution` is empty on a `GEOSPATIAL` asset: its dimensions are per layer,
+                    carried by `geospatialExportMetadata` with the CRS the layer is labeled in.
             first: Maximum number of assets to return.
-            consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.
-            consensus_mark_lt: Deprecated. Use `consensus_mark_lte` instead.
-            external_id_contains: Deprecated. Use `external_id_strictly_in` instead.
             metadata_where: Filters by the values of the metadata of the asset.
-            honeypot_mark_gt: Deprecated. Use `honeypot_mark_gte` instead.
-            honeypot_mark_lt: Deprecated. Use `honeypot_mark_lte` instead.
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
             label_author_in: Returned assets should have a label whose author belongs to that list, if given. An author can be designated by the first name, the last name, or the first name + last name.
-            label_consensus_mark_gt: Deprecated. Use `label_consensus_mark_gte` instead.
-            label_consensus_mark_lt: Deprecated. Use `label_consensus_mark_lte` instead.
             label_created_at: Returned assets should have a label whose creation date is equal to this date.
-            label_created_at_gt: Deprecated. Use `label_created_at_gte` instead.
-            label_created_at_lt: Deprecated. Use `label_created_at_lte` instead.
-            label_honeypot_mark_gt: Deprecated. Use `label_honeypot_mark_gte` instead.
-            label_honeypot_mark_lt: Deprecated. Use `label_honeypot_mark_lte` instead.
             updated_at_gte: Returned assets should have an update date that is greater or equal to this date. The update date represents the last time a modification has been done at the asset level.
             updated_at_lte: Returned assets should have an update date that is lower or equal to this date. The update date represents the last time a modification has been done at the asset level.
             format: If equal to 'pandas', returns a pandas DataFrame
@@ -376,27 +296,46 @@ class AssetClientMethods(BaseClientMethods):
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
             label_output_format: If `parsed_label`, the labels in the assets will be parsed. More information on parsed labels in the [documentation](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/).
             skipped: Returned assets should be skipped
-                Only applicable if the project is in WorkflowV1 (legacy).
+                Only applicable if the project uses the legacy workflow.
             status_in: Returned assets should have a status that belongs to that list, if given.
                 Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
-                Only applicable if the project is in the WorkflowV1 (legacy).
+                Only applicable if the project uses the legacy workflow.
             step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             step_name_in: Returned assets are in the step whose name belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             step_name_not_in: Returned assets are in the step whose name does not belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
+            step_id_in: Returned assets are in the step whose id belong to that list, if given.
+                Exclusive with `step_name_in`. Only applicable if the project uses the multi-step or multi-group workflow.
+            step_id_not_in: Returned assets are in the step whose id does not belong to that list,
+                if given. Exclusive with `step_name_not_in`.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+            step_id_and_status_in: Returned assets match at least one of the given
+                (step_id, step_status) pairs. Exclusive with `step_name_and_status_in`.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+            step_id_and_status_not_in: Returned assets do not match any of the given
+                (step_id, step_status) pairs. Exclusive with `step_name_and_status_not_in`.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             step_status_in: Returned assets have the status in their step that belongs to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             step_status_not_in: Returned assets have the status in their step that does not belong to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .
-                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
             group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -450,13 +389,6 @@ class AssetClientMethods(BaseClientMethods):
                 'Argument values as_generator==True and format=="pandas" are not compatible.'
             )
 
-        if external_id_contains is not None:
-            warnings.warn(
-                "external_id_contains is deprecated, use external_id_strictly_in instead",
-                DeprecationWarning,
-                stacklevel=1,
-            )
-
         if (step_status_in is not None and "DOING" in step_status_in) or (
             step_status_not_in is not None and "DOING" in step_status_not_in
         ):
@@ -473,19 +405,6 @@ class AssetClientMethods(BaseClientMethods):
                 DeprecationWarning,
                 stacklevel=1,
             )
-
-        _warn_deprecated_gt_lt_args(
-            consensus_mark_gt=consensus_mark_gt,
-            consensus_mark_lt=consensus_mark_lt,
-            honeypot_mark_gt=honeypot_mark_gt,
-            honeypot_mark_lt=honeypot_mark_lt,
-            label_consensus_mark_gt=label_consensus_mark_gt,
-            label_consensus_mark_lt=label_consensus_mark_lt,
-            label_created_at_gt=label_created_at_gt,
-            label_created_at_lt=label_created_at_lt,
-            label_honeypot_mark_gt=label_honeypot_mark_gt,
-            label_honeypot_mark_lt=label_honeypot_mark_lt,
-        )
 
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
 
@@ -507,12 +426,12 @@ class AssetClientMethods(BaseClientMethods):
                 stacklevel=1,
             )
 
-        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None
-        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None
-        step_id_in = None
-        step_id_not_in = None
         has_step_or_status_filters = (
-            step_name_in is not None
+            step_id_in is not None
+            or step_id_not_in is not None
+            or step_id_and_status_in is not None
+            or step_id_and_status_not_in is not None
+            or step_name_in is not None
             or step_name_not_in is not None
             or step_name_and_status_in is not None
             or step_name_and_status_not_in is not None
@@ -530,6 +449,15 @@ class AssetClientMethods(BaseClientMethods):
                     "skipped": skipped,
                     "status_in": status_in,
                     "step_name_in": step_name_in,
+                    "has_step_id_filter": any(
+                        f is not None
+                        for f in (
+                            step_id_in,
+                            step_id_not_in,
+                            step_id_and_status_in,
+                            step_id_and_status_not_in,
+                        )
+                    ),
                     "step_name_not_in": step_name_not_in,
                     "step_status_in": step_status_in,
                     "step_status_not_in": step_status_not_in,
@@ -539,25 +467,22 @@ class AssetClientMethods(BaseClientMethods):
                     "group_name_not_in": group_name_not_in,
                 },
             )
-            if project_workflow_version in ("V2", "V3") and step_name_in is not None:
-                step_id_in = extract_step_ids_from_project_steps(
-                    project_steps=project_steps,
+            if project_workflow_version in ("V2", "V3"):
+                (
+                    step_id_in,
+                    step_id_not_in,
+                    step_id_and_status_in,
+                    step_id_and_status_not_in,
+                ) = resolve_step_filters(
+                    project_steps,
+                    step_id_in=step_id_in,
+                    step_id_not_in=step_id_not_in,
+                    step_id_and_status_in=step_id_and_status_in,
+                    step_id_and_status_not_in=step_id_and_status_not_in,
                     step_name_in=step_name_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_not_in is not None:
-                step_id_not_in = extract_step_ids_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_in=step_name_not_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_and_status_in is not None:
-                step_id_and_status_in = extract_step_id_and_status_filters_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_and_status_filters=step_name_and_status_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_and_status_not_in is not None:
-                step_id_and_status_not_in = extract_step_id_and_status_filters_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_and_status_filters=step_name_and_status_not_in,
+                    step_name_not_in=step_name_not_in,
+                    step_name_and_status_in=step_name_and_status_in,
+                    step_name_and_status_not_in=step_name_and_status_not_in,
                 )
 
         # Resolve disable_tqdm: function parameter > client global setting > function default
@@ -569,26 +494,26 @@ class AssetClientMethods(BaseClientMethods):
             asset_id=AssetId(asset_id) if asset_id else None,
             asset_id_in=cast(list[AssetId], asset_id_in) if asset_id_in else None,
             asset_id_not_in=cast(list[AssetId], asset_id_not_in) if asset_id_not_in else None,
-            consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
-            consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
+            consensus_mark_gte=consensus_mark_gte,
+            consensus_mark_lte=consensus_mark_lte,
             external_id_strictly_in=(
-                cast(list[AssetExternalId], external_id_strictly_in or external_id_contains)
-                if external_id_strictly_in or external_id_contains
+                cast(list[AssetExternalId], external_id_strictly_in)
+                if external_id_strictly_in
                 else None
             ),
             external_id_in=cast(list[AssetExternalId], external_id_in) if external_id_in else None,
-            honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
-            honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
+            honeypot_mark_gte=honeypot_mark_gte,
+            honeypot_mark_lte=honeypot_mark_lte,
             inference_mark_gte=inference_mark_gte,
             inference_mark_lte=inference_mark_lte,
             label_author_in=label_author_in,
-            label_consensus_mark_gte=label_consensus_mark_gt or label_consensus_mark_gte,
-            label_consensus_mark_lte=label_consensus_mark_lt or label_consensus_mark_lte,
+            label_consensus_mark_gte=label_consensus_mark_gte,
+            label_consensus_mark_lte=label_consensus_mark_lte,
             label_created_at=label_created_at,
-            label_created_at_gte=label_created_at_gt or label_created_at_gte,
-            label_created_at_lte=label_created_at_lt or label_created_at_lte,
-            label_honeypot_mark_gte=label_honeypot_mark_gt or label_honeypot_mark_gte,
-            label_honeypot_mark_lte=label_honeypot_mark_lt or label_honeypot_mark_lte,
+            label_created_at_gte=label_created_at_gte,
+            label_created_at_lte=label_created_at_lte,
+            label_honeypot_mark_gte=label_honeypot_mark_gte,
+            label_honeypot_mark_lte=label_honeypot_mark_lte,
             label_type_in=label_type_in,
             metadata_where=metadata_where,
             skipped=skipped,
@@ -643,22 +568,11 @@ class AssetClientMethods(BaseClientMethods):
         asset_id: Optional[str] = None,
         asset_id_in: Optional[list[str]] = None,
         asset_id_not_in: Optional[list[str]] = None,
-        external_id_contains: Optional[list[str]] = None,
         metadata_where: Optional[dict] = None,
         status_in: Optional[list[AssetStatus]] = None,
-        consensus_mark_gt: Optional[float] = None,
-        consensus_mark_lt: Optional[float] = None,
-        honeypot_mark_gt: Optional[float] = None,
-        honeypot_mark_lt: Optional[float] = None,
         label_type_in: Optional[list[LabelType]] = None,
         label_author_in: Optional[list[str]] = None,
-        label_consensus_mark_gt: Optional[float] = None,
-        label_consensus_mark_lt: Optional[float] = None,
         label_created_at: Optional[str] = None,
-        label_created_at_gt: Optional[str] = None,
-        label_created_at_lt: Optional[str] = None,
-        label_honeypot_mark_gt: Optional[float] = None,
-        label_honeypot_mark_lt: Optional[float] = None,
         skipped: Optional[bool] = None,
         updated_at_gte: Optional[str] = None,
         updated_at_lte: Optional[str] = None,
@@ -695,6 +609,10 @@ class AssetClientMethods(BaseClientMethods):
         step_name_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
         group_name_in: Optional[list[str]] = None,
         group_name_not_in: Optional[list[str]] = None,
+        step_id_in: Optional[list[str]] = None,
+        step_id_not_in: Optional[list[str]] = None,
+        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None,
+        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Count and return the number of assets with the given constraints.
@@ -706,22 +624,11 @@ class AssetClientMethods(BaseClientMethods):
             asset_id: The unique id of the asset to retrieve.
             asset_id_in: A list of the ids of the assets to retrieve.
             asset_id_not_in: A list of the ids of the assets to exclude.
-            external_id_contains: Deprecated. Use `external_id_strictly_in` instead.
             metadata_where: Filters by the values of the metadata of the asset.
             status_in: Returned assets should have a status that belongs to that list, if given. Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.
-            consensus_mark_gt: Deprecated. Use `consensus_mark_gte` instead.
-            consensus_mark_lt: Deprecated. Use `consensus_mark_lte` instead.
-            honeypot_mark_gt: Deprecated. Use `honeypot_mark_gte` instead.
-            honeypot_mark_lt: Deprecated. Use `honeypot_mark_lte` instead.
             label_type_in: Returned assets should have a label whose type belongs to that list, if given.
             label_author_in: Returned assets should have a label whose author belongs to that list, if given. An author can be designated by the first name, the last name, or the first name + last name.
-            label_consensus_mark_gt: Deprecated. Use `label_consensus_mark_gte` instead.
-            label_consensus_mark_lt: Deprecated. Use `label_consensus_mark_lte` instead.
             label_created_at: Returned assets should have a label whose creation date is equal to this date.
-            label_created_at_gt: Deprecated. Use `label_created_at_gte` instead.
-            label_created_at_lt: Deprecated. Use `label_created_at_lte` instead.
-            label_honeypot_mark_gt: Deprecated. Use `label_honeypot_mark_gte` instead.
-            label_honeypot_mark_lt: Deprecated. Use `label_honeypot_mark_lte` instead.
             skipped: Returned assets should be skipped.
             updated_at_gte: Returned assets should have an update date that is greated or equal to this date. The update date represents the last time a modification has been done at the asset level.
             updated_at_lte: Returned assets should have an update date that is lower or equal to this date. The update date represents the last time a modification has been done at the asset level.
@@ -752,23 +659,42 @@ class AssetClientMethods(BaseClientMethods):
             external_id_in: Returned assets should have external ids that partially match the ones in the list.
                 For example, with `external_id_in=['abc']`, any asset with an external id containing `'abc'` will be returned.
             step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             step_name_not_in: Returned assets are in a step whose name does not belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
+            step_id_in: Returned assets are in the step whose id belong to that list, if given.
+                Exclusive with `step_name_in`. Only applicable if the project uses the multi-step or multi-group workflow.
+            step_id_not_in: Returned assets are in the step whose id does not belong to that list,
+                if given. Exclusive with `step_name_not_in`.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+            step_id_and_status_in: Returned assets match at least one of the given
+                (step_id, step_status) pairs. Exclusive with `step_name_and_status_in`.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+            step_id_and_status_not_in: Returned assets do not match any of the given
+                (step_id, step_status) pairs. Exclusive with `step_name_and_status_not_in`.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             step_status_not_in: Returned assets have the status of their step that does not belong to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             step_name_and_status_in: Returned assets match at least one of the given (step_name, step_status) pairs.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             step_name_and_status_not_in: Returned assets do not match any of the given (step_name, step_status) pairs.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
             group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
             group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
 
         !!! info "Dates format"
             Date strings should have format: "YYYY-MM-DD"
@@ -790,13 +716,6 @@ class AssetClientMethods(BaseClientMethods):
             - `metadata_where = {key2: [2, 10]}` to filter on assets whose metadata
                 have key "key2" with a value between 2 and 10.
         """
-        if external_id_contains is not None:
-            warnings.warn(
-                "external_id_contains is deprecated, use external_id_strictly_in instead",
-                DeprecationWarning,
-                stacklevel=1,
-            )
-
         if (step_status_in is not None and "DOING" in step_status_in) or (
             step_status_not_in is not None and "DOING" in step_status_not_in
         ):
@@ -814,25 +733,12 @@ class AssetClientMethods(BaseClientMethods):
                 stacklevel=1,
             )
 
-        _warn_deprecated_gt_lt_args(
-            consensus_mark_gt=consensus_mark_gt,
-            consensus_mark_lt=consensus_mark_lt,
-            honeypot_mark_gt=honeypot_mark_gt,
-            honeypot_mark_lt=honeypot_mark_lt,
-            label_consensus_mark_gt=label_consensus_mark_gt,
-            label_consensus_mark_lt=label_consensus_mark_lt,
-            label_created_at_gt=label_created_at_gt,
-            label_created_at_lt=label_created_at_lt,
-            label_honeypot_mark_gt=label_honeypot_mark_gt,
-            label_honeypot_mark_lt=label_honeypot_mark_lt,
-        )
-
-        step_id_in = None
-        step_id_not_in = None
-        step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]] = None
-        step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]] = None
         has_step_or_status_filters = (
-            step_name_in is not None
+            step_id_in is not None
+            or step_id_not_in is not None
+            or step_id_and_status_in is not None
+            or step_id_and_status_not_in is not None
+            or step_name_in is not None
             or step_name_not_in is not None
             or step_name_and_status_in is not None
             or step_name_and_status_not_in is not None
@@ -853,6 +759,15 @@ class AssetClientMethods(BaseClientMethods):
                 asset_workflow_filters={
                     "skipped": skipped,
                     "step_name_in": step_name_in,
+                    "has_step_id_filter": any(
+                        f is not None
+                        for f in (
+                            step_id_in,
+                            step_id_not_in,
+                            step_id_and_status_in,
+                            step_id_and_status_not_in,
+                        )
+                    ),
                     "step_name_and_status_in": step_name_and_status_in,
                     "step_name_and_status_not_in": step_name_and_status_not_in,
                     "step_name_not_in": step_name_not_in,
@@ -864,25 +779,22 @@ class AssetClientMethods(BaseClientMethods):
                 },
             )
 
-            if project_workflow_version in ("V2", "V3") and step_name_in is not None:
-                step_id_in = extract_step_ids_from_project_steps(
-                    project_steps=project_steps,
+            if project_workflow_version in ("V2", "V3"):
+                (
+                    step_id_in,
+                    step_id_not_in,
+                    step_id_and_status_in,
+                    step_id_and_status_not_in,
+                ) = resolve_step_filters(
+                    project_steps,
+                    step_id_in=step_id_in,
+                    step_id_not_in=step_id_not_in,
+                    step_id_and_status_in=step_id_and_status_in,
+                    step_id_and_status_not_in=step_id_and_status_not_in,
                     step_name_in=step_name_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_not_in is not None:
-                step_id_not_in = extract_step_ids_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_in=step_name_not_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_and_status_in is not None:
-                step_id_and_status_in = extract_step_id_and_status_filters_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_and_status_filters=step_name_and_status_in,
-                )
-            if project_workflow_version in ("V2", "V3") and step_name_and_status_not_in is not None:
-                step_id_and_status_not_in = extract_step_id_and_status_filters_from_project_steps(
-                    project_steps=project_steps,
-                    step_name_and_status_filters=step_name_and_status_not_in,
+                    step_name_not_in=step_name_not_in,
+                    step_name_and_status_in=step_name_and_status_in,
+                    step_name_and_status_not_in=step_name_and_status_not_in,
                 )
 
         filters = AssetFilters(
@@ -890,16 +802,16 @@ class AssetClientMethods(BaseClientMethods):
             asset_id=AssetId(asset_id) if asset_id else None,
             asset_id_in=cast(list[AssetId], asset_id_in) if asset_id_in else None,
             asset_id_not_in=cast(list[AssetId], asset_id_not_in) if asset_id_not_in else None,
-            consensus_mark_gte=consensus_mark_gt or consensus_mark_gte,
-            consensus_mark_lte=consensus_mark_lt or consensus_mark_lte,
+            consensus_mark_gte=consensus_mark_gte,
+            consensus_mark_lte=consensus_mark_lte,
             external_id_strictly_in=(
-                cast(list[AssetExternalId], external_id_strictly_in or external_id_contains)
-                if external_id_strictly_in or external_id_contains
+                cast(list[AssetExternalId], external_id_strictly_in)
+                if external_id_strictly_in
                 else None
             ),
             external_id_in=cast(list[AssetExternalId], external_id_in) if external_id_in else None,
-            honeypot_mark_gte=honeypot_mark_gt or honeypot_mark_gte,
-            honeypot_mark_lte=honeypot_mark_lt or honeypot_mark_lte,
+            honeypot_mark_gte=honeypot_mark_gte,
+            honeypot_mark_lte=honeypot_mark_lte,
             inference_mark_gte=inference_mark_gte,
             inference_mark_lte=inference_mark_lte,
             label_author_in=label_author_in,
@@ -909,13 +821,13 @@ class AssetClientMethods(BaseClientMethods):
             label_reviewer_not_in=label_reviewer_not_in,
             assignee_in=assignee_in,
             assignee_not_in=assignee_not_in,
-            label_consensus_mark_gte=label_consensus_mark_gt or label_consensus_mark_gte,
-            label_consensus_mark_lte=label_consensus_mark_lt or label_consensus_mark_lte,
+            label_consensus_mark_gte=label_consensus_mark_gte,
+            label_consensus_mark_lte=label_consensus_mark_lte,
             label_created_at=label_created_at,
-            label_created_at_gte=label_created_at_gt or label_created_at_gte,
-            label_created_at_lte=label_created_at_lt or label_created_at_lte,
-            label_honeypot_mark_gte=label_honeypot_mark_gt or label_honeypot_mark_gte,
-            label_honeypot_mark_lte=label_honeypot_mark_lt or label_honeypot_mark_lte,
+            label_created_at_gte=label_created_at_gte,
+            label_created_at_lte=label_created_at_lte,
+            label_honeypot_mark_gte=label_honeypot_mark_gte,
+            label_honeypot_mark_lte=label_honeypot_mark_lte,
             label_type_in=label_type_in,
             metadata_where=metadata_where,
             skipped=skipped,
@@ -949,6 +861,9 @@ class AssetClientMethods(BaseClientMethods):
     ) -> bool:
         """Activate or deactivate consensus on an asset.
 
+        This method is not compatible with projects using the legacy workflow. On those projects,
+        use `kili.update_properties_in_assets()` with `is_used_for_consensus_array` instead.
+
         Args:
             project_id: The project ID.
             is_consensus: Whether to activate (True) or deactivate (False) consensus on the asset.
@@ -960,6 +875,13 @@ class AssetClientMethods(BaseClientMethods):
 
         Raises:
             ValueError: If neither asset_id nor external_id is provided.
+            GraphQLError: If a server-side precondition is not met. The server accepts the
+                call only on multi-step or multi-group workflow projects, while the asset sits on
+                a labeling (DEFAULT) step whose status is still TO_DO, when consensus is enabled
+                on that step, and when the caller is an admin or a team manager. Note that the TO_DO
+                window closes as soon as any labeler starts working on the asset (their first
+                autosave, not their submission), so the real precondition is that no labeler
+                has opened and started the asset yet.
 
         Examples:
             >>> # Activate consensus on an asset using asset_id

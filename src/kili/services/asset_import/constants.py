@@ -13,7 +13,7 @@ MAX_WIDTH_OR_HEIGHT_NON_TILED = 10000
 
 ALLOWED_EXTENSIONS_BY_INPUT_TYPE: dict[str, frozenset[str]] = {
     "AUDIO": frozenset({".flac", ".mp3", ".mp4", ".wav"}),
-    "GEOSPATIAL": frozenset({".tif", ".tiff", ".jp2", ".ntf", ".nitf"}),
+    "GEOSPATIAL": frozenset({".tif", ".tiff", ".jp2", ".ntf", ".nitf", ".r0"}),
     "IMAGE": frozenset(
         {
             ".jpeg",
