@@ -50,17 +50,13 @@ class AssetFilter(TypedDict, total=False):
     asset_id_not_in: Optional[list[str]]
     assignee_in: Optional[ListOrTuple[str]]
     assignee_not_in: Optional[ListOrTuple[str]]
-    consensus_mark_gt: Optional[float]
     consensus_mark_gte: Optional[float]
-    consensus_mark_lt: Optional[float]
     consensus_mark_lte: Optional[float]
     created_at_gte: Optional[str]
     created_at_lte: Optional[str]
     external_id_in: Optional[list[str]]
     external_id_strictly_in: Optional[list[str]]
-    honeypot_mark_gt: Optional[float]
     honeypot_mark_gte: Optional[float]
-    honeypot_mark_lt: Optional[float]
     honeypot_mark_lte: Optional[float]
     inference_mark_gte: Optional[float]
     inference_mark_lte: Optional[float]
@@ -68,18 +64,12 @@ class AssetFilter(TypedDict, total=False):
     issue_type: Optional[IssueType]
     label_author_in: Optional[list[str]]
     label_category_search: Optional[str]
-    label_consensus_mark_gt: Optional[float]
     label_consensus_mark_gte: Optional[float]
-    label_consensus_mark_lt: Optional[float]
     label_consensus_mark_lte: Optional[float]
-    label_created_at_gt: Optional[str]
     label_created_at_gte: Optional[str]
-    label_created_at_lt: Optional[str]
     label_created_at_lte: Optional[str]
     label_created_at: Optional[str]
-    label_honeypot_mark_gt: Optional[float]
     label_honeypot_mark_gte: Optional[float]
-    label_honeypot_mark_lt: Optional[float]
     label_honeypot_mark_lte: Optional[float]
     label_labeler_in: Optional[ListOrTuple[str]]
     label_labeler_not_in: Optional[ListOrTuple[str]]
@@ -93,6 +83,10 @@ class AssetFilter(TypedDict, total=False):
     step_name_and_status_not_in: Optional[list[tuple[str, StatusInStep]]]
     step_name_in: Optional[list[str]]
     step_name_not_in: Optional[list[str]]
+    step_id_in: Optional[list[str]]
+    step_id_not_in: Optional[list[str]]
+    step_id_and_status_in: Optional[list[tuple[str, StatusInStep]]]
+    step_id_and_status_not_in: Optional[list[tuple[str, StatusInStep]]]
     step_status_in: Optional[list[StatusInStep]]
     step_status_not_in: Optional[list[StatusInStep]]
     updated_at_gte: Optional[str]
@@ -2633,7 +2627,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     ) -> bool:
         """Activate or deactivate consensus on an asset.
 
-        This method is not compatible with projects using workflow version 1. On those projects,
+        This method is not compatible with projects using the legacy workflow. On those projects,
         use `kili.legacy_client.update_properties_in_assets()` with `is_used_for_consensus_array`
         instead.
 
@@ -2649,9 +2643,9 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         Raises:
             ValueError: If neither asset_id nor external_id is provided.
             GraphQLError: If a server-side precondition is not met. The server accepts the
-                call only on workflow V2/V3 projects, while the asset sits on a labeling
-                (DEFAULT) step whose status is still TO_DO, when consensus is enabled on that
-                step, and when the caller is an admin or a team manager. Note that the TO_DO
+                call only on multi-step or multi-group workflow projects, while the asset sits on
+                a labeling (DEFAULT) step whose status is still TO_DO, when consensus is enabled
+                on that step, and when the caller is an admin or a team manager. Note that the TO_DO
                 window closes as soon as any labeler starts working on the asset (their first
                 autosave, not their submission), so the real precondition is that no labeler
                 has opened and started the asset yet.

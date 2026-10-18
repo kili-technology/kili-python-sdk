@@ -5,10 +5,13 @@ import sys
 import warnings
 from typing import Optional, Union
 
+from kili_events import UnknownEventError, parse_event
+from pydantic import ValidationError
 from typing_extensions import deprecated
 
 from kili.client import Kili as KiliLegacy
 from kili.client_domain import Kili
+from kili.services.plugins.events import subscribed_methods
 from kili.services.plugins.helpers import PLUGIN_CORE_DEPRECATION, get_logger
 
 if not sys.warnoptions:  # -W and PYTHONWARNINGS win
@@ -151,13 +154,48 @@ class _PluginBase:
         self,
         payload: dict,
     ) -> None:
-        """Handler for all events, triggered when an event is triggered.
+        """Receives every event of the plugin, and calls the methods subscribed to it.
+
+        The event is parsed into its kili_events model, then passed to each method decorated
+        with `@on_kili_event` whose annotation it is an instance of. Decorate methods rather than
+        overriding this one.
 
         Args:
-            payload: Dict.
+            payload: The event as Kili sends it: `event` (its subject, e.g. `asset.skipped`),
+                `organizationId`, `projectId`, `userId` and `payload`, for the fields the
+                event declares.
         """
-        # pylint: disable=unused-argument
-        self.logger.warning("Method not implemented. Define a custom on_event on your plugin")
+        try:
+            event = parse_event(payload)
+        except UnknownEventError as error:
+            self.logger.warning(f"{error} The event is ignored.")
+            return
+        except ValidationError as error:
+            self.logger.error(
+                f"The event '{payload.get('event')}' does not match its kili_events model, so no"
+                f" method receives it: {error}"
+            )
+            return
+
+        subscriptions = subscribed_methods(type(self))
+        handlers = [name for name, models in subscriptions.items() if isinstance(event, models)]
+        if not handlers:
+            self.logger.warning(
+                f"No method of the plugin receives the event '{event.event}' (methods decorated"
+                f" with @on_kili_event: {', '.join(subscriptions) or 'none'})."
+            )
+            return
+
+        # Each method runs even when another one fails, then the run fails with the first error.
+        errors: list[Exception] = []
+        for name in handlers:
+            try:
+                getattr(self, name)(event)
+            except Exception as error:  # pylint: disable=broad-exception-caught
+                self.logger.error(f"{name} failed on '{event.event}': {error!r}")
+                errors.append(error)
+        if errors:
+            raise errors[0]
 
 
 class Plugin(_PluginBase):
@@ -179,7 +217,9 @@ class Plugin(_PluginBase):
         on_review(self, label: Dict, asset_id: str)
         on_custom_interface_click(self, label: Dict, asset_id: str)
         on_send_back_to_queue(self, asset_id: str)
-        on_event(self, payload: Dict)
+
+    or methods decorated with `@on_kili_event`, which receive the Kili events their
+    parameter's annotation names, as kili_events models.
 
     !!! warning
         if using a custom init, be sure to call super().__init__()

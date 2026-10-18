@@ -38,7 +38,8 @@ class AppendManyLabelsData:
     labels_data: list[AppendLabelData]
     label_type: LabelType
     overwrite: Optional[bool]
-    step_name: Optional[str] = None
+    # The step to add the labels on, resolved to its id from a name before the request is built.
+    step_id: Optional[str] = None
 
 
 @dataclass

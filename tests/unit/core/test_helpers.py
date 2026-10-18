@@ -1,17 +1,14 @@
 import json
-import time
 import warnings
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 import pytest
-from tenacity import TryAgain, retry
-from tenacity.wait import wait_fixed
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.core.helpers import (
-    RetryLongWaitWarner,
     format_result,
+    get_mime_type,
     validate_category_search_query,
 )
 from kili.domain.label import LabelId
@@ -81,28 +78,6 @@ def test_format_result_with_type_conversion_int():
     result = json.loads(result)
     ret = format_result("data", result, int, http_client=MagicMock())
     assert isinstance(ret, int)
-
-
-def test_retry_long_wait_warner():
-    class MyTestClass:
-        def __init__(self) -> None:
-            self.start_time = None
-
-        @retry(
-            wait=wait_fixed(0.05),
-            before_sleep=RetryLongWaitWarner(
-                warn_after=0.25,
-                logger_func=warnings.warn,
-                warn_message="warn_message_defined_by_user",
-            ),
-        )
-        def my_method_takes_some_time(self):
-            self.start_time = self.start_time or time.time()
-            if time.time() - self.start_time < 0.5:
-                raise TryAgain("Try again")
-
-    with pytest.warns(match="warn_message_defined_by_user"):
-        MyTestClass().my_method_takes_some_time()
 
 
 def test_get_labels_asset_ids_map(kili_api_gateway: KiliAPIGateway):
@@ -265,3 +240,13 @@ def test_category_search_queries(case: str, query: str, raise_error: bool):
             validate_category_search_query(query)
     else:
         validate_category_search_query(query)
+
+
+@pytest.mark.parametrize("path", ["image.ntf", "image.nitf", "image.r0", "/rset/IMAGE.R0"])
+def test_get_mime_type_reads_nitf_and_rset_full_resolution_as_nitf(path):
+    assert get_mime_type(path) == "application/vnd.nitf"
+
+
+@pytest.mark.parametrize("path", ["image.r1", "image.r5", "image.r10"])
+def test_get_mime_type_does_not_read_rset_reduced_resolutions_as_nitf(path):
+    assert get_mime_type(path) != "application/vnd.nitf"

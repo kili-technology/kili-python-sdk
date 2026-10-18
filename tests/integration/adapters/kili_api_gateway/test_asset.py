@@ -139,6 +139,116 @@ def test_given_a_query_returning_serialized_json_it_parses_json_fields(graphql_c
     }
 
 
+def test_given_latest_labels_json_response_requested_it_downloads_it_from_json_response_url(
+    graphql_client, http_client
+):
+    captured_queries = []
+
+    def mock_graphql_execute(query, *_args, **_kwargs) -> dict | None:
+        captured_queries.append(query)
+
+        if "query countAssets" in query:
+            return {"data": 1}
+
+        if "projects(" in query:
+            return {"data": [{"id": "project_id", "inputType": "IMAGE", "jsonInterface": "{}"}]}
+
+        if "query assets" in query:
+            return {
+                "data": [
+                    {
+                        "id": "fake_asset_id",
+                        "latestLabels": [
+                            {
+                                "jsonResponse": "{}",
+                                "jsonResponseUrl": "https://storage.example.com/label.json",
+                            }
+                        ],
+                        "content": "",
+                        "jsonContent": "",
+                        "resolution": {"width": 100, "height": 100},
+                    }
+                ]
+            }
+
+        return None
+
+    mock_http_response = http_client.get.return_value
+    mock_http_response.json.return_value = {"jobs": {"CLASSIFICATION_JOB": {}}}
+
+    graphql_client.execute.side_effect = mock_graphql_execute
+
+    asset_operations = AssetOperationMixin()
+    asset_operations.graphql_client = graphql_client
+    asset_operations.http_client = http_client
+    filters = AssetFilters(project_id=ProjectId("project_id"))
+    fields = ["id", "latestLabels.jsonResponse"]
+
+    # when
+    assets = list(
+        asset_operations.list_assets(filters, fields, options=QueryOptions(disable_tqdm=None))
+    )
+
+    # then
+    assets_query = next(q for q in captured_queries if "query assets" in q)
+    assert "jsonResponseUrl" in assets_query
+    assert assets[0]["latestLabels"][0]["jsonResponse"] == {"jobs": {"CLASSIFICATION_JOB": {}}}
+    assert "jsonResponseUrl" not in assets[0]["latestLabels"][0]
+
+
+def test_given_llm_project_latest_labels_json_response_requested_it_rebuilds_it_from_annotations(
+    graphql_client, http_client
+):
+    captured_queries = []
+
+    def mock_graphql_execute(query, *_args, **_kwargs) -> dict | None:
+        captured_queries.append(query)
+
+        if "query countAssets" in query or "query countAssetAnnotations" in query:
+            return {"data": 1}
+
+        if "projects(" in query:
+            return {
+                "data": [
+                    {"id": "project_id", "inputType": "LLM_STATIC", "jsonInterface": '{"jobs": {}}'}
+                ]
+            }
+
+        if "query assets" in query:
+            return {
+                "data": [
+                    {
+                        "id": "fake_asset_id",
+                        "latestLabels": [{"jsonResponse": "{}", "annotations": []}],
+                        "content": "",
+                        "jsonContent": "",
+                        "resolution": {"width": 100, "height": 100},
+                    }
+                ]
+            }
+
+        return None
+
+    graphql_client.execute.side_effect = mock_graphql_execute
+
+    asset_operations = AssetOperationMixin()
+    asset_operations.graphql_client = graphql_client
+    asset_operations.http_client = http_client
+    filters = AssetFilters(project_id=ProjectId("project_id"))
+    fields = ["id", "latestLabels.jsonResponse"]
+
+    # when
+    assets = list(
+        asset_operations.list_assets(filters, fields, options=QueryOptions(disable_tqdm=None))
+    )
+
+    # then
+    assets_query = next(q for q in captured_queries if "query assets" in q)
+    assert "annotations" in assets_query
+    assert "annotations" not in assets[0]["latestLabels"][0]
+    assert isinstance(assets[0]["latestLabels"][0]["jsonResponse"], dict)
+
+
 def _asset_operations(graphql_client, http_client) -> AssetOperationMixin:
     asset_operations = AssetOperationMixin()
     asset_operations.graphql_client = graphql_client
