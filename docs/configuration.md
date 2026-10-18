@@ -245,7 +245,7 @@ export KILI_DISABLE_REQUEST_COMPRESSION=true  # or "false", "1", "yes"
 
 **Example:**
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 # Behind a proxy that rejects compressed requests
 kili = Kili(api_key="your-api-key", disable_request_compression=True)

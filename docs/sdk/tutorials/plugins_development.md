@@ -331,7 +331,7 @@ The events the plugin receives are read from the annotations of its decorated me
 
 ```python
 kili.plugins.create(plugin_path="path/to/my/event_plugin.py", plugin_name="My event plugin")
-kili.activate_plugin_on_project("My event plugin", project_id=project_id)
+kili.plugins.activate(plugin_name="My event plugin", project_id=project_id)
 ```
 
 ## Managing your plugin
