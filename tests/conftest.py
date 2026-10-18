@@ -30,7 +30,7 @@ def _no_pypi_call():
     the fixtures a test asks for.
     """
     with patch(
-        "kili.adapters.pypi.get_latest_sdk_version_from_pypi", return_value=None
+        "kili.adapters.pypi.get_latest_sdk_version_from_pypi", autospec=True, return_value=None
     ) as no_pypi_call:
         yield no_pypi_call
 

@@ -1,11 +1,13 @@
+import time
 import warnings
 
 import pytest
 import pytest_mock
 import requests
 
-from kili.adapters.http_client import HttpClient
 from kili.adapters.pypi import (
+    PYPI_JSON_URL,
+    PYPI_TIMEOUT_IN_SECONDS,
     get_latest_sdk_version_from_pypi,
     is_saas_production,
     warn_if_sdk_version_is_outdated,
@@ -21,26 +23,26 @@ def _forget_pypi_answers(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr("kili.adapters.pypi._latest_versions", {})
 
 
-def make_http_client(mocker: pytest_mock.MockerFixture, status_code=200, json_payload=None):
+def answering(mocker: pytest_mock.MockerFixture, http_client, status_code=200, json_payload=None):
     response = mocker.MagicMock(spec=requests.Response)
     response.status_code = status_code
     response.json.return_value = json_payload
-    http_client = mocker.MagicMock(spec=HttpClient)
     http_client.get.return_value = response
     return http_client
 
 
 def test_given_pypi_answers_when_getting_latest_version_then_it_returns_it(
-    mocker: pytest_mock.MockerFixture,
+    mocker: pytest_mock.MockerFixture, http_client
 ):
     # Given
-    http_client = make_http_client(mocker, json_payload={"info": {"version": "99.0.0"}})
+    answering(mocker, http_client, json_payload={"info": {"version": "99.0.0"}})
 
     # When
     latest_version = get_latest_sdk_version_from_pypi(http_client)
 
     # Then
     assert latest_version == "99.0.0"
+    http_client.get.assert_called_once_with(PYPI_JSON_URL, timeout=PYPI_TIMEOUT_IN_SECONDS)
 
 
 @pytest.mark.parametrize(
@@ -50,27 +52,14 @@ def test_given_pypi_answers_when_getting_latest_version_then_it_returns_it(
         (500, None),
         (200, {}),
         (200, {"info": {}}),
+        (200, {"info": {"version": 26}}),
     ],
 )
 def test_given_an_unusable_pypi_answer_when_getting_latest_version_then_it_returns_none(
-    mocker: pytest_mock.MockerFixture, status_code, json_payload
+    mocker: pytest_mock.MockerFixture, http_client, status_code, json_payload
 ):
     # Given
-    http_client = make_http_client(mocker, status_code=status_code, json_payload=json_payload)
-
-    # When
-    latest_version = get_latest_sdk_version_from_pypi(http_client)
-
-    # Then
-    assert latest_version is None
-
-
-def test_given_pypi_is_unreachable_when_getting_latest_version_then_it_returns_none(
-    mocker: pytest_mock.MockerFixture,
-):
-    # Given
-    http_client = mocker.MagicMock(spec=HttpClient)
-    http_client.get.side_effect = requests.ConnectionError("no network")
+    answering(mocker, http_client, status_code=status_code, json_payload=json_payload)
 
     # When
     latest_version = get_latest_sdk_version_from_pypi(http_client)
@@ -80,15 +69,70 @@ def test_given_pypi_is_unreachable_when_getting_latest_version_then_it_returns_n
 
 
 @pytest.mark.parametrize(
+    ("requires_python", "expected"),
+    [
+        (">=3.10", "99.0.0"),
+        (">=3.10,<4", "99.0.0"),
+        (None, "99.0.0"),
+        ("", "99.0.0"),
+        (">=3.99", None),
+        (">= 4.0", None),
+    ],
+)
+def test_given_the_latest_release_requires_another_python_when_getting_it_then_it_is_left_out(
+    mocker: pytest_mock.MockerFixture, http_client, requires_python, expected
+):
+    # Given
+    answering(
+        mocker,
+        http_client,
+        json_payload={"info": {"version": "99.0.0", "requires_python": requires_python}},
+    )
+
+    # When
+    latest_version = get_latest_sdk_version_from_pypi(http_client)
+
+    # Then
+    assert latest_version == expected
+
+
+def test_given_pypi_is_unreachable_when_getting_latest_version_then_it_returns_none(http_client):
+    # Given
+    http_client.get.side_effect = requests.ConnectionError("no network")
+
+    # When
+    latest_version = get_latest_sdk_version_from_pypi(http_client)
+
+    # Then
+    assert latest_version is None
+
+
+def test_given_pypi_answers_late_when_getting_latest_version_then_it_gives_up_in_time(
+    mocker: pytest_mock.MockerFixture, http_client
+):
+    # Given
+    mocker.patch("kili.adapters.pypi.PYPI_TIMEOUT_IN_SECONDS", 0.2)
+    http_client.get.side_effect = lambda *args, **kwargs: time.sleep(2)
+
+    # When
+    start = time.monotonic()
+    latest_version = get_latest_sdk_version_from_pypi(http_client)
+
+    # Then
+    assert latest_version is None
+    assert time.monotonic() - start < 1
+
+
+@pytest.mark.parametrize(
     "first_answer",
     [{"info": {"version": "99.0.0"}}, None],
     ids=["a version", "no usable answer"],
 )
 def test_given_several_clients_when_getting_latest_version_then_pypi_is_asked_once(
-    mocker: pytest_mock.MockerFixture, first_answer
+    mocker: pytest_mock.MockerFixture, http_client, first_answer
 ):
     # Given
-    http_client = make_http_client(mocker, json_payload=first_answer)
+    answering(mocker, http_client, json_payload=first_answer)
 
     # When
     answers = {get_latest_sdk_version_from_pypi(http_client) for _ in range(3)}
@@ -100,7 +144,7 @@ def test_given_several_clients_when_getting_latest_version_then_pypi_is_asked_on
 
 @pytest.mark.parametrize("api_endpoint", [SAAS_EU, SAAS_US])
 def test_given_an_outdated_version_on_saas_when_checking_it_then_it_warns_to_upgrade(
-    mocker: pytest_mock.MockerFixture, api_endpoint
+    mocker: pytest_mock.MockerFixture, http_client, api_endpoint
 ):
     # Given
     mocker.patch("kili.adapters.pypi.__version__", "26.1.15")
@@ -109,7 +153,7 @@ def test_given_an_outdated_version_on_saas_when_checking_it_then_it_warns_to_upg
     # Then
     with pytest.warns(UserWarning) as record:
         # When
-        warn_if_sdk_version_is_outdated(mocker.MagicMock(spec=HttpClient), api_endpoint)
+        warn_if_sdk_version_is_outdated(http_client, api_endpoint)
 
     assert str(record[0].message) == (
         "You are using Kili SDK version 26.1.15, while version 26.2.2 is available."
@@ -132,7 +176,7 @@ def test_given_an_outdated_version_on_saas_when_checking_it_then_it_warns_to_upg
     ],
 )
 def test_given_a_deployment_other_than_saas_when_checking_the_version_then_pypi_is_not_asked(
-    mocker: pytest_mock.MockerFixture, api_endpoint
+    mocker: pytest_mock.MockerFixture, http_client, api_endpoint
 ):
     # Given
     mocker.patch("kili.adapters.pypi.__version__", "1.0.0")
@@ -144,7 +188,7 @@ def test_given_a_deployment_other_than_saas_when_checking_the_version_then_pypi_
     with warnings.catch_warnings():
         warnings.simplefilter("error")  # checks that no warning is raised
         # When
-        warn_if_sdk_version_is_outdated(mocker.MagicMock(spec=HttpClient), api_endpoint)
+        warn_if_sdk_version_is_outdated(http_client, api_endpoint)
 
     latest.assert_not_called()
 
@@ -174,7 +218,7 @@ def test_is_saas_production(api_endpoint, expected):
     ],
 )
 def test_given_a_version_that_is_not_outdated_when_checking_it_then_it_does_not_warn(
-    mocker: pytest_mock.MockerFixture, current_version, latest_version
+    mocker: pytest_mock.MockerFixture, http_client, current_version, latest_version
 ):
     # Given
     mocker.patch("kili.adapters.pypi.__version__", current_version)
@@ -184,11 +228,12 @@ def test_given_a_version_that_is_not_outdated_when_checking_it_then_it_does_not_
     with warnings.catch_warnings():
         warnings.simplefilter("error")  # checks that no warning is raised
         # When
-        warn_if_sdk_version_is_outdated(mocker.MagicMock(spec=HttpClient), SAAS_EU)
+        warn_if_sdk_version_is_outdated(http_client, SAAS_EU)
 
 
 def test_given_pypi_is_unreachable_when_checking_the_version_then_it_does_not_warn(
     mocker: pytest_mock.MockerFixture,
+    http_client,
 ):
     # Given
     mocker.patch("kili.adapters.pypi.get_latest_sdk_version_from_pypi", return_value=None)
@@ -197,4 +242,4 @@ def test_given_pypi_is_unreachable_when_checking_the_version_then_it_does_not_wa
     with warnings.catch_warnings():
         warnings.simplefilter("error")  # checks that no warning is raised
         # When
-        warn_if_sdk_version_is_outdated(mocker.MagicMock(spec=HttpClient), SAAS_EU)
+        warn_if_sdk_version_is_outdated(http_client, SAAS_EU)
