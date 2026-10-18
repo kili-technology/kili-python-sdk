@@ -16,12 +16,15 @@ if TYPE_CHECKING:
         IssuesNamespace,
         LabelsNamespace,
         OrganizationsNamespace,
+        PluginsNamespace,
         ProjectsNamespace,
         QuestionsNamespace,
         StoragesNamespace,
         TagsNamespace,
         UsersNamespace,
     )
+    from kili.event.presentation.client.event import EventClientMethods
+    from kili.llm.presentation.client.llm import LlmClientMethods
 
 warnings.filterwarnings("default", module="kili", category=DeprecationWarning)
 
@@ -53,8 +56,8 @@ class Kili:
     ) -> None:
         """Initialize Kili client (domain mode).
 
-        This client provides access to domain-based namespaces.
-        For the legacy API with methods, use `from kili.client import Kili` instead.
+        This client provides access to domain-based namespaces. It is the default way of
+        interacting with Kili: the legacy client (`from kili.client import Kili`) is deprecated.
 
         Args:
             api_key: User API key generated
@@ -104,10 +107,6 @@ class Kili:
             kili = Kili(disable_tqdm=True)
             ```
         """
-        warnings.warn(
-            "Client domain api is still a work in progress. Method names and return type will evolve.",
-            stacklevel=1,
-        )
         self.legacy_client = KiliLegacy(
             api_key,
             api_endpoint,
@@ -117,6 +116,38 @@ class Kili:
             disable_tqdm,
             disable_request_compression,
         )
+
+    @classmethod
+    def from_legacy(cls, legacy_client: KiliLegacy) -> "Kili":
+        """Wrap an existing legacy client, without signing in again.
+
+        Args:
+            legacy_client: A `kili.client.Kili` instance, such as the one a plugin is given.
+
+        Returns:
+            A domain client making its calls through `legacy_client`.
+
+        Examples:
+            ```python
+            kili = Kili.from_legacy(legacy_kili)
+            kili.projects.list()
+            ```
+        """
+        kili = cls.__new__(cls)
+        kili.legacy_client = legacy_client
+        return kili
+
+    @property
+    def api_endpoint(self) -> str:
+        """The GraphQL endpoint this client calls.
+
+        Examples:
+            ```python
+            kili = Kili()
+            app_url = kili.api_endpoint.split("/api")[0]
+            ```
+        """
+        return self.legacy_client.api_endpoint
 
     # Domain API Namespaces - Lazy loaded properties
     @cached_property
@@ -303,3 +334,53 @@ class Kili:
         from kili.domain_api import ExportNamespace  # pylint: disable=import-outside-toplevel
 
         return ExportNamespace(self.legacy_client, self.legacy_client.kili_api_gateway)
+
+    @cached_property
+    def plugins(self) -> "PluginsNamespace":
+        """Get the plugins domain namespace.
+
+        Returns:
+            PluginsNamespace: Plugins domain namespace with lazy loading
+
+        Examples:
+            ```python
+            kili = Kili()
+            plugins = kili.plugins.list()
+            # Access nested namespaces
+            webhooks = kili.plugins.webhooks
+            ```
+        """
+        # pylint: disable-next=import-outside-toplevel  # loaded on first use, as every namespace
+        from kili.domain_api import PluginsNamespace
+
+        return PluginsNamespace(self.legacy_client, self.legacy_client.kili_api_gateway)
+
+    @property
+    def llm(self) -> "LlmClientMethods":
+        """Get the LLM methods: models, conversations and exports of LLM projects.
+
+        Returns:
+            LlmClientMethods: The same methods as the legacy client's `kili.llm`
+
+        Examples:
+            ```python
+            kili = Kili()
+            kili.llm.export(project_id="my_project_id")
+            ```
+        """
+        return self.legacy_client.llm
+
+    @property
+    def events(self) -> "EventClientMethods":
+        """Get the events methods.
+
+        Returns:
+            EventClientMethods: The same methods as the legacy client's `kili.events`
+
+        Examples:
+            ```python
+            kili = Kili()
+            kili.events.list(project_id="my_project_id")
+            ```
+        """
+        return self.legacy_client.events

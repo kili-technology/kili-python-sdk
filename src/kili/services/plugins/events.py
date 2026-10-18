@@ -84,10 +84,10 @@ def on_kili_event(method: _Method, /) -> _Method:
         ```python
         from kili_events import AssetSkippedEvent, AssetWorkflowEvent, LabelWorkflowEvent
 
-        from kili.plugins import PluginCore, on_kili_event
+        from kili.plugins import Plugin, on_kili_event
 
 
-        class PluginHandler(PluginCore):
+        class PluginHandler(Plugin):
             @on_kili_event
             def on_skip(self, event: AssetSkippedEvent) -> None:
                 self.logger.info(f"Asset {event.payload.asset_id} skipped by {event.user_id}")

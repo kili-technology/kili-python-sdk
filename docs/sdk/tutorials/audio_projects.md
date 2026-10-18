@@ -29,7 +29,7 @@ Let's start by installing the SDK and instantiating the client. `Kili()` reads y
 ```python
 import json
 
-from kili.client import Kili
+from kili.client_domain import Kili
 
 kili = Kili()
 ```
@@ -124,7 +124,7 @@ Audio projects use the `AUDIO` input type.
 
 
 ```python
-project = kili.create_project(
+project = kili.projects.create(
     title="[Kili SDK Notebook]: Audio transcription",
     description="Speaker-attributed transcription of customer support calls",
     input_type="AUDIO",
@@ -140,7 +140,7 @@ print("Project ID:", project_id)
 
 ## 2. Importing audio assets
 
-Audio assets are imported like any other asset type, with `append_many_to_dataset`.
+Audio assets are imported with `kili.assets.create_audio`.
 
 Kili accepts **`.mp3`, `.wav`, `.flac` and `.mp4`** files.
 
@@ -150,10 +150,10 @@ Kili accepts **`.mp3`, `.wav`, `.flac` and `.mp4`** files.
 ```python
 AUDIO_URL = "https://storage.googleapis.com/label-public-staging/demo-projects/audio/EN_Support.mp3"
 
-kili.append_many_to_dataset(
+kili.assets.create_audio(
     project_id=project_id,
-    content_array=[AUDIO_URL],
-    external_id_array=["support_call_en"],
+    content=AUDIO_URL,
+    external_id="support_call_en",
 )
 ```
 
@@ -168,10 +168,10 @@ import urllib.request
 
 urllib.request.urlretrieve(AUDIO_URL, "support_call.mp3")
 
-kili.append_many_to_dataset(
+kili.assets.create_audio(
     project_id=project_id,
-    content_array=["./support_call.mp3"],
-    external_id_array=["support_call_en_local"],
+    content="./support_call.mp3",
+    external_id="support_call_en_local",
 )
 ```
 
@@ -312,16 +312,15 @@ json_response = {
 }
 ```
 
-`label_type="PREDICTION"` marks the label as model output, and `model_name` records which model
+`kili.labels.create_prediction` marks the label as model output, and `model_name` records which model
 produced it, so you can later compare several models on the same assets.
 
 
 ```python
-kili.append_labels(
+kili.labels.create_prediction(
     project_id=project_id,
-    asset_external_id_array=["support_call_en"],
-    json_response_array=[json_response],
-    label_type="PREDICTION",
+    external_id="support_call_en",
+    json_response=json_response,
     model_name="whisper-large-v3",
 )
 ```
@@ -337,19 +336,19 @@ A few things to keep in mind when building the `jsonResponse`:
 - **Every `speakerId` should exist in `speakers`.** A segment pointing at an unknown speaker is
   imported, but the interface will render it as *Unknown*.
 
-To import ground-truth labels rather than predictions, use the very same `jsonResponse` with the
-default `label_type="DEFAULT"`.
+To import ground-truth labels rather than predictions, use the very same `jsonResponse` with
+`kili.labels.create_default`.
 
 ## 5. Exporting audio labels
 
-`kili.labels` returns the labels of a project. Beyond `jsonResponse`, audio labels expose the
+`kili.labels.list` returns the labels of a project. Beyond `jsonResponse`, audio labels expose the
 `speakers` relation, which gives you the cast of each label.
 
 
 ```python
-labels = kili.labels(
+labels = kili.labels.list(
     project_id=project_id,
-    asset_external_id_in=["support_call_en"],
+    filter={"asset_external_id_in": ["support_call_en"]},
     fields=[
         "labelType",
         "modelName",
@@ -412,8 +411,8 @@ particular is your stable join key back to your own data.
 
 ### Exporting the whole project to a file
 
-To get every asset and every label at once, use `export_labels`. The `raw` and `kili` formats keep
-the audio `jsonResponse` untouched, `speakers` relation aside; the computer-vision formats
+To get every asset and every label at once, use `kili.exports.kili`. The Kili format keeps the
+audio `jsonResponse` untouched, `speakers` relation aside; the computer-vision exports
 (`coco`, `yolo_*`, `pascal_voc`) and `geojson` do not apply to audio.
 
 By default only submitted labels are exported, so pass `label_type_in` and `export_type="normal"` if
@@ -421,10 +420,9 @@ you also want the predictions.
 
 
 ```python
-kili.export_labels(
+kili.exports.kili(
     project_id=project_id,
-    filename="audio_export.zip",
-    fmt="raw",
+    output_path="audio_export.zip",
     with_assets=False,
     label_type_in=["DEFAULT", "PREDICTION"],
     export_type="normal",
@@ -437,7 +435,7 @@ Let's remove the project we created for this tutorial.
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```
 
 ## Summary

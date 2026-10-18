@@ -14,7 +14,7 @@ The public Python client. `CONTRIBUTING.md` covers the environment, the tests an
 
 ## Gotchas
 
-- There are **two public surfaces**: the legacy `kili.client.Kili` (mixins — `count_assets(...)`), the only one the documentation site renders, and `kili.client_domain.Kili` (namespaces — `assets.list(...)`), most of whose methods wrap a legacy method through `self._client`. Neither picks up the other's additions: a method added only to a namespace is undocumented, one added only to a mixin is missing from the namespaces.
+- There are **two public surfaces**: `kili.client_domain.Kili` (namespaces — `assets.list(...)`), the default, most of whose methods wrap a legacy method through `self._client`, and the deprecated `kili.client.Kili` (mixins — `count_assets(...)`), which warns when a user builds it — the domain client builds its own (`legacy_client`) without the warning. Neither picks up the other's additions: a method added only to a mixin is missing from the namespaces and documented only under "Legacy Reference (deprecated)".
 - The test job enforces `--cov-fail-under=75`: a change that adds uncovered code fails CI on coverage, not on a failing test.
 - `tests/e2e/` holds notebooks only — there is no Python e2e suite any more, and CI's `--ignore tests/e2e/` is vestigial.
 - Releasing is **two deliberate human steps**: dispatch `pre_release.yml` (bump2version, tag, draft) against `main` for SaaS or `release/XX.Y` for an LTS — where only `patch` is allowed — then publish the GitHub Release, which is what uploads to PyPI. Merging to `main` publishes nothing.

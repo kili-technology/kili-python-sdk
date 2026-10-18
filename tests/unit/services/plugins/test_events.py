@@ -15,7 +15,7 @@ from kili_events import (
 )
 
 from kili.client import Kili
-from kili.plugins import PluginCore, on_kili_event
+from kili.plugins import Plugin, PluginCore, on_kili_event
 from kili.services.plugins.events import subscribed_methods
 
 SKIPPED = {
@@ -131,6 +131,23 @@ def test_on_event_ignores_an_event_its_kili_events_does_not_know():
 
     assert plugin.received == []
     assert "'asset.teleported'" in logger.warning.call_args.args[0]
+
+
+def test_on_event_calls_the_decorated_methods_of_a_plugin_on_the_domain_client():
+    class DomainPluginHandler(Plugin):
+        received: list[KiliEvent] = []
+
+        @on_kili_event
+        def on_skip(self, event: AssetSkippedEvent) -> None:
+            self.received.append(event)
+
+    plugin = DomainPluginHandler(
+        kili=MagicMock(spec=Kili), project_id="project_id", logger=MagicMock(spec=logging.Logger)
+    )
+
+    plugin.on_event(payload=SKIPPED)
+
+    assert [event.payload.asset_id for event in plugin.received] == ["asset_id"]
 
 
 def test_on_event_of_a_plugin_without_decorated_method_warns():

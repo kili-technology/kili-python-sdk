@@ -3,13 +3,13 @@
 
 <a href="https://colab.research.google.com/github/kili-technology/kili-python-sdk/blob/main/recipes/import_labels_from_geojson.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 
-This tutorial explains how to use the `kili.append_labels_from_geojson_files` function in the Kili SDK to import geometries from GeoJSON files and convert them to annotations in your Kili projects.
+This tutorial explains how to use the `kili.labels.create_default_from_geojson` function in the Kili SDK to import geometries from GeoJSON files and convert them to annotations in your Kili projects.
 
 ## Introduction
 
 GeoJSON is a widely-used open standard format for representing simple geographical features along with their non-spatial attributes. Unlike shapefiles, GeoJSON is human-readable, supports web applications natively, and always uses the WGS84 coordinate system (EPSG:4326).
 
-The `append_labels_from_geojson_files` function provides three flexible modes to convert GeoJSON features into Kili annotations, making it easy to import existing geographic data into your annotation projects.
+The `kili.labels.create_default_from_geojson` function provides three flexible modes to convert GeoJSON features into Kili annotations, making it easy to import existing geographic data into your annotation projects.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ Before using this feature, ensure you have:
 
 ## Function Structure
 
-The `append_labels_from_geojson_files` function accepts the following parameters:
+The `kili.labels.create_default_from_geojson` function accepts the following parameters:
 
 | Parameter            | Type                |
 |---------------------|----------------------|
@@ -76,12 +76,12 @@ In this mode, your GeoJSON features contain `kili` metadata in their properties,
 
 **Python Code:**
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 kili = Kili(api_key="your_api_key")
 
 # Mode 1: Import with kili properties already in GeoJSON
-kili.append_labels_from_geojson_files(
+kili.labels.create_default_from_geojson(
     project_id="your_project_id",
     asset_external_id="paris_satellite.tif",
     geojson_file_paths=["landmarks_with_kili_props.geojson"]
@@ -95,7 +95,7 @@ In this mode, you explicitly specify which job and category to use for all compa
 **Python Code:**
 ```python
 # Mode 2: Map all features to specific jobs and categories
-kili.append_labels_from_geojson_files(
+kili.labels.create_default_from_geojson(
     project_id="your_project_id",
     asset_external_id="urban_area.jp2",
     geojson_file_paths=["roads.geojson", "buildings.geojson", "parks.geojson"],
@@ -118,7 +118,7 @@ When neither kili properties nor specific mappings are provided, the function au
 **Python Code:**
 ```python
 # Mode 3: Automatic mapping based on geometry types
-kili.append_labels_from_geojson_files(
+kili.labels.create_default_from_geojson(
     project_id="your_project_id",
     asset_external_id="geographic_data.tif",
     geojson_file_paths=["mixed_features.geojson"]
@@ -132,7 +132,7 @@ kili.append_labels_from_geojson_files(
 This example shows how to import a GeoJSON file containing different geometry types with kili properties:
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 kili = Kili(api_key="your_api_key")
 
@@ -205,7 +205,7 @@ with open("mixed_annotations.geojson", "w") as f:
     json.dump(geojson_data, f)
 
 # Import into Kili
-kili.append_labels_from_geojson_files(
+kili.labels.create_default_from_geojson(
     project_id="your_project_id",
     asset_external_id="manhattan_satellite.tif",
     geojson_file_paths=["mixed_annotations.geojson"]
@@ -218,7 +218,7 @@ This example demonstrates importing multiple GeoJSON files with specific job/cat
 
 ```python
 # Import different infrastructure types
-kili.append_labels_from_geojson_files(
+kili.labels.create_default_from_geojson(
     project_id="city_planning_project",
     asset_external_id="city_orthophoto_2024.tif",
     geojson_file_paths=[
@@ -286,7 +286,7 @@ forest_patches = {
 with open("forest_patches.geojson", "w") as f:
     json.dump(forest_patches, f)
 
-kili.append_labels_from_geojson_files(
+kili.labels.create_default_from_geojson(
     project_id="environmental_monitoring",
     asset_external_id="sentinel2_composite.tif",
     geojson_file_paths=["forest_patches.geojson"]
@@ -301,7 +301,7 @@ kili.append_labels_from_geojson_files(
 2. **Check Job Compatibility**: Ensure your Kili project has jobs with the appropriate tools for your geometry types:
    ```python
    # Check project structure
-   project = kili.projects(project_id="your_project_id", fields=["jsonInterface"])[0]
+   project = kili.projects.list(filter={"project_id": "your_project_id"}, fields=["jsonInterface"])[0]
    print(json.dumps(project["jsonInterface"]["jobs"], indent=2))
    ```
 
@@ -315,7 +315,7 @@ kili.append_labels_from_geojson_files(
 1. **Incompatible geometry-job combination**:
    ```python
    # Check which tools are available for each job
-   project = kili.projects(project_id="your_project_id", fields=["jsonInterface"])[0]
+   project = kili.projects.list(filter={"project_id": "your_project_id"}, fields=["jsonInterface"])[0]
    for job_name, job_config in project["jsonInterface"]["jobs"].items():
        print(f"{job_name}: {job_config.get('tools', [])}")
    ```
@@ -328,7 +328,7 @@ kili.append_labels_from_geojson_files(
 **Solution**: Verify exact names in your project:
 ```python
 # List all jobs and categories
-project = kili.projects(project_id="your_project_id", fields=["jsonInterface"])[0]
+project = kili.projects.list(filter={"project_id": "your_project_id"}, fields=["jsonInterface"])[0]
 for job_name, job_config in project["jsonInterface"]["jobs"].items():
     categories = job_config.get("content", {}).get("categories", {})
 ```

@@ -34,7 +34,7 @@ from google.cloud import vision
 from google.oauth2 import service_account
 from PIL import Image
 
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 We can now create the project ontology (json interface).
@@ -88,7 +88,7 @@ kili = Kili(
 
 ```python
 # Create an OCR project
-project = kili.create_project(
+project = kili.projects.create(
     description="OCR street view",
     input_type="IMAGE",
     json_interface=json_interface,
@@ -268,7 +268,7 @@ Let's upload the asset with its pre-annotations to Kili:
 external_id = "store"
 content = PATH_TO_IMG
 
-kili.append_many_to_dataset(
+kili.assets.create_image(
     project_id=project_id,
     content_array=[content],
     external_id_array=[external_id],
@@ -292,5 +292,5 @@ To clean up, we simply need to remove the project that we created:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```

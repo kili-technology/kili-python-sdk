@@ -59,9 +59,10 @@ If you want to contribute, here are the [installation steps](CONTRIBUTING.md).
 Instantiate the Kili client:
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 kili = Kili()
 # You can now use the Kili client!
+kili.projects.list(first=10)
 ```
 
 Note that you can also pass the API key as an argument of the `Kili` initialization:
@@ -69,6 +70,10 @@ Note that you can also pass the API key as an argument of the `Kili` initializat
 ```python
 kili = Kili(api_key='<your api key value here>')
 ```
+
+Each entity has its namespace on the client: `kili.assets`, `kili.labels`, `kili.projects`, `kili.exports`...
+
+The legacy client, `from kili.client import Kili`, whose methods are called directly on the client (`kili.assets(...)`, `kili.count_assets(...)`), still works but is deprecated and will be removed in a future major release.
 
 For more details, read the [SDK reference](https://python-sdk-docs.kili-technology.com) or the [Kili documentation](https://docs.kili-technology.com/docs).
 
@@ -101,7 +106,7 @@ json_interface = {
         }
     }
 }
-project_id = kili.create_project(
+project_id = kili.projects.create(
     title="Color classification",
     description="Project ",
     input_type="IMAGE",
@@ -121,16 +126,12 @@ assets = [
         "externalId": "example 2",
         "content": "https://img.sportauto.fr/news/2018/11/28/1533574/1920%7C1280%7Cc096243e5460db3e5e70c773.jpg",
     },
-    {
-        "externalId": "example 3",
-        "content": "./recipes/img/man_on_a_bike.jpeg",
-    },
 ]
 
 external_id_array = [a.get("externalId") for a in assets]
 content_array = [a.get("content") for a in assets]
 
-kili.append_many_to_dataset(
+kili.assets.create_image(
     project_id=project_id,
     content_array=content_array,
     external_id_array=external_id_array,
@@ -161,7 +162,7 @@ prediction_examples = [
     }
 ]
 
-kili.create_predictions(
+kili.labels.create_prediction(
     project_id=project_id,
     external_id_array=[p["external_id"] for p in prediction_examples],
     json_response_array=[p["json_response"] for p in prediction_examples],
@@ -174,7 +175,7 @@ See detailed examples in this [recipe](https://docs.kili-technology.com/recipes/
 ### Exporting labels
 
 ```python
-kili.export_labels("your_project_id", "export.zip", "yolo_v4")
+kili.exports.yolo_v4(project_id="your_project_id", output_path="export.zip")
 ```
 
 See a detailed example in this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/).

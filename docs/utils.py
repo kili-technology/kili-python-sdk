@@ -271,7 +271,8 @@ def check_create_project_has_good_title_in_notebook(ipynb_filepath: Path):
     with open(ipynb_filepath, encoding="utf-8") as file:
         notebook_str = file.read()
 
-    if ".create_project(" in notebook_str and "[Kili SDK Notebook]: " not in notebook_str:
+    creates_project = ".projects.create(" in notebook_str or ".create_project(" in notebook_str
+    if creates_project and "[Kili SDK Notebook]: " not in notebook_str:
         raise ValueError(
             f"Project(s) created in {ipynb_filepath.name} should have '[Kili SDK Notebook]: ...'"
             " prefix for monitoring purpose."

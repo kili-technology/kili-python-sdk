@@ -26,7 +26,7 @@ First, let's install and import the required modules.
 ```python
 from pprint import pprint
 
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 Now, let's set up variables needed to create an instance of the Kili object.
@@ -71,7 +71,7 @@ interface = {
     }
 }
 
-project = kili.create_project(
+project = kili.projects.create(
     title="[Kili SDK Notebook]: Importing assets with metadata - PDF",
     description="Project Description",
     input_type="PDF",
@@ -86,7 +86,7 @@ You can now add assets. Here, we will add PDF from public URLs:
 project_id = project["id"]
 external_ids = ["2306.17766", "2306.17582", "2306.17514"]
 
-assets = kili.append_many_to_dataset(
+assets = kili.assets.create_pdf(
     project_id=project_id,
     content_array=[
         "https://arxiv.org/pdf/2306.17766.pdf",
@@ -103,8 +103,8 @@ You can fetch the PDF asset resolutions this way:
 
 
 ```python
-assets = kili.assets(
-    project_id,
+assets = kili.assets.list(
+    project_id=project_id,
     fields=["id", "pageResolutions.height", "pageResolutions.width", "pageResolutions.pageNumber"],
 )
 ```
@@ -137,5 +137,5 @@ We can remove the project that we created if needed:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```

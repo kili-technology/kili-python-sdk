@@ -3,7 +3,7 @@
 
 # Importing Labels from Shapefiles
 
-This tutorial explains how to use `kili.append_labels_from_shapefiles` function in the Kili SDK to import geometries
+This tutorial explains how to use `kili.labels.create_default_from_shapefile` function in the Kili SDK to import geometries
 from shapefile files and convert them to annotations in your Kili projects.
 
 ## Introduction
@@ -11,7 +11,7 @@ from shapefile files and convert them to annotations in your Kili projects.
 Shapefiles are a standard geospatial data format that stores the location, shape, and attributes of geographic features.
 They are commonly used in Geographic Information Systems (GIS) to represent points, lines, and polygons.
 
-The `append_labels_from_shapefiles` function automatically converts this spatial data into Kili annotations.
+The `kili.labels.create_default_from_shapefile` function automatically converts this spatial data into Kili annotations.
 
 
 ## Prerequisites
@@ -35,7 +35,7 @@ _This command installs the necessary libraries such as pyproj which are used for
 
 ## Function Structure
 
-The `append_labels_from_shapefiles` function takes the following parameters:
+The `kili.labels.create_default_from_shapefile` function takes the following parameters:
 
 | Parameter          | Type                 | Description                                                |
 |--------------------|----------------------|------------------------------------------------------------|
@@ -60,13 +60,13 @@ The function supports the following shapefile geometry types:
 Here's a simple usage example:
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 
 # Initialize Kili client
 kili = Kili(api_key="your_api_key")
 
 # Import labels from shapefiles
-kili.append_labels_from_shapefiles(
+kili.labels.create_default_from_shapefile(
     project_id="your_project_id",
     asset_external_id="satellite_image.tif",
     shapefile_paths=["roads.shp", "buildings.shp", "water_points.shp"],
@@ -82,11 +82,11 @@ If your shapefiles use different coordinate systems:
 
 ```python
 
-from kili.client import Kili
+from kili.client_domain import Kili
 
 kili = Kili(api_key="your_api_key")
 
-kili.append_labels_from_shapefiles(
+kili.labels.create_default_from_shapefile(
     project_id="your_project_id",
     asset_external_id="sentinel2_image.jp2",
     shapefile_paths=["observation_points.shp", "parcels.shp", "protected_areas.shp"],
@@ -124,7 +124,7 @@ Possible solutions:
 - Check if the image has geospatial metadata with:
 
 ```
-asset = kili.assets(project_id="your_project_id", fields=["jsonContent"])[0]
+asset = kili.assets.list(project_id="your_project_id", fields=["jsonContent"])[0]
 print(asset['jsonContent'])
 ```
 
@@ -133,12 +133,12 @@ print(asset['jsonContent'])
 Solution: Check that the category names exactly match those in your Kili ontology:
 
 ```python
-project = kili.projects(project_id="your_project_id", fields=["jsonInterface"])[0]
+project = kili.projects.list(filter={"project_id": "your_project_id"}, fields=["jsonInterface"])[0]
 print(project["jsonInterface"])
 ```
 
 
 ## Conclusion
 
-The `append_labels_from_shapefiles` function greatly simplifies the import of geospatial data into Kili, allowing you
+The `kili.labels.create_default_from_shapefile` function greatly simplifies the import of geospatial data into Kili, allowing you
 to easily convert your existing GIS data into annotations usable for machine learning and manual annotation.

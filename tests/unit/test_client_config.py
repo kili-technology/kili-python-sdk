@@ -1,12 +1,18 @@
 import json
 import os
+import subprocess
+import sys
 import tempfile
+import warnings
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from kili.client import Kili
+from kili.client_domain import Kili as KiliDomain
+from kili.core.graphql.graphql_client import GraphQLClientName
+from kili.domain_api import PluginsNamespace
 
 
 @pytest.fixture()
@@ -124,6 +130,88 @@ def test_config_verify_env_over_file(mock_http_operations):
         finally:
             os.chdir(original_cwd)
             os.environ.pop("KILI_VERIFY", None)
+
+
+def test_legacy_client_built_directly_is_deprecated(mock_http_operations):
+    with pytest.warns(DeprecationWarning, match="from kili.client_domain import Kili") as record:
+        Kili(api_key="key", api_endpoint="https://endpoint.com")
+
+    assert record[0].filename == __file__  # the user's line, not kili's
+
+
+@pytest.mark.parametrize(
+    "build",
+    [
+        lambda: Kili(
+            api_key="key", api_endpoint="https://endpoint.com", client_name=GraphQLClientName.CLI
+        ),
+        lambda: KiliDomain(api_key="key", api_endpoint="https://endpoint.com"),
+    ],
+    ids=["cli", "domain"],
+)
+def test_clients_the_sdk_builds_itself_do_not_warn(mock_http_operations, build):
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        build()
+
+
+@pytest.mark.parametrize(
+    ("flags", "shown"),
+    [
+        ([], True),
+        (["-W", "ignore::DeprecationWarning"], False),
+        (["-W", "error::DeprecationWarning"], "raised"),
+    ],
+)
+def test_the_legacy_client_warning_shows_outside_main_unless_silenced(tmp_path, flags, shown):
+    # Python ignores DeprecationWarning outside __main__ by default: a module that builds the client
+    (tmp_path / "my_module.py").write_text(
+        "import io\n"
+        "import sys\n"
+        "\n"
+        "from kili.client import Kili\n"
+        "from kili.exceptions import AuthenticationFailed\n"
+        "\n"
+        "sys.stdin = io.StringIO()  # not a terminal, so no key prompt: Windows' NUL is a tty\n"
+        "try:\n"
+        "    Kili(api_key='', api_endpoint='http://localhost:1/api/label/v2/graphql')\n"
+        "except AuthenticationFailed:\n"
+        "    pass\n"
+    )
+    env = {k: v for k, v in os.environ.items() if not k.startswith(("KILI_", "PYTHONWARNINGS"))}
+    env["HOME"] = env["USERPROFILE"] = str(tmp_path)  # no kili-sdk-config.json of the developer's
+
+    result = subprocess.run(
+        [sys.executable, *flags, "-c", "import my_module"],
+        cwd=tmp_path,
+        env=env,
+        stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=120,
+    )
+
+    if shown == "raised":
+        assert result.returncode != 0
+        assert "DeprecationWarning: `kili.client.Kili` is deprecated" in result.stderr
+    else:
+        assert result.returncode == 0, result.stderr
+        assert ("my_module.py:9: DeprecationWarning" in result.stderr) is shown
+
+
+def test_domain_client_exposes_plugins_llm_and_events(mock_http_operations):
+    kili = KiliDomain(api_key="key", api_endpoint="https://endpoint.com")
+
+    assert isinstance(kili.plugins, PluginsNamespace)
+    assert kili.llm is kili.legacy_client.llm
+    assert kili.events is kili.legacy_client.events
+
+
+def test_domain_client_exposes_its_api_endpoint(mock_http_operations):
+    kili = KiliDomain(api_key="key", api_endpoint="https://endpoint.com/api/label/v2/graphql")
+
+    assert kili.api_endpoint == "https://endpoint.com/api/label/v2/graphql"
 
 
 @pytest.mark.parametrize(

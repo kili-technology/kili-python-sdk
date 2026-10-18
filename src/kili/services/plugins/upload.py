@@ -2,6 +2,7 @@
 
 import ast
 import time
+import warnings
 from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional, Union
@@ -24,6 +25,7 @@ from kili.core.graphql.operations.plugin.mutations import (
 )
 from kili.core.graphql.operations.plugin.queries import GQL_GET_PLUGIN_RUNNER_STATUS
 from kili.core.helpers import get_mime_type
+from kili.services.plugins.helpers import PLUGIN_CORE_DEPRECATION
 from kili.services.plugins.tools import check_errors_plugin_upload
 from kili.utils import bucket
 from kili.utils.tempfile import TemporaryDirectory
@@ -45,6 +47,8 @@ POSSIBLE_HANDLERS = {
 
 DECORATOR_NAME = "on_kili_event"
 DECORATOR_MODULES = ("kili.plugins", "kili.services.plugins.events")
+BASE_NAMES = ("Plugin", "PluginCore")
+BASE_MODULES = ("kili.plugins", "kili.services.plugins.model")
 TYPING_MODULES = ("typing", "typing_extensions")
 _EXAMPLE = "def on_skip(self, event: AssetSkippedEvent)"
 
@@ -90,6 +94,11 @@ def check_file_contains_handler(path: Path) -> tuple[bool, Optional[list[str]], 
         module = ast.parse(file.read())
     for node in module.body:
         if isinstance(node, ast.ClassDef) and node.name == "PluginHandler":
+            if any(
+                getattr(base, "id", getattr(base, "attr", None)) == "PluginCore"
+                for base in node.bases
+            ):
+                warnings.warn(PLUGIN_CORE_DEPRECATION, DeprecationWarning, stacklevel=2)
             handlers = [
                 POSSIBLE_HANDLERS[child.name]
                 for child in node.body
@@ -136,7 +145,7 @@ def _is_events_module(module: Optional[str]) -> bool:
 
 
 class _ImportedNames:
-    """What the plugin file binds the decorator, the kili_events names and `Union` to.
+    """What the plugin file binds the decorator, kili's bases, kili_events names and `Union` to.
 
     Only what is bound when the class is defined counts: the methods are decorated then, and
     their annotations read.
@@ -144,6 +153,8 @@ class _ImportedNames:
 
     def __init__(self, module: ast.Module, class_line: int) -> None:
         self.decorators: set[str] = set()
+        # the names that stand for kili's Plugin and PluginCore
+        self.bases: set[str] = set()
         self.events: dict[str, str] = {}
         self.event_modules: set[str] = set()
         self.star_events = False
@@ -168,21 +179,27 @@ class _ImportedNames:
                 self._read_alias(node.targets[0], node.value)
             elif isinstance(node, ast.AnnAssign) and node.value is not None:
                 self._read_alias(node.target, node.value)
+            elif isinstance(node, ast.ClassDef):
+                self.bases.discard(node.name)
 
     def _read_alias(self, target: ast.expr, value: ast.expr) -> None:
         if isinstance(target, ast.Name):
             self.aliases[target.id] = value
             self.events.pop(target.id, None)
+            self.bases.discard(target.id)
 
     def _read_import_from(self, node: ast.ImportFrom) -> None:
         for alias in node.names:
             local_name = alias.asname or alias.name
+            if node.module in BASE_MODULES and alias.name in (*BASE_NAMES, "*"):
+                self.bases.update(BASE_NAMES if alias.name == "*" else (local_name,))
             if node.module in DECORATOR_MODULES and alias.name in (DECORATOR_NAME, "*"):
                 self.decorators.add(DECORATOR_NAME if alias.name == "*" else local_name)
             elif node.module == "kili_events" and alias.name == "*":
                 self.star_events = True
             elif node.module == "kili" and alias.name == "plugins":
                 self.decorators.add(f"{local_name}.{DECORATOR_NAME}")
+                self.bases.update(f"{local_name}.{base}" for base in BASE_NAMES)
             elif _is_events_module(node.module) and alias.name != "*":
                 self.events[local_name] = alias.name
                 self.aliases.pop(local_name, None)
@@ -192,6 +209,8 @@ class _ImportedNames:
     def _read_import(self, node: ast.Import) -> None:
         for alias in node.names:
             local_name = alias.asname or alias.name
+            if alias.name in BASE_MODULES:
+                self.bases.update(f"{local_name}.{base}" for base in BASE_NAMES)
             if alias.name in DECORATOR_MODULES:
                 self.decorators.add(f"{local_name}.{DECORATOR_NAME}")
             elif alias.name == "kili_events":
@@ -355,7 +374,7 @@ def find_event_subscriptions(path: Path) -> dict[str, list[str]]:
                     raise ValueError(f"PluginHandler.{method.name}: {error}") from error
                 subscriptions[method.name] = patterns
         bases = [ast.unparse(base) for base in node.bases]
-        if subscriptions and any(base.split(".")[-1] != "PluginCore" for base in bases):
+        if subscriptions and any(base not in names.bases for base in bases):
             get_logger().warning(
                 f"PluginHandler inherits from {', '.join(bases)}: the upload reads the"
                 f" @{DECORATOR_NAME} methods of PluginHandler only, so the events of inherited"

@@ -31,7 +31,7 @@ means several jobs, all in the same label.
 ```python
 from pathlib import Path
 
-from kili.client import Kili
+from kili.client_domain import Kili
 
 kili = Kili(
     # api_endpoint='https://cloud.kili-technology.com/api/label/v2/graphql',
@@ -66,7 +66,7 @@ json_interface = {
     }
 }
 
-project = kili.create_project(
+project = kili.projects.create(
     input_type="VIDEO",
     json_interface=json_interface,
     title="[Kili SDK Notebook]: File annotations",
@@ -77,22 +77,20 @@ project_id
 
 
 ```python
-kili.append_many_to_dataset(
+kili.assets.create_video_native(
     project_id=project_id,
-    content_array=[
-        "https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4"
-    ],
-    external_id_array=["short_video"],
+    content="https://storage.googleapis.com/label-public-staging/asset-test-sample/video/short_video.mp4",
+    external_id="short_video",
 )
 
-asset_id = kili.assets(project_id=project_id, fields=["id"])[0]["id"]
+asset_id = kili.assets.list(project_id=project_id, fields=["id"])[0]["id"]
 asset_id
 ```
 
 ## Submitting a label that names the files
 
 
-A file job is answered with the **path** of the file to attach. `append_labels` uploads it and
+A file job is answered with the **path** of the file to attach. `kili.labels.create_default` uploads it and
 stores the reference, so there is no separate upload step -- and no way to put bytes in Kili
 that are not the answer to a job.
 
@@ -105,10 +103,10 @@ rather than inside one.
 Path("render.mp4").write_bytes(b"not really a video, but enough for the recipe")
 Path("scene.blend").write_bytes(b"not really a scene either")
 
-kili.append_labels(
+kili.labels.create_default(
     project_id=project_id,
-    asset_id_array=[asset_id],
-    json_response_array=[{"assetLevel": {"RENDER": "render.mp4", "SCENE": "scene.blend"}}],
+    asset_id=asset_id,
+    json_response={"assetLevel": {"RENDER": "render.mp4", "SCENE": "scene.blend"}},
 )
 ```
 
@@ -117,7 +115,9 @@ kili.append_labels(
 
 
 ```python
-label = kili.labels(project_id=project_id, asset_id=asset_id, fields=["jsonResponse"])[-1]
+label = kili.labels.list(
+    project_id=project_id, filter={"asset_id": asset_id}, fields=["jsonResponse"]
+)[-1]
 label["jsonResponse"]["assetLevel"]
 ```
 
@@ -131,10 +131,9 @@ knows, so it comes back empty and Kili fills it in from the file name.
 
 
 ```python
-kili.export_labels(
+kili.exports.kili(
     project_id=project_id,
-    filename="export.zip",
-    fmt="kili",
+    output_path="export.zip",
 )
 ```
 
@@ -154,7 +153,7 @@ answered with. Each answer gains a `filePath` pointing at it.
 
 
 ```python
-kili.delete_project(project_id=project_id)
+kili.projects.delete(project_id=project_id)
 
 Path("render.mp4").unlink(missing_ok=True)
 Path("scene.blend").unlink(missing_ok=True)

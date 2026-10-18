@@ -124,7 +124,7 @@ class UsersNamespace(DomainNamespace):
 
         Examples:
             >>> # List all users in my organization
-            >>> organization = kili.organizations()[0]
+            >>> organization = kili.organizations.list()[0]
             >>> organization_id = organization['id']
             >>> users = kili.users.list(filter={"organization_id": organization_id})
 

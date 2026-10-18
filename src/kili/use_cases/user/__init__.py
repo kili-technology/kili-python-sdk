@@ -26,6 +26,25 @@ class UserUseCases(BaseUseCases):
             fields=fields, user_filters=filters, options=options
         )
 
+    def replace_emails_by_ids(self, users_array: ListOrTuple[list[str]]) -> list[list[str]]:
+        """Replace each email by its user's id, and keep the ids as they are."""
+        emails = {user for users in users_array for user in users if "@" in user}
+        ids = {}
+        for email in emails:
+            users = list(
+                self.list_users(
+                    UserFilter(id=None, email=email.lower()),  # stored lowercased
+                    ("id",),
+                    QueryOptions(disable_tqdm=True, first=1),
+                )
+            )
+            if not users:
+                raise ValueError(
+                    f"No user has the email {email}: check it, or pass the user's id instead."
+                )
+            ids[email] = users[0]["id"]
+        return [[ids.get(user, user) for user in users] for users in users_array]
+
     def count_users(self, filters: UserFilter) -> int:
         """Count users."""
         return self._kili_api_gateway.count_users(user_filters=filters)

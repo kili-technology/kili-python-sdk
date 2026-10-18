@@ -31,7 +31,6 @@ Let's first install the Kili package and all other packages required for our exp
 
 ```python
 import os
-import random
 import zipfile
 from copy import deepcopy
 from pathlib import Path
@@ -45,7 +44,7 @@ from torch import nn, optim
 from torchvision import datasets, transforms
 from tqdm.notebook import tqdm
 
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 To interact with Kili using the Python SDK, it is necessary to have a Kili account and an API key.
@@ -176,8 +175,10 @@ json_interface = {
     }
 }
 
-project_id = kili.create_project(
-    title=project_title, json_interface=json_interface, input_type="IMAGE"
+project_id = kili.projects.create(
+    title=project_title,
+    json_interface=json_interface,
+    input_type="IMAGE",
 )["id"]
 ```
 
@@ -242,7 +243,7 @@ We now upload the assets to our Kili project:
 
 
 ```python
-kili.append_many_to_dataset(
+kili.assets.create_image(
     project_id=project_id,
     external_id_array=external_id_array,
     content_array=[str(x) for x in content_array],
@@ -271,15 +272,10 @@ json_response_array = [
 
 
 ```python
-kili.append_labels(
+kili.labels.create_default(
     project_id=project_id,
-    asset_external_id_array=external_id_array[:nb_manually_labeled_assets],
+    external_id_array=external_id_array[:nb_manually_labeled_assets],
     json_response_array=json_response_array[:nb_manually_labeled_assets],
-    label_type="DEFAULT",
-    seconds_to_label_array=[
-        random.randint(60, 300)
-        for _ in range(nb_manually_labeled_assets)  # simulate labeling time
-    ],
 )
 
 # Replace the project_id below with your own project_id!
@@ -320,7 +316,7 @@ nb_labeled_assets = 200  # put the number of labeled assets you want to retrieve
 ```python
 data_dir = "./data"
 
-labeled_assets = kili.assets(
+labeled_assets = kili.assets.list(
     project_id=project_id,
     fields=[
         "id",
@@ -330,11 +326,11 @@ labeled_assets = kili.assets(
         "latestLabel.jsonResponse",
         "jsonMetadata",
     ],
-    status_in=["LABELED"],  # we retrieve assets already labeled
     download_media=True,
     local_media_dir=data_dir,
     first=nb_labeled_assets,
     label_output_format="parsed_label",
+    filter={"status_in": ["LABELED"]},  # we retrieve assets already labeled
 )
 
 print(f"\nRetrieved {len(labeled_assets)} labeled assets.")
@@ -591,12 +587,12 @@ max_nb_assets_to_label = 200
 
 
 ```python
-non_labeled_assets = kili.assets(
+non_labeled_assets = kili.assets.list(
     project_id=project_id,
     fields=["id", "content", "externalId", "jsonMetadata"],
-    status_in=["TODO"],  # we choose assets to label
     first=max_nb_assets_to_label,
     download_media=True,
+    filter={"status_in": ["TODO"]},  # we choose assets to label
 )
 print("\nNumber of fetched assets to label: ", len(non_labeled_assets))
 ```
@@ -699,20 +695,18 @@ You can learn more about the different kinds of labels in the [Kili documentatio
 
 
 ```python
-kili.append_labels(
+kili.labels.create_inference(
     project_id=project_id,
     json_response_array=json_response_array_non_labeled_assets,
     model_name="DINOv2",
-    label_type="INFERENCE",
-    asset_external_id_array=external_id_array_non_labeled_assets,
+    external_id_array=external_id_array_non_labeled_assets,
 )
 
-kili.append_labels(
+kili.labels.create_prediction(
     project_id=project_id,
     json_response_array=json_response_array_non_labeled_assets,
     model_name="DINOv2",
-    label_type="PREDICTION",
-    asset_external_id_array=external_id_array_non_labeled_assets,
+    external_id_array=external_id_array_non_labeled_assets,
 )
 ```
 
@@ -826,11 +820,10 @@ for asset in non_labeled_assets:
 
 
 ```python
-kili.append_labels(
+kili.labels.create_default(
     project_id=project_id,
-    asset_external_id_array=gt_external_id_array,
+    external_id_array=gt_external_id_array,
     json_response_array=gt_json_response_array,
-    label_type="DEFAULT",
 )
 ```
 
@@ -863,5 +856,5 @@ We can now delete the project we created on Kili:
 
 
 ```python
-kili.delete_project(project_id=project_id)
+kili.projects.delete(project_id=project_id)
 ```

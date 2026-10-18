@@ -23,7 +23,7 @@ First, let's install and import the required modules.
 
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 Now, let's set up variables needed to create an instance of the Kili object.
@@ -74,7 +74,7 @@ interface = {
     }
 }
 
-project = kili.create_project(
+project = kili.projects.create(
     title="[Kili SDK Notebook]: Importing multi-layer Geospatial asset",
     description="Project Description",
     input_type="IMAGE",
@@ -112,55 +112,38 @@ You can now add assets. Here is an example to add 2 geotiffs and a public layer 
 
 ```python
 project_id = project["id"]
-json_metadata_array = [{"processingParameters": {"epsg": 3857}}]
-multi_layer_content_array = [
-    [
+kili.assets.create_geospatial(
+    project_id=project_id,
+    layer_array=[
+        {"path": "geospatial/a.tiff", "name": "Layer 1", "is_base_layer": False},
+        {"path": "geospatial/b.tiff", "name": "Layer 2", "is_base_layer": False},
         {
-            "path": "geospatial/a.tiff",
-            "name": "Layer 1",
-            "isBaseLayer": False,
-        },
-        {
-            "path": "geospatial/b.tiff",
-            "name": "Layer 2",
-            "isBaseLayer": False,
-        },
-    ],
-]
-json_content_array = [
-    [
-        {
+            "path": "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
             "name": "osm",
-            "tileLayerUrl": "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
             "epsg": "EPSG3857",
             "bounds": [
                 [11.17010498046875, 44.308941579503745],
                 [13.67478942871094, 46.542667432984864],
             ],
-            "useClassicCoordinates": False,
-            "minZoom": 10,
-            "maxZoom": 18,
-            "isBaseLayer": True,
-        }
-    ]
-]
-
-kili.append_many_to_dataset(
-    project_id=project_id,
-    multi_layer_content_array=multi_layer_content_array,
-    json_metadata_array=json_metadata_array,
-    json_content_array=json_content_array,
+            "min_zoom": 10,
+            "max_zoom": 18,
+            "is_base_layer": True,
+        },
+    ],
+    json_metadata={"processingParameters": {"epsg": 3857}},
 )
 ```
 
-In this example 4 arguments are used for the `append_many_to_dataset` function :
+In this example, 3 arguments are given to `kili.assets.create_geospatial`:
 
 1. `project_id`: the id of the project to which you want to add the asset
-1. `multi_layer_content_array`: it is a list of dictionnaries representing the layers created from geospatial files like GEOTIFFS. For each GEOTIFF you have to set the `path` to the GEOTIFF, the `name` that will be used in kili for the layer and the boolean `isBaseLayer` to define if it's a base layer (only one visible at a time) or an overlay layer (a layer that will be displayed on top of the base layer). This last one is optional and by default if no parameter is set, we consider it is a base layer.
-1. `json_metadata_array`: This one contains the processing parameters that will be used when processing the files. 3 parameters can be set there :
+1. `layer_array`: the layers of the asset. A layer whose `path` is a local file, like a GEOTIFF, is uploaded and tiled by Kili; a layer whose `path` is a URL is a public tile layer. Each layer takes the `name` that will be used in kili for the layer and the boolean `is_base_layer` to define if it's a base layer (only one visible at a time) or an overlay layer (a layer that will be displayed on top of the base layer). It is optional: by default, a GEOTIFF is a base layer and a tile layer an overlay. A tile layer also takes:
+    1. `epsg`, with the format `EPSG{number}`: the EPSG used by the tile server, as we will not reproject anything;
+    1. `bounds`, the minimum and maximum latitude and longitude for which you want to request tiles, with the format `[[min_lng, min_lat],[max_lng, max_lat]]`;
+    1. `min_zoom` and `max_zoom`, the zoom levels between which tiles are requested.
+1. `json_metadata`: the processing parameters used when processing the GEOTIFFS. 3 parameters can be set there :
     1. `epsg`: This one defines the projection (<https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset>) to which we will reproject the dataset. Our frontend supports only two projections : `EPSG:4326` and `EPSG:3857`. If this parameter is not set we will keep the projection of the initial file if it is one of these two, else we will reproject it by default to `EPSG:3857`. By default, we advise to not set this parameter but if you need to use your GEOTIFFS with some tile server (as with openstreetmap here) you will need to reproject it to the same EPSG as the one used by the tile server as our application supports only one EPSG for the whole asset. For your information most of the well known tile server (openstreetmap, googlemaps, etc) are using `EPSG:3857`.
     1. `maxZoom` and `minZoom`: these defines limits of zoom for your GEOTIFF files. This is especially useful for files that will be tiled by our server (file size > 30MB). By default we generate all the zooms until the one of the original file but if you want to limit to specific zoom levels you can constrain them with these parameters.
-1. `json_content_array`: It has to be used when you need to add public tile layers to your asset. You can find the same arguments as for GEOTIFF layers `name`, `minZoom`, `maxZoom`, `isBaseLayer`. You also need to specify the `epsg` but with the format `EPSG{number}` (this one correspond to the EPSG used by the tile server, we will not reproject anything). And then, you have to provide the url to the tile server with the parameter `tileLayerUrl` and the `bounds`, corresponding to the minimum and maximum latitude and longitude for which you want to request tiles (use the following format `[[min_lng, min_lat],[max_lng, max_lat]]`). Finally, the `useClassicCoordinates: False` has always to be provided to explain that geospatial coordinates are used.
 
 ## Cleanup
 
@@ -168,5 +151,5 @@ We can remove the project that we created if needed:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```

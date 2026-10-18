@@ -162,7 +162,7 @@ class ExportNamespace(DomainNamespace):
         label_type_in: Optional[list[LabelType]] = None,
         single_file: Optional[bool] = False,
         export_type: Optional[ExportType] = None,
-    ):
+    ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export project labels in Kili native format.
 
         Kili native format exports annotations as JSON files containing the raw label data
@@ -224,7 +224,7 @@ class ExportNamespace(DomainNamespace):
         label_type_in: Optional[list[LabelType]] = None,
         layout: SplitOption = "split",
         export_type: Optional[ExportType] = None,
-    ):
+    ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export project labels in COCO format.
 
         COCO format exports annotations in JSON format with image metadata and
@@ -288,7 +288,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
-    ):
+    ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export project labels in YOLO v4 format.
 
         YOLO v4 format exports annotations with normalized coordinates suitable for
@@ -350,7 +350,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
-    ):
+    ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export project labels in YOLO v5 format.
 
         YOLO v5 format exports annotations with normalized coordinates suitable for
@@ -412,7 +412,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
-    ):
+    ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export project labels in YOLO v7 format.
 
         YOLO v7 format exports annotations with normalized coordinates suitable for
@@ -474,7 +474,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
-    ):
+    ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export project labels in YOLO v8 format.
 
         YOLO v8 format exports annotations with normalized coordinates suitable for
@@ -535,7 +535,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
-    ):
+    ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export project labels in Pascal VOC format.
 
         Pascal VOC format exports annotations in XML format with pixel coordinates,
@@ -594,7 +594,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
-    ):
+    ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export project labels in GeoJSON format.
 
         GeoJSON format exports annotations with latitude/longitude coordinates,

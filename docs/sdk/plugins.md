@@ -19,7 +19,7 @@ plugin_folder
     |__ helper.py
 ```
 
-The plugin you are going to upload has to contain a `class PluginHandler(PluginCore)` (in the case of the module type plugin it has to be inside `main.py`) that implements two methods for the different types of events:
+The plugin you are going to upload has to contain a `class PluginHandler(Plugin)` (in the case of the module type plugin it has to be inside `main.py`) that implements two methods for the different types of events:
 
 - `on_submit`
 - `on_review`
@@ -33,7 +33,7 @@ You can add custom methods in your class as well.
 
 Moreover, some attributes are directly available in the class:
 
-- `self.kili`
+- `self.kili`: the Kili client, to call `self.kili.assets.list(...)`, `self.kili.issues.create(...)`, etc.
 - `self.project_id`
 
 Therefore, the skeleton of the plugin (of `main.py` in the case of the module type plugin) should look like this:
@@ -42,12 +42,12 @@ Therefore, the skeleton of the plugin (of `main.py` in the case of the module ty
 from typing import Dict
 import numpy as np
 
-from kili.plugins import PluginCore
+from kili.plugins import Plugin
 
 def custom_function():
     # Do something...
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """Custom plugin"""
 
     def custom_method(self):
@@ -65,6 +65,9 @@ class PluginHandler(PluginCore):
 !!! note
     The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run.
 
+!!! note "Kili version"
+    `Plugin` comes with the kili release that deprecates `PluginCore`: a plugin built on it needs that version or a later one where it runs. On Kili's EU cloud (`cloud.kili-technology.com`), plugins are installed with the latest `kili` unless your `requirements.txt` pins an older one. On Kili's US cloud (`cloud.eastus.kili-technology.com`) and on-premise, plugins run with the `kili` of the plugins runner: until it includes `Plugin` (`from kili.plugins import Plugin` succeeds there), keep `PluginCore`, described below.
+
 ## Receiving Kili events
 
 Instead of `on_submit` and `on_review`, a plugin can receive any Kili event: decorate a method of `PluginHandler` with
@@ -74,10 +77,10 @@ parsed into its [`kili_events`](https://pypi.org/project/kili-events/) model —
 ```python
 from kili_events import AssetSkippedEvent, AssetWorkflowEvent, LabelWorkflowEvent
 
-from kili.plugins import PluginCore, on_kili_event
+from kili.plugins import Plugin, on_kili_event
 
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """Custom plugin"""
 
     @on_kili_event
@@ -106,7 +109,7 @@ the others still run, its error is logged, and the run fails with the first erro
 `event_matcher`: the events it receives are read from the annotations.
 
 ```python
-kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin")
+kili.plugins.create(plugin_path="./my_plugin/", plugin_name="my_plugin")
 ```
 
 The upload reads your code without running it, so:
@@ -123,8 +126,8 @@ The upload reads your code without running it, so:
 
 A family is uploaded as the pattern of its folder (`asset.workflow.*`), so an event Kili adds to it later reaches the
 plugin without changing its code. The method receives it once the plugin runs with a version of `kili_events` that
-knows it: on Kili's cloud, the packages are installed when the plugin is uploaded, so update the plugin
-(`kili.update_plugin`); on-premise, they are those of the plugins runner. Until then, like any event the plugin's
+knows it: on Kili's EU cloud, the packages are installed when the plugin is uploaded, so update the plugin
+(`kili.plugins.update`); on Kili's US cloud and on-premise, they are those of the plugins runner. Until then, like any event the plugin's
 version of `kili_events` does not know, it is logged and skipped; an event that does not match its model is logged as
 an error and skipped.
 
@@ -141,29 +144,29 @@ more names (`label.workflow.*`, `project.workflow.bulkAction.*.started`).
 Before:
 
 ```python
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     def on_event(self, payload: dict) -> None:
         if payload["event"] == "asset.skipped":
             self.logger.info(f"Asset {payload['assetId']} skipped")
 
-kili.upload_plugin(plugin_path="./my_plugin/", event_matcher=["asset.skipped"])
+kili.plugins.create(plugin_path="./my_plugin/", event_matcher=["asset.skipped"])
 ```
 
 After, with `on_kili_event`:
 
 ```python
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     @on_kili_event
     def on_skip(self, event: AssetSkippedEvent) -> None:
         self.logger.info(f"Asset {event.payload.asset_id} skipped")
 
-kili.upload_plugin(plugin_path="./my_plugin/")
+kili.plugins.create(plugin_path="./my_plugin/")
 ```
 
 Or after, keeping `on_event`:
 
 ```python
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     def on_event(self, payload: dict) -> None:
         if payload["event"] == "asset.skipped":
             self.logger.info(f"Asset {payload['payload']['assetId']} skipped")
@@ -178,18 +181,19 @@ The plugins for the on-premise deployments work exactly the same as the plugins 
 
     `on_kili_event` needs the version of `kili` that introduces it, and `kili-events`: until your plugins-runner ships them,
     receive events with `on_submit` and `on_review`.
-2. In order to save the logs during the execution of your plugin, you should only use the provided logger in the plugin class (the simple `print` function will not save the log). For an example, see the code below:
+2. As noted above, `Plugin` needs a kili that includes it: while your plugins runner's does not, write `class PluginHandler(PluginCore)` and call the legacy client's methods on `self.kili`.
+3. In order to save the logs during the execution of your plugin, you should only use the provided logger in the plugin class (the simple `print` function will not save the log). For an example, see the code below:
 
 ```python
 from logging import Logger
 from typing import Dict
-from kili.plugins import PluginCore
+from kili.plugins import Plugin
 
 def custom_function(label: Dict, logger: Logger):
     logger.info("Custom function called")
     # Do something...
 
-class PluginHandler(PluginCore):
+class PluginHandler(Plugin):
     """Custom plugin"""
 
     def on_submit(self, label: Dict, asset_id: str) -> None:
@@ -198,14 +202,30 @@ class PluginHandler(PluginCore):
         custom_function(label, self.logger)
 ```
 
+## Moving a plugin from `PluginCore`
+
+Plugins written with `class PluginHandler(PluginCore)` keep working, but `PluginCore` is deprecated and will be removed in a future major release: uploading one, and each of its runs, logs a deprecation warning. There, `self.kili` is the legacy client (`self.kili.assets(...)`, `self.kili.create_issues(...)`).
+
+To move a plugin, change its base class to `Plugin`: `self.kili` becomes the client used everywhere else in this documentation, and `self.kili.legacy_client` keeps the legacy methods. Prefix the legacy calls with `legacy_client`, then convert them one at a time:
+
+```python
+from typing import Dict
+
+from kili.plugins import Plugin
+
+
+class PluginHandler(Plugin):
+    def on_submit(self, label: Dict, asset_id: str) -> None:
+        self.kili.issues.create(project_id=self.project_id, label_id=label["id"], text="To check")
+        self.kili.legacy_client.send_back_to_queue(asset_ids=[asset_id])  # not migrated yet
+```
+
 ## Model for Plugins
 
+::: kili.services.plugins.model.Plugin
+    options:
+      inherited_members: true
+
+## Legacy model for plugins (deprecated)
+
 ::: kili.services.plugins.model.PluginCore
-
-## Queries
-
-::: kili.entrypoints.queries.plugins.__init__.QueriesPlugins
-
-## Mutations
-
-::: kili.entrypoints.mutations.plugins.__init__.MutationsPlugins

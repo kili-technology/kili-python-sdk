@@ -14,7 +14,7 @@ We will learn how to push model-generated labels to Kili and how to visualize th
 
 
 ```python
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 
@@ -96,7 +96,7 @@ json_interface = {
     }
 }
 
-project_id = kili.create_project(
+project_id = kili.projects.create(
     title="[Kili SDK Notebook]: Project demo inference",
     input_type="IMAGE",
     json_interface=json_interface,
@@ -136,7 +136,7 @@ We import the assets into the Kili project:
 
 
 ```python
-kili.append_many_to_dataset(
+kili.assets.create_image(
     project_id=project_id,
     content_array=[asset["url"] for asset in stream_of_assets],
     external_id_array=[asset["external_id"] for asset in stream_of_assets],
@@ -165,11 +165,10 @@ inference_labels = [
     for predicted_category in predicted_categories
 ]
 
-kili.append_labels(
+kili.labels.create_inference(
     project_id=project_id,
-    asset_external_id_array=[asset["external_id"] for asset in stream_of_assets],
+    external_id_array=[asset["external_id"] for asset in stream_of_assets],
     json_response_array=inference_labels,
-    label_type="INFERENCE",  # We import model-generated labels as "INFERENCE" labels
     model_name="my_model",
 )
 ```
@@ -191,11 +190,10 @@ human_labels = [
     {"CLASSIFICATION_JOB": {"categories": [{"name": ground_truths[asset["external_id"]]}]}}
     for asset in stream_of_assets
 ]
-kili.append_labels(
+kili.labels.create_default(
     project_id=project_id,
     json_response_array=human_labels,
-    asset_external_id_array=[asset["external_id"] for asset in stream_of_assets],
-    label_type="DEFAULT",
+    external_id_array=[asset["external_id"] for asset in stream_of_assets],
 )
 ```
 
@@ -205,8 +203,10 @@ You can now fetch the agreement between the human and the model, for human label
 
 
 ```python
-labels = kili.labels(
-    project_id=project_id, fields=["inferenceMark", "id", "labelOf.id"], type_in=["DEFAULT"]
+labels = kili.labels.list(
+    project_id=project_id,
+    fields=["inferenceMark", "id", "labelOf.id"],
+    filter={"type_in": ["DEFAULT"]},
 )
 print(labels)
 ```
@@ -227,19 +227,18 @@ for label in labels:
     if label["inferenceMark"] < 1:
         asset_id = label["labelOf"]["id"]
         # get the model-generated label
-        inference_label = kili.labels(
+        inference_label = kili.labels.list(
             project_id=project_id,
-            asset_id=asset_id,
-            type_in=["INFERENCE"],
             output_format="parsed_label",
             disable_tqdm=True,
+            filter={"asset_id": asset_id, "type_in": ["INFERENCE"]},
         )[0]
         # get the human-made label
-        human_label = kili.labels(
+        human_label = kili.labels.list(
             project_id=project_id,
-            label_id=label["id"],
             output_format="parsed_label",
             disable_tqdm=True,
+            filter={"label_id": label["id"]},
         )[0]
 
         inference_category = inference_label.jobs["CLASSIFICATION_JOB"].category.name
@@ -263,7 +262,7 @@ Low IoU indicates low agreement:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```
 
 ### Use case 2
@@ -274,7 +273,7 @@ We start with a human-labeled dataset and we insert model predictions to it, to 
 
 
 ```python
-project_id = kili.create_project(
+project_id = kili.projects.create(
     title="[Kili SDK Notebook]: Project demo inference 2",
     input_type="IMAGE",
     json_interface=json_interface,
@@ -309,7 +308,7 @@ labeled_assets = [
 
 
 ```python
-kili.append_many_to_dataset(
+kili.assets.create_image(
     project_id=project_id,
     content_array=[asset["url"] for asset in labeled_assets],
     external_id_array=[asset["external_id"] for asset in labeled_assets],
@@ -337,11 +336,10 @@ human_labels = [
     for asset in labeled_assets
 ]
 
-kili.append_labels(
+kili.labels.create_default(
     project_id=project_id,
     json_response_array=human_labels,
-    asset_external_id_array=[asset["external_id"] for asset in labeled_assets],
-    label_type="DEFAULT",
+    external_id_array=[asset["external_id"] for asset in labeled_assets],
 )
 ```
 
@@ -355,19 +353,20 @@ test_labels = [
     {"CLASSIFICATION_JOB": {"categories": [{"name": predictions[asset["external_id"]]}]}}
     for asset in labeled_assets
 ]
-kili.append_labels(
+kili.labels.create_inference(
     project_id=project_id,
     json_response_array=test_labels,
-    asset_external_id_array=[asset["external_id"] for asset in labeled_assets],
-    label_type="INFERENCE",
+    external_id_array=[asset["external_id"] for asset in labeled_assets],
     model_name="my_model",
 )
 ```
 
 
 ```python
-labels = kili.labels(
-    project_id=project_id, fields=["inferenceMark", "id", "labelOf.id"], type_in=["DEFAULT"]
+labels = kili.labels.list(
+    project_id=project_id,
+    fields=["inferenceMark", "id", "labelOf.id"],
+    filter={"type_in": ["DEFAULT"]},
 )
 print(labels)
 ```
@@ -386,20 +385,19 @@ We can now print out a list of disagreements between human and machine labels:
 for label in labels:
     if label["inferenceMark"] < 1:
         inference_label = list(
-            kili.labels(
+            kili.labels.list(
                 project_id=project_id,
-                asset_id=label["labelOf"]["id"],
-                type_in=["INFERENCE"],
                 output_format="parsed_label",
                 disable_tqdm=True,
+                filter={"asset_id": label["labelOf"]["id"], "type_in": ["INFERENCE"]},
             )
         )[0]
         human_label = list(
-            kili.labels(
+            kili.labels.list(
                 project_id=project_id,
-                label_id=label["id"],
                 output_format="parsed_label",
                 disable_tqdm=True,
+                filter={"label_id": label["id"]},
             )
         )[0]
 
@@ -419,7 +417,7 @@ for label in labels:
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```
 
 ## Conclusion

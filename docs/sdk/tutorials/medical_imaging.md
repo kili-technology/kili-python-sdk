@@ -31,7 +31,7 @@ import pydicom
 import wget
 from PIL import Image
 
-from kili.client import Kili
+from kili.client_domain import Kili
 ```
 
 ## Get data
@@ -151,15 +151,18 @@ title = "[Kili SDK Notebook]: Medical Imaging with Kili Technology"
 description = "This is a test project"
 input_type = "IMAGE"
 
-project = kili.create_project(
-    title=title, description=description, input_type=input_type, json_interface=json_interface
+project = kili.projects.create(
+    title=title,
+    description=description,
+    input_type=input_type,
+    json_interface=json_interface,
 )
 project_id = project["id"]
 ```
 
 
 ```python
-kili.append_many_to_dataset(
+kili.assets.create_image(
     project_id=project_id,
     content_array=processed_imgs,
     external_id_array=processed_imgs,
@@ -179,7 +182,7 @@ All that remains is to start labeling! To learn more about how to label images i
 
 Once your assets are labeled, you might want to download them and visualize them using matplotlib.
 
-To download your labels, simply use `kili.labels(project_id)`. You can also export your labels to a zip file using `kili.export_labels(project_id)`. For more information, see the [documentation](https://docs.kili-technology.com/docs/exporting-project-data).
+To download your labels, simply use `kili.labels.list(project_id=project_id)`. You can also export your labels to a zip file using one of the `kili.exports` methods, such as `kili.exports.kili(project_id=project_id, output_path="export.zip")`. For more information, see the [documentation](https://docs.kili-technology.com/docs/exporting-project-data).
 
 In this tutorial, we assume that our labels have already been downloaded and stored in a file `medical-labels.pkl`.
 
@@ -325,5 +328,5 @@ In this tutorial, we have seen how to upload medical images to Kili, and how to 
 
 
 ```python
-kili.delete_project(project_id)
+kili.projects.delete(project_id=project_id)
 ```

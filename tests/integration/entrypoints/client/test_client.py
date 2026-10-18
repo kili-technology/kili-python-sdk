@@ -11,6 +11,7 @@ from graphql import ExecutionResult
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.client import Kili
+from kili.client_domain import Kili as KiliDomain
 from kili.core.graphql.graphql_client import (
     DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR,
     GraphQLClient,
@@ -140,7 +141,7 @@ def test_given_an_api_key_away_to_expiration_when_I_check_expiry_of_key_is_not_c
     with warnings.catch_warnings():
         warnings.simplefilter("error")  # checks that no warning is raised
         # When
-        _ = Kili()
+        _ = KiliDomain()  # the legacy client warns on construction, as it is deprecated
 
 
 @patch.dict(os.environ, {"KILI_API_KEY": "fake_key"})
