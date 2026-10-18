@@ -166,9 +166,13 @@ def test_clients_the_sdk_builds_itself_do_not_warn(mock_http_operations, build):
 def test_the_legacy_client_warning_shows_outside_main_unless_silenced(tmp_path, flags, shown):
     # Python ignores DeprecationWarning outside __main__ by default: a module that builds the client
     (tmp_path / "my_module.py").write_text(
+        "import io\n"
+        "import sys\n"
+        "\n"
         "from kili.client import Kili\n"
         "from kili.exceptions import AuthenticationFailed\n"
         "\n"
+        "sys.stdin = io.StringIO()  # not a terminal, so no key prompt: Windows' NUL is a tty\n"
         "try:\n"
         "    Kili(api_key='', api_endpoint='http://localhost:1/api/label/v2/graphql')\n"
         "except AuthenticationFailed:\n"
@@ -184,6 +188,7 @@ def test_the_legacy_client_warning_shows_outside_main_unless_silenced(tmp_path, 
         capture_output=True,
         text=True,
         check=False,
+        timeout=120,
     )
 
     if shown == "raised":
@@ -191,7 +196,7 @@ def test_the_legacy_client_warning_shows_outside_main_unless_silenced(tmp_path, 
         assert "DeprecationWarning: `kili.client.Kili` is deprecated" in result.stderr
     else:
         assert result.returncode == 0, result.stderr
-        assert ("my_module.py:5: DeprecationWarning" in result.stderr) is shown
+        assert ("my_module.py:9: DeprecationWarning" in result.stderr) is shown
 
 
 def test_domain_client_exposes_plugins_llm_and_events(mock_http_operations):
