@@ -362,7 +362,9 @@ def find_event_subscriptions(path: Path) -> dict[str, list[str]]:
                     raise ValueError(f"PluginHandler.{method.name}: {error}") from error
                 subscriptions[method.name] = patterns
         bases = [ast.unparse(base) for base in node.bases]
-        if subscriptions and any(base.split(".")[-1] != "PluginCore" for base in bases):
+        if subscriptions and any(
+            base.split(".")[-1] not in ("Plugin", "PluginCore") for base in bases
+        ):
             get_logger().warning(
                 f"PluginHandler inherits from {', '.join(bases)}: the upload reads the"
                 f" @{DECORATOR_NAME} methods of PluginHandler only, so the events of inherited"

@@ -605,6 +605,31 @@ def test_find_event_subscriptions_warns_of_inherited_handlers(tmp_path, caplog):
     assert "PluginHandler inherits from MyBase" in caplog.text
 
 
+@pytest.mark.parametrize("base", ["Plugin", "PluginCore", "plugins.Plugin"])
+def test_find_event_subscriptions_does_not_warn_on_the_kili_bases(tmp_path, caplog, base):
+    plugin_path = _plugin_file(
+        tmp_path,
+        f"""
+        from kili_events import AssetSkippedEvent
+
+        from kili import plugins
+        from kili.plugins import Plugin, PluginCore, on_kili_event
+
+
+        class PluginHandler({base}):
+            @on_kili_event
+            def on_skip(self, event: AssetSkippedEvent):
+                pass
+        """,
+    )
+
+    with caplog.at_level(logging.WARNING, logger="kili.services.plugins"):
+        subscriptions = find_event_subscriptions(plugin_path)
+
+    assert subscriptions == {"on_skip": ["asset.skipped"]}
+    assert "inherits from" not in caplog.text
+
+
 def test_upload_refuses_a_plugin_without_handler(kili):
     plugin_path = Path(
         os.path.join(
