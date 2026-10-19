@@ -53,6 +53,31 @@ class TextTestCase(ImportTestCase):
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
 
+    def _batches_sent(self, assets) -> list[list[str]]:
+        def graphql_execute_side_effect(*args, **_):
+            nb_asset_batch = len(args[1]["data"]["contentArray"])
+            return {"data": [{"id": f"id{i}"} for i in range(nb_asset_batch)]}
+
+        # self.kili is shared by every test: the patch must not outlive this one
+        with patch.object(
+            self.kili.graphql_client, "execute", side_effect=graphql_execute_side_effect
+        ) as execute:
+            import_assets(self.kili, self.project_id, assets)
+        return [c.args[1]["data"]["externalIDArray"] for c in execute.call_args_list]
+
+    def test_large_raw_texts_are_not_split_since_they_go_to_the_bucket(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "TEXT"}
+        assets = [{"content": "é" * 300_000, "external_id": f"text {i}"} for i in range(10)]
+
+        assert self._batches_sent(assets) == [[f"text {i}" for i in range(10)]]
+
+    def test_large_rich_texts_are_not_split_since_they_go_to_the_bucket(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "TEXT"}
+        json_content = [{"children": [{"id": "1", "text": "x" * 300_000}]}]
+        assets = [{"json_content": json_content, "external_id": f"rich {i}"} for i in range(10)]
+
+        assert self._batches_sent(assets) == [[f"rich {i}" for i in range(10)]]
+
     def test_upload_from_one_rich_text(self, *_):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "TEXT"}
         json_content = [

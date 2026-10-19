@@ -90,6 +90,7 @@ class LabelClientMethods(BaseClientMethods):
         user_id: Optional[str] = None,
         category_search: Optional[str] = None,
         id_contains: Optional[list[str]] = None,
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> int:
         # pylint: disable=line-too-long
         """Get the number of labels for the given parameters.
@@ -102,14 +103,19 @@ class LabelClientMethods(BaseClientMethods):
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
+            asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.
+                Exclusive with `asset_step_name_in`.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             asset_group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
             asset_group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -145,7 +151,10 @@ class LabelClientMethods(BaseClientMethods):
                 stacklevel=1,
             )
 
-        asset_step_id_in = None
+        if asset_step_id_in is not None and asset_step_name_in is not None:
+            raise ValueError(
+                "Filters asset_step_id_in and asset_step_name_in both given: use only one of them."
+            )
         if (
             asset_status_in is not None
             or asset_step_name_in is not None
@@ -163,6 +172,7 @@ class LabelClientMethods(BaseClientMethods):
                 asset_workflow_filters={
                     "skipped": None,
                     "step_name_in": asset_step_name_in,
+                    "has_step_id_filter": asset_step_id_in is not None,
                     "step_status_in": asset_step_status_in,
                     "status_in": asset_status_in,
                     "group_name_in": asset_group_name_in,
@@ -254,6 +264,7 @@ class LabelClientMethods(BaseClientMethods):
         output_format: Literal["dict"] = "dict",
         *,
         as_generator: Literal[True],
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> Generator[dict, None, None]:
         ...
 
@@ -296,6 +307,7 @@ class LabelClientMethods(BaseClientMethods):
         output_format: Literal["dict"] = "dict",
         *,
         as_generator: Literal[False] = False,
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> list[dict]:
         ...
 
@@ -338,6 +350,7 @@ class LabelClientMethods(BaseClientMethods):
         output_format: Literal["parsed_label"] = "parsed_label",
         *,
         as_generator: Literal[False] = False,
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> list[ParsedLabel]:
         ...
 
@@ -380,6 +393,7 @@ class LabelClientMethods(BaseClientMethods):
         output_format: Literal["parsed_label"] = "parsed_label",
         *,
         as_generator: Literal[True] = True,
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> Generator[ParsedLabel, None, None]:
         ...
 
@@ -422,6 +436,7 @@ class LabelClientMethods(BaseClientMethods):
         output_format: Literal["dict", "parsed_label"] = "dict",
         *,
         as_generator: bool = False,
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> Iterable[Union[dict, ParsedLabel]]:
         # pylint: disable=line-too-long
         """Get a label list or a label generator from a project based on a set of criteria.
@@ -434,14 +449,19 @@ class LabelClientMethods(BaseClientMethods):
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
+            asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.
+                Exclusive with `asset_step_name_in`.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             asset_group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
             asset_group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.
-                Only applicable if the project is in WorkflowV3.
+                Only applicable if the project uses the multi-group workflow.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have their creation date equal to this date.
@@ -511,7 +531,10 @@ class LabelClientMethods(BaseClientMethods):
         disable_tqdm = disable_tqdm_if_as_generator(as_generator, disable_tqdm)
         options = QueryOptions(disable_tqdm, first, skip)
 
-        asset_step_id_in = None
+        if asset_step_id_in is not None and asset_step_name_in is not None:
+            raise ValueError(
+                "Filters asset_step_id_in and asset_step_name_in both given: use only one of them."
+            )
         if (
             asset_status_in is not None
             or asset_step_name_in is not None
@@ -529,6 +552,7 @@ class LabelClientMethods(BaseClientMethods):
                 asset_workflow_filters={
                     "skipped": None,
                     "step_name_in": asset_step_name_in,
+                    "has_step_id_filter": asset_step_id_in is not None,
                     "step_status_in": asset_step_status_in,
                     "status_in": asset_status_in,
                     "group_name_in": asset_group_name_in,
@@ -623,6 +647,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[True],
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> Generator[dict, None, None]:
         ...
 
@@ -658,6 +683,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> list[dict]:
         ...
 
@@ -693,6 +719,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: bool = False,
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get prediction labels from a project based on a set of criteria.
@@ -706,10 +733,15 @@ class LabelClientMethods(BaseClientMethods):
                 Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
+            asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.
+                Exclusive with `asset_step_name_in`.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -754,6 +786,7 @@ class LabelClientMethods(BaseClientMethods):
                 asset_status_in=asset_status_in,
                 asset_external_id_in=asset_external_id_in,
                 asset_step_name_in=asset_step_name_in,
+                asset_step_id_in=asset_step_id_in,
                 asset_step_status_in=asset_step_status_in,
                 author_in=author_in,
                 created_at=created_at,
@@ -778,6 +811,7 @@ class LabelClientMethods(BaseClientMethods):
             asset_status_in=asset_status_in,
             asset_external_id_in=asset_external_id_in,
             asset_step_name_in=asset_step_name_in,
+            asset_step_id_in=asset_step_id_in,
             asset_step_status_in=asset_step_status_in,
             author_in=author_in,
             created_at=created_at,
@@ -829,6 +863,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[True],
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> Generator[dict, None, None]:
         ...
 
@@ -864,6 +899,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: Literal[False] = False,
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> list[dict]:
         ...
 
@@ -899,6 +935,7 @@ class LabelClientMethods(BaseClientMethods):
         category_search: Optional[str] = None,
         *,
         as_generator: bool = False,
+        asset_step_id_in: Optional[list[str]] = None,
     ) -> Iterable[dict]:
         # pylint: disable=line-too-long
         """Get inference labels from a project based on a set of criteria.
@@ -912,10 +949,15 @@ class LabelClientMethods(BaseClientMethods):
                 Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`
             asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.
             asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.
-                Only applicable if the project is in WorkflowV2.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Step names are unique per group only: a name several groups use matches the step
+                of each of them, unless `group_name_in` narrows it down.
+            asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.
+                Exclusive with `asset_step_name_in`.
+                Only applicable if the project uses the multi-step or multi-group workflow.
             asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.
                 Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.
-                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
+                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.
             author_in: Returned labels should have been made by authors in that list, if given.
                 An author can be designated by the first name, the last name, or the first name + last name.
             created_at: Returned labels should have a label whose creation date is equal to this date.
@@ -960,6 +1002,7 @@ class LabelClientMethods(BaseClientMethods):
                 asset_status_in=asset_status_in,
                 asset_external_id_in=asset_external_id_in,
                 asset_step_name_in=asset_step_name_in,
+                asset_step_id_in=asset_step_id_in,
                 asset_step_status_in=asset_step_status_in,
                 author_in=author_in,
                 created_at=created_at,
@@ -984,6 +1027,7 @@ class LabelClientMethods(BaseClientMethods):
             asset_status_in=asset_status_in,
             asset_external_id_in=asset_external_id_in,
             asset_step_name_in=asset_step_name_in,
+            asset_step_id_in=asset_step_id_in,
             asset_step_status_in=asset_step_status_in,
             author_in=author_in,
             created_at=created_at,
@@ -1044,8 +1088,14 @@ class LabelClientMethods(BaseClientMethods):
         overwrite: bool = False,
         step_name: Optional[str] = None,
         reviewed_label_id_array: Optional[list[str]] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> list[dict[Literal["id"], str]]:
         """Append labels to assets.
+
+        Note:
+            In the multi-group workflow, the jobs a step group allows are enforced by the
+            labeling app only: labels created through the SDK are not checked against them.
 
         Args:
             asset_id_array: list of asset internal ids to append labels on.
@@ -1064,7 +1114,12 @@ class LabelClientMethods(BaseClientMethods):
             reviewed_label_id_array: list of IDs of labels being reviewed.
                 Only useful when uploading REVIEW labels.
             step_name: Name of the step to which the labels belong.
-                The label_type must match accordingly.
+                The label_type must match accordingly. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
+                Required when several groups have a step with the same name.
 
         Returns:
             A list of dictionaries with the label ids.
@@ -1135,6 +1190,8 @@ class LabelClientMethods(BaseClientMethods):
             disable_tqdm=disable_tqdm,
             label_type=label_type,
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
             labels=labels,
             overwrite=overwrite,
             project_id=ProjectId(project_id) if project_id else None,
@@ -1420,8 +1477,8 @@ class LabelClientMethods(BaseClientMethods):
                 - `label_reviewer_not_in`
                 - `assignee_in`
                 - `assignee_not_in`
-                - `skipped`: only applicable if the project is in the WorkflowV1 (legacy).
-                - `status_in`: only applicable if the project is in the WorkflowV1 (legacy).
+                - `skipped`: only applicable if the project uses the legacy workflow.
+                - `status_in`: only applicable if the project uses the legacy workflow.
                 - `label_category_search`
                 - `created_at_gte`
                 - `created_at_lte`
@@ -1430,13 +1487,16 @@ class LabelClientMethods(BaseClientMethods):
                 - `inference_mark_gte`
                 - `inference_mark_lte`
                 - `metadata_where`
-                - `step_name_in`: : only applicable if the project is in the WorkflowV2.
-                - `step_status_in`: only applicable if the project is in the WorkflowV2.
+                - `step_name_in`: only applicable if the project uses the multi-step or multi-group workflow.
+                - `step_status_in`: only applicable if the project uses the multi-step or multi-group workflow.
 
                 See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.
             normalized_coordinates: This parameter is only effective on the Kili (a.k.a raw) format.
                 If True, the coordinates of the `(x, y)` vertices are normalized between 0 and 1.
                 If False, the json response will contain additional fields with coordinates in absolute values, that is, in pixels.
+                On a `GEOSPATIAL` project labeled in image pixel coordinates the absolute values are
+                the default, since they are what that mode exists for: `None` and `False` both add
+                them, and only `True` leaves the fractions alone.
             label_type_in: Optional list of label type. Exported assets should have a label whose type belongs to that list.
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that have been sent back.
@@ -1485,6 +1545,14 @@ class LabelClientMethods(BaseClientMethods):
         else:
             resolved_asset_ids = cast(list[AssetId], asset_ids)
 
+        if (
+            asset_filter_kwargs
+            and asset_filter_kwargs.get("step_name_in") is not None
+            and asset_filter_kwargs.get("step_id_in") is not None
+        ):
+            raise ValueError(
+                "Filters step_id_in and step_name_in both given: use only one of them."
+            )
         if asset_filter_kwargs and (
             asset_filter_kwargs.get("step_name_in") is not None
             or asset_filter_kwargs.get("step_status_in") is not None
@@ -1555,6 +1623,8 @@ class LabelClientMethods(BaseClientMethods):
         label_type: LabelType = "DEFAULT",
         step_name: Optional[str] = None,
         model_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ):
         """Import and convert shapefiles into annotations for a specific asset in a Kili project.
 
@@ -1575,7 +1645,12 @@ class LabelClientMethods(BaseClientMethods):
                        All geometries will be transformed to EPSG:4326 before being added to Kili.
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
             step_name: Name of the step to which the labels belong.
-                The label_type must match accordingly.
+                The label_type must match accordingly. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
+                Required when several groups have a step with the same name.
             model_name: Name of the model that generated the labels.
                 Only useful when uploading PREDICTION or INFERENCE labels.
 
@@ -1601,6 +1676,8 @@ class LabelClientMethods(BaseClientMethods):
             asset_external_id_array=[asset_external_id],
             label_type=label_type,
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
             model_name=model_name,
         )
 
@@ -1616,6 +1693,8 @@ class LabelClientMethods(BaseClientMethods):
         label_type: LabelType = "DEFAULT",
         step_name: Optional[str] = None,
         model_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ):
         """Import and convert GeoJSON files into annotations for a specific asset in a Kili project.
 
@@ -1647,7 +1726,12 @@ class LabelClientMethods(BaseClientMethods):
                 Each category must exist in the corresponding job's ontology.
             label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.
             step_name: Name of the step to which the labels belong.
-                The label_type must match accordingly.
+                The label_type must match accordingly. Exclusive with `step_id`.
+            step_id: Id of the step to which the labels belong.
+                Exclusive with `step_name` and `group_name`.
+            group_name: Name of the group containing the step named `step_name`, in the multi-group
+                workflow.
+                Required when several groups have a step with the same name.
             model_name: Name of the model that generated the labels.
                 Only useful when uploading PREDICTION or INFERENCE labels.
 
@@ -1758,5 +1842,7 @@ class LabelClientMethods(BaseClientMethods):
             asset_external_id_array=[asset_external_id],
             label_type=label_type,
             step_name=step_name,
+            step_id=step_id,
+            group_name=group_name,
             model_name=model_name,
         )

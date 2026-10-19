@@ -14,19 +14,23 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 )
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.constants import MUTATION_BATCH_SIZE
+from kili.core.utils.batching import json_size, size_aware_batcher
 from kili.core.utils.pagination import batcher
 from kili.domain.asset import AssetId
 from kili.domain.label import LabelFilters, LabelId
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
+from kili.exceptions import MutationOutcomeUnknownError
 from kili.utils.tqdm import tqdm
 
 from .common import get_annotation_fragment
 from .formatters import load_label_json_fields
 from .mappers import append_label_data_mapper, append_to_labels_data_mapper, label_where_mapper
 from .operations import (
+    GQL_ANNOTATION_FILE_URL,
     GQL_COPY_LABELS,
     GQL_COUNT_LABELS,
+    GQL_CREATE_ANNOTATION_FILE_UPLOAD,
     GQL_DELETE_LABELS,
     get_append_many_labels_mutation,
     get_append_to_labels_mutation,
@@ -192,28 +196,36 @@ class LabelOperationMixin(BaseOperationMixin):
         query = get_append_many_labels_mutation(fragment=fragment)
 
         added_labels: list[dict] = []
+        first_index = 0
         with tqdm(total=nb_labels_to_add, desc="Adding labels", disable=disable_tqdm) as pbar:
-            for batch_of_label_data in batcher(data.labels_data, batch_size=MUTATION_BATCH_SIZE):
+            mapped_labels = (
+                (label.asset_id, append_label_data_mapper(label)) for label in data.labels_data
+            )
+            for batch_of_label_data in size_aware_batcher(
+                mapped_labels, MUTATION_BATCH_SIZE, item_size=lambda label: json_size(label[1])
+            ):
                 variables = {
                     "data": {
                         "labelType": data.label_type,
-                        "stepName": data.step_name,
                         "overwrite": data.overwrite,
-                        "labelsData": [
-                            append_label_data_mapper(label) for label in batch_of_label_data
-                        ],
+                        "labelsData": [label_data for _, label_data in batch_of_label_data],
+                        **({"stepId": data.step_id} if data.step_id is not None else {}),
                     },
                     "where": {
-                        "idIn": [label.asset_id for label in batch_of_label_data],
+                        "idIn": [asset_id for asset_id, _ in batch_of_label_data],
                     },
                 }
                 if project_id is not None:
                     variables["where"]["project"] = {"id": project_id}
 
                 # we increase the timeout because the import can take a long time
-                batch_result = self.graphql_client.execute(query, variables, timeout=120)
+                try:
+                    batch_result = self.graphql_client.execute(query, variables, timeout=120)
+                except MutationOutcomeUnknownError as err:
+                    raise err.at_index(first_index) from err.cause
                 added_labels.extend(batch_result["data"])
                 pbar.update(len(batch_of_label_data))
+                first_index += len(batch_of_label_data)
 
         return added_labels
 
@@ -241,6 +253,25 @@ class LabelOperationMixin(BaseOperationMixin):
             "where": {"id": asset_id},
         }
         result = self.graphql_client.execute(query, variables)
+        return result["data"]
+
+    def create_annotation_file_upload(self, project_id: str, asset_id: str) -> dict:
+        """Reserve a file id for an asset and get where to upload its bytes.
+
+        The caller names no path: the id is minted server side and the path derived from it, which
+        is what lets a labeler produce a deliverable without being able to write anywhere else.
+        """
+        variables = {"projectId": project_id, "assetId": asset_id}
+        result = self.graphql_client.execute(GQL_CREATE_ANNOTATION_FILE_UPLOAD, variables)
+        return result["data"]
+
+    def get_annotation_file_url(self, project_id: str, asset_id: str, file_id: str) -> str:
+        """Get a short lived url to download the file held by a file annotation.
+
+        The url is signed when asked for and is never stored, so it must be used rather than kept.
+        """
+        variables = {"projectId": project_id, "assetId": asset_id, "fileId": file_id}
+        result = self.graphql_client.execute(GQL_ANNOTATION_FILE_URL, variables)
         return result["data"]
 
     def copy_labels(

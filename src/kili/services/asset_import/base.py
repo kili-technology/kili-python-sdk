@@ -27,13 +27,15 @@ from tenacity.wait import wait_exponential
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
-    GQL_APPEND_MANY_FRAMES_TO_DATASET,
+    GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY,
 )
 from kili.core.helpers import T, format_result, get_mime_type, is_url
-from kili.core.utils.pagination import batcher
+from kili.core.utils.batching import json_size, size_aware_batcher, with_is_last
+from kili.domain.notification import NotificationFilter, NotificationId
 from kili.domain.organization import OrganizationFilters
 from kili.domain.project import InputType, ProjectId
 from kili.domain.types import ListOrTuple
+from kili.exceptions import MutationOutcomeUnknownError
 from kili.services.asset_import.constants import (
     ALLOWED_EXTENSIONS_BY_INPUT_TYPE,
     IMPORT_BATCH_SIZE,
@@ -103,6 +105,20 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
 
+    def fields_uploaded_to_bucket(self) -> frozenset[str]:
+        """Asset fields this importer uploads on their own, so that they are not in the body."""
+        return frozenset()
+
+    def payload_size(self, asset: AssetLike) -> int:
+        """Estimated size of the asset in the mutation body, before it is prepared."""
+        uploaded = self.fields_uploaded_to_bucket()
+        sent = {key: value for key, value in asset.items() if key not in uploaded}
+        metadata = sent.get("json_metadata")
+        if metadata is not None and not isinstance(metadata, str):
+            # sent as a JSON string, whose quotes are escaped once more in the body
+            sent["json_metadata"] = dumps(metadata, default=str)
+        return json_size(sent)
+
     def import_batch(  # pylint: disable=unused-argument
         self, assets: ListOrTuple[AssetLike], verify: bool, input_type: Optional[InputType] = None
     ) -> list[str]:
@@ -114,6 +130,17 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
         assets = self.loop_on_batch(self.stringify_metadata)(assets)
         assets = self.loop_on_batch(self.stringify_json_content)(assets)
         assets_ = self.loop_on_batch(self.fill_empty_fields)(assets)
+        try:
+            return self._import_prepared_batch(assets, assets_, verify)
+        except MutationOutcomeUnknownError as err:
+            # named by the external ids sent, defaults included: an index would not locate the
+            # batch, since the assets were filtered and regrouped before batching
+            external_ids = [asset["external_id"] for asset in assets_]
+            raise err.for_assets(external_ids) from err.cause
+
+    def _import_prepared_batch(
+        self, assets: ListOrTuple[AssetLike], assets_: list[KiliResolverAsset], verify: bool
+    ) -> list[str]:
         if self.is_asynchronous and verify:
             notification = self.import_to_kili(assets_)
             if isinstance(notification, list):
@@ -139,7 +166,13 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             reraise=True,
         ):
             with attempt:
-                notification = self.kili.notifications(notification_id=notification_id)[0]
+                notification = list(
+                    self.kili.kili_api_gateway.list_notifications(
+                        filters=NotificationFilter(id=NotificationId(notification_id)),
+                        fields=("status",),
+                        options=QueryOptions(disable_tqdm=True, first=1, skip=0),
+                    )
+                )[0]
                 if notification["status"] == "FAILURE":
                     error_message = (
                         "Some assets were not imported. "
@@ -243,8 +276,10 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
 
     def _async_import_to_kili(self, assets: list[KiliResolverAsset]):
         """Import assets with asynchronous resolver."""
-        if self.input_type in ["IMAGE", "GEOSPATIAL"]:
+        if self.input_type == "GEOSPATIAL":
             upload_type = "GEO_SATELLITE"
+        elif self.input_type == "IMAGE":
+            upload_type = "TILED_IMAGE"
         elif self.input_type in ("VIDEO", "VIDEO_LEGACY"):
             upload_type = "NATIVE_VIDEO" if self.are_native_videos(assets) else "FRAME_VIDEO"
         else:
@@ -270,7 +305,7 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
             },
             "where": {"id": self.project_id},
         }
-        result = self.kili.graphql_client.execute(GQL_APPEND_MANY_FRAMES_TO_DATASET, payload)
+        result = self.kili.graphql_client.execute(GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY, payload)
         return format_result("data", result, None, self.kili.http_client)
 
     def _sync_import_to_kili(self, assets: list[KiliResolverAsset]):
@@ -303,6 +338,10 @@ class BaseBatchImporter:  # pylint: disable=too-many-instance-attributes
 
 class ContentBatchImporter(BaseBatchImporter):
     """Class defining the methods to import a batch of assets with content."""
+
+    def fields_uploaded_to_bucket(self) -> frozenset[str]:
+        """Local content, files or raw text, is uploaded to the bucket and sent as a URL."""
+        return frozenset() if self.is_hosted else frozenset({"content", "multi_layer_content"})
 
     def import_batch(
         self, assets: list[AssetLike], verify: bool, input_type: Optional[InputType] = None
@@ -402,6 +441,10 @@ class ContentBatchImporter(BaseBatchImporter):
 
 class JsonContentBatchImporter(BaseBatchImporter):
     """Class defining the import methods for a batch of assets twith json_content."""
+
+    def fields_uploaded_to_bucket(self) -> frozenset[str]:
+        """The json_content is always uploaded to the bucket and sent as a URL."""
+        return frozenset({"json_content"})
 
     @staticmethod
     def stringify_json_content(asset: AssetLike):
@@ -711,15 +754,18 @@ class BaseAbstractAssetImporter(abc.ABC):
         batch_size=IMPORT_BATCH_SIZE,
         input_type: Optional[InputType] = None,
     ):
-        """Split assets by batch and import them with a given batch importer."""
-        batch_generator = batcher(assets, batch_size)
-        nb_batch = (len(assets) - 1) // batch_size + 1
+        """Split assets by batch and import them with a given batch importer.
+
+        Batches are capped by batch_size and by their payload size, estimated on the assets as
+        given minus the fields the batch importer uploads to the bucket on its own.
+        """
+        batch_generator = size_aware_batcher(assets, batch_size, batch_importer.payload_size)
         self.pbar.total = len(assets)
         self.pbar.refresh()
 
         created_asset_ids: list[str] = []
-        for i, batch_assets in enumerate(batch_generator):
+        for batch_assets, is_last_batch in with_is_last(batch_generator):
             # check last batch only
-            verify = i == (nb_batch - 1) and self.verify
+            verify = is_last_batch and self.verify
             created_asset_ids += batch_importer.import_batch(batch_assets, verify, input_type)
         return created_asset_ids

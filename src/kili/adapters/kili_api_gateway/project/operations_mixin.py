@@ -46,6 +46,7 @@ class ProjectOperationMixin(BaseOperationMixin):
         description: str,
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
         from_demo_project: Optional[DemoProjectType],
+        pixel_labeling: bool = False,
     ) -> ProjectId:
         """Create a project."""
         variables = {
@@ -60,6 +61,9 @@ class ProjectOperationMixin(BaseOperationMixin):
         # compliance tags are only available for Kili app > 2.138
         if compliance_tags:
             variables["data"]["complianceTags"] = compliance_tags
+        # Omitted rather than sent as false: older deployments do not know the field.
+        if pixel_labeling:
+            variables["data"]["pixelLabeling"] = True
 
         result = self.graphql_client.execute(GQL_CREATE_PROJECT, variables)
         return ProjectId(result["data"]["id"])
@@ -121,7 +125,7 @@ class ProjectOperationMixin(BaseOperationMixin):
             }
         }
 
-        # For the copy_project call, we want a much higher timeout, since it can take a long time for large projects.
-        # Instead of 60 seconds, we pass to waiting for 10 minutes.
-        result = self.graphql_client.execute(GQL_COPY_PROJECT, variables, retry=False, timeout=600)
+        # Copying a large project takes minutes: wait for up to 10 instead of the default 60 s.
+        # Like any mutation, it is not resent when it times out.
+        result = self.graphql_client.execute(GQL_COPY_PROJECT, variables, timeout=600)
         return ProjectId(result.get("data", ""))

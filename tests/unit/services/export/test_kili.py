@@ -197,6 +197,127 @@ def test_kili_exporter_convert_to_pixel_coords_pdf(mocker: pytest_mock.MockerFix
     }
 
 
+def test_kili_exporter_convert_to_pixel_coords_pdf_polygon(mocker: pytest_mock.MockerFixture):
+    """A PDF polygon scales to pixels against the dimensions of its own page.
+
+    Self-contained on purpose: `fakes/pdf_project_assets.json` is left untouched so that the
+    bounding box expectations keep proving that nothing regressed for existing PDF projects.
+    """
+    mocker.patch.object(KiliExporter, "__init__", return_value=None)
+    exporter = KiliExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
+    exporter.normalized_coordinates = None
+
+    project: ProjectDict = {
+        "id": "fake_project_id",
+        "title": "Fake Project Title",
+        "description": "Fake Project Description",
+        "organizationId": "fake_organization_id",
+        "inputType": "PDF",
+        "jsonInterface": {
+            "jobs": {
+                "OBJECT_DETECTION_JOB": {
+                    "content": {
+                        "categories": {
+                            "A": {"children": [], "color": "#472CED", "name": "A"},
+                            "B": {"children": [], "name": "B", "color": "#5CE7B7"},
+                        },
+                        "input": "radio",
+                    },
+                    "instruction": "Polygon",
+                    "mlTask": "OBJECT_DETECTION",
+                    "required": 1,
+                    "tools": ["polygon"],
+                    "isChild": False,
+                }
+            }
+        },
+    }
+    normalized_vertices = [
+        {"x": 0.1, "y": 0.1},
+        {"x": 0.3, "y": 0.05},
+        {"x": 0.4, "y": 0.3},
+        {"x": 0.25, "y": 0.45},
+        {"x": 0.08, "y": 0.3},
+    ]
+    enclosing_rectangle = [
+        {"x": 0.08, "y": 0.05},
+        {"x": 0.08, "y": 0.45},
+        {"x": 0.4, "y": 0.45},
+        {"x": 0.4, "y": 0.05},
+    ]
+    # page 2 is landscape, so scaling against page 1 would give a different result
+    page_resolutions = [
+        {"pageNumber": 1, "height": 842, "width": 595, "rotation": 0},
+        {"pageNumber": 2, "height": 595, "width": 842, "rotation": 0},
+    ]
+    asset = {
+        "latestLabel": {
+            "author": {
+                "id": "user-feat1-1",
+                "email": "test+admin+1@kili-technology.com",
+                "firstname": "Feat1",
+                "lastname": "Test Admin",
+                "name": "Feat1 Test Admin",
+            },
+            "jsonResponse": {
+                "OBJECT_DETECTION_JOB": {
+                    "annotations": [
+                        {
+                            "children": {},
+                            "annotations": [
+                                {
+                                    # the backend derives boundingPoly as the enclosing rectangle,
+                                    # so only polys carries the polygon's own five vertices
+                                    "boundingPoly": [{"normalizedVertices": [enclosing_rectangle]}],
+                                    "pageNumberArray": [2],
+                                    "polys": [{"normalizedVertices": [normalized_vertices]}],
+                                }
+                            ],
+                            "categories": [{"confidence": 100, "name": "A"}],
+                            "content": "",
+                            "mid": "20230703112327217-43948",
+                            "type": "polygon",
+                        },
+                    ]
+                }
+            },
+            "createdAt": "2023-07-03T12:18:08.825Z",
+            "isLatestLabelForUser": True,
+            "labelType": "DEFAULT",
+            "modelName": None,
+        },
+        "pageResolutions": page_resolutions,
+        "content": "https://",
+        "jsonContent": "https://",
+    }
+
+    scaled_asset = convert_to_pixel_coords(asset, project)
+
+    def to_pixels(vertices):
+        return [[{"x": vertex["x"] * 842, "y": vertex["y"] * 595} for vertex in vertices]]
+
+    scaled_page_annotation = scaled_asset["latestLabel"]["jsonResponse"]["OBJECT_DETECTION_JOB"][
+        "annotations"
+    ][0]["annotations"][0]
+
+    assert scaled_page_annotation["polys"] == [
+        {
+            "normalizedVertices": [normalized_vertices],
+            "vertices": to_pixels(normalized_vertices),
+        }
+    ]
+    assert scaled_page_annotation["boundingPoly"] == [
+        {
+            "normalizedVertices": [enclosing_rectangle],
+            "vertices": to_pixels(enclosing_rectangle),
+        }
+    ]
+    assert scaled_page_annotation["pageNumberArray"] == [2]
+    # the polygon keeps its five vertices in polys, while boundingPoly stays the 4-vertex box
+    assert len(scaled_page_annotation["polys"][0]["vertices"][0]) == 5
+    assert len(scaled_page_annotation["boundingPoly"][0]["vertices"][0]) == 4
+
+
 def test_kili_export_labels_non_normalized_pdf(mocker: pytest_mock.MockerFixture):
     get_project_return_val = {
         "inputType": "PDF",
@@ -546,7 +667,7 @@ def test_save_assets_export_with_external_id_containing_slash(
 
 
 def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
-    def mocked_graphql_execute(query, variables, **kwargs):
+    def mocked_graphql_execute(query, variables=None, **kwargs):
         if "projects(" in query:
             return {
                 "data": [
@@ -570,6 +691,9 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
 
         if "assets(" in query:
             return {"data": test_case_13.assets}
+
+        if "viewer" in query:
+            return {"data": {"email": "test+admin@kili-technology.com"}}
 
         raise NotImplementedError
 
@@ -608,4 +732,92 @@ def test_kili_export_labels_geojson(mocker: pytest_mock.MockerFixture):
             with Path(f"{extract_folder}/labels/Click_here_to_start.geojson").open() as f:
                 output = json.load(f)
 
+    # Asset/export-level metadata sits once at the root under properties.kili (not per-feature).
+    # Assert it, then strip it (exportDate is dynamic) before comparing against the static fixture.
+    root_kili = output.pop("properties")["kili"]
+    assert root_kili["assetId"] == "clrrybpj800003b75o7ykp3st"
+    assert root_kili["author"] == "test+admin@kili-technology.com"
+    assert root_kili["exportDate"]
+
     assert output == geojson_project_asset
+
+
+def _exporter_for_files(mocker: pytest_mock.MockerFixture, tmp_path) -> KiliExporter:
+    mocker.patch.object(KiliExporter, "__init__", return_value=None)
+    exporter = KiliExporter()  # type: ignore  # pylint: disable=no-value-for-parameter
+    exporter.kili = mocker.MagicMock()
+    exporter.project_id = "project_id"
+    return exporter
+
+
+def test_kili_exporter_puts_a_file_job_s_file_beside_its_label(
+    mocker: pytest_mock.MockerFixture, tmp_path
+):
+    """A file job stores an id, so without this the archive names a render and does not hold it."""
+    # Given
+    exporter = _exporter_for_files(mocker, tmp_path)
+    download = mocker.patch(
+        "kili.use_cases.label.LabelUseCases.download_annotation_file", return_value="written"
+    )
+    assets = [
+        {
+            "id": "asset_id",
+            "externalId": "short video",
+            "latestLabel": {
+                "jsonResponse": {
+                    "assetLevel": {
+                        "RENDER": {"fileId": "file_id", "fileName": "render.mp4"},
+                    }
+                }
+            },
+        }
+    ]
+
+    # When
+    exporter._download_annotation_files(assets, tmp_path / "labels")
+
+    # Then the file is named for the asset and job that produced it, which is unique
+    _, kwargs = download.call_args
+    assert kwargs["output_path"].parent.name == "short_video"
+    assert kwargs["output_path"].name == "RENDER_render.mp4"
+    assert kwargs["file_id"] == "file_id"
+    assert kwargs["asset_id"] == "asset_id"
+
+    # and the label points at it
+    answer = assets[0]["latestLabel"]["jsonResponse"]["assetLevel"]["RENDER"]
+    assert answer["filePath"] == "labels/short_video/RENDER_render.mp4"
+
+
+def test_kili_exporter_finds_a_file_job_outside_video(mocker: pytest_mock.MockerFixture, tmp_path):
+    """Only video puts an asset level job under `assetLevel`; elsewhere it sits at the root."""
+    exporter = _exporter_for_files(mocker, tmp_path)
+    mocker.patch("kili.use_cases.label.LabelUseCases.download_annotation_file", return_value="w")
+    assets = [
+        {
+            "id": "asset_id",
+            "externalId": "image",
+            "latestLabel": {"jsonResponse": {"RENDER": {"fileId": "file_id"}}},
+        }
+    ]
+
+    exporter._download_annotation_files(assets, tmp_path / "labels")
+
+    assert "filePath" in assets[0]["latestLabel"]["jsonResponse"]["RENDER"]
+
+
+def test_kili_exporter_downloads_nothing_for_a_label_without_files(
+    mocker: pytest_mock.MockerFixture, tmp_path
+):
+    exporter = _exporter_for_files(mocker, tmp_path)
+    download = mocker.patch("kili.use_cases.label.LabelUseCases.download_annotation_file")
+    assets = [
+        {
+            "id": "asset_id",
+            "externalId": "image",
+            "latestLabel": {"jsonResponse": {"JOB": {"categories": []}}},
+        }
+    ]
+
+    exporter._download_annotation_files(assets, tmp_path / "labels")
+
+    download.assert_not_called()

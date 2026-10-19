@@ -28,7 +28,7 @@ def get_add_review_step_mutation() -> str:
     return """
         mutation addReviewStep($input: AddReviewStepInput!) {
             data: addReviewStep(input: $input) {
-            steps{id,name}
+            steps{id,name,stepGroupId}
             }
         }
         """

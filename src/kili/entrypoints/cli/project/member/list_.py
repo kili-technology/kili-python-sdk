@@ -3,7 +3,6 @@
 from typing import Optional
 
 import click
-import pandas as pd
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.core.graphql.operations.project_user.queries import (
@@ -31,6 +30,7 @@ def list_members(api_key: Optional[str], endpoint: Optional[str], project_id: st
         ```
     """
     try:
+        import pandas as pd  # pylint: disable=import-outside-toplevel
         from tabulate import tabulate  # pylint: disable=import-outside-toplevel
     except ImportError as e:
         raise ImportError("Install with `pip install kili[cli]` to use this feature.") from e

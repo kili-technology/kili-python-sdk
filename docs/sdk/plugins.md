@@ -65,12 +65,119 @@ class PluginHandler(PluginCore):
 !!! note
     The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run.
 
+## Receiving Kili events
+
+Instead of `on_submit` and `on_review`, a plugin can receive any Kili event: decorate a method of `PluginHandler` with
+`on_kili_event`, and annotate its event parameter with the events to receive. The method is called with each of them,
+parsed into its [`kili_events`](https://pypi.org/project/kili-events/) model — typed fields, completion in your IDE.
+
+```python
+from kili_events import AssetSkippedEvent, AssetWorkflowEvent, LabelWorkflowEvent
+
+from kili.plugins import PluginCore, on_kili_event
+
+
+class PluginHandler(PluginCore):
+    """Custom plugin"""
+
+    @on_kili_event
+    def on_skip(self, event: AssetSkippedEvent) -> None:
+        self.logger.info(f"Asset {event.payload.asset_id} skipped by {event.user_id}")
+
+    @on_kili_event
+    def on_workflow(self, event: AssetWorkflowEvent | LabelWorkflowEvent) -> None:
+        self.logger.info(f"Received {event.event} on project {event.project_id}")
+```
+
+The annotation is the subscription, and is one of:
+
+| Annotation | Receives | Example |
+| --- | --- | --- |
+| an event model | that event | `AssetSkippedEvent` |
+| a family of events | every event of the family, including those Kili adds to it later | `AssetWorkflowEvent`: every `asset.workflow.…` event |
+| a union of them | every event of each | `Union[AssetSkippedEvent, LabelWorkflowEvent]` |
+
+The union can also be written `AssetWorkflowEvent | LabelWorkflowEvent`, as in `on_workflow`. `AnyEvent` receives every
+event. Events that share no family, such as every `….started` event, are received with a union of their models or
+families. `on_kili_event` takes no arguments, and is the only decorator of the method.
+
+Every method whose annotation matches an event receives it, in the alphabetical order of their names; when one raises,
+the others still run, its error is logged, and the run fails with the first error. Upload the plugin without
+`event_matcher`: the events it receives are read from the annotations.
+
+```python
+kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin")
+```
+
+The upload reads your code without running it, so:
+
+- the decorated methods are those of the `PluginHandler` class of the plugin file (of `main.py` for a folder) — not the
+  ones it inherits — and plain methods taking `self` and the event, not `async` ones;
+- the annotation is made of names imported from `kili_events` when the class is defined (not under
+  `if TYPE_CHECKING:` — with ruff, list `kili.plugins.on_kili_event` in `runtime-evaluated-decorators`), or a
+  module-level alias of them — anything else stops the upload with the reason;
+- Kili never sends plugins its system events, nor the events of no project (`assetStorage.integration.…`): an
+  annotation naming a model or a family made only of those stops the upload;
+- a plugin receives events either with `on_kili_event` or with `on_submit`, `on_review`, `on_custom_interface_click` and
+  `on_send_back_to_queue`, not both.
+
+A family is uploaded as the pattern of its folder (`asset.workflow.*`), so an event Kili adds to it later reaches the
+plugin without changing its code. The method receives it once the plugin runs with a version of `kili_events` that
+knows it: on Kili's cloud, the packages are installed when the plugin is uploaded, so update the plugin
+(`kili.update_plugin`); on-premise, they are those of the plugins runner. Until then, like any event the plugin's
+version of `kili_events` does not know, it is logged and skipped; an event that does not match its model is logged as
+an error and skipped.
+
+The event carries its subject (`event.event`), `organization_id`, `project_id`, `user_id` and `payload`, as its model
+declares them — no event id or timestamp.
+
+### Migrating from `on_event`
+
+Overriding `on_event` with an `event_matcher` still works, but is deprecated in favour of `on_kili_event`. **`on_event` now
+receives the whole event**: the fields it received before are under `payload["payload"]`, beside `event`,
+`organizationId`, `projectId` and `userId`. Its `event_matcher` takes subjects and patterns, where `*` stands for one or
+more names (`label.workflow.*`, `project.workflow.bulkAction.*.started`).
+
+Before:
+
+```python
+class PluginHandler(PluginCore):
+    def on_event(self, payload: dict) -> None:
+        if payload["event"] == "asset.skipped":
+            self.logger.info(f"Asset {payload['assetId']} skipped")
+
+kili.upload_plugin(plugin_path="./my_plugin/", event_matcher=["asset.skipped"])
+```
+
+After, with `on_kili_event`:
+
+```python
+class PluginHandler(PluginCore):
+    @on_kili_event
+    def on_skip(self, event: AssetSkippedEvent) -> None:
+        self.logger.info(f"Asset {event.payload.asset_id} skipped")
+
+kili.upload_plugin(plugin_path="./my_plugin/")
+```
+
+Or after, keeping `on_event`:
+
+```python
+class PluginHandler(PluginCore):
+    def on_event(self, payload: dict) -> None:
+        if payload["event"] == "asset.skipped":
+            self.logger.info(f"Asset {payload['payload']['assetId']} skipped")
+```
+
 ## On-Premise deployment details
 
 The plugins for the on-premise deployments work exactly the same as the plugins for the SaaS version of Kili, with only a few small exceptions :
 
 1. It's not possible to add custom python packages to your plugin with the help of the `requirements.txt` file, but we selected a list of the most useful packages that you can directly use, including :
     * `numpy`, `pandas`, `scikit-learn`, `opencv-python-headless`, `Pillow`, `requests`, `uuid` and of course `kili`
+
+    `on_kili_event` needs the version of `kili` that introduces it, and `kili-events`: until your plugins-runner ships them,
+    receive events with `on_submit` and `on_review`.
 2. In order to save the logs during the execution of your plugin, you should only use the provided logger in the plugin class (the simple `print` function will not save the log). For an example, see the code below:
 
 ```python

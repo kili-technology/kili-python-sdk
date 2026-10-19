@@ -44,6 +44,15 @@ class WorkflowStepCreate(TypedDict, total=False):
     type: Required[Literal["DEFAULT", "REVIEW"]]
     assignees: Required[list[str]]
     send_back_step_id: Optional[str]
+    # The group to create the step in, required on workflow V3 projects.
+    step_group_id: Optional[str]
+
+
+class WorkflowStepDesignation(TypedDict, total=False):
+    """A step given by its name, with its group when several groups use that name."""
+
+    name: Required[str]
+    group_name: Optional[str]
 
 
 class WorkflowStepUpdate(TypedDict, total=False):
@@ -57,6 +66,9 @@ class WorkflowStepUpdate(TypedDict, total=False):
     type: Optional[Literal["DEFAULT", "REVIEW"]]
     assignees: Optional[list[str]]
     send_back_step_id: Optional[str]
+    # With no `id`, the step is found by `name`, which is unique per group only: the group name
+    # says which group's step it is when several groups use that name.
+    group_name: Optional[str]
 
 
 class InputTypeEnum(str, Enum):

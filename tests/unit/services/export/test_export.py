@@ -641,6 +641,9 @@ def test_export_service_layout(mocker: pytest_mock.MockerFixture, name, test_cas
         fake_kili.kili_api_gateway.list_assets.side_effect = mocked_AssetQuery
         fake_kili.kili_api_gateway.count_assets.side_effect = mocked_AssetQuery_count
         fake_kili.kili_api_gateway.get_project.side_effect = mocked_kili_api_gateway_get_project
+        fake_kili.kili_api_gateway.get_current_user.return_value = {
+            "email": "exporter@kili-technology.com"
+        }
         default_kwargs = {
             "asset_ids": [],
             "split_option": "merged",
@@ -769,6 +772,9 @@ def test_export_service_errors(mocker_project, name, test_case, error):
         fake_kili.kili_api_gateway.list_assets.side_effect = mocked_AssetQuery
         fake_kili.kili_api_gateway.count_assets.side_effect = mocked_AssetQuery_count
         fake_kili.kili_api_gateway.get_project.side_effect = mocked_kili_api_gateway_get_project
+        fake_kili.kili_api_gateway.get_current_user.return_value = {
+            "email": "exporter@kili-technology.com"
+        }
         default_kwargs = {
             "asset_ids": [],
             "split_option": "merged",

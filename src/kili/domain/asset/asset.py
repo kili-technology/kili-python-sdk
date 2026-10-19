@@ -75,6 +75,33 @@ class AssetFilters:
     group_name_not_in: Optional[ListOrTuple[str]] = None
 
 
+class AssetRef(TypedDict):
+    """An asset named by its ids alone, rather than the asset itself."""
+
+    assetId: str
+    externalId: str | None
+
+
+class AssetFailure(TypedDict):
+    """An asset whose write threw, and what went wrong."""
+
+    assetId: str
+    externalId: str | None
+    details: str | None
+
+
+class AssetActionOutcome(TypedDict):
+    """What an asset action did. Every asset given comes back under exactly one key.
+
+    Why an asset was declined is not carried: the reasons read as noise next to the count, so
+    every surface that reports these counts them without saying why.
+    """
+
+    succeeded: list[AssetRef]
+    declined: list[AssetRef]
+    failed: list[AssetFailure]
+
+
 class AssetWorkflowFilters(TypedDict, total=False):
     """Asset filters relative to worklow."""
 
@@ -84,6 +111,8 @@ class AssetWorkflowFilters(TypedDict, total=False):
     step_name_and_status_not_in: Optional[list[tuple[str, StatusInStep]]]
     step_name_in: Optional[ListOrTuple[str]]
     step_name_not_in: Optional[ListOrTuple[str]]
+    # Whether a step filter was given by id: the rules of the filters by name apply to it.
+    has_step_id_filter: Optional[bool]
     step_status_in: Optional[ListOrTuple[StatusInStep]]
     step_status_not_in: Optional[ListOrTuple[StatusInStep]]
     group_name_in: Optional[ListOrTuple[str]]
