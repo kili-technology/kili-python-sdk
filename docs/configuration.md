@@ -261,8 +261,8 @@ kili = Kili(api_key="your-api-key")
 
 Display an error raised by the SDK as one line, the line of your code that called the SDK and
 the message, instead of the full Python traceback and the raw GraphQL error. Warnings emitted by
-the SDK are also displayed on a single line. Errors raised by your own code, including code the
-SDK calls back such as a plugin's handlers, keep their full traceback.
+the SDK are also displayed on a single line. Errors raised by your own code keep their full
+traceback.
 
 **Values:**
 
@@ -293,10 +293,10 @@ $ python my_script.py
 my_script.py:12: Project with id cme2rmsjdg0k4an0w4j0iggq3 not found
 ```
 
-When enabled, the messages of the SDK's GraphQL and authentication errors are short too, also
-when you catch them (`str(error)`). In Jupyter, the line shows under the cell, without its
-location. An exception hook that another tool installed, such as an error tracker, is left in
-place.
+Only the display changes: an error you catch keeps its full message (`str(error)`), and its
+short form is in `error.short_message` for the GraphQL and authentication errors. In Jupyter, the
+line shows under the cell, without its location, and `%debug` still opens on the error. An
+exception hook that another tool installed, such as an error tracker, is left in place.
 
 ---
 

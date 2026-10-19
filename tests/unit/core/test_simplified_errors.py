@@ -1,5 +1,6 @@
 """Tests for the opt-in simplified error display."""
 
+import io
 import os
 import sys
 import warnings
@@ -36,6 +37,8 @@ def _reset_simplified_errors_state(monkeypatch):
     """Isolate each test from the environment and restore the display hooks."""
     monkeypatch.delenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, raising=False)
     monkeypatch.setitem(simplified_errors._state, "enabled_from_config", False)
+    monkeypatch.setitem(simplified_errors._state, "previous_excepthook", None)
+    monkeypatch.setitem(simplified_errors._state, "previous_formatwarning", None)
     monkeypatch.setattr(sys, "excepthook", sys.__excepthook__)
     monkeypatch.setattr(warnings, "formatwarning", warnings.formatwarning)
 
@@ -92,63 +95,63 @@ def test_given_a_plain_message_when_simplifying_then_it_is_unchanged():
     )
 
 
-def test_given_the_flag_disabled_when_raising_a_graphql_error_then_the_message_is_legacy():
+def test_given_a_graphql_error_then_its_message_stays_whole_and_its_short_form_is_kept_beside():
     error = GraphQLError(error=[{"message": BACKEND_MESSAGE_WITH_STACK}])
 
-    assert str(error).startswith('GraphQL error: "')
-    assert "    at " in str(error)
+    assert str(error) == f'GraphQL error: "{BACKEND_MESSAGE_WITH_STACK}"'
+    assert error.short_message == SIMPLIFIED_MESSAGE
 
 
-def test_given_the_flag_enabled_when_raising_a_graphql_error_then_the_message_is_short(monkeypatch):
-    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
-
-    error = GraphQLError(error=[{"message": BACKEND_MESSAGE_WITH_STACK}])
-
-    assert str(error) == SIMPLIFIED_MESSAGE
-
-
-def test_given_the_flag_enabled_when_raising_a_batched_graphql_error_then_the_index_is_kept(
-    monkeypatch,
+@pytest.mark.parametrize("flag", ["true", "false"])
+def test_given_the_flag_either_way_when_raising_a_graphql_error_then_its_message_is_the_same(
+    monkeypatch, flag
 ):
-    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    # kili's own code reads str(error) (storages, users): a display setting must not change it
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, flag)
 
+    error = GraphQLError(error=[{"message": BACKEND_MESSAGE}])
+
+    assert str(error) == f'GraphQL error: "{BACKEND_MESSAGE}"'
+
+
+def test_given_a_batched_graphql_error_then_its_short_form_keeps_the_index():
     error = GraphQLError(error=[{"message": BACKEND_MESSAGE}], batch_number=3)
 
-    assert str(error) == f"{SIMPLIFIED_MESSAGE} (at index 300)"
+    assert error.short_message == f"{SIMPLIFIED_MESSAGE} (at index 300)"
+    assert str(error) == f'GraphQL error at index 300: "{BACKEND_MESSAGE}"'
 
 
-def test_given_the_flag_enabled_when_the_api_key_is_invalid_then_the_message_is_short(monkeypatch):
-    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
-
+@pytest.mark.parametrize(
+    ("error_msg", "expected"),
+    [
+        (
+            "Api key does not seem to be valid.",
+            "API key `**gerg` refused by http://localhost:4001/api/label/v2/graphql: check the key"
+            " and the endpoint.",
+        ),
+        (
+            "Connection refused",
+            "API key `**gerg` refused by http://localhost:4001/api/label/v2/graphql: Connection"
+            " refused",
+        ),
+    ],
+)
+def test_given_a_refused_api_key_then_the_short_form_names_the_endpoint(error_msg, expected):
     error = AuthenticationFailed(
         api_key="rggerg",
         api_endpoint="http://localhost:4001/api/label/v2/graphql",
-        error_msg="Api key does not seem to be valid.",
+        error_msg=error_msg,
     )
 
-    assert str(error) == "Invalid API key `**gerg`"
+    assert error.short_message == expected
+    assert "Check your connection and API key." in str(error)
 
 
-def test_given_the_flag_enabled_when_the_api_key_is_missing_then_the_message_is_one_line(
-    monkeypatch,
-):
-    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
-
+def test_given_no_api_key_then_the_short_form_is_one_line():
     error = AuthenticationFailed(api_key=None, api_endpoint="https://cloud.kili-technology.com")
 
-    assert "KILI_API_KEY" in str(error)
-    assert "\n" not in str(error)
-
-
-def test_given_the_flag_disabled_when_authentication_fails_then_the_message_is_legacy():
-    error = AuthenticationFailed(
-        api_key="rggerg",
-        api_endpoint="http://localhost:4001/api/label/v2/graphql",
-        error_msg="Api key does not seem to be valid.",
-    )
-
-    assert "Check your connection and API key." in str(error)
-    assert "**gerg" in str(error)
+    assert "KILI_API_KEY" in error.short_message
+    assert "\n" not in error.short_message
 
 
 def test_given_the_flag_enabled_when_a_kili_error_is_uncaught_then_a_single_line_is_printed(
@@ -350,3 +353,167 @@ def test_given_the_exceptiongroup_backport_hook_when_installing_then_it_is_repla
 
     assert capsys.readouterr().err == f"{SIMPLIFIED_MESSAGE}\n"
     assert len(received) == 1  # the user's KeyError, formatted by the hook kili replaced
+
+
+def test_given_a_call_site_on_another_drive_when_printing_then_its_full_path_is_shown(
+    monkeypatch, capsys
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    install_error_display_hooks()
+    sdk = _in_kili("def fail():\n    raise ValueError('bad input')\n")
+    exception_info = _uncaught(sdk["fail"])
+
+    def relpath_across_drives(path, start=None):
+        raise ValueError("path is on mount 'D:', start on mount 'C:'")
+
+    monkeypatch.setattr(os.path, "relpath", relpath_across_drives)
+    sys.excepthook(*exception_info)
+
+    assert capsys.readouterr().err.startswith(f"{__file__}:")
+
+
+def test_given_the_variable_set_after_kili_was_imported_when_a_client_starts_then_hooks_install(
+    monkeypatch,
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")  # e.g. load_dotenv() after the imports
+
+    enable_error_simplification_from_config({})  # what each client does when it starts
+
+    assert sys.excepthook is simplified_errors._simplified_excepthook
+
+
+@pytest.mark.parametrize("value", ["true", 1, "yes"])
+def test_given_a_config_value_that_is_no_boolean_then_it_warns_and_stays_off(value):
+    with pytest.warns(UserWarning, match="write true or false"):
+        enable_error_simplification_from_config({"simplify_error_logs": value})
+
+    assert is_error_simplification_enabled() is False
+
+
+def test_given_a_tool_wrapping_the_warning_formatter_when_installing_again_then_it_does_not_loop(
+    monkeypatch,
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    install_error_display_hooks()
+    kili_formatter = warnings.formatwarning
+    monkeypatch.setattr(warnings, "formatwarning", lambda *args: "tool: " + kili_formatter(*args))
+
+    install_error_display_hooks()  # a second client
+
+    assert warnings.formatwarning("Some warning.", UserWarning, "script.py", 3).startswith("tool: ")
+
+
+def test_given_the_kili_command_when_it_fails_then_the_line_has_no_location(monkeypatch, capsys):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    install_error_display_hooks()
+    namespace: dict = {"__name__": "kili.entrypoints.cli._fake_command"}
+    exec(  # pylint: disable=exec-used  # test code
+        compile(
+            "from kili.exceptions import GraphQLError\n"
+            "def main(message):\n"
+            "    raise GraphQLError(error=[{'message': message}])\n",
+            os.path.join(simplified_errors._KILI_DIRECTORY, "entrypoints", "_fake_command.py"),
+            "exec",
+        ),
+        namespace,
+    )
+
+    sys.excepthook(*_uncaught(namespace["main"], BACKEND_MESSAGE))
+
+    assert capsys.readouterr().err == f"{SIMPLIFIED_MESSAGE}\n"
+
+
+class _Terminal(io.StringIO):
+    def isatty(self) -> bool:
+        return True
+
+
+@pytest.mark.parametrize(("no_color", "colored"), [(None, True), ("1", False)])
+def test_given_a_terminal_when_printing_then_the_line_is_red_unless_no_color(
+    monkeypatch, no_color, colored
+):
+    terminal = _Terminal()
+    monkeypatch.setattr(sys, "stderr", terminal)
+    monkeypatch.setattr(os, "name", "posix")
+    if no_color is None:
+        monkeypatch.delenv("NO_COLOR", raising=False)
+    else:
+        monkeypatch.setenv("NO_COLOR", no_color)
+
+    simplified_errors._print_error_line("Project not found")
+
+    assert ("\033[91m" in terminal.getvalue()) is colored
+
+
+def test_given_the_hook_failing_when_an_error_is_uncaught_then_the_previous_hook_shows_it(
+    monkeypatch, capsys
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    install_error_display_hooks()
+
+    def broken(*args):
+        raise RuntimeError("bug in the display")
+
+    monkeypatch.setattr(simplified_errors, "_one_line", broken)
+    error = GraphQLError(error=[{"message": BACKEND_MESSAGE}])
+    sys.excepthook(type(error), error, None)
+
+    assert "GraphQLError" in capsys.readouterr().err
+
+
+@pytest.fixture()
+def ipython_shell(monkeypatch):
+    interactiveshell = pytest.importorskip("IPython.core.interactiveshell")
+    shell = interactiveshell.InteractiveShell.instance()
+    monkeypatch.setattr("IPython.core.getipython.get_ipython", lambda: shell)
+    shell.set_custom_exc((), None)
+    yield shell
+    shell.set_custom_exc((), None)
+    interactiveshell.InteractiveShell.clear_instance()
+
+
+def test_given_ipython_when_a_kili_error_is_raised_then_one_line_and_the_debugger_s_state(
+    monkeypatch, capsys, ipython_shell
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    install_error_display_hooks()
+    ipython_shell.user_ns["sdk"] = _in_kili(
+        "from kili.exceptions import GraphQLError\n"
+        "def query(message):\n"
+        "    raise GraphQLError(error=[{'message': message}])\n"
+    )
+    ipython_shell.user_ns["message"] = BACKEND_MESSAGE
+
+    result = ipython_shell.run_cell("sdk['query'](message)")
+
+    assert capsys.readouterr().err == f"{SIMPLIFIED_MESSAGE}\n"
+    assert isinstance(result.error_in_exec, GraphQLError)  # the cell failed: Run All stops
+    assert sys.last_value is result.error_in_exec  # what %debug and %tb read
+
+
+def test_given_ipython_when_the_user_s_code_fails_then_ipython_shows_its_traceback(
+    monkeypatch, capsys, ipython_shell
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    install_error_display_hooks()
+
+    ipython_shell.run_cell("{}['my own key']")
+
+    captured = capsys.readouterr()
+    assert "KeyError" in captured.out + captured.err
+    assert "Traceback" in captured.out + captured.err
+
+
+def test_given_ipython_with_pdb_on_when_a_kili_error_is_raised_then_the_debugger_starts(
+    monkeypatch, ipython_shell
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    install_error_display_hooks()
+    started = []
+    monkeypatch.setattr(ipython_shell, "debugger", lambda force=False: started.append(force))
+    ipython_shell.call_pdb = True
+    ipython_shell.user_ns["sdk"] = _in_kili("def fail():\n    raise ValueError('bad input')\n")
+
+    ipython_shell.run_cell("sdk['fail']()")
+
+    assert started == [True]
