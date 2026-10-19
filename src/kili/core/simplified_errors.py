@@ -1,18 +1,23 @@
 """Opt-in simplified display of the SDK errors and warnings.
 
-When error simplification is enabled, exceptions raised by the SDK are reported
-as a single-line message (without traceback), backend GraphQL error messages are
-stripped from their technical noise (error codes, stack traces, boilerplate),
-and warnings emitted by the SDK are displayed on a single line.
+When error simplification is enabled, an uncaught error raised by the SDK is reported as one
+line, the user's line that called the SDK and the message, without traceback. Backend GraphQL
+error messages are stripped from their technical noise (error codes, stack traces, boilerplate),
+and warnings emitted by the SDK are displayed on a single line. Errors raised by the user's own
+code keep their full traceback.
 
 It can be enabled with the ``KILI_SDK_SIMPLIFY_ERROR_LOGS`` environment variable
 (set to ``true``, ``1`` or ``yes``), or with ``"simplify_error_logs": true`` in
 the ``kili-sdk-config.json`` configuration file.
 """
 
+import functools
 import os
 import re
+import site
 import sys
+import sysconfig
+import traceback
 import warnings
 from collections.abc import Mapping
 from types import TracebackType
@@ -29,6 +34,9 @@ _ERROR_CODE_PREFIX_REGEX = re.compile(r"^\[\w+\]\s*")
 _CAUSE_SEPARATOR = " -- This can be due to: "
 # Stack-trace lines that older backend versions embed in the error message.
 _STACK_FRAME_LINE_REGEX = re.compile(r"^\s+at\s.*$", flags=re.MULTILINE)
+
+# The installed kili package: a frame of a file under it is the SDK's.
+_KILI_DIRECTORY = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + os.sep
 
 _RED = "\033[91m"
 _RESET = "\033[0m"
@@ -60,7 +68,7 @@ def enable_error_simplification_from_config(config: Mapping[str, Any]) -> None:
     Args:
         config: The configuration loaded from the ``kili-sdk-config.json`` file.
     """
-    if bool(config.get(SIMPLIFY_ERROR_LOGS_CONFIG_KEY, False)):
+    if config.get(SIMPLIFY_ERROR_LOGS_CONFIG_KEY) is True:
         _state["enabled_from_config"] = True
         install_error_display_hooks()
 
@@ -74,11 +82,11 @@ def install_error_display_hooks_if_enabled() -> None:
 def install_error_display_hooks() -> None:
     """Install the hooks rendering SDK errors and warnings as single lines.
 
-    The hooks only alter the display when the simplified error display is
-    enabled, and delegate to the previous behavior otherwise. Installing them
-    twice is a no-op.
+    The hooks only alter the display when the simplified error display is enabled, and delegate
+    to the previous behavior otherwise. Installing them twice is a no-op. An exception hook that
+    another tool installed (an error tracker, a debugger) is left in place.
     """
-    if sys.excepthook is not _simplified_excepthook:
+    if _is_default_excepthook(sys.excepthook):
         _state["previous_excepthook"] = sys.excepthook
         sys.excepthook = _simplified_excepthook
 
@@ -87,6 +95,14 @@ def install_error_display_hooks() -> None:
         warnings.formatwarning = _simplified_formatwarning
 
     _install_ipython_hook()
+
+
+def _is_default_excepthook(hook: object) -> bool:
+    # On Python 3.10, the exceptiongroup backport that gql's dependencies import replaces the
+    # default hook with its own, which formats exception groups and is no tool of the user's.
+    return hook is sys.__excepthook__ or getattr(hook, "__module__", None) == (
+        "exceptiongroup._formatting"
+    )
 
 
 def simplify_graphql_error_message(message: str) -> str:
@@ -119,19 +135,81 @@ def _is_kili_exception_type(exception_type: type) -> bool:
 
 
 def _is_kili_file(filename: str) -> bool:
-    return f"{os.sep}kili{os.sep}" in filename
+    return os.path.abspath(filename).startswith(_KILI_DIRECTORY)
 
 
-def _print_error_line(exception: BaseException) -> None:
-    message = str(exception).strip() or exception.__class__.__name__
+@functools.lru_cache(maxsize=1)
+def _library_directories() -> tuple[str, ...]:
+    paths = sysconfig.get_paths()
+    # "scripts" holds the console scripts, the `kili` command's among them
+    keys = ("stdlib", "platstdlib", "purelib", "platlib", "scripts")
+    directories = [paths[key] for key in keys if key in paths]
+    directories += site.getsitepackages() if hasattr(site, "getsitepackages") else []
+    directories.append(site.getusersitepackages())
+    return tuple(os.path.abspath(directory) + os.sep for directory in directories)
+
+
+def _is_library_file(filename: str) -> bool:
+    return filename.startswith("<frozen") or os.path.abspath(filename).startswith(
+        _library_directories()
+    )
+
+
+def _raised_by_kili(
+    exception_type: type[BaseException], exception_traceback: Optional[TracebackType]
+) -> bool:
+    """Whether the error comes from the SDK rather than from the user's own code.
+
+    A kili exception does. Otherwise the code closest to where it was raised decides, the
+    libraries the SDK calls (typeguard, requests, the standard library) passed over: an error
+    raised in kili's code is the SDK's, one raised in the user's code, a callback the SDK called
+    included, is the user's.
+    """
+    if _is_kili_exception_type(exception_type):
+        return True
+    for frame, _ in reversed(list(traceback.walk_tb(exception_traceback))):
+        filename = frame.f_code.co_filename
+        if _is_kili_file(filename):
+            return True
+        if not _is_library_file(filename):
+            return False
+    return False
+
+
+def _user_call_site(exception_traceback: Optional[TracebackType]) -> Optional[str]:
+    """The user's line closest to the error, the one that called the SDK, as `file:line`."""
+    call_site = None
+    for frame, line_number in traceback.walk_tb(exception_traceback):
+        filename = frame.f_code.co_filename
+        if not _is_kili_file(filename) and not _is_library_file(filename):
+            call_site = (filename, line_number)
+    if call_site is None:
+        return None
+    filename, line_number = call_site
+    relative = os.path.relpath(filename) if os.path.isabs(filename) else filename
+    shown = filename if relative.startswith("..") else relative
+    return f"{shown}:{line_number}"
+
+
+def _one_line(exception: BaseException, call_site: Optional[str]) -> str:
+    name = type(exception).__name__
+    message = " ".join(line.strip() for line in str(exception).splitlines() if line.strip())
+    if not message:
+        message = name
+    elif not _is_kili_exception_type(type(exception)):
+        message = f"{name}: {message}"  # a ValueError, a KeyError: the type says what went wrong
+    return f"{call_site}: {message}" if call_site else message
+
+
+def _print_error_line(line: str) -> None:
     stream = sys.stderr
     try:
         is_a_tty = stream.isatty()
     except (AttributeError, ValueError):
         is_a_tty = False
     if is_a_tty:
-        message = f"{_RED}{message}{_RESET}"
-    stream.write(f"{message}\n")
+        line = f"{_RED}{line}{_RESET}"
+    stream.write(f"{line}\n")
 
 
 def _simplified_excepthook(
@@ -139,8 +217,8 @@ def _simplified_excepthook(
     exception_value: BaseException,
     exception_traceback: Optional[TracebackType],
 ) -> None:
-    if is_error_simplification_enabled() and _is_kili_exception_type(exception_type):
-        _print_error_line(exception_value)
+    if is_error_simplification_enabled() and _raised_by_kili(exception_type, exception_traceback):
+        _print_error_line(_one_line(exception_value, _user_call_site(exception_traceback)))
         return
     previous_excepthook = _state["previous_excepthook"] or sys.__excepthook__
     previous_excepthook(exception_type, exception_value, exception_traceback)
@@ -166,14 +244,15 @@ def _install_ipython_hook() -> None:
         return
 
     try:
-        from IPython.core.getipython import (  # pylint: disable=import-outside-toplevel
+        from IPython.core.getipython import (  # pylint: disable=import-outside-toplevel  # optional
             get_ipython,
         )
     except ImportError:
         return
 
     shell = get_ipython()
-    if shell is None:
+    # IPython takes one custom exception handler: one already set is the user's or a tool's.
+    if shell is None or shell.custom_exceptions:
         return
 
     def _custom_exception_handler(
@@ -183,8 +262,11 @@ def _install_ipython_hook() -> None:
         exception_traceback: Optional[TracebackType],
         tb_offset: Optional[int] = None,
     ) -> None:
-        if is_error_simplification_enabled() and _is_kili_exception_type(exception_type):
-            _print_error_line(exception_value)
+        if is_error_simplification_enabled() and _raised_by_kili(
+            exception_type, exception_traceback
+        ):
+            # the line shows right under the cell that raised it
+            _print_error_line(_one_line(exception_value, None))
             return
         shell_.showtraceback(
             (exception_type, exception_value, exception_traceback), tb_offset=tb_offset

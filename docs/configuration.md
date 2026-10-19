@@ -259,9 +259,10 @@ kili = Kili(api_key="your-api-key")
 
 ### 6. Simplified Error Logs (`simplify_error_logs`)
 
-Display SDK errors as a short, single-line message instead of the full Python
-traceback and raw GraphQL error payload. Warnings emitted by the SDK are also
-displayed on a single line.
+Display an error raised by the SDK as one line, the line of your code that called the SDK and
+the message, instead of the full Python traceback and the raw GraphQL error. Warnings emitted by
+the SDK are also displayed on a single line. Errors raised by your own code, including code the
+SDK calls back such as a plugin's handlers, keep their full traceback.
 
 **Values:**
 
@@ -289,8 +290,13 @@ full traceback and a raw GraphQL error. With the option enabled:
 ```bash
 $ export KILI_SDK_SIMPLIFY_ERROR_LOGS=true
 $ python my_script.py
-Project with id cme2rmsjdg0k4an0w4j0iggq3 not found
+my_script.py:12: Project with id cme2rmsjdg0k4an0w4j0iggq3 not found
 ```
+
+When enabled, the messages of the SDK's GraphQL and authentication errors are short too, also
+when you catch them (`str(error)`). In Jupyter, the line shows under the cell, without its
+location. An exception hook that another tool installed, such as an error tracker, is left in
+place.
 
 ---
 

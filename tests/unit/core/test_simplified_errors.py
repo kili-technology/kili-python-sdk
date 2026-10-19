@@ -36,7 +36,7 @@ def _reset_simplified_errors_state(monkeypatch):
     """Isolate each test from the environment and restore the display hooks."""
     monkeypatch.delenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, raising=False)
     monkeypatch.setitem(simplified_errors._state, "enabled_from_config", False)
-    monkeypatch.setattr(sys, "excepthook", sys.excepthook)
+    monkeypatch.setattr(sys, "excepthook", sys.__excepthook__)
     monkeypatch.setattr(warnings, "formatwarning", warnings.formatwarning)
 
 
@@ -197,7 +197,7 @@ def test_given_the_flag_enabled_when_a_kili_warning_is_emitted_then_it_is_one_li
     formatted = warnings.formatwarning(
         "Client domain api is still a work in progress.",
         UserWarning,
-        os.sep.join(["", "site-packages", "kili", "client_domain.py"]),
+        os.path.join(simplified_errors._KILI_DIRECTORY, "client_domain.py"),
         100,
     )
 
@@ -226,3 +226,127 @@ def test_given_installed_hooks_when_installing_again_then_it_is_a_no_op():
 
     assert sys.excepthook is first_excepthook
     assert warnings.formatwarning is first_formatwarning
+
+
+def _in_kili(source: str) -> dict:
+    """Functions compiled as if they were the SDK's: their frames are in the kili package."""
+    namespace: dict = {}
+    filename = os.path.join(simplified_errors._KILI_DIRECTORY, "_fake_sdk_module.py")
+    exec(compile(source, filename, "exec"), namespace)  # pylint: disable=exec-used  # test code
+    return namespace
+
+
+def _uncaught(function, *args) -> tuple:
+    try:
+        function(*args)
+    except Exception:  # pylint: disable=broad-exception-caught  # whatever the case raises
+        return sys.exc_info()
+    raise AssertionError("nothing raised")
+
+
+def test_given_the_flag_enabled_when_the_sdk_raises_a_builtin_error_then_one_line_names_it(
+    monkeypatch, capsys
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    install_error_display_hooks()
+    sdk = _in_kili("def fail():\n    raise ValueError('No user has the email a@b.c')\n")
+
+    exception_info = _uncaught(sdk["fail"])
+    sys.excepthook(*exception_info)
+
+    line = exception_info[2].tb_lineno
+    err = capsys.readouterr().err
+    assert err == f"{os.path.relpath(__file__)}:{line}: ValueError: No user has the email a@b.c\n"
+
+
+def test_given_the_flag_enabled_when_a_library_the_sdk_calls_raises_then_one_line_is_printed(
+    monkeypatch, capsys
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    install_error_display_hooks()
+    sdk = _in_kili("import json\ndef parse():\n    return json.loads('{')\n")
+
+    sys.excepthook(*_uncaught(sdk["parse"]))
+
+    err = capsys.readouterr().err
+    assert "Traceback" not in err
+    assert err.count("\n") == 1
+    assert ": JSONDecodeError: Expecting property name" in err
+
+
+def test_given_the_flag_enabled_when_a_callback_the_sdk_calls_raises_then_the_traceback_is_kept(
+    monkeypatch, capsys
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    install_error_display_hooks()
+    sdk = _in_kili("def call(callback):\n    return callback()\n")
+
+    def users_callback():
+        raise KeyError("my_bug")
+
+    sys.excepthook(*_uncaught(sdk["call"], users_callback))
+
+    err = capsys.readouterr().err
+    assert "Traceback" in err
+    assert "users_callback" in err
+
+
+def test_given_the_flag_enabled_when_a_kili_error_is_raised_through_the_sdk_then_the_call_site_leads(
+    monkeypatch, capsys
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    install_error_display_hooks()
+    sdk = _in_kili(
+        "from kili.exceptions import GraphQLError\n"
+        "def query(message):\n"
+        "    raise GraphQLError(error=[{'message': message}])\n"
+    )
+
+    exception_info = _uncaught(sdk["query"], BACKEND_MESSAGE_WITH_STACK)
+    sys.excepthook(*exception_info)
+
+    line = exception_info[2].tb_lineno
+    assert capsys.readouterr().err == f"{os.path.relpath(__file__)}:{line}: {SIMPLIFIED_MESSAGE}\n"
+
+
+def test_given_a_user_file_under_a_folder_named_kili_then_it_is_not_the_sdk_s():
+    assert not simplified_errors._is_kili_file(os.sep.join(["", "home", "me", "kili", "script.py"]))
+    assert simplified_errors._is_kili_file(
+        os.path.join(simplified_errors._KILI_DIRECTORY, "client.py")
+    )
+
+
+def test_given_an_exception_hook_set_by_another_tool_when_installing_then_it_is_kept(
+    monkeypatch, capsys
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    received = []
+    monkeypatch.setattr(sys, "excepthook", lambda *exception_info: received.append(exception_info))
+
+    install_error_display_hooks()
+    error = GraphQLError(error=[{"message": BACKEND_MESSAGE}])
+    sys.excepthook(type(error), error, None)
+
+    assert len(received) == 1
+    assert capsys.readouterr().err == ""
+
+
+def test_given_the_exceptiongroup_backport_hook_when_installing_then_it_is_replaced_and_delegated_to(
+    monkeypatch, capsys
+):
+    monkeypatch.setenv(SIMPLIFY_ERROR_LOGS_ENV_VAR, "true")
+    received = []
+
+    def exceptiongroup_excepthook(*exception_info):
+        received.append(exception_info)
+
+    exceptiongroup_excepthook.__module__ = "exceptiongroup._formatting"
+    monkeypatch.setattr(sys, "excepthook", exceptiongroup_excepthook)
+
+    install_error_display_hooks()
+    error = GraphQLError(error=[{"message": BACKEND_MESSAGE}])
+    sys.excepthook(type(error), error, None)
+    sys.excepthook(*_uncaught(lambda: {}["user's own key"]))
+
+    assert capsys.readouterr().err == f"{SIMPLIFIED_MESSAGE}\n"
+    assert len(received) == 1  # the user's KeyError, formatted by the hook kili replaced
