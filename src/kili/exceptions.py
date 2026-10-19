@@ -4,9 +4,16 @@ from typing import Optional
 
 from requests.exceptions import ConnectionError as RequestsConnectionError
 
+from kili.core.simplified_errors import simplify_graphql_error_message
+
 
 class GraphQLError(Exception):
-    """Raised when the GraphQL call returns an error."""
+    """Raised when the GraphQL call returns an error.
+
+    Attributes:
+        short_message: the message without the backend's error code and boilerplate, which the
+            simplified error display shows.
+    """
 
     def __init__(self, error, batch_number=None, context=None, index=None) -> None:
         self.error = error
@@ -21,6 +28,10 @@ class GraphQLError(Exception):
 
         if index is None and batch_number is not None:
             index = 100 * batch_number
+        short_message = simplify_graphql_error_message(error_msg)
+        self.short_message = (
+            short_message if index is None else f"{short_message} (at index {index})"
+        )
         if index is None:
             super().__init__(f'GraphQL error: "{error_msg}"')
         else:
@@ -114,9 +125,14 @@ class NotFound(Exception):
 
 
 class AuthenticationFailed(Exception):
-    """Used when the authentification fails."""
+    """Used when the authentification fails.
+
+    Attributes:
+        short_message: the message on one line, which the simplified error display shows.
+    """
 
     def __init__(self, api_key, api_endpoint, error_msg: Optional[str] = None) -> None:
+        self.short_message = self._short_message(api_key, api_endpoint, error_msg)
         if api_key is None:
             super().__init__(
                 "You need to provide an API KEY to connect."
@@ -130,6 +146,21 @@ class AuthenticationFailed(Exception):
             if error_msg is not None:
                 raise_msg += f"\nError message:\n{error_msg}"
             super().__init__(raise_msg)
+
+    @classmethod
+    def _short_message(
+        cls, api_key: Optional[str], api_endpoint: str, error_msg: Optional[str]
+    ) -> str:
+        if not api_key:
+            return (
+                "No API key provided."
+                " Set the `KILI_API_KEY` environment variable or pass `api_key` to the client."
+            )
+        # the key check fails on any answer but a 200: a wrong endpoint or an outage too
+        message = f"API key `{cls._obfuscate(api_key)}` refused by {api_endpoint}"
+        if error_msg and "api key" not in error_msg.lower():
+            return f"{message}: {error_msg}"
+        return f"{message}: check the key and the endpoint."
 
     @staticmethod
     def _obfuscate(input_str: str) -> str:

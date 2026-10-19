@@ -257,6 +257,49 @@ kili = Kili(api_key="your-api-key")
 
 ---
 
+### 6. Simplified Error Logs (`simplify_error_logs`)
+
+Display an error raised by the SDK as one line, the line of your code that called the SDK and
+the message, instead of the full Python traceback and the raw GraphQL error. Warnings emitted by
+the SDK are also displayed on a single line. Errors raised by your own code keep their full
+traceback.
+
+**Values:**
+
+- `False` (default): Standard Python error display (full tracebacks)
+- `True`: Single-line, human-readable error messages
+
+**Configuration Methods:**
+```python
+# 1. Environment variable
+export KILI_SDK_SIMPLIFY_ERROR_LOGS=true  # or "1", "yes"
+
+# 2. Configuration file
+{
+  "simplify_error_logs": true
+}
+
+# 3. Default: false
+```
+
+**Example:**
+
+With the option disabled (default), a call on a non-existing project ends with a
+full traceback and a raw GraphQL error. With the option enabled:
+
+```bash
+$ export KILI_SDK_SIMPLIFY_ERROR_LOGS=true
+$ python my_script.py
+my_script.py:12: Project with id cme2rmsjdg0k4an0w4j0iggq3 not found
+```
+
+Only the display changes: an error you catch keeps its full message (`str(error)`), and its
+short form is in `error.short_message` for the GraphQL and authentication errors. In Jupyter, the
+line shows under the cell, without its location, and `%debug` still opens on the error. An
+exception hook that another tool installed, such as an error tracker, is left in place.
+
+---
+
 ## Environment Variables Reference
 
 | Variable | Type | Default | Description |
@@ -266,6 +309,7 @@ kili = Kili(api_key="your-api-key")
 | `KILI_VERIFY` | boolean/string | `true` | TLS certificate verification |
 | `KILI_DISABLE_TQDM` | boolean | None | Disable progress bars globally |
 | `KILI_DISABLE_REQUEST_COMPRESSION` | boolean | `false` | Send request bodies uncompressed |
+| `KILI_SDK_SIMPLIFY_ERROR_LOGS` | boolean | `false` | Display SDK errors as single-line messages without traceback |
 
 **Boolean Environment Variables:**
 
