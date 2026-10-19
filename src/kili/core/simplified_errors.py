@@ -12,6 +12,7 @@ the ``kili-sdk-config.json`` configuration file.
 """
 
 import functools
+import importlib
 import os
 import re
 import site
@@ -105,7 +106,7 @@ def install_error_display_hooks() -> None:
         # skips both when it finds a hook other than Python's, and exception groups then lose their
         # sub-exceptions in every traceback of the process.
         try:
-            import exceptiongroup  # noqa: F401  # pylint: disable=import-outside-toplevel,unused-import  # its patches
+            importlib.import_module("exceptiongroup")  # only installed below Python 3.11
         except ImportError:
             pass
 
