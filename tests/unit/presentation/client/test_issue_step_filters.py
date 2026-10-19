@@ -82,8 +82,17 @@ def test_issues_refuses_a_step_filter_given_by_id_and_by_name(issues_client, pro
 
 
 def test_issues_refuses_a_step_name_the_project_does_not_have(issues_client, project_steps):
-    with pytest.raises(ValueError, match="do not match any steps"):
+    with pytest.raises(ValueError, match="match no current step of the project: \\['Review 3'\\]"):
         issues_client.issues("project", step_name_in=["Review 3"])
+
+
+def test_count_issues_points_to_step_id_in_for_a_step_removed_from_the_workflow(
+    issues_client, project_steps
+):
+    # Given a step removed from the workflow, absent from the project's current steps
+    # When its issues are counted by its name / Then the error says to filter by its id
+    with pytest.raises(ValueError, match="use step_id_in with the issues' stepId"):
+        issues_client.count_issues("project", step_name_in=["Removed review"])
 
 
 def test_issue_where_mapper_sends_the_step_ids():

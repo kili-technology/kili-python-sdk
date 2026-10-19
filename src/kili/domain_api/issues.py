@@ -34,8 +34,9 @@ class IssueFilter(TypedDict, total=False):
         asset_id_in: List of Ids of assets whose returned issues are associated to.
         status: Status of the issues to return (e.g., 'OPEN', 'SOLVED', 'CANCELLED').
         step_id_in: Ids of the steps the returned issues were raised in.
-        step_name_in: Names of the steps the returned issues were raised in, on a project with
-            the multi-step or multi-group workflow. Exclusive with `step_id_in`.
+        step_name_in: Names of the project's current steps the returned issues were raised in, on a
+            project with the multi-step or multi-group workflow; a step removed from the workflow is
+            filtered by its id, with `step_id_in`. Exclusive with `step_id_in`.
     """
 
     asset_id: Optional[str]

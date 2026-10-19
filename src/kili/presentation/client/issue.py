@@ -29,7 +29,8 @@ from kili.utils.logcontext import for_all_methods, log_call
 from .base import BaseClientMethods
 
 
-# The steps step_name_in names, by id; step_id_in as given otherwise.
+# The current steps step_name_in names, by id; step_id_in as given otherwise. A step removed from
+# the workflow is not among the project's steps: its issues are found by its id only.
 def _resolve_step_ids(
     kili_api_gateway: KiliAPIGateway,
     project_id: str,
@@ -41,6 +42,14 @@ def _resolve_step_ids(
     if step_name_in is None:
         return step_id_in
     project_steps, _ = ProjectUseCases(kili_api_gateway).get_project_steps_and_version(project_id)
+    step_names = {step["name"] for step in project_steps}
+    unmatched_names = [name for name in step_name_in if name not in step_names]
+    if unmatched_names:
+        raise ValueError(
+            f"The following step names match no current step of the project: {unmatched_names}. "
+            "Issues raised in a step since removed from the workflow are filtered by its id: "
+            "use step_id_in with the issues' stepId."
+        )
     return extract_step_ids_from_project_steps(
         project_steps=project_steps, step_name_in=step_name_in
     )
@@ -105,8 +114,9 @@ class IssueClientMethods(BaseClientMethods):
             status: Status of the issues to return.
             step_id_in: Ids of the steps the returned issues were raised in.
                 Exclusive with `step_name_in`.
-            step_name_in: Names of the steps the returned issues were raised in.
+            step_name_in: Names of the project's current steps the returned issues were raised in.
                 Only applicable if the project uses the multi-step or multi-group workflow.
+                A step removed from the workflow is filtered by its id, with `step_id_in`.
                 Exclusive with `step_id_in`.
 
         Returns:
@@ -218,8 +228,9 @@ class IssueClientMethods(BaseClientMethods):
             status: Status of the issues to return.
             step_id_in: Ids of the steps the returned issues were raised in.
                 Exclusive with `step_name_in`.
-            step_name_in: Names of the steps the returned issues were raised in.
+            step_name_in: Names of the project's current steps the returned issues were raised in.
                 Only applicable if the project uses the multi-step or multi-group workflow.
+                A step removed from the workflow is filtered by its id, with `step_id_in`.
                 Exclusive with `step_id_in`.
             fields: All the fields to request among the possible fields for the assets.
                 See [the documentation](https://api-docs.kili-technology.com/types/objects/issue) for all possible fields.
