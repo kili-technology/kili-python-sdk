@@ -1,5 +1,7 @@
 """Common fixtures for tests."""
 
+from unittest.mock import patch
+
 import pytest
 from pytest_mock import MockerFixture
 
@@ -17,6 +19,20 @@ def _reset_batch_and_page_budgets():
     yield
     mutation_batch_sizer.reset()
     query_page_sizer.reset()
+
+
+@pytest.fixture(autouse=True)
+def _no_pypi_call():
+    """Keep the SDK version check of every Kili client initialization away from PyPI.
+
+    A test that needs a version can patch `get_latest_sdk_version_from_pypi` itself. This
+    fixture does not use `mocker`, so that requesting it does not reorder the teardown of
+    the fixtures a test asks for.
+    """
+    with patch(
+        "kili.adapters.pypi.get_latest_sdk_version_from_pypi", autospec=True, return_value=None
+    ) as no_pypi_call:
+        yield no_pypi_call
 
 
 @pytest.fixture()

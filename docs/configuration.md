@@ -274,6 +274,26 @@ kili = Kili(api_key="your-api-key")
 
 ---
 
+## Upgrade Notice
+
+On Kili SaaS (`cloud.kili-technology.com` and `cloud.eastus.kili-technology.com`), creating a client
+looks up the latest `kili` published on PyPI, once per Python process, and warns when yours is older:
+
+```
+UserWarning: You are using Kili SDK version 26.1.15, while version 26.2.2 is available. Upgrade with: pip install --upgrade kili
+```
+
+On-premise and LTS deployments are not checked. The lookup never stops the client: when PyPI does
+not answer within 3 seconds, it is skipped. To hide the message:
+
+```python
+import warnings
+
+warnings.filterwarnings("ignore", message="You are using Kili SDK version")
+```
+
+---
+
 ## Example : Production Configuration
 
 ```json
