@@ -33,11 +33,16 @@ class IssueFilter(TypedDict, total=False):
         asset_id: Id of the asset whose returned issues are associated to.
         asset_id_in: List of Ids of assets whose returned issues are associated to.
         status: Status of the issues to return (e.g., 'OPEN', 'SOLVED', 'CANCELLED').
+        step_id_in: Ids of the steps the returned issues were raised in.
+        step_name_in: Names of the steps the returned issues were raised in, on a project with
+            the multi-step or multi-group workflow. Exclusive with `step_id_in`.
     """
 
     asset_id: Optional[str]
     asset_id_in: Optional[list[str]]
     status: Optional[IssueStatus]
+    step_id_in: Optional[list[str]]
+    step_name_in: Optional[list[str]]
 
 
 class IssuesNamespace(DomainNamespace):
@@ -157,6 +162,13 @@ class IssuesNamespace(DomainNamespace):
             >>> open_issues = kili.issues.list(
             ...     project_id="my_project",
             ...     filter={"status": "OPEN"}
+            ... )
+
+            >>> # List the issues raised in a step, with the label each was raised on
+            >>> review_issues = kili.issues.list(
+            ...     project_id="my_project",
+            ...     filter={"step_name_in": ["Client review"]},
+            ...     fields=["id", "status", "step.name", "labelId"]
             ... )
         """
         filter_kwargs: dict[str, Any] = dict(filter or {})

@@ -12,5 +12,6 @@ def issue_where_mapper(filters: IssueFilters) -> dict[str, Any]:
         "asset": {"id": filters.asset_id},
         "assetIn": filters.asset_id_in,
         "status": filters.status,
+        "stepIdIn": filters.step_id_in,
         "type": filters.issue_type,
     }

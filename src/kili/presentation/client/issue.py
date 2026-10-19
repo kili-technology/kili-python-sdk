@@ -8,6 +8,7 @@ from typing import Any, Literal, Optional, overload
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.domain.issue import IssueFilters, IssueId, IssueStatus, IssueType
 from kili.domain.label import LabelId
 from kili.domain.project import ProjectId
@@ -17,11 +18,32 @@ from kili.presentation.client.helpers.common_validators import (
     disable_tqdm_if_as_generator,
     resolve_disable_tqdm,
 )
+from kili.presentation.client.helpers.filter_conversion import (
+    extract_step_ids_from_project_steps,
+)
 from kili.use_cases.issue import IssueUseCases
 from kili.use_cases.issue.types import IssueToCreateUseCaseInput
+from kili.use_cases.project.project import ProjectUseCases
 from kili.utils.logcontext import for_all_methods, log_call
 
 from .base import BaseClientMethods
+
+
+# The steps step_name_in names, by id; step_id_in as given otherwise.
+def _resolve_step_ids(
+    kili_api_gateway: KiliAPIGateway,
+    project_id: str,
+    step_id_in: Optional[list[str]],
+    step_name_in: Optional[list[str]],
+) -> Optional[list[str]]:
+    if step_id_in is not None and step_name_in is not None:
+        raise ValueError("Filters step_id_in and step_name_in both given: use only one of them.")
+    if step_name_in is None:
+        return step_id_in
+    project_steps, _ = ProjectUseCases(kili_api_gateway).get_project_steps_and_version(project_id)
+    return extract_step_ids_from_project_steps(
+        project_steps=project_steps, step_name_in=step_name_in
+    )
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -69,6 +91,8 @@ class IssueClientMethods(BaseClientMethods):
         asset_id_in: Optional[list[str]] = None,
         issue_type: Optional[IssueType] = None,
         status: Optional[IssueStatus] = None,
+        step_id_in: Optional[list[str]] = None,
+        step_name_in: Optional[list[str]] = None,
     ) -> int:
         """Count and return the number of issues with the given constraints.
 
@@ -79,6 +103,11 @@ class IssueClientMethods(BaseClientMethods):
             issue_type: Type of the issue to return. An issue object both
                 represents issues and questions in the app.
             status: Status of the issues to return.
+            step_id_in: Ids of the steps the returned issues were raised in.
+                Exclusive with `step_name_in`.
+            step_name_in: Names of the steps the returned issues were raised in.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Exclusive with `step_id_in`.
 
         Returns:
             The number of issues that match the given constraints.
@@ -94,6 +123,9 @@ class IssueClientMethods(BaseClientMethods):
                 asset_id_in=asset_id_in,
                 issue_type=issue_type,
                 status=status,
+                step_id_in=_resolve_step_ids(
+                    self.kili_api_gateway, project_id, step_id_in, step_name_in
+                ),
             )
         )
 
@@ -115,6 +147,8 @@ class IssueClientMethods(BaseClientMethods):
         asset_id_in: Optional[list[str]] = None,
         issue_type: Optional[IssueType] = None,
         status: Optional[IssueStatus] = None,
+        step_id_in: Optional[list[str]] = None,
+        step_name_in: Optional[list[str]] = None,
         *,
         as_generator: Literal[True],
     ) -> Generator[dict, None, None]:
@@ -138,6 +172,8 @@ class IssueClientMethods(BaseClientMethods):
         asset_id_in: Optional[list[str]] = None,
         issue_type: Optional[IssueType] = None,
         status: Optional[IssueStatus] = None,
+        step_id_in: Optional[list[str]] = None,
+        step_name_in: Optional[list[str]] = None,
         *,
         as_generator: Literal[False] = False,
     ) -> list[dict]:
@@ -161,6 +197,8 @@ class IssueClientMethods(BaseClientMethods):
         asset_id_in: Optional[list[str]] = None,
         issue_type: Optional[IssueType] = None,
         status: Optional[IssueStatus] = None,
+        step_id_in: Optional[list[str]] = None,
+        step_name_in: Optional[list[str]] = None,
         *,
         as_generator: bool = False,
     ) -> Iterable[dict]:
@@ -178,8 +216,16 @@ class IssueClientMethods(BaseClientMethods):
             asset_id_in: List of Ids of assets whose returned issues are associated to.
             issue_type: Type of the issue to return. An issue object both represents issues and questions in the app.
             status: Status of the issues to return.
+            step_id_in: Ids of the steps the returned issues were raised in.
+                Exclusive with `step_name_in`.
+            step_name_in: Names of the steps the returned issues were raised in.
+                Only applicable if the project uses the multi-step or multi-group workflow.
+                Exclusive with `step_id_in`.
             fields: All the fields to request among the possible fields for the assets.
                 See [the documentation](https://api-docs.kili-technology.com/types/objects/issue) for all possible fields.
+                `stepId` and `step.name` give the step an issue was raised in, `labelId` and
+                `label.id` the label it was raised on: both are null for issues created before
+                they were recorded.
             first: Maximum number of issues to return.
             skip: Number of issues to skip (they are ordered by their date of creation, first to last).
             disable_tqdm: If `True`, the progress bar will be disabled
@@ -190,6 +236,7 @@ class IssueClientMethods(BaseClientMethods):
 
         Examples:
             >>> kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors
+            >>> kili.issues(project_id=project_id, fields=['id', 'step.name', 'labelId'], step_name_in=['Review 2']) # The issues raised in the step "Review 2"
         """
         if asset_id and asset_id_in:
             raise ValueError(
@@ -206,6 +253,9 @@ class IssueClientMethods(BaseClientMethods):
                 asset_id_in=asset_id_in,
                 issue_type=issue_type,
                 status=status,
+                step_id_in=_resolve_step_ids(
+                    self.kili_api_gateway, project_id, step_id_in, step_name_in
+                ),
             ),
             fields=fields,
             options=options,
