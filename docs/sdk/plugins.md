@@ -70,6 +70,8 @@ class PluginHandler(PluginCore):
 Instead of `on_submit` and `on_review`, a plugin can receive any Kili event: decorate a method of `PluginHandler` with
 `on_kili_event`, and annotate its event parameter with the events to receive. The method is called with each of them,
 parsed into its [`kili_events`](https://pypi.org/project/kili-events/) model — typed fields, completion in your IDE.
+The [Kili events documentation](https://events-docs.kili-technology.com/latest/) lists every event, with its model and
+its fields.
 
 ```python
 from kili_events import AssetSkippedEvent, AssetWorkflowEvent, LabelWorkflowEvent
