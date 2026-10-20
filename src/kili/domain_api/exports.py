@@ -95,7 +95,7 @@ class ExportNamespace(DomainNamespace):
         which queries the plural latestLabels field to support multiple annotators.
 
         Args:
-            workflow_version: The workflow version ("V1", "V2", or None)
+            workflow_version: The workflow version ("V1", "V2", "V3" or None)
 
         Returns:
             The optimal export type for this project
@@ -114,7 +114,7 @@ class ExportNamespace(DomainNamespace):
         - latest_from_all_steps: Uses labels with isLastForStep
 
         Args:
-            workflow_version: The workflow version ("V1", "V2", or None)
+            workflow_version: The workflow version ("V1", "V2", "V3" or None)
             export_type: The requested export type
 
         Raises:
