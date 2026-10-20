@@ -193,7 +193,7 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         group_name: Optional[str] = None,
         step_id: Optional[str] = None,
     ) -> list[str]:
-        """Add labelers to a specific labeling step of a workflow V3 project."""
+        """Add labelers to a specific labeling step of a multi-group workflow project."""
         context = self.get_project_workflow_context(project_id)
         if context.get("workflowVersion") != "V3":
             raise ValueError("Assigning labelers to a step requires the multi-group workflow")
@@ -219,7 +219,7 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         group_name: Optional[str] = None,
         step_id: Optional[str] = None,
     ) -> list[str]:
-        """Remove labelers from a specific labeling step of a workflow V3 project."""
+        """Remove labelers from a specific labeling step of a multi-group workflow project."""
         context = self.get_project_workflow_context(project_id, include_assignee_emails=True)
         if context.get("workflowVersion") != "V3":
             raise ValueError("Assigning labelers to a step requires the multi-group workflow")
