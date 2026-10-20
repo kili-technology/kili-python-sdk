@@ -278,7 +278,7 @@ kili.get_plugin_logs(project_id=project_id, plugin_name=plugin_name, start_date=
 
 ## Receiving Kili events
 
-Beyond `on_submit` and `on_review`, a plugin can receive any Kili event: decorate a method with `on_kili_event` and annotate its event parameter with the events to receive. It is called with each of them, parsed into its [`kili_events`](https://pypi.org/project/kili-events/) model.
+Beyond `on_submit` and `on_review`, a plugin can receive any Kili event: decorate a method with `on_kili_event` and annotate its event parameter with the events to receive. It is called with each of them, parsed into its [`kili_events`](https://pypi.org/project/kili-events/) model. The [Kili events documentation](https://events-docs.kili-technology.com/latest/) lists every event, with its model and its fields.
 
 The annotation is an event model (`AssetSkippedEvent`), a family of events (`LabelWorkflowEvent`: every `label.workflow.…` event), or a union of them (`AssetSkippedEvent | LabelWorkflowEvent`).
 
