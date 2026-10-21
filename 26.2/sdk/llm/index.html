@@ -2288,6 +2288,7 @@
         <span class="n">step_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">group_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">group_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Conversation</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]]]]:</span>
 <span class="w">        </span><span class="sd">"""Returns an export of llm conversations with valid labels.</span>
 
@@ -2301,14 +2302,18 @@
 <span class="sd">            status_in: Returned assets should have a status that belongs to that list, if given.</span>
 <span class="sd">                Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.</span>
 <span class="sd">            step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow. Exclusive with `step_id_in`.</span>
+<span class="sd">                Step names are unique per group only: a name several groups use matches the step</span>
+<span class="sd">                of each of them, unless `group_name_in` narrows it down.</span>
+<span class="sd">            step_id_in: Returned assets are in a step whose id belong to that list, if given.</span>
+<span class="sd">                Exclusive with `step_name_in`.</span>
 <span class="sd">            step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">            group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">                Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">            group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">                Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">        !!! Example</span>
 <span class="sd">            ```python</span>
 <span class="sd">            kili.llm.export("your_project_id")</span>
@@ -2343,7 +2348,10 @@
 
         <span class="n">label_type_in</span> <span class="o">=</span> <span class="n">label_type_in</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">"DEFAULT"</span><span class="p">,</span> <span class="s2">"REVIEW"</span><span class="p">]</span>
 
-        <span class="n">step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">step_id_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Filters step_id_in and step_name_in both given: use only one of them."</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -3275,7 +3283,7 @@
 
 
 <h3 id="kili.llm.presentation.client.llm.LlmClientMethods.export" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_sent_back_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_sent_back_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3342,7 +3350,16 @@ Possible choices: <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>,
         <td><code>step_name_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets are in a step whose name belong to that list, if given.
-Only applicable if the project is in WorkflowV2.</p></td>
+Only applicable if the project uses the multi-step or multi-group workflow. Exclusive with <code>step_id_in</code>.
+Step names are unique per group only: a name several groups use matches the step
+of each of them, unless <code>group_name_in</code> narrows it down.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_id_in</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>Returned assets are in a step whose id belong to that list, if given.
+Exclusive with <code>step_name_in</code>.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -3350,21 +3367,21 @@ Only applicable if the project is in WorkflowV2.</p></td>
         <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
         <td><p>Returned assets have the status of their step that belongs to that list, if given.
 Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>IN_PROGRESS</code>, <code>PARTIALLY_DONE</code>, <code>REWORK</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code> .
-Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
+Only applicable if the project uses the multi-step or multi-group workflow. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>group_name_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets belong to a workflow step group whose name is in the list, if given.
-Only applicable if the project is in WorkflowV3.</p></td>
+Only applicable if the project uses the multi-group workflow.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>group_name_not_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets do not belong to a workflow step group whose name is in the list, if given.
-Only applicable if the project is in WorkflowV3.</p></td>
+Only applicable if the project uses the multi-group workflow.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -3389,6 +3406,7 @@ Only applicable if the project is in WorkflowV3.</p></td>
     <span class="n">step_status_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">StatusInStep</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">group_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">group_name_not_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Conversation</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]]]]:</span>
 <span class="w">    </span><span class="sd">"""Returns an export of llm conversations with valid labels.</span>
 
@@ -3402,14 +3420,18 @@ Only applicable if the project is in WorkflowV3.</p></td>
 <span class="sd">        status_in: Returned assets should have a status that belongs to that list, if given.</span>
 <span class="sd">            Possible choices: `TODO`, `ONGOING`, `LABELED`, `TO_REVIEW` or `REVIEWED`.</span>
 <span class="sd">        step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow. Exclusive with `step_id_in`.</span>
+<span class="sd">            Step names are unique per group only: a name several groups use matches the step</span>
+<span class="sd">            of each of them, unless `group_name_in` narrows it down.</span>
+<span class="sd">        step_id_in: Returned assets are in a step whose id belong to that list, if given.</span>
+<span class="sd">            Exclusive with `step_name_in`.</span>
 <span class="sd">        step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">            Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED` .</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">        group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">            Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">        group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">            Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python</span>
 <span class="sd">        kili.llm.export("your_project_id")</span>
@@ -3444,7 +3466,10 @@ Only applicable if the project is in WorkflowV3.</p></td>
 
     <span class="n">label_type_in</span> <span class="o">=</span> <span class="n">label_type_in</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">"DEFAULT"</span><span class="p">,</span> <span class="s2">"REVIEW"</span><span class="p">]</span>
 
-    <span class="n">step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">step_id_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"Filters step_id_in and step_name_in both given: use only one of them."</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>

@@ -2384,9 +2384,9 @@
 <p>You can specify label filters directly in the <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.entrypoints.queries.asset.__init__.QueriesAsset.assets"><code>.assets</code></a> and the <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/label/#kili.entrypoints.queries.label.__init__.QueriesLabel.labels"><code>.labels</code></a> methods. The available filters are listed in the arguments list
 for each one of these methods.</p>
 <p>When done, you can write the conversion code to get the data in the format that you need.</p>
-<p><strong>Get only the assets with a consensus mark above 0.5:</strong></p>
+<p><strong>Get only the assets with a consensus mark of at least 0.5:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="n">assets</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">assets</span><span class="p">(</span>
-    <span class="n">your_project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"externalId"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"consensusMark"</span><span class="p">],</span> <span class="n">consensus_mark_gt</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="n">your_project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">"externalId"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"consensusMark"</span><span class="p">],</span> <span class="n">consensus_mark_gte</span><span class="o">=</span><span class="mf">0.5</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">assets</span><span class="p">)</span>
 <span class="c1"># + asset conversion code</span>

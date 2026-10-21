@@ -734,6 +734,30 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#receiving-kili-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      Receiving Kili events
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Receiving Kili events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#migrating-from-on_event" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migrating from on_event
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#on-premise-deployment-details" class="md-nav__link">
     <span class="md-ellipsis">
       On-Premise deployment details
@@ -2195,6 +2219,30 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#receiving-kili-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      Receiving Kili events
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Receiving Kili events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#migrating-from-on_event" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migrating from on_event
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#on-premise-deployment-details" class="md-nav__link">
     <span class="md-ellipsis">
       On-Premise deployment details
@@ -2466,14 +2514,122 @@
 <p class="admonition-title">Note</p>
 <p>The plugins run has some limitations, it can use a maximum of 512 MB of ram and will timeout after 60 sec of run.</p>
 </div>
+<h2 id="receiving-kili-events">Receiving Kili events</h2>
+<p>Instead of <code>on_submit</code> and <code>on_review</code>, a plugin can receive any Kili event: decorate a method of <code>PluginHandler</code> with
+<code>on_kili_event</code>, and annotate its event parameter with the events to receive. The method is called with each of them,
+parsed into its <a href="https://pypi.org/project/kili-events/"><code>kili_events</code></a> model — typed fields, completion in your IDE.
+The <a href="https://events-docs.kili-technology.com/latest/">Kili events documentation</a> lists every event, with its model and
+its fields.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kili_events</span><span class="w"> </span><span class="kn">import</span> <span class="n">AssetSkippedEvent</span><span class="p">,</span> <span class="n">AssetWorkflowEvent</span><span class="p">,</span> <span class="n">LabelWorkflowEvent</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">kili.plugins</span><span class="w"> </span><span class="kn">import</span> <span class="n">PluginCore</span><span class="p">,</span> <span class="n">on_kili_event</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Custom plugin"""</span>
+
+    <span class="nd">@on_kili_event</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_skip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">AssetSkippedEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Asset </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">asset_id</span><span class="si">}</span><span class="s2"> skipped by </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">user_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="nd">@on_kili_event</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">AssetWorkflowEvent</span> <span class="o">|</span> <span class="n">LabelWorkflowEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Received </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">event</span><span class="si">}</span><span class="s2"> on project </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">project_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p>The annotation is the subscription, and is one of:</p>
+<table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>Receives</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>an event model</td>
+<td>that event</td>
+<td><code>AssetSkippedEvent</code></td>
+</tr>
+<tr>
+<td>a family of events</td>
+<td>every event of the family, including those Kili adds to it later</td>
+<td><code>AssetWorkflowEvent</code>: every <code>asset.workflow.…</code> event</td>
+</tr>
+<tr>
+<td>a union of them</td>
+<td>every event of each</td>
+<td><code>Union[AssetSkippedEvent, LabelWorkflowEvent]</code></td>
+</tr>
+</tbody>
+</table>
+<p>The union can also be written <code>AssetWorkflowEvent | LabelWorkflowEvent</code>, as in <code>on_workflow</code>. <code>AnyEvent</code> receives every
+event. Events that share no family, such as every <code>….started</code> event, are received with a union of their models or
+families. <code>on_kili_event</code> takes no arguments, and is the only decorator of the method.</p>
+<p>Every method whose annotation matches an event receives it, in the alphabetical order of their names; when one raises,
+the others still run, its error is logged, and the run fails with the first error. Upload the plugin without
+<code>event_matcher</code>: the events it receives are read from the annotations.</p>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">plugin_path</span><span class="o">=</span><span class="s2">"./my_plugin/"</span><span class="p">,</span> <span class="n">plugin_name</span><span class="o">=</span><span class="s2">"my_plugin"</span><span class="p">)</span>
+</code></pre></div>
+<p>The upload reads your code without running it, so:</p>
+<ul>
+<li>the decorated methods are those of the <code>PluginHandler</code> class of the plugin file (of <code>main.py</code> for a folder) — not the
+  ones it inherits — and plain methods taking <code>self</code> and the event, not <code>async</code> ones;</li>
+<li>the annotation is made of names imported from <code>kili_events</code> when the class is defined (not under
+  <code>if TYPE_CHECKING:</code> — with ruff, list <code>kili.plugins.on_kili_event</code> in <code>runtime-evaluated-decorators</code>), or a
+  module-level alias of them — anything else stops the upload with the reason;</li>
+<li>Kili never sends plugins its system events, nor the events of no project (<code>assetStorage.integration.…</code>): an
+  annotation naming a model or a family made only of those stops the upload;</li>
+<li>a plugin receives events either with <code>on_kili_event</code> or with <code>on_submit</code>, <code>on_review</code>, <code>on_custom_interface_click</code> and
+  <code>on_send_back_to_queue</code>, not both.</li>
+</ul>
+<p>A family is uploaded as the pattern of its folder (<code>asset.workflow.*</code>), so an event Kili adds to it later reaches the
+plugin without changing its code. The method receives it once the plugin runs with a version of <code>kili_events</code> that
+knows it: on Kili's cloud, the packages are installed when the plugin is uploaded, so update the plugin
+(<code>kili.update_plugin</code>); on-premise, they are those of the plugins runner. Until then, like any event the plugin's
+version of <code>kili_events</code> does not know, it is logged and skipped; an event that does not match its model is logged as
+an error and skipped.</p>
+<p>The event carries its subject (<code>event.event</code>), <code>organization_id</code>, <code>project_id</code>, <code>user_id</code> and <code>payload</code>, as its model
+declares them — no event id or timestamp.</p>
+<h3 id="migrating-from-on_event">Migrating from <code>on_event</code></h3>
+<p>Overriding <code>on_event</code> with an <code>event_matcher</code> still works, but is deprecated in favour of <code>on_kili_event</code>. <strong><code>on_event</code> now
+receives the whole event</strong>: the fields it received before are under <code>payload["payload"]</code>, beside <code>event</code>,
+<code>organizationId</code>, <code>projectId</code> and <code>userId</code>. Its <code>event_matcher</code> takes subjects and patterns, where <code>*</code> stands for one or
+more names (<code>label.workflow.*</code>, <code>project.workflow.bulkAction.*.started</code>).</p>
+<p>Before:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">payload</span><span class="p">[</span><span class="s2">"event"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"asset.skipped"</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Asset </span><span class="si">{</span><span class="n">payload</span><span class="p">[</span><span class="s1">'assetId'</span><span class="p">]</span><span class="si">}</span><span class="s2"> skipped"</span><span class="p">)</span>
+
+<span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">plugin_path</span><span class="o">=</span><span class="s2">"./my_plugin/"</span><span class="p">,</span> <span class="n">event_matcher</span><span class="o">=</span><span class="p">[</span><span class="s2">"asset.skipped"</span><span class="p">])</span>
+</code></pre></div>
+<p>After, with <code>on_kili_event</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
+    <span class="nd">@on_kili_event</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_skip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">AssetSkippedEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Asset </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">asset_id</span><span class="si">}</span><span class="s2"> skipped"</span><span class="p">)</span>
+
+<span class="n">kili</span><span class="o">.</span><span class="n">upload_plugin</span><span class="p">(</span><span class="n">plugin_path</span><span class="o">=</span><span class="s2">"./my_plugin/"</span><span class="p">)</span>
+</code></pre></div>
+<p>Or after, keeping <code>on_event</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PluginHandler</span><span class="p">(</span><span class="n">PluginCore</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">payload</span><span class="p">[</span><span class="s2">"event"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"asset.skipped"</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Asset </span><span class="si">{</span><span class="n">payload</span><span class="p">[</span><span class="s1">'payload'</span><span class="p">][</span><span class="s1">'assetId'</span><span class="p">]</span><span class="si">}</span><span class="s2"> skipped"</span><span class="p">)</span>
+</code></pre></div>
 <h2 id="on-premise-deployment-details">On-Premise deployment details</h2>
 <p>The plugins for the on-premise deployments work exactly the same as the plugins for the SaaS version of Kili, with only a few small exceptions :</p>
 <ol>
-<li>It's not possible to add custom python packages to your plugin with the help of the <code>requirements.txt</code> file, but we selected a list of the most useful packages that you can directly use, including :<ul>
+<li>
+<p>It's not possible to add custom python packages to your plugin with the help of the <code>requirements.txt</code> file, but we selected a list of the most useful packages that you can directly use, including :</p>
+<ul>
 <li><code>numpy</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>opencv-python-headless</code>, <code>Pillow</code>, <code>requests</code>, <code>uuid</code> and of course <code>kili</code></li>
 </ul>
+<p><code>on_kili_event</code> needs the version of <code>kili</code> that introduces it, and <code>kili-events</code>: until your plugins-runner ships them,
+receive events with <code>on_submit</code> and <code>on_review</code>.
+2. In order to save the logs during the execution of your plugin, you should only use the provided logger in the plugin class (the simple <code>print</code> function will not save the log). For an example, see the code below:</p>
 </li>
-<li>In order to save the logs during the execution of your plugin, you should only use the provided logger in the plugin class (the simple <code>print</code> function will not save the log). For an example, see the code below:</li>
 </ol>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
@@ -2530,8 +2686,9 @@
 on_review(self, label: Dict, asset_id: str)
 on_custom_interface_click(self, label: Dict, asset_id: str)
 on_send_back_to_queue(self, asset_id: str)
-on_event(self, payload: Dict)
 </code></pre>
+<p>or methods decorated with <code>@on_kili_event</code>, which receive the Kili events their
+parameter's annotation names, as kili_events models.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>if using a custom init, be sure to call super().<strong>init</strong>()</p>
@@ -2552,7 +2709,9 @@ on_event(self, payload: Dict)
 <span class="sd">        on_review(self, label: Dict, asset_id: str)</span>
 <span class="sd">        on_custom_interface_click(self, label: Dict, asset_id: str)</span>
 <span class="sd">        on_send_back_to_queue(self, asset_id: str)</span>
-<span class="sd">        on_event(self, payload: Dict)</span>
+
+<span class="sd">    or methods decorated with `@on_kili_event`, which receive the Kili events their</span>
+<span class="sd">    parameter's annotation names, as kili_events models.</span>
 
 <span class="sd">    !!! warning</span>
 <span class="sd">        if using a custom init, be sure to call super().__init__()</span>
@@ -2693,13 +2852,48 @@ on_event(self, payload: Dict)
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Handler for all events, triggered when an event is triggered.</span>
+<span class="w">        </span><span class="sd">"""Receives every event of the plugin, and calls the methods subscribed to it.</span>
+
+<span class="sd">        The event is parsed into its kili_events model, then passed to each method decorated</span>
+<span class="sd">        with `@on_kili_event` whose annotation it is an instance of. Decorate methods rather than</span>
+<span class="sd">        overriding this one.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            payload: Dict.</span>
+<span class="sd">            payload: The event as Kili sends it: `event` (its subject, e.g. `asset.skipped`),</span>
+<span class="sd">                `organizationId`, `projectId`, `userId` and `payload`, for the fields the</span>
+<span class="sd">                event declares.</span>
 <span class="sd">        """</span>
-        <span class="c1"># pylint: disable=unused-argument</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Method not implemented. Define a custom on_event on your plugin"</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">event</span> <span class="o">=</span> <span class="n">parse_event</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">UnknownEventError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2"> The event is ignored."</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"The event '</span><span class="si">{</span><span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'event'</span><span class="p">)</span><span class="si">}</span><span class="s2">' does not match its kili_events model, so no"</span>
+                <span class="sa">f</span><span class="s2">" method receives it: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">subscriptions</span> <span class="o">=</span> <span class="n">subscribed_methods</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="n">handlers</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">models</span> <span class="ow">in</span> <span class="n">subscriptions</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">models</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">handlers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"No method of the plugin receives the event '</span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">event</span><span class="si">}</span><span class="s2">' (methods decorated"</span>
+                <span class="sa">f</span><span class="s2">" with @on_kili_event: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subscriptions</span><span class="p">)</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'none'</span><span class="si">}</span><span class="s2">)."</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Each method runs even when another one fails, then the run fails with the first error.</span>
+        <span class="n">errors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">handlers</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="n">event</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-exception-caught</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> failed on '</span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">event</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">error</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">errors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </code></pre></div>
         </details>
 
@@ -2832,7 +3026,10 @@ it should be used with caution.</p>
 
     <div class="doc doc-contents ">
 
-      <p>Handler for all events, triggered when an event is triggered.</p>
+      <p>Receives every event of the plugin, and calls the methods subscribed to it.</p>
+<p>The event is parsed into its kili_events model, then passed to each method decorated
+with <code>@on_kili_event</code> whose annotation it is an instance of. Decorate methods rather than
+overriding this one.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2848,7 +3045,9 @@ it should be used with caution.</p>
       <tr>
         <td><code>payload</code></td>
         <td><code>dict</code></td>
-        <td><p>Dict.</p></td>
+        <td><p>The event as Kili sends it: <code>event</code> (its subject, e.g. <code>asset.skipped</code>),
+<code>organizationId</code>, <code>projectId</code>, <code>userId</code> and <code>payload</code>, for the fields the
+event declares.</p></td>
         <td><em>required</em></td>
       </tr>
   </tbody>
@@ -2859,13 +3058,48 @@ it should be used with caution.</p>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Handler for all events, triggered when an event is triggered.</span>
+<span class="w">    </span><span class="sd">"""Receives every event of the plugin, and calls the methods subscribed to it.</span>
+
+<span class="sd">    The event is parsed into its kili_events model, then passed to each method decorated</span>
+<span class="sd">    with `@on_kili_event` whose annotation it is an instance of. Decorate methods rather than</span>
+<span class="sd">    overriding this one.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        payload: Dict.</span>
+<span class="sd">        payload: The event as Kili sends it: `event` (its subject, e.g. `asset.skipped`),</span>
+<span class="sd">            `organizationId`, `projectId`, `userId` and `payload`, for the fields the</span>
+<span class="sd">            event declares.</span>
 <span class="sd">    """</span>
-    <span class="c1"># pylint: disable=unused-argument</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Method not implemented. Define a custom on_event on your plugin"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">parse_event</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">UnknownEventError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2"> The event is ignored."</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"The event '</span><span class="si">{</span><span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'event'</span><span class="p">)</span><span class="si">}</span><span class="s2">' does not match its kili_events model, so no"</span>
+            <span class="sa">f</span><span class="s2">" method receives it: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">subscriptions</span> <span class="o">=</span> <span class="n">subscribed_methods</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+    <span class="n">handlers</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">models</span> <span class="ow">in</span> <span class="n">subscriptions</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">models</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">handlers</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"No method of the plugin receives the event '</span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">event</span><span class="si">}</span><span class="s2">' (methods decorated"</span>
+            <span class="sa">f</span><span class="s2">" with @on_kili_event: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subscriptions</span><span class="p">)</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'none'</span><span class="si">}</span><span class="s2">)."</span>
+        <span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Each method runs even when another one fails, then the run fails with the first error.</span>
+    <span class="n">errors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">handlers</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)(</span><span class="n">event</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-exception-caught</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> failed on '</span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">event</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">error</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">errors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </code></pre></div>
         </details>
     </div>
@@ -3738,7 +3972,8 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 <span class="sd">                - a folder containing a main.py (mandatory) and a requirements.txt (optional)</span>
 <span class="sd">                - a .py file</span>
 <span class="sd">            plugin_name: name of your plugin, if not provided, it will be the name from your file</span>
-<span class="sd">            event_matcher: List of events for which the plugin should be called.</span>
+<span class="sd">            event_matcher: Events for which a plugin overriding `on_event` is called. A plugin</span>
+<span class="sd">                using `@on_kili_event` leaves it out: its events come from the annotations.</span>
 <span class="sd">            verbose: If false, minimal logs are displayed</span>
 
 <span class="sd">        Returns:</span>
@@ -3924,7 +4159,8 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 <span class="sd">                - a folder containing a main.py (mandatory) and a requirements.txt (optional)</span>
 <span class="sd">                - a .py file</span>
 <span class="sd">            plugin_name: Name of the plugin</span>
-<span class="sd">            event_matcher: List of events names and/or globs for which the plugin should be called.</span>
+<span class="sd">            event_matcher: Events for which a plugin overriding `on_event` is called. A plugin</span>
+<span class="sd">                using `@on_kili_event` leaves it out: its events come from the annotations.</span>
 <span class="sd">            verbose: If false, minimal logs are displayed</span>
 
 <span class="sd">        Returns:</span>
@@ -4413,7 +4649,8 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
       <tr>
         <td><code>event_matcher</code></td>
         <td><code>Optional[list[str]]</code></td>
-        <td><p>List of events names and/or globs for which the plugin should be called.</p></td>
+        <td><p>Events for which a plugin overriding <code>on_event</code> is called. A plugin
+using <code>@on_kili_event</code> leaves it out: its events come from the annotations.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -4462,7 +4699,8 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>].</p></td>
 <span class="sd">            - a folder containing a main.py (mandatory) and a requirements.txt (optional)</span>
 <span class="sd">            - a .py file</span>
 <span class="sd">        plugin_name: Name of the plugin</span>
-<span class="sd">        event_matcher: List of events names and/or globs for which the plugin should be called.</span>
+<span class="sd">        event_matcher: Events for which a plugin overriding `on_event` is called. A plugin</span>
+<span class="sd">            using `@on_kili_event` leaves it out: its events come from the annotations.</span>
 <span class="sd">        verbose: If false, minimal logs are displayed</span>
 
 <span class="sd">    Returns:</span>
@@ -4680,7 +4918,8 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>]</p></td>
       <tr>
         <td><code>event_matcher</code></td>
         <td><code>Optional[list[str]]</code></td>
-        <td><p>List of events for which the plugin should be called.</p></td>
+        <td><p>Events for which a plugin overriding <code>on_event</code> is called. A plugin
+using <code>@on_kili_event</code> leaves it out: its events come from the annotations.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -4729,7 +4968,8 @@ By default, is [<code>onSubmit</code>, <code>onReview</code>]</p></td>
 <span class="sd">            - a folder containing a main.py (mandatory) and a requirements.txt (optional)</span>
 <span class="sd">            - a .py file</span>
 <span class="sd">        plugin_name: name of your plugin, if not provided, it will be the name from your file</span>
-<span class="sd">        event_matcher: List of events for which the plugin should be called.</span>
+<span class="sd">        event_matcher: Events for which a plugin overriding `on_event` is called. A plugin</span>
+<span class="sd">            using `@on_kili_event` leaves it out: its events come from the annotations.</span>
 <span class="sd">        verbose: If false, minimal logs are displayed</span>
 
 <span class="sd">    Returns:</span>

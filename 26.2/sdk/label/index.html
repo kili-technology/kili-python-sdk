@@ -2284,6 +2284,7 @@
         <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">"""Get the number of labels for the given parameters.</span>
@@ -2296,14 +2297,19 @@
 <span class="sd">            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
 <span class="sd">            asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.</span>
 <span class="sd">            asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">                Step names are unique per group only: a name several groups use matches the step</span>
+<span class="sd">                of each of them, unless `group_name_in` narrows it down.</span>
+<span class="sd">            asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.</span>
+<span class="sd">                Exclusive with `asset_step_name_in`.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow.</span>
 <span class="sd">            asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">            asset_group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">                Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">            asset_group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">                Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">            author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">                An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">            created_at: Returned labels should have a label whose creation date is equal to this date.</span>
@@ -2339,7 +2345,10 @@
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">asset_step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">asset_step_id_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">asset_step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Filters asset_step_id_in and asset_step_name_in both given: use only one of them."</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">asset_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="ow">or</span> <span class="n">asset_step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -2357,6 +2366,7 @@
                 <span class="n">asset_workflow_filters</span><span class="o">=</span><span class="p">{</span>
                     <span class="s2">"skipped"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s2">"step_name_in"</span><span class="p">:</span> <span class="n">asset_step_name_in</span><span class="p">,</span>
+                    <span class="s2">"has_step_id_filter"</span><span class="p">:</span> <span class="n">asset_step_id_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s2">"step_status_in"</span><span class="p">:</span> <span class="n">asset_step_status_in</span><span class="p">,</span>
                     <span class="s2">"status_in"</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
                     <span class="s2">"group_name_in"</span><span class="p">:</span> <span class="n">asset_group_name_in</span><span class="p">,</span>
@@ -2448,6 +2458,7 @@
         <span class="n">output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"dict"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"dict"</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="o">...</span>
 
@@ -2490,6 +2501,7 @@
         <span class="n">output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"dict"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"dict"</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="o">...</span>
 
@@ -2532,6 +2544,7 @@
         <span class="n">output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"parsed_label"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"parsed_label"</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParsedLabel</span><span class="p">]:</span>
         <span class="o">...</span>
 
@@ -2574,6 +2587,7 @@
         <span class="n">output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"parsed_label"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"parsed_label"</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">ParsedLabel</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="o">...</span>
 
@@ -2616,6 +2630,7 @@
         <span class="n">output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"dict"</span><span class="p">,</span> <span class="s2">"parsed_label"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"dict"</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">ParsedLabel</span><span class="p">]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">"""Get a label list or a label generator from a project based on a set of criteria.</span>
@@ -2628,14 +2643,19 @@
 <span class="sd">            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
 <span class="sd">            asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.</span>
 <span class="sd">            asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">                Step names are unique per group only: a name several groups use matches the step</span>
+<span class="sd">                of each of them, unless `group_name_in` narrows it down.</span>
+<span class="sd">            asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.</span>
+<span class="sd">                Exclusive with `asset_step_name_in`.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow.</span>
 <span class="sd">            asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">            asset_group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">                Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">            asset_group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">                Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">            author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">                An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">            created_at: Returned labels should have their creation date equal to this date.</span>
@@ -2705,7 +2725,10 @@
         <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
         <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
 
-        <span class="n">asset_step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">asset_step_id_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">asset_step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Filters asset_step_id_in and asset_step_name_in both given: use only one of them."</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">asset_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="ow">or</span> <span class="n">asset_step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -2723,6 +2746,7 @@
                 <span class="n">asset_workflow_filters</span><span class="o">=</span><span class="p">{</span>
                     <span class="s2">"skipped"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s2">"step_name_in"</span><span class="p">:</span> <span class="n">asset_step_name_in</span><span class="p">,</span>
+                    <span class="s2">"has_step_id_filter"</span><span class="p">:</span> <span class="n">asset_step_id_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s2">"step_status_in"</span><span class="p">:</span> <span class="n">asset_step_status_in</span><span class="p">,</span>
                     <span class="s2">"status_in"</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
                     <span class="s2">"group_name_in"</span><span class="p">:</span> <span class="n">asset_group_name_in</span><span class="p">,</span>
@@ -2817,6 +2841,7 @@
         <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="o">...</span>
 
@@ -2852,6 +2877,7 @@
         <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="o">...</span>
 
@@ -2887,6 +2913,7 @@
         <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">"""Get prediction labels from a project based on a set of criteria.</span>
@@ -2900,10 +2927,15 @@
 <span class="sd">                Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`</span>
 <span class="sd">            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
 <span class="sd">            asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">                Step names are unique per group only: a name several groups use matches the step</span>
+<span class="sd">                of each of them, unless `group_name_in` narrows it down.</span>
+<span class="sd">            asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.</span>
+<span class="sd">                Exclusive with `asset_step_name_in`.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow.</span>
 <span class="sd">            asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">            author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">                An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">            created_at: Returned labels should have a label whose creation date is equal to this date.</span>
@@ -2948,6 +2980,7 @@
                 <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
                 <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
                 <span class="n">asset_step_name_in</span><span class="o">=</span><span class="n">asset_step_name_in</span><span class="p">,</span>
+                <span class="n">asset_step_id_in</span><span class="o">=</span><span class="n">asset_step_id_in</span><span class="p">,</span>
                 <span class="n">asset_step_status_in</span><span class="o">=</span><span class="n">asset_step_status_in</span><span class="p">,</span>
                 <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
                 <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
@@ -2972,6 +3005,7 @@
             <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
             <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
             <span class="n">asset_step_name_in</span><span class="o">=</span><span class="n">asset_step_name_in</span><span class="p">,</span>
+            <span class="n">asset_step_id_in</span><span class="o">=</span><span class="n">asset_step_id_in</span><span class="p">,</span>
             <span class="n">asset_step_status_in</span><span class="o">=</span><span class="n">asset_step_status_in</span><span class="p">,</span>
             <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
             <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
@@ -3023,6 +3057,7 @@
         <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="o">...</span>
 
@@ -3058,6 +3093,7 @@
         <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="o">...</span>
 
@@ -3093,6 +3129,7 @@
         <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">"""Get inference labels from a project based on a set of criteria.</span>
@@ -3106,10 +3143,15 @@
 <span class="sd">                Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`</span>
 <span class="sd">            asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
 <span class="sd">            asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">                Step names are unique per group only: a name several groups use matches the step</span>
+<span class="sd">                of each of them, unless `group_name_in` narrows it down.</span>
+<span class="sd">            asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.</span>
+<span class="sd">                Exclusive with `asset_step_name_in`.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow.</span>
 <span class="sd">            asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">                Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">                Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">            author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">                An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">            created_at: Returned labels should have a label whose creation date is equal to this date.</span>
@@ -3154,6 +3196,7 @@
                 <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
                 <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
                 <span class="n">asset_step_name_in</span><span class="o">=</span><span class="n">asset_step_name_in</span><span class="p">,</span>
+                <span class="n">asset_step_id_in</span><span class="o">=</span><span class="n">asset_step_id_in</span><span class="p">,</span>
                 <span class="n">asset_step_status_in</span><span class="o">=</span><span class="n">asset_step_status_in</span><span class="p">,</span>
                 <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
                 <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
@@ -3178,6 +3221,7 @@
             <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
             <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
             <span class="n">asset_step_name_in</span><span class="o">=</span><span class="n">asset_step_name_in</span><span class="p">,</span>
+            <span class="n">asset_step_id_in</span><span class="o">=</span><span class="n">asset_step_id_in</span><span class="p">,</span>
             <span class="n">asset_step_status_in</span><span class="o">=</span><span class="n">asset_step_status_in</span><span class="p">,</span>
             <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
             <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
@@ -3238,8 +3282,14 @@
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">reviewed_label_id_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Append labels to assets.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            In the multi-group workflow, the jobs a step group allows are enforced by the</span>
+<span class="sd">            labeling app only: labels created through the SDK are not checked against them.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            asset_id_array: list of asset internal ids to append labels on.</span>
@@ -3258,7 +3308,12 @@
 <span class="sd">            reviewed_label_id_array: list of IDs of labels being reviewed.</span>
 <span class="sd">                Only useful when uploading REVIEW labels.</span>
 <span class="sd">            step_name: Name of the step to which the labels belong.</span>
-<span class="sd">                The label_type must match accordingly.</span>
+<span class="sd">                The label_type must match accordingly. Exclusive with `step_id`.</span>
+<span class="sd">            step_id: Id of the step to which the labels belong.</span>
+<span class="sd">                Exclusive with `step_name` and `group_name`.</span>
+<span class="sd">            group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">                workflow.</span>
+<span class="sd">                Required when several groups have a step with the same name.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list of dictionaries with the label ids.</span>
@@ -3329,6 +3384,8 @@
             <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span>
             <span class="n">label_type</span><span class="o">=</span><span class="n">label_type</span><span class="p">,</span>
             <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
             <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
             <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">project_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
@@ -3614,8 +3671,8 @@
 <span class="sd">                - `label_reviewer_not_in`</span>
 <span class="sd">                - `assignee_in`</span>
 <span class="sd">                - `assignee_not_in`</span>
-<span class="sd">                - `skipped`: only applicable if the project is in the WorkflowV1 (legacy).</span>
-<span class="sd">                - `status_in`: only applicable if the project is in the WorkflowV1 (legacy).</span>
+<span class="sd">                - `skipped`: only applicable if the project uses the legacy workflow.</span>
+<span class="sd">                - `status_in`: only applicable if the project uses the legacy workflow.</span>
 <span class="sd">                - `label_category_search`</span>
 <span class="sd">                - `created_at_gte`</span>
 <span class="sd">                - `created_at_lte`</span>
@@ -3624,8 +3681,8 @@
 <span class="sd">                - `inference_mark_gte`</span>
 <span class="sd">                - `inference_mark_lte`</span>
 <span class="sd">                - `metadata_where`</span>
-<span class="sd">                - `step_name_in`: : only applicable if the project is in the WorkflowV2.</span>
-<span class="sd">                - `step_status_in`: only applicable if the project is in the WorkflowV2.</span>
+<span class="sd">                - `step_name_in`: only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">                - `step_status_in`: only applicable if the project uses the multi-step or multi-group workflow.</span>
 
 <span class="sd">                See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.</span>
 <span class="sd">            normalized_coordinates: This parameter is only effective on the Kili (a.k.a raw) format.</span>
@@ -3682,6 +3739,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetId</span><span class="p">],</span> <span class="n">asset_ids</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">asset_filter_kwargs</span>
+            <span class="ow">and</span> <span class="n">asset_filter_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"step_name_in"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">asset_filter_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"step_id_in"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Filters step_id_in and step_name_in both given: use only one of them."</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">asset_filter_kwargs</span> <span class="ow">and</span> <span class="p">(</span>
             <span class="n">asset_filter_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"step_name_in"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="ow">or</span> <span class="n">asset_filter_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"step_status_in"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -3752,6 +3817,8 @@
         <span class="n">label_type</span><span class="p">:</span> <span class="n">LabelType</span> <span class="o">=</span> <span class="s2">"DEFAULT"</span><span class="p">,</span>
         <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Import and convert shapefiles into annotations for a specific asset in a Kili project.</span>
 
@@ -3772,7 +3839,12 @@
 <span class="sd">                       All geometries will be transformed to EPSG:4326 before being added to Kili.</span>
 <span class="sd">            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.</span>
 <span class="sd">            step_name: Name of the step to which the labels belong.</span>
-<span class="sd">                The label_type must match accordingly.</span>
+<span class="sd">                The label_type must match accordingly. Exclusive with `step_id`.</span>
+<span class="sd">            step_id: Id of the step to which the labels belong.</span>
+<span class="sd">                Exclusive with `step_name` and `group_name`.</span>
+<span class="sd">            group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">                workflow.</span>
+<span class="sd">                Required when several groups have a step with the same name.</span>
 <span class="sd">            model_name: Name of the model that generated the labels.</span>
 <span class="sd">                Only useful when uploading PREDICTION or INFERENCE labels.</span>
 
@@ -3798,6 +3870,8 @@
             <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset_external_id</span><span class="p">],</span>
             <span class="n">label_type</span><span class="o">=</span><span class="n">label_type</span><span class="p">,</span>
             <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
             <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -3813,6 +3887,8 @@
         <span class="n">label_type</span><span class="p">:</span> <span class="n">LabelType</span> <span class="o">=</span> <span class="s2">"DEFAULT"</span><span class="p">,</span>
         <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Import and convert GeoJSON files into annotations for a specific asset in a Kili project.</span>
 
@@ -3844,7 +3920,12 @@
 <span class="sd">                Each category must exist in the corresponding job's ontology.</span>
 <span class="sd">            label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.</span>
 <span class="sd">            step_name: Name of the step to which the labels belong.</span>
-<span class="sd">                The label_type must match accordingly.</span>
+<span class="sd">                The label_type must match accordingly. Exclusive with `step_id`.</span>
+<span class="sd">            step_id: Id of the step to which the labels belong.</span>
+<span class="sd">                Exclusive with `step_name` and `group_name`.</span>
+<span class="sd">            group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">                workflow.</span>
+<span class="sd">                Required when several groups have a step with the same name.</span>
 <span class="sd">            model_name: Name of the model that generated the labels.</span>
 <span class="sd">                Only useful when uploading PREDICTION or INFERENCE labels.</span>
 
@@ -3955,6 +4036,8 @@
             <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset_external_id</span><span class="p">],</span>
             <span class="n">label_type</span><span class="o">=</span><span class="n">label_type</span><span class="p">,</span>
             <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
             <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
         <span class="p">)</span>
 </code></pre></div>
@@ -3977,7 +4060,7 @@
 
 
 <h3 id="kili.presentation.client.label.LabelClientMethods.append_labels" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">append_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_response_array</span><span class="o">=</span><span class="p">(),</span> <span class="n">author_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seconds_to_label_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="o">=</span><span class="s1">'DEFAULT'</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reviewed_label_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">append_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_response_array</span><span class="o">=</span><span class="p">(),</span> <span class="n">author_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seconds_to_label_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="o">=</span><span class="s1">'DEFAULT'</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reviewed_label_id_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3985,6 +4068,11 @@
     <div class="doc doc-contents ">
 
       <p>Append labels to assets.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the multi-group workflow, the jobs a step group allows are enforced by the
+labeling app only: labels created through the SDK are not checked against them.</p>
+</div>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -4071,7 +4159,22 @@ Only useful when uploading REVIEW labels.</p></td>
         <td><code>step_name</code></td>
         <td><code>Optional[str]</code></td>
         <td><p>Name of the step to which the labels belong.
-The label_type must match accordingly.</p></td>
+The label_type must match accordingly. Exclusive with <code>step_id</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Id of the step to which the labels belong.
+Exclusive with <code>step_name</code> and <code>group_name</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>group_name</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Name of the group containing the step named <code>step_name</code>, in the multi-group
+workflow.
+Required when several groups have a step with the same name.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -4114,8 +4217,14 @@ The label_type must match accordingly.</p></td>
     <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">reviewed_label_id_array</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">"""Append labels to assets.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        In the multi-group workflow, the jobs a step group allows are enforced by the</span>
+<span class="sd">        labeling app only: labels created through the SDK are not checked against them.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        asset_id_array: list of asset internal ids to append labels on.</span>
@@ -4134,7 +4243,12 @@ The label_type must match accordingly.</p></td>
 <span class="sd">        reviewed_label_id_array: list of IDs of labels being reviewed.</span>
 <span class="sd">            Only useful when uploading REVIEW labels.</span>
 <span class="sd">        step_name: Name of the step to which the labels belong.</span>
-<span class="sd">            The label_type must match accordingly.</span>
+<span class="sd">            The label_type must match accordingly. Exclusive with `step_id`.</span>
+<span class="sd">        step_id: Id of the step to which the labels belong.</span>
+<span class="sd">            Exclusive with `step_name` and `group_name`.</span>
+<span class="sd">        group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">            workflow.</span>
+<span class="sd">            Required when several groups have a step with the same name.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of dictionaries with the label ids.</span>
@@ -4205,6 +4319,8 @@ The label_type must match accordingly.</p></td>
         <span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span>
         <span class="n">label_type</span><span class="o">=</span><span class="n">label_type</span><span class="p">,</span>
         <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
         <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
         <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">project_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
@@ -4222,7 +4338,7 @@ The label_type must match accordingly.</p></td>
 
 
 <h3 id="kili.presentation.client.label.LabelClientMethods.append_labels_from_geojson_files" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">append_labels_from_geojson_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">geojson_file_paths</span><span class="p">,</span> <span class="n">job_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="o">=</span><span class="s1">'DEFAULT'</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">append_labels_from_geojson_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">geojson_file_paths</span><span class="p">,</span> <span class="n">job_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="o">=</span><span class="s1">'DEFAULT'</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -4305,7 +4421,22 @@ Each category must exist in the corresponding job's ontology.</p></td>
         <td><code>step_name</code></td>
         <td><code>Optional[str]</code></td>
         <td><p>Name of the step to which the labels belong.
-The label_type must match accordingly.</p></td>
+The label_type must match accordingly. Exclusive with <code>step_id</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Id of the step to which the labels belong.
+Exclusive with <code>step_name</code> and <code>group_name</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>group_name</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Name of the group containing the step named <code>step_name</code>, in the multi-group
+workflow.
+Required when several groups have a step with the same name.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -4378,6 +4509,8 @@ Only useful when uploading PREDICTION or INFERENCE labels.</p></td>
     <span class="n">label_type</span><span class="p">:</span> <span class="n">LabelType</span> <span class="o">=</span> <span class="s2">"DEFAULT"</span><span class="p">,</span>
     <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Import and convert GeoJSON files into annotations for a specific asset in a Kili project.</span>
 
@@ -4409,7 +4542,12 @@ Only useful when uploading PREDICTION or INFERENCE labels.</p></td>
 <span class="sd">            Each category must exist in the corresponding job's ontology.</span>
 <span class="sd">        label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.</span>
 <span class="sd">        step_name: Name of the step to which the labels belong.</span>
-<span class="sd">            The label_type must match accordingly.</span>
+<span class="sd">            The label_type must match accordingly. Exclusive with `step_id`.</span>
+<span class="sd">        step_id: Id of the step to which the labels belong.</span>
+<span class="sd">            Exclusive with `step_name` and `group_name`.</span>
+<span class="sd">        group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">            workflow.</span>
+<span class="sd">            Required when several groups have a step with the same name.</span>
 <span class="sd">        model_name: Name of the model that generated the labels.</span>
 <span class="sd">            Only useful when uploading PREDICTION or INFERENCE labels.</span>
 
@@ -4520,6 +4658,8 @@ Only useful when uploading PREDICTION or INFERENCE labels.</p></td>
         <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset_external_id</span><span class="p">],</span>
         <span class="n">label_type</span><span class="o">=</span><span class="n">label_type</span><span class="p">,</span>
         <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
         <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
@@ -4535,7 +4675,7 @@ Only useful when uploading PREDICTION or INFERENCE labels.</p></td>
 
 
 <h3 id="kili.presentation.client.label.LabelClientMethods.append_labels_from_shapefiles" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">append_labels_from_shapefiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">shapefile_paths</span><span class="p">,</span> <span class="n">job_names</span><span class="p">,</span> <span class="n">category_names</span><span class="p">,</span> <span class="n">from_epsgs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="o">=</span><span class="s1">'DEFAULT'</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">append_labels_from_shapefiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_external_id</span><span class="p">,</span> <span class="n">shapefile_paths</span><span class="p">,</span> <span class="n">job_names</span><span class="p">,</span> <span class="n">category_names</span><span class="p">,</span> <span class="n">from_epsgs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type</span><span class="o">=</span><span class="s1">'DEFAULT'</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -4608,7 +4748,22 @@ Each shapefile's geometries are associated with a job and category name in the K
         <td><code>step_name</code></td>
         <td><code>Optional[str]</code></td>
         <td><p>Name of the step to which the labels belong.
-The label_type must match accordingly.</p></td>
+The label_type must match accordingly. Exclusive with <code>step_id</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Id of the step to which the labels belong.
+Exclusive with <code>step_name</code> and <code>group_name</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>group_name</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Name of the group containing the step named <code>step_name</code>, in the multi-group
+workflow.
+Required when several groups have a step with the same name.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -4638,6 +4793,8 @@ Install them with: pip install kili[gis] or pip install 'kili[gis]'</p>
     <span class="n">label_type</span><span class="p">:</span> <span class="n">LabelType</span> <span class="o">=</span> <span class="s2">"DEFAULT"</span><span class="p">,</span>
     <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Import and convert shapefiles into annotations for a specific asset in a Kili project.</span>
 
@@ -4658,7 +4815,12 @@ Install them with: pip install kili[gis] or pip install 'kili[gis]'</p>
 <span class="sd">                   All geometries will be transformed to EPSG:4326 before being added to Kili.</span>
 <span class="sd">        label_type: Can be one of `AUTOSAVE`, `DEFAULT`, `PREDICTION`, `REVIEW` or `INFERENCE`.</span>
 <span class="sd">        step_name: Name of the step to which the labels belong.</span>
-<span class="sd">            The label_type must match accordingly.</span>
+<span class="sd">            The label_type must match accordingly. Exclusive with `step_id`.</span>
+<span class="sd">        step_id: Id of the step to which the labels belong.</span>
+<span class="sd">            Exclusive with `step_name` and `group_name`.</span>
+<span class="sd">        group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">            workflow.</span>
+<span class="sd">            Required when several groups have a step with the same name.</span>
 <span class="sd">        model_name: Name of the model that generated the labels.</span>
 <span class="sd">            Only useful when uploading PREDICTION or INFERENCE labels.</span>
 
@@ -4684,6 +4846,8 @@ Install them with: pip install kili[gis] or pip install 'kili[gis]'</p>
         <span class="n">asset_external_id_array</span><span class="o">=</span><span class="p">[</span><span class="n">asset_external_id</span><span class="p">],</span>
         <span class="n">label_type</span><span class="o">=</span><span class="n">label_type</span><span class="p">,</span>
         <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
         <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
@@ -4875,7 +5039,7 @@ Install them with: pip install kili[gis] or pip install 'kili[gis]'</p>
 
 
 <h3 id="kili.presentation.client.label.LabelClientMethods.count_labels" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">count_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_strictly_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_group_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_group_name_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">count_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_strictly_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_group_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_group_name_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -4930,7 +5094,17 @@ Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>
         <td><code>asset_step_name_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets are in a step whose name belong to that list, if given.
-Only applicable if the project is in WorkflowV2.</p></td>
+Only applicable if the project uses the multi-step or multi-group workflow.
+Step names are unique per group only: a name several groups use matches the step
+of each of them, unless <code>group_name_in</code> narrows it down.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>asset_step_id_in</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>Returned assets are in a step whose id belong to that list, if given.
+Exclusive with <code>asset_step_name_in</code>.
+Only applicable if the project uses the multi-step or multi-group workflow.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -4938,21 +5112,21 @@ Only applicable if the project is in WorkflowV2.</p></td>
         <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
         <td><p>Returned assets have the status of their step that belongs to that list, if given.
 Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>IN_PROGRESS</code>, <code>PARTIALLY_DONE</code>, <code>REWORK</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code>.
-Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
+Only applicable if the project uses the multi-step or multi-group workflow. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>asset_group_name_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets belong to a workflow step group whose name is in the list, if given.
-Only applicable if the project is in WorkflowV3.</p></td>
+Only applicable if the project uses the multi-group workflow.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>asset_group_name_not_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets do not belong to a workflow step group whose name is in the list, if given.
-Only applicable if the project is in WorkflowV3.</p></td>
+Only applicable if the project uses the multi-group workflow.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -5067,6 +5241,7 @@ An author can be designated by the first name, the last name, or the first name 
     <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">id_contains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">"""Get the number of labels for the given parameters.</span>
@@ -5079,14 +5254,19 @@ An author can be designated by the first name, the last name, or the first name 
 <span class="sd">        asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
 <span class="sd">        asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.</span>
 <span class="sd">        asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">            Step names are unique per group only: a name several groups use matches the step</span>
+<span class="sd">            of each of them, unless `group_name_in` narrows it down.</span>
+<span class="sd">        asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.</span>
+<span class="sd">            Exclusive with `asset_step_name_in`.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow.</span>
 <span class="sd">        asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">            Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">        asset_group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">            Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">        asset_group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">            Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">        author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">            An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">        created_at: Returned labels should have a label whose creation date is equal to this date.</span>
@@ -5122,7 +5302,10 @@ An author can be designated by the first name, the last name, or the first name 
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="n">asset_step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">asset_step_id_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">asset_step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"Filters asset_step_id_in and asset_step_name_in both given: use only one of them."</span>
+        <span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">asset_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="ow">or</span> <span class="n">asset_step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -5140,6 +5323,7 @@ An author can be designated by the first name, the last name, or the first name 
             <span class="n">asset_workflow_filters</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">"skipped"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="s2">"step_name_in"</span><span class="p">:</span> <span class="n">asset_step_name_in</span><span class="p">,</span>
+                <span class="s2">"has_step_id_filter"</span><span class="p">:</span> <span class="n">asset_step_id_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="s2">"step_status_in"</span><span class="p">:</span> <span class="n">asset_step_status_in</span><span class="p">,</span>
                 <span class="s2">"status_in"</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
                 <span class="s2">"group_name_in"</span><span class="p">:</span> <span class="n">asset_group_name_in</span><span class="p">,</span>
@@ -5722,8 +5906,8 @@ and add it to the COCO annotation (see example).</p></td>
 <li><code>label_reviewer_not_in</code></li>
 <li><code>assignee_in</code></li>
 <li><code>assignee_not_in</code></li>
-<li><code>skipped</code>: only applicable if the project is in the WorkflowV1 (legacy).</li>
-<li><code>status_in</code>: only applicable if the project is in the WorkflowV1 (legacy).</li>
+<li><code>skipped</code>: only applicable if the project uses the legacy workflow.</li>
+<li><code>status_in</code>: only applicable if the project uses the legacy workflow.</li>
 <li><code>label_category_search</code></li>
 <li><code>created_at_gte</code></li>
 <li><code>created_at_lte</code></li>
@@ -5732,8 +5916,8 @@ and add it to the COCO annotation (see example).</p></td>
 <li><code>inference_mark_gte</code></li>
 <li><code>inference_mark_lte</code></li>
 <li><code>metadata_where</code></li>
-<li><code>step_name_in</code>: : only applicable if the project is in the WorkflowV2.</li>
-<li><code>step_status_in</code>: only applicable if the project is in the WorkflowV2.</li>
+<li><code>step_name_in</code>: only applicable if the project uses the multi-step or multi-group workflow.</li>
+<li><code>step_status_in</code>: only applicable if the project uses the multi-step or multi-group workflow.</li>
 </ul>
 <p>See the documentation of <a href="https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets"><code>kili.assets()</code></a> for more information.</p></td>
         <td><code>None</code></td>
@@ -5863,8 +6047,8 @@ By default, only <code>DEFAULT</code> and <code>REVIEW</code> labels are exporte
 <span class="sd">            - `label_reviewer_not_in`</span>
 <span class="sd">            - `assignee_in`</span>
 <span class="sd">            - `assignee_not_in`</span>
-<span class="sd">            - `skipped`: only applicable if the project is in the WorkflowV1 (legacy).</span>
-<span class="sd">            - `status_in`: only applicable if the project is in the WorkflowV1 (legacy).</span>
+<span class="sd">            - `skipped`: only applicable if the project uses the legacy workflow.</span>
+<span class="sd">            - `status_in`: only applicable if the project uses the legacy workflow.</span>
 <span class="sd">            - `label_category_search`</span>
 <span class="sd">            - `created_at_gte`</span>
 <span class="sd">            - `created_at_lte`</span>
@@ -5873,8 +6057,8 @@ By default, only <code>DEFAULT</code> and <code>REVIEW</code> labels are exporte
 <span class="sd">            - `inference_mark_gte`</span>
 <span class="sd">            - `inference_mark_lte`</span>
 <span class="sd">            - `metadata_where`</span>
-<span class="sd">            - `step_name_in`: : only applicable if the project is in the WorkflowV2.</span>
-<span class="sd">            - `step_status_in`: only applicable if the project is in the WorkflowV2.</span>
+<span class="sd">            - `step_name_in`: only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">            - `step_status_in`: only applicable if the project uses the multi-step or multi-group workflow.</span>
 
 <span class="sd">            See the documentation of [`kili.assets()`](https://python-sdk-docs.kili-technology.com/latest/sdk/asset/#kili.queries.asset.__init__.QueriesAsset.assets) for more information.</span>
 <span class="sd">        normalized_coordinates: This parameter is only effective on the Kili (a.k.a raw) format.</span>
@@ -5931,6 +6115,14 @@ By default, only <code>DEFAULT</code> and <code>REVIEW</code> labels are exporte
     <span class="k">else</span><span class="p">:</span>
         <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetId</span><span class="p">],</span> <span class="n">asset_ids</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">asset_filter_kwargs</span>
+        <span class="ow">and</span> <span class="n">asset_filter_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"step_name_in"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">and</span> <span class="n">asset_filter_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"step_id_in"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"Filters step_id_in and step_name_in both given: use only one of them."</span>
+        <span class="p">)</span>
     <span class="k">if</span> <span class="n">asset_filter_kwargs</span> <span class="ow">and</span> <span class="p">(</span>
         <span class="n">asset_filter_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"step_name_in"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="ow">or</span> <span class="n">asset_filter_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"step_status_in"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -6095,7 +6287,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/asset">the docum
 
 
 <h3 id="kili.presentation.client.label.LabelClientMethods.inferences" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">inferences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'author.email'</span><span class="p">,</span> <span class="s1">'author.id'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'jsonResponse'</span><span class="p">,</span> <span class="s1">'labelType'</span><span class="p">,</span> <span class="s1">'modelName'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">inferences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'author.email'</span><span class="p">,</span> <span class="s1">'author.id'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'jsonResponse'</span><span class="p">,</span> <span class="s1">'labelType'</span><span class="p">,</span> <span class="s1">'modelName'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset_step_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -6145,7 +6337,17 @@ Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>
         <td><code>asset_step_name_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets are in a step whose name belong to that list, if given.
-Only applicable if the project is in WorkflowV2.</p></td>
+Only applicable if the project uses the multi-step or multi-group workflow.
+Step names are unique per group only: a name several groups use matches the step
+of each of them, unless <code>group_name_in</code> narrows it down.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>asset_step_id_in</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>Returned assets are in a step whose id belong to that list, if given.
+Exclusive with <code>asset_step_name_in</code>.
+Only applicable if the project uses the multi-step or multi-group workflow.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -6153,7 +6355,7 @@ Only applicable if the project is in WorkflowV2.</p></td>
         <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
         <td><p>Returned assets have the status of their step that belongs to that list, if given.
 Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>IN_PROGRESS</code>, <code>PARTIALLY_DONE</code>, <code>REWORK</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code>.
-Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
+Only applicable if the project uses the multi-step or multi-group workflow. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -6302,6 +6504,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/label">the docum
     <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">"""Get inference labels from a project based on a set of criteria.</span>
@@ -6315,10 +6518,15 @@ See <a href="https://api-docs.kili-technology.com/types/objects/label">the docum
 <span class="sd">            Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`</span>
 <span class="sd">        asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
 <span class="sd">        asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">            Step names are unique per group only: a name several groups use matches the step</span>
+<span class="sd">            of each of them, unless `group_name_in` narrows it down.</span>
+<span class="sd">        asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.</span>
+<span class="sd">            Exclusive with `asset_step_name_in`.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow.</span>
 <span class="sd">        asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">            Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">        author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">            An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">        created_at: Returned labels should have a label whose creation date is equal to this date.</span>
@@ -6363,6 +6571,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/label">the docum
             <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
             <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
             <span class="n">asset_step_name_in</span><span class="o">=</span><span class="n">asset_step_name_in</span><span class="p">,</span>
+            <span class="n">asset_step_id_in</span><span class="o">=</span><span class="n">asset_step_id_in</span><span class="p">,</span>
             <span class="n">asset_step_status_in</span><span class="o">=</span><span class="n">asset_step_status_in</span><span class="p">,</span>
             <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
             <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
@@ -6387,6 +6596,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/label">the docum
         <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
         <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
         <span class="n">asset_step_name_in</span><span class="o">=</span><span class="n">asset_step_name_in</span><span class="p">,</span>
+        <span class="n">asset_step_id_in</span><span class="o">=</span><span class="n">asset_step_id_in</span><span class="p">,</span>
         <span class="n">asset_step_status_in</span><span class="o">=</span><span class="n">asset_step_status_in</span><span class="p">,</span>
         <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
         <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
@@ -6418,7 +6628,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/label">the docum
 
 
 <h3 id="kili.presentation.client.label.LabelClientMethods.labels" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_strictly_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_group_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_group_name_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'author.email'</span><span class="p">,</span> <span class="s1">'author.id'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'jsonResponse'</span><span class="p">,</span> <span class="s1">'labelType'</span><span class="p">,</span> <span class="s1">'secondsToLabel'</span><span class="p">,</span> <span class="s1">'isLatestLabelForUser'</span><span class="p">,</span> <span class="s1">'assetId'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">'dict'</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_strictly_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_group_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_group_name_not_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'author.email'</span><span class="p">,</span> <span class="s1">'author.id'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'jsonResponse'</span><span class="p">,</span> <span class="s1">'labelType'</span><span class="p">,</span> <span class="s1">'secondsToLabel'</span><span class="p">,</span> <span class="s1">'isLatestLabelForUser'</span><span class="p">,</span> <span class="s1">'assetId'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">'dict'</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset_step_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -6473,7 +6683,17 @@ Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>
         <td><code>asset_step_name_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets are in a step whose name belong to that list, if given.
-Only applicable if the project is in WorkflowV2.</p></td>
+Only applicable if the project uses the multi-step or multi-group workflow.
+Step names are unique per group only: a name several groups use matches the step
+of each of them, unless <code>group_name_in</code> narrows it down.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>asset_step_id_in</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>Returned assets are in a step whose id belong to that list, if given.
+Exclusive with <code>asset_step_name_in</code>.
+Only applicable if the project uses the multi-step or multi-group workflow.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -6481,21 +6701,21 @@ Only applicable if the project is in WorkflowV2.</p></td>
         <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
         <td><p>Returned assets have the status of their step that belongs to that list, if given.
 Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>IN_PROGRESS</code>, <code>PARTIALLY_DONE</code>, <code>REWORK</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code>.
-Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
+Only applicable if the project uses the multi-step or multi-group workflow. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>asset_group_name_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets belong to a workflow step group whose name is in the list, if given.
-Only applicable if the project is in WorkflowV3.</p></td>
+Only applicable if the project uses the multi-group workflow.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>asset_group_name_not_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets do not belong to a workflow step group whose name is in the list, if given.
-Only applicable if the project is in WorkflowV3.</p></td>
+Only applicable if the project uses the multi-group workflow.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -6688,6 +6908,7 @@ category_search = <code>(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY
     <span class="n">output_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"dict"</span><span class="p">,</span> <span class="s2">"parsed_label"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"dict"</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">ParsedLabel</span><span class="p">]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">"""Get a label list or a label generator from a project based on a set of criteria.</span>
@@ -6700,14 +6921,19 @@ category_search = <code>(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY
 <span class="sd">        asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
 <span class="sd">        asset_external_id_strictly_in: Returned labels should have an external id that exactly matches one of the ids in that list, if given.</span>
 <span class="sd">        asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">            Step names are unique per group only: a name several groups use matches the step</span>
+<span class="sd">            of each of them, unless `group_name_in` narrows it down.</span>
+<span class="sd">        asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.</span>
+<span class="sd">            Exclusive with `asset_step_name_in`.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow.</span>
 <span class="sd">        asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">            Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">        asset_group_name_in: Returned assets belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">            Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">        asset_group_name_not_in: Returned assets do not belong to a workflow step group whose name is in the list, if given.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV3.</span>
+<span class="sd">            Only applicable if the project uses the multi-group workflow.</span>
 <span class="sd">        author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">            An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">        created_at: Returned labels should have their creation date equal to this date.</span>
@@ -6777,7 +7003,10 @@ category_search = <code>(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY
     <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">disable_tqdm_if_as_generator</span><span class="p">(</span><span class="n">as_generator</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="p">)</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="p">)</span>
 
-    <span class="n">asset_step_id_in</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">asset_step_id_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">asset_step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"Filters asset_step_id_in and asset_step_name_in both given: use only one of them."</span>
+        <span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">asset_status_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="ow">or</span> <span class="n">asset_step_name_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -6795,6 +7024,7 @@ category_search = <code>(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY
             <span class="n">asset_workflow_filters</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">"skipped"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="s2">"step_name_in"</span><span class="p">:</span> <span class="n">asset_step_name_in</span><span class="p">,</span>
+                <span class="s2">"has_step_id_filter"</span><span class="p">:</span> <span class="n">asset_step_id_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="s2">"step_status_in"</span><span class="p">:</span> <span class="n">asset_step_status_in</span><span class="p">,</span>
                 <span class="s2">"status_in"</span><span class="p">:</span> <span class="n">asset_status_in</span><span class="p">,</span>
                 <span class="s2">"group_name_in"</span><span class="p">:</span> <span class="n">asset_group_name_in</span><span class="p">,</span>
@@ -6869,7 +7099,7 @@ category_search = <code>(JOB_CLASSIF.CATEGORY_A.count &gt; 0 OR JOB_NER.CATEGORY
 
 
 <h3 id="kili.presentation.client.label.LabelClientMethods.predictions" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'author.email'</span><span class="p">,</span> <span class="s1">'author.id'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'jsonResponse'</span><span class="p">,</span> <span class="s1">'labelType'</span><span class="p">,</span> <span class="s1">'modelName'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_external_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_step_status_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">created_at_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'author.email'</span><span class="p">,</span> <span class="s1">'author.id'</span><span class="p">,</span> <span class="s1">'id'</span><span class="p">,</span> <span class="s1">'jsonResponse'</span><span class="p">,</span> <span class="s1">'labelType'</span><span class="p">,</span> <span class="s1">'modelName'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_gte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">honeypot_mark_lte</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_contains</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset_step_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -6919,7 +7149,17 @@ Possible choices : <code>TODO</code>, <code>ONGOING</code>, <code>LABELED</code>
         <td><code>asset_step_name_in</code></td>
         <td><code>Optional[list[str]]</code></td>
         <td><p>Returned assets are in a step whose name belong to that list, if given.
-Only applicable if the project is in WorkflowV2.</p></td>
+Only applicable if the project uses the multi-step or multi-group workflow.
+Step names are unique per group only: a name several groups use matches the step
+of each of them, unless <code>group_name_in</code> narrows it down.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>asset_step_id_in</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>Returned assets are in a step whose id belong to that list, if given.
+Exclusive with <code>asset_step_name_in</code>.
+Only applicable if the project uses the multi-step or multi-group workflow.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -6927,7 +7167,7 @@ Only applicable if the project is in WorkflowV2.</p></td>
         <td><code>Optional[list[Literal[&#39;TO_DO&#39;, &#39;DOING&#39;, &#39;IN_PROGRESS&#39;, &#39;PARTIALLY_DONE&#39;, &#39;REWORK&#39;, &#39;REDO&#39;, &#39;DONE&#39;, &#39;SKIPPED&#39;]]]</code></td>
         <td><p>Returned assets have the status of their step that belongs to that list, if given.
 Possible choices: <code>TO_DO</code>, <code>DOING</code>, <code>IN_PROGRESS</code>, <code>PARTIALLY_DONE</code>, <code>REWORK</code>, <code>REDO</code>, <code>DONE</code>, <code>SKIPPED</code>.
-Only applicable if the project is in WorkflowV2. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
+Only applicable if the project uses the multi-step or multi-group workflow. Note that <code>DOING</code> and <code>REDO</code> are deprecated, use <code>IN_PROGRESS</code> and <code>REWORK</code> instead.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -7076,6 +7316,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/label">the docum
     <span class="n">category_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">asset_step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">"""Get prediction labels from a project based on a set of criteria.</span>
@@ -7089,10 +7330,15 @@ See <a href="https://api-docs.kili-technology.com/types/objects/label">the docum
 <span class="sd">            Possible choices : `TODO`, `ONGOING`, `LABELED`, `TO REVIEW` or `REVIEWED`</span>
 <span class="sd">        asset_external_id_in: Returned labels should have an external id that belongs to that list, if given.</span>
 <span class="sd">        asset_step_name_in: Returned assets are in a step whose name belong to that list, if given.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">            Step names are unique per group only: a name several groups use matches the step</span>
+<span class="sd">            of each of them, unless `group_name_in` narrows it down.</span>
+<span class="sd">        asset_step_id_in: Returned assets are in a step whose id belong to that list, if given.</span>
+<span class="sd">            Exclusive with `asset_step_name_in`.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow.</span>
 <span class="sd">        asset_step_status_in: Returned assets have the status of their step that belongs to that list, if given.</span>
 <span class="sd">            Possible choices: `TO_DO`, `DOING`, `IN_PROGRESS`, `PARTIALLY_DONE`, `REWORK`, `REDO`, `DONE`, `SKIPPED`.</span>
-<span class="sd">            Only applicable if the project is in WorkflowV2. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow. Note that `DOING` and `REDO` are deprecated, use `IN_PROGRESS` and `REWORK` instead.</span>
 <span class="sd">        author_in: Returned labels should have been made by authors in that list, if given.</span>
 <span class="sd">            An author can be designated by the first name, the last name, or the first name + last name.</span>
 <span class="sd">        created_at: Returned labels should have a label whose creation date is equal to this date.</span>
@@ -7137,6 +7383,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/label">the docum
             <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
             <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
             <span class="n">asset_step_name_in</span><span class="o">=</span><span class="n">asset_step_name_in</span><span class="p">,</span>
+            <span class="n">asset_step_id_in</span><span class="o">=</span><span class="n">asset_step_id_in</span><span class="p">,</span>
             <span class="n">asset_step_status_in</span><span class="o">=</span><span class="n">asset_step_status_in</span><span class="p">,</span>
             <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
             <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>
@@ -7161,6 +7408,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/label">the docum
         <span class="n">asset_status_in</span><span class="o">=</span><span class="n">asset_status_in</span><span class="p">,</span>
         <span class="n">asset_external_id_in</span><span class="o">=</span><span class="n">asset_external_id_in</span><span class="p">,</span>
         <span class="n">asset_step_name_in</span><span class="o">=</span><span class="n">asset_step_name_in</span><span class="p">,</span>
+        <span class="n">asset_step_id_in</span><span class="o">=</span><span class="n">asset_step_id_in</span><span class="p">,</span>
         <span class="n">asset_step_status_in</span><span class="o">=</span><span class="n">asset_step_status_in</span><span class="p">,</span>
         <span class="n">author_in</span><span class="o">=</span><span class="n">author_in</span><span class="p">,</span>
         <span class="n">created_at</span><span class="o">=</span><span class="n">created_at</span><span class="p">,</span>

@@ -2231,7 +2231,7 @@
         <span class="n">enforce_step_separation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">create_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">WorkflowStepCreate</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">update_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">WorkflowStepUpdate</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">delete_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">delete_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">WorkflowStepDesignation</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Update properties of a project workflow.</span>
 
@@ -2240,9 +2240,14 @@
 <span class="sd">            enforce_step_separation: Prevents the same user from being assigned to</span>
 <span class="sd">                multiple steps in the workflow for a same asset,</span>
 <span class="sd">                ensuring independent review and labeling processes</span>
-<span class="sd">            create_steps: List of steps to create in the project workflow.</span>
-<span class="sd">            update_steps: List of steps to update in the project workflow.</span>
-<span class="sd">            delete_steps: List of step IDs or names to delete from the project workflow.</span>
+<span class="sd">            create_steps: List of steps to create in the project workflow. In the multi-group</span>
+<span class="sd">                workflow, each step gives the `step_group_id` of the group to create it in, and</span>
+<span class="sd">                consensus can only be set on the labeling step of the first group.</span>
+<span class="sd">            update_steps: List of steps to update in the project workflow, each given by its `id`,</span>
+<span class="sd">                or by its `name` with `group_name` when several groups use that name.</span>
+<span class="sd">            delete_steps: List of steps to delete from the project workflow, each given by its ID,</span>
+<span class="sd">                by its name, or as `{"name": ..., "group_name": ...}` when several groups use</span>
+<span class="sd">                that name.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the changed properties which indicates if the mutation was successful,</span>
@@ -2264,6 +2269,7 @@
             <span class="s2">"steps.type"</span><span class="p">,</span>
             <span class="s2">"steps.name"</span><span class="p">,</span>
             <span class="s2">"steps.id"</span><span class="p">,</span>
+            <span class="s2">"steps.stepGroupId"</span><span class="p">,</span>
             <span class="s2">"steps.assignees.email"</span><span class="p">,</span>
             <span class="s2">"steps.assignees.id"</span><span class="p">,</span>
         <span class="p">),</span>
@@ -2286,103 +2292,131 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">add_reviewers_to_step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">emails</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Add reviewers to a specific step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
-<span class="sd">            step_name: Name of the step.</span>
+<span class="sd">            step_name: Name of the step. Exclusive with `step_id`.</span>
 <span class="sd">            emails: List of emails to add.</span>
-<span class="sd">            group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">            group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">                workflow.</span>
 <span class="sd">                Required when several groups have a step with the same name.</span>
+<span class="sd">            step_id: Id of the step. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list with the added emails.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_reviewers_to_step</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">emails</span><span class="o">=</span><span class="n">_required</span><span class="p">(</span><span class="n">emails</span><span class="p">,</span> <span class="s2">"emails"</span><span class="p">),</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_reviewers_from_step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">emails</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Remove reviewers from a specific step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
-<span class="sd">            step_name: Name of the step.</span>
+<span class="sd">            step_name: Name of the step. Exclusive with `step_id`.</span>
 <span class="sd">            emails: List of emails to remove.</span>
-<span class="sd">            group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">            group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">                workflow.</span>
 <span class="sd">                Required when several groups have a step with the same name.</span>
+<span class="sd">            step_id: Id of the step. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list with the removed emails.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_reviewers_from_step</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">emails</span><span class="o">=</span><span class="n">_required</span><span class="p">(</span><span class="n">emails</span><span class="p">,</span> <span class="s2">"emails"</span><span class="p">),</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_labelers_to_step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">emails</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Add labelers to a specific labeling step.</span>
 
-<span class="sd">        Only workflow V3 projects support assigning labelers to a step, and the target step must</span>
-<span class="sd">        be a labeling step.</span>
+<span class="sd">        Only the multi-group workflow supports assigning labelers to a step, and the target step</span>
+<span class="sd">        must be a labeling step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
-<span class="sd">            step_name: Name of the labeling step.</span>
+<span class="sd">            step_name: Name of the labeling step. Exclusive with `step_id`.</span>
 <span class="sd">            emails: List of emails to add.</span>
-<span class="sd">            group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">            group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">                workflow.</span>
 <span class="sd">                Required when several groups have a step with the same name.</span>
+<span class="sd">            step_id: Id of the step. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list with the added emails.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_labelers_to_step</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">emails</span><span class="o">=</span><span class="n">_required</span><span class="p">(</span><span class="n">emails</span><span class="p">,</span> <span class="s2">"emails"</span><span class="p">),</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_labelers_from_step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">emails</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Remove labelers from a specific labeling step.</span>
 
-<span class="sd">        Only workflow V3 projects support removing labelers from a step, and the target step must</span>
-<span class="sd">        be a labeling step. Removing a labeler also clears their asset-step assignments and step</span>
-<span class="sd">        queue for that step.</span>
+<span class="sd">        Only the multi-group workflow supports removing labelers from a step, and the target step</span>
+<span class="sd">        must be a labeling step. Removing a labeler also clears their asset-step assignments and</span>
+<span class="sd">        step queue for that step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
-<span class="sd">            step_name: Name of the labeling step.</span>
+<span class="sd">            step_name: Name of the labeling step. Exclusive with `step_id`.</span>
 <span class="sd">            emails: List of emails to remove.</span>
-<span class="sd">            group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">            group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">                workflow.</span>
 <span class="sd">                Required when several groups have a step with the same name.</span>
+<span class="sd">            step_id: Id of the step. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list with the removed emails.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_labelers_from_step</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">emails</span><span class="o">=</span><span class="n">_required</span><span class="p">(</span><span class="n">emails</span><span class="p">,</span> <span class="s2">"emails"</span><span class="p">),</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -2431,8 +2465,9 @@
         <span class="n">step_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Add a review step to a project workflow.</span>
+<span class="w">        </span><span class="sd">"""Add a review step to a project workflow, at the end of its group.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
@@ -2440,7 +2475,9 @@
 <span class="sd">            assignees: List of user emails to assign as reviewers.</span>
 <span class="sd">            step_coverage: Percentage of assets to be reviewed in this step (0-100).</span>
 <span class="sd">            use_honeypot: Whether to use honeypot on this step.</span>
-<span class="sd">            send_back_to_step: Name of the step to send assets back to.</span>
+<span class="sd">            send_back_to_step: Name of the step to send assets back to, in the same group.</span>
+<span class="sd">            group_name: Name of the group to add the step to, in the multi-group workflow.</span>
+<span class="sd">                Required when the project has several groups.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the created step data (id, name).</span>
@@ -2452,25 +2489,34 @@
             <span class="n">step_coverage</span><span class="o">=</span><span class="n">step_coverage</span><span class="p">,</span>
             <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
             <span class="n">send_back_to_step</span><span class="o">=</span><span class="n">send_back_to_step</span><span class="p">,</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_labeling_step_properties</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">consensus_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">number_of_expected_labels_for_consensus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Update properties of a labeling step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
-<span class="sd">            step_name: Name of the labeling step to update.</span>
+<span class="sd">            step_name: Name of the labeling step to update. Exclusive with `step_id`.</span>
 <span class="sd">            consensus_coverage: Percentage of assets to be labeled for consensus (0-100).</span>
+<span class="sd">                In the multi-group workflow, consensus can only be set on the labeling step of</span>
+<span class="sd">                the first group.</span>
 <span class="sd">            number_of_expected_labels_for_consensus: Number of expected labels for consensus.</span>
 <span class="sd">            use_honeypot: Whether to use honeypot on this step.</span>
+<span class="sd">            group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">                workflow.</span>
+<span class="sd">                Required when several groups have a step with the same name.</span>
+<span class="sd">            step_id: Id of the step to update. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the updated step data (id, name).</span>
@@ -2481,27 +2527,35 @@
             <span class="n">consensus_coverage</span><span class="o">=</span><span class="n">consensus_coverage</span><span class="p">,</span>
             <span class="n">number_of_expected_labels_for_consensus</span><span class="o">=</span><span class="n">number_of_expected_labels_for_consensus</span><span class="p">,</span>
             <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_review_step_properties</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">assignees</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Update properties of a review step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
-<span class="sd">            step_name: Name of the review step to update.</span>
+<span class="sd">            step_name: Name of the review step to update. Exclusive with `step_id`.</span>
 <span class="sd">            assignees: List of emails to assign to the step.</span>
 <span class="sd">            step_coverage: Percentage of assets to be reviewed in this step (0-100).</span>
 <span class="sd">            send_back_to_step: Id of the step to send assets back to when rejected.</span>
 <span class="sd">            use_honeypot: Whether to use honeypot on this step.</span>
+<span class="sd">            group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">                workflow.</span>
+<span class="sd">                Required when several groups have a step with the same name.</span>
+<span class="sd">            step_id: Id of the step to update. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the updated step data (id, name).</span>
@@ -2513,6 +2567,8 @@
             <span class="n">step_coverage</span><span class="o">=</span><span class="n">step_coverage</span><span class="p">,</span>
             <span class="n">send_back_to_step</span><span class="o">=</span><span class="n">send_back_to_step</span><span class="p">,</span>
             <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -2536,15 +2592,21 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">rename_step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Rename a step in a project workflow.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            project_id: Id of the project.</span>
-<span class="sd">            step_name: Name of the step.</span>
+<span class="sd">            step_name: Name of the step. Exclusive with `step_id`.</span>
 <span class="sd">            new_name: New name for the step.</span>
+<span class="sd">            group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">                workflow.</span>
+<span class="sd">                Required when several groups have a step with the same name.</span>
+<span class="sd">            step_id: Id of the step. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dict with the renamed step data (id, name).</span>
@@ -2552,7 +2614,9 @@
         <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">rename_step</span><span class="p">(</span>
             <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
             <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
-            <span class="n">new_name</span><span class="o">=</span><span class="n">new_name</span><span class="p">,</span>
+            <span class="n">new_name</span><span class="o">=</span><span class="n">_required</span><span class="p">(</span><span class="n">new_name</span><span class="p">,</span> <span class="s2">"new_name"</span><span class="p">),</span>
+            <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
         <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2574,7 +2638,7 @@
 
 
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_labelers_to_step" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">add_labelers_to_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">add_labelers_to_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2582,8 +2646,8 @@
     <div class="doc doc-contents ">
 
       <p>Add labelers to a specific labeling step.</p>
-<p>Only workflow V3 projects support assigning labelers to a step, and the target step must
-be a labeling step.</p>
+<p>Only the multi-group workflow supports assigning labelers to a step, and the target step
+must be a labeling step.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2604,21 +2668,28 @@ be a labeling step.</p>
       </tr>
       <tr>
         <td><code>step_name</code></td>
-        <td><code>str</code></td>
-        <td><p>Name of the labeling step.</p></td>
-        <td><em>required</em></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Name of the labeling step. Exclusive with <code>step_id</code>.</p></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>emails</code></td>
-        <td><code>list</code></td>
+        <td><code>Optional[list[str]]</code></td>
         <td><p>List of emails to add.</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>group_name</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Name of the workflow V3 group containing the step.
+        <td><p>Name of the group containing the step named <code>step_name</code>, in the multi-group
+workflow.
 Required when several groups have a step with the same name.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Id of the step. Exclusive with <code>step_name</code> and <code>group_name</code>.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -2643,27 +2714,34 @@ Required when several groups have a step with the same name.</p></td>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_labelers_to_step</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">emails</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Add labelers to a specific labeling step.</span>
 
-<span class="sd">    Only workflow V3 projects support assigning labelers to a step, and the target step must</span>
-<span class="sd">    be a labeling step.</span>
+<span class="sd">    Only the multi-group workflow supports assigning labelers to a step, and the target step</span>
+<span class="sd">    must be a labeling step.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
-<span class="sd">        step_name: Name of the labeling step.</span>
+<span class="sd">        step_name: Name of the labeling step. Exclusive with `step_id`.</span>
 <span class="sd">        emails: List of emails to add.</span>
-<span class="sd">        group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">        group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">            workflow.</span>
 <span class="sd">            Required when several groups have a step with the same name.</span>
+<span class="sd">        step_id: Id of the step. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list with the added emails.</span>
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_labelers_to_step</span><span class="p">(</span>
-        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+        <span class="n">emails</span><span class="o">=</span><span class="n">_required</span><span class="p">(</span><span class="n">emails</span><span class="p">,</span> <span class="s2">"emails"</span><span class="p">),</span>
+        <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2678,14 +2756,14 @@ Required when several groups have a step with the same name.</p></td>
 
 
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_review_step" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">add_review_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">assignees</span><span class="p">,</span> <span class="n">step_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">send_back_to_step</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">add_review_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">assignees</span><span class="p">,</span> <span class="n">step_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">send_back_to_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
 
     <div class="doc doc-contents ">
 
-      <p>Add a review step to a project workflow.</p>
+      <p>Add a review step to a project workflow, at the end of its group.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2731,7 +2809,14 @@ Required when several groups have a step with the same name.</p></td>
       <tr>
         <td><code>send_back_to_step</code></td>
         <td><code>str | None</code></td>
-        <td><p>Name of the step to send assets back to.</p></td>
+        <td><p>Name of the step to send assets back to, in the same group.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>group_name</code></td>
+        <td><code>str | None</code></td>
+        <td><p>Name of the group to add the step to, in the multi-group workflow.
+Required when the project has several groups.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -2761,8 +2846,9 @@ Required when several groups have a step with the same name.</p></td>
     <span class="n">step_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">"""Add a review step to a project workflow.</span>
+<span class="w">    </span><span class="sd">"""Add a review step to a project workflow, at the end of its group.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
@@ -2770,7 +2856,9 @@ Required when several groups have a step with the same name.</p></td>
 <span class="sd">        assignees: List of user emails to assign as reviewers.</span>
 <span class="sd">        step_coverage: Percentage of assets to be reviewed in this step (0-100).</span>
 <span class="sd">        use_honeypot: Whether to use honeypot on this step.</span>
-<span class="sd">        send_back_to_step: Name of the step to send assets back to.</span>
+<span class="sd">        send_back_to_step: Name of the step to send assets back to, in the same group.</span>
+<span class="sd">        group_name: Name of the group to add the step to, in the multi-group workflow.</span>
+<span class="sd">            Required when the project has several groups.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the created step data (id, name).</span>
@@ -2782,6 +2870,7 @@ Required when several groups have a step with the same name.</p></td>
         <span class="n">step_coverage</span><span class="o">=</span><span class="n">step_coverage</span><span class="p">,</span>
         <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
         <span class="n">send_back_to_step</span><span class="o">=</span><span class="n">send_back_to_step</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -2796,7 +2885,7 @@ Required when several groups have a step with the same name.</p></td>
 
 
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.add_reviewers_to_step" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">add_reviewers_to_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">add_reviewers_to_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2824,21 +2913,28 @@ Required when several groups have a step with the same name.</p></td>
       </tr>
       <tr>
         <td><code>step_name</code></td>
-        <td><code>str</code></td>
-        <td><p>Name of the step.</p></td>
-        <td><em>required</em></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Name of the step. Exclusive with <code>step_id</code>.</p></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>emails</code></td>
-        <td><code>list</code></td>
+        <td><code>Optional[list[str]]</code></td>
         <td><p>List of emails to add.</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>group_name</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Name of the workflow V3 group containing the step.
+        <td><p>Name of the group containing the step named <code>step_name</code>, in the multi-group
+workflow.
 Required when several groups have a step with the same name.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Id of the step. Exclusive with <code>step_name</code> and <code>group_name</code>.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -2863,24 +2959,31 @@ Required when several groups have a step with the same name.</p></td>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_reviewers_to_step</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">emails</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Add reviewers to a specific step.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
-<span class="sd">        step_name: Name of the step.</span>
+<span class="sd">        step_name: Name of the step. Exclusive with `step_id`.</span>
 <span class="sd">        emails: List of emails to add.</span>
-<span class="sd">        group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">        group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">            workflow.</span>
 <span class="sd">            Required when several groups have a step with the same name.</span>
+<span class="sd">        step_id: Id of the step. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list with the added emails.</span>
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">add_reviewers_to_step</span><span class="p">(</span>
-        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+        <span class="n">emails</span><span class="o">=</span><span class="n">_required</span><span class="p">(</span><span class="n">emails</span><span class="p">,</span> <span class="s2">"emails"</span><span class="p">),</span>
+        <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3095,7 +3198,7 @@ destination project already has labels.</p></td>
 
 
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.get_steps" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'steps.type'</span><span class="p">,</span> <span class="s1">'steps.name'</span><span class="p">,</span> <span class="s1">'steps.id'</span><span class="p">,</span> <span class="s1">'steps.assignees.email'</span><span class="p">,</span> <span class="s1">'steps.assignees.id'</span><span class="p">))</span></code>
+<code class="highlight language-python"><span class="n">get_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'steps.type'</span><span class="p">,</span> <span class="s1">'steps.name'</span><span class="p">,</span> <span class="s1">'steps.id'</span><span class="p">,</span> <span class="s1">'steps.stepGroupId'</span><span class="p">,</span> <span class="s1">'steps.assignees.email'</span><span class="p">,</span> <span class="s1">'steps.assignees.id'</span><span class="p">))</span></code>
 
 
 </h3>
@@ -3126,7 +3229,7 @@ destination project already has labels.</p></td>
         <td><code>Union[list[str], tuple[str, ...]]</code></td>
         <td><p>All the fields to request among the possible fields for the project.
 See the documentation for all possible fields.</p></td>
-        <td><code>(&#39;steps.type&#39;, &#39;steps.name&#39;, &#39;steps.id&#39;, &#39;steps.assignees.email&#39;, &#39;steps.assignees.id&#39;)</code></td>
+        <td><code>(&#39;steps.type&#39;, &#39;steps.name&#39;, &#39;steps.id&#39;, &#39;steps.stepGroupId&#39;, &#39;steps.assignees.email&#39;, &#39;steps.assignees.id&#39;)</code></td>
       </tr>
   </tbody>
 </table>
@@ -3154,6 +3257,7 @@ See the documentation for all possible fields.</p></td>
         <span class="s2">"steps.type"</span><span class="p">,</span>
         <span class="s2">"steps.name"</span><span class="p">,</span>
         <span class="s2">"steps.id"</span><span class="p">,</span>
+        <span class="s2">"steps.stepGroupId"</span><span class="p">,</span>
         <span class="s2">"steps.assignees.email"</span><span class="p">,</span>
         <span class="s2">"steps.assignees.id"</span><span class="p">,</span>
     <span class="p">),</span>
@@ -3184,7 +3288,7 @@ See the documentation for all possible fields.</p></td>
 
 
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.remove_labelers_from_step" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">remove_labelers_from_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">remove_labelers_from_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3192,9 +3296,9 @@ See the documentation for all possible fields.</p></td>
     <div class="doc doc-contents ">
 
       <p>Remove labelers from a specific labeling step.</p>
-<p>Only workflow V3 projects support removing labelers from a step, and the target step must
-be a labeling step. Removing a labeler also clears their asset-step assignments and step
-queue for that step.</p>
+<p>Only the multi-group workflow supports removing labelers from a step, and the target step
+must be a labeling step. Removing a labeler also clears their asset-step assignments and
+step queue for that step.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -3215,21 +3319,28 @@ queue for that step.</p>
       </tr>
       <tr>
         <td><code>step_name</code></td>
-        <td><code>str</code></td>
-        <td><p>Name of the labeling step.</p></td>
-        <td><em>required</em></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Name of the labeling step. Exclusive with <code>step_id</code>.</p></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>emails</code></td>
-        <td><code>list</code></td>
+        <td><code>Optional[list[str]]</code></td>
         <td><p>List of emails to remove.</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>group_name</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Name of the workflow V3 group containing the step.
+        <td><p>Name of the group containing the step named <code>step_name</code>, in the multi-group
+workflow.
 Required when several groups have a step with the same name.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Id of the step. Exclusive with <code>step_name</code> and <code>group_name</code>.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -3254,28 +3365,35 @@ Required when several groups have a step with the same name.</p></td>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_labelers_from_step</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">emails</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Remove labelers from a specific labeling step.</span>
 
-<span class="sd">    Only workflow V3 projects support removing labelers from a step, and the target step must</span>
-<span class="sd">    be a labeling step. Removing a labeler also clears their asset-step assignments and step</span>
-<span class="sd">    queue for that step.</span>
+<span class="sd">    Only the multi-group workflow supports removing labelers from a step, and the target step</span>
+<span class="sd">    must be a labeling step. Removing a labeler also clears their asset-step assignments and</span>
+<span class="sd">    step queue for that step.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
-<span class="sd">        step_name: Name of the labeling step.</span>
+<span class="sd">        step_name: Name of the labeling step. Exclusive with `step_id`.</span>
 <span class="sd">        emails: List of emails to remove.</span>
-<span class="sd">        group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">        group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">            workflow.</span>
 <span class="sd">            Required when several groups have a step with the same name.</span>
+<span class="sd">        step_id: Id of the step. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list with the removed emails.</span>
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_labelers_from_step</span><span class="p">(</span>
-        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+        <span class="n">emails</span><span class="o">=</span><span class="n">_required</span><span class="p">(</span><span class="n">emails</span><span class="p">,</span> <span class="s2">"emails"</span><span class="p">),</span>
+        <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3290,7 +3408,7 @@ Required when several groups have a step with the same name.</p></td>
 
 
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.remove_reviewers_from_step" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">remove_reviewers_from_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">remove_reviewers_from_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3318,21 +3436,28 @@ Required when several groups have a step with the same name.</p></td>
       </tr>
       <tr>
         <td><code>step_name</code></td>
-        <td><code>str</code></td>
-        <td><p>Name of the step.</p></td>
-        <td><em>required</em></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Name of the step. Exclusive with <code>step_id</code>.</p></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>emails</code></td>
-        <td><code>list</code></td>
+        <td><code>Optional[list[str]]</code></td>
         <td><p>List of emails to remove.</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>group_name</code></td>
         <td><code>Optional[str]</code></td>
-        <td><p>Name of the workflow V3 group containing the step.
+        <td><p>Name of the group containing the step named <code>step_name</code>, in the multi-group
+workflow.
 Required when several groups have a step with the same name.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Id of the step. Exclusive with <code>step_name</code> and <code>group_name</code>.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -3357,24 +3482,31 @@ Required when several groups have a step with the same name.</p></td>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_reviewers_from_step</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">emails</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">emails</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Remove reviewers from a specific step.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
-<span class="sd">        step_name: Name of the step.</span>
+<span class="sd">        step_name: Name of the step. Exclusive with `step_id`.</span>
 <span class="sd">        emails: List of emails to remove.</span>
-<span class="sd">        group_name: Name of the workflow V3 group containing the step.</span>
+<span class="sd">        group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">            workflow.</span>
 <span class="sd">            Required when several groups have a step with the same name.</span>
+<span class="sd">        step_id: Id of the step. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list with the removed emails.</span>
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">remove_reviewers_from_step</span><span class="p">(</span>
-        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
+        <span class="n">emails</span><span class="o">=</span><span class="n">_required</span><span class="p">(</span><span class="n">emails</span><span class="p">,</span> <span class="s2">"emails"</span><span class="p">),</span>
+        <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3389,7 +3521,7 @@ Required when several groups have a step with the same name.</p></td>
 
 
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.rename_step" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">rename_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">rename_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3417,15 +3549,29 @@ Required when several groups have a step with the same name.</p></td>
       </tr>
       <tr>
         <td><code>step_name</code></td>
-        <td><code>str</code></td>
-        <td><p>Name of the step.</p></td>
-        <td><em>required</em></td>
+        <td><code>str | None</code></td>
+        <td><p>Name of the step. Exclusive with <code>step_id</code>.</p></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>new_name</code></td>
-        <td><code>str</code></td>
+        <td><code>str | None</code></td>
         <td><p>New name for the step.</p></td>
-        <td><em>required</em></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>group_name</code></td>
+        <td><code>str | None</code></td>
+        <td><p>Name of the group containing the step named <code>step_name</code>, in the multi-group
+workflow.
+Required when several groups have a step with the same name.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_id</code></td>
+        <td><code>str | None</code></td>
+        <td><p>Id of the step. Exclusive with <code>step_name</code> and <code>group_name</code>.</p></td>
+        <td><code>None</code></td>
       </tr>
   </tbody>
 </table>
@@ -3449,15 +3595,21 @@ Required when several groups have a step with the same name.</p></td>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rename_step</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Rename a step in a project workflow.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
-<span class="sd">        step_name: Name of the step.</span>
+<span class="sd">        step_name: Name of the step. Exclusive with `step_id`.</span>
 <span class="sd">        new_name: New name for the step.</span>
+<span class="sd">        group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">            workflow.</span>
+<span class="sd">            Required when several groups have a step with the same name.</span>
+<span class="sd">        step_id: Id of the step. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the renamed step data (id, name).</span>
@@ -3465,7 +3617,9 @@ Required when several groups have a step with the same name.</p></td>
     <span class="k">return</span> <span class="n">ProjectWorkflowUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">rename_step</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
         <span class="n">step_name</span><span class="o">=</span><span class="n">step_name</span><span class="p">,</span>
-        <span class="n">new_name</span><span class="o">=</span><span class="n">new_name</span><span class="p">,</span>
+        <span class="n">new_name</span><span class="o">=</span><span class="n">_required</span><span class="p">(</span><span class="n">new_name</span><span class="p">,</span> <span class="s2">"new_name"</span><span class="p">),</span>
+        <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3480,7 +3634,7 @@ Required when several groups have a step with the same name.</p></td>
 
 
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.update_labeling_step_properties" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">update_labeling_step_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">consensus_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_expected_labels_for_consensus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">update_labeling_step_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">consensus_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number_of_expected_labels_for_consensus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3508,14 +3662,16 @@ Required when several groups have a step with the same name.</p></td>
       </tr>
       <tr>
         <td><code>step_name</code></td>
-        <td><code>str</code></td>
-        <td><p>Name of the labeling step to update.</p></td>
-        <td><em>required</em></td>
+        <td><code>str | None</code></td>
+        <td><p>Name of the labeling step to update. Exclusive with <code>step_id</code>.</p></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>consensus_coverage</code></td>
         <td><code>int | None</code></td>
-        <td><p>Percentage of assets to be labeled for consensus (0-100).</p></td>
+        <td><p>Percentage of assets to be labeled for consensus (0-100).
+In the multi-group workflow, consensus can only be set on the labeling step of
+the first group.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
@@ -3528,6 +3684,20 @@ Required when several groups have a step with the same name.</p></td>
         <td><code>use_honeypot</code></td>
         <td><code>bool | None</code></td>
         <td><p>Whether to use honeypot on this step.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>group_name</code></td>
+        <td><code>str | None</code></td>
+        <td><p>Name of the group containing the step named <code>step_name</code>, in the multi-group
+workflow.
+Required when several groups have a step with the same name.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_id</code></td>
+        <td><code>str | None</code></td>
+        <td><p>Id of the step to update. Exclusive with <code>step_name</code> and <code>group_name</code>.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -3552,19 +3722,27 @@ Required when several groups have a step with the same name.</p></td>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_labeling_step_properties</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">consensus_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">number_of_expected_labels_for_consensus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Update properties of a labeling step.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
-<span class="sd">        step_name: Name of the labeling step to update.</span>
+<span class="sd">        step_name: Name of the labeling step to update. Exclusive with `step_id`.</span>
 <span class="sd">        consensus_coverage: Percentage of assets to be labeled for consensus (0-100).</span>
+<span class="sd">            In the multi-group workflow, consensus can only be set on the labeling step of</span>
+<span class="sd">            the first group.</span>
 <span class="sd">        number_of_expected_labels_for_consensus: Number of expected labels for consensus.</span>
 <span class="sd">        use_honeypot: Whether to use honeypot on this step.</span>
+<span class="sd">        group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">            workflow.</span>
+<span class="sd">            Required when several groups have a step with the same name.</span>
+<span class="sd">        step_id: Id of the step to update. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the updated step data (id, name).</span>
@@ -3575,6 +3753,8 @@ Required when several groups have a step with the same name.</p></td>
         <span class="n">consensus_coverage</span><span class="o">=</span><span class="n">consensus_coverage</span><span class="p">,</span>
         <span class="n">number_of_expected_labels_for_consensus</span><span class="o">=</span><span class="n">number_of_expected_labels_for_consensus</span><span class="p">,</span>
         <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -3626,19 +3806,24 @@ ensuring independent review and labeling processes</p></td>
       <tr>
         <td><code>create_steps</code></td>
         <td><code>Optional[list[kili.domain.project.WorkflowStepCreate]]</code></td>
-        <td><p>List of steps to create in the project workflow.</p></td>
+        <td><p>List of steps to create in the project workflow. In the multi-group
+workflow, each step gives the <code>step_group_id</code> of the group to create it in, and
+consensus can only be set on the labeling step of the first group.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>update_steps</code></td>
         <td><code>Optional[list[kili.domain.project.WorkflowStepUpdate]]</code></td>
-        <td><p>List of steps to update in the project workflow.</p></td>
+        <td><p>List of steps to update in the project workflow, each given by its <code>id</code>,
+or by its <code>name</code> with <code>group_name</code> when several groups use that name.</p></td>
         <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>delete_steps</code></td>
-        <td><code>Optional[list[str]]</code></td>
-        <td><p>List of step IDs or names to delete from the project workflow.</p></td>
+        <td><code>Optional[list[str | kili.domain.project.WorkflowStepDesignation]]</code></td>
+        <td><p>List of steps to delete from the project workflow, each given by its ID,
+by its name, or as <code>{"name": ..., "group_name": ...}</code> when several groups use
+that name.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -3667,7 +3852,7 @@ ensuring independent review and labeling processes</p></td>
     <span class="n">enforce_step_separation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">create_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">WorkflowStepCreate</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">update_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">WorkflowStepUpdate</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">delete_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">delete_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">WorkflowStepDesignation</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Update properties of a project workflow.</span>
 
@@ -3676,9 +3861,14 @@ ensuring independent review and labeling processes</p></td>
 <span class="sd">        enforce_step_separation: Prevents the same user from being assigned to</span>
 <span class="sd">            multiple steps in the workflow for a same asset,</span>
 <span class="sd">            ensuring independent review and labeling processes</span>
-<span class="sd">        create_steps: List of steps to create in the project workflow.</span>
-<span class="sd">        update_steps: List of steps to update in the project workflow.</span>
-<span class="sd">        delete_steps: List of step IDs or names to delete from the project workflow.</span>
+<span class="sd">        create_steps: List of steps to create in the project workflow. In the multi-group</span>
+<span class="sd">            workflow, each step gives the `step_group_id` of the group to create it in, and</span>
+<span class="sd">            consensus can only be set on the labeling step of the first group.</span>
+<span class="sd">        update_steps: List of steps to update in the project workflow, each given by its `id`,</span>
+<span class="sd">            or by its `name` with `group_name` when several groups use that name.</span>
+<span class="sd">        delete_steps: List of steps to delete from the project workflow, each given by its ID,</span>
+<span class="sd">            by its name, or as `{"name": ..., "group_name": ...}` when several groups use</span>
+<span class="sd">            that name.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the changed properties which indicates if the mutation was successful,</span>
@@ -3704,7 +3894,7 @@ ensuring independent review and labeling processes</p></td>
 
 
 <h3 id="kili.presentation.client.project_workflow.ProjectWorkflowClientMethods.update_review_step_properties" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">update_review_step_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">assignees</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">send_back_to_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">update_review_step_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assignees</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_coverage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">send_back_to_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -3732,9 +3922,9 @@ ensuring independent review and labeling processes</p></td>
       </tr>
       <tr>
         <td><code>step_name</code></td>
-        <td><code>str</code></td>
-        <td><p>Name of the review step to update.</p></td>
-        <td><em>required</em></td>
+        <td><code>str | None</code></td>
+        <td><p>Name of the review step to update. Exclusive with <code>step_id</code>.</p></td>
+        <td><code>None</code></td>
       </tr>
       <tr>
         <td><code>assignees</code></td>
@@ -3760,6 +3950,20 @@ ensuring independent review and labeling processes</p></td>
         <td><p>Whether to use honeypot on this step.</p></td>
         <td><code>None</code></td>
       </tr>
+      <tr>
+        <td><code>group_name</code></td>
+        <td><code>str | None</code></td>
+        <td><p>Name of the group containing the step named <code>step_name</code>, in the multi-group
+workflow.
+Required when several groups have a step with the same name.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_id</code></td>
+        <td><code>str | None</code></td>
+        <td><p>Id of the step to update. Exclusive with <code>step_name</code> and <code>group_name</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -3782,21 +3986,27 @@ ensuring independent review and labeling processes</p></td>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_review_step_properties</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">assignees</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">step_coverage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">send_back_to_step</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">use_honeypot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Update properties of a review step.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        project_id: Id of the project.</span>
-<span class="sd">        step_name: Name of the review step to update.</span>
+<span class="sd">        step_name: Name of the review step to update. Exclusive with `step_id`.</span>
 <span class="sd">        assignees: List of emails to assign to the step.</span>
 <span class="sd">        step_coverage: Percentage of assets to be reviewed in this step (0-100).</span>
 <span class="sd">        send_back_to_step: Id of the step to send assets back to when rejected.</span>
 <span class="sd">        use_honeypot: Whether to use honeypot on this step.</span>
+<span class="sd">        group_name: Name of the group containing the step named `step_name`, in the multi-group</span>
+<span class="sd">            workflow.</span>
+<span class="sd">            Required when several groups have a step with the same name.</span>
+<span class="sd">        step_id: Id of the step to update. Exclusive with `step_name` and `group_name`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dict with the updated step data (id, name).</span>
@@ -3808,6 +4018,8 @@ ensuring independent review and labeling processes</p></td>
         <span class="n">step_coverage</span><span class="o">=</span><span class="n">step_coverage</span><span class="p">,</span>
         <span class="n">send_back_to_step</span><span class="o">=</span><span class="n">send_back_to_step</span><span class="p">,</span>
         <span class="n">use_honeypot</span><span class="o">=</span><span class="n">use_honeypot</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="o">=</span><span class="n">group_name</span><span class="p">,</span>
+        <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>

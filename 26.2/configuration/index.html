@@ -565,6 +565,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#upgrade-notice" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrade Notice
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#example-production-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       Example : Production Configuration
@@ -2217,6 +2226,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#upgrade-notice" class="md-nav__link">
+    <span class="md-ellipsis">
+      Upgrade Notice
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#example-production-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       Example : Production Configuration
@@ -2511,6 +2529,18 @@
 <li>Truthy values: <code>"true"</code>, <code>"1"</code>, <code>"yes"</code> (case-insensitive)</li>
 <li>Falsy values: <code>"false"</code>, <code>"0"</code>, <code>"no"</code> (case-insensitive)</li>
 </ul>
+<hr />
+<h2 id="upgrade-notice">Upgrade Notice</h2>
+<p>On Kili SaaS (<code>cloud.kili-technology.com</code> and <code>cloud.eastus.kili-technology.com</code>), creating a client
+looks up the latest <code>kili</code> published on PyPI, once per Python process, and warns when yours is older:</p>
+<div class="highlight"><pre><span></span><code>UserWarning: You are using Kili SDK version 26.1.15, while version 26.2.2 is available. Upgrade with: pip install --upgrade kili
+</code></pre></div>
+<p>On-premise and LTS deployments are not checked. The lookup never stops the client: when PyPI does
+not answer within 3 seconds, it is skipped. To hide the message:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">"You are using Kili SDK version"</span><span class="p">)</span>
+</code></pre></div>
 <hr />
 <h2 id="example-production-configuration">Example : Production Configuration</h2>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>

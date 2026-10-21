@@ -2300,8 +2300,8 @@ For information on how to add users and assign them to your project, refer to th
 </code></pre>
 <h3 id="setting-consensus-for-specific-assets-to-compute-consensus-kpis">Setting consensus for specific assets to compute consensus KPIs</h3>
 <p>You can manually select specific project assets to be used for computing consensus KPIs.</p>
-<p>The method to use depends on the workflow version of your project. On multi-review
-projects, use <code>update_asset_consensus</code>, one call per asset:</p>
+<p>The method to use depends on the workflow of your project. On multi-step and multi-group
+workflow projects, use <code>update_asset_consensus</code>, one call per asset:</p>
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">external_id</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"1.jpg"</span><span class="p">,</span> <span class="s2">"2.jpg"</span><span class="p">,</span> <span class="s2">"3.jpg"</span><span class="p">]:</span>
     <span class="n">kili</span><span class="o">.</span><span class="n">update_asset_consensus</span><span class="p">(</span>
         <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
@@ -2309,7 +2309,7 @@ projects, use <code>update_asset_consensus</code>, one call per asset:</p>
         <span class="n">is_consensus</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
-<p>On projects still using workflow version 1, <code>update_asset_consensus</code> is not available.
+<p>On projects still using the legacy workflow, <code>update_asset_consensus</code> is not available.
 Use <code>update_properties_in_assets</code> with <code>is_used_for_consensus_array</code> instead:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
     <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
@@ -2317,7 +2317,7 @@ Use <code>update_properties_in_assets</code> with <code>is_used_for_consensus_ar
     <span class="n">is_used_for_consensus_array</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>Using <code>is_used_for_consensus_array</code> on a multi-review project raises
+<p>Using <code>is_used_for_consensus_array</code> on a multi-step or multi-group workflow project raises
 <code>DeprecatedArgumentError</code>.</p>
 <p>For more information on consensus, refer to our <a href="https://docs.kili-technology.com/docs/consensus-overview">documentation</a>.</p>
 <h2 id="setting-up-honeypot">Setting up honeypot</h2>
@@ -2326,7 +2326,7 @@ Honeypot works by interspersing assets with defined ground truth label in the an
 <p>First, we need to enable honeypot on the labeling step of our project:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_labeling_step_properties</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">step_name</span><span class="o">=</span><span class="s2">"Label"</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
-<p>On projects still using workflow version 1, enable it on the project instead:</p>
+<p>On projects still using the legacy workflow, enable it on the project instead:</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">update_properties_in_project</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">use_honeypot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 <p>You can now manually select specific project assets to be used as honeypots:</p>
