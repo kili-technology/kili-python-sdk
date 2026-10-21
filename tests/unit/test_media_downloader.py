@@ -201,37 +201,29 @@ def test_download_media_jsoncontent_none(mocker, content, jsoncontent, should_ca
             http_client.get.assert_not_called()
 
 
-def test_get_download_path_no_double_extension(mocker):
+@pytest.mark.parametrize(
+    ("external_id", "content_type", "filename"),
+    [
+        ("photo.jpeg", "image/jpeg", "photo.jpeg"),  # not "photo.jpeg.jpg"
+        ("photo.aaa", "image/jpeg", "photo.aaa.jpg"),  # an image ends with an image extension
+        ("photo", "image/jpeg", "photo.jpg"),
+        ("logo.svg", "image/svg+xml", "logo.svg"),  # not "logo.svg.svg"
+        ("img", "application/octet-stream", "img"),  # no meaningless ".bin"
+        ("scan.pdf", "application/pdf", "scan.pdf"),
+        ("clip", "video/mp4", "clip.mp4"),
+        ("dir/photo", "image/png", "dir/photo.png"),
+        ("../../photo", "image/png", "photo.png"),  # stays inside the download folder
+    ],
+)
+def test_get_download_path_names_a_media_as_the_export_does(
+    mocker, tmp_path, external_id, content_type, filename
+):
     mocker.patch(
-        "kili.use_cases.asset.media_downloader.get_file_extension_from_headers",
-        return_value=".jpg",
+        "kili.use_cases.asset.media_downloader.get_content_type_from_headers",
+        return_value=content_type,
     )
     http_client = mocker.MagicMock(spec=HttpClient)
     path = get_download_path(
-        "https://example.com/img", AssetExternalId("photo.jpeg"), Path("/tmp"), http_client
+        "https://example.com/media", AssetExternalId(external_id), tmp_path, http_client
     )
-    assert path.name == "photo.jpeg"  # not "photo.jpeg.jpg"
-
-
-def test_get_download_path_with_valid_extension(mocker):
-    mocker.patch(
-        "kili.use_cases.asset.media_downloader.get_file_extension_from_headers",
-        return_value=".jpg",
-    )
-    http_client = mocker.MagicMock(spec=HttpClient)
-    path = get_download_path(
-        "https://example.com/img", AssetExternalId("photo.aaa"), Path("/tmp"), http_client
-    )
-    assert path.name == "photo.aaa.jpg"  # not "photo.aaa"
-
-
-def test_get_download_path_with_extension(mocker):
-    mocker.patch(
-        "kili.use_cases.asset.media_downloader.get_file_extension_from_headers",
-        return_value=".jpg",
-    )
-    http_client = mocker.MagicMock(spec=HttpClient)
-    path = get_download_path(
-        "https://example.com/img", AssetExternalId("photo"), Path("/tmp"), http_client
-    )
-    assert path.name == "photo.jpg"  # not "photo"
+    assert path.relative_to(tmp_path.resolve()).as_posix() == filename

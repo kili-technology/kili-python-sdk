@@ -12,7 +12,13 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
-from kili.services.export.types import CocoAnnotationModifier, ExportType, LabelFormat, SplitOption
+from kili.services.export.types import (
+    CocoAnnotationModifier,
+    ExportType,
+    LabelFormat,
+    SplitOption,
+    YoloBoundingBoxes,
+)
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -291,9 +297,10 @@ class ExportNamespace(DomainNamespace):
     ):
         """Export project labels in YOLO v4 format.
 
-        YOLO v4 format exports annotations with normalized coordinates suitable for
-        object detection tasks. The format creates a classes.txt file and individual
-        .txt files for each image with bounding box annotations.
+        YOLO v4 format exports annotations with normalized coordinates for the Detect task:
+        a classes.txt file and a .txt file per image, a box per bounding box, the upright box
+        around it. It has no other task: polygons, semantic segmentations, points, lines, pose and
+        classification are not exported. For segmentation, use the YOLO v5, v7 or v8 format.
 
         Args:
             project_id: Identifier of the project.
@@ -350,12 +357,25 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
+        bbox_as: YoloBoundingBoxes = "box",
     ):
         """Export project labels in YOLO v5 format.
 
-        YOLO v5 format exports annotations with normalized coordinates suitable for
-        object detection tasks. The format creates a data.yaml file and individual
-        .txt files for each image with bounding box annotations.
+        YOLO v5 format exports annotations with normalized coordinates, in the Ultralytics
+        dataset format that every YOLO version from v5 to YOLO26 reads: a data.yaml file and a
+        .txt file per image. It writes a dataset per task the project's jobs give:
+
+        - The bounding boxes' task, when the project has a bounding box job, by `bbox_as`:
+          Detect, the upright box around each; OBB, their four corners, so a rotated box keeps
+          its angle; or Segment, their four corners beside the polygons.
+        - Segment, a polygon per polygon and semantic segmentation part, when the project has a
+          polygon or semantic job.
+
+        With `layout="split"`, each job's folder is written for its own task: Segment for a job
+        with a polygon or semantic tool, its bounding boxes as polygons; the bounding boxes' task
+        otherwise. With `layout="merged"` and two tasks, each dataset goes in its own folder,
+        `detect/` or `obb/`, and `segment/`, beside the shared `images/`; with one task, at the
+        root of the archive. Points, lines, pose and classification are not exported.
 
         Args:
             project_id: Identifier of the project.
@@ -363,6 +383,9 @@ class ExportNamespace(DomainNamespace):
                 the exported data.
             layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
+            bbox_as: How the bounding boxes are written: `"box"`, the upright box around each, for
+                Detect; `"obb"`, their four corners, for OBB; `"polygon"`, their four corners, in
+                Segment.
             with_assets: Download the assets in the export.
             disable_tqdm: Disable the progress bar if True.
             filter: Optional dictionary to filter assets whose labels are exported.
@@ -397,6 +420,7 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels=include_sent_back_labels,
             label_type_in=label_type_in,
             layout=layout,
+            bbox_as=bbox_as,
             fmt="yolo_v5",
             export_type=export_type,
         )
@@ -412,12 +436,25 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
+        bbox_as: YoloBoundingBoxes = "box",
     ):
         """Export project labels in YOLO v7 format.
 
-        YOLO v7 format exports annotations with normalized coordinates suitable for
-        object detection tasks. The format creates a data.yaml file and individual
-        .txt files for each image with bounding box annotations.
+        YOLO v7 format exports annotations with normalized coordinates, in the Ultralytics
+        dataset format that every YOLO version from v5 to YOLO26 reads: a data.yaml file and a
+        .txt file per image. It writes a dataset per task the project's jobs give:
+
+        - The bounding boxes' task, when the project has a bounding box job, by `bbox_as`:
+          Detect, the upright box around each; OBB, their four corners, so a rotated box keeps
+          its angle; or Segment, their four corners beside the polygons.
+        - Segment, a polygon per polygon and semantic segmentation part, when the project has a
+          polygon or semantic job.
+
+        With `layout="split"`, each job's folder is written for its own task: Segment for a job
+        with a polygon or semantic tool, its bounding boxes as polygons; the bounding boxes' task
+        otherwise. With `layout="merged"` and two tasks, each dataset goes in its own folder,
+        `detect/` or `obb/`, and `segment/`, beside the shared `images/`; with one task, at the
+        root of the archive. Points, lines, pose and classification are not exported.
 
         Args:
             project_id: Identifier of the project.
@@ -425,6 +462,9 @@ class ExportNamespace(DomainNamespace):
                 the exported data.
             layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
+            bbox_as: How the bounding boxes are written: `"box"`, the upright box around each, for
+                Detect; `"obb"`, their four corners, for OBB; `"polygon"`, their four corners, in
+                Segment.
             with_assets: Download the assets in the export.
             disable_tqdm: Disable the progress bar if True.
             filter: Optional dictionary to filter assets whose labels are exported.
@@ -459,6 +499,7 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels=include_sent_back_labels,
             label_type_in=label_type_in,
             layout=layout,
+            bbox_as=bbox_as,
             fmt="yolo_v7",
             export_type=export_type,
         )
@@ -474,12 +515,25 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
+        bbox_as: YoloBoundingBoxes = "box",
     ):
         """Export project labels in YOLO v8 format.
 
-        YOLO v8 format exports annotations with normalized coordinates suitable for
-        object detection tasks. The format creates a data.yaml file and individual
-        .txt files for each image with bounding box annotations.
+        YOLO v8 format exports annotations with normalized coordinates, in the Ultralytics
+        dataset format that every YOLO version from v5 to YOLO26 reads: a data.yaml file and a
+        .txt file per image. It writes a dataset per task the project's jobs give:
+
+        - The bounding boxes' task, when the project has a bounding box job, by `bbox_as`:
+          Detect, the upright box around each; OBB, their four corners, so a rotated box keeps
+          its angle; or Segment, their four corners beside the polygons.
+        - Segment, a polygon per polygon and semantic segmentation part, when the project has a
+          polygon or semantic job.
+
+        With `layout="split"`, each job's folder is written for its own task: Segment for a job
+        with a polygon or semantic tool, its bounding boxes as polygons; the bounding boxes' task
+        otherwise. With `layout="merged"` and two tasks, each dataset goes in its own folder,
+        `detect/` or `obb/`, and `segment/`, beside the shared `images/`; with one task, at the
+        root of the archive. Points, lines, pose and classification are not exported.
 
         Args:
             project_id: Identifier of the project.
@@ -487,6 +541,9 @@ class ExportNamespace(DomainNamespace):
                 the exported data.
             layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
+            bbox_as: How the bounding boxes are written: `"box"`, the upright box around each, for
+                Detect; `"obb"`, their four corners, for OBB; `"polygon"`, their four corners, in
+                Segment.
             with_assets: Download the assets in the export.
             disable_tqdm: Disable the progress bar if True.
             filter: Optional dictionary to filter assets whose labels are exported.
@@ -521,6 +578,7 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels=include_sent_back_labels,
             label_type_in=label_type_in,
             layout=layout,
+            bbox_as=bbox_as,
             fmt="yolo_v8",
             export_type=export_type,
         )
@@ -540,7 +598,8 @@ class ExportNamespace(DomainNamespace):
 
         Pascal VOC format exports annotations in XML format with pixel coordinates,
         suitable for object detection tasks. Each image has a corresponding XML file
-        with bounding box annotations in the Pascal VOC XML schema.
+        with bounding box annotations in the Pascal VOC XML schema. Polygons and semantic
+        segmentations are not exported: Pascal VOC holds rectangles only.
 
         Args:
             project_id: Identifier of the project.
@@ -711,6 +770,7 @@ class ExportNamespace(DomainNamespace):
         single_file: bool = False,
         with_assets: Optional[bool] = True,
         export_type: Optional[ExportType] = None,
+        bbox_as: YoloBoundingBoxes = "box",
     ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export the project labels with the requested format into the requested output path.
 
@@ -740,6 +800,8 @@ class ExportNamespace(DomainNamespace):
                 whose type belongs to that list.
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that have been sent back.
+            bbox_as: (For YOLO v5, v7 and v8 only) how the bounding boxes are written: `"box"`,
+                for Detect; `"obb"`, for OBB; `"polygon"`, in Segment.
 
         Returns:
             Export information or None if export failed.
@@ -780,4 +842,5 @@ class ExportNamespace(DomainNamespace):
             label_type_in=list(label_type_in) if label_type_in else None,
             include_sent_back_labels=include_sent_back_labels,
             export_type=export_type,
+            bbox_as=bbox_as,
         )
