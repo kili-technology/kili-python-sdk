@@ -63,6 +63,22 @@ class TextDataImporter(BaseAbstractAssetImporter):
             return TextDataType.HOSTED_FILE
         return TextDataType.RAW_TEXT
 
+    @staticmethod
+    def check_file_extensions(assets: list[AssetLike], input_type: str) -> None:
+        """Validate the extensions of the contents that are URLs or local files.
+
+        Any other content is not read as a file (see `get_data_type`), so a dot in it is not an
+        extension.
+        """
+        not_raw_text = [
+            asset
+            for asset in assets
+            if not isinstance(content := asset.get("content"), str)
+            or is_url(content)
+            or os.path.exists(content)
+        ]
+        BaseAbstractAssetImporter.check_file_extensions(not_raw_text, input_type)
+
     def import_assets(self, assets: list[AssetLike], input_type: InputType):
         """Import TEXT assets into Kili."""
         self._check_upload_is_allowed(assets)
