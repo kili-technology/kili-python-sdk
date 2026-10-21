@@ -67,8 +67,8 @@ class TextDataImporter(BaseAbstractAssetImporter):
     def check_file_extensions(assets: list[AssetLike], input_type: str) -> None:
         """Validate the extensions of the contents that are URLs or local files.
 
-        A content that is neither is raw text, imported as is (see `get_data_type`): a dot in it
-        is punctuation, not an extension.
+        Any other content is not read as a file (see `get_data_type`), so a dot in it is not an
+        extension.
         """
         not_raw_text = [
             asset

@@ -9,6 +9,7 @@ from kili.core.graphql.operations.asset.mutations import GQL_APPEND_MANY_ASSETS
 from kili.domain.project import ProjectId
 from kili.services.asset_import import import_assets
 from kili.services.asset_import.exceptions import ImportValidationError
+from kili.utils.bucket import upload_data_via_rest
 from tests.unit.services.asset_import.base import ImportTestCase
 from tests.unit.services.asset_import.mocks import (
     mocked_request_signed_urls,
@@ -274,11 +275,14 @@ class TestFileExtensionValidation(ImportTestCase):
             "The total is 12.50 euros",
             "Invoice 42. Total due: 1 200 €",
             "Add 1/2 cup. Stir.\n",
+            "A single sentence.",  # suffix '.' on Python 3.14
             missing_file,  # no such file: raw text, as the TEXT importer reads it
         ]
         assets = [{"content": text, "external_id": f"text {i}"} for i, text in enumerate(texts)]
         with patch(
-            "kili.utils.bucket.upload_data_via_rest", side_effect=lambda url, *_: url
+            "kili.utils.bucket.upload_data_via_rest",
+            autospec=upload_data_via_rest,  # the real one: the class already patches this name
+            side_effect=lambda url, *_: url,
         ) as upload:
             import_assets(self.kili, ProjectId(self.project_id), assets)
         uploaded = sorted(call.args[1] for call in upload.call_args_list)
