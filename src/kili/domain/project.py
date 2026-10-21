@@ -44,7 +44,7 @@ class WorkflowStepCreate(TypedDict, total=False):
     type: Required[Literal["DEFAULT", "REVIEW"]]
     assignees: Required[list[str]]
     send_back_step_id: Optional[str]
-    # The group to create the step in, required on workflow V3 projects.
+    # The group to create the step in, required on multi-group workflow projects.
     step_group_id: Optional[str]
 
 

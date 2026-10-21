@@ -88,14 +88,14 @@ class ExportNamespace(DomainNamespace):
     def _get_optimal_export_type(self, workflow_version: Optional[str]) -> ExportType:
         """Determine the optimal export type based on project workflow configuration.
 
-        For non-multi-review projects (Workflow V1), uses "latest"
+        For legacy workflow projects, uses "latest"
         which queries the singular latestLabel field for better performance.
 
-        For multi-review projects (Workflow V2), uses "latest_from_last_step"
+        For multi-step and multi-group workflow projects, uses "latest_from_last_step"
         which queries the plural latestLabels field to support multiple annotators.
 
         Args:
-            workflow_version: The workflow version ("V1", "V2", or None)
+            workflow_version: The workflow version ("V1", "V2", "V3" or None)
 
         Returns:
             The optimal export type for this project
@@ -109,12 +109,12 @@ class ExportNamespace(DomainNamespace):
     ) -> None:
         """Validate that the export type is compatible with the project workflow.
 
-        Workflow V1 projects cannot use export types that rely on multi-step workflows:
-        - latest_from_last_step: Uses latestLabels field (V2 multi-review feature)
-        - latest_from_all_steps: Uses labels with isLastForStep (V2 multi-step feature)
+        Legacy workflow projects cannot use the export types of the multi-step and multi-group workflows:
+        - latest_from_last_step: Uses latestLabels field
+        - latest_from_all_steps: Uses labels with isLastForStep
 
         Args:
-            workflow_version: The workflow version ("V1", "V2", or None)
+            workflow_version: The workflow version ("V1", "V2", "V3" or None)
             export_type: The requested export type
 
         Raises:

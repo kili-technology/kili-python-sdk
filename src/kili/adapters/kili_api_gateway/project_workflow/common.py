@@ -27,7 +27,7 @@ def get_assignees_to_add_ids(existing_members: list[dict], assignees: list[str])
 
 
 def find_step_group_by_name(project: dict, group_name: str) -> dict:
-    """Find a step group of a workflow V3 project by its name."""
+    """Find a step group of a multi-group workflow project by its name."""
     if project.get("workflowVersion") != "V3":
         raise ValueError("group_name is only supported in the multi-group workflow")
     group = next(
@@ -47,7 +47,7 @@ def find_step_by_name(project: dict, step_name: str, group_name: Optional[str]) 
     """Find a workflow step by name, optionally scoped to a step group.
 
     When group_name is provided, the lookup is restricted to the named group and only supported
-    on workflow V3 projects. When group_name is None, the step name must be unique across all
+    on multi-group workflow projects. When group_name is None, the step name must be unique across all
     groups, otherwise the caller is asked to provide a group_name.
     """
     steps = project.get("steps") or []

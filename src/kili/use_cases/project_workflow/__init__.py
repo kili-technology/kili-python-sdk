@@ -214,7 +214,7 @@ class ProjectWorkflowUseCases(BaseUseCases):
         )
         enforce_step_separation: bool | None = source_project.get("enforceStepSeparation")
 
-        # 2. Validate destination project is workflow V2
+        # 2. Validate destination project uses the multi-step workflow
         self._validate_destination_is_workflow_v2(destination_project_id)
 
         # 3. Validate destination has no labels
@@ -326,7 +326,7 @@ class ProjectWorkflowUseCases(BaseUseCases):
             )
 
     def _validate_destination_is_workflow_v2(self, destination_project_id: ProjectId) -> None:
-        """Validate that the destination project uses workflow V2."""
+        """Validate that the destination project uses the multi-step workflow."""
         project = self._kili_api_gateway.get_project(
             project_id=destination_project_id, fields=["workflowVersion"]
         )

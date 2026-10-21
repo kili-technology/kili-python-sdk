@@ -49,6 +49,11 @@ repos:
         pass_filenames: true
         require_serial: true
         additional_dependencies: [click, nbconvert, pillow, urllib3]
+      - id: no-retired-workflow-names
+        name: Name the workflows legacy, multi-step or multi-group
+        language: pygrep
+        entry: '(?i)(workflow v[0-9]\b|multi-review workflow)'
+        files: ^(src/|docs/|README\.md$)
       - id: detect-kili-api-key
         name: Detect Kili API key
         language: python

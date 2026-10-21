@@ -76,7 +76,7 @@ def check_asset_workflow_arguments(
             )
         return
 
-    # project workflow v1
+    # legacy workflow project
     if has_step_id_filter:
         raise ValueError("Filters by step id given : use filter status_in for this project.")
     if step_name_in is not None or step_status_in is not None:
