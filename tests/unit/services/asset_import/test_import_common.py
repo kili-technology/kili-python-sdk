@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 from uuid import UUID
 
@@ -265,6 +266,31 @@ class TestFileExtensionValidation(ImportTestCase):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "TEXT"}
         assets = [{"content": "this is raw text with no extension", "external_id": "ok"}]
         import_assets(self.kili, ProjectId(self.project_id), assets)
+
+    def test_text_project_imports_raw_text_holding_dots_as_its_text(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "TEXT"}
+        missing_file = str(Path(self.test_dir) / "missing.md")  # never created
+        texts = [
+            "The total is 12.50 euros",
+            "Invoice 42. Total due: 1 200 €",
+            "Add 1/2 cup. Stir.\n",
+            missing_file,  # no such file: raw text, as the TEXT importer reads it
+        ]
+        assets = [{"content": text, "external_id": f"text {i}"} for i, text in enumerate(texts)]
+        with patch(
+            "kili.utils.bucket.upload_data_via_rest", side_effect=lambda url, *_: url
+        ) as upload:
+            import_assets(self.kili, ProjectId(self.project_id), assets)
+        uploaded = sorted(call.args[1] for call in upload.call_args_list)
+        assert uploaded == sorted(text.encode("utf-8") for text in texts)
+
+    def test_text_project_rejects_local_file_with_disallowed_extension(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "TEXT"}
+        path = Path(self.test_dir) / "notes.md"
+        path.write_text("a local markdown file", encoding="utf-8")
+        assets = [{"content": str(path), "external_id": "wrong"}]
+        with pytest.raises(ImportValidationError, match=r"\.md"):
+            import_assets(self.kili, ProjectId(self.project_id), assets)
 
     # --- LLM_RLHF ---
     def test_llm_project_rejects_non_json_extension(self, *_):

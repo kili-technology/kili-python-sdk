@@ -573,7 +573,8 @@ class BaseAbstractAssetImporter(abc.ABC):
     def check_file_extensions(assets: list[AssetLike], input_type: str) -> None:
         """Validate file extensions against allowed extensions for the given input type.
 
-        Skips validation when content has no extension (e.g. raw text, extensionless URLs).
+        Skips validation when content has no extension (e.g. extensionless URLs). Raw text is left
+        out by the TEXT importer before this check (`TextDataImporter.check_file_extensions`).
         Raises ImportValidationError on the first asset with a disallowed extension.
         """
         allowed = ALLOWED_EXTENSIONS_BY_INPUT_TYPE.get(input_type)
