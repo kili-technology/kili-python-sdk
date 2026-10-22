@@ -294,3 +294,51 @@ def test_list_organization_usage_by_project_asks_only_for_first_projects(
         LIST_ORGANIZATION_USAGE_BY_PROJECT_QUERY,
         {"where": {"metrics": ["LABELED_ASSETS"]}, "first": 2, "skip": 5},
     )
+
+
+def test_list_organization_usage_by_project_asks_the_last_page_for_what_first_leaves(
+    graphql_client: GraphQLClient,
+):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+    kili_api_gateway.graphql_client.execute.side_effect = [
+        _usage_page([f"project_{i}" for i in range(50)], 80),
+        _usage_page([f"project_{i}" for i in range(50, 60)], 80),
+    ]
+
+    # When
+    projects = list(
+        kili_api_gateway.list_organization_usage_by_project(
+            OrganizationUsageByProjectFilters(metrics=("LABELED_ASSETS",)),
+            QueryOptions(disable_tqdm=True, first=60),
+        )
+    )
+
+    # Then
+    assert len(projects) == 60
+    where = {"metrics": ["LABELED_ASSETS"]}
+    assert kili_api_gateway.graphql_client.execute.call_args_list == [
+        call(LIST_ORGANIZATION_USAGE_BY_PROJECT_QUERY, {"where": where, "first": 50, "skip": 0}),
+        call(LIST_ORGANIZATION_USAGE_BY_PROJECT_QUERY, {"where": where, "first": 10, "skip": 50}),
+    ]
+
+
+def test_list_organization_usage_by_project_asks_nothing_for_first_0(
+    graphql_client: GraphQLClient,
+):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+
+    # When
+    projects = list(
+        kili_api_gateway.list_organization_usage_by_project(
+            OrganizationUsageByProjectFilters(metrics=("LABELED_ASSETS",)),
+            QueryOptions(disable_tqdm=True, first=0),
+        )
+    )
+
+    # Then
+    assert projects == []
+    kili_api_gateway.graphql_client.execute.assert_not_called()

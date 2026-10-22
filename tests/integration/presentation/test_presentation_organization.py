@@ -1,3 +1,4 @@
+from collections.abc import Generator
 from datetime import datetime, timezone
 
 import pytest
@@ -211,3 +212,22 @@ def test_given_an_organization_when_I_call_organization_usage_by_project_it_list
         OrganizationUsageByProjectFilters(metrics=["LABELED_ASSETS"], search_query="shelves"),
         QueryOptions(disable_tqdm=True, first=10, skip=0),
     )
+
+
+def test_given_an_organization_when_I_ask_its_usage_by_project_as_a_generator_it_yields_them(
+    kili_client: Kili, mocker: MockerFixture
+):
+    # Given
+    projects = [{"projectId": "project_id", "metrics": []}]
+    mocker.patch.object(
+        OrganizationUseCases,
+        "list_organization_usage_by_project",
+        return_value=(project for project in projects),
+    )
+
+    # When
+    result = kili_client.organization_usage_by_project(as_generator=True, disable_tqdm=True)
+
+    # Then
+    assert isinstance(result, Generator)
+    assert list(result) == projects

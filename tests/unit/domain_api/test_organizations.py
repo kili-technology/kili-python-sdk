@@ -102,7 +102,6 @@ class TestOrganizationsNamespace:
                 "NUMBER_OF_ANNOTATIONS",
                 "ROOT_NUMBER_OF_ANNOTATIONS",
                 "LABELING_TIME",
-                "REVIEW_TIME",
             ),
             start_date=None,
             end_date=None,

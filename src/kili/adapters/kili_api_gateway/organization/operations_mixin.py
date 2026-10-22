@@ -118,6 +118,8 @@ class OrganizationOperationMixin(BaseOperationMixin):
                 projects = page["data"] or []
                 if pbar.total is None:
                     pbar.total = max(page["totalCount"] - options.skip, 0)
+                    if options.first is not None:
+                        pbar.total = min(pbar.total, options.first)
                 yield from projects
                 pbar.update(len(projects))
                 retrieved += len(projects)

@@ -9,6 +9,8 @@ from typing_extensions import deprecated
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.organization import (
+    USAGE_BY_PROJECT_METRICS,
+    USAGE_METRICS,
     MetricsGranularity,
     OrganizationFilters,
     OrganizationId,
@@ -29,15 +31,6 @@ from kili.utils.logcontext import for_all_methods, log_call
 ORGANIZATION_METRICS_DEPRECATION = (
     "organization_metrics is deprecated and will be removed: use organization_usage() instead,"
     " which counts as the Usage and license page of the app does."
-)
-
-# The metrics the Usage and license page totals
-USAGE_METRICS: tuple[OrganizationMetricName, ...] = (
-    "LABELED_ASSETS",
-    "NUMBER_OF_ANNOTATIONS",
-    "ROOT_NUMBER_OF_ANNOTATIONS",
-    "LABELING_TIME",
-    "REVIEW_TIME",
 )
 
 
@@ -213,17 +206,22 @@ class OrganizationClientMethods(BaseClientMethods):
             metrics: The metrics to return. Times (`LABELING_TIME`, `REVIEW_TIME`) are in seconds.
                 The page counts annotations with `ROOT_NUMBER_OF_ANNOTATIONS` when your licence
                 counts root annotations only, and with `NUMBER_OF_ANNOTATIONS` otherwise.
-            start_date: Start of the period. Defaults to the start of your licence. A naive
+            start_date: Start of the period, floored to its day in UTC. Defaults to the start of
+                your licence. A naive datetime is read as UTC.
+            end_date: End of the period. Defaults to now. Usage is kept per UTC day: the day
+                `end_date` falls in counts in full, unless `end_date` is its midnight. A naive
                 datetime is read as UTC.
-            end_date: End of the period, excluded. Defaults to now. A naive datetime is read as UTC.
-            granularity: Size of the buckets of `details`: `HOUR`, `DAY`, `WEEK`, `MONTH` or
-                `YEAR` (the default). The page uses `DAY` for a month and `MONTH` for a year.
+            granularity: Size of the buckets of `details`: `DAY`, `WEEK`, `MONTH` or `YEAR` (the
+                default); `HOUR` gives days too. The page uses `DAY` for a month and `MONTH` for a
+                year.
             project_id: Restrict the metrics to this project.
-            organization_id: Identifier of another organization: only Kili admins can set it.
+            organization_id: Identifier of the organization, yours by default. Only Kili admins
+                can name another, and the default start date still follows your own licence.
 
         Returns:
-            One dictionary per metric: `metric`, its `total` over the period, and its `details`,
-                one `{"timestamp", "value"}` per bucket and per project.
+            One dictionary per metric with usage over the period: `metric`, its `total`, and its
+                `details`, one `{"timestamp", "value"}` per bucket and per project. A metric with
+                no usage is absent: read it as 0.
 
         Examples:
             >>> from datetime import datetime
@@ -233,8 +231,8 @@ class OrganizationClientMethods(BaseClientMethods):
             ...     end_date=datetime(2026, 11, 1),
             ...     granularity="DAY",
             ... )
-            [{'metric': 'LABELED_ASSETS', 'total': 120.0, 'details': [...]},
-             {'metric': 'LABELING_TIME', 'total': 45000.0, 'details': [...]}]
+            [{'metric': 'LABELED_ASSETS', 'total': 120, 'details': [...]},
+             {'metric': 'LABELING_TIME', 'total': 45000, 'details': [...]}]
         """
         filters = OrganizationUsageFilters(
             metrics=metrics,
@@ -249,7 +247,7 @@ class OrganizationClientMethods(BaseClientMethods):
     @overload
     def organization_usage_by_project(
         self,
-        metrics: ListOrTuple[OrganizationMetricName] = USAGE_METRICS,
+        metrics: ListOrTuple[OrganizationMetricName] = USAGE_BY_PROJECT_METRICS,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         search_query: Optional[str] = None,
@@ -265,7 +263,7 @@ class OrganizationClientMethods(BaseClientMethods):
     @overload
     def organization_usage_by_project(
         self,
-        metrics: ListOrTuple[OrganizationMetricName] = USAGE_METRICS,
+        metrics: ListOrTuple[OrganizationMetricName] = USAGE_BY_PROJECT_METRICS,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         search_query: Optional[str] = None,
@@ -281,7 +279,7 @@ class OrganizationClientMethods(BaseClientMethods):
     @typechecked
     def organization_usage_by_project(
         self,
-        metrics: ListOrTuple[OrganizationMetricName] = USAGE_METRICS,
+        metrics: ListOrTuple[OrganizationMetricName] = USAGE_BY_PROJECT_METRICS,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         search_query: Optional[str] = None,
@@ -295,17 +293,22 @@ class OrganizationClientMethods(BaseClientMethods):
         """Get the usage metrics per project, as the Usage and license page lists them.
 
         Only organization admins can call it. Projects come busiest first, ranked by the annotation
-        metric your licence counts, which every project's `metrics` then include; a project with no
-        usage over the period is not listed.
+        metric your licence counts, which is added to the metrics asked for; a project with no usage
+        of these metrics over the period is not listed. Every page ranks the whole organization
+        again: on a large one, set `first` or narrow the period.
 
         Args:
             metrics: The metrics to total per project. Times (`LABELING_TIME`, `REVIEW_TIME`) are in
                 seconds.
-            start_date: Start of the period. Defaults to the start of your licence. A naive
+            start_date: Start of the period, floored to its day in UTC. Defaults to the start of
+                your licence. A naive datetime is read as UTC.
+            end_date: End of the period. Defaults to now. Usage is kept per UTC day: the day
+                `end_date` falls in counts in full, unless `end_date` is its midnight. A naive
                 datetime is read as UTC.
-            end_date: End of the period, excluded. Defaults to now. A naive datetime is read as UTC.
             search_query: Case-insensitive filter on the project title, description or id.
-            organization_id: Identifier of another organization: only Kili admins can set it.
+            organization_id: Identifier of the organization, yours by default. Only Kili admins
+                can name another, and the default start date and the ranking still follow your own
+                licence.
             first: Maximum number of projects to return.
             skip: Number of projects to skip, in rank order.
             disable_tqdm: If `True`, the progress bar will be disabled.
@@ -313,12 +316,12 @@ class OrganizationClientMethods(BaseClientMethods):
 
         Returns:
             An iterable of projects: `projectId`, `projectTitle`, `isDeleted`, and `metrics`, one
-                `{"metric", "total"}` per metric the project has usage for.
+                `{"metric", "total"}` per metric the project has usage for: a missing one is 0.
 
         Examples:
             >>> kili.organization_usage_by_project(metrics=["LABELED_ASSETS"], first=2)
             [{'projectId': 'clx…', 'projectTitle': 'Retail shelves', 'isDeleted': False,
-              'metrics': [{'metric': 'LABELED_ASSETS', 'total': 120.0}]}, ...]
+              'metrics': [{'metric': 'LABELED_ASSETS', 'total': 120}]}, ...]
         """
         disable_tqdm = resolve_disable_tqdm(disable_tqdm, getattr(self, "disable_tqdm", None))
         projects = OrganizationUseCases(self.kili_api_gateway).list_organization_usage_by_project(

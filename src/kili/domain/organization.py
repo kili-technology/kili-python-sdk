@@ -21,6 +21,23 @@ OrganizationMetricName = Literal[
 
 MetricsGranularity = Literal["HOUR", "DAY", "WEEK", "MONTH", "YEAR"]
 
+# The metrics the Usage and license page totals on its usage card
+USAGE_METRICS: tuple[OrganizationMetricName, ...] = (
+    "LABELED_ASSETS",
+    "NUMBER_OF_ANNOTATIONS",
+    "ROOT_NUMBER_OF_ANNOTATIONS",
+    "LABELING_TIME",
+    "REVIEW_TIME",
+)
+
+# The metrics its usage-by-project table totals, whichever annotation count the licence uses
+USAGE_BY_PROJECT_METRICS: tuple[OrganizationMetricName, ...] = (
+    "LABELED_ASSETS",
+    "NUMBER_OF_ANNOTATIONS",
+    "ROOT_NUMBER_OF_ANNOTATIONS",
+    "LABELING_TIME",
+)
+
 
 @dataclass(frozen=True)
 class OrganizationFilters:
