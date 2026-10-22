@@ -5,9 +5,9 @@ from datetime import datetime, timezone
 from typing import Literal, Optional, overload
 
 from typeguard import typechecked
+from typing_extensions import deprecated
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
-from kili.core.helpers import deprecate
 from kili.domain.organization import (
     OrganizationFilters,
     OrganizationId,
@@ -20,6 +20,11 @@ from kili.presentation.client.base import BaseClientMethods
 from kili.presentation.client.helpers.common_validators import resolve_disable_tqdm
 from kili.use_cases.organization.use_cases import OrganizationUseCases
 from kili.utils.logcontext import for_all_methods, log_call
+
+ORGANIZATION_METRICS_DEPRECATION = (
+    "organization_metrics is deprecated and will be removed: it counts differently from the"
+    " Usage and license page of the app, which is the reference for your consumption."
+)
 
 
 @for_all_methods(log_call, exclude=["__init__"])
@@ -176,12 +181,7 @@ class OrganizationClientMethods(BaseClientMethods):
         )
         return OrganizationUseCases(self.kili_api_gateway).count_organizations(where)
 
-    @deprecate(
-        msg=(
-            "organization_metrics is deprecated and will be removed: it counts differently from the"
-            " Usage and license page of the app, which is the reference for your consumption."
-        )
-    )
+    @deprecated(ORGANIZATION_METRICS_DEPRECATION)
     @typechecked
     def organization_metrics(
         self,

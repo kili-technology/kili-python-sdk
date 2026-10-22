@@ -1,5 +1,6 @@
 """Organizations domain namespace for the Kili Python SDK."""
 
+import re
 import warnings
 from collections.abc import Generator
 from datetime import datetime
@@ -11,6 +12,7 @@ from typing_extensions import deprecated
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
+from kili.presentation.client.organization import ORGANIZATION_METRICS_DEPRECATION
 
 
 class OrganizationsNamespace(DomainNamespace):
@@ -221,7 +223,9 @@ class OrganizationsNamespace(DomainNamespace):
         # The legacy method warns in its own terms, already said above
         with warnings.catch_warnings():
             warnings.filterwarnings(
-                "ignore", message="organization_metrics is deprecated", category=DeprecationWarning
+                "ignore",
+                message=re.escape(ORGANIZATION_METRICS_DEPRECATION),
+                category=DeprecationWarning,
             )
             return self._client.organization_metrics(
                 organization_id=organization_id,

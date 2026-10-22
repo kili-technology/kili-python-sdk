@@ -9,6 +9,7 @@ import pytest
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.client import Kili
 from kili.domain_api.organizations import OrganizationsNamespace
+from kili.presentation.client.organization import ORGANIZATION_METRICS_DEPRECATION
 
 
 class TestOrganizationsNamespace:
@@ -30,7 +31,7 @@ class TestOrganizationsNamespace:
         metrics = {"numberOfAnnotations": 18, "numberOfHours": 5, "numberOfLabeledAssets": 3}
 
         def legacy_organization_metrics(**_):
-            warnings.warn("organization_metrics is deprecated", DeprecationWarning, stacklevel=1)
+            warnings.warn(ORGANIZATION_METRICS_DEPRECATION, DeprecationWarning, stacklevel=1)
             return metrics
 
         mock_client.organization_metrics.side_effect = legacy_organization_metrics
