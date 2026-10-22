@@ -7,6 +7,7 @@ from typing import Literal, Optional, overload
 from typeguard import typechecked
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.core.helpers import deprecate
 from kili.domain.organization import (
     OrganizationFilters,
     OrganizationId,
@@ -175,6 +176,12 @@ class OrganizationClientMethods(BaseClientMethods):
         )
         return OrganizationUseCases(self.kili_api_gateway).count_organizations(where)
 
+    @deprecate(
+        msg=(
+            "organization_metrics is deprecated and will be removed: it counts differently from the"
+            " Usage and license page of the app, which is the reference for your consumption."
+        )
+    )
     @typechecked
     def organization_metrics(
         self,
@@ -188,6 +195,10 @@ class OrganizationClientMethods(BaseClientMethods):
         ),
     ) -> dict:
         """Get organization metrics.
+
+        !!! warning "Deprecated"
+            This method will be removed: it counts differently from the Usage and license page of
+            the app, which is the reference for your consumption. Only organization admins can call it.
 
         Args:
             organization_id: Identifier of the organization

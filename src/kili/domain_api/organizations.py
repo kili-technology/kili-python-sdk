@@ -1,5 +1,6 @@
 """Organizations domain namespace for the Kili Python SDK."""
 
+import warnings
 from collections.abc import Generator
 from datetime import datetime
 from typing import Optional
@@ -22,7 +23,7 @@ class OrganizationsNamespace(DomainNamespace):
     The namespace provides the following main operations:
     - list(): Query and list organizations
     - count(): Count organizations matching filters
-    - metrics(): Get organization-level analytics and metrics
+    - metrics(): Get organization-level analytics and metrics (deprecated)
 
     Examples:
         >>> kili = Kili()
@@ -158,6 +159,10 @@ class OrganizationsNamespace(DomainNamespace):
             as_generator=True,
         )
 
+    @deprecated(
+        "kili.organizations.metrics() is deprecated and will be removed: it counts differently from"
+        " the Usage and license page of the app, which is the reference for your consumption."
+    )
     @typechecked
     def metrics(
         self,
@@ -174,6 +179,10 @@ class OrganizationsNamespace(DomainNamespace):
 
         This method provides access to organization-level analytics including
         annotation counts, labeling hours, and labeled asset statistics.
+
+        !!! warning "Deprecated"
+            This method will be removed: it counts differently from the Usage and license page of
+            the app, which is the reference for your consumption. Only organization admins can call it.
 
         Args:
             organization_id: Identifier of the organization
@@ -209,9 +218,14 @@ class OrganizationsNamespace(DomainNamespace):
             >>> annotations_count = metrics["numberOfAnnotations"]
             >>> hours_spent = metrics["numberOfHours"]
         """
-        return self._client.organization_metrics(
-            organization_id=organization_id,
-            start_date=start_date,
-            end_date=end_date,
-            fields=fields,
-        )
+        # The legacy method warns in its own terms, already said above
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore", message="organization_metrics is deprecated", category=DeprecationWarning
+            )
+            return self._client.organization_metrics(
+                organization_id=organization_id,
+                start_date=start_date,
+                end_date=end_date,
+                fields=fields,
+            )

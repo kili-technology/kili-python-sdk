@@ -110,11 +110,12 @@ def test_given_organization_in_kili_when_I_call_organization_metrics_it_retrieve
     )
 
     # When
-    organization_metrics = kili_client.organization_metrics(
-        organization_id=organization_id,
-        start_date=datetime(2022, 1, 1, tzinfo=timezone.utc),
-        end_date=datetime(2022, 1, 5, tzinfo=timezone.utc),
-    )
+    with pytest.warns(DeprecationWarning, match="organization_metrics is deprecated"):
+        organization_metrics = kili_client.organization_metrics(
+            organization_id=organization_id,
+            start_date=datetime(2022, 1, 1, tzinfo=timezone.utc),
+            end_date=datetime(2022, 1, 5, tzinfo=timezone.utc),
+        )
 
     # Then
     assert organization_metrics == metrics
