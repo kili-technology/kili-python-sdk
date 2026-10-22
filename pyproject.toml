@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 
 [project]
 name = "kili"
-version = "26.2.2"
+version = "26.2.3"
 description = "Python client for Kili Technology labeling tool"
 readme = "README.md"
 authors = [{ name = "Kili Technology", email = "contact@kili-technology.com" }]
@@ -44,7 +44,7 @@ dependencies = [
   "pip-system-certs >= 4.0.0, < 5.0.0; platform_system=='Windows'",
   "pyrate-limiter >= 3, < 4",
   "kili-formats == 1.6.0",
-  "kili-events >= 26.2.1rc4, < 27"
+  "kili-events >= 26.2.1, < 27"
 ]
 urls = { homepage = "https://github.com/kili-technology/kili-python-sdk" }
 
