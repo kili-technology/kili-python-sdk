@@ -46,9 +46,9 @@ class TestOrganizationsNamespace:
 
         # Then
         assert [str(record.message) for record in records] == [
-            "kili.organizations.metrics() is deprecated and will be removed: it counts differently"
-            " from the Usage and license page of the app, which is the reference for your"
-            " consumption."
+            "kili.organizations.metrics() is deprecated and will be removed: use"
+            " kili.organizations.usage() instead, which counts as the Usage and license page of the"
+            " app does."
         ]
         assert result == metrics
         mock_client.organization_metrics.assert_called_once_with(
@@ -56,4 +56,60 @@ class TestOrganizationsNamespace:
             start_date=datetime(2022, 1, 1, tzinfo=timezone.utc),
             end_date=datetime(2022, 1, 5, tzinfo=timezone.utc),
             fields=("numberOfAnnotations", "numberOfHours", "numberOfLabeledAssets"),
+        )
+
+    def test_usage_calls_the_legacy_method(self, organizations_namespace, mock_client):
+        """Usage() passes its arguments to organization_usage()."""
+        # Given
+        mock_client.organization_usage.return_value = [{"metric": "LABELED_ASSETS", "total": 3.0}]
+
+        # When
+        result = organizations_namespace.usage(metrics=["LABELED_ASSETS"], granularity="MONTH")
+
+        # Then
+        assert result == [{"metric": "LABELED_ASSETS", "total": 3.0}]
+        mock_client.organization_usage.assert_called_once_with(
+            metrics=["LABELED_ASSETS"],
+            start_date=None,
+            end_date=None,
+            granularity="MONTH",
+            project_id=None,
+            organization_id=None,
+        )
+
+    @pytest.mark.parametrize(
+        ("method", "as_generator"),
+        [("usage_by_project", False), ("usage_by_project_as_generator", True)],
+    )
+    def test_usage_by_project_calls_the_legacy_method(
+        self, organizations_namespace, mock_client, method, as_generator
+    ):
+        """usage_by_project() and its generator pass their arguments to organization_usage_by_project()."""
+        # Given
+        projects = [{"projectId": "project_id"}]
+        mock_client.organization_usage_by_project.return_value = (
+            (project for project in projects) if as_generator else projects
+        )
+
+        # When
+        result = getattr(organizations_namespace, method)(search_query="shelves", first=5)
+
+        # Then
+        assert list(result) == projects
+        mock_client.organization_usage_by_project.assert_called_once_with(
+            metrics=(
+                "LABELED_ASSETS",
+                "NUMBER_OF_ANNOTATIONS",
+                "ROOT_NUMBER_OF_ANNOTATIONS",
+                "LABELING_TIME",
+                "REVIEW_TIME",
+            ),
+            start_date=None,
+            end_date=None,
+            search_query="shelves",
+            organization_id=None,
+            first=5,
+            skip=0,
+            disable_tqdm=None,
+            as_generator=as_generator,
         )

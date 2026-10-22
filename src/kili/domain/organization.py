@@ -2,9 +2,24 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import NewType, Optional
+from typing import Literal, NewType, Optional
+
+from kili.domain.project import ProjectId
+from kili.domain.types import ListOrTuple
 
 OrganizationId = NewType("OrganizationId", str)
+
+OrganizationMetricName = Literal[
+    "INTERACTIVE_SEGMENTATION",
+    "LABELED_ASSETS",
+    "LABELING_TIME",
+    "NUMBER_OF_ANNOTATIONS",
+    "REVIEW_TIME",
+    "ROOT_NUMBER_OF_ANNOTATIONS",
+    "VIDEO_TRACKING",
+]
+
+MetricsGranularity = Literal["HOUR", "DAY", "WEEK", "MONTH", "YEAR"]
 
 
 @dataclass(frozen=True)
@@ -22,6 +37,29 @@ class OrganizationMetricsFilters:
     id: OrganizationId
     start_datetime: datetime
     end_datetime: datetime
+
+
+@dataclass(frozen=True)
+class OrganizationUsageFilters:
+    """Filters of the usage metrics of an organization, as the Usage and license page reads them."""
+
+    metrics: ListOrTuple[OrganizationMetricName]
+    organization_id: Optional[OrganizationId] = None
+    project_id: Optional[ProjectId] = None
+    start_datetime: Optional[datetime] = None
+    end_datetime: Optional[datetime] = None
+    granularity: Optional[MetricsGranularity] = None
+
+
+@dataclass(frozen=True)
+class OrganizationUsageByProjectFilters:
+    """Filters of the usage metrics of an organization, totalled per project."""
+
+    metrics: ListOrTuple[OrganizationMetricName]
+    organization_id: Optional[OrganizationId] = None
+    start_datetime: Optional[datetime] = None
+    end_datetime: Optional[datetime] = None
+    search_query: Optional[str] = None
 
 
 @dataclass(frozen=True)
