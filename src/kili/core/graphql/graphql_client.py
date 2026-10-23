@@ -62,6 +62,7 @@ class _RequestsHTTPTransport(RequestsHTTPTransport):
         fails once the transport's retries ran out reaches the caller as the error of requests
         (ConnectionError, RetryError, ReadTimeout...), as with gql 3.
         """
+        error = None  # bound before the try: pylint cannot tell what err.__cause__ is otherwise
         try:
             return super().execute(*args, **kwargs)
         except exceptions.TransportConnectionFailed as err:
