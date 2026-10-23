@@ -198,6 +198,7 @@ class KiliRequestsHTTPTransport(RequestsHTTPTransport):
         a refused connection, which is safe to resend, from a read timeout, which is not, by the
         type of that error: it gets the error unwrapped, as gql 3 raised it.
         """
+        error = None  # bound before the try: pylint cannot tell what err.__cause__ is otherwise
         try:
             return super().execute(*args, **kwargs)
         except TransportConnectionFailed as err:
