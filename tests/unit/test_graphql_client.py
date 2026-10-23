@@ -3,16 +3,24 @@ from time import time
 
 import pytest
 import pytest_mock
-from gql import Client
+from gql import Client, gql
 from gql.transport import exceptions
 from graphql import ExecutionResult
 from pyrate_limiter import Duration, Rate
 from pyrate_limiter.limiter import Limiter
+from requests.adapters import HTTPAdapter
+from requests.exceptions import ConnectTimeout, ReadTimeout, RetryError
 
 from kili.adapters.http_client import HttpClient
 from kili.core.constants import MAX_CALLS_PER_MINUTE
-from kili.core.graphql.graphql_client import GraphQLClient, GraphQLClientName
+from kili.core.graphql.graphql_client import (
+    GraphQLClient,
+    GraphQLClientName,
+    _RequestsHTTPTransport,
+)
 from kili.exceptions import GraphQLError
+
+QUERY = "query { projects { id } }"
 
 
 def test_graphql_client_cache_cant_get_kili_version(mocker):
@@ -67,7 +75,6 @@ def test_skip_checks_disable_local_validation(mocker: pytest_mock.MockerFixture)
 
 def test_rate_limiting(mocker: pytest_mock.MockerFixture):
     mocker.patch("kili.core.graphql.graphql_client.GraphQLClient._get_kili_app_version")
-    mocker.patch("kili.core.graphql.graphql_client.gql", side_effect=lambda x: x)
     mocker.patch(
         "kili.core.graphql.graphql_client._limiter",
         new=Limiter(Rate(MAX_CALLS_PER_MINUTE, Duration.SECOND * 5), max_delay=120 * 1000),
@@ -97,10 +104,10 @@ def test_rate_limiting(mocker: pytest_mock.MockerFixture):
 
     # first calls should not be rate limited
     for _ in range(MAX_CALLS_PER_MINUTE):
-        client.execute(query="")
+        client.execute(query=QUERY)
 
     # next calls should be rate limited
-    client.execute(query="")
+    client.execute(query=QUERY)
 
     # at least 1 second delay for the last call
     assert last_call_timestamp - before_last_call_timestamp > 1
@@ -109,8 +116,6 @@ def test_rate_limiting(mocker: pytest_mock.MockerFixture):
 def test_given_gql_client_when_the_server_refuses_wrong_query_then_it_does_no_retry(
     mocker: pytest_mock.MockerFixture,
 ):
-    mocker.patch("kili.core.graphql.graphql_client.gql", side_effect=lambda x: x)
-
     nb_times_called = 0
 
     def mocked_backend_response(*args, **kwargs):
@@ -149,7 +154,7 @@ def test_given_gql_client_when_the_server_refuses_wrong_query_then_it_does_no_re
     with pytest.raises(
         GraphQLError, match=r'Variable "(\$\w+)" of required type "(\w+!)" was not provided.'
     ):
-        client.execute(query="fake_query")  # When
+        client.execute(query=QUERY)  # When
 
     assert mocked_execute.call_count == nb_times_called == 1
 
@@ -157,8 +162,6 @@ def test_given_gql_client_when_the_server_refuses_wrong_query_then_it_does_no_re
 def test_given_gql_client_when_the_server_returns_flagsmith_error_then_it_retries(
     mocker: pytest_mock.MockerFixture,
 ):
-    mocker.patch("kili.core.graphql.graphql_client.gql", side_effect=lambda x: x)
-
     nb_times_called = 0
 
     def mocked_backend_response(*args, **kwargs):
@@ -224,7 +227,7 @@ def test_given_gql_client_when_the_server_returns_flagsmith_error_then_it_retrie
     )
 
     # When
-    result = client.execute(query="fake_query")
+    result = client.execute(query=QUERY)
 
     # Then
     assert result["data"] == "all good"
@@ -301,3 +304,29 @@ def test_given_variables_when_i_remove_null_values_then_it_works(variables: dict
 
     # Then
     assert output == expected
+
+
+@pytest.mark.parametrize("error", [ConnectTimeout(), ReadTimeout(), RetryError()])
+def test_transport_raises_the_error_of_requests_that_gql_wraps(
+    mocker: pytest_mock.MockerFixture, error: Exception
+):
+    # gql 3 let these through: callers catching them must keep catching them
+    mocker.patch.object(HTTPAdapter, "send", side_effect=error)
+    transport = _RequestsHTTPTransport(url="https://kili/graphql")
+    transport.connect()
+
+    with pytest.raises(type(error)) as raised:
+        transport.execute(gql(QUERY))
+
+    assert raised.value is error
+
+
+def test_transport_keeps_a_wrapped_error_that_is_not_one_of_requests(
+    mocker: pytest_mock.MockerFixture,
+):
+    mocker.patch.object(HTTPAdapter, "send", side_effect=RuntimeError("boom"))
+    transport = _RequestsHTTPTransport(url="https://kili/graphql")
+    transport.connect()
+
+    with pytest.raises(exceptions.TransportConnectionFailed):
+        transport.execute(gql(QUERY))

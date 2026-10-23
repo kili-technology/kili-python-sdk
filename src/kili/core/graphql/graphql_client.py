@@ -11,13 +11,14 @@ from urllib.parse import urlparse
 
 import graphql
 from filelock import FileLock
-from gql import Client, gql
+from gql import Client, GraphQLRequest
 from gql.transport import exceptions
 from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.requests import log as gql_requests_logger
-from graphql import DocumentNode, print_schema
+from graphql import DocumentNode, ExecutionResult, print_schema
 from pyrate_limiter import Duration, Rate
 from pyrate_limiter.limiter import Limiter
+from requests.exceptions import RequestException
 from tenacity import (
     retry,
     retry_all,
@@ -49,6 +50,25 @@ _limiter = Limiter(Rate(MAX_CALLS_PER_MINUTE, Duration.MINUTE), max_delay=120 * 
 _execute_lock = threading.Lock()
 
 DEFAULT_GRAPHQL_SCHEMA_CACHE_DIR = Path.home() / ".cache" / "kili" / "graphql"
+
+
+class _RequestsHTTPTransport(RequestsHTTPTransport):
+    """The requests transport of gql, raising the errors of requests as gql 3 did."""
+
+    def execute(self, *args: Any, **kwargs: Any) -> ExecutionResult:
+        """Send the request, raising the error of requests itself when it fails to.
+
+        gql 4 wraps every error of requests in TransportConnectionFailed. A request that still
+        fails once the transport's retries ran out reaches the caller as the error of requests
+        (ConnectionError, RetryError, ReadTimeout...), as with gql 3.
+        """
+        try:
+            return super().execute(*args, **kwargs)
+        except exceptions.TransportConnectionFailed as err:
+            if not isinstance(err.__cause__, RequestException):
+                raise
+            error = err.__cause__
+        raise error  # out of the except block: the error keeps its own context
 
 
 # pylint: disable=too-many-instance-attributes, too-few-public-methods
@@ -91,7 +111,7 @@ class GraphQLClient:
 
         self.ws_endpoint = self.endpoint.replace("http", "ws")
 
-        self._gql_transport = RequestsHTTPTransport(
+        self._gql_transport = _RequestsHTTPTransport(
             url=endpoint,
             headers=self._get_headers(),
             timeout=60,
@@ -259,15 +279,16 @@ class GraphQLClient:
             variables: the payload of the query
             kwargs: additional arguments to pass to the GraphQL client
         """
-        document = query if isinstance(query, DocumentNode) else gql(query)
-        variables = self._remove_nullable_inputs(variables) if variables else None
+        request = GraphQLRequest(
+            query, variable_values=self._remove_nullable_inputs(variables) if variables else None
+        )
 
         should_retry = kwargs.pop("retry", True)
 
         try:
             if should_retry:
-                return self._execute_with_retries(document, variables, **kwargs)
-            return self._raw_execute(document, variables, **kwargs)
+                return self._execute_with_retries(request, **kwargs)
+            return self._raw_execute(request, **kwargs)
 
         except graphql.GraphQLError:  # local validation error
             # the local schema might be outdated
@@ -275,7 +296,7 @@ class GraphQLClient:
             self._purge_graphql_schema_cache_dir()
             self._gql_client = self._initizalize_graphql_client()
             try:
-                return self._execute_with_retries(document, variables, **kwargs)
+                return self._execute_with_retries(request, **kwargs)
 
             except graphql.GraphQLError as err:
                 # even after updating the schema, the query is invalid , we crash
@@ -311,21 +332,16 @@ class GraphQLClient:
         stop=stop_after_delay(3 * 60),
         wait=wait_exponential(multiplier=0.5, min=1, max=10),
     )
-    def _execute_with_retries(
-        self, document: DocumentNode, variables: Optional[dict], **kwargs
-    ) -> dict[str, Any]:
-        return self._raw_execute(document, variables, **kwargs)
+    def _execute_with_retries(self, request: GraphQLRequest, **kwargs) -> dict[str, Any]:
+        return self._raw_execute(request, **kwargs)
 
-    def _raw_execute(
-        self, document: DocumentNode, variables: Optional[dict], **kwargs
-    ) -> dict[str, Any]:
+    def _raw_execute(self, request: GraphQLRequest, **kwargs) -> dict[str, Any]:
         _limiter.try_acquire("GraphQLClient.execute")
         log_context = LogContext()
         log_context.set_client_name(self.client_name)
         with _execute_lock:
             res = self._gql_client.execute(
-                document=document,
-                variable_values=variables,
+                request,
                 get_execution_result=True,
                 extra_args={
                     "headers": {
