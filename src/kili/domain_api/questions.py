@@ -31,11 +31,17 @@ class QuestionFilter(TypedDict, total=False):
         asset_id: Id of the asset whose returned questions are associated to.
         asset_id_in: List of Ids of assets whose returned questions are associated to.
         status: Status of the questions to return (e.g., 'OPEN', 'SOLVED', 'CANCELLED').
+        step_id_in: Ids of the steps the returned questions were raised in.
+        step_name_in: Names of the project's current steps the returned questions were raised in, on a
+            project with the multi-step or multi-group workflow; a step removed from the workflow is
+            filtered by its id, with `step_id_in`. Exclusive with `step_id_in`.
     """
 
     asset_id: Optional[str]
     asset_id_in: Optional[list[str]]
     status: Optional[IssueStatus]
+    step_id_in: Optional[list[str]]
+    step_name_in: Optional[list[str]]
 
 
 class QuestionsNamespace(DomainNamespace):
