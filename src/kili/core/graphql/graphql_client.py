@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 
 import graphql
 from filelock import FileLock
-from gql import Client, gql
+from gql import Client, GraphQLRequest
 from gql.transport import exceptions
 from gql.transport.requests import log as gql_requests_logger
 from graphql import DocumentNode, print_schema
@@ -343,13 +343,14 @@ class GraphQLClient:
             variables: the payload of the query
             kwargs: additional arguments to pass to the GraphQL client
         """
-        document = query if isinstance(query, DocumentNode) else gql(query)
-        variables = self._remove_nullable_inputs(variables) if variables else None
+        request = GraphQLRequest(
+            query, variable_values=self._remove_nullable_inputs(variables) if variables else None
+        )
 
         with_retries = kwargs.pop("retry", True)
 
         try:
-            return self._execute_with_retries(document, variables, with_retries, **kwargs)
+            return self._execute_with_retries(request, with_retries, **kwargs)
 
         except graphql.GraphQLError:  # local validation error
             # the local schema might be outdated
@@ -357,7 +358,7 @@ class GraphQLClient:
             self._purge_graphql_schema_cache_dir()
             self._gql_client = self._initizalize_graphql_client()
             try:
-                return self._execute_with_retries(document, variables, with_retries, **kwargs)
+                return self._execute_with_retries(request, with_retries, **kwargs)
 
             except graphql.GraphQLError as err:
                 # even after updating the schema, the query is invalid , we crash
@@ -372,15 +373,13 @@ class GraphQLClient:
             raise kili.exceptions.GraphQLError(error=err.errors, context=context) from err
 
     def _execute_with_retries(
-        self, document: DocumentNode, variables: Optional[dict], with_retries: bool, **kwargs
+        self, request: GraphQLRequest, with_retries: bool, **kwargs
     ) -> dict[str, Any]:
-        mutation = is_mutation(document)
-        name = operation_name(document)
+        mutation = is_mutation(request.document)
+        name = operation_name(request.document)
         self._local.page_overload_recorded = False  # the page budget shrinks once per operation
         try:
-            return self._run(
-                name, mutation, with_retries, self._raw_execute, document, variables, **kwargs
-            )
+            return self._run(name, mutation, with_retries, self._raw_execute, request, **kwargs)
         except Exception as err:
             if mutation and classify(err) is Outcome.UNKNOWN:
                 raise kili.exceptions.MutationOutcomeUnknownError(name, err) from err
@@ -400,8 +399,7 @@ class GraphQLClient:
 
     def _account(
         self,
-        document: DocumentNode,
-        variables: Optional[dict],
+        request: GraphQLRequest,
         exchange: Optional[Exchange],
         error: Optional[BaseException],
     ) -> None:
@@ -413,6 +411,7 @@ class GraphQLClient:
         self._local.last_response_bytes = exchange.response_bytes if exchange else None
         if exchange is None:
             return
+        document, variables = request.document, request.variable_values
         if is_mutation(document):
             if error is None:
                 if exchange.succeeded:
@@ -436,9 +435,7 @@ class GraphQLClient:
             query_page_sizer.record_failure(query, (variables or {})["first"])
             self._local.page_overload_recorded = True
 
-    def _raw_execute(
-        self, document: DocumentNode, variables: Optional[dict], **kwargs
-    ) -> dict[str, Any]:
+    def _raw_execute(self, request: GraphQLRequest, **kwargs) -> dict[str, Any]:
         _limiter.try_acquire("GraphQLClient.execute")
         log_context = LogContext()
         log_context.set_client_name(self.client_name)
@@ -447,8 +444,7 @@ class GraphQLClient:
             error: Optional[BaseException] = None
             try:
                 res = self._gql_client.execute(
-                    document=document,
-                    variable_values=variables,
+                    request,
                     get_execution_result=True,
                     extra_args={
                         "headers": {
@@ -462,7 +458,7 @@ class GraphQLClient:
                 error = err
                 raise
             finally:
-                self._account(document, variables, self._gql_transport.adapter.last_exchange, error)
+                self._account(request, self._gql_transport.adapter.last_exchange, error)
 
             extensions = getattr(res, "extensions", None)
             if isinstance(extensions, dict):
