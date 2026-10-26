@@ -234,9 +234,11 @@ class IssueClientMethods(BaseClientMethods):
                 Exclusive with `step_id_in`.
             fields: All the fields to request among the possible fields for the assets.
                 See [the documentation](https://api-docs.kili-technology.com/types/objects/issue) for all possible fields.
-                `stepId` and `step.name` give the step an issue was raised in, `labelId` and
-                `label.id` the label it was raised on: both are null for issues created before
-                they were recorded.
+                `stepId` and `step.name` give the step an issue was raised in: null when its
+                asset had finished its workflow, off a multi-step or multi-group workflow, and for
+                an issue created before steps were recorded. `labelId` and `label.id` give the
+                label it was raised on: null for a question, for an issue created before labels
+                were recorded, and once the label is deleted.
             first: Maximum number of issues to return.
             skip: Number of issues to skip (they are ordered by their date of creation, first to last).
             disable_tqdm: If `True`, the progress bar will be disabled
