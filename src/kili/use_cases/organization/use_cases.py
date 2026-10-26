@@ -6,9 +6,12 @@ from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.organization import (
     OrganizationFilters,
     OrganizationId,
+    OrganizationMetricName,
     OrganizationMetricsFilters,
     OrganizationToCreateInput,
     OrganizationToUpdateInput,
+    OrganizationUsageByProjectFilters,
+    OrganizationUsageFilters,
 )
 from kili.domain.types import ListOrTuple
 from kili.use_cases.base import BaseUseCases
@@ -54,3 +57,24 @@ class OrganizationUseCases(BaseUseCases):
     ) -> dict:
         """Get organization metrics."""
         return self._kili_api_gateway.get_organization_metrics(filters=where, fields=fields)
+
+    def get_organization_usage(self, where: OrganizationUsageFilters) -> list[dict]:
+        """Get the usage metrics of an organization."""
+        _check_some_metric(where.metrics)
+        return self._kili_api_gateway.get_organization_usage(filters=where)
+
+    def list_organization_usage_by_project(
+        self, where: OrganizationUsageByProjectFilters, options: QueryOptions
+    ) -> Generator[dict, None, None]:
+        """List the usage metrics of an organization, totalled per project."""
+        _check_some_metric(where.metrics)
+        return self._kili_api_gateway.list_organization_usage_by_project(
+            filters=where, options=options
+        )
+
+
+def _check_some_metric(metrics: ListOrTuple[OrganizationMetricName]) -> None:
+    if not metrics:
+        raise ValueError(
+            "No metric to read: give at least one in `metrics`, for example ('LABELED_ASSETS',)."
+        )

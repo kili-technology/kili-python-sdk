@@ -1,15 +1,24 @@
 """Organizations domain namespace for the Kili Python SDK."""
 
+import re
+import warnings
 from collections.abc import Generator
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from typeguard import typechecked
 from typing_extensions import deprecated
 
+from kili.domain.organization import (
+    USAGE_BY_PROJECT_METRICS,
+    USAGE_METRICS,
+    MetricsGranularity,
+    OrganizationMetricName,
+)
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
+from kili.presentation.client.organization import ORGANIZATION_METRICS_DEPRECATION
 
 
 class OrganizationsNamespace(DomainNamespace):
@@ -22,7 +31,9 @@ class OrganizationsNamespace(DomainNamespace):
     The namespace provides the following main operations:
     - list(): Query and list organizations
     - count(): Count organizations matching filters
-    - metrics(): Get organization-level analytics and metrics
+    - usage(): Get the usage metrics the Usage and license page shows
+    - usage_by_project(): Get them per project
+    - metrics(): Get organization-level analytics and metrics (deprecated)
 
     Examples:
         >>> kili = Kili()
@@ -159,6 +170,149 @@ class OrganizationsNamespace(DomainNamespace):
         )
 
     @typechecked
+    def usage(
+        self,
+        metrics: ListOrTuple[OrganizationMetricName] = USAGE_METRICS,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        granularity: Optional[MetricsGranularity] = None,
+        project_id: Optional[str] = None,
+        organization_id: Optional[str] = None,
+    ) -> List[dict]:
+        """Get the usage metrics of your organization, as the Usage and license page shows them.
+
+        Only organization admins can call it.
+
+        Args:
+            metrics: The metrics to return. Times (`LABELING_TIME`, `REVIEW_TIME`) are in seconds.
+                The page counts annotations with `ROOT_NUMBER_OF_ANNOTATIONS` when your licence
+                counts root annotations only, and with `NUMBER_OF_ANNOTATIONS` otherwise.
+            start_date: Start of the period, floored to its day in UTC. Defaults to the start of
+                your licence. A naive datetime is read as UTC.
+            end_date: End of the period. Defaults to now. Usage is kept per UTC day: the day
+                `end_date` falls in counts in full, unless `end_date` is its midnight. A naive
+                datetime is read as UTC.
+            granularity: Size of the buckets of `details`: `DAY`, `WEEK`, `MONTH` or `YEAR` (the
+                default); `HOUR` gives days too. The page uses `DAY` for a month and `MONTH` for a
+                year.
+            project_id: Restrict the metrics to this project.
+            organization_id: Identifier of the organization, yours by default. Only Kili admins
+                can name another, and the default start date still follows your own licence.
+
+        Returns:
+            One dictionary per metric with usage over the period: `metric`, its `total`, and its
+                `details`, one `{"timestamp", "value"}` per bucket and per project. A metric with
+                no usage is absent: read it as 0.
+
+        Examples:
+            >>> from datetime import datetime
+            >>> kili.organizations.usage(
+            ...     metrics=["LABELED_ASSETS", "LABELING_TIME"],
+            ...     start_date=datetime(2026, 10, 1),
+            ...     end_date=datetime(2026, 11, 1),
+            ...     granularity="DAY",
+            ... )
+        """
+        return self._client.organization_usage(
+            metrics=metrics,
+            start_date=start_date,
+            end_date=end_date,
+            granularity=granularity,
+            project_id=project_id,
+            organization_id=organization_id,
+        )
+
+    @typechecked
+    def usage_by_project(
+        self,
+        metrics: ListOrTuple[OrganizationMetricName] = USAGE_BY_PROJECT_METRICS,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        search_query: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: Optional[bool] = None,
+    ) -> List[dict]:
+        """Get the usage metrics per project, as the Usage and license page lists them.
+
+        Only organization admins can call it. Projects come busiest first, ranked by the annotation
+        metric your licence counts, which is added to the metrics asked for; a project with no usage
+        of these metrics over the period is not listed. Every page ranks the whole organization
+        again: on a large one, set `first` or narrow the period.
+
+        Args:
+            metrics: The metrics to total per project. Times (`LABELING_TIME`, `REVIEW_TIME`) are in
+                seconds.
+            start_date: Start of the period, floored to its day in UTC. Defaults to the start of
+                your licence. A naive datetime is read as UTC.
+            end_date: End of the period. Defaults to now. Usage is kept per UTC day: the day
+                `end_date` falls in counts in full, unless `end_date` is its midnight. A naive
+                datetime is read as UTC.
+            search_query: Case-insensitive filter on the project title, description or id.
+            organization_id: Identifier of the organization, yours by default. Only Kili admins
+                can name another, and the default start date and the ranking still follow your own
+                licence.
+            first: Maximum number of projects to return.
+            skip: Number of projects to skip, in rank order.
+            disable_tqdm: If True, the progress bar will be disabled.
+
+        Returns:
+            A list of projects: `projectId`, `projectTitle`, `isDeleted`, and `metrics`, one
+                `{"metric", "total"}` per metric the project has usage for: a missing one is 0.
+
+        Examples:
+            >>> kili.organizations.usage_by_project(metrics=["LABELED_ASSETS"], first=2)
+        """
+        return self._client.organization_usage_by_project(
+            metrics=metrics,
+            start_date=start_date,
+            end_date=end_date,
+            search_query=search_query,
+            organization_id=organization_id,
+            first=first,
+            skip=skip,
+            disable_tqdm=disable_tqdm,
+            as_generator=False,
+        )
+
+    @typechecked
+    def usage_by_project_as_generator(
+        self,
+        metrics: ListOrTuple[OrganizationMetricName] = USAGE_BY_PROJECT_METRICS,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        search_query: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        first: Optional[int] = None,
+        skip: int = 0,
+        disable_tqdm: Optional[bool] = None,
+    ) -> Generator[dict, None, None]:
+        """Get a generator of the usage metrics per project.
+
+        See `usage_by_project()` for the arguments and what each project holds.
+
+        Returns:
+            A generator yielding projects.
+        """
+        return self._client.organization_usage_by_project(
+            metrics=metrics,
+            start_date=start_date,
+            end_date=end_date,
+            search_query=search_query,
+            organization_id=organization_id,
+            first=first,
+            skip=skip,
+            disable_tqdm=disable_tqdm,
+            as_generator=True,
+        )
+
+    @deprecated(
+        "kili.organizations.metrics() is deprecated and will be removed: use"
+        " kili.organizations.usage() instead, which counts as the Usage and license page of the"
+        " app does."
+    )
+    @typechecked
     def metrics(
         self,
         organization_id: str,
@@ -174,6 +328,10 @@ class OrganizationsNamespace(DomainNamespace):
 
         This method provides access to organization-level analytics including
         annotation counts, labeling hours, and labeled asset statistics.
+
+        !!! warning "Deprecated"
+            This method will be removed: use `kili.organizations.usage()` instead, which counts as
+            the Usage and license page of the app does. Only organization admins can call it.
 
         Args:
             organization_id: Identifier of the organization
@@ -209,9 +367,16 @@ class OrganizationsNamespace(DomainNamespace):
             >>> annotations_count = metrics["numberOfAnnotations"]
             >>> hours_spent = metrics["numberOfHours"]
         """
-        return self._client.organization_metrics(
-            organization_id=organization_id,
-            start_date=start_date,
-            end_date=end_date,
-            fields=fields,
-        )
+        # The legacy method warns in its own terms, already said above
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore",
+                message=re.escape(ORGANIZATION_METRICS_DEPRECATION),
+                category=DeprecationWarning,
+            )
+            return self._client.organization_metrics(
+                organization_id=organization_id,
+                start_date=start_date,
+                end_date=end_date,
+                fields=fields,
+            )

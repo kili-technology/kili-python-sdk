@@ -1,6 +1,11 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from unittest.mock import call
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
+from kili.adapters.kili_api_gateway.organization.operations import (
+    GET_ORGANIZATION_USAGE_QUERY,
+    LIST_ORGANIZATION_USAGE_BY_PROJECT_QUERY,
+)
 from kili.adapters.kili_api_gateway.organization.operations_mixin import (
     OrganizationOperationMixin,
 )
@@ -11,7 +16,10 @@ from kili.domain.organization import (
     OrganizationMetricsFilters,
     OrganizationToCreateInput,
     OrganizationToUpdateInput,
+    OrganizationUsageByProjectFilters,
+    OrganizationUsageFilters,
 )
+from kili.domain.project import ProjectId
 
 
 def test_create_organization(graphql_client):
@@ -158,3 +166,179 @@ def test_update_organization(graphql_client: GraphQLClient):
         {"where": {"id": "fake_organization_id"}, "data": {"name": "new_name"}},
     )
     assert organization["name"] == "new_name"
+
+
+def test_get_organization_usage_sends_the_period_in_utc(graphql_client: GraphQLClient):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+    usage = [{"metric": "LABELED_ASSETS", "total": 3.0, "details": []}]
+    kili_api_gateway.graphql_client.execute.return_value = {"data": usage}
+
+    # When
+    result = kili_api_gateway.get_organization_usage(
+        OrganizationUsageFilters(
+            metrics=("LABELED_ASSETS", "LABELING_TIME"),
+            project_id=ProjectId("project_id"),
+            start_datetime=datetime(2026, 10, 1),
+            end_datetime=datetime(2026, 11, 1, 2, tzinfo=timezone(timedelta(hours=2))),
+            granularity="DAY",
+        )
+    )
+
+    # Then
+    assert result == usage
+    kili_api_gateway.graphql_client.execute.assert_called_once_with(
+        GET_ORGANIZATION_USAGE_QUERY,
+        {
+            "where": {
+                "metrics": ["LABELED_ASSETS", "LABELING_TIME"],
+                "projectId": "project_id",
+                "startDate": "2026-10-01T00:00:00+00:00",
+                "endDate": "2026-11-01T00:00:00+00:00",
+                "granularity": "DAY",
+            }
+        },
+    )
+
+
+def test_get_organization_usage_reads_a_null_answer_as_no_metric(graphql_client: GraphQLClient):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+    kili_api_gateway.graphql_client.execute.return_value = {"data": None}
+
+    # When
+    result = kili_api_gateway.get_organization_usage(
+        OrganizationUsageFilters(metrics=("LABELED_ASSETS",))
+    )
+
+    # Then
+    assert result == []
+    kili_api_gateway.graphql_client.execute.assert_called_once_with(
+        GET_ORGANIZATION_USAGE_QUERY, {"where": {"metrics": ["LABELED_ASSETS"]}}
+    )
+
+
+def _usage_page(project_ids: list[str], total_count: int) -> dict:
+    return {
+        "data": {
+            "data": [
+                {
+                    "projectId": project_id,
+                    "projectTitle": project_id,
+                    "isDeleted": False,
+                    "metrics": [{"metric": "LABELED_ASSETS", "total": 1.0}],
+                }
+                for project_id in project_ids
+            ],
+            "totalCount": total_count,
+        }
+    }
+
+
+def test_list_organization_usage_by_project_pages_until_the_total_count(
+    graphql_client: GraphQLClient,
+):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+    first_page = [f"project_{i}" for i in range(50)]
+    kili_api_gateway.graphql_client.execute.side_effect = [
+        _usage_page(first_page, 52),
+        _usage_page(["project_50", "project_51"], 52),
+    ]
+    filters = OrganizationUsageByProjectFilters(metrics=("LABELED_ASSETS",), search_query="shelves")
+
+    # When
+    projects = list(
+        kili_api_gateway.list_organization_usage_by_project(
+            filters, QueryOptions(disable_tqdm=True)
+        )
+    )
+
+    # Then
+    assert [project["projectId"] for project in projects] == [
+        *first_page,
+        "project_50",
+        "project_51",
+    ]
+    where = {"metrics": ["LABELED_ASSETS"], "searchQuery": "shelves"}
+    assert kili_api_gateway.graphql_client.execute.call_args_list == [
+        call(LIST_ORGANIZATION_USAGE_BY_PROJECT_QUERY, {"where": where, "first": 50, "skip": 0}),
+        call(LIST_ORGANIZATION_USAGE_BY_PROJECT_QUERY, {"where": where, "first": 50, "skip": 50}),
+    ]
+
+
+def test_list_organization_usage_by_project_asks_only_for_first_projects(
+    graphql_client: GraphQLClient,
+):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+    kili_api_gateway.graphql_client.execute.return_value = _usage_page(
+        ["project_5", "project_6"], 52
+    )
+
+    # When
+    projects = list(
+        kili_api_gateway.list_organization_usage_by_project(
+            OrganizationUsageByProjectFilters(metrics=("LABELED_ASSETS",)),
+            QueryOptions(disable_tqdm=True, first=2, skip=5),
+        )
+    )
+
+    # Then
+    assert [project["projectId"] for project in projects] == ["project_5", "project_6"]
+    kili_api_gateway.graphql_client.execute.assert_called_once_with(
+        LIST_ORGANIZATION_USAGE_BY_PROJECT_QUERY,
+        {"where": {"metrics": ["LABELED_ASSETS"]}, "first": 2, "skip": 5},
+    )
+
+
+def test_list_organization_usage_by_project_asks_the_last_page_for_what_first_leaves(
+    graphql_client: GraphQLClient,
+):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+    kili_api_gateway.graphql_client.execute.side_effect = [
+        _usage_page([f"project_{i}" for i in range(50)], 80),
+        _usage_page([f"project_{i}" for i in range(50, 60)], 80),
+    ]
+
+    # When
+    projects = list(
+        kili_api_gateway.list_organization_usage_by_project(
+            OrganizationUsageByProjectFilters(metrics=("LABELED_ASSETS",)),
+            QueryOptions(disable_tqdm=True, first=60),
+        )
+    )
+
+    # Then
+    assert len(projects) == 60
+    where = {"metrics": ["LABELED_ASSETS"]}
+    assert kili_api_gateway.graphql_client.execute.call_args_list == [
+        call(LIST_ORGANIZATION_USAGE_BY_PROJECT_QUERY, {"where": where, "first": 50, "skip": 0}),
+        call(LIST_ORGANIZATION_USAGE_BY_PROJECT_QUERY, {"where": where, "first": 10, "skip": 50}),
+    ]
+
+
+def test_list_organization_usage_by_project_asks_nothing_for_first_0(
+    graphql_client: GraphQLClient,
+):
+    # Given
+    kili_api_gateway = OrganizationOperationMixin()
+    kili_api_gateway.graphql_client = graphql_client
+
+    # When
+    projects = list(
+        kili_api_gateway.list_organization_usage_by_project(
+            OrganizationUsageByProjectFilters(metrics=("LABELED_ASSETS",)),
+            QueryOptions(disable_tqdm=True, first=0),
+        )
+    )
+
+    # Then
+    assert projects == []
+    kili_api_gateway.graphql_client.execute.assert_not_called()
