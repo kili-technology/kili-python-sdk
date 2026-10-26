@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from zipfile import ZipFile
 
+import pytest
 import pytest_mock
 from kili_formats import convert_from_kili_to_coco_format
 from kili_formats.types import JobTool
@@ -195,54 +196,30 @@ def test__export_in_coco_format(mocker: pytest_mock.MockerFixture):
     assert len(output2["images"]) == 3
 
 
-def test_expand_assets_with_multiple_labels():
-    """Test that assets with latestLabels are expanded into multiple asset entries."""
-    # Test with assets containing latestLabels
-    assets = [
-        {
-            "externalId": "asset1",
-            "latestLabels": [
-                {"jsonResponse": {"JOB": {"annotations": [{"categories": [{"name": "A"}]}]}}},
-                {"jsonResponse": {"JOB": {"annotations": [{"categories": [{"name": "B"}]}]}}},
-            ],
-        },
-        {
-            "externalId": "asset2",
-            "latestLabel": {
-                "jsonResponse": {"JOB": {"annotations": [{"categories": [{"name": "C"}]}]}}
-            },
-        },
-    ]
+JOBS_BY_SHAPE = {
+    "box": {"mlTask": "OBJECT_DETECTION", "tools": ["rectangle"]},
+    "polygon only": {"mlTask": "OBJECT_DETECTION", "tools": ["polygon"]},
+    "mask": {"mlTask": "OBJECT_DETECTION", "tools": ["semantic"]},
+    "point": {"mlTask": "OBJECT_DETECTION", "tools": ["marker"]},
+    "line": {"mlTask": "OBJECT_DETECTION", "tools": ["polyline"]},
+    "model box": {"mlTask": "OBJECT_DETECTION", "tools": ["rectangle"], "isModel": True},
+    "classification": {"mlTask": "CLASSIFICATION"},
+}
 
-    # Call the method directly - create a simple instance just for this method
+
+@pytest.mark.parametrize(
+    ("shape", "compatible"),
+    [
+        ("box", True),
+        ("polygon only", True),
+        ("mask", True),
+        ("point", False),
+        ("line", False),
+        ("model box", False),
+        ("classification", False),
+    ],
+)
+def test_the_coco_export_takes_the_jobs_with_a_shape(shape: str, compatible: bool):
     exporter = CocoExporter.__new__(CocoExporter)
-    expanded = exporter._expand_assets_with_multiple_labels(assets)
 
-    # Should have 3 assets total: 2 from asset1 (with latestLabels), 1 from asset2 (with latestLabel)
-    assert len(expanded) == 3
-
-    # Check first asset was expanded with suffixes
-    assert expanded[0]["externalId"] == "asset1_label1"
-    assert "latestLabel" in expanded[0]
-    assert "latestLabels" not in expanded[0]
-    assert (
-        expanded[0]["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]["categories"][0]["name"]
-        == "A"
-    )
-
-    assert expanded[1]["externalId"] == "asset1_label2"
-    assert "latestLabel" in expanded[1]
-    assert "latestLabels" not in expanded[1]
-    assert (
-        expanded[1]["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]["categories"][0]["name"]
-        == "B"
-    )
-
-    # Check second asset kept original externalId (only one label)
-    assert expanded[2]["externalId"] == "asset2"
-    assert "latestLabel" in expanded[2]
-    assert "latestLabels" not in expanded[2]
-    assert (
-        expanded[2]["latestLabel"]["jsonResponse"]["JOB"]["annotations"][0]["categories"][0]["name"]
-        == "C"
-    )
+    assert exporter._is_job_compatible(JOBS_BY_SHAPE[shape]) is compatible  # pylint: disable=protected-access

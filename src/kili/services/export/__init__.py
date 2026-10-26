@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Optional, Union, get_args
 
 from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
+from kili.services.export.exceptions import NotCompatibleOptions
 from kili.services.export.format.base import AbstractExporter, ExportParams
 from kili.services.export.format.coco import CocoExporter
 from kili.services.export.format.geojson import GeoJsonExporter
@@ -13,7 +14,13 @@ from kili.services.export.format.voc import VocExporter
 from kili.services.export.format.yolo import YoloExporter
 from kili.services.export.logger import get_logger
 from kili.services.export.repository import SDKContentRepository
-from kili.services.export.types import CocoAnnotationModifier, ExportType, LabelFormat, SplitOption
+from kili.services.export.types import (
+    CocoAnnotationModifier,
+    ExportType,
+    LabelFormat,
+    SplitOption,
+    YoloBoundingBoxes,
+)
 from kili.services.types import LogLevel
 
 if TYPE_CHECKING:
@@ -37,8 +44,17 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     normalized_coordinates: Optional[bool],
     label_type_in: Optional[list[str]],
     include_sent_back_labels: Optional[bool],
+    bbox_as: YoloBoundingBoxes = "box",
 ) -> Optional[list[dict[str, Union[list[str], str]]]]:
     """Export the selected assets into the required format, and save it into a file archive."""
+    if bbox_as not in get_args(YoloBoundingBoxes):
+        raise ValueError(
+            f'bbox_as="{bbox_as}" is none of {", ".join(get_args(YoloBoundingBoxes))}.'
+        )
+    if bbox_as != "box" and label_format not in ("yolo_v5", "yolo_v7", "yolo_v8"):
+        raise NotCompatibleOptions(
+            f'bbox_as="{bbox_as}" is only available for the YOLO v5, v7 and v8 formats.'
+        )
     kili.kili_api_gateway.get_project(project_id, ["id"])
 
     include_sent_back_labels = (
@@ -59,6 +75,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         normalized_coordinates=normalized_coordinates,
         label_type_in=label_type_in,
         include_sent_back_labels=include_sent_back_labels,
+        bbox_as=bbox_as,
     )
 
     logger = get_logger(log_level)

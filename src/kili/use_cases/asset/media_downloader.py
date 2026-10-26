@@ -1,13 +1,12 @@
 """Helpers for the asset queries."""
-import mimetypes
 import warnings
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from itertools import repeat
-from mimetypes import guess_extension
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional, Union
 
+from kili_formats.layout import frame_name, image_filename
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_random
@@ -145,9 +144,9 @@ class MediaDownloader:
                 log_raise_for_status(response)
                 json_content = get_response_json(response)
                 urls = tuple(json_content.values())
-                nbr_char_zfill = len(str(len(urls)))
+                # Named as kili-formats names a frame, from the video's number of frames
                 img_names = (
-                    f'{asset["externalId"]}_{f"{i+1}".zfill(nbr_char_zfill)}.jpg'
+                    f'{frame_name(asset["externalId"], i, len(urls))}.jpg'
                     for i, _ in enumerate(urls)
                 )
                 with ThreadPoolExecutor() as threads:
@@ -187,8 +186,8 @@ class MediaDownloader:
         return asset
 
 
-def get_file_extension_from_headers(url: str, http_client: HttpClient) -> Optional[str]:
-    """Guess the extension of a file with the url response headers."""
+def get_content_type_from_headers(url: str, http_client: HttpClient) -> Optional[str]:
+    """The content type of a file, from the url response headers."""
     with http_client.head(url, timeout=20) as header_response:
         if header_response.status_code == 200:
             headers = header_response.headers
@@ -196,28 +195,15 @@ def get_file_extension_from_headers(url: str, http_client: HttpClient) -> Option
             with http_client.get(url, timeout=20) as response:
                 response.raise_for_status()
                 headers = response.headers
-        if "content-type" in headers:
-            content_type = headers["content-type"].split(";")[0]
-            # (#ML-1368) remove parameters the content-type to only get
-            # the mimetype in the type/subtype format
-            return guess_extension(content_type)
-    return None
+        return headers.get("content-type")
 
 
 def get_download_path(
     url: str, external_id: AssetExternalId, local_dir_path: Path, http_client: HttpClient
 ) -> Path:
-    """Build the path to download a file the file in local."""
-    extension = get_file_extension_from_headers(url, http_client)
-    filename = str(external_id)
-    current_suffix = Path(filename).suffix.lower()
-    has_known_extension = (
-        current_suffix != "" and mimetypes.types_map.get(current_suffix) is not None
-    )
-    if extension is not None and not has_known_extension:
-        filename = filename + extension
-    local_dir_path = local_dir_path / filename
-    return local_dir_path.resolve()
+    """Build the path to download a file in local, named as the app's export names it."""
+    filename = image_filename(str(external_id), get_content_type_from_headers(url, http_client))
+    return (local_dir_path / filename).resolve()
 
 
 @retry(stop=stop_after_attempt(2), wait=wait_random(min=1, max=2), reraise=True)
