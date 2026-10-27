@@ -387,7 +387,7 @@ class ExportNamespace(DomainNamespace):
         YOLO v4 format exports annotations with normalized coordinates for the Detect task:
         a classes.txt file and a .txt file per image, a box per bounding box, the upright box
         around it. It has no other task: polygons, semantic segmentations, points, lines, pose and
-        classification are not exported. For segmentation, use the YOLO v5, v7 or v8 format.
+        classification are not exported. For segmentation, use `yolo()`.
 
         Args:
             project_id: Identifier of the project.

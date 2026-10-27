@@ -1528,8 +1528,8 @@ class LabelClientMethods(BaseClientMethods):
                 per task, `detect/` or `obb/`, and `segment/`. Points, lines, pose and
                 classification are not exported.
             - `"yolo_v4"`, `"yolo_v5"`, `"yolo_v7"` and `"yolo_v8"` are deprecated: use `"yolo"`.
-                They still work, each as before (`"yolo_v8"` writes the files of `"yolo"`,
-                `"yolo_v4"` Detect only), with a `DeprecationWarning`.
+                They still work, each as before (`"yolo_v7"` and `"yolo_v8"` write the files of
+                `"yolo"`, `"yolo_v4"` Detect only), with a `DeprecationWarning`.
             - Kili (a.k.a raw) for all tasks.
             - COCO for object detection tasks (bounding box, polygon and semantic segmentation).
             - Pascal VOC for object detection tasks (bounding box only: polygons and semantic
