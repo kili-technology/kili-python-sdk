@@ -17,7 +17,10 @@ from kili.services.export.types import LabelFormat, SplitOption, YoloBoundingBox
 @click.option(
     "--output-format",
     type=click.Choice(get_args(LabelFormat)),
-    help="Format into which the label data will be converted",
+    help=(
+        "Format into which the label data will be converted. yolo_v4, yolo_v5, yolo_v7 and"
+        " yolo_v8 are deprecated: use yolo."
+    ),
     required=True,
 )
 @click.option(

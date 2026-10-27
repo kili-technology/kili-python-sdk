@@ -45,7 +45,10 @@ def type_check_label(key, value):
 @click.option(
     "--input-format",
     type=click.Choice(get_args(LabelFormat)),
-    help="Format in which the labels are encoded",
+    help=(
+        "Format in which the labels are encoded. yolo_v4, yolo_v5 and yolo_v7 are deprecated:"
+        " use yolo, which reads the classes.txt or data.yaml of any YOLO dataset."
+    ),
     default="kili",
     show_default='"raw" kili format',
 )
