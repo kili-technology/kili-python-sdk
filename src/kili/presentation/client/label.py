@@ -1512,7 +1512,7 @@ class LabelClientMethods(BaseClientMethods):
                 - `"latest_from_last_step"`: Export the latest label from each annotator for the last step.
                 - `"latest_from_all_steps"`: Export the latest label from each annotator for all steps.
                 - `"normal"`: Export all labels.
-            bbox_as: How the YOLO v5, v7 and v8 formats write the bounding boxes:
+            bbox_as: How the YOLO format writes the bounding boxes:
                 - `"box"`: the upright box around each, for the Detect task.
                 - `"obb"`: their four corners, for the OBB task: a rotated box keeps its angle.
                 - `"polygon"`: their four corners, in the Segment task, beside the polygons and
@@ -1521,13 +1521,15 @@ class LabelClientMethods(BaseClientMethods):
         !!! Info
             The supported formats are:
 
-            - Yolo V5, V7, V8 for object detection: a dataset per Ultralytics task the project's
-                jobs give: the bounding boxes' task, Detect, OBB or Segment by `bbox_as`, and
-                Segment (polygons and semantic segmentations). Split by job, each job's folder
-                holds its own task; merged, a project with two gets a folder per task, `detect/`
-                or `obb/`, and `segment/`. Points, lines, pose and classification are not
-                exported.
-            - Yolo V4 for object detection: Detect only (bounding boxes).
+            - `"yolo"` for object detection, the YOLO format the Kili app exports: a dataset per
+                Ultralytics task the project's jobs give: the bounding boxes' task, Detect, OBB or
+                Segment by `bbox_as`, and Segment (polygons and semantic segmentations). Split by
+                job, each job's folder holds its own task; merged, a project with two gets a folder
+                per task, `detect/` or `obb/`, and `segment/`. Points, lines, pose and
+                classification are not exported.
+            - `"yolo_v4"`, `"yolo_v5"`, `"yolo_v7"` and `"yolo_v8"` are deprecated: use `"yolo"`.
+                They still work, each as before (`"yolo_v8"` writes the files of `"yolo"`,
+                `"yolo_v4"` Detect only), with a `DeprecationWarning`.
             - Kili (a.k.a raw) for all tasks.
             - COCO for object detection tasks (bounding box, polygon and semantic segmentation).
             - Pascal VOC for object detection tasks (bounding box only: polygons and semantic
@@ -1540,7 +1542,7 @@ class LabelClientMethods(BaseClientMethods):
 
         !!! Example
             ```python
-            kili.export_labels("your_project_id", "export.zip", "yolo_v4")
+            kili.export_labels("your_project_id", "export.zip", "yolo")
             ```
 
         !!! Example

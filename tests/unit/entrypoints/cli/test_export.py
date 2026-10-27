@@ -21,9 +21,10 @@ def test_the_export_passes_how_to_write_the_bounding_boxes(mocker: pytest_mock.M
     mocker.patch.object(export_module, "get_kili_client")
     service = mocker.patch.object(export_module, "service_export_labels")
 
-    result = _export("--output-format", "yolo_v8", "--bbox-as", "obb")
+    result = _export("--output-format", "yolo", "--bbox-as", "obb")
 
     assert result.exit_code == 0, result.output
+    assert service.call_args.kwargs["label_format"] == "yolo"
     assert service.call_args.kwargs["bbox_as"] == "obb"
 
 
@@ -40,9 +41,7 @@ def test_the_export_says_a_bounding_boxes_choice_does_not_fit_the_format(
     mocker.patch.object(
         export_module,
         "service_export_labels",
-        side_effect=NotCompatibleOptions(
-            'bbox_as="obb" is only available for the YOLO v5, v7 and v8 formats.'
-        ),
+        side_effect=NotCompatibleOptions('bbox_as="obb" is only available for the "yolo" format.'),
     )
 
     result = _export("--output-format", "yolo_v4", "--bbox-as", "obb")

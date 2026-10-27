@@ -1,5 +1,6 @@
 """Service for exporting kili objects."""
 
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Union, get_args
 
@@ -15,6 +16,7 @@ from kili.services.export.format.yolo import YoloExporter
 from kili.services.export.logger import get_logger
 from kili.services.export.repository import SDKContentRepository
 from kili.services.export.types import (
+    DEPRECATED_YOLO_FORMATS,
     CocoAnnotationModifier,
     ExportType,
     LabelFormat,
@@ -47,14 +49,20 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     bbox_as: YoloBoundingBoxes = "box",
 ) -> Optional[list[dict[str, Union[list[str], str]]]]:
     """Export the selected assets into the required format, and save it into a file archive."""
+    if label_format in DEPRECATED_YOLO_FORMATS:
+        warnings.warn(
+            f'The "{label_format}" format is deprecated and will be removed in a future release:'
+            ' export in the "yolo" format instead (kili.exports.yolo(), fmt="yolo" or'
+            " --output-format yolo), the YOLO dataset the Kili app exports.",
+            DeprecationWarning,
+            stacklevel=1,
+        )
     if bbox_as not in get_args(YoloBoundingBoxes):
         raise ValueError(
             f'bbox_as="{bbox_as}" is none of {", ".join(get_args(YoloBoundingBoxes))}.'
         )
-    if bbox_as != "box" and label_format not in ("yolo_v5", "yolo_v7", "yolo_v8"):
-        raise NotCompatibleOptions(
-            f'bbox_as="{bbox_as}" is only available for the YOLO v5, v7 and v8 formats.'
-        )
+    if bbox_as != "box" and label_format not in ("yolo", "yolo_v5", "yolo_v7", "yolo_v8"):
+        raise NotCompatibleOptions(f'bbox_as="{bbox_as}" is only available for the "yolo" format.')
     kili.kili_api_gateway.get_project(project_id, ["id"])
 
     include_sent_back_labels = (
@@ -87,6 +95,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
             "raw": KiliExporter,
             "kili": KiliExporter,
             "coco": CocoExporter,
+            "yolo": YoloExporter,
             "yolo_v4": YoloExporter,
             "yolo_v5": YoloExporter,
             "yolo_v7": YoloExporter,
