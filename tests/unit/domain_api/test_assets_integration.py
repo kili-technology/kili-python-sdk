@@ -43,30 +43,42 @@ class TestAssetsNamespaceIntegration:
         """Test that workflow operations properly delegate to legacy methods."""
         # Mock the legacy workflow methods on the legacy_client
         mock_kili_client.legacy_client.assign_assets_to_labelers = MagicMock(
-            return_value=[{"id": "asset1"}]
+            return_value={
+                "declined": [],
+                "failed": [],
+                "succeeded": [{"assetId": "asset1", "externalId": "img1"}],
+            }
         )
         mock_kili_client.legacy_client.send_back_to_queue = MagicMock(
-            return_value={"id": "project_123", "asset_ids": ["asset1"]}
+            return_value={
+                "declined": [],
+                "failed": [],
+                "succeeded": [{"assetId": "asset1", "externalId": "img1"}],
+            }
         )
         mock_kili_client.legacy_client.add_to_review = MagicMock(
-            return_value={"id": "project_123", "asset_ids": ["asset1"]}
+            return_value={
+                "declined": [],
+                "failed": [],
+                "succeeded": [{"assetId": "asset1", "externalId": "img1"}],
+            }
         )
 
         assets_ns = mock_kili_client.assets
 
         # Test assign
         result = assets_ns.assign(asset_ids=["asset1"], to_be_labeled_by_array=[["user1"]])
-        assert result[0]["id"] == "asset1"
+        assert result["succeeded"] == [{"assetId": "asset1", "externalId": "img1"}]
         mock_kili_client.legacy_client.assign_assets_to_labelers.assert_called_once()
 
         # Test invalidate
         result = assets_ns.invalidate(asset_ids=["asset1"])
-        assert result["id"] == "project_123"
+        assert result["succeeded"] == [{"assetId": "asset1", "externalId": "img1"}]
         mock_kili_client.legacy_client.send_back_to_queue.assert_called_once()
 
         # Test move_to_next_step
         result = assets_ns.move_to_next_step(asset_ids=["asset1"])
-        assert result["id"] == "project_123"
+        assert result["succeeded"] == [{"assetId": "asset1", "externalId": "img1"}]
         mock_kili_client.legacy_client.add_to_review.assert_called_once()
 
     def test_list_and_count_use_cases_integration(self, mock_kili_client):

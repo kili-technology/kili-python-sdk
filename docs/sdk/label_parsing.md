@@ -112,6 +112,43 @@ Retrieves the transcription text.
 label.jobs["TRANSCRIPTION_JOB"].text
 ```
 
+### File tasks
+
+A file job answers with one file, the way a transcription answers with one text. The file is named
+by id rather than by url; to get the bytes, export the project: each asset gets a folder in the
+archive holding the files its jobs answered with.
+
+!!! warning
+    On a video project the backend stores an asset level job under `assetLevel`, which the parser
+    does not read yet, so these accessors are unavailable there for now. Reading the label's
+    `jsonResponse` directly works in the meantime.
+
+Each accessor answers `None` while the job holds no file yet, as long as the job is not required.
+
+#### `.file_id`
+
+Retrieves the id of the stored file.
+
+```python
+label.jobs["RENDER"].file_id
+```
+
+#### `.file_name`
+
+Retrieves the name the file was uploaded under.
+
+```python
+label.jobs["RENDER"].file_name
+```
+
+#### `.file_mime_type`
+
+Retrieves the mime type of the file, which is what tells a reader whether it can display it.
+
+```python
+label.jobs["RENDER"].file_mime_type
+```
+
 ### Object detection tasks
 
 For more information about the different object detection tasks and their label formats, please refer to the [Kili documentation](https://docs.kili-technology.com/reference/export-object-entity-detection-and-relation).
@@ -148,6 +185,45 @@ label.jobs["BBOX_JOB"].annotations.content
 
 # IDE autocompletion will not display this attribute and Python linter will raise an error
 label.jobs["BBOX_JOB"].bounding_poly_annotations.content
+```
+
+#### Object detection in PDFs
+
+In a PDF project, the geometry of a bounding box or of a polygon is not on the annotation itself but one level deeper, in a nested `.annotations` list: a PDF page has its own coordinate system, so the vertices are normalized to the page named by `.page_number_array`.
+
+##### `.type`
+
+Returns the tool used to draw the annotation, `"rectangle"` or `"polygon"`.
+
+```python
+label.jobs["DETECTION_JOB"].annotations[0].type
+```
+
+PDF labels only carry the tool when it is not the rectangle, so an annotation without it is reported as a `"rectangle"`. This is a read-time default only: it is never written back, and exporting a label leaves it unchanged.
+
+##### `.annotations`
+
+Returns the page-level positions of the annotation. A polygon always has exactly one, since a polygon lives on a single page.
+
+```python
+label.jobs["DETECTION_JOB"].annotations[0].annotations[0]
+```
+
+##### `.polys` and `.bounding_poly`
+
+Return the vertices of the shape. For a polygon both hold the same ring of `N >= 3` vertices.
+
+```python
+label.jobs["DETECTION_JOB"].annotations[0].annotations[0].polys
+label.jobs["DETECTION_JOB"].annotations[0].annotations[0].bounding_poly[0].normalized_vertices
+```
+
+##### `.page_number_array`
+
+Returns the page the annotation is drawn on, 1-indexed.
+
+```python
+label.jobs["DETECTION_JOB"].annotations[0].annotations[0].page_number_array
 ```
 
 #### Point detection

@@ -13,5 +13,6 @@ https://platform.openai.com/*
 # Ignore Google Cloud Console (HTTP/2 protocol errors / bot protection)
 https://console.cloud.google.com/*
 
-# Ignore Roboflow public datasets (403 errors due to bot protection on CI runners)
+# Ignore Roboflow (the dataset page redirects to Universe, which returns 403 due to bot protection)
 https://public.roboflow.com/*
+https://universe.roboflow.com/*

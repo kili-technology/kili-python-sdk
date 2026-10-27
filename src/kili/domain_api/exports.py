@@ -12,7 +12,13 @@ from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
-from kili.services.export.types import CocoAnnotationModifier, ExportType, LabelFormat, SplitOption
+from kili.services.export.types import (
+    CocoAnnotationModifier,
+    ExportType,
+    LabelFormat,
+    SplitOption,
+    YoloBoundingBoxes,
+)
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -48,6 +54,7 @@ class ExportAssetFilter(TypedDict, total=False):
     skipped: Optional[bool]
     status_in: Optional[list[AssetStatus]]
     step_name_in: Optional[list[str]]
+    step_id_in: Optional[list[str]]
     step_status_in: Optional[list[StatusInStep]]
     group_name_in: Optional[list[str]]
     group_name_not_in: Optional[list[str]]
@@ -87,14 +94,14 @@ class ExportNamespace(DomainNamespace):
     def _get_optimal_export_type(self, workflow_version: Optional[str]) -> ExportType:
         """Determine the optimal export type based on project workflow configuration.
 
-        For non-multi-review projects (Workflow V1), uses "latest"
+        For legacy workflow projects, uses "latest"
         which queries the singular latestLabel field for better performance.
 
-        For multi-review projects (Workflow V2), uses "latest_from_last_step"
+        For multi-step and multi-group workflow projects, uses "latest_from_last_step"
         which queries the plural latestLabels field to support multiple annotators.
 
         Args:
-            workflow_version: The workflow version ("V1", "V2", or None)
+            workflow_version: The workflow version ("V1", "V2", "V3" or None)
 
         Returns:
             The optimal export type for this project
@@ -108,12 +115,12 @@ class ExportNamespace(DomainNamespace):
     ) -> None:
         """Validate that the export type is compatible with the project workflow.
 
-        Workflow V1 projects cannot use export types that rely on multi-step workflows:
-        - latest_from_last_step: Uses latestLabels field (V2 multi-review feature)
-        - latest_from_all_steps: Uses labels with isLastForStep (V2 multi-step feature)
+        Legacy workflow projects cannot use the export types of the multi-step and multi-group workflows:
+        - latest_from_last_step: Uses latestLabels field
+        - latest_from_all_steps: Uses labels with isLastForStep
 
         Args:
-            workflow_version: The workflow version ("V1", "V2", or None)
+            workflow_version: The workflow version ("V1", "V2", "V3" or None)
             export_type: The requested export type
 
         Raises:
@@ -124,10 +131,10 @@ class ExportNamespace(DomainNamespace):
 
         if workflow_version == "V1":
             raise ValueError(
-                f"Export type '{export_type}' is not compatible with Workflow V1 projects. "
-                f"Workflow V1 projects should use export_type='latest' or 'normal'. "
-                f"The '{export_type}' export type is designed for Workflow V2 projects "
-                f"with multi-step workflows."
+                f"Export type '{export_type}' is not compatible with the legacy workflow. "
+                f"Legacy workflow projects should use export_type='latest' or 'normal'. "
+                f"The '{export_type}' export type is designed for the multi-step and "
+                f"multi-group workflows."
             )
 
     @deprecated(
@@ -182,8 +189,9 @@ class ExportNamespace(DomainNamespace):
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             single_file: If True, all labels are exported in a single JSON file.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -246,8 +254,9 @@ class ExportNamespace(DomainNamespace):
             layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -288,9 +297,10 @@ class ExportNamespace(DomainNamespace):
     ):
         """Export project labels in YOLO v4 format.
 
-        YOLO v4 format exports annotations with normalized coordinates suitable for
-        object detection tasks. The format creates a classes.txt file and individual
-        .txt files for each image with bounding box annotations.
+        YOLO v4 format exports annotations with normalized coordinates for the Detect task:
+        a classes.txt file and a .txt file per image, a box per bounding box, the upright box
+        around it. It has no other task: polygons, semantic segmentations, points, lines, pose and
+        classification are not exported. For segmentation, use the YOLO v5, v7 or v8 format.
 
         Args:
             project_id: Identifier of the project.
@@ -308,8 +318,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -346,12 +357,25 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
+        bbox_as: YoloBoundingBoxes = "box",
     ):
         """Export project labels in YOLO v5 format.
 
-        YOLO v5 format exports annotations with normalized coordinates suitable for
-        object detection tasks. The format creates a data.yaml file and individual
-        .txt files for each image with bounding box annotations.
+        YOLO v5 format exports annotations with normalized coordinates, in the Ultralytics
+        dataset format that every YOLO version from v5 to YOLO26 reads: a data.yaml file and a
+        .txt file per image. It writes a dataset per task the project's jobs give:
+
+        - The bounding boxes' task, when the project has a bounding box job, by `bbox_as`:
+          Detect, the upright box around each; OBB, their four corners, so a rotated box keeps
+          its angle; or Segment, their four corners beside the polygons.
+        - Segment, a polygon per polygon and semantic segmentation part, when the project has a
+          polygon or semantic job.
+
+        With `layout="split"`, each job's folder is written for its own task: Segment for a job
+        with a polygon or semantic tool, its bounding boxes as polygons; the bounding boxes' task
+        otherwise. With `layout="merged"` and two tasks, each dataset goes in its own folder,
+        `detect/` or `obb/`, and `segment/`, beside the shared `images/`; with one task, at the
+        root of the archive. Points, lines, pose and classification are not exported.
 
         Args:
             project_id: Identifier of the project.
@@ -359,6 +383,9 @@ class ExportNamespace(DomainNamespace):
                 the exported data.
             layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
+            bbox_as: How the bounding boxes are written: `"box"`, the upright box around each, for
+                Detect; `"obb"`, their four corners, for OBB; `"polygon"`, their four corners, in
+                Segment.
             with_assets: Download the assets in the export.
             disable_tqdm: Disable the progress bar if True.
             filter: Optional dictionary to filter assets whose labels are exported.
@@ -369,8 +396,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -392,6 +420,7 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels=include_sent_back_labels,
             label_type_in=label_type_in,
             layout=layout,
+            bbox_as=bbox_as,
             fmt="yolo_v5",
             export_type=export_type,
         )
@@ -407,12 +436,25 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
+        bbox_as: YoloBoundingBoxes = "box",
     ):
         """Export project labels in YOLO v7 format.
 
-        YOLO v7 format exports annotations with normalized coordinates suitable for
-        object detection tasks. The format creates a data.yaml file and individual
-        .txt files for each image with bounding box annotations.
+        YOLO v7 format exports annotations with normalized coordinates, in the Ultralytics
+        dataset format that every YOLO version from v5 to YOLO26 reads: a data.yaml file and a
+        .txt file per image. It writes a dataset per task the project's jobs give:
+
+        - The bounding boxes' task, when the project has a bounding box job, by `bbox_as`:
+          Detect, the upright box around each; OBB, their four corners, so a rotated box keeps
+          its angle; or Segment, their four corners beside the polygons.
+        - Segment, a polygon per polygon and semantic segmentation part, when the project has a
+          polygon or semantic job.
+
+        With `layout="split"`, each job's folder is written for its own task: Segment for a job
+        with a polygon or semantic tool, its bounding boxes as polygons; the bounding boxes' task
+        otherwise. With `layout="merged"` and two tasks, each dataset goes in its own folder,
+        `detect/` or `obb/`, and `segment/`, beside the shared `images/`; with one task, at the
+        root of the archive. Points, lines, pose and classification are not exported.
 
         Args:
             project_id: Identifier of the project.
@@ -420,6 +462,9 @@ class ExportNamespace(DomainNamespace):
                 the exported data.
             layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
+            bbox_as: How the bounding boxes are written: `"box"`, the upright box around each, for
+                Detect; `"obb"`, their four corners, for OBB; `"polygon"`, their four corners, in
+                Segment.
             with_assets: Download the assets in the export.
             disable_tqdm: Disable the progress bar if True.
             filter: Optional dictionary to filter assets whose labels are exported.
@@ -430,8 +475,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -453,6 +499,7 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels=include_sent_back_labels,
             label_type_in=label_type_in,
             layout=layout,
+            bbox_as=bbox_as,
             fmt="yolo_v7",
             export_type=export_type,
         )
@@ -468,12 +515,25 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
+        bbox_as: YoloBoundingBoxes = "box",
     ):
         """Export project labels in YOLO v8 format.
 
-        YOLO v8 format exports annotations with normalized coordinates suitable for
-        object detection tasks. The format creates a data.yaml file and individual
-        .txt files for each image with bounding box annotations.
+        YOLO v8 format exports annotations with normalized coordinates, in the Ultralytics
+        dataset format that every YOLO version from v5 to YOLO26 reads: a data.yaml file and a
+        .txt file per image. It writes a dataset per task the project's jobs give:
+
+        - The bounding boxes' task, when the project has a bounding box job, by `bbox_as`:
+          Detect, the upright box around each; OBB, their four corners, so a rotated box keeps
+          its angle; or Segment, their four corners beside the polygons.
+        - Segment, a polygon per polygon and semantic segmentation part, when the project has a
+          polygon or semantic job.
+
+        With `layout="split"`, each job's folder is written for its own task: Segment for a job
+        with a polygon or semantic tool, its bounding boxes as polygons; the bounding boxes' task
+        otherwise. With `layout="merged"` and two tasks, each dataset goes in its own folder,
+        `detect/` or `obb/`, and `segment/`, beside the shared `images/`; with one task, at the
+        root of the archive. Points, lines, pose and classification are not exported.
 
         Args:
             project_id: Identifier of the project.
@@ -481,6 +541,9 @@ class ExportNamespace(DomainNamespace):
                 the exported data.
             layout: Layout of the exported files. "split" means there is one folder
                 per job, "merged" that there is one folder with every labels.
+            bbox_as: How the bounding boxes are written: `"box"`, the upright box around each, for
+                Detect; `"obb"`, their four corners, for OBB; `"polygon"`, their four corners, in
+                Segment.
             with_assets: Download the assets in the export.
             disable_tqdm: Disable the progress bar if True.
             filter: Optional dictionary to filter assets whose labels are exported.
@@ -491,8 +554,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -514,6 +578,7 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels=include_sent_back_labels,
             label_type_in=label_type_in,
             layout=layout,
+            bbox_as=bbox_as,
             fmt="yolo_v8",
             export_type=export_type,
         )
@@ -533,7 +598,8 @@ class ExportNamespace(DomainNamespace):
 
         Pascal VOC format exports annotations in XML format with pixel coordinates,
         suitable for object detection tasks. Each image has a corresponding XML file
-        with bounding box annotations in the Pascal VOC XML schema.
+        with bounding box annotations in the Pascal VOC XML schema. Polygons and semantic
+        segmentations are not exported: Pascal VOC holds rectangles only.
 
         Args:
             project_id: Identifier of the project.
@@ -549,8 +615,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -607,8 +674,9 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that
                 have been sent back.
             export_type: Type of export. If not specified, automatically selects the optimal type:
-                - For Workflow V1 projects: uses `"latest"` (single label per asset)
-                - For Workflow V2 projects: uses `"latest_from_last_step"` (supports multiple annotators)
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
 
                 Available options:
                 - `"latest_from_last_step"`: exports the latest labels from the last workflow step
@@ -702,6 +770,7 @@ class ExportNamespace(DomainNamespace):
         single_file: bool = False,
         with_assets: Optional[bool] = True,
         export_type: Optional[ExportType] = None,
+        bbox_as: YoloBoundingBoxes = "box",
     ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export the project labels with the requested format into the requested output path.
 
@@ -731,24 +800,24 @@ class ExportNamespace(DomainNamespace):
                 whose type belongs to that list.
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that have been sent back.
+            bbox_as: (For YOLO v5, v7 and v8 only) how the bounding boxes are written: `"box"`,
+                for Detect; `"obb"`, for OBB; `"polygon"`, in Segment.
 
         Returns:
             Export information or None if export failed.
 
         Examples:
             >>> # Export all labels in COCO format
-            >>> kili.labels.export(
+            >>> kili.exports.coco(
             ...     project_id="my_project",
-            ...     fmt="coco",
-            ...     filename="export.zip"
+            ...     output_path="export.zip",
             ... )
 
             >>> # Export labels for specific assets
-            >>> kili.labels.export(
+            >>> kili.exports.kili(
             ...     project_id="my_project",
-            ...     fmt="kili",
-            ...     filename="filtered_export.zip",
-            ...     filter={"external_id_contains": ["batch_1"]}
+            ...     output_path="filtered_export.zip",
+            ...     filter={"external_id_strictly_in": ["batch_1"]},
             ... )
         """
         workflow_version = self._get_workflow_version(project_id)
@@ -773,4 +842,5 @@ class ExportNamespace(DomainNamespace):
             label_type_in=list(label_type_in) if label_type_in else None,
             include_sent_back_labels=include_sent_back_labels,
             export_type=export_type,
+            bbox_as=bbox_as,
         )

@@ -13,7 +13,6 @@ from typing import Any, Optional, TypeVar, Union, get_args, get_origin
 
 import pyparsing as pp
 import requests
-import tenacity
 
 from kili.adapters.http_client import HttpClient
 from kili.core.constants import MIME_EXTENSIONS_FOR_IV2
@@ -300,34 +299,6 @@ def check_file_mime_type(path: str, input_type: str, raise_error=True) -> bool:
             f"File mime type should be one of {MIME_EXTENSIONS_FOR_IV2[input_type]}"
         )
     return correct_mime_type
-
-
-class RetryLongWaitWarner:  # pylint: disable=too-few-public-methods
-    """Class that warns when retry takes too long."""
-
-    def __init__(
-        self,
-        warn_message: str,
-        logger_func: Callable,
-        warn_after: float = 10,
-    ) -> None:
-        """Class that warns when retry takes too long.
-
-        Args:
-            warn_message: custom warning message. If not provided, a default message is used.
-            logger_func: function to log the message (print, warning, logger.warning, etc.)
-            warn_after: time in seconds after which the warning is raised.
-        """
-        self.warn_message = warn_message
-        self.logger_func = logger_func
-        self.warn_after = warn_after
-
-        self.warned = False
-
-    def __call__(self, retry_state: tenacity.RetryCallState):
-        if not self.warned and float(retry_state.outcome_timestamp or 0) > self.warn_after:
-            self.logger_func(self.warn_message)
-            self.warned = True
 
 
 def is_empty_list_with_warning(method_name: str, argument_name: str, argument_value: Any) -> bool:

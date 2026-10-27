@@ -26,8 +26,10 @@ from kili.adapters.kili_api_gateway.helpers.queries import (
 from kili.adapters.kili_api_gateway.label.common import get_annotation_fragment
 from kili.adapters.kili_api_gateway.project.common import get_project
 from kili.core.graphql.operations.asset.mutations import GQL_SET_ASSET_CONSENSUS
-from kili.domain.asset import AssetFilters
+from kili.domain.asset import AssetFilters, AssetId
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
+from kili.exceptions import NotFound
 
 # Threshold for batching based on number of annotations
 # This is used to determine whether to use a single batch or multiple batches
@@ -38,6 +40,17 @@ THRESHOLD_FOR_BATCHING = 200
 
 class AssetOperationMixin(BaseOperationMixin):
     """Mixin extending Kili API Gateway class with Assets related operations."""
+
+    def get_asset_project_id(self, asset_id: AssetId) -> ProjectId:
+        """The project an asset belongs to."""
+        query = get_assets_query(fragment_builder(["project.id"]))
+        result = self.graphql_client.execute(
+            query, {"where": {"id": asset_id}, "first": 1, "skip": 0}
+        )
+        assets = result["data"]
+        if not assets:
+            raise NotFound(f"asset ID: {asset_id}. The asset does not exist.")
+        return ProjectId(assets[0]["project"]["id"])
 
     def list_assets(
         self,

@@ -1,7 +1,7 @@
-from datetime import datetime
+from collections.abc import Generator
+from datetime import datetime, timezone
 
 import pytest
-import pytz
 from pytest_mock import MockerFixture
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
@@ -12,7 +12,10 @@ from kili.domain.organization import (
     OrganizationId,
     OrganizationMetricsFilters,
     OrganizationToUpdateInput,
+    OrganizationUsageByProjectFilters,
+    OrganizationUsageFilters,
 )
+from kili.domain.project import ProjectId
 from kili.presentation.client.organization import (
     InternalOrganizationClientMethods,
     OrganizationClientMethods,
@@ -111,19 +114,20 @@ def test_given_organization_in_kili_when_I_call_organization_metrics_it_retrieve
     )
 
     # When
-    organization_metrics = kili_client.organization_metrics(
-        organization_id=organization_id,
-        start_date=datetime(2022, 1, 1, tzinfo=pytz.UTC),
-        end_date=datetime(2022, 1, 5, tzinfo=pytz.UTC),
-    )
+    with pytest.warns(DeprecationWarning, match="organization_metrics is deprecated"):
+        organization_metrics = kili_client.organization_metrics(
+            organization_id=organization_id,
+            start_date=datetime(2022, 1, 1, tzinfo=timezone.utc),
+            end_date=datetime(2022, 1, 5, tzinfo=timezone.utc),
+        )
 
     # Then
     assert organization_metrics == metrics
     get_organizations_metrics_use_case.assert_called_with(
         OrganizationMetricsFilters(
             id=OrganizationId(organization_id),
-            start_datetime=datetime(2022, 1, 1, tzinfo=pytz.UTC),
-            end_datetime=datetime(2022, 1, 5, tzinfo=pytz.UTC),
+            start_datetime=datetime(2022, 1, 1, tzinfo=timezone.utc),
+            end_datetime=datetime(2022, 1, 5, tzinfo=timezone.utc),
         ),
         ("numberOfAnnotations", "numberOfHours", "numberOfLabeledAssets"),
     )
@@ -134,7 +138,7 @@ def test_given_organization_in_kili_when_I_call_update_properties_in_organizatio
 ):
     # Given
     test_organization_id = "fake_organization_id"
-    new_name = "new_name_{}".format(datetime.now(tz=pytz.UTC).strftime("%Y-%m-%d %H:%M:%S"))
+    new_name = "new_name_{}".format(datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S"))
     update_properties_in_organization_use_case = mocker.patch.object(
         OrganizationUseCases,
         "update_organization",
@@ -152,3 +156,78 @@ def test_given_organization_in_kili_when_I_call_update_properties_in_organizatio
         OrganizationToUpdateInput(name=new_name, license=None),
     )
     assert result["name"] == new_name
+
+
+def test_given_an_organization_when_I_call_organization_usage_it_reads_the_usage_page_metrics(
+    kili_client: Kili, mocker: MockerFixture
+):
+    # Given
+    usage = [{"metric": "LABELED_ASSETS", "total": 3.0, "details": []}]
+    get_organization_usage = mocker.patch.object(
+        OrganizationUseCases, "get_organization_usage", return_value=usage
+    )
+
+    # When
+    result = kili_client.organization_usage(
+        start_date=datetime(2026, 10, 1, tzinfo=timezone.utc),
+        granularity="DAY",
+        project_id="project_id",
+    )
+
+    # Then
+    assert result == usage
+    get_organization_usage.assert_called_once_with(
+        OrganizationUsageFilters(
+            metrics=(
+                "LABELED_ASSETS",
+                "NUMBER_OF_ANNOTATIONS",
+                "ROOT_NUMBER_OF_ANNOTATIONS",
+                "LABELING_TIME",
+                "REVIEW_TIME",
+            ),
+            project_id=ProjectId("project_id"),
+            start_datetime=datetime(2026, 10, 1, tzinfo=timezone.utc),
+            granularity="DAY",
+        )
+    )
+
+
+def test_given_an_organization_when_I_call_organization_usage_by_project_it_lists_the_projects(
+    kili_client: Kili, mocker: MockerFixture
+):
+    # Given
+    projects = [{"projectId": "project_id", "metrics": []}]
+    list_usage_by_project = mocker.patch.object(
+        OrganizationUseCases, "list_organization_usage_by_project", return_value=iter(projects)
+    )
+
+    # When
+    result = kili_client.organization_usage_by_project(
+        metrics=["LABELED_ASSETS"], search_query="shelves", first=10, disable_tqdm=True
+    )
+
+    # Then
+    assert result == projects
+    list_usage_by_project.assert_called_once_with(
+        OrganizationUsageByProjectFilters(metrics=["LABELED_ASSETS"], search_query="shelves"),
+        QueryOptions(disable_tqdm=True, first=10, skip=0),
+    )
+
+
+def test_given_an_organization_when_I_ask_its_usage_by_project_as_a_generator_it_yields_them(
+    kili_client: Kili, mocker: MockerFixture
+):
+    # Given
+    projects = [{"projectId": "project_id", "metrics": []}]
+    mocker.patch.object(
+        OrganizationUseCases,
+        "list_organization_usage_by_project",
+        return_value=(project for project in projects),
+    )
+
+    # When
+    result = kili_client.organization_usage_by_project(as_generator=True, disable_tqdm=True)
+
+    # Then
+    assert isinstance(result, Generator)
+    assert list(result) == projects

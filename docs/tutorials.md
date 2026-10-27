@@ -47,6 +47,8 @@ In this section, you’ll learn the various ways you can process labels with Kil
 
 The label parsing [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/label_parsing/) will show you how you can read and write label data more efficiently.
 
+The file annotations [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/file_annotations/) shows how a labeling step hands back a file it produced -- a render, a scene file, a report -- and how to read it back.
+
 This [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_coco/) shows how to import COCO annotations into Kili.
 
 This [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/importing_pascalvoc/) shows how to import PascalVOC annotations into Kili.

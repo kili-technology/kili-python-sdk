@@ -1,8 +1,12 @@
 """Label use cases."""
 
+import mimetypes
 from collections.abc import Generator
 from functools import partial
+from pathlib import Path
 from typing import TYPE_CHECKING, Literal, Optional, cast
+
+import requests
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.label.types import (
@@ -11,17 +15,20 @@ from kili.adapters.kili_api_gateway.label.types import (
     AppendToLabelsData,
 )
 from kili.domain.asset import AssetExternalId, AssetFilters, AssetId
+from kili.domain.asset.helpers import check_asset_identifier_arguments
 from kili.domain.label import LabelFilters, LabelId, LabelType
 from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.domain.user import UserId
-from kili.exceptions import GraphQLError
+from kili.exceptions import GraphQLError, NotFound
 from kili.use_cases.asset.utils import AssetUseCasesUtils
 from kili.use_cases.base import BaseUseCases
 from kili.utils.labels.parsing import parse_labels
 
 from .types import LabelToCreateUseCaseInput
 from .validator import check_input_labels
+
+ASSET_LEVEL_KEY = "assetLevel"
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -50,6 +57,141 @@ class LabelUseCases(BaseUseCases):
     def count_labels(self, filters: LabelFilters) -> int:
         """Count labels."""
         return self._kili_api_gateway.count_labels(filters=filters)
+
+    def _resolve_file_jobs(
+        self, json_response: dict, project_id: Optional[ProjectId], asset_id: AssetId
+    ) -> dict:
+        """Uploads the files a json response names by path, and puts the answers in their place.
+
+        A file job is answered with a path, and the upload happens here rather than in a call of
+        its own: a file only means anything as the answer to a job, so there is no way to put bytes
+        in Kili that are not an annotation.
+
+        A plain string is what marks one. No other task answers with a bare string -- a
+        transcription answers `{"text": ...}`, a classification `{"categories": [...]}` -- so there
+        is nothing to disambiguate, and an answer already carrying a `fileId` is left alone, which
+        is what lets a label read back from Kili be submitted again.
+        """
+
+        def resolve(jobs: dict) -> dict:
+            resolved = {}
+            for job_name, answer in jobs.items():
+                if not isinstance(answer, str):
+                    resolved[job_name] = answer
+                    continue
+                if project_id is None:
+                    raise ValueError(
+                        f"Job '{job_name}' names a file to upload, which needs the project it"
+                        " belongs to: pass project_id to append_labels."
+                    )
+                resolved[job_name] = self.upload_annotation_file(
+                    project_id=project_id, asset_id=asset_id, file_path=Path(answer)
+                )
+            return resolved
+
+        # On video an asset level job sits under `assetLevel`; the sibling keys are frame numbers,
+        # and a file has no frame, so they are left untouched.
+        asset_level = json_response.get(ASSET_LEVEL_KEY)
+        if isinstance(asset_level, dict):
+            return {**json_response, ASSET_LEVEL_KEY: resolve(asset_level)}
+
+        return resolve(json_response)
+
+    def upload_annotation_file(
+        self, project_id: ProjectId, asset_id: AssetId, file_path: Path
+    ) -> dict:
+        """Upload a file and return what a file job answers with.
+
+        Two steps, as the tools that produce these files do them: the id is minted server side
+        along with a short lived url, then the bytes go straight to the bucket. Nothing references
+        the file until the returned answer is written into a label, so an upload that is never
+        referenced simply leaves an unused blob.
+
+        The mime type is what the file name suggests; the server fills it in the same way when it
+        is not given, so a name it does not recognise is left for the server to decide.
+        """
+        upload = self._kili_api_gateway.create_annotation_file_upload(
+            project_id=project_id, asset_id=asset_id
+        )
+
+        mime_type = mimetypes.guess_type(file_path.name)[0] or ""
+        headers = {"Content-Length": str(file_path.stat().st_size)}
+        if mime_type:
+            headers["Content-Type"] = mime_type
+
+        with file_path.open("rb") as file:
+            response = self._kili_api_gateway.http_client.put(
+                upload["uploadUrl"],
+                data=file,
+                headers=headers,
+                timeout=300,
+            )
+
+        # The bucket answers an upload it refuses with a reason in the body, which
+        # `raise_for_status` drops -- leaving a bare status and the signed url.
+        if not response.ok:
+            raise GraphQLError(
+                f"Uploading {file_path.name} failed with {response.status_code}:"
+                f" {response.text[:500]}"
+            )
+
+        return {
+            "fileId": upload["fileId"],
+            "fileName": file_path.name,
+            "fileMimeType": mime_type,
+        }
+
+    def download_annotation_file(
+        self,
+        project_id: ProjectId,
+        asset_id: Optional[AssetId],
+        asset_external_id: Optional[AssetExternalId],
+        file_id: str,
+        output_path: Path,
+    ) -> str:
+        """Download the file a file annotation points at.
+
+        A file annotation stores an id, never a url: the url is signed when asked for and is short
+        lived, so it is fetched here rather than kept. Streamed in chunks because the files this
+        exists for -- renders, scene files -- are large.
+
+        The asset is named by either identifier, but the project always has to be given: the file
+        lives under the project in the bucket, so there is no addressing it without one.
+        """
+        check_asset_identifier_arguments(
+            project_id,
+            [asset_id] if asset_id else None,
+            [asset_external_id] if asset_external_id else None,
+        )
+        resolved_asset_id = (
+            asset_id
+            or AssetUseCasesUtils(self._kili_api_gateway).get_asset_ids_or_throw_error(
+                asset_ids=None,
+                external_ids=[cast(AssetExternalId, asset_external_id)],
+                project_id=project_id,
+            )[0]
+        )
+
+        url = self._kili_api_gateway.get_annotation_file_url(
+            project_id=project_id, asset_id=resolved_asset_id, file_id=file_id
+        )
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with self._kili_api_gateway.http_client.get(url, stream=True, timeout=30) as response:
+            # The bucket path is keyed on the asset, so a file id belonging to another asset is a
+            # 404 just like one belonging to nothing. Raising the bucket's own error would say
+            # neither, and would put the signed url -- a credential -- in the caller's logs.
+            if response.status_code == requests.codes.not_found:
+                raise NotFound(
+                    f"file {file_id} on asset {resolved_asset_id}: use the fileId read from this"
+                    " asset's label"
+                )
+            response.raise_for_status()
+            with output_path.open("wb") as file:
+                for chunk in response.iter_content(chunk_size=1024 * 1024):
+                    file.write(chunk)
+
+        return str(output_path)
 
     def list_labels(
         self,
@@ -102,6 +244,8 @@ class LabelUseCases(BaseUseCases):
         fields: ListOrTuple[str],
         disable_tqdm: Optional[bool],
         step_name: Optional[str] = None,
+        step_id: Optional[str] = None,
+        group_name: Optional[str] = None,
     ) -> list[dict]:
         """Append labels."""
         check_input_labels(labels)
@@ -131,7 +275,7 @@ class LabelUseCases(BaseUseCases):
                 author_id=label.author_id,
                 asset_id=asset_id,
                 seconds_to_label=label.seconds_to_label,
-                json_response=label.json_response,
+                json_response=self._resolve_file_jobs(label.json_response, project_id, asset_id),
                 model_name=label.model_name,
                 client_version=None,
                 referenced_label_id=label.referenced_label_id,
@@ -139,9 +283,19 @@ class LabelUseCases(BaseUseCases):
             for label, asset_id in zip(labels, resolved_asset_ids, strict=False)
         ]
 
+        if step_id is not None or step_name is not None or group_name is not None:
+            # A step is sent by id: one given by name, and group when several groups use that
+            # name, is resolved first, in the project of the labelled assets.
+            step_id = self._kili_api_gateway.get_step(
+                project_id or self._kili_api_gateway.get_asset_project_id(resolved_asset_ids[0]),
+                step_id=step_id,
+                step_name=step_name,
+                group_name=group_name,
+            )["id"]
+
         data = AppendManyLabelsData(
             label_type=label_type,
-            step_name=step_name,
+            step_id=step_id,
             overwrite=overwrite,
             labels_data=labels_to_add,
         )
@@ -231,6 +385,8 @@ class LabelUseCases(BaseUseCases):
             for label in asset["labels"]
         ]
 
-        import pandas as pd  # pylint: disable=import-outside-toplevel
-
+        try:
+            import pandas as pd  # pylint: disable=import-outside-toplevel
+        except ImportError as e:
+            raise ImportError("Install `pip install kili[pandas]` for format='pandas'.") from e
         return pd.DataFrame(labels)

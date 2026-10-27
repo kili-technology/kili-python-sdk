@@ -1,9 +1,12 @@
 from copy import deepcopy
 
+import pytest
+
 from kili.adapters.kili_api_gateway.asset.operations_mixin import AssetOperationMixin
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.asset import AssetFilters
 from kili.domain.project import ProjectId
+from kili.exceptions import GraphQLError
 
 
 def test_given_video_project_only_latest_label_json_response_requested_annotations_not_fetched_for_labels(
@@ -244,3 +247,82 @@ def test_given_llm_project_latest_labels_json_response_requested_it_rebuilds_it_
     assert "annotations" in assets_query
     assert "annotations" not in assets[0]["latestLabels"][0]
     assert isinstance(assets[0]["latestLabels"][0]["jsonResponse"], dict)
+
+
+def _asset_operations(graphql_client, http_client) -> AssetOperationMixin:
+    asset_operations = AssetOperationMixin()
+    asset_operations.graphql_client = graphql_client
+    asset_operations.http_client = http_client
+    return asset_operations
+
+
+def test_update_asset_consensus_sends_the_set_asset_consensus_mutation_with_an_asset_id(
+    graphql_client, http_client
+):
+    """Pins the backend contract of update_asset_consensus: mutation name, alias and payload."""
+    captured = {}
+
+    def mock_graphql_execute(query, variables=None, **_kwargs) -> dict:
+        captured["query"] = query
+        captured["variables"] = variables
+        return {"data": True}
+
+    graphql_client.execute.side_effect = mock_graphql_execute
+
+    result = _asset_operations(graphql_client, http_client).update_asset_consensus(
+        project_id="project_id", is_consensus=True, asset_id="asset_id"
+    )
+
+    assert result is True
+    assert "mutation setAssetConsensus" in captured["query"]
+    assert "data: setAssetConsensus" in captured["query"]
+    assert captured["variables"] == {
+        "projectId": "project_id",
+        "isConsensus": True,
+        "assetId": "asset_id",
+    }
+
+
+def test_update_asset_consensus_sends_the_external_id_only_when_given(graphql_client, http_client):
+    captured = {}
+
+    def mock_graphql_execute(query, variables=None, **_kwargs) -> dict:
+        captured["variables"] = variables
+        return {"data": False}
+
+    graphql_client.execute.side_effect = mock_graphql_execute
+
+    result = _asset_operations(graphql_client, http_client).update_asset_consensus(
+        project_id="project_id", is_consensus=False, external_id="external_id"
+    )
+
+    assert result is False
+    assert captured["variables"] == {
+        "projectId": "project_id",
+        "isConsensus": False,
+        "externalId": "external_id",
+    }
+
+
+def test_update_asset_consensus_requires_an_asset_id_or_an_external_id(graphql_client, http_client):
+    with pytest.raises(ValueError, match="asset_id or external_id"):
+        _asset_operations(graphql_client, http_client).update_asset_consensus(
+            project_id="project_id", is_consensus=True
+        )
+
+    graphql_client.execute.assert_not_called()
+
+
+def test_update_asset_consensus_propagates_a_graphql_error_without_retrying(
+    graphql_client, http_client
+):
+    graphql_client.execute.side_effect = GraphQLError(
+        error="Cannot set consensus on the current step if its status is not TO DO"
+    )
+
+    with pytest.raises(GraphQLError):
+        _asset_operations(graphql_client, http_client).update_asset_consensus(
+            project_id="project_id", is_consensus=True, asset_id="asset_id"
+        )
+
+    assert graphql_client.execute.call_count == 1

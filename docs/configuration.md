@@ -216,6 +216,47 @@ kili = Kili(api_key="your-api-key")  # Progress bars disabled
 
 ---
 
+### 5. Disable Request Compression (`disable_request_compression`)
+
+Request bodies larger than 1 MB, such as imports of assets with heavy metadata, are compressed (gzip) before being sent, which the Kili API accepts.
+
+If a proxy between you and Kili refuses a compressed request (an HTTP 415, or a 400 because it dropped the `Content-Encoding` header), the SDK sends that request again uncompressed, stops compressing for the rest of the client's life, and logs a warning once. Disable compression to skip that refused first attempt, for instance when your proxy is known to refuse compressed requests.
+
+**Values:**
+
+- `False` (default): Compress request bodies larger than 1 MB
+- `True`: Send every request body uncompressed
+
+**Configuration Methods:**
+```python
+# 1. Function parameter (highest priority)
+kili = Kili(disable_request_compression=True)
+
+# 2. Environment variable
+export KILI_DISABLE_REQUEST_COMPRESSION=true  # or "false", "1", "yes"
+
+# 3. Configuration file
+{
+  "disable_request_compression": true
+}
+
+# 4. Default: False
+```
+
+**Example:**
+```python
+from kili.client import Kili
+
+# Behind a proxy that rejects compressed requests
+kili = Kili(api_key="your-api-key", disable_request_compression=True)
+
+# Or via environment variable
+# $ export KILI_DISABLE_REQUEST_COMPRESSION=true
+kili = Kili(api_key="your-api-key")
+```
+
+---
+
 ## Environment Variables Reference
 
 | Variable | Type | Default | Description |
@@ -224,11 +265,32 @@ kili = Kili(api_key="your-api-key")  # Progress bars disabled
 | `KILI_API_ENDPOINT` | string | `https://cloud.kili-technology.com/api/label/v2/graphql` | GraphQL API endpoint |
 | `KILI_VERIFY` | boolean/string | `true` | TLS certificate verification |
 | `KILI_DISABLE_TQDM` | boolean | None | Disable progress bars globally |
+| `KILI_DISABLE_REQUEST_COMPRESSION` | boolean | `false` | Send request bodies uncompressed |
 
 **Boolean Environment Variables:**
 
 - Truthy values: `"true"`, `"1"`, `"yes"` (case-insensitive)
 - Falsy values: `"false"`, `"0"`, `"no"` (case-insensitive)
+
+---
+
+## Upgrade Notice
+
+On Kili SaaS (`cloud.kili-technology.com` and `cloud.eastus.kili-technology.com`), creating a client
+looks up the latest `kili` published on PyPI, once per Python process, and warns when yours is older:
+
+```
+UserWarning: You are using Kili SDK version 26.1.15, while version 26.2.2 is available. Upgrade with: pip install --upgrade kili
+```
+
+On-premise and LTS deployments are not checked. The lookup never stops the client: when PyPI does
+not answer within 3 seconds, it is skipped. To hide the message:
+
+```python
+import warnings
+
+warnings.filterwarnings("ignore", message="You are using Kili SDK version")
+```
 
 ---
 
@@ -283,3 +345,4 @@ For each setting, the priority order is:
     - `api_endpoint`: `https://cloud.kili-technology.com/api/label/v2/graphql`
     - `verify`: `True`
     - `disable_tqdm`: `None`
+    - `disable_request_compression`: `False`

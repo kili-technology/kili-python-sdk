@@ -57,26 +57,36 @@ class BoundingPoly:
         """Sets the normalized vertices of the bounding polygon.
 
         Args:
-            normalized_vertices: List of normalized vertices for object detection tasks.
-                Or a list of a list of normalized vertices for NER in PDF task.
+            normalized_vertices: A flat list of normalized vertices, or a list of rings
+                (a list of lists of normalized vertices). Both shapes exist in production:
+                image annotations are flat, PDF annotations nest their vertices one level
+                deeper. The nesting is inferred from the data itself, not from the tool,
+                because a PDF annotation is nested whatever tool drew it.
         """
+        rings = (
+            normalized_vertices
+            if normalized_vertices and isinstance(normalized_vertices[0], list)
+            else [normalized_vertices]
+        )
+
         # for object detection tasks type of tool is defined
         if self._type_of_tool:
-            nb_vertices = len(normalized_vertices)
+            for ring in rings:
+                nb_vertices = len(ring)
 
-            if self._type_of_tool == "rectangle" and nb_vertices != 4:
-                raise InvalidMutationError(
-                    f"Bounding polygon with {nb_vertices} vertices is not a rectangle."
-                )
+                if self._type_of_tool == "rectangle" and nb_vertices != 4:
+                    raise InvalidMutationError(
+                        f"Bounding polygon with {nb_vertices} vertices is not a rectangle."
+                    )
 
-            if self._type_of_tool == "polygon" and nb_vertices < 3:
-                raise InvalidMutationError(
-                    f"Bounding polygon with {nb_vertices} vertices is not a polygon."
-                )
+                if self._type_of_tool == "polygon" and nb_vertices < 3:
+                    raise InvalidMutationError(
+                        f"Bounding polygon with {nb_vertices} vertices is not a polygon."
+                    )
 
-        vertices = normalized_vertices if self._type_of_tool else normalized_vertices[0]
-        for vertex in vertices:
-            assert isinstance(vertex, dict), f"Vertex {vertex} is not a dict."
+        for ring in rings:
+            for vertex in ring:
+                assert isinstance(vertex, dict), f"Vertex {vertex} is not a dict."
 
         self._json_data["normalizedVertices"] = normalized_vertices
 

@@ -1,5 +1,6 @@
 """Unit tests for the AssetsNamespace domain API."""
 
+import warnings
 from unittest.mock import MagicMock
 
 import pytest
@@ -189,25 +190,6 @@ class TestAssetsNamespaceCoreOperations:
         assert "project_id" in call_kwargs
         assert call_kwargs["project_id"] == "project_321"
 
-    def test_list_assets_rejects_deprecated_filters(self, assets_namespace):
-        """Ensure deprecated filter names now raise."""
-        # Mock the legacy client method
-        assets_namespace._client.assets.return_value = []
-
-        # The namespace API doesn't accept these deprecated parameters
-        # They should raise TypeError if passed as **kwargs
-        with pytest.raises(TypeError):
-            assets_namespace.list(
-                project_id="project_ext",
-                external_id_contains=["assetA", "assetB"],
-            )
-
-        with pytest.raises(TypeError):
-            assets_namespace.list(
-                project_id="project_ext",
-                consensus_mark_gt=0.5,
-            )
-
     def test_list_assets_resolves_step_name_filters(self, assets_namespace):
         """Ensure step_name_in filter is supported."""
         # Mock the legacy client method
@@ -224,24 +206,6 @@ class TestAssetsNamespaceCoreOperations:
         call_kwargs = assets_namespace._client.assets.call_args[1]
         # step_name_in should be passed as a kwarg
         assert call_kwargs.get("step_name_in") == ["Review"]
-
-    def test_count_assets_rejects_deprecated_filters(self, assets_namespace):
-        """Ensure deprecated count filters raise."""
-        # Mock the legacy client method
-        assets_namespace._client.count_assets.return_value = 0
-
-        # The namespace API doesn't accept these deprecated parameters
-        with pytest.raises(TypeError):
-            assets_namespace.count(
-                project_id="project_ext_count",
-                external_id_contains=["legacy"],
-            )
-
-        with pytest.raises(TypeError):
-            assets_namespace.count(
-                project_id="project_ext_count",
-                honeypot_mark_gt=0.2,
-            )
 
     def test_list_assets_unknown_filter_raises(self, assets_namespace):
         """Ensure unexpected filter names raise a helpful error."""
@@ -296,7 +260,11 @@ class TestAssetsNamespaceCoreOperations:
 
     def test_delete_assets(self, assets_namespace, mock_client):
         """Test delete method delegates to client."""
-        expected_result = {"id": "project_123"}
+        expected_result = {
+            "declined": [],
+            "failed": [],
+            "succeeded": [{"assetId": "asset1", "externalId": None}],
+        }
         mock_client.delete_many_from_dataset.return_value = expected_result
 
         result = assets_namespace.delete(asset_ids=["asset1", "asset2"])
@@ -304,6 +272,39 @@ class TestAssetsNamespaceCoreOperations:
         assert result == expected_result
         mock_client.delete_many_from_dataset.assert_called_once_with(
             asset_ids=["asset1", "asset2"], external_ids=None, project_id=""
+        )
+
+    def test_set_priority(self, assets_namespace, mock_client):
+        """Test set_priority method delegates to client."""
+        expected_result = {
+            "declined": [],
+            "failed": [],
+            "succeeded": [{"assetId": "asset1", "externalId": None}],
+        }
+        mock_client.set_assets_priority.return_value = expected_result
+
+        result = assets_namespace.set_priority(asset_id="asset1", priority=2)
+
+        assert result == expected_result
+        mock_client.set_assets_priority.assert_called_once_with(
+            priority=2, asset_ids=["asset1"], external_ids=None, project_id=""
+        )
+
+    def test_update_priority_is_deprecated_for_set_priority(self, assets_namespace, mock_client):
+        """Test update_priority still delegates, warning once about set_priority."""
+
+        def update_properties_in_assets(**_):
+            warnings.warn("priorities is deprecated", DeprecationWarning, stacklevel=1)
+            return [{"id": "asset1"}]
+
+        mock_client.update_properties_in_assets.side_effect = update_properties_in_assets
+
+        with pytest.warns(DeprecationWarning, match="set_priority") as records:
+            assets_namespace.update_priority(asset_id="asset1", priority=2)
+
+        assert len(records) == 1
+        mock_client.update_properties_in_assets.assert_called_once_with(
+            asset_ids=["asset1"], external_ids=None, project_id="", priorities=[2]
         )
 
     def test_update_consensus_with_asset_id(self, assets_namespace, mock_client):
@@ -410,7 +411,11 @@ class TestAssetsNamespaceContractCompatibility:
 
     def test_api_parity_delete_vs_delete_many(self, assets_namespace, mock_client):
         """Test that delete() calls have same signature as delete_many_from_dataset()."""
-        mock_client.delete_many_from_dataset.return_value = {"id": "project"}
+        mock_client.delete_many_from_dataset.return_value = {
+            "declined": [],
+            "failed": [],
+            "succeeded": [],
+        }
 
         assets_namespace.delete(
             asset_ids=["asset1", "asset2"], external_ids=None, project_id="test_project"
@@ -505,3 +510,22 @@ class TestAssetsNamespaceGroupNameFilter:
 
 if __name__ == "__main__":
     pytest.main([__file__])
+
+
+def test_labels_create_default_sends_no_step():
+    """create_default leaves the step to the asset: no step name is sent on its behalf."""
+    from unittest.mock import MagicMock
+
+    from kili.client import Kili
+    from kili.domain_api.labels import LabelsNamespace
+
+    client = MagicMock(spec=Kili)
+    client.append_labels = MagicMock(return_value=[])
+    LabelsNamespace(client, MagicMock()).create_default(
+        asset_id="asset", json_response={}, project_id="project"
+    )
+
+    kwargs = client.append_labels.call_args.kwargs
+    assert kwargs["step_name"] is None
+    assert kwargs["step_id"] is None
+    assert kwargs["group_name"] is None

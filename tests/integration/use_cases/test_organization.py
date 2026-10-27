@@ -1,6 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
-import pytz
+import pytest
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
@@ -10,6 +10,8 @@ from kili.domain.organization import (
     OrganizationMetricsFilters,
     OrganizationToCreateInput,
     OrganizationToUpdateInput,
+    OrganizationUsageByProjectFilters,
+    OrganizationUsageFilters,
 )
 from kili.use_cases.organization.use_cases import OrganizationUseCases
 
@@ -95,8 +97,8 @@ def test_given_existing_organization_when_I_call_organization_metrics_the_it_ret
     organization_metrics = organization_use_cases.get_organization_metrics(
         OrganizationMetricsFilters(
             id=OrganizationId("fake_organization_id"),
-            start_datetime=datetime.now(tz=pytz.UTC),
-            end_datetime=datetime.now(tz=pytz.UTC),
+            start_datetime=datetime.now(tz=timezone.utc),
+            end_datetime=datetime.now(tz=timezone.utc),
         ),
         fields=["nbUsers"],
     )
@@ -125,3 +127,27 @@ def test_given_a_stored_organization_when_i_call_update_properties_in_organizati
 
     # Then
     assert organization["name"] == "new_name"
+
+
+@pytest.mark.parametrize(
+    ("method", "filters"),
+    [
+        ("get_organization_usage", OrganizationUsageFilters(metrics=())),
+        ("list_organization_usage_by_project", OrganizationUsageByProjectFilters(metrics=())),
+    ],
+)
+def test_given_no_metric_when_I_read_the_usage_it_refuses_before_any_call(
+    kili_api_gateway: KiliAPIGateway, method, filters
+):
+    # Given
+    organization_use_cases = OrganizationUseCases(kili_api_gateway)
+    args = (
+        (filters,)
+        if method == "get_organization_usage"
+        else (filters, QueryOptions(disable_tqdm=True))
+    )
+
+    # When / Then
+    with pytest.raises(ValueError, match="No metric to read"):
+        getattr(organization_use_cases, method)(*args)
+    getattr(kili_api_gateway, method).assert_not_called()

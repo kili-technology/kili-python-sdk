@@ -1,16 +1,12 @@
 import json
-import time
 import warnings
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 import pytest
-from tenacity import TryAgain, retry
-from tenacity.wait import wait_fixed
 
 from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
 from kili.core.helpers import (
-    RetryLongWaitWarner,
     format_result,
     get_mime_type,
     validate_category_search_query,
@@ -84,28 +80,6 @@ def test_format_result_with_type_conversion_int():
     assert isinstance(ret, int)
 
 
-def test_retry_long_wait_warner():
-    class MyTestClass:
-        def __init__(self) -> None:
-            self.start_time = None
-
-        @retry(
-            wait=wait_fixed(0.05),
-            before_sleep=RetryLongWaitWarner(
-                warn_after=0.25,
-                logger_func=warnings.warn,
-                warn_message="warn_message_defined_by_user",
-            ),
-        )
-        def my_method_takes_some_time(self):
-            self.start_time = self.start_time or time.time()
-            if time.time() - self.start_time < 0.5:
-                raise TryAgain("Try again")
-
-    with pytest.warns(match="warn_message_defined_by_user"):
-        MyTestClass().my_method_takes_some_time()
-
-
 def test_get_labels_asset_ids_map(kili_api_gateway: KiliAPIGateway):
     kili_api_gateway.list_labels.return_value = (
         label
@@ -135,7 +109,7 @@ class TestCheckWarnEmptyList(TestCase):
             ),
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=[])
-        assert ret is None
+        assert ret == {"declined": [], "failed": [], "succeeded": []}
         mocked_mutate_from_paginated_call.assert_not_called()
 
     def test_args_empty(self, mocked_mutate_from_paginated_call):
@@ -148,7 +122,7 @@ class TestCheckWarnEmptyList(TestCase):
             ),
         ):
             ret = kili.add_to_review([], [])
-        assert ret is None
+        assert ret == {"declined": [], "failed": [], "succeeded": []}
         mocked_mutate_from_paginated_call.assert_not_called()
 
     def test_none(self, mocked_mutate_from_paginated_call):
@@ -170,7 +144,7 @@ class TestCheckWarnEmptyList(TestCase):
             ),
         ):
             ret = kili.add_to_review(asset_ids=None, external_ids=[], project_id="project_id")
-        assert ret is None
+        assert ret == {"declined": [], "failed": [], "succeeded": []}
         mocked_mutate_from_paginated_call.assert_not_called()
 
     def test_kwargs_one_empty_2(self, mocked_mutate_from_paginated_call):
@@ -183,7 +157,7 @@ class TestCheckWarnEmptyList(TestCase):
             ),
         ):
             ret = kili.add_to_review(asset_ids=[], external_ids=None)
-        assert ret is None
+        assert ret == {"declined": [], "failed": [], "succeeded": []}
         mocked_mutate_from_paginated_call.assert_not_called()
 
     def test_kwargs_no_warning_correct_input(self, mocked_mutate_from_paginated_call):
@@ -194,7 +168,7 @@ class TestCheckWarnEmptyList(TestCase):
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(asset_ids=["asset_id"], external_ids=None)
-        mocked_mutate_from_paginated_call.assert_called_once()
+        kili.graphql_client.execute.assert_called_once()
 
     def test_args_no_warning_correct_input(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()
@@ -204,7 +178,7 @@ class TestCheckWarnEmptyList(TestCase):
         with warnings.catch_warnings():
             warnings.simplefilter("error")
             kili.add_to_review(["asset_id"], None)
-        mocked_mutate_from_paginated_call.assert_called_once()
+        kili.graphql_client.execute.assert_called_once()
 
     def test_warn_change_asset_external_ids(self, mocked_mutate_from_paginated_call):
         kili = MutationsAsset()

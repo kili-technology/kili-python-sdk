@@ -285,9 +285,9 @@ class TestExportTypeValidation:
         # Verify error message is helpful
         error_message = str(exc_info.value)
         assert incompatible_export_type in error_message
-        assert "Workflow V1" in error_message
+        assert "legacy workflow" in error_message
         assert "not compatible" in error_message
-        assert "Workflow V2" in error_message
+        assert "multi-step and multi-group workflows" in error_message
 
         # Should not have called export_labels
         mock_client.export_labels.assert_not_called()
@@ -377,7 +377,20 @@ class TestExportTypeValidation:
 
         # Verify error message
         assert "latest_from_last_step" in str(exc_info.value)
-        assert "Workflow V1" in str(exc_info.value)
+        assert "legacy workflow" in str(exc_info.value)
 
         # Should have fetched workflow version only once
         mock_gateway.get_project.assert_called_once()
+
+
+@pytest.mark.parametrize("method", ["yolo_v5", "yolo_v7", "yolo_v8"])
+def test_the_yolo_exports_pass_how_to_write_the_bounding_boxes(
+    export_namespace, mock_client, mock_gateway, method
+):
+    mock_gateway.get_project.return_value = {"id": "test-project", "workflowVersion": "V2"}
+
+    getattr(export_namespace, method)(
+        project_id="test-project", output_path="/tmp/export.zip", bbox_as="obb"
+    )
+
+    assert mock_client.export_labels.call_args.kwargs["bbox_as"] == "obb"

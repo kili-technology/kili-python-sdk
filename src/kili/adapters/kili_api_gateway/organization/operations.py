@@ -45,6 +45,42 @@ def get_get_organization_metrics_query(fragment: str) -> str:
     """
 
 
+GET_ORGANIZATION_USAGE_QUERY = """
+    query organizationMetricsAnalytics($where: OrganizationMetricsAnalyticsWhere!) {
+        data: organizationMetricsAnalytics(where: $where) {
+            metric
+            total
+            details {
+                timestamp
+                value
+            }
+        }
+    }
+    """
+
+
+LIST_ORGANIZATION_USAGE_BY_PROJECT_QUERY = """
+    query organizationMetricsAnalyticsByProject(
+        $where: OrganizationProjectMetricsWhere!
+        $first: PageSize!
+        $skip: Int!
+    ) {
+        data: organizationMetricsAnalyticsByProject(where: $where, first: $first, skip: $skip) {
+            data {
+                projectId
+                projectTitle
+                isDeleted
+                metrics {
+                    metric
+                    total
+                }
+            }
+            totalCount
+        }
+    }
+    """
+
+
 def get_update_properties_in_organization_mutation(fragment: str) -> str:
     """Return the GraphQL updatePropertiesInOrganization mutation."""
     return f"""

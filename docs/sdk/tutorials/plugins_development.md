@@ -276,6 +276,64 @@ start_date = datetime.combine(dt, datetime.min.time())
 kili.get_plugin_logs(project_id=project_id, plugin_name=plugin_name, start_date=start_date)
 ```
 
+## Receiving Kili events
+
+Beyond `on_submit` and `on_review`, a plugin can receive any Kili event: decorate a method with `on_kili_event` and annotate its event parameter with the events to receive. It is called with each of them, parsed into its [`kili_events`](https://pypi.org/project/kili-events/) model. The [Kili events documentation](https://events-docs.kili-technology.com/latest/) lists every event, with its model and its fields.
+
+The annotation is an event model (`AssetSkippedEvent`), a family of events (`LabelWorkflowEvent`: every `label.workflow.…` event), or a union of them (`AssetSkippedEvent | LabelWorkflowEvent`).
+
+This cell should be the contents of the `.py` file of the plugin:
+
+
+```python
+from kili_events import AssetSkippedEvent, LabelWorkflowEvent
+
+from kili.plugins import PluginCore, on_kili_event
+
+
+class PluginHandler(PluginCore):
+    """Plugin receiving Kili events"""
+
+    @on_kili_event
+    def on_skip(self, event: AssetSkippedEvent) -> None:
+        """Called with every asset skipped in the project"""
+        self.logger.info(f"Asset {event.payload.asset_id} skipped by user {event.user_id}")
+
+    @on_kili_event
+    def on_label_workflow(self, event: LabelWorkflowEvent) -> None:
+        """Called with every label.workflow.… event"""
+        self.logger.info(f"{event.event} on asset {event.payload.asset_id}")
+```
+
+### Testing an event handler locally
+
+Kili calls `on_event` with the event, and `on_event` calls the methods whose annotation the event matches. To test the plugin, call it with an event as Kili sends it:
+
+
+```python
+my_event_plugin = PluginHandler(kili, project_id)
+
+my_event_plugin.on_event(
+    payload={
+        "event": "asset.skipped",
+        "organizationId": "<YOUR_ORGANIZATION_ID>",
+        "projectId": project_id,
+        "userId": "<YOUR_USER_ID>",
+        "payload": {"assetId": asset_id, "externalId": None, "skipped": True, "status": "TODO"},
+    }
+)
+```
+
+### Uploading it
+
+The events the plugin receives are read from the annotations of its decorated methods, so it is uploaded without `event_matcher`:
+
+
+```python
+kili.upload_plugin("path/to/my/event_plugin.py", "My event plugin")
+kili.activate_plugin_on_project("My event plugin", project_id=project_id)
+```
+
 ## Managing your plugin
 
 There are several other methods to manage your plugins and their lifecycle. To find out more, check the plugins [tutorials](https://python-sdk-docs.kili-technology.com/latest/tutorials).

@@ -3,8 +3,6 @@
 from typing import Optional
 
 import click
-import numpy as np
-import pandas as pd
 
 from kili.adapters.kili_api_gateway.helpers.queries import QueryOptions
 from kili.domain.project import ProjectFilters
@@ -33,6 +31,7 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
         ```
     """
     try:
+        import pandas as pd  # pylint: disable=import-outside-toplevel
         from tabulate import tabulate  # pylint: disable=import-outside-toplevel
     except ImportError as e:
         raise ImportError("Install with `pip install kili[cli]` to use this feature.") from e
@@ -57,7 +56,7 @@ def list_projects(api_key: Optional[str], endpoint: Optional[str], tablefmt: str
         lambda x: (
             round((1 - x["numberOfRemainingAssets"] / x["numberOfAssets"]) * 100, 1)
             if x["numberOfAssets"] != 0
-            else np.nan
+            else float("nan")
         ),
         axis=1,
     )

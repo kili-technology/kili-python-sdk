@@ -1,36 +1,46 @@
-"""Common code for the yolo exporter."""
+"""Common code for the yolo exporter, laid out by kili-formats as the app's export lays it out."""
 
-import logging
 from pathlib import Path
 
-from kili_formats import convert_from_kili_to_yolo_format
+from kili_formats.layout import (
+    asset_label_files,
+    exported_jobs,
+    yolo_class_file,
+    yolo_folders,
+    yolo_label_file,
+    yolo_label_filename,
+    yolo_readme_notes,
+)
 from kili_formats.media.video import cut_video
-from kili_formats.types import Job, JobCategory, JobTool
+from kili_formats.types import Job
 
-from kili.domain.ontology import JobMLTask
 from kili.services.export.exceptions import (
     NoCompatibleJobError,
     NotCompatibleInputType,
     NotCompatibleOptions,
 )
-from kili.services.export.format.base import AbstractExporter
-from kili.services.export.repository import AbstractContentRepository, DownloadError
-from kili.services.export.types import LabelFormat, SplitOption
+from kili.services.export.format.base import AbstractExporter, keep_only_images
 from kili.utils.tqdm import tqdm
-
-IMAGE_EXTENSIONS = {".jpeg", ".jpg", ".png", ".bmp", ".gif", ".webp", ".ico"}
 
 
 class YoloExporter(AbstractExporter):
-    """Common code for Yolo exporters."""
+    """Common code for Yolo exporters.
+
+    The export writes a dataset per Ultralytics task the project's jobs give: the bounding boxes'
+    task with a bounding box job, detect, obb or segment by `bbox_as`; segment with a polygon or
+    semantic job. Merged, with two, each goes in its own folder, named after its task, beside the
+    shared `images/`; with one, at the export's root. Split, each job's folder is written for its
+    own task. YOLO v4 has detect only.
+    """
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-
-        if self.split_option == "merged":
-            self.merged_categories_id = self._get_merged_categories(self.project["jsonInterface"])
-        else:
-            self.categories_by_job = self._get_categories_by_job(self.project["jsonInterface"])
+        self.folders = yolo_folders(
+            self.project["jsonInterface"],
+            self.label_format,  # pyright: ignore[reportArgumentType]
+            split=self.split_option != "merged",
+            bounding_boxes=self.bbox_as,
+        )
 
     def _check_arguments_compatibility(self) -> None:
         """Checks if the export label format is compatible with the export options."""
@@ -55,419 +65,140 @@ class YoloExporter(AbstractExporter):
         if len(self.compatible_jobs) == 0:
             raise NoCompatibleJobError("Project needs at least one compatible job.")
 
-        if self.split_option == "merged":
-            if not self.merged_categories_id:
-                raise NoCompatibleJobError(
-                    f"Error: There is no job in project {self.project_id} "
-                    f"that can be converted to the {self.label_format} format."
-                )
-        else:
-            if not self.categories_by_job:
-                raise NoCompatibleJobError(
-                    f"Error: There is no job in project {self.project_id} "
-                    f"that can be converted to the {self.label_format} format."
-                )
+        if not any(folder.categories for folder in self.folders.values()):
+            raise NoCompatibleJobError(
+                f"Error: There is no job in project {self.project_id} "
+                f"that can be converted to the {self.label_format} format."
+            )
 
     def _is_job_compatible(self, job: Job) -> bool:
-        """Check job compatibility with the YOLO format."""
-        if "tools" not in job:
-            return False
-
-        compatible_tools = {JobTool.RECTANGLE, JobTool.POLYGON, JobTool.SEMANTIC}
-
-        return job["mlTask"] == JobMLTask.OBJECT_DETECTION and all(
-            tool in compatible_tools
-            for tool in job["tools"]  # pyright: ignore[reportGeneralTypeIssues]
+        """The jobs the format exports, as the app's export takes them."""
+        return bool(
+            exported_jobs(
+                {"jobs": {"job": job}},
+                self.label_format,  # pyright: ignore[reportArgumentType]
+            )
         )
 
     def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
-        """Yolo specific process and save."""
-        if self.split_option == "merged":
-            return self._process_and_save_merge(assets, output_filename)
-        return self._process_and_save_split(assets, output_filename)
-
-    def _process_and_save_split(self, assets: list[dict], output_filename: Path) -> None:
-        self.logger.info("Exporting to yolo format split...")
-
-        self._write_jobs_labels_into_split_folders(
-            assets,
-            self.categories_by_job,
-            self.export_root_folder,
-            self.images_folder,
-        )
-        self.create_readme_kili_file(self.export_root_folder)
-        self.make_archive(self.export_root_folder, output_filename)
-
-        self.logger.warning(output_filename)
-
-    def _process_and_save_merge(self, assets: list[dict], output_filename: Path) -> None:
-        self.logger.info("Exporting to yolo format merged...")
-
-        labels_folder = self.base_folder / "labels"
-        labels_folder.mkdir(parents=True, exist_ok=True)
-        self._write_labels_into_single_folder(
-            assets,
-            self.merged_categories_id,
-            labels_folder,
-            self.images_folder,
-            self.base_folder,
-        )
-        self.create_readme_kili_file(self.export_root_folder)
-        self.make_archive(self.export_root_folder, output_filename)
-
-        self.logger.warning(output_filename)
-
-    def _write_labels_into_single_folder(
-        self,
-        assets: list[dict],
-        categories_id: dict[str, JobCategory],
-        labels_folder: Path,
-        images_folder: Path,
-        base_folder: Path,
-    ):  # pylint: disable=too-many-arguments
-        """Write all the labels into a single folder."""
-        _write_class_file(base_folder, categories_id, self.label_format, self.split_option)
-
-        remote_content = []
-        video_metadata = {}
-
-        for asset in tqdm(assets, disable=self.disable_tqdm):
-            asset_remote_content, video_filenames = _process_asset(
-                asset,
-                images_folder,
-                labels_folder,
-                categories_id,
-                self.content_repository,
-                self.with_assets,
-                self.project["inputType"],
-            )
-            if video_filenames:
-                video_metadata[asset["externalId"]] = video_filenames
-            remote_content.extend(asset_remote_content)
-
-        if video_metadata:
-            self.write_video_metadata_file(video_metadata, base_folder)
-
-        if len(remote_content) > 0:
-            self.images_folder.mkdir(parents=True, exist_ok=True)
-            self.write_remote_content_file(remote_content, images_folder)
-
-    def _write_jobs_labels_into_split_folders(
-        self,
-        assets: list[dict],
-        categories_by_job: dict[str, dict[str, JobCategory]],
-        root_folder: Path,
-        images_folder: Path,
-    ) -> None:
-        """Write assets into split folders."""
-        for job_id, category_ids in categories_by_job.items():
-            base_folder = root_folder / self.project_id / job_id
-            labels_folder = base_folder / "labels"
-            labels_folder.mkdir(parents=True, exist_ok=True)
-
-            self._write_labels_into_single_folder(
-                assets,
-                category_ids,
-                labels_folder,
-                images_folder,
-                base_folder,
-            )
-
-    def _get_merged_categories(self, json_interface: dict) -> dict[str, JobCategory]:
-        """Return a dictionary of JobCategory instances by category full name."""
-        cat_number = 0
-        merged_categories_id: dict[str, JobCategory] = {}
-        for job_id, job in json_interface.get("jobs", {}).items():
-            if not self._is_job_compatible(job):
-                continue
-
-            for category in job.get("content", {}).get("categories", {}):
-                merged_categories_id[get_category_full_name(job_id, category)] = JobCategory(
-                    category_name=category, id=cat_number, job_id=job_id
-                )
-                cat_number += 1
-
-        return merged_categories_id
-
-    def _get_categories_by_job(self, json_interface: dict) -> dict[str, dict[str, JobCategory]]:
-        """Return a dictionary of JobCategory instances by category full name and job id."""
-        categories_by_job: dict[str, dict[str, JobCategory]] = {}
-        for job_id, job in json_interface.get("jobs", {}).items():
-            if not self._is_job_compatible(job):
-                continue
-
-            categories: dict[str, JobCategory] = {}
-            for cat_id, category in enumerate(job.get("content", {}).get("categories", {})):
-                categories[get_category_full_name(job_id, category)] = JobCategory(
-                    category_name=category, id=cat_id, job_id=job_id
-                )
-            categories_by_job[job_id] = categories
-        return categories_by_job
-
-
-class _LabelFrames:
-    """Holds asset frames data."""
-
-    @staticmethod
-    def from_asset(asset, job_ids, latest_label) -> "_LabelFrames":
-        """Instantiate the label frames from the asset.
-
-        It handles the case when there are several
-        frames by label or a single one.
+        """Write each asset's label files into every folder, as kili-formats lays them out, the
+        images shared: the downloaded images no label file describes are left out.
         """
-        frames = {}
-        number_of_frames = 0
-        is_frame_group = False
-        if "jsonResponse" in latest_label:
-            number_of_frames = len(latest_label["jsonResponse"])
-            for idx in range(number_of_frames):
-                if str(idx) in latest_label["jsonResponse"]:
-                    is_frame_group = True
-                    frame_asset = latest_label["jsonResponse"][str(idx)]
-                    for job_id in job_ids:
-                        if (
-                            job_id in frame_asset
-                            and "annotations" in frame_asset[job_id]
-                            and frame_asset[job_id]["annotations"]
-                        ):
-                            frames[idx] = {"latestLabel": {"jsonResponse": frame_asset}}
-                            break
+        self.logger.info(f"Exporting to yolo format {self.split_option}...")
+        assets = self.preprocess_assets(assets)
 
-        if not frames:
-            frames[-1] = {"latestLabel": latest_label}
-        return _LabelFrames(frames, number_of_frames, is_frame_group, asset["externalId"])
+        for path, folder in self.folders.items():
+            class_file, content = yolo_class_file(
+                folder,
+                self.label_format,  # pyright: ignore[reportArgumentType]
+            )
+            (self.base_folder / path).mkdir(parents=True, exist_ok=True)
+            (self.base_folder / path / class_file).write_text(content, encoding="utf8", newline="")
 
-    def __init__(
-        self, frames: dict[int, dict], number_frames: int, is_frame_group: bool, external_id: str
-    ) -> None:
-        self.frames: dict[int, dict] = frames
-        self.number_frames: int = number_frames
-        self.is_frame_group: bool = is_frame_group
-        self.external_id: str = external_id
+        # A remote image is listed once, whichever folders' label files point to it
+        remote_rows: dict[tuple[str, str, str], None] = {}
+        video_frames: dict[str, dict[str, list[str]]] = {path: {} for path in self.folders}
+        images: set[Path] = set()
+        for asset in tqdm(assets, disable=self.disable_tqdm):
+            asset_remote_rows, frames_by_folder, asset_images = self._write_asset(asset)
+            remote_rows.update(dict.fromkeys(asset_remote_rows))
+            images |= asset_images
+            for path, frame_names in frames_by_folder.items():
+                if frame_names:
+                    video_frames[path][asset["externalId"]] = frame_names
 
-    def get_leading_zeros(self) -> int:
-        """Get leading zeros for file name building."""
-        return len(str(self.number_frames))
+        for path, frames_by_asset in video_frames.items():
+            if frames_by_asset:
+                self.write_video_metadata_file(frames_by_asset, self.base_folder / path)
+        if self.with_assets:
+            keep_only_images(self.images_folder, images)
+        if remote_rows:
+            self.images_folder.mkdir(parents=True, exist_ok=True)
+            self.write_remote_content_file([list(row) for row in remote_rows], self.images_folder)
 
-    def get_label_filename(self, idx: int) -> str:
-        """Get label filemame for index."""
-        return f"{self.external_id}_{str(idx + 1).zfill(self.get_leading_zeros())}"
+        self.create_readme_kili_file(self.export_root_folder, yolo_readme_notes(self.folders))
+        self.make_archive(self.export_root_folder, output_filename)
 
+        self.logger.warning(output_filename)
 
-def get_category_full_name(job_id: str, category_name: str):
-    """Return a full name to identify uniquely a category."""
-    return f"{job_id}__{category_name}"
+    def _write_asset(
+        self, asset: dict
+    ) -> tuple[list[tuple[str, str, str]], dict[str, list[str]], set[Path]]:
+        """Write an asset's label files into every folder.
 
-
-def _process_frame(
-    idx: int,
-    frame: dict,
-    label_frames: _LabelFrames,
-    label_suffix: str,
-    label_idx: int,
-    asset: dict,
-    content_frames: list[str],
-    job_ids: set[str],
-    category_ids: dict[str, JobCategory],
-    labels_folder: Path,
-    images_folder: Path,
-    content_repository: AbstractContentRepository,
-    with_assets: bool,
-    all_video_filenames: list[str],
-) -> list[tuple[str, str, str]]:
-    """Process a single frame and return asset remote content."""
-    asset_remote_content = []
-
-    if label_frames.is_frame_group:
-        filename = label_frames.get_label_filename(idx) + label_suffix
-        if label_idx == 1:  # Only add to video_filenames once (for first label)
-            all_video_filenames.append(label_frames.get_label_filename(idx))
-    else:
-        filename = asset["externalId"] + label_suffix
-
-    frame_labels = _get_frame_labels(frame, job_ids, category_ids)
-    _write_labels_to_file(labels_folder, filename, frame_labels)
-
-    # no need to write asset urls since they are already downloaded
-    if with_assets:
-        return asset_remote_content
-
-    content_frame = content_frames[idx] if content_frames else asset["content"]
-    if content_repository.is_serving(content_frame):
-        if content_frames and not label_frames.is_frame_group:
-            try:
-                _write_content_frame_to_file(
-                    content_frame, images_folder, filename, content_repository
-                )
-            except DownloadError as download_error:
-                asset_id = asset["id"]
-                logging.warning("for asset %s: %s", asset_id, str(download_error))
-    else:
-        asset_remote_content.append(
-            [asset["externalId"], content_frame, f"{_remove_image_extension(filename)}.txt"]
+        Return the rows of the remote images they point to, each folder's video frames, and the
+        downloaded images they describe.
+        """
+        input_type = self.project["inputType"]
+        content_frames = (
+            [Path(path) for path in asset["jsonContent"]]
+            if isinstance(asset.get("jsonContent"), list)
+            else []
         )
-
-    return asset_remote_content
-
-
-def _process_asset(
-    asset: dict,
-    images_folder: Path,
-    labels_folder: Path,
-    category_ids: dict[str, JobCategory],
-    content_repository: AbstractContentRepository,
-    with_assets: bool,
-    project_input_type: str,
-) -> tuple[list[tuple[str, str, str]], list[str]]:
-    # pylint: disable=too-many-locals, too-many-arguments
-    """Process an asset for all job_ids of category_ids."""
-    # Collect all labels to process (handle both latestLabel and latestLabels)
-    labels_to_process = []
-    if "latestLabel" in asset and asset["latestLabel"]:
-        labels_to_process.append(asset["latestLabel"])
-    if "latestLabels" in asset and asset["latestLabels"]:
-        for label in asset["latestLabels"]:
-            if label is not None:
-                labels_to_process.append(label)
-
-    if not labels_to_process:
-        return [], []
-
-    asset_remote_content = []
-    job_ids = {job_category.job_id for job_category in category_ids.values()}
-    all_video_filenames = []
-
-    # Process each label
-    for label_idx, latest_label in enumerate(labels_to_process, start=1):
-        # Add label suffix if we have multiple labels
-        label_suffix = f"_label{label_idx}" if len(labels_to_process) > 1 else ""
-
-        label_frames = _LabelFrames.from_asset(asset, job_ids, latest_label)
-
-        leading_zeros = 0
-        if label_frames.is_frame_group:
-            nbr_frames = label_frames.number_frames
-            leading_zeros = len(str(nbr_frames))
-
-        # If the asset is a video, we need to cut it into frames
-        if project_input_type == "VIDEO" and asset["jsonContent"] == "" and with_assets:
+        # A downloaded native video is cut into frames, named as kili-formats names them
+        if (
+            input_type == "VIDEO"
+            and not content_frames
+            and self.with_assets
+            and Path(str(asset["content"])).is_file()
+        ):
             try:
-                asset["jsonContent"] = cut_video(
-                    video_path=asset["content"],
-                    asset=asset,
-                    leading_zeros=leading_zeros,
-                    output_dir=images_folder,
-                )
+                content_frames = cut_video(Path(asset["content"]), asset, 0, self.images_folder)
             except ImportError as e:
                 raise ImportError(
                     "Install with `pip install kili[video]` to use this feature."
                 ) from e
 
-        content_frames = []
-        if isinstance(asset["jsonContent"], list):
-            content_frames = asset["jsonContent"]
-            content_frames = [str(path) for path in content_frames]
-
-        for idx, frame in label_frames.frames.items():
-            frame_remote_content = _process_frame(
-                idx,
-                frame,
-                label_frames,
-                label_suffix,
-                label_idx,
-                asset,
-                content_frames,
-                job_ids,
-                category_ids,
-                labels_folder,
-                images_folder,
-                content_repository,
-                with_assets,
-                all_video_filenames,
-            )
-            asset_remote_content.extend(frame_remote_content)
-
-    return asset_remote_content, all_video_filenames
-
-
-def _write_class_file(
-    folder: Path,
-    category_ids: dict[str, JobCategory],
-    label_format: LabelFormat,
-    layout: SplitOption,
-):
-    """Create a file that contains meta information about the export, depending of Yolo version.
-
-    For the "merged" layout, the category name is prefixed with the job id to avoid duplicates
-    since a same category name can be used in several jobs.
-    """
-    if label_format == "yolo_v4":
-        with (folder / "classes.txt").open("wb") as fout:
-            for job_category in category_ids.values():
-                prefix = f"{job_category.job_id}/" if layout == "merged" else ""
-                fout.write(f"{job_category.id} {prefix}{job_category.category_name}\n".encode())
-
-    elif label_format == "yolo_v5":
-        with (folder / "data.yaml").open("wb") as fout:
-            fout.write(b"names:\n")
-            for ind, job_category in enumerate(category_ids.values()):
-                prefix = f"{job_category.job_id}/" if layout == "merged" else ""
-                fout.write(f"  {ind}: {prefix}{job_category.category_name}\n".encode())
-
-    elif label_format in ("yolo_v7", "yolo_v8"):
-        with (folder / "data.yaml").open("wb") as fout:
-            categories = ""
-            for job_category in category_ids.values():
-                prefix = f"{job_category.job_id}/" if layout == "merged" else ""
-                categories += f"'{prefix}{job_category.category_name}', "
-            fout.write(f"nc: {len(category_ids.items())}\n".encode())
-            fout.write(f"names: [{categories[:-2]}]\n".encode())  # remove last comma
-
-    else:
-        raise ValueError(f"Unknown Yolo label format: {label_format}")
-
-
-def _get_frame_labels(
-    frame: dict, job_ids: set[str], category_ids: dict[str, JobCategory]
-) -> list[tuple]:
-    annotations = []
-    for job_id in job_ids:
-        job_annotations = convert_from_kili_to_yolo_format(
-            job_id, frame["latestLabel"], category_ids
+        # Not downloaded, a video's frames are listed by url, as the app lists them: the frame count
+        # names them
+        frame_urls = (
+            self.content_repository.get_frames(asset["jsonContent"])
+            if input_type == "VIDEO"
+            and not self.with_assets
+            and isinstance(asset.get("jsonContent"), str)
+            and asset["jsonContent"]
+            else []
         )
-        annotations += job_annotations
 
-    return annotations
+        remote_rows = []
+        images: set[Path] = set()
+        frames_by_folder: dict[str, list[str]] = {}
+        for path, folder in self.folders.items():
+            files = asset_label_files(
+                asset,
+                input_type,
+                [category.job_id for category in folder.categories.values()],
+                len(content_frames) or len(frame_urls),
+                self.project["jsonInterface"],
+            )
+            for file in files:
+                label_filename = yolo_label_filename(file.stem)
+                _write_labels_to_file(
+                    self.base_folder / path / "labels",
+                    label_filename,
+                    yolo_label_file(file.json_response, folder),
+                )
+                if self.with_assets:
+                    if file.frame is None:
+                        images.add(Path(asset["content"]))
+                    elif file.frame < len(content_frames):
+                        images.add(content_frames[file.frame])
+                else:
+                    url = (
+                        frame_urls[file.frame]
+                        if file.frame is not None and file.frame < len(frame_urls)
+                        else asset["content"]
+                    )
+                    if not self.content_repository.is_serving(url):
+                        remote_rows.append((asset["externalId"], url, label_filename))
+            frames_by_folder[path] = sorted(
+                {file.image for file in files if file.frame is not None}
+            )
+        return remote_rows, frames_by_folder, images
 
 
-def _write_content_frame_to_file(
-    url_content_frame: str,
-    images_folder: Path,
-    filename: str,
-    content_repository: AbstractContentRepository,
-):
-    content_iterator = content_repository.get_content_stream(url_content_frame, 1024)
-    with (images_folder / f"{filename}.jpg").open("wb") as fout:
-        for block in content_iterator:
-            if not block:
-                break
-            fout.write(block)
-
-
-def _write_labels_to_file(labels_folder: Path, filename: str, annotations: list[tuple]) -> None:
-    file_path = labels_folder / f"{_remove_image_extension(filename)}.txt"
+def _write_labels_to_file(labels_folder: Path, filename: str, content: str) -> None:
+    """Write a label file, its folder created: an external id can hold a slash."""
+    file_path = labels_folder / filename
     file_path.parent.mkdir(parents=True, exist_ok=True)
-    with file_path.open("wb") as fout:
-        for category_idx, *points in annotations:
-            points_str = " ".join([str(point) for point in points])
-            fout.write(f"{category_idx} {points_str}\n".encode())
-
-
-def _remove_image_extension(filename: str) -> str:
-    try:
-        path = Path(filename)
-        if path.suffix and path.suffix in IMAGE_EXTENSIONS:
-            return str(path.with_suffix(""))
-        return filename
-    except TypeError:
-        return filename
+    file_path.write_text(content, encoding="utf8", newline="")

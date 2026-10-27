@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, call
 from kili.adapters.http_client import HttpClient
 from kili.core.graphql.operations.asset.mutations import (
     GQL_APPEND_MANY_ASSETS,
-    GQL_APPEND_MANY_FRAMES_TO_DATASET,
+    GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY,
 )
 from kili.domain.project import ProjectId
 from kili.services.asset_import import import_assets
@@ -28,7 +28,9 @@ class ImportTestCase(TestCase):
         )
         self.kili = mocked_auth
         self.kili.kili_api_gateway.count_assets = MagicMock(return_value=1)
-        self.kili.notifications = MagicMock(return_value=[{"status": "SUCCESS"}])
+        self.kili.kili_api_gateway.list_notifications = MagicMock(
+            return_value=[{"status": "SUCCESS"}]
+        )
         self.kili.kili_api_gateway.list_assets = MagicMock(return_value=[])
         self.kili.kili_api_gateway.list_organizations = MagicMock(
             return_value=organization_generator(upload_local_data=True)
@@ -62,10 +64,15 @@ class ImportTestCase(TestCase):
         )
 
     def get_expected_async_call(
-        self, content_array, external_id_array, id_array, json_metadata_array, upload_type
+        self,
+        content_array,
+        external_id_array,
+        id_array,
+        json_metadata_array,
+        upload_type,
     ):
         return (
-            GQL_APPEND_MANY_FRAMES_TO_DATASET,
+            GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY,
             {
                 "data": {
                     "contentArray": content_array,
@@ -88,7 +95,7 @@ class ImportTestCase(TestCase):
         upload_type,
     ):
         return (
-            GQL_APPEND_MANY_FRAMES_TO_DATASET,
+            GQL_APPEND_MANY_ASSETS_ASYNCHRONOUSLY,
             {
                 "data": {
                     "multiLayerContentArray": multi_layer_content_array,
