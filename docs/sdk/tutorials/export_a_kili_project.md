@@ -231,8 +231,8 @@ You can export your project data from the Kili UI (see [documentation](https://d
 | YOLO          | ✅   | ✅             | ✅                      |
 | YOLO V4, V5, V7, V8 (deprecated) | ❌   | ✅             | ✅                      |
 | Pascal VOC    | ✅   | ✅             | ✅                      |
-| COCO          | ❌   | ✅             | ✅                      |
-| GeoJSON          | ❌   | ✅             | ✅                      |
+| COCO          | ✅   | ✅             | ✅                      |
+| GeoJSON          | ✅   | ✅             | ✅                      |
 
 ### The `.export_labels` method
 
