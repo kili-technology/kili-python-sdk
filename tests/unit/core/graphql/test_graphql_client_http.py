@@ -70,6 +70,20 @@ def ok(handler: http.server.BaseHTTPRequestHandler) -> None:
     handler.wfile.write(body)
 
 
+def with_warning(handler: http.server.BaseHTTPRequestHandler) -> None:
+    body = json.dumps(
+        {
+            "data": {"appendManyAssets": [{"id": "asset"}]},
+            "extensions": {"warnings": ["Use your personal account."]},
+        }
+    ).encode()
+    handler.send_response(200)
+    handler.send_header("Content-Type", "application/json")
+    handler.send_header("Content-Length", str(len(body)))
+    handler.end_headers()
+    handler.wfile.write(body)
+
+
 def slow(handler: http.server.BaseHTTPRequestHandler) -> None:
     time.sleep(1.5)  # longer than the client's read timeout: the mutation outcome is unknown
     ok(handler)
@@ -118,6 +132,14 @@ def client_for(mocker: pytest_mock.MockerFixture) -> Callable[..., GraphQLClient
         )
 
     return build
+
+
+def test_the_warnings_of_a_response_are_shown(backend, client_for):
+    state, endpoint = backend
+    state.replies = [with_warning]
+
+    with pytest.warns(UserWarning, match=r"^\[Kili SDK\] Use your personal account\.$"):
+        client_for(endpoint).execute(MUTATION)
 
 
 def test_a_mutation_that_times_out_reaches_the_server_once(backend, client_for):
