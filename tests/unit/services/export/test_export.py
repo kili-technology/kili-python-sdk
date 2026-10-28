@@ -1,6 +1,7 @@
 # pylint: disable=missing-module-docstring
 import glob
 import os
+import warnings
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -1218,7 +1219,8 @@ def _asset_labelled(external_id: str, sent_back: bool) -> dict:
 
 
 @pytest.mark.parametrize(
-    ("fmt", "label_file"), [("yolo_v8", "labels/{}.txt"), ("pascal_voc", "labels/{}.xml")]
+    ("fmt", "label_file"),
+    [("yolo", "labels/{}.txt"), ("yolo_v8", "labels/{}.txt"), ("pascal_voc", "labels/{}.xml")],
 )
 @pytest.mark.parametrize("include_sent_back_labels", [False, True])
 def test_yolo_and_voc_leave_out_the_sent_back_labels_when_asked(
@@ -1272,3 +1274,89 @@ def test_the_export_refuses_a_bounding_boxes_choice_it_does_not_know(mocker):
             bbox_as="OBB",  # type: ignore
         )
     kili.kili_api_gateway.get_project.assert_not_called()
+
+
+def _export_two_assets(mocker: pytest_mock.MockerFixture, path, fmt, **kwargs):
+    mocker.patch(
+        "kili.services.export.format.base.fetch_assets",
+        return_value=[_asset_labelled("kept", False), _asset_labelled("sent", True)],
+    )
+    kili = mock_kili(mocker, with_data_connection=False)
+    kili.api_endpoint = "https://"  # type: ignore
+    kili.api_key = ""  # type: ignore
+    kili.graphql_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.http_client = mocker.MagicMock()  # pyright: ignore[reportGeneralTypeIssues]
+    kili.export_labels(
+        project_id="fake_proj_id",
+        filename=str(path),
+        fmt=fmt,
+        layout="merged",
+        with_assets=False,
+        **kwargs,
+    )
+    with ZipFile(path) as archive:
+        # The README names the format and the date: the rest is the dataset
+        return {
+            name: archive.read(name)
+            for name in archive.namelist()
+            if not name.endswith("README.kili.txt")
+        }
+
+
+@pytest.mark.parametrize("bbox_as", ["box", "obb", "polygon"])
+def test_yolo_writes_the_files_of_the_deprecated_yolo_v8(
+    mocker: pytest_mock.MockerFixture, tmp_path, bbox_as
+):
+    files = _export_two_assets(mocker, tmp_path / "yolo.zip", "yolo", bbox_as=bbox_as)
+
+    assert files
+    assert files == _export_two_assets(mocker, tmp_path / "v8.zip", "yolo_v8", bbox_as=bbox_as)
+
+
+@pytest.mark.parametrize("fmt", ["yolo_v4", "yolo_v5", "yolo_v7", "yolo_v8"])
+def test_a_deprecated_yolo_format_still_exports_and_warns_once_to_use_yolo(
+    mocker: pytest_mock.MockerFixture, tmp_path, fmt
+):
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        files = _export_two_assets(mocker, tmp_path / "export.zip", fmt)
+
+    assert files
+    (warning,) = (w for w in caught if issubclass(w.category, DeprecationWarning))
+    assert f'The "{fmt}" format is deprecated' in str(warning.message)
+    assert 'export in the "yolo" format instead' in str(warning.message)
+
+
+def test_yolo_exports_without_a_deprecation_warning(mocker: pytest_mock.MockerFixture, tmp_path):
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        _export_two_assets(mocker, tmp_path / "export.zip", "yolo")
+
+    assert not [w for w in caught if issubclass(w.category, DeprecationWarning)]
+
+
+def test_the_export_refuses_a_bounding_boxes_choice_with_yolo_v4(mocker):
+    kili = mock_kili(mocker, with_data_connection=False)
+
+    with pytest.raises(
+        NotCompatibleOptions, match='bbox_as="obb" is only available for the "yolo" format.'
+    ):
+        export_labels(
+            kili,  # type: ignore
+            asset_ids=None,
+            project_id="fake_proj_id",  # type: ignore
+            export_type="latest",
+            label_format="yolo_v4",
+            split_option="merged",
+            single_file=False,
+            output_file="export.zip",
+            disable_tqdm=True,
+            log_level="WARNING",
+            with_assets=False,
+            annotation_modifier=None,
+            asset_filter_kwargs=None,
+            normalized_coordinates=None,
+            label_type_in=None,
+            include_sent_back_labels=None,
+            bbox_as="obb",
+        )

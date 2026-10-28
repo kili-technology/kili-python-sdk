@@ -17,7 +17,10 @@ from kili.services.export.types import LabelFormat, SplitOption, YoloBoundingBox
 @click.option(
     "--output-format",
     type=click.Choice(get_args(LabelFormat)),
-    help="Format into which the label data will be converted",
+    help=(
+        "Format into which the label data will be converted. yolo_v4, yolo_v5, yolo_v7 and"
+        " yolo_v8 are deprecated: use yolo."
+    ),
     required=True,
 )
 @click.option(
@@ -58,8 +61,8 @@ from kili.services.export.types import LabelFormat, SplitOption, YoloBoundingBox
     type=click.Choice(get_args(YoloBoundingBoxes)),
     default="box",
     help=(
-        "YOLO v5, v7 and v8 only: write the bounding boxes for the Detect task ('box'), the OBB"
-        " task ('obb'), or as polygons in the Segment task ('polygon')."
+        "YOLO only: write the bounding boxes for the Detect task ('box'), the OBB task ('obb'), or"
+        " as polygons in the Segment task ('polygon')."
     ),
 )
 @Options.api_key
@@ -87,8 +90,9 @@ def export_labels(
     !!! Info
         The supported formats are:
 
-        - Yolo V4, V5, V7, V8 for object detection tasks; V5, V7 and V8 write the bounding boxes
-          for Detect, OBB or Segment (`--bbox-as`).
+        - yolo for object detection tasks, the YOLO format the Kili app exports: the bounding
+          boxes for Detect, OBB or Segment (`--bbox-as`). yolo_v4, yolo_v5, yolo_v7 and yolo_v8
+          are deprecated: use yolo.
         - Kili (a.k.a raw) for all tasks.
         - COCO for object detection tasks (bounding box, polygon and semantic segmentation).
         - Pascal VOC for object detection tasks (bounding box only).
@@ -108,7 +112,7 @@ def export_labels(
         ```
         kili project export \\
             --project-id <project_id> \\
-            --output-format yolo_v5 \\
+            --output-format yolo \\
             --output-file /tmp/export_split.zip \\
             --layout split
         ```

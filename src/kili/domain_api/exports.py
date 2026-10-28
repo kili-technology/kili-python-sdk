@@ -283,6 +283,90 @@ class ExportNamespace(DomainNamespace):
             export_type=export_type,
         )
 
+    def yolo(
+        self,
+        project_id: str,
+        output_path: str,
+        layout: SplitOption = "split",
+        with_assets: Optional[bool] = True,
+        disable_tqdm: Optional[bool] = False,
+        filter: Optional[ExportAssetFilter] = None,
+        include_sent_back_labels: Optional[bool] = None,
+        label_type_in: Optional[list[LabelType]] = None,
+        export_type: Optional[ExportType] = None,
+        bbox_as: YoloBoundingBoxes = "box",
+    ):
+        """Export project labels in the YOLO format, the one the Kili app exports.
+
+        The YOLO format exports annotations with normalized coordinates, in the Ultralytics
+        dataset format that every YOLO version from v5 to YOLO26 reads: a data.yaml file and a
+        .txt file per image. It writes a dataset per task the project's jobs give:
+
+        - The bounding boxes' task, when the project has a bounding box job, by `bbox_as`:
+          Detect, the upright box around each; OBB, their four corners, so a rotated box keeps
+          its angle; or Segment, their four corners beside the polygons.
+        - Segment, a polygon per polygon and semantic segmentation part, when the project has a
+          polygon or semantic job.
+
+        With `layout="split"`, each job's folder is written for its own task: Segment for a job
+        with a polygon or semantic tool, its bounding boxes as polygons; the bounding boxes' task
+        otherwise. With `layout="merged"` and two tasks, each dataset goes in its own folder,
+        `detect/` or `obb/`, and `segment/`, beside the shared `images/`; with one task, at the
+        root of the archive. Points, lines, pose and classification are not exported.
+
+        Args:
+            project_id: Identifier of the project.
+            output_path: Relative or full path of the archive that will contain
+                the exported data.
+            layout: Layout of the exported files. "split" means there is one folder
+                per job, "merged" that there is one folder with every labels.
+            bbox_as: How the bounding boxes are written: `"box"`, the upright box around each, for
+                Detect; `"obb"`, their four corners, for OBB; `"polygon"`, their four corners, in
+                Segment.
+            with_assets: Download the assets in the export.
+            disable_tqdm: Disable the progress bar if True.
+            filter: Optional dictionary to filter assets whose labels are exported.
+                See `ExportAssetFilter` for available filter options.
+            label_type_in: Optional list of label type. Exported assets should have a label
+                whose type belongs to that list.
+                By default, only `DEFAULT` and `REVIEW` labels are exported.
+            include_sent_back_labels: If True, the export will include the labels that
+                have been sent back.
+            export_type: Type of export. If not specified, automatically selects the optimal type:
+                - For legacy workflow projects: uses `"latest"` (single label per asset)
+                - For multi-step or multi-group workflow projects: uses `"latest_from_last_step"`
+                  (supports multiple annotators)
+
+                Available options:
+                - `"latest_from_last_step"`: exports the latest labels from the last workflow step
+                  (uses `latestLabels` field, supports multiple annotators).
+                - `"latest_from_all_steps"`: exports latest labels from all workflow steps
+                - `"latest"`: exports the latest label for each asset
+                  (deprecated, use `"latest_from_last_step"` instead).
+                - `"normal"`: exports all labels for each asset.
+
+        Returns:
+            Export information or None if export failed.
+        """
+        return self._export(
+            project_id=project_id,
+            output_path=output_path,
+            with_assets=with_assets,
+            disable_tqdm=disable_tqdm,
+            filter=filter,
+            include_sent_back_labels=include_sent_back_labels,
+            label_type_in=label_type_in,
+            layout=layout,
+            bbox_as=bbox_as,
+            fmt="yolo",
+            export_type=export_type,
+        )
+
+    @deprecated(
+        "kili.exports.yolo_v4() is deprecated: use kili.exports.yolo(), the YOLO format the"
+        " Kili app exports.",
+        category=None,
+    )
     def yolo_v4(
         self,
         project_id: str,
@@ -295,12 +379,15 @@ class ExportNamespace(DomainNamespace):
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
     ):
-        """Export project labels in YOLO v4 format.
+        """Export project labels in YOLO v4 format, deprecated: use `yolo()`.
+
+        Deprecated: `yolo()` exports the YOLO format the Kili app exports. YOLO v4 still
+        works, with a `DeprecationWarning`, until a later release removes it.
 
         YOLO v4 format exports annotations with normalized coordinates for the Detect task:
         a classes.txt file and a .txt file per image, a box per bounding box, the upright box
         around it. It has no other task: polygons, semantic segmentations, points, lines, pose and
-        classification are not exported. For segmentation, use the YOLO v5, v7 or v8 format.
+        classification are not exported. For segmentation, use `yolo()`.
 
         Args:
             project_id: Identifier of the project.
@@ -346,6 +433,11 @@ class ExportNamespace(DomainNamespace):
             export_type=export_type,
         )
 
+    @deprecated(
+        "kili.exports.yolo_v5() is deprecated: use kili.exports.yolo(), the YOLO format the"
+        " Kili app exports.",
+        category=None,
+    )
     def yolo_v5(
         self,
         project_id: str,
@@ -359,7 +451,10 @@ class ExportNamespace(DomainNamespace):
         export_type: Optional[ExportType] = None,
         bbox_as: YoloBoundingBoxes = "box",
     ):
-        """Export project labels in YOLO v5 format.
+        """Export project labels in YOLO v5 format, deprecated: use `yolo()`.
+
+        Deprecated: `yolo()` exports the YOLO format the Kili app exports. YOLO v5 still
+        works, with a `DeprecationWarning`, until a later release removes it.
 
         YOLO v5 format exports annotations with normalized coordinates, in the Ultralytics
         dataset format that every YOLO version from v5 to YOLO26 reads: a data.yaml file and a
@@ -425,6 +520,11 @@ class ExportNamespace(DomainNamespace):
             export_type=export_type,
         )
 
+    @deprecated(
+        "kili.exports.yolo_v7() is deprecated: use kili.exports.yolo(), the YOLO format the"
+        " Kili app exports.",
+        category=None,
+    )
     def yolo_v7(
         self,
         project_id: str,
@@ -438,7 +538,10 @@ class ExportNamespace(DomainNamespace):
         export_type: Optional[ExportType] = None,
         bbox_as: YoloBoundingBoxes = "box",
     ):
-        """Export project labels in YOLO v7 format.
+        """Export project labels in YOLO v7 format, deprecated: use `yolo()`.
+
+        Deprecated: `yolo()` exports the YOLO format the Kili app exports. YOLO v7 still
+        works, with a `DeprecationWarning`, until a later release removes it.
 
         YOLO v7 format exports annotations with normalized coordinates, in the Ultralytics
         dataset format that every YOLO version from v5 to YOLO26 reads: a data.yaml file and a
@@ -504,6 +607,11 @@ class ExportNamespace(DomainNamespace):
             export_type=export_type,
         )
 
+    @deprecated(
+        "kili.exports.yolo_v8() is deprecated: use kili.exports.yolo(), the YOLO format the"
+        " Kili app exports.",
+        category=None,
+    )
     def yolo_v8(
         self,
         project_id: str,
@@ -517,7 +625,10 @@ class ExportNamespace(DomainNamespace):
         export_type: Optional[ExportType] = None,
         bbox_as: YoloBoundingBoxes = "box",
     ):
-        """Export project labels in YOLO v8 format.
+        """Export project labels in YOLO v8 format, deprecated: use `yolo()`.
+
+        Deprecated: `yolo()` exports the YOLO format the Kili app exports. YOLO v8 still
+        works, with a `DeprecationWarning`, until a later release removes it.
 
         YOLO v8 format exports annotations with normalized coordinates, in the Ultralytics
         dataset format that every YOLO version from v5 to YOLO26 reads: a data.yaml file and a
@@ -800,8 +911,8 @@ class ExportNamespace(DomainNamespace):
                 whose type belongs to that list.
                 By default, only `DEFAULT` and `REVIEW` labels are exported.
             include_sent_back_labels: If True, the export will include the labels that have been sent back.
-            bbox_as: (For YOLO v5, v7 and v8 only) how the bounding boxes are written: `"box"`,
-                for Detect; `"obb"`, for OBB; `"polygon"`, in Segment.
+            bbox_as: (For YOLO only) how the bounding boxes are written: `"box"`, for Detect;
+                `"obb"`, for OBB; `"polygon"`, in Segment.
 
         Returns:
             Export information or None if export failed.

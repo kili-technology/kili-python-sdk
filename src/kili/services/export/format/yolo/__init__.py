@@ -30,7 +30,7 @@ class YoloExporter(AbstractExporter):
     task with a bounding box job, detect, obb or segment by `bbox_as`; segment with a polygon or
     semantic job. Merged, with two, each goes in its own folder, named after its task, beside the
     shared `images/`; with one, at the export's root. Split, each job's folder is written for its
-    own task. YOLO v4 has detect only.
+    own task. The deprecated YOLO v4 has detect only.
     """
 
     def __init__(self, *args, **kwargs) -> None:
