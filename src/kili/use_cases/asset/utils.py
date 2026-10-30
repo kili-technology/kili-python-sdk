@@ -40,13 +40,19 @@ class AssetUseCasesUtils:
         return resolved_asset_ids
 
     def infer_ids_from_external_ids(
-        self, asset_external_ids: ListOrTuple[AssetExternalId], project_id: ProjectId
+        self,
+        asset_external_ids: ListOrTuple[AssetExternalId],
+        project_id: ProjectId,
+        *,
+        refuse_duplicates: bool = False,
     ) -> dict[AssetExternalId, AssetId]:
         """Infer asset ids from their external ids and project Id.
 
         Args:
             asset_external_ids: asset external ids
             project_id: project id
+            refuse_duplicates: raise when several assets of the project have one of the external
+                ids, instead of picking one of them
 
         Returns:
             a dict that maps external ids to internal ids.
@@ -55,7 +61,9 @@ class AssetUseCasesUtils:
             NotFound: when there are asset_ids what have the same external id, or when external ids
             have not been found.
         """
-        id_map = self._build_id_map(asset_external_ids, project_id)
+        id_map = self._build_id_map(
+            asset_external_ids, project_id, refuse_duplicates=refuse_duplicates
+        )
 
         if len(id_map) < len(set(asset_external_ids)):
             assets_not_found = [
@@ -92,7 +100,7 @@ class AssetUseCasesUtils:
             MissingArgumentError: If both or neither of `asset_ids` and `external_ids` are given.
             IncompatibleArgumentsError: If the call gives a metadata dictionary count other than the
                 id count.
-            NotFound: If an id matches no asset of the project.
+            NotFound: If an id matches no asset of the project, or an external id several.
         """
         if (asset_ids is None) == (external_ids is None):
             raise MissingArgumentError("Please provide either `asset_ids` or `external_ids`.")
@@ -110,7 +118,7 @@ class AssetUseCasesUtils:
 
         if external_ids is not None:
             id_map = self.infer_ids_from_external_ids(
-                cast(list[AssetExternalId], external_ids), project_id
+                cast(list[AssetExternalId], external_ids), project_id, refuse_duplicates=True
             )
             given_ids = [str(id_map[AssetExternalId(external_id)]) for external_id in external_ids]
 
@@ -132,7 +140,11 @@ class AssetUseCasesUtils:
         return given_ids, metadata_by_id
 
     def _build_id_map(
-        self, asset_external_ids: ListOrTuple[AssetExternalId], project_id: ProjectId
+        self,
+        asset_external_ids: ListOrTuple[AssetExternalId],
+        project_id: ProjectId,
+        *,
+        refuse_duplicates: bool = False,
     ) -> dict[AssetExternalId, AssetId]:
         # we batch the queries because too many assets in a "in" query makes the query fail
         assets_generators = (
@@ -147,5 +159,11 @@ class AssetUseCasesUtils:
         id_map: dict[AssetExternalId, AssetId] = {}
         asset_external_ids_set = set(asset_external_ids)
         for asset in (asset for asset in assets if asset["externalId"] in asset_external_ids_set):
-            id_map[AssetExternalId(asset["externalId"])] = AssetId(asset["id"])
+            external_id = AssetExternalId(asset["externalId"])
+            if refuse_duplicates and external_id in id_map:
+                raise NotFound(
+                    f"Several assets of the project of Id {project_id} have the external_id"
+                    f" {external_id!r}: use their asset ids instead."
+                )
+            id_map[external_id] = AssetId(asset["id"])
         return id_map

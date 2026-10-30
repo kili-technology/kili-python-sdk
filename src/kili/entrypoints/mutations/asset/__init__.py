@@ -559,7 +559,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         Raises:
             MissingArgumentError: If both or neither of `asset_ids` and `external_ids` are given.
             IncompatibleArgumentsError: If `json_metadata` and the ids do not have the same length.
-            NotFound: If an asset ID or an external ID matches no asset of the project.
+            NotFound: If an asset ID or an external ID matches no asset of the project, or an
+                external ID several.
 
         Examples:
             >>> kili.add_metadata(
@@ -628,7 +629,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         Raises:
             MissingArgumentError: If both or neither of `asset_ids` and `external_ids` are given.
             IncompatibleArgumentsError: If `json_metadata` and the ids do not have the same length.
-            NotFound: If an asset ID or an external ID matches no asset of the project.
+            NotFound: If an asset ID or an external ID matches no asset of the project, or an
+                external ID several.
 
         Examples:
             >>> kili.set_metadata(
@@ -656,12 +658,12 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         asset_ids_in_order, current_metadata = AssetUseCasesUtils(
             self.kili_api_gateway
         ).get_metadata_targets(ProjectId(project_id), asset_ids, external_ids, len(json_metadata))
-        # an asset given twice ends with the last dictionary, as two calls would leave it
+        # an asset given twice gets both dictionaries in turn, as two calls would
         new_metadata: dict[str, dict] = {}
         for asset_id, metadata in zip(asset_ids_in_order, json_metadata, strict=True):
             kept_metadata = {
                 key: value
-                for key, value in current_metadata[asset_id].items()
+                for key, value in new_metadata.get(asset_id, current_metadata[asset_id]).items()
                 if key in METADATA_KEYS_KEPT_BY_SET
             }
             new_metadata[asset_id] = {**kept_metadata, **metadata}
@@ -694,9 +696,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
 
         Raises:
             ValueError: If `keys` holds `processingParameters`, which Kili keeps to process the
-                asset: change it with `kili.assets.update_processing_parameter()` instead.
+                asset: change it with `add_metadata`, which keeps the asset's other metadata.
             MissingArgumentError: If both or neither of `asset_ids` and `external_ids` are given.
-            NotFound: If an asset ID or an external ID matches no asset of the project.
+            NotFound: If an asset ID or an external ID matches no asset of the project, or an
+                external ID several.
 
         Examples:
             >>> kili.remove_metadata(
@@ -721,7 +724,8 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         if "processingParameters" in keys:
             raise ValueError(
                 "`processingParameters` cannot be removed: Kili keeps it to process the asset."
-                " Change it with `kili.assets.update_processing_parameter()` instead."
+                ' Change it with `add_metadata(json_metadata=[{"processingParameters": {...}}], ...)`,'
+                " which keeps the asset's other metadata."
             )
 
         asset_ids_in_order, current_metadata = AssetUseCasesUtils(

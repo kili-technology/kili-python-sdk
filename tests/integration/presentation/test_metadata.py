@@ -535,6 +535,44 @@ def test_add_metadata_gives_an_asset_given_twice_both_dicts(mocker: pytest_mock.
     }
 
 
+@pytest.mark.parametrize("method", ["add_metadata", "set_metadata"])
+def test_metadata_raises_when_an_external_id_matches_several_assets(
+    mocker: pytest_mock.MockerFixture, method: str
+):
+    """Test that an external id two assets share raises instead of writing one of them."""
+    mutations_asset, kili_api_gateway, update_mock = _mutations_asset(
+        mocker, [{"id": "first", "externalId": "dup"}, {"id": "second", "externalId": "dup"}]
+    )
+
+    with pytest.raises(NotFound, match="'dup'"):
+        getattr(mutations_asset, method)(
+            json_metadata=[{"split": "val"}], project_id="project1", external_ids=["dup"]
+        )
+
+    assert kili_api_gateway.list_assets.call_count == 1
+    update_mock.assert_not_called()
+
+
+def test_set_metadata_gives_an_asset_given_twice_both_dicts_in_turn(
+    mocker: pytest_mock.MockerFixture,
+):
+    """Test that the second dict sets the asset as the first left it, as a second call would."""
+    mutations_asset, _, update_mock = _mutations_asset(
+        mocker, [{"id": "asset1", "jsonMetadata": {"text": "old", "k": "v"}}]
+    )
+
+    mutations_asset.set_metadata(
+        json_metadata=[{"text": "new", "a": "1"}, {"b": "2"}],
+        project_id="project1",
+        asset_ids=["asset1", "asset1"],
+    )
+
+    assert update_mock.call_args[1] == {
+        "asset_ids": ["asset1"],
+        "json_metadatas": [{"text": "new", "b": "2"}],
+    }
+
+
 def test_add_metadata_accepts_nested_values(mocker: pytest_mock.MockerFixture):
     """Test that metadata values can be nested dicts and lists."""
     mutations_asset, _, update_mock = _mutations_asset(
@@ -577,7 +615,7 @@ def test_remove_metadata_refuses_processing_parameters(mocker: pytest_mock.Mocke
     """Test that processingParameters, which Kili keeps, is refused instead of silently kept."""
     mutations_asset, kili_api_gateway, update_mock = _mutations_asset(mocker)
 
-    with pytest.raises(ValueError, match="update_processing_parameter"):
+    with pytest.raises(ValueError, match="add_metadata"):
         mutations_asset.remove_metadata(
             keys=["processingParameters"], project_id="project1", asset_ids=["asset1"]
         )

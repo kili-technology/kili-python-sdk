@@ -1792,7 +1792,8 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
 
         Raises:
             IncompatibleArgumentsError: If `json_metadata` and the ids do not have the same length.
-            NotFound: If an asset ID or an external ID matches no asset of the project.
+            NotFound: If an asset ID or an external ID matches no asset of the project, or an
+                external ID several.
 
         Examples:
             >>> # Single asset
@@ -1899,7 +1900,8 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
 
         Raises:
             IncompatibleArgumentsError: If `json_metadata` and the ids do not have the same length.
-            NotFound: If an asset ID or an external ID matches no asset of the project.
+            NotFound: If an asset ID or an external ID matches no asset of the project, or an
+                external ID several.
 
         Examples:
             >>> # Single asset
@@ -2001,8 +2003,9 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
 
         Raises:
             ValueError: If `keys` holds `processingParameters`, which Kili keeps to process the asset:
-                change it with `update_processing_parameter()` instead.
-            NotFound: If an asset ID or an external ID matches no asset of the project.
+                change it with `add_metadata()`, which keeps the asset's other metadata.
+            NotFound: If an asset ID or an external ID matches no asset of the project, or an
+                external ID several.
 
         Examples:
             >>> # Single asset
