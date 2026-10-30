@@ -259,6 +259,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     - delete(): Delete assets from projects
     - add_metadata(): Add metadata to assets
     - set_metadata(): Set metadata on assets
+    - remove_metadata(): Remove metadata keys from assets
     - update_external_id(): Update asset external IDs
     - update_processing_parameter(): Update video processing parameters
     - invalidate(): Send assets back to queue (invalidate current step)
@@ -1724,7 +1725,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def add_metadata(
         self,
         *,
-        json_metadata: dict[str, Union[str, int, float]],
+        json_metadata: dict[str, Any],
         project_id: str,
         asset_id: str,
     ) -> List[dict[Literal["id"], str]]:
@@ -1734,7 +1735,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def add_metadata(
         self,
         *,
-        json_metadata: List[dict[str, Union[str, int, float]]],
+        json_metadata: List[dict[str, Any]],
         project_id: str,
         asset_ids: List[str],
     ) -> List[dict[Literal["id"], str]]:
@@ -1744,7 +1745,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def add_metadata(
         self,
         *,
-        json_metadata: dict[str, Union[str, int, float]],
+        json_metadata: dict[str, Any],
         project_id: str,
         external_id: str,
     ) -> List[dict[Literal["id"], str]]:
@@ -1754,7 +1755,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def add_metadata(
         self,
         *,
-        json_metadata: List[dict[str, Union[str, int, float]]],
+        json_metadata: List[dict[str, Any]],
         project_id: str,
         external_ids: List[str],
     ) -> List[dict[Literal["id"], str]]:
@@ -1764,9 +1765,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def add_metadata(
         self,
         *,
-        json_metadata: Union[
-            dict[str, Union[str, int, float]], List[dict[str, Union[str, int, float]]]
-        ],
+        json_metadata: Union[dict[str, Any], List[dict[str, Any]]],
         project_id: str,
         asset_id: Optional[str] = None,
         asset_ids: Optional[List[str]] = None,
@@ -1775,17 +1774,25 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     ) -> List[dict[Literal["id"], str]]:
         """Add metadata to assets without overriding existing metadata.
 
+        Each dictionary is merged into the metadata of the asset given at the same position: its
+        keys are added, or changed when the asset already has them, and the other keys are kept.
+
         Args:
-            json_metadata: Metadata dictionary to add to asset, or list of metadata dictionaries to add to each asset.
-                Each dictionary contains key/value pairs to be added to the asset's metadata.
+            json_metadata: Metadata dictionary to add to asset, or list of metadata dictionaries to add to each asset,
+                one per asset, in the order of `asset_ids` or `external_ids`. Values can be nested dicts and lists.
             project_id: The project ID.
             asset_id: The asset ID to modify.
             asset_ids: The asset IDs to modify.
             external_id: The external asset ID to modify (if `asset_id` is not already provided).
             external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
+                External IDs are matched exactly.
 
         Returns:
             A list of dictionaries with the asset ids.
+
+        Raises:
+            IncompatibleArgumentsError: If `json_metadata` and the ids do not have the same length.
+            NotFound: If an asset ID or an external ID matches no asset of the project.
 
         Examples:
             >>> # Single asset
@@ -1824,7 +1831,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def set_metadata(
         self,
         *,
-        json_metadata: dict[str, Union[str, int, float]],
+        json_metadata: dict[str, Any],
         project_id: str,
         asset_id: str,
     ) -> List[dict[Literal["id"], str]]:
@@ -1834,7 +1841,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def set_metadata(
         self,
         *,
-        json_metadata: List[dict[str, Union[str, int, float]]],
+        json_metadata: List[dict[str, Any]],
         project_id: str,
         asset_ids: List[str],
     ) -> List[dict[Literal["id"], str]]:
@@ -1844,7 +1851,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def set_metadata(
         self,
         *,
-        json_metadata: dict[str, Union[str, int, float]],
+        json_metadata: dict[str, Any],
         project_id: str,
         external_id: str,
     ) -> List[dict[Literal["id"], str]]:
@@ -1854,7 +1861,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def set_metadata(
         self,
         *,
-        json_metadata: List[dict[str, Union[str, int, float]]],
+        json_metadata: List[dict[str, Any]],
         project_id: str,
         external_ids: List[str],
     ) -> List[dict[Literal["id"], str]]:
@@ -1864,28 +1871,35 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
     def set_metadata(
         self,
         *,
-        json_metadata: Union[
-            dict[str, Union[str, int, float]], List[dict[str, Union[str, int, float]]]
-        ],
+        json_metadata: Union[dict[str, Any], List[dict[str, Any]]],
         project_id: str,
         asset_id: Optional[str] = None,
         asset_ids: Optional[List[str]] = None,
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
     ) -> List[dict[Literal["id"], str]]:
-        """Set metadata on assets, replacing any existing metadata.
+        """Set metadata on assets, replacing their existing metadata.
+
+        Each dictionary replaces the metadata of the asset given at the same position, except the
+        keys `text`, `imageUrl`, `url` and `processingParameters`, which the asset keeps unless the
+        dictionary gives them.
 
         Args:
-            json_metadata: Metadata dictionary to set on asset, or list of metadata dictionaries to set on each asset.
-                Each dictionary contains key/value pairs to be set as the asset's metadata.
+            json_metadata: Metadata dictionary to set on asset, or list of metadata dictionaries to set on each asset,
+                one per asset, in the order of `asset_ids` or `external_ids`. Values can be nested dicts and lists.
             project_id: The project ID.
             asset_id: The asset ID to modify.
             asset_ids: The asset IDs to modify (if `external_ids` is not already provided).
             external_id: The external asset ID to modify (if `asset_id` is not already provided).
             external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
+                External IDs are matched exactly.
 
         Returns:
             A list of dictionaries with the asset ids.
+
+        Raises:
+            IncompatibleArgumentsError: If `json_metadata` and the ids do not have the same length.
+            NotFound: If an asset ID or an external ID matches no asset of the project.
 
         Examples:
             >>> # Single asset
@@ -1915,6 +1929,104 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
 
         return self._client.set_metadata(
             json_metadata=json_metadata,
+            project_id=project_id,
+            asset_ids=asset_ids,
+            external_ids=external_ids,
+        )
+
+    @overload
+    def remove_metadata(
+        self,
+        *,
+        keys: List[str],
+        project_id: str,
+        asset_id: str,
+    ) -> List[dict[Literal["id"], str]]:
+        ...
+
+    @overload
+    def remove_metadata(
+        self,
+        *,
+        keys: List[str],
+        project_id: str,
+        asset_ids: List[str],
+    ) -> List[dict[Literal["id"], str]]:
+        ...
+
+    @overload
+    def remove_metadata(
+        self,
+        *,
+        keys: List[str],
+        project_id: str,
+        external_id: str,
+    ) -> List[dict[Literal["id"], str]]:
+        ...
+
+    @overload
+    def remove_metadata(
+        self,
+        *,
+        keys: List[str],
+        project_id: str,
+        external_ids: List[str],
+    ) -> List[dict[Literal["id"], str]]:
+        ...
+
+    @typechecked
+    def remove_metadata(
+        self,
+        *,
+        keys: List[str],
+        project_id: str,
+        asset_id: Optional[str] = None,
+        asset_ids: Optional[List[str]] = None,
+        external_id: Optional[str] = None,
+        external_ids: Optional[List[str]] = None,
+    ) -> List[dict[Literal["id"], str]]:
+        """Remove metadata keys from assets, keeping their other keys.
+
+        Args:
+            keys: The metadata keys to remove from each asset. A key an asset does not have is ignored.
+            project_id: The project ID.
+            asset_id: The asset ID to modify.
+            asset_ids: The asset IDs to modify (if `external_ids` is not already provided).
+            external_id: The external asset ID to modify (if `asset_id` is not already provided).
+            external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).
+                External IDs are matched exactly.
+
+        Returns:
+            A list of dictionaries with the asset ids.
+
+        Raises:
+            ValueError: If `keys` holds `processingParameters`, which Kili keeps to process the asset:
+                change it with `update_processing_parameter()` instead.
+            NotFound: If an asset ID or an external ID matches no asset of the project.
+
+        Examples:
+            >>> # Single asset
+            >>> kili.assets.remove_metadata(
+                    keys=["reviewed_by"],
+                    project_id="cm92to3cx012u7l0w6kij9qvx",
+                    asset_id="ckg22d81r0jrg0885unmuswj8"
+                )
+
+            >>> # Multiple assets
+            >>> kili.assets.remove_metadata(
+                    keys=["reviewed_by", "split"],
+                    project_id="cm92to3cx012u7l0w6kij9qvx",
+                    external_ids=["asset1", "asset2"]
+                )
+        """
+        # Convert singular to plural
+        if asset_id is not None:
+            asset_ids = [asset_id]
+        if external_id is not None:
+            external_ids = [external_id]
+
+        return self._client.remove_metadata(
+            keys=keys,
             project_id=project_id,
             asset_ids=asset_ids,
             external_ids=external_ids,
