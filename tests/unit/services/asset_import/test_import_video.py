@@ -143,15 +143,17 @@ class VideoTestCase(ImportTestCase):
 
     def test_upload_of_a_transport_stream_to_split_into_frames_is_refused(self, *_):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
-        assets = [
-            {
-                "content": "https://hosted-data/flight.ts",
-                "external_id": "stream",
-                "json_metadata": {"processingParameters": {"shouldUseNativeVideo": False}},
-            }
-        ]
-        with pytest.raises(ImportValidationError, match="transport stream"):
-            import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+        for parameter in ["shouldUseNativeVideo", "shouldKeepNativeFrameRate"]:
+            with self.subTest(parameter=parameter):
+                assets = [
+                    {
+                        "content": "https://hosted-data/flight.ts",
+                        "external_id": "stream",
+                        "json_metadata": {"processingParameters": {parameter: False}},
+                    }
+                ]
+                with pytest.raises(ImportValidationError, match="transport stream"):
+                    import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     def test_upload_from_one_hosted_video_authorized_while_local_forbidden(self, *_):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
