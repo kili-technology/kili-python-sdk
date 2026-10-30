@@ -543,9 +543,10 @@ class MutationsAsset(BaseOperationEntrypointMixin):
         """Add metadata to assets without overriding existing metadata.
 
         Each dictionary is merged into the metadata of the asset given at the same position: its
-        keys are added, or changed when the asset already has them, and the other keys are kept.
-        The metadata is read, then written whole: two calls at once on the same asset may lose the
-        keys of one of them.
+        keys are added, or changed when the asset already has them, and the other keys are kept. A
+        stored `ocrMetadata` key is the asset's OCR, not metadata: it is left out, and the OCR is
+        unchanged. The metadata is read, then written whole: two calls at once on the same asset may
+        lose the keys of one of them.
 
         Args:
             json_metadata: List of metadata dictionaries to add to each asset, one per asset, in
@@ -686,8 +687,9 @@ class MutationsAsset(BaseOperationEntrypointMixin):
     ) -> list[dict[Literal["id"], str]]:
         """Remove metadata keys from assets, keeping their other keys.
 
-        The metadata is read, then written whole: two calls at once on the same asset may lose the
-        keys of one of them.
+        A stored `ocrMetadata` key is the asset's OCR, not metadata: it is left out, and the OCR is
+        unchanged. The metadata is read, then written whole: two calls at once on the same asset may
+        lose the keys of one of them.
 
         Args:
             keys: The metadata keys to remove from each asset. A key an asset does not have is
