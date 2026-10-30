@@ -89,6 +89,8 @@ class AssetUseCasesUtils:
     ) -> tuple[list[str], dict[str, dict]]:
         """The ids of the assets a metadata call targets, in the order given, and each one's metadata.
 
+        The metadata leaves out an `ocrMetadata` key, which an update reads as a command for the asset's OCR.
+
         Args:
             project_id: The project of the assets.
             asset_ids: The asset ids, if the call identifies the assets by id.
@@ -129,7 +131,13 @@ class AssetUseCasesUtils:
             QueryOptions(disable_tqdm=True),
         )
         metadata_by_id: dict[str, dict] = {
-            asset["id"]: asset.get("jsonMetadata") or {} for asset in assets
+            asset["id"]: {
+                key: value
+                for key, value in (asset.get("jsonMetadata") or {}).items()
+                # a command for the OCR column, never metadata to send back: null would remove the OCR
+                if key != "ocrMetadata"
+            }
+            for asset in assets
         }
         not_found = [asset_id for asset_id in unique_ids if asset_id not in metadata_by_id]
         if not_found:

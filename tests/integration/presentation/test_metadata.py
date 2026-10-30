@@ -573,6 +573,45 @@ def test_set_metadata_gives_an_asset_given_twice_both_dicts_in_turn(
     }
 
 
+@pytest.mark.parametrize(
+    ("method", "kwargs", "expected"),
+    [
+        (
+            "add_metadata",
+            {"json_metadata": [{"reviewed": "yes"}]},
+            {"split": "train", "text": "t", "reviewed": "yes"},
+        ),
+        ("set_metadata", {"json_metadata": [{"split": "val"}]}, {"text": "t", "split": "val"}),
+        ("remove_metadata", {"keys": ["split"]}, {"text": "t"}),
+    ],
+)
+def test_metadata_never_sends_back_a_stored_ocr_metadata(
+    mocker: pytest_mock.MockerFixture, method: str, kwargs: dict, expected: dict
+):
+    """Test that a stored ocrMetadata key, which the backend reads as an OCR command, is not resent."""
+    mutations_asset, _, update_mock = _mutations_asset(
+        mocker,
+        [{"id": "asset1", "jsonMetadata": {"ocrMetadata": None, "split": "train", "text": "t"}}],
+    )
+
+    getattr(mutations_asset, method)(project_id="project1", asset_ids=["asset1"], **kwargs)
+
+    assert update_mock.call_args[1]["json_metadatas"] == [expected]
+
+
+def test_add_metadata_sends_an_ocr_metadata_the_caller_gives(mocker: pytest_mock.MockerFixture):
+    """Test that an ocrMetadata given in the call still reaches the backend."""
+    mutations_asset, _, update_mock = _mutations_asset(
+        mocker, [{"id": "asset1", "jsonMetadata": {"split": "train"}}]
+    )
+
+    mutations_asset.add_metadata(
+        json_metadata=[{"ocrMetadata": None}], project_id="project1", asset_ids=["asset1"]
+    )
+
+    assert update_mock.call_args[1]["json_metadatas"] == [{"split": "train", "ocrMetadata": None}]
+
+
 def test_add_metadata_accepts_nested_values(mocker: pytest_mock.MockerFixture):
     """Test that metadata values can be nested dicts and lists."""
     mutations_asset, _, update_mock = _mutations_asset(

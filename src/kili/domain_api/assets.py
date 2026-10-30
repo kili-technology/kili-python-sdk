@@ -1776,6 +1776,8 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
 
         Each dictionary is merged into the metadata of the asset given at the same position: its
         keys are added, or changed when the asset already has them, and the other keys are kept.
+        The metadata is read, then written whole: two calls at once on the same asset may lose the
+        keys of one of them.
 
         Args:
             json_metadata: Metadata dictionary to add to asset, or list of metadata dictionaries to add to each asset,
@@ -1883,7 +1885,8 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
 
         Each dictionary replaces the metadata of the asset given at the same position, except the
         keys `text`, `imageUrl`, `url` and `processingParameters`, which the asset keeps unless the
-        dictionary gives them.
+        dictionary gives them. The metadata is read, then written whole: two calls at once on the
+        same asset may lose the keys of one of them.
 
         Args:
             json_metadata: Metadata dictionary to set on asset, or list of metadata dictionaries to set on each asset,
@@ -1988,6 +1991,9 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_ids: Optional[List[str]] = None,
     ) -> List[dict[Literal["id"], str]]:
         """Remove metadata keys from assets, keeping their other keys.
+
+        The metadata is read, then written whole: two calls at once on the same asset may lose the
+        keys of one of them.
 
         Args:
             keys: The metadata keys to remove from each asset. A key an asset does not have is ignored.
