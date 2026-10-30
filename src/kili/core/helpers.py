@@ -61,6 +61,9 @@ def get_mime_type(path: str):
     # the full-resolution image of an NGA RSet
     if path.endswith((".ntf", ".nitf", ".r0")) and mime_type != "application/vnd.nitf":
         return "application/vnd.nitf"
+    # guess_type reads the platform's types: Qt Linguist files on Linux, a DLNA type on Windows
+    if path.endswith(".ts"):
+        return "video/mp2t"
     return mime_type
 
 
