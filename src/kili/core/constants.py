@@ -6,7 +6,7 @@ mime_extensions = {
     "Csv": "text/csv",
     "Video": (
         "video/mp4,video/x-matroska,video/3gpp,video/x-msvideo,"
-        "video/x-m4v,video/quicktime,video/webm"
+        "video/x-m4v,video/quicktime,video/webm,video/mp2t"
     ),
     "Image": (
         "application/vnd.nitf, image/jp2,image/jpeg,image/png,image/bmp,image/gif,image/webp,"

@@ -1,6 +1,7 @@
 """Functions to import assets into a VIDEO_LEGACY project."""
 
 import os
+import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from itertools import repeat
@@ -159,25 +160,63 @@ class VideoDataImporter(BaseAbstractAssetImporter):
             return VideoDataType.HOSTED_FILE
         return VideoDataType.LOCAL_FILE
 
+    @staticmethod
+    def is_transport_stream(asset: AssetLike) -> bool:
+        """Determine if the asset's content, a URL or a local path, is a transport stream (.ts)."""
+        content = asset.get("content")
+        if not isinstance(content, str):
+            return False
+        path = urllib.parse.urlparse(content).path if is_url(content) else content
+        return path.lower().endswith(".ts")
+
+    @staticmethod
+    def check_transport_streams_are_native_videos(assets: list[AssetLike]) -> None:
+        """Raise if a transport stream is asked to be split into frames or resampled."""
+        for asset in assets:
+            processing_parameters = VideoMixin.get_video_processing_parameters(asset)
+            if (
+                processing_parameters.get("shouldUseNativeVideo") is False
+                or processing_parameters.get("shouldKeepNativeFrameRate") is False
+            ):
+                raise ImportValidationError(
+                    f"Asset '{asset.get('external_id', 'unknown')}' is a transport stream (.ts),"
+                    " which Kili plays as a native video at its native frame rate: remove"
+                    " shouldUseNativeVideo=False and shouldKeepNativeFrameRate=False from its"
+                    " processingParameters, or convert it to MP4 to split it into frames."
+                )
+
+    def import_video_files(self, assets: list[AssetLike], is_hosted: bool):
+        """Import video files: transport streams synchronously, the others through the import service.
+
+        The browser converts a transport stream when it is played, so it skips the import service,
+        which reads neither MPEG-2 video nor a stream not starting at 0.
+        """
+        transport_streams = [asset for asset in assets if self.is_transport_stream(asset)]
+        self.check_transport_streams_are_native_videos(transport_streams)
+        other_videos = [asset for asset in assets if not self.is_transport_stream(asset)]
+        created_asset_ids: list[str] = []
+        for group, is_asynchronous in ((transport_streams, False), (other_videos, True)):
+            if group:
+                batch_params = BatchParams(is_hosted=is_hosted, is_asynchronous=is_asynchronous)
+                batch_importer = VideoContentBatchImporter(
+                    self.kili, self.project_params, batch_params, self.pbar
+                )
+                created_asset_ids += self.import_assets_by_batch(
+                    group, batch_importer, IMPORT_BATCH_SIZE
+                )
+        return created_asset_ids
+
     def import_assets(self, assets: list[AssetLike], input_type: InputType):
         """Import video assets into Kili."""
         self._check_upload_is_allowed(assets)
         data_type = self.get_data_type(assets)
         assets = self.filter_duplicate_external_ids(assets)
-        if data_type == VideoDataType.LOCAL_FILE:
-            assets = self.filter_local_assets(assets, self.raise_error)
-            batch_params = BatchParams(is_hosted=False, is_asynchronous=True)
-            batch_importer = VideoContentBatchImporter(
-                self.kili, self.project_params, batch_params, self.pbar
-            )
-            batch_size = IMPORT_BATCH_SIZE
-        elif data_type == VideoDataType.HOSTED_FILE:
-            batch_params = BatchParams(is_hosted=True, is_asynchronous=True)
-            batch_importer = VideoContentBatchImporter(
-                self.kili, self.project_params, batch_params, self.pbar
-            )
-            batch_size = IMPORT_BATCH_SIZE
-        elif data_type == VideoDataType.LOCAL_FRAMES:
+        if data_type in (VideoDataType.LOCAL_FILE, VideoDataType.HOSTED_FILE):
+            is_hosted = data_type == VideoDataType.HOSTED_FILE
+            if not is_hosted:
+                assets = self.filter_local_assets(assets, self.raise_error)
+            return self.import_video_files(assets, is_hosted)
+        if data_type == VideoDataType.LOCAL_FRAMES:
             batch_params = BatchParams(is_hosted=False, is_asynchronous=False)
             batch_importer = FrameBatchImporter(
                 self.kili, self.project_params, batch_params, self.pbar

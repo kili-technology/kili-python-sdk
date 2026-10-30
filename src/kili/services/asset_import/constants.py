@@ -33,5 +33,5 @@ ALLOWED_EXTENSIONS_BY_INPUT_TYPE: dict[str, frozenset[str]] = {
     "LLM_RLHF": frozenset({".json"}),
     "PDF": frozenset({".pdf"}),
     "TEXT": frozenset({".txt", ".csv"}),
-    "VIDEO": frozenset({".mp4", ".mkv", ".3gp", ".avi", ".m4v", ".mov", ".webm"}),
+    "VIDEO": frozenset({".mp4", ".mkv", ".3gp", ".avi", ".m4v", ".mov", ".webm", ".ts"}),
 }
