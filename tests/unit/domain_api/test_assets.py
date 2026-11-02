@@ -29,6 +29,7 @@ class TestAssetsNamespace:
         client.change_asset_external_ids = MagicMock()
         client.add_metadata = MagicMock()
         client.set_metadata = MagicMock()
+        client.remove_metadata = MagicMock()
         client.skip_or_unskip = MagicMock()
         client.update_asset_consensus = MagicMock()
         return client
@@ -423,6 +424,36 @@ class TestAssetsNamespaceContractCompatibility:
 
         mock_client.delete_many_from_dataset.assert_called_once_with(
             asset_ids=["asset1", "asset2"], external_ids=None, project_id="test_project"
+        )
+
+    def test_api_parity_remove_metadata(self, assets_namespace, mock_client):
+        """Test that remove_metadata() passes one external id on to the legacy method as a list."""
+        mock_client.remove_metadata.return_value = [{"id": "asset1"}]
+
+        result = assets_namespace.remove_metadata(
+            keys=["split"], project_id="test_project", external_id="ext1"
+        )
+
+        mock_client.remove_metadata.assert_called_once_with(
+            keys=["split"], project_id="test_project", asset_ids=None, external_ids=["ext1"]
+        )
+        assert result == [{"id": "asset1"}]
+
+    def test_api_parity_add_metadata_with_nested_values(self, assets_namespace, mock_client):
+        """Test that add_metadata() takes nested values and passes one dict on as a list."""
+        mock_client.add_metadata.return_value = [{"id": "asset1"}]
+
+        assets_namespace.add_metadata(
+            json_metadata={"nested": {"a": [1, 2]}, "flag": True},
+            project_id="test_project",
+            asset_id="asset1",
+        )
+
+        mock_client.add_metadata.assert_called_once_with(
+            json_metadata=[{"nested": {"a": [1, 2]}, "flag": True}],
+            project_id="test_project",
+            asset_ids=["asset1"],
+            external_ids=None,
         )
 
 
